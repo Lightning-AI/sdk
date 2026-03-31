@@ -43,25 +43,30 @@ class ModelsStoreCreateModelVersionBody(object):
     swagger_types = {
         'cluster_id': 'str',
         'metadata': 'dict(str, str)',
+        'metrics_stream_id': 'str',
         'version': 'str'
     }
 
     attribute_map = {
         'cluster_id': 'clusterId',
         'metadata': 'metadata',
+        'metrics_stream_id': 'metricsStreamId',
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, metrics_stream_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """ModelsStoreCreateModelVersionBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._metadata = None
+        self._metrics_stream_id = None
         self._version = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if metadata is not None:
             self.metadata = metadata
+        if metrics_stream_id is not None:
+            self.metrics_stream_id = metrics_stream_id
         if version is not None:
             self.version = version
 
@@ -106,6 +111,27 @@ class ModelsStoreCreateModelVersionBody(object):
         """
 
         self._metadata = metadata
+
+    @property
+    def metrics_stream_id(self) -> 'str':
+        """Gets the metrics_stream_id of this ModelsStoreCreateModelVersionBody.  # noqa: E501
+
+
+        :return: The metrics_stream_id of this ModelsStoreCreateModelVersionBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._metrics_stream_id
+
+    @metrics_stream_id.setter
+    def metrics_stream_id(self, metrics_stream_id: 'str'):
+        """Sets the metrics_stream_id of this ModelsStoreCreateModelVersionBody.
+
+
+        :param metrics_stream_id: The metrics_stream_id of this ModelsStoreCreateModelVersionBody.  # noqa: E501
+        :type: str
+        """
+
+        self._metrics_stream_id = metrics_stream_id
 
     @property
     def version(self) -> 'str':

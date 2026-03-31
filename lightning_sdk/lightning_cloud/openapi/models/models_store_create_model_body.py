@@ -44,6 +44,7 @@ class ModelsStoreCreateModelBody(object):
         'always_create': 'bool',
         'cluster_id': 'str',
         'metadata': 'dict(str, str)',
+        'metrics_stream_id': 'str',
         'name': 'str',
         'private': 'bool'
     }
@@ -52,15 +53,17 @@ class ModelsStoreCreateModelBody(object):
         'always_create': 'alwaysCreate',
         'cluster_id': 'clusterId',
         'metadata': 'metadata',
+        'metrics_stream_id': 'metricsStreamId',
         'name': 'name',
         'private': 'private'
     }
 
-    def __init__(self, always_create: 'bool' =None, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None):  # noqa: E501
+    def __init__(self, always_create: 'bool' =None, cluster_id: 'str' =None, metadata: 'dict(str, str)' =None, metrics_stream_id: 'str' =None, name: 'str' =None, private: 'bool' =None):  # noqa: E501
         """ModelsStoreCreateModelBody - a model defined in Swagger"""  # noqa: E501
         self._always_create = None
         self._cluster_id = None
         self._metadata = None
+        self._metrics_stream_id = None
         self._name = None
         self._private = None
         self.discriminator = None
@@ -70,6 +73,8 @@ class ModelsStoreCreateModelBody(object):
             self.cluster_id = cluster_id
         if metadata is not None:
             self.metadata = metadata
+        if metrics_stream_id is not None:
+            self.metrics_stream_id = metrics_stream_id
         if name is not None:
             self.name = name
         if private is not None:
@@ -137,6 +142,27 @@ class ModelsStoreCreateModelBody(object):
         """
 
         self._metadata = metadata
+
+    @property
+    def metrics_stream_id(self) -> 'str':
+        """Gets the metrics_stream_id of this ModelsStoreCreateModelBody.  # noqa: E501
+
+
+        :return: The metrics_stream_id of this ModelsStoreCreateModelBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._metrics_stream_id
+
+    @metrics_stream_id.setter
+    def metrics_stream_id(self, metrics_stream_id: 'str'):
+        """Sets the metrics_stream_id of this ModelsStoreCreateModelBody.
+
+
+        :param metrics_stream_id: The metrics_stream_id of this ModelsStoreCreateModelBody.  # noqa: E501
+        :type: str
+        """
+
+        self._metrics_stream_id = metrics_stream_id
 
     @property
     def name(self) -> 'str':

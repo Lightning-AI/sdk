@@ -43,6 +43,103 @@ class ProjectsServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def projects_service_create_api_key(self, body: 'V1CreateAPIKeyRequest', **kwargs) -> 'V1APIKey':  # noqa: E501
+        """projects_service_create_api_key  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_create_api_key(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CreateAPIKeyRequest body: (required)
+        :return: V1APIKey
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.projects_service_create_api_key_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.projects_service_create_api_key_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def projects_service_create_api_key_with_http_info(self, body: 'V1CreateAPIKeyRequest', **kwargs) -> 'V1APIKey':  # noqa: E501
+        """projects_service_create_api_key  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_create_api_key_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1CreateAPIKeyRequest body: (required)
+        :return: V1APIKey
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method projects_service_create_api_key" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `projects_service_create_api_key`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/api-keys', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1APIKey',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def projects_service_create_project(self, body: 'V1CreateProjectRequest', **kwargs) -> 'V1Project':  # noqa: E501
         """Project management  # noqa: E501
 
@@ -561,6 +658,103 @@ class ProjectsServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1Role',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def projects_service_delete_api_key(self, id: 'str', **kwargs) -> 'V1DeleteAPIKeyResponse':  # noqa: E501
+        """projects_service_delete_api_key  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_delete_api_key(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str org_id:
+        :return: V1DeleteAPIKeyResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.projects_service_delete_api_key_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.projects_service_delete_api_key_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def projects_service_delete_api_key_with_http_info(self, id: 'str', **kwargs) -> 'V1DeleteAPIKeyResponse':  # noqa: E501
+        """projects_service_delete_api_key  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_delete_api_key_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str org_id:
+        :return: V1DeleteAPIKeyResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method projects_service_delete_api_key" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `projects_service_delete_api_key`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/api-keys/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteAPIKeyResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1377,6 +1571,95 @@ class ProjectsServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1InviteProjectMembershipResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def projects_service_list_api_keys(self, **kwargs) -> 'V1ListAPIKeysResponse':  # noqa: E501
+        """projects_service_list_api_keys  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_list_api_keys(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :return: V1ListAPIKeysResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.projects_service_list_api_keys_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.projects_service_list_api_keys_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def projects_service_list_api_keys_with_http_info(self, **kwargs) -> 'V1ListAPIKeysResponse':  # noqa: E501
+        """projects_service_list_api_keys  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.projects_service_list_api_keys_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :return: V1ListAPIKeysResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method projects_service_list_api_keys" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/api-keys', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListAPIKeysResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

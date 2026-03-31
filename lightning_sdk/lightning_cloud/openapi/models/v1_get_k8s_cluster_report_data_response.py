@@ -41,14 +41,92 @@ class V1GetK8sClusterReportDataResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'chart_metadata': 'V1ChartMetadata',
+        'report_stream': 'V1ReportStream',
+        'table_metadata': 'V1TableMetadata'
     }
 
     attribute_map = {
+        'chart_metadata': 'chartMetadata',
+        'report_stream': 'reportStream',
+        'table_metadata': 'tableMetadata'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, chart_metadata: 'V1ChartMetadata' =None, report_stream: 'V1ReportStream' =None, table_metadata: 'V1TableMetadata' =None):  # noqa: E501
         """V1GetK8sClusterReportDataResponse - a model defined in Swagger"""  # noqa: E501
+        self._chart_metadata = None
+        self._report_stream = None
+        self._table_metadata = None
         self.discriminator = None
+        if chart_metadata is not None:
+            self.chart_metadata = chart_metadata
+        if report_stream is not None:
+            self.report_stream = report_stream
+        if table_metadata is not None:
+            self.table_metadata = table_metadata
+
+    @property
+    def chart_metadata(self) -> 'V1ChartMetadata':
+        """Gets the chart_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+
+
+        :return: The chart_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :rtype: V1ChartMetadata
+        """
+        return self._chart_metadata
+
+    @chart_metadata.setter
+    def chart_metadata(self, chart_metadata: 'V1ChartMetadata'):
+        """Sets the chart_metadata of this V1GetK8sClusterReportDataResponse.
+
+
+        :param chart_metadata: The chart_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :type: V1ChartMetadata
+        """
+
+        self._chart_metadata = chart_metadata
+
+    @property
+    def report_stream(self) -> 'V1ReportStream':
+        """Gets the report_stream of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+
+
+        :return: The report_stream of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :rtype: V1ReportStream
+        """
+        return self._report_stream
+
+    @report_stream.setter
+    def report_stream(self, report_stream: 'V1ReportStream'):
+        """Sets the report_stream of this V1GetK8sClusterReportDataResponse.
+
+
+        :param report_stream: The report_stream of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :type: V1ReportStream
+        """
+
+        self._report_stream = report_stream
+
+    @property
+    def table_metadata(self) -> 'V1TableMetadata':
+        """Gets the table_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+
+
+        :return: The table_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :rtype: V1TableMetadata
+        """
+        return self._table_metadata
+
+    @table_metadata.setter
+    def table_metadata(self, table_metadata: 'V1TableMetadata'):
+        """Sets the table_metadata of this V1GetK8sClusterReportDataResponse.
+
+
+        :param table_metadata: The table_metadata of this V1GetK8sClusterReportDataResponse.  # noqa: E501
+        :type: V1TableMetadata
+        """
+
+        self._table_metadata = table_metadata
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

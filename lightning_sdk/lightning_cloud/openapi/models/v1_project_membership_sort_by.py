@@ -41,6 +41,8 @@ class V1ProjectMembershipSortBy(object):
     USERNAME = "PROJECT_MEMBERSHIP_SORT_BY_USERNAME"
     TITLE = "PROJECT_MEMBERSHIP_SORT_BY_TITLE"
     ROLE = "PROJECT_MEMBERSHIP_SORT_BY_ROLE"
+    FIRST_NAME = "PROJECT_MEMBERSHIP_SORT_BY_FIRST_NAME"
+    LAST_NAME = "PROJECT_MEMBERSHIP_SORT_BY_LAST_NAME"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

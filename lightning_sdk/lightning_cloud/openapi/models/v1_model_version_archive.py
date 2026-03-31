@@ -46,6 +46,7 @@ class V1ModelVersionArchive(object):
         'downloads': 'str',
         'index': 'int',
         'metadata': 'dict(str, str)',
+        'metrics_stream_id': 'str',
         'model_id': 'str',
         'number_of_files': 'str',
         'project_id': 'str',
@@ -62,6 +63,7 @@ class V1ModelVersionArchive(object):
         'downloads': 'downloads',
         'index': 'index',
         'metadata': 'metadata',
+        'metrics_stream_id': 'metricsStreamId',
         'model_id': 'modelId',
         'number_of_files': 'numberOfFiles',
         'project_id': 'projectId',
@@ -72,13 +74,14 @@ class V1ModelVersionArchive(object):
         'version': 'version'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, index: 'int' =None, metadata: 'dict(str, str)' =None, model_id: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, index: 'int' =None, metadata: 'dict(str, str)' =None, metrics_stream_id: 'str' =None, model_id: 'str' =None, number_of_files: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, user_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1ModelVersionArchive - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._downloads = None
         self._index = None
         self._metadata = None
+        self._metrics_stream_id = None
         self._model_id = None
         self._number_of_files = None
         self._project_id = None
@@ -98,6 +101,8 @@ class V1ModelVersionArchive(object):
             self.index = index
         if metadata is not None:
             self.metadata = metadata
+        if metrics_stream_id is not None:
+            self.metrics_stream_id = metrics_stream_id
         if model_id is not None:
             self.model_id = model_id
         if number_of_files is not None:
@@ -219,6 +224,27 @@ class V1ModelVersionArchive(object):
         """
 
         self._metadata = metadata
+
+    @property
+    def metrics_stream_id(self) -> 'str':
+        """Gets the metrics_stream_id of this V1ModelVersionArchive.  # noqa: E501
+
+
+        :return: The metrics_stream_id of this V1ModelVersionArchive.  # noqa: E501
+        :rtype: str
+        """
+        return self._metrics_stream_id
+
+    @metrics_stream_id.setter
+    def metrics_stream_id(self, metrics_stream_id: 'str'):
+        """Sets the metrics_stream_id of this V1ModelVersionArchive.
+
+
+        :param metrics_stream_id: The metrics_stream_id of this V1ModelVersionArchive.  # noqa: E501
+        :type: str
+        """
+
+        self._metrics_stream_id = metrics_stream_id
 
     @property
     def model_id(self) -> 'str':

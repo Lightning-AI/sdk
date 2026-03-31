@@ -375,6 +375,9 @@ class K8SClusterServiceApi(object):
         :param str report_id: (required)
         :param datetime start: Date range
         :param datetime end:
+        :param str namespace: Optional - used for certain reports
+        :param str user_id:
+        :param str queue_id:
         :return: V1GetK8sClusterReportDataResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -399,12 +402,15 @@ class K8SClusterServiceApi(object):
         :param str report_id: (required)
         :param datetime start: Date range
         :param datetime end:
+        :param str namespace: Optional - used for certain reports
+        :param str user_id:
+        :param str queue_id:
         :return: V1GetK8sClusterReportDataResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'report_id', 'start', 'end']  # noqa: E501
+        all_params = ['cluster_id', 'report_id', 'start', 'end', 'namespace', 'user_id', 'queue_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -441,6 +447,12 @@ class K8SClusterServiceApi(object):
             query_params.append(('start', params['start']))  # noqa: E501
         if 'end' in params:
             query_params.append(('end', params['end']))  # noqa: E501
+        if 'namespace' in params:
+            query_params.append(('namespace', params['namespace']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'queue_id' in params:
+            query_params.append(('queueId', params['queue_id']))  # noqa: E501
 
         header_params = {}
 

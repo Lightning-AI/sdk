@@ -43,6 +43,7 @@ class V1KubernetesDirectSettingsV1(object):
     swagger_types = {
         'daily_usage_report': 'bool',
         'disable_pods_collection': 'bool',
+        'enable_kai_scheduler_pod_name_validation': 'bool',
         'monthly_usage_report': 'bool',
         'nfs_storage_threshold': 'float',
         'override_read_only': 'bool',
@@ -56,6 +57,7 @@ class V1KubernetesDirectSettingsV1(object):
     attribute_map = {
         'daily_usage_report': 'dailyUsageReport',
         'disable_pods_collection': 'disablePodsCollection',
+        'enable_kai_scheduler_pod_name_validation': 'enableKaiSchedulerPodNameValidation',
         'monthly_usage_report': 'monthlyUsageReport',
         'nfs_storage_threshold': 'nfsStorageThreshold',
         'override_read_only': 'overrideReadOnly',
@@ -66,10 +68,11 @@ class V1KubernetesDirectSettingsV1(object):
         'xid_error_behavior': 'xidErrorBehavior'
     }
 
-    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)' =None):  # noqa: E501
+    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, enable_kai_scheduler_pod_name_validation: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)' =None):  # noqa: E501
         """V1KubernetesDirectSettingsV1 - a model defined in Swagger"""  # noqa: E501
         self._daily_usage_report = None
         self._disable_pods_collection = None
+        self._enable_kai_scheduler_pod_name_validation = None
         self._monthly_usage_report = None
         self._nfs_storage_threshold = None
         self._override_read_only = None
@@ -83,6 +86,8 @@ class V1KubernetesDirectSettingsV1(object):
             self.daily_usage_report = daily_usage_report
         if disable_pods_collection is not None:
             self.disable_pods_collection = disable_pods_collection
+        if enable_kai_scheduler_pod_name_validation is not None:
+            self.enable_kai_scheduler_pod_name_validation = enable_kai_scheduler_pod_name_validation
         if monthly_usage_report is not None:
             self.monthly_usage_report = monthly_usage_report
         if nfs_storage_threshold is not None:
@@ -141,6 +146,27 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._disable_pods_collection = disable_pods_collection
+
+    @property
+    def enable_kai_scheduler_pod_name_validation(self) -> 'bool':
+        """Gets the enable_kai_scheduler_pod_name_validation of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+
+        :return: The enable_kai_scheduler_pod_name_validation of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enable_kai_scheduler_pod_name_validation
+
+    @enable_kai_scheduler_pod_name_validation.setter
+    def enable_kai_scheduler_pod_name_validation(self, enable_kai_scheduler_pod_name_validation: 'bool'):
+        """Sets the enable_kai_scheduler_pod_name_validation of this V1KubernetesDirectSettingsV1.
+
+
+        :param enable_kai_scheduler_pod_name_validation: The enable_kai_scheduler_pod_name_validation of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._enable_kai_scheduler_pod_name_validation = enable_kai_scheduler_pod_name_validation
 
     @property
     def monthly_usage_report(self) -> 'bool':
