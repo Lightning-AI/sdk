@@ -23,6 +23,11 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 
 
+class MyDummyExperiment:
+    def __init__(self, id: str) -> None:
+        self.id = id
+
+
 def test_get_teamspace(internal_teamspace_api_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -146,7 +151,13 @@ def test_try_get_cluster_id():
 def test_create_delete_model():
     teamspace_api = TeamspaceApi()
     # create a content reused in following cases
-    model_body = {"name": "model-name", "metadata": {}, "private": True, "cluster_id": "cluster-abc"}
+    model_body = {
+        "name": "model-name",
+        "metadata": {},
+        "private": True,
+        "cluster_id": "cluster-abc",
+        "metrics_stream_id": None,
+    }
     # mock the models_store_list_models and models_store_create_model for empty state
     teamspace_api._client = mock.MagicMock(
         models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
@@ -154,6 +165,48 @@ def test_create_delete_model():
     )
     teamspace_api.create_model(
         teamspace_id="ts-abc", name="model-name", version="vvv", metadata={}, private=True, cloud_account="cluster-abc"
+    )
+    # validate the calls
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_create_model.assert_called_with(
+        body=ModelsStoreCreateModelBody(**model_body), project_id="ts-abc"
+    )
+
+    # mock the models_store_list_models and models_store_create_model for non-empty state
+    teamspace_api._client = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
+        models_store_delete_model=mock.MagicMock(),
+    )
+    # delete the model calls
+    teamspace_api.delete_model(name="model-name", version="", teamspace_id="ts-abc")
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_delete_model.assert_called_with(project_id="ts-abc", model_id="model-id")
+
+
+def test_create_delete_model_with_experiment():
+    teamspace_api = TeamspaceApi()
+    experiment = MyDummyExperiment(id="exp-abc")
+    # create a content reused in following cases
+    model_body = {
+        "name": "model-name",
+        "metadata": {},
+        "private": True,
+        "cluster_id": "cluster-abc",
+        "metrics_stream_id": "exp-abc",
+    }
+    # mock the models_store_list_models and models_store_create_model for empty state
+    teamspace_api._client = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[])),
+        models_store_create_model=mock.MagicMock(return_value=mock.MagicMock(model_id="model-id")),
+    )
+    teamspace_api.create_model(
+        teamspace_id="ts-abc",
+        name="model-name",
+        version="vvv",
+        metadata={},
+        private=True,
+        cloud_account="cluster-abc",
+        experiment=experiment,
     )
     # validate the calls
     teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
@@ -192,7 +245,51 @@ def test_create_delete_model_version():
     teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._client.models_store_create_model_version.assert_called_with(
         project_id="ts-abc",
-        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv"),
+        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv", metrics_stream_id=None),
+        model_id="model-id",
+    )
+
+    teamspace_api._client = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(
+            return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id", default_version="v1")])
+        ),
+        models_store_delete_model_version=mock.MagicMock(),
+    )
+    teamspace_api.delete_model(name="model-name", version="default", teamspace_id="ts-abc")
+    teamspace_api._client.models_store_delete_model_version.assert_called_with(
+        project_id="ts-abc", model_id="model-id", version=version.version
+    )
+    teamspace_api.delete_model(name="model-name", version=version.version, teamspace_id="ts-abc")
+    teamspace_api._client.models_store_delete_model_version.assert_called_with(
+        project_id="ts-abc", model_id="model-id", version=version.version
+    )
+
+
+def test_create_delete_model_version_with_experiment():
+    teamspace_api = TeamspaceApi()
+    # mock the models_store_list_models and models_store_create_model_version for existing model
+    teamspace_api._client = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
+        models_store_create_model_version=mock.MagicMock(
+            return_value=mock.MagicMock(model_id="model-id", version="v1")
+        ),
+    )
+
+    experiment = MyDummyExperiment(id="exp-abc")
+
+    version = teamspace_api.create_model(
+        teamspace_id="ts-abc",
+        name="model-name",
+        version="vVv",
+        metadata={},
+        private=True,
+        cloud_account="cluster-abc",
+        experiment=experiment,
+    )
+    teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
+    teamspace_api._client.models_store_create_model_version.assert_called_with(
+        project_id="ts-abc",
+        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv", metrics_stream_id="exp-abc"),
         model_id="model-id",
     )
 

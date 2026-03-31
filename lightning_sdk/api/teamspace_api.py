@@ -11,6 +11,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     _MAX_SIZE_MULTI_PART_CHUNK,
+    Experiment,
     _authenticate_and_get_token,
     _download_model_files,
     _DummyBody,
@@ -200,19 +201,29 @@ class TeamspaceApi:
         private: bool,
         teamspace_id: str,
         cloud_account: str,
+        experiment: Optional[Experiment] = None,
     ) -> V1ModelVersionArchive:
         # ask if such model already exists by listing models with specific name
         models = self._client.models_store_list_models(project_id=teamspace_id, name=name).models
+        experiment_id = experiment.id if experiment is not None else None
         if len(models) == 0:
             return self._client.models_store_create_model(
                 body=ModelsStoreCreateModelBody(
-                    cluster_id=cloud_account, metadata=metadata, name=name, private=private
+                    cluster_id=cloud_account,
+                    metadata=metadata,
+                    name=name,
+                    private=private,
+                    metrics_stream_id=experiment_id,
                 ),
                 project_id=teamspace_id,
             )
         assert len(models) == 1, "Multiple models with the same name found"
         return self._client.models_store_create_model_version(
-            body=ModelsStoreCreateModelVersionBody(cluster_id=cloud_account, version=version),
+            body=ModelsStoreCreateModelVersionBody(
+                cluster_id=cloud_account,
+                version=version,
+                metrics_stream_id=experiment_id,
+            ),
             project_id=teamspace_id,
             model_id=models[0].id,
         )

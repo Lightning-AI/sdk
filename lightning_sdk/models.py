@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from lightning_sdk.api import OrgApi, TeamspaceApi, UserApi
-from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
+from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -148,6 +148,7 @@ def upload_model(
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
     metadata: Optional[Dict[str, Any]] = None,
+    experiment: Optional[Experiment] = None,
 ) -> UploadedModelInfo:
     """Upload a Model.
 
@@ -160,6 +161,7 @@ def upload_model(
         progress_bar: Whether to show a progress bar for the upload.
         metadata: Metadata to attach to the uploaded model.
             If not provided, an empty dictionary will be used.
+        experiment: The experiment producing this model.
     """
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
@@ -172,6 +174,7 @@ def upload_model(
         cloud_account=cloud_account,
         progress_bar=progress_bar,
         metadata=metadata,
+        experiment=experiment,
     )
 
 

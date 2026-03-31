@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache, partial
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, TypedDict, Union, runtime_checkable
 
 import backoff
 import requests
@@ -39,6 +39,11 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive impor
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
+
+
+@runtime_checkable
+class Experiment(Protocol):
+    id: str
 
 
 class _DummyBody:

@@ -16,6 +16,11 @@ from lightning_sdk.models import _get_teamspace, delete_model, download_model, l
 from lightning_sdk.user import User
 
 
+class MyDummyExperiment:
+    def __init__(self, id: str) -> None:
+        self.id = id
+
+
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.models._get_authed_user")
@@ -232,6 +237,36 @@ def test_upload_model_in_studio_with_org(
         path=".",
         progress_bar=True,
         version=None,
+        experiment=None,
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+def test_upload_model_in_studio_with_org_and_experiment(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    experiment = MyDummyExperiment(id="abc")
+
+    upload_model("model_name", experiment=experiment)
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+        experiment=experiment,
     )
 
 
@@ -258,6 +293,7 @@ def test_upload_model_in_studio_with_user(
         path=".",
         progress_bar=True,
         version=None,
+        experiment=None,
     )
 
 

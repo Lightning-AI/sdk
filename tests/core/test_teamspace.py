@@ -38,6 +38,11 @@ from lightning_sdk.teamspace import ConnectionType, Teamspace
 from lightning_sdk.user import User
 
 
+class MyDummyExperiment:
+    def __init__(self, id: str) -> None:
+        self.id = id
+
+
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
 @mock.patch.dict(os.environ, clear=True)
@@ -224,6 +229,65 @@ def test_upload_model_single_file(
         private=True,
         teamspace_id="ts-abc002",
         cloud_account="test-cluster-id",
+        experiment=None,
+    )
+    ts._teamspace_api.upload_model_file.assert_called_with(
+        model_id="test-model-id",
+        version="v3",
+        local_path=file_path,
+        remote_path="checkpoint.pt",
+        teamspace_id="ts-abc002",
+        progress_bar=True,
+    )
+    ts._teamspace_api._complete_model_upload.assert_called_once()
+
+    assert result.name == "modelname"
+    assert result.version == "v3"
+    assert result.teamspace == "ts-abc"
+    assert result.cloud_account == "test-cluster-id"
+
+    ts._teamspace_api.delete_model = mock.Mock()
+    ts.delete_model("user/modelname")
+    ts._teamspace_api.delete_model.assert_called_once_with(
+        teamspace_id="ts-abc002",
+        name="user/modelname",
+        version=None,
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+def test_upload_model_single_file_experiment(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    dummy_experiment = MyDummyExperiment(id="exp_abc")
+
+    with pytest.raises(FileNotFoundError):
+        ts.upload_model(path=(tmp_path / "does-not-exist.ckpt"), name="user/modelname", experiment=dummy_experiment)
+
+    # Upload single file
+    file_path = tmp_path / "checkpoint.pt"
+    file_path.touch()
+
+    ts._teamspace_api.create_model = mock.Mock(return_value=mock.Mock(model_id="test-model-id", version="v3"))
+    ts._teamspace_api.upload_model_file = mock.Mock()
+    ts._teamspace_api._complete_model_upload = mock.Mock()
+
+    result = ts.upload_model(
+        path=str(file_path), name="modelname", metadata={"weather": "sunny or rainy"}, experiment=dummy_experiment
+    )
+
+    ts._teamspace_api.create_model.assert_called_once_with(
+        name="modelname",
+        version=None,
+        metadata={"weather": "sunny or rainy", "lightning-sdk": lightning_sdk.__version__},
+        private=True,
+        teamspace_id="ts-abc002",
+        cloud_account="test-cluster-id",
+        experiment=dummy_experiment,
     )
     ts._teamspace_api.upload_model_file.assert_called_with(
         model_id="test-model-id",

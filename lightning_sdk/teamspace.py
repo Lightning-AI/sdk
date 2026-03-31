@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, TeamspaceApi
-from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
+from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
     V1Model,
@@ -388,6 +388,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
         metadata: Optional[dict] = None,
+        experiment: Optional[Experiment] = None,
     ) -> UploadedModelInfo:
         """Upload a local checkpoint file to the model store.
 
@@ -400,6 +401,7 @@ class Teamspace(metaclass=TrackCallsMeta):
                 If not provided, the default cloud account for the Teamspace will be used.
             progress_bar: Whether to show a progress bar for the upload.
             metadata: Metadata to attach to the model. Can be a dictionary.
+            experiment: The experiment producing this model.
         """
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not path:
@@ -441,6 +443,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             private=True,
             teamspace_id=self.id,
             cloud_account=cloud_account,
+            experiment=experiment,
         )
         self._teamspace_api.upload_model_files(
             model_id=model.model_id,
