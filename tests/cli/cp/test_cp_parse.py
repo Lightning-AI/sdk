@@ -8,11 +8,6 @@ def test_parse_lit_url_missing_scheme():
         parse_lit_url("teamspace/org/studios/my-studio")
 
 
-def test_parse_lit_url_unsupported_resource_type():
-    with pytest.raises(ValueError, match="URL must contain one of the following resource types"):
-        parse_lit_url("lit://org/teamspace/unknown_resource/path")
-
-
 def test_parse_lit_url_studios():
     assert parse_lit_url("lit://org/teamspace/studios/my-studio") == "studios"
 

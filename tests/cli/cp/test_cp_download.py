@@ -5,6 +5,16 @@ import pytest
 from lightning_sdk.cli.cp import route_cp_operation
 
 
+def test_route_unsupported_resource_type():
+    """Test that unsupported resource type raises ValueError."""
+    with pytest.raises(ValueError, match="Resource type: unknown_resource is not supported"):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/unknown_resource/data/model.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+
+
 def test_route_cp_s3_folders_download():
     """Test that s3_folders download routes to Filesystem.copy."""
     mock_fs = MagicMock()
@@ -74,6 +84,60 @@ def test_route_cp_lightning_storage_download():
             source="lit://my-org/my-teamspace/lightning_storage/data/model.ckpt",
             destination="/local/model.ckpt",
             recursive=False,
+        )
+
+
+def test_route_cp_jobs_download():
+    """Test that jobs download routes to Filesystem.copy."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/jobs/my-job/data/model.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace/jobs/my-job/data/model.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+
+
+def test_route_cp_jobs_download_recursive():
+    """Test that jobs download passes recursive=True to Filesystem.copy."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/jobs/my-job/data/mydir",
+            destination="/local/mydir",
+            recursive=True,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace/jobs/my-job/data/mydir",
+            destination="/local/mydir",
+            recursive=True,
+        )
+
+
+def test_route_cp_jobs_raises_if_both_remote():
+    """Test that two lit:// paths raises ValueError."""
+    with pytest.raises(ValueError, match="two remote URLs"):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/jobs/my-job1/a.txt",
+            destination="lit://my-org/my-teamspace/jobs/my-job2/b.txt",
+        )
+
+
+def test_route_cp_jobs_raises_if_both_local():
+    """Test that two local paths raises ValueError."""
+    with pytest.raises(ValueError, match="At least one path"):
+        route_cp_operation(
+            source="/local/a.txt",
+            destination="/local/b.txt",
         )
 
 
