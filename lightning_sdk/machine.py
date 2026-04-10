@@ -194,16 +194,10 @@ Machine.L40S_X_2 = Machine(name="L40S_X_2", slug="lit-l40s-2", family="L40S", ac
 Machine.L40S_X_4 = Machine(name="L40S_X_4", slug="lit-l40s-4", family="L40S", accelerator_count=4)
 Machine.L40S_X_8 = Machine(name="L40S_X_8", slug="lit-l40s-8", family="L40S", accelerator_count=8)
 # available RTXP 6000 machines
-Machine.RTXP_6000 = Machine(name="RTXP_6000", slug="lit-rtx-6000-pro-1", family="RTXP_6000", accelerator_count=1)
-Machine.RTXP_6000_X_2 = Machine(
-    name="RTXP_6000_X_2", slug="lit-rtx-6000-pro-2", family="RTXP_6000", accelerator_count=2
-)
-Machine.RTXP_6000_X_4 = Machine(
-    name="RTXP_6000_X_4", slug="lit-rtx-6000-pro-4", family="RTXP_6000", accelerator_count=4
-)
-Machine.RTXP_6000_X_8 = Machine(
-    name="RTXP_6000_X_8", slug="lit-rtx-6000-pro-8", family="RTXP_6000", accelerator_count=8
-)
+Machine.RTXP_6000 = Machine(name="RTXP_6000", slug="lit-rtx-6000-pro-1", family="RTX PRO", accelerator_count=1)
+Machine.RTXP_6000_X_2 = Machine(name="RTXP_6000_X_2", slug="lit-rtx-6000-pro-2", family="RTX PRO", accelerator_count=2)
+Machine.RTXP_6000_X_4 = Machine(name="RTXP_6000_X_4", slug="lit-rtx-6000-pro-4", family="RTX PRO", accelerator_count=4)
+Machine.RTXP_6000_X_8 = Machine(name="RTXP_6000_X_8", slug="lit-rtx-6000-pro-8", family="RTX PRO", accelerator_count=8)
 # available A100 Machines
 Machine.A100 = Machine(name="A100", slug="lit-a100-1", family="A100", accelerator_count=1)
 Machine.A100_X_2 = Machine(name="A100_X_2", slug="lit-a100-2", family="A100", accelerator_count=2)
