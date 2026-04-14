@@ -39,6 +39,9 @@ def route_cp_operation(source: str, destination: str, **options: Any) -> None:
             or resource_type == "uploads"
             or resource_type == "s3_folders"
             or resource_type == "jobs"
+            or resource_type == "gcs_folders"
+            or resource_type == "s3_connections"
+            or resource_type == "gcs_connections"
         ):
             fs = Filesystem()
             source = source.replace("uploads/", "Uploads/")
