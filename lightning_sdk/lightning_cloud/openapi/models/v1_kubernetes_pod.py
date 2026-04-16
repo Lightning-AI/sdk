@@ -54,6 +54,7 @@ class V1KubernetesPod(object):
         'preemption_event': 'V1PodPreemptionEvent',
         'priority': 'str',
         'queue_name': 'str',
+        'software_versions': 'dict(str, str)',
         'user_id': 'str'
     }
 
@@ -71,10 +72,11 @@ class V1KubernetesPod(object):
         'preemption_event': 'preemptionEvent',
         'priority': 'priority',
         'queue_name': 'queueName',
+        'software_versions': 'softwareVersions',
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, job_name: 'str' =None, name: 'str' =None, namespace: 'str' =None, node_name: 'str' =None, pod: 'str' =None, pod_id: 'str' =None, preemption_event: 'V1PodPreemptionEvent' =None, priority: 'str' =None, queue_name: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, job_name: 'str' =None, name: 'str' =None, namespace: 'str' =None, node_name: 'str' =None, pod: 'str' =None, pod_id: 'str' =None, preemption_event: 'V1PodPreemptionEvent' =None, priority: 'str' =None, queue_name: 'str' =None, software_versions: 'dict(str, str)' =None, user_id: 'str' =None):  # noqa: E501
         """V1KubernetesPod - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
@@ -89,6 +91,7 @@ class V1KubernetesPod(object):
         self._preemption_event = None
         self._priority = None
         self._queue_name = None
+        self._software_versions = None
         self._user_id = None
         self.discriminator = None
         if cluster_id is not None:
@@ -117,6 +120,8 @@ class V1KubernetesPod(object):
             self.priority = priority
         if queue_name is not None:
             self.queue_name = queue_name
+        if software_versions is not None:
+            self.software_versions = software_versions
         if user_id is not None:
             self.user_id = user_id
 
@@ -392,6 +397,27 @@ class V1KubernetesPod(object):
         """
 
         self._queue_name = queue_name
+
+    @property
+    def software_versions(self) -> 'dict(str, str)':
+        """Gets the software_versions of this V1KubernetesPod.  # noqa: E501
+
+
+        :return: The software_versions of this V1KubernetesPod.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._software_versions
+
+    @software_versions.setter
+    def software_versions(self, software_versions: 'dict(str, str)'):
+        """Sets the software_versions of this V1KubernetesPod.
+
+
+        :param software_versions: The software_versions of this V1KubernetesPod.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._software_versions = software_versions
 
     @property
     def user_id(self) -> 'str':

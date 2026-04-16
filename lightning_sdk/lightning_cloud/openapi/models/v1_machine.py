@@ -41,6 +41,7 @@ class V1Machine(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'added_by': 'str',
         'address': 'str',
         'auth_token': 'str',
         'capacity_reservation_id': 'str',
@@ -55,6 +56,7 @@ class V1Machine(object):
         'private_address': 'str',
         'project_id': 'str',
         'provider': 'str',
+        'provider_fabric_group': 'str',
         'provider_instance_id': 'str',
         'provider_region': 'str',
         'provisioning_method': 'str',
@@ -70,6 +72,7 @@ class V1Machine(object):
     }
 
     attribute_map = {
+        'added_by': 'addedBy',
         'address': 'address',
         'auth_token': 'authToken',
         'capacity_reservation_id': 'capacityReservationId',
@@ -84,6 +87,7 @@ class V1Machine(object):
         'private_address': 'privateAddress',
         'project_id': 'projectId',
         'provider': 'provider',
+        'provider_fabric_group': 'providerFabricGroup',
         'provider_instance_id': 'providerInstanceId',
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
@@ -98,8 +102,9 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
+        self._added_by = None
         self._address = None
         self._auth_token = None
         self._capacity_reservation_id = None
@@ -114,6 +119,7 @@ class V1Machine(object):
         self._private_address = None
         self._project_id = None
         self._provider = None
+        self._provider_fabric_group = None
         self._provider_instance_id = None
         self._provider_region = None
         self._provisioning_method = None
@@ -127,6 +133,8 @@ class V1Machine(object):
         self._updated_at = None
         self._warning_message = None
         self.discriminator = None
+        if added_by is not None:
+            self.added_by = added_by
         if address is not None:
             self.address = address
         if auth_token is not None:
@@ -155,6 +163,8 @@ class V1Machine(object):
             self.project_id = project_id
         if provider is not None:
             self.provider = provider
+        if provider_fabric_group is not None:
+            self.provider_fabric_group = provider_fabric_group
         if provider_instance_id is not None:
             self.provider_instance_id = provider_instance_id
         if provider_region is not None:
@@ -179,6 +189,27 @@ class V1Machine(object):
             self.updated_at = updated_at
         if warning_message is not None:
             self.warning_message = warning_message
+
+    @property
+    def added_by(self) -> 'str':
+        """Gets the added_by of this V1Machine.  # noqa: E501
+
+
+        :return: The added_by of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._added_by
+
+    @added_by.setter
+    def added_by(self, added_by: 'str'):
+        """Sets the added_by of this V1Machine.
+
+
+        :param added_by: The added_by of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._added_by = added_by
 
     @property
     def address(self) -> 'str':
@@ -473,6 +504,27 @@ class V1Machine(object):
         """
 
         self._provider = provider
+
+    @property
+    def provider_fabric_group(self) -> 'str':
+        """Gets the provider_fabric_group of this V1Machine.  # noqa: E501
+
+
+        :return: The provider_fabric_group of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_fabric_group
+
+    @provider_fabric_group.setter
+    def provider_fabric_group(self, provider_fabric_group: 'str'):
+        """Sets the provider_fabric_group of this V1Machine.
+
+
+        :param provider_fabric_group: The provider_fabric_group of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_fabric_group = provider_fabric_group
 
     @property
     def provider_instance_id(self) -> 'str':

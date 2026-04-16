@@ -44,6 +44,8 @@ class V1ContainerMetrics(object):
         'container_id': 'str',
         'container_name': 'str',
         'cpu_usage': 'float',
+        'image': 'str',
+        'image_id': 'str',
         'mem_usage': 'float',
         'namespace': 'str',
         'node_name': 'str',
@@ -61,6 +63,8 @@ class V1ContainerMetrics(object):
         'container_id': 'containerId',
         'container_name': 'containerName',
         'cpu_usage': 'cpuUsage',
+        'image': 'image',
+        'image_id': 'imageId',
         'mem_usage': 'memUsage',
         'namespace': 'namespace',
         'node_name': 'nodeName',
@@ -74,11 +78,13 @@ class V1ContainerMetrics(object):
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, container_id: 'str' =None, container_name: 'str' =None, cpu_usage: 'float' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'int' =None, num_cpus_request: 'int' =None, num_gpus: 'int' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, container_id: 'str' =None, container_name: 'str' =None, cpu_usage: 'float' =None, image: 'str' =None, image_id: 'str' =None, mem_usage: 'float' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'int' =None, num_cpus_request: 'int' =None, num_gpus: 'int' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1ContainerMetrics - a model defined in Swagger"""  # noqa: E501
         self._container_id = None
         self._container_name = None
         self._cpu_usage = None
+        self._image = None
+        self._image_id = None
         self._mem_usage = None
         self._namespace = None
         self._node_name = None
@@ -97,6 +103,10 @@ class V1ContainerMetrics(object):
             self.container_name = container_name
         if cpu_usage is not None:
             self.cpu_usage = cpu_usage
+        if image is not None:
+            self.image = image
+        if image_id is not None:
+            self.image_id = image_id
         if mem_usage is not None:
             self.mem_usage = mem_usage
         if namespace is not None:
@@ -182,6 +192,48 @@ class V1ContainerMetrics(object):
         """
 
         self._cpu_usage = cpu_usage
+
+    @property
+    def image(self) -> 'str':
+        """Gets the image of this V1ContainerMetrics.  # noqa: E501
+
+
+        :return: The image of this V1ContainerMetrics.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this V1ContainerMetrics.
+
+
+        :param image: The image of this V1ContainerMetrics.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
+
+    @property
+    def image_id(self) -> 'str':
+        """Gets the image_id of this V1ContainerMetrics.  # noqa: E501
+
+
+        :return: The image_id of this V1ContainerMetrics.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_id
+
+    @image_id.setter
+    def image_id(self, image_id: 'str'):
+        """Sets the image_id of this V1ContainerMetrics.
+
+
+        :param image_id: The image_id of this V1ContainerMetrics.  # noqa: E501
+        :type: str
+        """
+
+        self._image_id = image_id
 
     @property
     def mem_usage(self) -> 'float':

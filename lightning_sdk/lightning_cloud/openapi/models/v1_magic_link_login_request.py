@@ -46,6 +46,7 @@ class V1MagicLinkLoginRequest(object):
         'experimentation_id': 'str',
         'guest_user_api_key': 'str',
         'invite_code': 'str',
+        'pending_create_deployment': 'V1CreateDeploymentRequest',
         'redirect_url': 'str',
         'referrer_params': 'str',
         'source': 'str'
@@ -57,18 +58,20 @@ class V1MagicLinkLoginRequest(object):
         'experimentation_id': 'experimentationId',
         'guest_user_api_key': 'guestUserApiKey',
         'invite_code': 'inviteCode',
+        'pending_create_deployment': 'pendingCreateDeployment',
         'redirect_url': 'redirectUrl',
         'referrer_params': 'referrerParams',
         'source': 'source'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, pending_create_deployment: 'V1CreateDeploymentRequest' =None, redirect_url: 'str' =None, referrer_params: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
         self._experimentation_id = None
         self._guest_user_api_key = None
         self._invite_code = None
+        self._pending_create_deployment = None
         self._redirect_url = None
         self._referrer_params = None
         self._source = None
@@ -83,6 +86,8 @@ class V1MagicLinkLoginRequest(object):
             self.guest_user_api_key = guest_user_api_key
         if invite_code is not None:
             self.invite_code = invite_code
+        if pending_create_deployment is not None:
+            self.pending_create_deployment = pending_create_deployment
         if redirect_url is not None:
             self.redirect_url = redirect_url
         if referrer_params is not None:
@@ -194,6 +199,27 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._invite_code = invite_code
+
+    @property
+    def pending_create_deployment(self) -> 'V1CreateDeploymentRequest':
+        """Gets the pending_create_deployment of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The pending_create_deployment of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: V1CreateDeploymentRequest
+        """
+        return self._pending_create_deployment
+
+    @pending_create_deployment.setter
+    def pending_create_deployment(self, pending_create_deployment: 'V1CreateDeploymentRequest'):
+        """Sets the pending_create_deployment of this V1MagicLinkLoginRequest.
+
+
+        :param pending_create_deployment: The pending_create_deployment of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: V1CreateDeploymentRequest
+        """
+
+        self._pending_create_deployment = pending_create_deployment
 
     @property
     def redirect_url(self) -> 'str':

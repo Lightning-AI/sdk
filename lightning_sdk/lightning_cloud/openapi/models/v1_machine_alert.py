@@ -44,6 +44,7 @@ class V1MachineAlert(object):
         'created_at': 'datetime',
         'id': 'str',
         'level': 'str',
+        'machine_id': 'str',
         'message': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
@@ -55,6 +56,7 @@ class V1MachineAlert(object):
         'created_at': 'createdAt',
         'id': 'id',
         'level': 'level',
+        'machine_id': 'machineId',
         'message': 'message',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
@@ -62,11 +64,12 @@ class V1MachineAlert(object):
         'version': 'version'
     }
 
-    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, level: 'str' =None, message: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_id: 'str' =None, version: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, id: 'str' =None, level: 'str' =None, machine_id: 'str' =None, message: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_id: 'str' =None, version: 'str' =None):  # noqa: E501
         """V1MachineAlert - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._id = None
         self._level = None
+        self._machine_id = None
         self._message = None
         self._resource_id = None
         self._resource_type = None
@@ -79,6 +82,8 @@ class V1MachineAlert(object):
             self.id = id
         if level is not None:
             self.level = level
+        if machine_id is not None:
+            self.machine_id = machine_id
         if message is not None:
             self.message = message
         if resource_id is not None:
@@ -152,6 +157,27 @@ class V1MachineAlert(object):
         """
 
         self._level = level
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this V1MachineAlert.  # noqa: E501
+
+
+        :return: The machine_id of this V1MachineAlert.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this V1MachineAlert.
+
+
+        :param machine_id: The machine_id of this V1MachineAlert.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def message(self) -> 'str':

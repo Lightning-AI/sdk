@@ -44,12 +44,16 @@ class V1KubernetesDirectSettingsV1(object):
         'daily_usage_report': 'bool',
         'disable_pods_collection': 'bool',
         'enable_kai_scheduler_pod_name_validation': 'bool',
+        'memory_alert_duration': 'str',
+        'memory_utilization_threshold': 'float',
+        'monitored_filesystem_mount_points': 'list[str]',
         'monthly_usage_report': 'bool',
         'nfs_storage_threshold': 'float',
         'override_read_only': 'bool',
         'persist_pods_logs': 'bool',
         'slack_channel_id': 'str',
         'temperature_threshold': 'float',
+        'unschedulable_gpu_sustain_duration': 'str',
         'weekly_usage_report': 'bool',
         'xid_error_behavior': 'dict(str, V1XidErrorBehaviorMap)'
     }
@@ -58,27 +62,35 @@ class V1KubernetesDirectSettingsV1(object):
         'daily_usage_report': 'dailyUsageReport',
         'disable_pods_collection': 'disablePodsCollection',
         'enable_kai_scheduler_pod_name_validation': 'enableKaiSchedulerPodNameValidation',
+        'memory_alert_duration': 'memoryAlertDuration',
+        'memory_utilization_threshold': 'memoryUtilizationThreshold',
+        'monitored_filesystem_mount_points': 'monitoredFilesystemMountPoints',
         'monthly_usage_report': 'monthlyUsageReport',
         'nfs_storage_threshold': 'nfsStorageThreshold',
         'override_read_only': 'overrideReadOnly',
         'persist_pods_logs': 'persistPodsLogs',
         'slack_channel_id': 'slackChannelId',
         'temperature_threshold': 'temperatureThreshold',
+        'unschedulable_gpu_sustain_duration': 'unschedulableGpuSustainDuration',
         'weekly_usage_report': 'weeklyUsageReport',
         'xid_error_behavior': 'xidErrorBehavior'
     }
 
-    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, enable_kai_scheduler_pod_name_validation: 'bool' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, weekly_usage_report: 'bool' =None, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)' =None):  # noqa: E501
+    def __init__(self, daily_usage_report: 'bool' =None, disable_pods_collection: 'bool' =None, enable_kai_scheduler_pod_name_validation: 'bool' =None, memory_alert_duration: 'str' =None, memory_utilization_threshold: 'float' =None, monitored_filesystem_mount_points: 'list[str]' =None, monthly_usage_report: 'bool' =None, nfs_storage_threshold: 'float' =None, override_read_only: 'bool' =None, persist_pods_logs: 'bool' =None, slack_channel_id: 'str' =None, temperature_threshold: 'float' =None, unschedulable_gpu_sustain_duration: 'str' =None, weekly_usage_report: 'bool' =None, xid_error_behavior: 'dict(str, V1XidErrorBehaviorMap)' =None):  # noqa: E501
         """V1KubernetesDirectSettingsV1 - a model defined in Swagger"""  # noqa: E501
         self._daily_usage_report = None
         self._disable_pods_collection = None
         self._enable_kai_scheduler_pod_name_validation = None
+        self._memory_alert_duration = None
+        self._memory_utilization_threshold = None
+        self._monitored_filesystem_mount_points = None
         self._monthly_usage_report = None
         self._nfs_storage_threshold = None
         self._override_read_only = None
         self._persist_pods_logs = None
         self._slack_channel_id = None
         self._temperature_threshold = None
+        self._unschedulable_gpu_sustain_duration = None
         self._weekly_usage_report = None
         self._xid_error_behavior = None
         self.discriminator = None
@@ -88,6 +100,12 @@ class V1KubernetesDirectSettingsV1(object):
             self.disable_pods_collection = disable_pods_collection
         if enable_kai_scheduler_pod_name_validation is not None:
             self.enable_kai_scheduler_pod_name_validation = enable_kai_scheduler_pod_name_validation
+        if memory_alert_duration is not None:
+            self.memory_alert_duration = memory_alert_duration
+        if memory_utilization_threshold is not None:
+            self.memory_utilization_threshold = memory_utilization_threshold
+        if monitored_filesystem_mount_points is not None:
+            self.monitored_filesystem_mount_points = monitored_filesystem_mount_points
         if monthly_usage_report is not None:
             self.monthly_usage_report = monthly_usage_report
         if nfs_storage_threshold is not None:
@@ -100,6 +118,8 @@ class V1KubernetesDirectSettingsV1(object):
             self.slack_channel_id = slack_channel_id
         if temperature_threshold is not None:
             self.temperature_threshold = temperature_threshold
+        if unschedulable_gpu_sustain_duration is not None:
+            self.unschedulable_gpu_sustain_duration = unschedulable_gpu_sustain_duration
         if weekly_usage_report is not None:
             self.weekly_usage_report = weekly_usage_report
         if xid_error_behavior is not None:
@@ -167,6 +187,75 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._enable_kai_scheduler_pod_name_validation = enable_kai_scheduler_pod_name_validation
+
+    @property
+    def memory_alert_duration(self) -> 'str':
+        """Gets the memory_alert_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+        The duration over which average memory utilization must exceed the threshold before an alert is sent. Defaults to 5 minutes if unset.  # noqa: E501
+
+        :return: The memory_alert_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._memory_alert_duration
+
+    @memory_alert_duration.setter
+    def memory_alert_duration(self, memory_alert_duration: 'str'):
+        """Sets the memory_alert_duration of this V1KubernetesDirectSettingsV1.
+
+        The duration over which average memory utilization must exceed the threshold before an alert is sent. Defaults to 5 minutes if unset.  # noqa: E501
+
+        :param memory_alert_duration: The memory_alert_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: str
+        """
+
+        self._memory_alert_duration = memory_alert_duration
+
+    @property
+    def memory_utilization_threshold(self) -> 'float':
+        """Gets the memory_utilization_threshold of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+        Memory utilization alert settings. Used to decide whether to emit a high memory utilization alert. The threshold (percentage 0-100) above which a pod is considered to have high memory utilization. Defaults to 90.0 if unset.  # noqa: E501
+
+        :return: The memory_utilization_threshold of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: float
+        """
+        return self._memory_utilization_threshold
+
+    @memory_utilization_threshold.setter
+    def memory_utilization_threshold(self, memory_utilization_threshold: 'float'):
+        """Sets the memory_utilization_threshold of this V1KubernetesDirectSettingsV1.
+
+        Memory utilization alert settings. Used to decide whether to emit a high memory utilization alert. The threshold (percentage 0-100) above which a pod is considered to have high memory utilization. Defaults to 90.0 if unset.  # noqa: E501
+
+        :param memory_utilization_threshold: The memory_utilization_threshold of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: float
+        """
+
+        self._memory_utilization_threshold = memory_utilization_threshold
+
+    @property
+    def monitored_filesystem_mount_points(self) -> 'list[str]':
+        """Gets the monitored_filesystem_mount_points of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+        Mount points to collect and expose node filesystem metrics for. Defaults to [\"/\"] when empty.  # noqa: E501
+
+        :return: The monitored_filesystem_mount_points of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._monitored_filesystem_mount_points
+
+    @monitored_filesystem_mount_points.setter
+    def monitored_filesystem_mount_points(self, monitored_filesystem_mount_points: 'list[str]'):
+        """Sets the monitored_filesystem_mount_points of this V1KubernetesDirectSettingsV1.
+
+        Mount points to collect and expose node filesystem metrics for. Defaults to [\"/\"] when empty.  # noqa: E501
+
+        :param monitored_filesystem_mount_points: The monitored_filesystem_mount_points of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._monitored_filesystem_mount_points = monitored_filesystem_mount_points
 
     @property
     def monthly_usage_report(self) -> 'bool':
@@ -293,6 +382,29 @@ class V1KubernetesDirectSettingsV1(object):
         """
 
         self._temperature_threshold = temperature_threshold
+
+    @property
+    def unschedulable_gpu_sustain_duration(self) -> 'str':
+        """Gets the unschedulable_gpu_sustain_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+
+        The duration a GPU must remain unschedulable before an incident is opened. Defaults to 2 minutes if unset.  # noqa: E501
+
+        :return: The unschedulable_gpu_sustain_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._unschedulable_gpu_sustain_duration
+
+    @unschedulable_gpu_sustain_duration.setter
+    def unschedulable_gpu_sustain_duration(self, unschedulable_gpu_sustain_duration: 'str'):
+        """Sets the unschedulable_gpu_sustain_duration of this V1KubernetesDirectSettingsV1.
+
+        The duration a GPU must remain unschedulable before an incident is opened. Defaults to 2 minutes if unset.  # noqa: E501
+
+        :param unschedulable_gpu_sustain_duration: The unschedulable_gpu_sustain_duration of this V1KubernetesDirectSettingsV1.  # noqa: E501
+        :type: str
+        """
+
+        self._unschedulable_gpu_sustain_duration = unschedulable_gpu_sustain_duration
 
     @property
     def weekly_usage_report(self) -> 'bool':

@@ -57,6 +57,7 @@ class V1Model(object):
         'tags': 'list[str]',
         'updated_at': 'datetime',
         'user_id': 'str',
+        'versions': 'list[V1ModelVersionArchive]',
         'visibility': 'V1ResourceVisibility'
     }
 
@@ -77,10 +78,11 @@ class V1Model(object):
         'tags': 'tags',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
+        'versions': 'versions',
         'visibility': 'visibility'
     }
 
-    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, creator_username: 'str' =None, default_version: 'V1ModelVersionArchive' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, categories: 'list[str]' =None, created_at: 'datetime' =None, creator_username: 'str' =None, default_version: 'V1ModelVersionArchive' =None, description: 'str' =None, downloads: 'str' =None, id: 'str' =None, latest_version: 'V1ModelVersionArchive' =None, license: 'str' =None, model_metadata: 'dict(str, str)' =None, name: 'str' =None, private: 'bool' =None, project_id: 'str' =None, tags: 'list[str]' =None, updated_at: 'datetime' =None, user_id: 'str' =None, versions: 'list[V1ModelVersionArchive]' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Model - a model defined in Swagger"""  # noqa: E501
         self._categories = None
         self._created_at = None
@@ -98,6 +100,7 @@ class V1Model(object):
         self._tags = None
         self._updated_at = None
         self._user_id = None
+        self._versions = None
         self._visibility = None
         self.discriminator = None
         if categories is not None:
@@ -132,6 +135,8 @@ class V1Model(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+        if versions is not None:
+            self.versions = versions
         if visibility is not None:
             self.visibility = visibility
 
@@ -470,6 +475,27 @@ class V1Model(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def versions(self) -> 'list[V1ModelVersionArchive]':
+        """Gets the versions of this V1Model.  # noqa: E501
+
+
+        :return: The versions of this V1Model.  # noqa: E501
+        :rtype: list[V1ModelVersionArchive]
+        """
+        return self._versions
+
+    @versions.setter
+    def versions(self, versions: 'list[V1ModelVersionArchive]'):
+        """Sets the versions of this V1Model.
+
+
+        :param versions: The versions of this V1Model.  # noqa: E501
+        :type: list[V1ModelVersionArchive]
+        """
+
+        self._versions = versions
 
     @property
     def visibility(self) -> 'V1ResourceVisibility':

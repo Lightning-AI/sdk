@@ -45,6 +45,7 @@ class V1GitCredentials(object):
         'git_username': 'str',
         'id': 'str',
         'last_modified': 'datetime',
+        'provider_id': 'str',
         'registry_url': 'str'
     }
 
@@ -53,15 +54,17 @@ class V1GitCredentials(object):
         'git_username': 'gitUsername',
         'id': 'id',
         'last_modified': 'lastModified',
+        'provider_id': 'providerId',
         'registry_url': 'registryUrl'
     }
 
-    def __init__(self, created_at: 'datetime' =None, git_username: 'str' =None, id: 'str' =None, last_modified: 'datetime' =None, registry_url: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, git_username: 'str' =None, id: 'str' =None, last_modified: 'datetime' =None, provider_id: 'str' =None, registry_url: 'str' =None):  # noqa: E501
         """V1GitCredentials - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._git_username = None
         self._id = None
         self._last_modified = None
+        self._provider_id = None
         self._registry_url = None
         self.discriminator = None
         if created_at is not None:
@@ -72,6 +75,8 @@ class V1GitCredentials(object):
             self.id = id
         if last_modified is not None:
             self.last_modified = last_modified
+        if provider_id is not None:
+            self.provider_id = provider_id
         if registry_url is not None:
             self.registry_url = registry_url
 
@@ -158,6 +163,27 @@ class V1GitCredentials(object):
         """
 
         self._last_modified = last_modified
+
+    @property
+    def provider_id(self) -> 'str':
+        """Gets the provider_id of this V1GitCredentials.  # noqa: E501
+
+
+        :return: The provider_id of this V1GitCredentials.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_id
+
+    @provider_id.setter
+    def provider_id(self, provider_id: 'str'):
+        """Sets the provider_id of this V1GitCredentials.
+
+
+        :param provider_id: The provider_id of this V1GitCredentials.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_id = provider_id
 
     @property
     def registry_url(self) -> 'str':

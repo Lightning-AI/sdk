@@ -43,8 +43,10 @@ class V1MetricSummary(object):
     swagger_types = {
         'last_step': 'str',
         'last_value': 'float',
+        'max_step': 'str',
         'max_value': 'float',
         'mean_value': 'float',
+        'min_step': 'str',
         'min_value': 'float',
         'num_values': 'str',
         'variance': 'float'
@@ -53,19 +55,23 @@ class V1MetricSummary(object):
     attribute_map = {
         'last_step': 'lastStep',
         'last_value': 'lastValue',
+        'max_step': 'maxStep',
         'max_value': 'maxValue',
         'mean_value': 'meanValue',
+        'min_step': 'minStep',
         'min_value': 'minValue',
         'num_values': 'numValues',
         'variance': 'variance'
     }
 
-    def __init__(self, last_step: 'str' =None, last_value: 'float' =None, max_value: 'float' =None, mean_value: 'float' =None, min_value: 'float' =None, num_values: 'str' =None, variance: 'float' =None):  # noqa: E501
+    def __init__(self, last_step: 'str' =None, last_value: 'float' =None, max_step: 'str' =None, max_value: 'float' =None, mean_value: 'float' =None, min_step: 'str' =None, min_value: 'float' =None, num_values: 'str' =None, variance: 'float' =None):  # noqa: E501
         """V1MetricSummary - a model defined in Swagger"""  # noqa: E501
         self._last_step = None
         self._last_value = None
+        self._max_step = None
         self._max_value = None
         self._mean_value = None
+        self._min_step = None
         self._min_value = None
         self._num_values = None
         self._variance = None
@@ -74,10 +80,14 @@ class V1MetricSummary(object):
             self.last_step = last_step
         if last_value is not None:
             self.last_value = last_value
+        if max_step is not None:
+            self.max_step = max_step
         if max_value is not None:
             self.max_value = max_value
         if mean_value is not None:
             self.mean_value = mean_value
+        if min_step is not None:
+            self.min_step = min_step
         if min_value is not None:
             self.min_value = min_value
         if num_values is not None:
@@ -128,6 +138,27 @@ class V1MetricSummary(object):
         self._last_value = last_value
 
     @property
+    def max_step(self) -> 'str':
+        """Gets the max_step of this V1MetricSummary.  # noqa: E501
+
+
+        :return: The max_step of this V1MetricSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._max_step
+
+    @max_step.setter
+    def max_step(self, max_step: 'str'):
+        """Sets the max_step of this V1MetricSummary.
+
+
+        :param max_step: The max_step of this V1MetricSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._max_step = max_step
+
+    @property
     def max_value(self) -> 'float':
         """Gets the max_value of this V1MetricSummary.  # noqa: E501
 
@@ -168,6 +199,27 @@ class V1MetricSummary(object):
         """
 
         self._mean_value = mean_value
+
+    @property
+    def min_step(self) -> 'str':
+        """Gets the min_step of this V1MetricSummary.  # noqa: E501
+
+
+        :return: The min_step of this V1MetricSummary.  # noqa: E501
+        :rtype: str
+        """
+        return self._min_step
+
+    @min_step.setter
+    def min_step(self, min_step: 'str'):
+        """Sets the min_step of this V1MetricSummary.
+
+
+        :param min_step: The min_step of this V1MetricSummary.  # noqa: E501
+        :type: str
+        """
+
+        self._min_step = min_step
 
     @property
     def min_value(self) -> 'float':

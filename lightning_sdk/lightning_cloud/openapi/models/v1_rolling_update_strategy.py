@@ -42,23 +42,28 @@ class V1RollingUpdateStrategy(object):
     """
     swagger_types = {
         'max_surge': 'str',
-        'max_unavailable': 'str'
+        'max_unavailable': 'str',
+        'shutdown_delay_minutes': 'int'
     }
 
     attribute_map = {
         'max_surge': 'maxSurge',
-        'max_unavailable': 'maxUnavailable'
+        'max_unavailable': 'maxUnavailable',
+        'shutdown_delay_minutes': 'shutdownDelayMinutes'
     }
 
-    def __init__(self, max_surge: 'str' =None, max_unavailable: 'str' =None):  # noqa: E501
+    def __init__(self, max_surge: 'str' =None, max_unavailable: 'str' =None, shutdown_delay_minutes: 'int' =None):  # noqa: E501
         """V1RollingUpdateStrategy - a model defined in Swagger"""  # noqa: E501
         self._max_surge = None
         self._max_unavailable = None
+        self._shutdown_delay_minutes = None
         self.discriminator = None
         if max_surge is not None:
             self.max_surge = max_surge
         if max_unavailable is not None:
             self.max_unavailable = max_unavailable
+        if shutdown_delay_minutes is not None:
+            self.shutdown_delay_minutes = shutdown_delay_minutes
 
     @property
     def max_surge(self) -> 'str':
@@ -101,6 +106,27 @@ class V1RollingUpdateStrategy(object):
         """
 
         self._max_unavailable = max_unavailable
+
+    @property
+    def shutdown_delay_minutes(self) -> 'int':
+        """Gets the shutdown_delay_minutes of this V1RollingUpdateStrategy.  # noqa: E501
+
+
+        :return: The shutdown_delay_minutes of this V1RollingUpdateStrategy.  # noqa: E501
+        :rtype: int
+        """
+        return self._shutdown_delay_minutes
+
+    @shutdown_delay_minutes.setter
+    def shutdown_delay_minutes(self, shutdown_delay_minutes: 'int'):
+        """Sets the shutdown_delay_minutes of this V1RollingUpdateStrategy.
+
+
+        :param shutdown_delay_minutes: The shutdown_delay_minutes of this V1RollingUpdateStrategy.  # noqa: E501
+        :type: int
+        """
+
+        self._shutdown_delay_minutes = shutdown_delay_minutes
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -1330,6 +1330,7 @@ class LitLoggerServiceApi(object):
         :param str project_owner_name:
         :param str name:
         :param str id:
+        :param str project_id:
         :return: V1MetricsStream
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1354,12 +1355,13 @@ class LitLoggerServiceApi(object):
         :param str project_owner_name:
         :param str name:
         :param str id:
+        :param str project_id:
         :return: V1MetricsStream
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_name', 'project_owner_name', 'name', 'id']  # noqa: E501
+        all_params = ['project_name', 'project_owner_name', 'name', 'id', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1388,6 +1390,8 @@ class LitLoggerServiceApi(object):
             query_params.append(('name', params['name']))  # noqa: E501
         if 'id' in params:
             query_params.append(('id', params['id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

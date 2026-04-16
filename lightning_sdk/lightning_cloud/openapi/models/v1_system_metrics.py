@@ -44,6 +44,7 @@ class V1SystemMetrics(object):
         'cpu': 'V1CPUSystemMetrics',
         'gpu': 'list[V1GPUSystemMetrics]',
         'storage': 'V1StorageSystemMetrics',
+        'storage_by_mountpoint': 'dict(str, V1StorageSystemMetrics)',
         'timestamp': 'datetime'
     }
 
@@ -51,14 +52,16 @@ class V1SystemMetrics(object):
         'cpu': 'cpu',
         'gpu': 'gpu',
         'storage': 'storage',
+        'storage_by_mountpoint': 'storageByMountpoint',
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, cpu: 'V1CPUSystemMetrics' =None, gpu: 'list[V1GPUSystemMetrics]' =None, storage: 'V1StorageSystemMetrics' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, cpu: 'V1CPUSystemMetrics' =None, gpu: 'list[V1GPUSystemMetrics]' =None, storage: 'V1StorageSystemMetrics' =None, storage_by_mountpoint: 'dict(str, V1StorageSystemMetrics)' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1SystemMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu = None
         self._gpu = None
         self._storage = None
+        self._storage_by_mountpoint = None
         self._timestamp = None
         self.discriminator = None
         if cpu is not None:
@@ -67,6 +70,8 @@ class V1SystemMetrics(object):
             self.gpu = gpu
         if storage is not None:
             self.storage = storage
+        if storage_by_mountpoint is not None:
+            self.storage_by_mountpoint = storage_by_mountpoint
         if timestamp is not None:
             self.timestamp = timestamp
 
@@ -132,6 +137,29 @@ class V1SystemMetrics(object):
         """
 
         self._storage = storage
+
+    @property
+    def storage_by_mountpoint(self) -> 'dict(str, V1StorageSystemMetrics)':
+        """Gets the storage_by_mountpoint of this V1SystemMetrics.  # noqa: E501
+
+        Per-mount-point storage metrics keyed by mount path (e.g. \"/\", \"/scratch\").  # noqa: E501
+
+        :return: The storage_by_mountpoint of this V1SystemMetrics.  # noqa: E501
+        :rtype: dict(str, V1StorageSystemMetrics)
+        """
+        return self._storage_by_mountpoint
+
+    @storage_by_mountpoint.setter
+    def storage_by_mountpoint(self, storage_by_mountpoint: 'dict(str, V1StorageSystemMetrics)'):
+        """Sets the storage_by_mountpoint of this V1SystemMetrics.
+
+        Per-mount-point storage metrics keyed by mount path (e.g. \"/\", \"/scratch\").  # noqa: E501
+
+        :param storage_by_mountpoint: The storage_by_mountpoint of this V1SystemMetrics.  # noqa: E501
+        :type: dict(str, V1StorageSystemMetrics)
+        """
+
+        self._storage_by_mountpoint = storage_by_mountpoint
 
     @property
     def timestamp(self) -> 'datetime':

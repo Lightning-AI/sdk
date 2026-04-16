@@ -47,6 +47,7 @@ class V1Endpoint(object):
         'custom_domain': 'str',
         'id': 'str',
         'job': 'V1UpstreamJob',
+        'lightning_subdomain': 'str',
         'managed': 'V1UpstreamManaged',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
@@ -66,6 +67,7 @@ class V1Endpoint(object):
         'custom_domain': 'customDomain',
         'id': 'id',
         'job': 'job',
+        'lightning_subdomain': 'lightningSubdomain',
         'managed': 'managed',
         'name': 'name',
         'openai': 'openai',
@@ -78,7 +80,7 @@ class V1Endpoint(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, id: 'str' =None, job: 'V1UpstreamJob' =None, lightning_subdomain: 'str' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, project_id: 'str' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """V1Endpoint - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
@@ -86,6 +88,7 @@ class V1Endpoint(object):
         self._custom_domain = None
         self._id = None
         self._job = None
+        self._lightning_subdomain = None
         self._managed = None
         self._name = None
         self._openai = None
@@ -109,6 +112,8 @@ class V1Endpoint(object):
             self.id = id
         if job is not None:
             self.job = job
+        if lightning_subdomain is not None:
+            self.lightning_subdomain = lightning_subdomain
         if managed is not None:
             self.managed = managed
         if name is not None:
@@ -255,6 +260,27 @@ class V1Endpoint(object):
         """
 
         self._job = job
+
+    @property
+    def lightning_subdomain(self) -> 'str':
+        """Gets the lightning_subdomain of this V1Endpoint.  # noqa: E501
+
+
+        :return: The lightning_subdomain of this V1Endpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._lightning_subdomain
+
+    @lightning_subdomain.setter
+    def lightning_subdomain(self, lightning_subdomain: 'str'):
+        """Sets the lightning_subdomain of this V1Endpoint.
+
+
+        :param lightning_subdomain: The lightning_subdomain of this V1Endpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._lightning_subdomain = lightning_subdomain
 
     @property
     def managed(self) -> 'V1UpstreamManaged':

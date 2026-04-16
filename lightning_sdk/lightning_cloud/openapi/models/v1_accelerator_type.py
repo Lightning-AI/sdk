@@ -44,6 +44,7 @@ class V1AcceleratorType(object):
     TRAINIUM = "ACCELERATOR_TYPE_TRAINIUM"
     EFA_NCCL_GPU_HOPPER = "ACCELERATOR_TYPE_EFA_NCCL_GPU_HOPPER"
     GPU_BLACKWELL = "ACCELERATOR_TYPE_GPU_BLACKWELL"
+    TPU = "ACCELERATOR_TYPE_TPU"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

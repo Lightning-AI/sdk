@@ -46,6 +46,7 @@ class EndpointServiceUpdateEndpointBody(object):
         'created_at': 'datetime',
         'custom_domain': 'str',
         'job': 'V1UpstreamJob',
+        'lightning_subdomain': 'str',
         'managed': 'V1UpstreamManaged',
         'name': 'str',
         'openai': 'V1UpstreamOpenAI',
@@ -63,6 +64,7 @@ class EndpointServiceUpdateEndpointBody(object):
         'created_at': 'createdAt',
         'custom_domain': 'customDomain',
         'job': 'job',
+        'lightning_subdomain': 'lightningSubdomain',
         'managed': 'managed',
         'name': 'name',
         'openai': 'openai',
@@ -74,13 +76,14 @@ class EndpointServiceUpdateEndpointBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, job: 'V1UpstreamJob' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, auth: 'V1EndpointAuth' =None, cloudspace: 'V1UpstreamCloudSpace' =None, created_at: 'datetime' =None, custom_domain: 'str' =None, job: 'V1UpstreamJob' =None, lightning_subdomain: 'str' =None, managed: 'V1UpstreamManaged' =None, name: 'str' =None, openai: 'V1UpstreamOpenAI' =None, ports: 'list[str]' =None, prewarm: 'V1EndpointPrewarm' =None, proxy: 'bool' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """EndpointServiceUpdateEndpointBody - a model defined in Swagger"""  # noqa: E501
         self._auth = None
         self._cloudspace = None
         self._created_at = None
         self._custom_domain = None
         self._job = None
+        self._lightning_subdomain = None
         self._managed = None
         self._name = None
         self._openai = None
@@ -101,6 +104,8 @@ class EndpointServiceUpdateEndpointBody(object):
             self.custom_domain = custom_domain
         if job is not None:
             self.job = job
+        if lightning_subdomain is not None:
+            self.lightning_subdomain = lightning_subdomain
         if managed is not None:
             self.managed = managed
         if name is not None:
@@ -224,6 +229,27 @@ class EndpointServiceUpdateEndpointBody(object):
         """
 
         self._job = job
+
+    @property
+    def lightning_subdomain(self) -> 'str':
+        """Gets the lightning_subdomain of this EndpointServiceUpdateEndpointBody.  # noqa: E501
+
+
+        :return: The lightning_subdomain of this EndpointServiceUpdateEndpointBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._lightning_subdomain
+
+    @lightning_subdomain.setter
+    def lightning_subdomain(self, lightning_subdomain: 'str'):
+        """Sets the lightning_subdomain of this EndpointServiceUpdateEndpointBody.
+
+
+        :param lightning_subdomain: The lightning_subdomain of this EndpointServiceUpdateEndpointBody.  # noqa: E501
+        :type: str
+        """
+
+        self._lightning_subdomain = lightning_subdomain
 
     @property
     def managed(self) -> 'V1UpstreamManaged':

@@ -4709,6 +4709,8 @@ class ClusterServiceApi(object):
         :param str org_id:
         :param str resource_id: resource id
         :param str server_id: server id
+        :param str machine_id: machine id
+        :param datetime after: only return alerts created after this time
         :param int page_size: default 20
         :param int offset: default 0
         :return: V1ListMachineAlertsResponse
@@ -4736,6 +4738,8 @@ class ClusterServiceApi(object):
         :param str org_id:
         :param str resource_id: resource id
         :param str server_id: server id
+        :param str machine_id: machine id
+        :param datetime after: only return alerts created after this time
         :param int page_size: default 20
         :param int offset: default 0
         :return: V1ListMachineAlertsResponse
@@ -4743,7 +4747,7 @@ class ClusterServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'id', 'org_id', 'resource_id', 'server_id', 'page_size', 'offset']  # noqa: E501
+        all_params = ['cluster_id', 'id', 'org_id', 'resource_id', 'server_id', 'machine_id', 'after', 'page_size', 'offset']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -4782,6 +4786,10 @@ class ClusterServiceApi(object):
             query_params.append(('resourceId', params['resource_id']))  # noqa: E501
         if 'server_id' in params:
             query_params.append(('serverId', params['server_id']))  # noqa: E501
+        if 'machine_id' in params:
+            query_params.append(('machineId', params['machine_id']))  # noqa: E501
+        if 'after' in params:
+            query_params.append(('after', params['after']))  # noqa: E501
         if 'page_size' in params:
             query_params.append(('pageSize', params['page_size']))  # noqa: E501
         if 'offset' in params:

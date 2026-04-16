@@ -41,6 +41,7 @@ class AssistantsServiceUpdateAssistantBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'aliases': 'list[str]',
         'cloudspace_id': 'str',
         'cloudy_compatible': 'bool',
         'cluster_id': 'str',
@@ -68,6 +69,7 @@ class AssistantsServiceUpdateAssistantBody(object):
     }
 
     attribute_map = {
+        'aliases': 'aliases',
         'cloudspace_id': 'cloudspaceId',
         'cloudy_compatible': 'cloudyCompatible',
         'cluster_id': 'clusterId',
@@ -94,8 +96,9 @@ class AssistantsServiceUpdateAssistantBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cloudy_compatible: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, managed_endpoint_id: 'str' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, aliases: 'list[str]' =None, cloudspace_id: 'str' =None, cloudy_compatible: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, managed_endpoint_id: 'str' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsServiceUpdateAssistantBody - a model defined in Swagger"""  # noqa: E501
+        self._aliases = None
         self._cloudspace_id = None
         self._cloudy_compatible = None
         self._cluster_id = None
@@ -121,6 +124,8 @@ class AssistantsServiceUpdateAssistantBody(object):
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
+        if aliases is not None:
+            self.aliases = aliases
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cloudy_compatible is not None:
@@ -169,6 +174,27 @@ class AssistantsServiceUpdateAssistantBody(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def aliases(self) -> 'list[str]':
+        """Gets the aliases of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+
+
+        :return: The aliases of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._aliases
+
+    @aliases.setter
+    def aliases(self, aliases: 'list[str]'):
+        """Sets the aliases of this AssistantsServiceUpdateAssistantBody.
+
+
+        :param aliases: The aliases of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._aliases = aliases
 
     @property
     def cloudspace_id(self) -> 'str':

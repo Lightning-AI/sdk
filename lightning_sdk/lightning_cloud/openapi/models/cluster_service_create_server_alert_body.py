@@ -41,6 +41,7 @@ class ClusterServiceCreateServerAlertBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'machine_id': 'str',
         'message': 'str',
         'phase': 'V1ServerAlertPhase',
         'severity': 'V1ServerAlertSeverity',
@@ -48,19 +49,23 @@ class ClusterServiceCreateServerAlertBody(object):
     }
 
     attribute_map = {
+        'machine_id': 'machineId',
         'message': 'message',
         'phase': 'phase',
         'severity': 'severity',
         'type': 'type'
     }
 
-    def __init__(self, message: 'str' =None, phase: 'V1ServerAlertPhase' =None, severity: 'V1ServerAlertSeverity' =None, type: 'V1ServerAlertType' =None):  # noqa: E501
+    def __init__(self, machine_id: 'str' =None, message: 'str' =None, phase: 'V1ServerAlertPhase' =None, severity: 'V1ServerAlertSeverity' =None, type: 'V1ServerAlertType' =None):  # noqa: E501
         """ClusterServiceCreateServerAlertBody - a model defined in Swagger"""  # noqa: E501
+        self._machine_id = None
         self._message = None
         self._phase = None
         self._severity = None
         self._type = None
         self.discriminator = None
+        if machine_id is not None:
+            self.machine_id = machine_id
         if message is not None:
             self.message = message
         if phase is not None:
@@ -69,6 +74,27 @@ class ClusterServiceCreateServerAlertBody(object):
             self.severity = severity
         if type is not None:
             self.type = type
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this ClusterServiceCreateServerAlertBody.  # noqa: E501
+
+
+        :return: The machine_id of this ClusterServiceCreateServerAlertBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this ClusterServiceCreateServerAlertBody.
+
+
+        :param machine_id: The machine_id of this ClusterServiceCreateServerAlertBody.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def message(self) -> 'str':

@@ -51,6 +51,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         'disk_size': 'str',
         'display_name': 'str',
         'name': 'str',
+        'org_id': 'str',
         'plugins': 'list[str]',
         'project_id': 'str',
         'requested_run_duration_seconds': 'str',
@@ -72,6 +73,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         'disk_size': 'diskSize',
         'display_name': 'displayName',
         'name': 'name',
+        'org_id': 'orgId',
         'plugins': 'plugins',
         'project_id': 'projectId',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
@@ -82,7 +84,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         'spot': 'spot'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, plugins: 'list[str]' =None, project_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, sandbox: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, project_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, sandbox: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
         """VirtualMachineServiceCreateVirtualMachineBody - a model defined in Swagger"""  # noqa: E501
         self._can_download_source_code = None
         self._cloud_space_environment_template_id = None
@@ -94,6 +96,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._disk_size = None
         self._display_name = None
         self._name = None
+        self._org_id = None
         self._plugins = None
         self._project_id = None
         self._requested_run_duration_seconds = None
@@ -123,6 +126,8 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
             self.display_name = display_name
         if name is not None:
             self.name = name
+        if org_id is not None:
+            self.org_id = org_id
         if plugins is not None:
             self.plugins = plugins
         if project_id is not None:
@@ -349,6 +354,27 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         """
 
         self._name = name
+
+    @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+
+        :return: The org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this VirtualMachineServiceCreateVirtualMachineBody.
+
+
+        :param org_id: The org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
 
     @property
     def plugins(self) -> 'list[str]':

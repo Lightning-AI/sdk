@@ -41,6 +41,7 @@ class ClusterServiceCreateMachineBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'added_by': 'str',
         'address': 'str',
         'bootstrap': 'V1MachineBootstrap',
         'ca_cert': 'str',
@@ -64,6 +65,7 @@ class ClusterServiceCreateMachineBody(object):
     }
 
     attribute_map = {
+        'added_by': 'addedBy',
         'address': 'address',
         'bootstrap': 'bootstrap',
         'ca_cert': 'caCert',
@@ -86,8 +88,9 @@ class ClusterServiceCreateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, ca_cert: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, ca_cert: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
+        self._added_by = None
         self._address = None
         self._bootstrap = None
         self._ca_cert = None
@@ -109,6 +112,8 @@ class ClusterServiceCreateMachineBody(object):
         self._tls_key = None
         self._unschedulable = None
         self.discriminator = None
+        if added_by is not None:
+            self.added_by = added_by
         if address is not None:
             self.address = address
         if bootstrap is not None:
@@ -149,6 +154,27 @@ class ClusterServiceCreateMachineBody(object):
             self.tls_key = tls_key
         if unschedulable is not None:
             self.unschedulable = unschedulable
+
+    @property
+    def added_by(self) -> 'str':
+        """Gets the added_by of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The added_by of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._added_by
+
+    @added_by.setter
+    def added_by(self, added_by: 'str'):
+        """Sets the added_by of this ClusterServiceCreateMachineBody.
+
+
+        :param added_by: The added_by of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._added_by = added_by
 
     @property
     def address(self) -> 'str':

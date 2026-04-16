@@ -58,6 +58,7 @@ class V1Organization(object):
         'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'created_at': 'datetime',
+        'creator_id': 'str',
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'default_project_id': 'str',
@@ -79,6 +80,7 @@ class V1Organization(object):
         'full_story_start_date': 'datetime',
         'general_teamspace': 'bool',
         'id': 'str',
+        'is_personal_org': 'bool',
         'last_storage_overuse_notification_sent_at': 'datetime',
         'location': 'str',
         'name': 'str',
@@ -116,6 +118,7 @@ class V1Organization(object):
         'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'created_at': 'createdAt',
+        'creator_id': 'creatorId',
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'default_project_id': 'defaultProjectId',
@@ -137,6 +140,7 @@ class V1Organization(object):
         'full_story_start_date': 'fullStoryStartDate',
         'general_teamspace': 'generalTeamspace',
         'id': 'id',
+        'is_personal_org': 'isPersonalOrg',
         'last_storage_overuse_notification_sent_at': 'lastStorageOveruseNotificationSentAt',
         'location': 'location',
         'name': 'name',
@@ -156,7 +160,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -175,6 +179,7 @@ class V1Organization(object):
         self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._created_at = None
+        self._creator_id = None
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._default_project_id = None
@@ -196,6 +201,7 @@ class V1Organization(object):
         self._full_story_start_date = None
         self._general_teamspace = None
         self._id = None
+        self._is_personal_org = None
         self._last_storage_overuse_notification_sent_at = None
         self._location = None
         self._name = None
@@ -248,6 +254,8 @@ class V1Organization(object):
             self.auto_switch_machine = auto_switch_machine
         if created_at is not None:
             self.created_at = created_at
+        if creator_id is not None:
+            self.creator_id = creator_id
         if default_machine_image_version is not None:
             self.default_machine_image_version = default_machine_image_version
         if default_machine_type is not None:
@@ -290,6 +298,8 @@ class V1Organization(object):
             self.general_teamspace = general_teamspace
         if id is not None:
             self.id = id
+        if is_personal_org is not None:
+            self.is_personal_org = is_personal_org
         if last_storage_overuse_notification_sent_at is not None:
             self.last_storage_overuse_notification_sent_at = last_storage_overuse_notification_sent_at
         if location is not None:
@@ -683,6 +693,27 @@ class V1Organization(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def creator_id(self) -> 'str':
+        """Gets the creator_id of this V1Organization.  # noqa: E501
+
+
+        :return: The creator_id of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._creator_id
+
+    @creator_id.setter
+    def creator_id(self, creator_id: 'str'):
+        """Sets the creator_id of this V1Organization.
+
+
+        :param creator_id: The creator_id of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._creator_id = creator_id
 
     @property
     def default_machine_image_version(self) -> 'str':
@@ -1124,6 +1155,27 @@ class V1Organization(object):
         """
 
         self._id = id
+
+    @property
+    def is_personal_org(self) -> 'bool':
+        """Gets the is_personal_org of this V1Organization.  # noqa: E501
+
+
+        :return: The is_personal_org of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._is_personal_org
+
+    @is_personal_org.setter
+    def is_personal_org(self, is_personal_org: 'bool'):
+        """Sets the is_personal_org of this V1Organization.
+
+
+        :param is_personal_org: The is_personal_org of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._is_personal_org = is_personal_org
 
     @property
     def last_storage_overuse_notification_sent_at(self) -> 'datetime':

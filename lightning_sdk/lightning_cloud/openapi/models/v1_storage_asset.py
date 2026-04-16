@@ -43,6 +43,7 @@ class V1StorageAsset(object):
     swagger_types = {
         'created_at': 'datetime',
         'created_by': 'str',
+        'file_count': 'str',
         'id': 'str',
         'name': 'str',
         'read_cost_daily': 'float',
@@ -58,6 +59,7 @@ class V1StorageAsset(object):
     attribute_map = {
         'created_at': 'createdAt',
         'created_by': 'createdBy',
+        'file_count': 'fileCount',
         'id': 'id',
         'name': 'name',
         'read_cost_daily': 'readCostDaily',
@@ -70,10 +72,11 @@ class V1StorageAsset(object):
         'write_cost_daily': 'writeCostDaily'
     }
 
-    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, id: 'str' =None, name: 'str' =None, read_cost_daily: 'float' =None, storage_bytes: 'str' =None, storage_cost_daily: 'float' =None, sub_type: 'str' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, type: 'V1StorageAssetType' =None, write_cost_daily: 'float' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, created_by: 'str' =None, file_count: 'str' =None, id: 'str' =None, name: 'str' =None, read_cost_daily: 'float' =None, storage_bytes: 'str' =None, storage_cost_daily: 'float' =None, sub_type: 'str' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, type: 'V1StorageAssetType' =None, write_cost_daily: 'float' =None):  # noqa: E501
         """V1StorageAsset - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._created_by = None
+        self._file_count = None
         self._id = None
         self._name = None
         self._read_cost_daily = None
@@ -89,6 +92,8 @@ class V1StorageAsset(object):
             self.created_at = created_at
         if created_by is not None:
             self.created_by = created_by
+        if file_count is not None:
+            self.file_count = file_count
         if id is not None:
             self.id = id
         if name is not None:
@@ -151,6 +156,27 @@ class V1StorageAsset(object):
         """
 
         self._created_by = created_by
+
+    @property
+    def file_count(self) -> 'str':
+        """Gets the file_count of this V1StorageAsset.  # noqa: E501
+
+
+        :return: The file_count of this V1StorageAsset.  # noqa: E501
+        :rtype: str
+        """
+        return self._file_count
+
+    @file_count.setter
+    def file_count(self, file_count: 'str'):
+        """Sets the file_count of this V1StorageAsset.
+
+
+        :param file_count: The file_count of this V1StorageAsset.  # noqa: E501
+        :type: str
+        """
+
+        self._file_count = file_count
 
     @property
     def id(self) -> 'str':

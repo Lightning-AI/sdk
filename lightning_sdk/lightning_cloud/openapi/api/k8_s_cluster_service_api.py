@@ -43,6 +43,111 @@ class K8SClusterServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
+    def k8_s_cluster_service_create_kubernetes_job(self, body: 'K8SClusterServiceCreateKubernetesJobBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_create_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_kubernetes_job(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param K8SClusterServiceCreateKubernetesJobBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_create_kubernetes_job_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_create_kubernetes_job_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_create_kubernetes_job_with_http_info(self, body: 'K8SClusterServiceCreateKubernetesJobBody', cluster_id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_create_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_create_kubernetes_job_with_http_info(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param K8SClusterServiceCreateKubernetesJobBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_create_kubernetes_job" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_create_kubernetes_job`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_create_kubernetes_job`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/jobs', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1KubernetesJob',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_create_kubernetes_pod_event(self, body: 'K8SClusterServiceCreateKubernetesPodEventBody', cluster_id: 'str', pod_id: 'str', **kwargs) -> 'V1CreateKubernetesPodEventResponse':  # noqa: E501
         """k8_s_cluster_service_create_kubernetes_pod_event  # noqa: E501
 
@@ -254,6 +359,107 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1KubernetesTemplate',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_delete_kubernetes_job(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1DeleteKubernetesJobResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_kubernetes_job(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1DeleteKubernetesJobResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_delete_kubernetes_job_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_delete_kubernetes_job_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_delete_kubernetes_job_with_http_info(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1DeleteKubernetesJobResponse':  # noqa: E501
+        """k8_s_cluster_service_delete_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_delete_kubernetes_job_with_http_info(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1DeleteKubernetesJobResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_delete_kubernetes_job" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_delete_kubernetes_job`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_delete_kubernetes_job`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/jobs/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteKubernetesJobResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -476,6 +682,107 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetK8sClusterReportDataResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_get_kubernetes_job(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_job(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_get_kubernetes_job_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_get_kubernetes_job_with_http_info(cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_get_kubernetes_job_with_http_info(self, cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_get_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_get_kubernetes_job_with_http_info(cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_get_kubernetes_job" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_get_kubernetes_job`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_get_kubernetes_job`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/jobs/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1KubernetesJob',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -2059,6 +2366,128 @@ class K8SClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def k8_s_cluster_service_list_kubernetes_jobs(self, cluster_id: 'str', **kwargs) -> 'V1ListKubernetesJobsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kubernetes_jobs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kubernetes_jobs(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str user_id:
+        :param str schedule_id:
+        :param list[str] job_statuses:
+        :param bool deleted:
+        :param str search_query:
+        :param str next_page_token:
+        :param int page_size:
+        :return: V1ListKubernetesJobsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_kubernetes_jobs_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_kubernetes_jobs_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_kubernetes_jobs_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListKubernetesJobsResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kubernetes_jobs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kubernetes_jobs_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str user_id:
+        :param str schedule_id:
+        :param list[str] job_statuses:
+        :param bool deleted:
+        :param str search_query:
+        :param str next_page_token:
+        :param int page_size:
+        :return: V1ListKubernetesJobsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'user_id', 'schedule_id', 'job_statuses', 'deleted', 'search_query', 'next_page_token', 'page_size']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_kubernetes_jobs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_kubernetes_jobs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'schedule_id' in params:
+            query_params.append(('scheduleId', params['schedule_id']))  # noqa: E501
+        if 'job_statuses' in params:
+            query_params.append(('jobStatuses', params['job_statuses']))  # noqa: E501
+            collection_formats['jobStatuses'] = 'multi'  # noqa: E501
+        if 'deleted' in params:
+            query_params.append(('deleted', params['deleted']))  # noqa: E501
+        if 'search_query' in params:
+            query_params.append(('searchQuery', params['search_query']))  # noqa: E501
+        if 'next_page_token' in params:
+            query_params.append(('nextPageToken', params['next_page_token']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/jobs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListKubernetesJobsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def k8_s_cluster_service_list_kubernetes_namespaces(self, cluster_id: 'str', **kwargs) -> 'V1ListKubernetesNamespacesResponse':  # noqa: E501
         """k8_s_cluster_service_list_kubernetes_namespaces  # noqa: E501
 
@@ -2145,6 +2574,99 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListKubernetesNamespacesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_list_kubernetes_nodes(self, cluster_id: 'str', **kwargs) -> 'V1ListKubernetesNodesResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kubernetes_nodes  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kubernetes_nodes(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1ListKubernetesNodesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_list_kubernetes_nodes_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_list_kubernetes_nodes_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_list_kubernetes_nodes_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListKubernetesNodesResponse':  # noqa: E501
+        """k8_s_cluster_service_list_kubernetes_nodes  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_list_kubernetes_nodes_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1ListKubernetesNodesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_list_kubernetes_nodes" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_list_kubernetes_nodes`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/nodes', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListKubernetesNodesResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -2513,6 +3035,7 @@ class K8SClusterServiceApi(object):
         :param str node_name: (required)
         :param datetime start: Date range
         :param datetime end:
+        :param list[str] mount_points: Mount points to fetch metrics for. Defaults to [\"/\"] when empty.
         :return: V1ListNodeFileSystemMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2537,12 +3060,13 @@ class K8SClusterServiceApi(object):
         :param str node_name: (required)
         :param datetime start: Date range
         :param datetime end:
+        :param list[str] mount_points: Mount points to fetch metrics for. Defaults to [\"/\"] when empty.
         :return: V1ListNodeFileSystemMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['cluster_id', 'node_name', 'start', 'end']  # noqa: E501
+        all_params = ['cluster_id', 'node_name', 'start', 'end', 'mount_points']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2579,6 +3103,9 @@ class K8SClusterServiceApi(object):
             query_params.append(('start', params['start']))  # noqa: E501
         if 'end' in params:
             query_params.append(('end', params['end']))  # noqa: E501
+        if 'mount_points' in params:
+            query_params.append(('mountPoints', params['mount_points']))  # noqa: E501
+            collection_formats['mountPoints'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -3143,6 +3670,119 @@ class K8SClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ReportKubernetesEventsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def k8_s_cluster_service_update_kubernetes_job(self, body: 'K8SClusterServiceUpdateKubernetesJobBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_update_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_kubernetes_job(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param K8SClusterServiceUpdateKubernetesJobBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.k8_s_cluster_service_update_kubernetes_job_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.k8_s_cluster_service_update_kubernetes_job_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def k8_s_cluster_service_update_kubernetes_job_with_http_info(self, body: 'K8SClusterServiceUpdateKubernetesJobBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1KubernetesJob':  # noqa: E501
+        """k8_s_cluster_service_update_kubernetes_job  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.k8_s_cluster_service_update_kubernetes_job_with_http_info(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param K8SClusterServiceUpdateKubernetesJobBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1KubernetesJob
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method k8_s_cluster_service_update_kubernetes_job" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `k8_s_cluster_service_update_kubernetes_job`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `k8_s_cluster_service_update_kubernetes_job`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `k8_s_cluster_service_update_kubernetes_job`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/k8s-clusters/{clusterId}/jobs/{id}', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1KubernetesJob',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

@@ -43,6 +43,7 @@ class V1KubevirtConfig(object):
     swagger_types = {
         'api_key': 'str',
         'api_url': 'str',
+        'default_vm_image': 'str',
         'k8s_node_count': 'int',
         'node_count': 'int',
         'node_family': 'str',
@@ -56,6 +57,7 @@ class V1KubevirtConfig(object):
     attribute_map = {
         'api_key': 'apiKey',
         'api_url': 'apiUrl',
+        'default_vm_image': 'defaultVmImage',
         'k8s_node_count': 'k8sNodeCount',
         'node_count': 'nodeCount',
         'node_family': 'nodeFamily',
@@ -66,10 +68,11 @@ class V1KubevirtConfig(object):
         'vm_node_count': 'vmNodeCount'
     }
 
-    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, show_as_lightning: 'bool' =None, supported: 'bool' =None, uuid: 'str' =None, vm_node_count: 'int' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, default_vm_image: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, show_as_lightning: 'bool' =None, supported: 'bool' =None, uuid: 'str' =None, vm_node_count: 'int' =None):  # noqa: E501
         """V1KubevirtConfig - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._api_url = None
+        self._default_vm_image = None
         self._k8s_node_count = None
         self._node_count = None
         self._node_family = None
@@ -83,6 +86,8 @@ class V1KubevirtConfig(object):
             self.api_key = api_key
         if api_url is not None:
             self.api_url = api_url
+        if default_vm_image is not None:
+            self.default_vm_image = default_vm_image
         if k8s_node_count is not None:
             self.k8s_node_count = k8s_node_count
         if node_count is not None:
@@ -141,6 +146,27 @@ class V1KubevirtConfig(object):
         """
 
         self._api_url = api_url
+
+    @property
+    def default_vm_image(self) -> 'str':
+        """Gets the default_vm_image of this V1KubevirtConfig.  # noqa: E501
+
+
+        :return: The default_vm_image of this V1KubevirtConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._default_vm_image
+
+    @default_vm_image.setter
+    def default_vm_image(self, default_vm_image: 'str'):
+        """Sets the default_vm_image of this V1KubevirtConfig.
+
+
+        :param default_vm_image: The default_vm_image of this V1KubevirtConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._default_vm_image = default_vm_image
 
     @property
     def k8s_node_count(self) -> 'int':

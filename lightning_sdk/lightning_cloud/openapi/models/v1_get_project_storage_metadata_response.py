@@ -60,6 +60,7 @@ class V1GetProjectStorageMetadataResponse(object):
         'model_storage_bytes': 'str',
         'models': 'list[V1StorageAsset]',
         'sorted_assets': 'list[V1StorageAsset]',
+        'total_file_count': 'str',
         'total_storage_bytes': 'str',
         'upload_storage_bytes': 'str',
         'uploads': 'V1StorageAsset'
@@ -85,12 +86,13 @@ class V1GetProjectStorageMetadataResponse(object):
         'model_storage_bytes': 'modelStorageBytes',
         'models': 'models',
         'sorted_assets': 'sortedAssets',
+        'total_file_count': 'totalFileCount',
         'total_storage_bytes': 'totalStorageBytes',
         'upload_storage_bytes': 'uploadStorageBytes',
         'uploads': 'uploads'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, model_storage_bytes: 'str' =None, models: 'list[V1StorageAsset]' =None, sorted_assets: 'list[V1StorageAsset]' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, billable_bytes: 'str' =None, cloudspace_storage_bytes: 'str' =None, cloudspaces: 'list[V1StorageAsset]' =None, container_registry_repositories: 'list[V1StorageAsset]' =None, container_registry_storage_bytes: 'str' =None, data_connection_storage_bytes: 'str' =None, data_connections: 'list[V1StorageAsset]' =None, display_name: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, folder_storage_bytes: 'str' =None, folders: 'list[V1StorageAsset]' =None, id: 'str' =None, job_storage_bytes: 'str' =None, jobs: 'list[V1StorageAsset]' =None, model_storage_bytes: 'str' =None, models: 'list[V1StorageAsset]' =None, sorted_assets: 'list[V1StorageAsset]' =None, total_file_count: 'str' =None, total_storage_bytes: 'str' =None, upload_storage_bytes: 'str' =None, uploads: 'V1StorageAsset' =None):  # noqa: E501
         """V1GetProjectStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
         self._billable_bytes = None
@@ -111,6 +113,7 @@ class V1GetProjectStorageMetadataResponse(object):
         self._model_storage_bytes = None
         self._models = None
         self._sorted_assets = None
+        self._total_file_count = None
         self._total_storage_bytes = None
         self._upload_storage_bytes = None
         self._uploads = None
@@ -153,6 +156,8 @@ class V1GetProjectStorageMetadataResponse(object):
             self.models = models
         if sorted_assets is not None:
             self.sorted_assets = sorted_assets
+        if total_file_count is not None:
+            self.total_file_count = total_file_count
         if total_storage_bytes is not None:
             self.total_storage_bytes = total_storage_bytes
         if upload_storage_bytes is not None:
@@ -558,6 +563,27 @@ class V1GetProjectStorageMetadataResponse(object):
         """
 
         self._sorted_assets = sorted_assets
+
+    @property
+    def total_file_count(self) -> 'str':
+        """Gets the total_file_count of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The total_file_count of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_file_count
+
+    @total_file_count.setter
+    def total_file_count(self, total_file_count: 'str'):
+        """Sets the total_file_count of this V1GetProjectStorageMetadataResponse.
+
+
+        :param total_file_count: The total_file_count of this V1GetProjectStorageMetadataResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_file_count = total_file_count
 
     @property
     def total_storage_bytes(self) -> 'str':

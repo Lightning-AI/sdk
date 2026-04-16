@@ -45,7 +45,6 @@ class StorageServiceCompleteUploadProjectArtifactBody(object):
         'data_connection_id': 'str',
         'filename': 'str',
         'parts': 'list[V1CompleteUpload]',
-        'reindex': 'bool',
         'upload_id': 'str'
     }
 
@@ -54,17 +53,15 @@ class StorageServiceCompleteUploadProjectArtifactBody(object):
         'data_connection_id': 'dataConnectionId',
         'filename': 'filename',
         'parts': 'parts',
-        'reindex': 'reindex',
         'upload_id': 'uploadId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, data_connection_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, reindex: 'bool' =None, upload_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, data_connection_id: 'str' =None, filename: 'str' =None, parts: 'list[V1CompleteUpload]' =None, upload_id: 'str' =None):  # noqa: E501
         """StorageServiceCompleteUploadProjectArtifactBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._data_connection_id = None
         self._filename = None
         self._parts = None
-        self._reindex = None
         self._upload_id = None
         self.discriminator = None
         if cluster_id is not None:
@@ -75,8 +72,6 @@ class StorageServiceCompleteUploadProjectArtifactBody(object):
             self.filename = filename
         if parts is not None:
             self.parts = parts
-        if reindex is not None:
-            self.reindex = reindex
         if upload_id is not None:
             self.upload_id = upload_id
 
@@ -163,27 +158,6 @@ class StorageServiceCompleteUploadProjectArtifactBody(object):
         """
 
         self._parts = parts
-
-    @property
-    def reindex(self) -> 'bool':
-        """Gets the reindex of this StorageServiceCompleteUploadProjectArtifactBody.  # noqa: E501
-
-
-        :return: The reindex of this StorageServiceCompleteUploadProjectArtifactBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._reindex
-
-    @reindex.setter
-    def reindex(self, reindex: 'bool'):
-        """Sets the reindex of this StorageServiceCompleteUploadProjectArtifactBody.
-
-
-        :param reindex: The reindex of this StorageServiceCompleteUploadProjectArtifactBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._reindex = reindex
 
     @property
     def upload_id(self) -> 'str':

@@ -41,24 +41,50 @@ class V1CloudSpaceEnvironmentTemplateEndpoint(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'lightning_subdomain': 'str',
         'name': 'str',
         'ports': 'list[int]'
     }
 
     attribute_map = {
+        'lightning_subdomain': 'lightningSubdomain',
         'name': 'name',
         'ports': 'ports'
     }
 
-    def __init__(self, name: 'str' =None, ports: 'list[int]' =None):  # noqa: E501
+    def __init__(self, lightning_subdomain: 'str' =None, name: 'str' =None, ports: 'list[int]' =None):  # noqa: E501
         """V1CloudSpaceEnvironmentTemplateEndpoint - a model defined in Swagger"""  # noqa: E501
+        self._lightning_subdomain = None
         self._name = None
         self._ports = None
         self.discriminator = None
+        if lightning_subdomain is not None:
+            self.lightning_subdomain = lightning_subdomain
         if name is not None:
             self.name = name
         if ports is not None:
             self.ports = ports
+
+    @property
+    def lightning_subdomain(self) -> 'str':
+        """Gets the lightning_subdomain of this V1CloudSpaceEnvironmentTemplateEndpoint.  # noqa: E501
+
+
+        :return: The lightning_subdomain of this V1CloudSpaceEnvironmentTemplateEndpoint.  # noqa: E501
+        :rtype: str
+        """
+        return self._lightning_subdomain
+
+    @lightning_subdomain.setter
+    def lightning_subdomain(self, lightning_subdomain: 'str'):
+        """Sets the lightning_subdomain of this V1CloudSpaceEnvironmentTemplateEndpoint.
+
+
+        :param lightning_subdomain: The lightning_subdomain of this V1CloudSpaceEnvironmentTemplateEndpoint.  # noqa: E501
+        :type: str
+        """
+
+        self._lightning_subdomain = lightning_subdomain
 
     @property
     def name(self) -> 'str':

@@ -42,6 +42,7 @@ class V1APIKey(object):
     """
     swagger_types = {
         'created_at': 'datetime',
+        'creator_id': 'str',
         'description': 'str',
         'id': 'str',
         'last_used': 'datetime',
@@ -52,6 +53,7 @@ class V1APIKey(object):
 
     attribute_map = {
         'created_at': 'createdAt',
+        'creator_id': 'creatorId',
         'description': 'description',
         'id': 'id',
         'last_used': 'lastUsed',
@@ -60,9 +62,10 @@ class V1APIKey(object):
         'role': 'role'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, raw_key: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, raw_key: 'str' =None, role: 'str' =None):  # noqa: E501
         """V1APIKey - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
+        self._creator_id = None
         self._description = None
         self._id = None
         self._last_used = None
@@ -72,6 +75,8 @@ class V1APIKey(object):
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
+        if creator_id is not None:
+            self.creator_id = creator_id
         if description is not None:
             self.description = description
         if id is not None:
@@ -105,6 +110,27 @@ class V1APIKey(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def creator_id(self) -> 'str':
+        """Gets the creator_id of this V1APIKey.  # noqa: E501
+
+
+        :return: The creator_id of this V1APIKey.  # noqa: E501
+        :rtype: str
+        """
+        return self._creator_id
+
+    @creator_id.setter
+    def creator_id(self, creator_id: 'str'):
+        """Sets the creator_id of this V1APIKey.
+
+
+        :param creator_id: The creator_id of this V1APIKey.  # noqa: E501
+        :type: str
+        """
+
+        self._creator_id = creator_id
 
     @property
     def description(self) -> 'str':
