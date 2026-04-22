@@ -1,0 +1,153 @@
+# serializer version: 1
+# name: TestCommandTracking.test_initial_last_command_is_shell[screen-bash]
+  '''
+  # Given session (name="Fresh")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Fresh - bash (detached, id=fresh-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestCommandTracking.test_initial_last_command_is_shell[screen-zsh]
+  '''
+  # Given session (name="Fresh")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Fresh - zsh (detached, id=fresh-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestCommandTracking.test_last_command_updates_after_send[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo TRACKING_TEST
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestCommandTracking.test_last_command_updates_after_send[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo TRACKING_TEST
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingArgs.test_last_command_by_name[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=bash bash lightningterminal.sh last_command --name Worker
+  echo
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingArgs.test_last_command_by_name[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=zsh zsh lightningterminal.sh last_command --name Worker
+  echo
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingArgs.test_last_command_requires_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh last_command
+  [STDERR] error: --id or --name is required for 'last_command'
+  [STDERR] Usage: lightningterminal.sh last_command --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingArgs.test_last_command_requires_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh last_command
+  [STDERR] error: --id or --name is required for 'last_command'
+  [STDERR] Usage: lightningterminal.sh last_command --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingCompat.test_old_cmd_history_path_written[screen-bash]
+  '''
+  # Given session (name="Compat")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id compat-XXXXXXXX echo compat_test
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: compat-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Compat
+  default_name: term-1
+  display_label: Compat (echo)
+  last_command: echo
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingCompat.test_old_cmd_history_path_written[screen-zsh]
+  '''
+  # Given session (name="Compat")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id compat-XXXXXXXX echo compat_test
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: compat-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Compat
+  default_name: term-1
+  display_label: Compat (echo)
+  last_command: echo
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingSecurity.test_strips_env_vars[screen-bash]
+  '''
+  # Given session (name="Env")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id env-XXXXXXXX SECRET=abc OTHER=xyz python train.py
+  # Execute: SHELL=bash bash lightningterminal.sh last_command --id env-XXXXXXXX
+  python
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingSecurity.test_strips_env_vars[screen-zsh]
+  '''
+  # Given session (name="Env")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id env-XXXXXXXX SECRET=abc OTHER=xyz python train.py
+  # Execute: SHELL=zsh zsh lightningterminal.sh last_command --id env-XXXXXXXX
+  python
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingSecurity.test_tracks_command_name_only[screen-bash]
+  '''
+  # Given session (name="Secure")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id secure-XXXXXXXX curl -H 'Authorization: Bearer secret' https://example.com
+  # Execute: SHELL=bash bash lightningterminal.sh last_command --id secure-XXXXXXXX
+  curl
+  
+  
+  '''
+# ---
+# name: TestCommandTrackingSecurity.test_tracks_command_name_only[screen-zsh]
+  '''
+  # Given session (name="Secure")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id secure-XXXXXXXX curl -H 'Authorization: Bearer secret' https://example.com
+  # Execute: SHELL=zsh zsh lightningterminal.sh last_command --id secure-XXXXXXXX
+  curl
+  
+  
+  '''
+# ---

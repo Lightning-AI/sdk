@@ -1,0 +1,237 @@
+# serializer version: 1
+# name: TestScriptRead.test_read_after_send[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo READ_TEST_MARKER_42
+  # Execute: SHELL=bash bash lightningterminal.sh read --id worker-XXXXXXXX
+  $ echo READ_TEST_MARKER_42
+  READ_TEST_MARKER_42
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_after_send[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo READ_TEST_MARKER_42
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id worker-XXXXXXXX
+  $ echo READ_TEST_MARKER_42
+  READ_TEST_MARKER_42
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_empty_session[screen-bash]
+  '''
+  # Given session (name="Fresh")
+  # Execute: SHELL=bash bash lightningterminal.sh read --id fresh-XXXXXXXX
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_empty_session[screen-zsh]
+  '''
+  # Given session (name="Fresh")
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id fresh-XXXXXXXX
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_multiple_commands[screen-bash]
+  '''
+  # Given session (name="Multi")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id multi-XXXXXXXX echo FIRST_MARKER
+  # Execute: SHELL=bash bash lightningterminal.sh send --id multi-XXXXXXXX echo SECOND_MARKER
+  # Execute: SHELL=bash bash lightningterminal.sh read --id multi-XXXXXXXX
+  $ echo FIRST_MARKER
+  FIRST_MARKER
+  $ echo SECOND_MARKER
+  SECOND_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_multiple_commands[screen-zsh]
+  '''
+  # Given session (name="Multi")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id multi-XXXXXXXX echo FIRST_MARKER
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id multi-XXXXXXXX echo SECOND_MARKER
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id multi-XXXXXXXX
+  $ echo FIRST_MARKER
+  FIRST_MARKER
+  $ echo SECOND_MARKER
+  SECOND_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_nonexistent_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh read --id nonexistent-id
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_nonexistent_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id nonexistent-id
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_requires_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh read
+  [STDERR] error: --id or --name is required for 'read'
+  [STDERR] Usage: lightningterminal.sh read --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_read_requires_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh read
+  [STDERR] error: --id or --name is required for 'read'
+  [STDERR] Usage: lightningterminal.sh read --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_send_to_attached_session[screen-bash]
+  '''
+  # Given session (name="Attached")
+  # [pty1] Start: bash lightningterminal.sh attach --id attached-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh send --id attached-XXXXXXXX echo ATTACHED_MARKER
+  # Execute: SHELL=bash bash lightningterminal.sh read --id attached-XXXXXXXX
+  $ echo ATTACHED_MARKER
+  ATTACHED_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_send_to_attached_session[screen-zsh]
+  '''
+  # Given session (name="Attached")
+  # [pty1] Start: zsh lightningterminal.sh attach --id attached-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id attached-XXXXXXXX echo ATTACHED_MARKER
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id attached-XXXXXXXX
+  $ echo ATTACHED_MARKER
+  ATTACHED_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_send_with_pipe[screen-bash]
+  '''
+  # Given session (name="Pipes")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id pipes-XXXXXXXX echo PIPE_INPUT | cat
+  # Execute: SHELL=bash bash lightningterminal.sh read --id pipes-XXXXXXXX
+  $ echo PIPE_INPUT | cat
+  PIPE_INPUT
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptRead.test_send_with_pipe[screen-zsh]
+  '''
+  # Given session (name="Pipes")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id pipes-XXXXXXXX echo PIPE_INPUT | cat
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id pipes-XXXXXXXX
+  $ echo PIPE_INPUT | cat
+  PIPE_INPUT
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_by_name[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --name Worker echo NAME_MARKER
+  # Execute: SHELL=bash bash lightningterminal.sh read --name Worker
+  $ echo NAME_MARKER
+  NAME_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_by_name[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --name Worker echo NAME_MARKER
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --name Worker
+  $ echo NAME_MARKER
+  NAME_MARKER
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_command[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo SEND_TEST_MARKER
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_command[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo SEND_TEST_MARKER
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_requires_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh send echo hello
+  [STDERR] error: --id or --name is required for 'send'
+  [STDERR] Usage: lightningterminal.sh send --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_requires_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh send echo hello
+  [STDERR] error: --id or --name is required for 'send'
+  [STDERR] Usage: lightningterminal.sh send --id <session_id>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_to_nonexistent_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh send --id nonexistent-id echo hello
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptSend.test_send_to_nonexistent_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id nonexistent-id echo hello
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---

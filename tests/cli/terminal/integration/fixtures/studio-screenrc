@@ -1,0 +1,32 @@
+# >>> lightning managed. do not modify >>>
+# Screen is used to make persistent zsh sessions and resolve
+# the issue of sleeping processes in VSCode terminals.
+# Set default shell to be zsh
+shell "/usr/bin/${SHELL}"
+
+# Don't display the copyright page
+startup_message off
+
+# Enable normal scrolling
+termcapinfo xterm* ti@:te@
+
+# Disable all keybindings to make sure screen doesn't conflict with normal keymaps
+unbindall
+
+# Remap escape key to `Ctrl-Q` + `q`
+# When you press `Ctrl+Q` and then `q` in a Screen session, it will be interpreted as the escape key,
+# allowing you to enter Screen commands.
+# By default it's `Ctrl-A`
+escape ^Qq
+
+# Do not store VIM/less output in the main buffer
+altscreen on
+
+# Enable truecolor if available
+truecolor on
+
+# Ensure access
+multiuser on
+acladd zeus
+
+# <<< lightning managed. do not modify <<<

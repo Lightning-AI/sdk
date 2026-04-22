@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+#
+# lightningterminal.rc — Helpers, and session init for the inner shell
+#
+# This file should be sourced from .lightningrc and:
+# - Adds the lt() function as an alias for lightningterminal.sh
+# - If inside a terminal session, sets up command tracking
+#
+
+# ================================
+# === Utilities for all shells ===
+# ================================
+
+# --- Convenience function ---
+# Provides `lt` as a short alias for lightningterminal.sh.
+# The script is located alongside this rc file. We resolve the
+# directory at source time (not at call time) for performance.
+if [ -n "${ZSH_VERSION:-}" ]; then
+    _lt_script_dir="${${(%):-%x}:A:h}"
+else
+    _lt_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
+
+lt() {
+    LIGHTNING_TERMINAL_HELP_SCRIPT_NAME=lt \
+        "${_lt_script_dir}/lightningterminal.sh" "$@"
+}
+
+# ==============================
+# === Terminal sessions only ===
+# ==============================
+
+# If inside a lightning terminal session, the session creator (attach/new) will set
+# the following environment variables for us:
+#
+#   LIGHTNING_TERMINAL_SESSION_ID        - Session identifier (e.g. "backend-a7f3")
+#   LIGHTNING_TERMINAL_LAST_COMMAND_FILE - File to write last command to
+#
+# Guard: don't run the rest if a session ID isn't set.
+if [ -z "${LIGHTNING_TERMINAL_SESSION_ID:-}" ]; then
+    # Return safely whether sourced or executed directly
+    return 0 2>/dev/null || true
+fi
+
+# --- Scroll region reset ---
+#
+# Resets the terminal scroll region to the full window height.
+# Prevents the cursor from starting midway in the window when a new
+# terminal session is opened.
+# See: https://github.com/gridai/base-images/issues/1849
+#
+# This runs BEFORE the preexec hook is installed, so it won't be
+# captured as a "last command".
+tput csr 0 $(($(tput lines)-1)) 2>/dev/null || true
+
+# --- Command tracking ---
+#
+# Writes the command name to LIGHTNING_TERMINAL_LAST_COMMAND_FILE so that:
+# - `lightningterminal.sh ls` can show the last command
+# - The Studio Terminal UI can display what's running
+# - `lightning terminal ls` shows the Last Command column
+#
+# Security: we only record the command name (e.g. "make", "curl", "python"),
+# NOT arguments or inline env vars. This vastly mitigates the risk of secrets
+# leaking into the history file (and then into the UI) from commands like:
+#   SECRET=abc curl -H "Authorization: Bearer token" ...
+#   export API_KEY=secret123
+#
+# Performance: the hook writes directly to the file using shell builtins only
+# (no subprocesses). The _lt_command_name function uses pure parameter expansion.
+#
+# Activation: the hook is deferred until the first prompt, so commands that
+# run during shell init (sourcing .zshrc, loading plugins, etc.) aren't
+# captured as "last command". Once the shell is ready for user input, the
+# hook activates and tracks all subsequent commands — including those sent
+# via `lightningterminal.sh send`.
+
+# Extract just the command name from a full command line.
+# Strips leading VAR=value assignments, returns only the first command word,
+# and strips directory paths so "/usr/bin/python" becomes "python".
+#   "make develop"                    → "make"
+#   "SECRET=abc curl http://..."      → "curl"
+#   "export API_KEY=secret"           → "export"
+#   "VAR=x OTHER=y python train.py"  → "python"
+#   "/usr/bin/python train.py"        → "python"
+#   "./scripts/deploy.sh"             → "deploy.sh"
+_lt_command_name() {
+    local cmd="$1"
+    # Strip leading VAR=value pairs (e.g. "SECRET=abc curl ..." → "curl ...")
+    while true; do
+        case "$cmd" in
+            [A-Za-z_]*=*\ *) cmd="${cmd#* }" ;;
+            *) break ;;
+        esac
+    done
+    # If what's left is still a bare assignment (no command), return empty
+    local name
+    case "$cmd" in
+        [A-Za-z_]*=*) name="" ;;
+        *) name="${cmd%% *}" ;;
+    esac
+    # Strip directory path: "/usr/bin/python" → "python"
+    echo "${name##*/}"
+}
+
+_lt_track_command() {
+    if [ -n "${LIGHTNING_TERMINAL_LAST_COMMAND_FILE:-}" ]; then
+        local name
+        name=$(_lt_command_name "$1")
+        if [ -n "$name" ]; then
+            echo "$name" >> "$LIGHTNING_TERMINAL_LAST_COMMAND_FILE" 2>/dev/null || true
+
+            # Also write to the old /tmp/cmd_history.{pid}.{session_id} path so the
+            # Studio Terminal UI (via _lsscreen.sh) can still display session names.
+            # TODO: Remove once _lsscreen.sh is retired.
+            if [ -n "${LIGHTNING_TERMINAL_SESSION_ID:-}" ]; then
+                echo "$name" >> "/tmp/cmd_history.$$.${LIGHTNING_TERMINAL_SESSION_ID}" 2>/dev/null || true
+            fi
+        fi
+    fi
+}
+
+# --- Hook installation ---
+#
+# Deferred until the first prompt so shell init commands aren't tracked.
+# On the first prompt, we install the real preexec hook and remove the
+# activation hook.
+
+if [ -n "${ZSH_VERSION:-}" ]; then
+    autoload -Uz add-zsh-hook 2>/dev/null || true
+    _lt_preexec() { _lt_track_command "$1"; }
+    _lt_activate() {
+        add-zsh-hook preexec _lt_preexec 2>/dev/null || true
+        add-zsh-hook -d precmd _lt_activate 2>/dev/null || true  # remove self after first prompt
+    }
+    add-zsh-hook precmd _lt_activate 2>/dev/null || true
+elif [ -n "${BASH_VERSION:-}" ]; then
+    # bash: use DEBUG trap (closest equivalent to preexec).
+    # We use DEBUG instead of PROMPT_COMMAND because PROMPT_COMMAND only fires
+    # after a command finishes — a long-running program wouldn't show
+    # up in `lightning terminal ls` until it exits. DEBUG fires immediately.
+    _lt_debug_trap() {
+        # Skip prompt commands and tab completion — only track user commands.
+        # The wrapper function itself triggers DEBUG before _LT_IN_PROMPT_COMMAND
+        # is set inside it, so we also filter it (and its helpers) by name.
+        case "$BASH_COMMAND" in
+            _lt_prompt_command_wrapper|_lt_restore_status*|return*) return ;;
+        esac
+        if [ -z "${_LT_IN_PROMPT_COMMAND:-}" ] && [ -z "${COMP_LINE:-}" ]; then
+            _lt_track_command "$BASH_COMMAND"
+        fi
+    }
+    _lt_restore_status() {
+        return "$1"
+    }
+    # Wrap PROMPT_COMMAND so prompt helpers run under a dedicated guard and
+    # the DEBUG trap can reliably ignore them, even when PROMPT_COMMAND
+    # contains multiple commands or function calls.
+    _lt_prompt_command_wrapper() {
+        local _lt_prompt_status=$?
+
+        _LT_IN_PROMPT_COMMAND=1
+
+        if [ -z "${_LT_DEBUG_TRAP_INSTALLED:-}" ]; then
+            trap '_lt_debug_trap' DEBUG
+            _LT_DEBUG_TRAP_INSTALLED=1
+        fi
+
+        if [ -n "${_lt_original_prompt_command:-}" ]; then
+            # Preserve the incoming prompt status for existing PROMPT_COMMAND
+            # handlers that inspect $?.
+            _lt_restore_status "$_lt_prompt_status"
+            eval "$_lt_original_prompt_command"
+        fi
+
+        unset _LT_IN_PROMPT_COMMAND
+        return "$_lt_prompt_status"
+    }
+    _lt_original_prompt_command="${PROMPT_COMMAND:-}"
+    PROMPT_COMMAND="_lt_prompt_command_wrapper"
+fi

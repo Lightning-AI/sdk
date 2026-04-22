@@ -132,6 +132,7 @@ exclude = [
   "docs",
   "examples",
   "lightning_sdk/llm/public_assistants.py",
+  "**/__snapshots__/*.ambr",
 ]
 ignore-init-module-imports = true
 unfixable = ["F401"]
@@ -148,6 +149,9 @@ unfixable = ["F401"]
 ]
 "tests/cli/test_help.py" = [
     "E501",  # Line too long (122 > 120 characters)
+]
+"tests/cli/terminal/integration/conftest.py" = [
+    "E402",  # sys.path fixup before remaining imports
 ]
 
 "lightning_sdk/cli/groups.py" = ["D301"]

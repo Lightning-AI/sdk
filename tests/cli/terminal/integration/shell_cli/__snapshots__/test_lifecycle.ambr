@@ -1,0 +1,51 @@
+# serializer version: 1
+# name: TestScriptLifecycle.test_lifecycle[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name lifecycle-test
+  session_id: lifecycle-test-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: lifecycle-test
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  lifecycle-test - bash (detached, id=lifecycle-test-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh send --id lifecycle-test-XXXXXXXX echo LIFECYCLE_MARKER
+  # Execute: SHELL=bash bash lightningterminal.sh read --id lifecycle-test-XXXXXXXX
+  $ echo LIFECYCLE_MARKER
+  LIFECYCLE_MARKER
+  $
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --id lifecycle-test-XXXXXXXX
+  lifecycle-test - echo (detached, id=lifecycle-test-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id lifecycle-test-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptLifecycle.test_lifecycle[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name lifecycle-test
+  session_id: lifecycle-test-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: lifecycle-test
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  lifecycle-test - zsh (detached, id=lifecycle-test-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id lifecycle-test-XXXXXXXX echo LIFECYCLE_MARKER
+  # Execute: SHELL=zsh zsh lightningterminal.sh read --id lifecycle-test-XXXXXXXX
+  $ echo LIFECYCLE_MARKER
+  LIFECYCLE_MARKER
+  $
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id lifecycle-test-XXXXXXXX
+  lifecycle-test - echo (detached, id=lifecycle-test-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id lifecycle-test-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  
+  '''
+# ---

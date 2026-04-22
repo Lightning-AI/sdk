@@ -1,0 +1,169 @@
+# serializer version: 1
+# name: TestScriptRename.test_rename_anonymous_session[screen-bash]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=bash bash lightningterminal.sh rename --id session-XXXXXXXX GotAName
+  # Execute: SHELL=bash bash lightningterminal.sh status --id session-XXXXXXXX
+  GotAName - bash (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_anonymous_session[screen-zsh]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --id session-XXXXXXXX GotAName
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id session-XXXXXXXX
+  GotAName - zsh (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_by_name[screen-bash]
+  '''
+  # Given session (name="OldName")
+  # Execute: SHELL=bash bash lightningterminal.sh rename --name OldName NewName
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  NewName - bash (detached, id=oldname-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_by_name[screen-zsh]
+  '''
+  # Given session (name="OldName")
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --name OldName NewName
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  NewName - zsh (detached, id=oldname-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_current_session[screen-bash]
+  '''
+  # Given session (name="OldCurrent")
+  # [pty1] Start: bash lightningterminal.sh attach --id oldcurrent-XXXXXXXX
+  # [pty1] Send: lt rename CurrentName\n
+  # Execute: SHELL=bash bash lightningterminal.sh status --id oldcurrent-XXXXXXXX
+  CurrentName - lt (attached, id=oldcurrent-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_current_session[screen-zsh]
+  '''
+  # Given session (name="OldCurrent")
+  # [pty1] Start: zsh lightningterminal.sh attach --id oldcurrent-XXXXXXXX
+  # [pty1] Send: lt rename CurrentName\n
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id oldcurrent-XXXXXXXX
+  CurrentName - lt (attached, id=oldcurrent-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_no_name_errors[screen-bash]
+  '''
+  # Given session (name="Existing")
+  # Execute: SHELL=bash bash lightningterminal.sh rename --id existing-XXXXXXXX
+  [STDERR] error: new name is required
+  [STDERR] Usage: lightningterminal.sh rename [--id <session_id>] <name>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_no_name_errors[screen-zsh]
+  '''
+  # Given session (name="Existing")
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --id existing-XXXXXXXX
+  [STDERR] error: new name is required
+  [STDERR] Usage: lightningterminal.sh rename [--id <session_id>] <name>
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_no_session_errors[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh rename SomeName
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh rename [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_no_session_errors[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename SomeName
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh rename [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_nonexistent_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh rename --id nonexistent-id NewName
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_nonexistent_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --id nonexistent-id NewName
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_shows_in_ls[screen-bash]
+  '''
+  # Given session (name="Before")
+  # Execute: SHELL=bash bash lightningterminal.sh rename --id before-XXXXXXXX After
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  After - bash (detached, id=before-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_shows_in_ls[screen-zsh]
+  '''
+  # Given session (name="Before")
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --id before-XXXXXXXX After
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  After - zsh (detached, id=before-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_with_explicit_id[screen-bash]
+  '''
+  # Given session (name="OldName")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id oldname-XXXXXXXX
+  OldName - bash (detached, id=oldname-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh rename --id oldname-XXXXXXXX NewName
+  # Execute: SHELL=bash bash lightningterminal.sh status --id oldname-XXXXXXXX
+  NewName - bash (detached, id=oldname-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptRename.test_rename_with_explicit_id[screen-zsh]
+  '''
+  # Given session (name="OldName")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id oldname-XXXXXXXX
+  OldName - zsh (detached, id=oldname-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh rename --id oldname-XXXXXXXX NewName
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id oldname-XXXXXXXX
+  NewName - zsh (detached, id=oldname-XXXXXXXX)
+  
+  
+  '''
+# ---

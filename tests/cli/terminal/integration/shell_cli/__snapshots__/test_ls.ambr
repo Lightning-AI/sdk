@@ -1,0 +1,305 @@
+# serializer version: 1
+# name: TestLtLs.test_lt_ls[screen-bash]
+  '''
+  # Given session (name="ListMe")
+  # [pty1] Start: bash lightningterminal.sh attach --id listme-XXXXXXXX
+  # [pty1] Send: lt ls\n
+  # [pty1] Snapshot - lt ls output
+  $ lt ls
+  ListMe - lt (attached, id=listme-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestLtLs.test_lt_ls[screen-zsh]
+  '''
+  # Given session (name="ListMe")
+  # [pty1] Start: zsh lightningterminal.sh attach --id listme-XXXXXXXX
+  # [pty1] Send: lt ls\n
+  # [pty1] Snapshot - lt ls output
+  $ lt ls
+  ListMe - lt (attached, id=listme-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptLs.test_empty[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptLs.test_empty[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptLs.test_single_anonymous_session[screen-bash]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  term-1 - bash (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLs.test_single_anonymous_session[screen-zsh]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  term-1 - zsh (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLs.test_single_named_session[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLs.test_single_named_session[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_multiple_sessions[screen-bash]
+  '''
+  # Given session (name="Alpha")
+  # Given session (name="Beta")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Alpha - bash (detached, id=alpha-XXXXXXXX)
+  Beta - bash (detached, id=beta-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_multiple_sessions[screen-zsh]
+  '''
+  # Given session (name="Alpha")
+  # Given session (name="Beta")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Alpha - zsh (detached, id=alpha-XXXXXXXX)
+  Beta - zsh (detached, id=beta-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_contains_name_status_id[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_contains_name_status_id[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_shows_last_command[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_shows_last_command[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_vs_raw[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptLsFormat.test_oneliner_vs_raw[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptLsOrdering.test_attached_still_in_creation_order[screen-bash]
+  '''
+  # Given session (name="Detached")
+  # Given session (name="Attached", attached=True)
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Detached - bash (detached, id=detached-XXXXXXXX)
+  Attached - bash (attached, id=attached-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsOrdering.test_attached_still_in_creation_order[screen-zsh]
+  '''
+  # Given session (name="Detached")
+  # Given session (name="Attached", attached=True)
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Detached - zsh (detached, id=detached-XXXXXXXX)
+  Attached - zsh (attached, id=attached-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsOrdering.test_creation_order[screen-bash]
+  '''
+  # Given session (name="First")
+  # Given session (name="Second")
+  # Given session (name="Third")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  First - bash (detached, id=first-XXXXXXXX)
+  Second - bash (detached, id=second-XXXXXXXX)
+  Third - bash (detached, id=third-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsOrdering.test_creation_order[screen-zsh]
+  '''
+  # Given session (name="First")
+  # Given session (name="Second")
+  # Given session (name="Third")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  First - zsh (detached, id=first-XXXXXXXX)
+  Second - zsh (detached, id=second-XXXXXXXX)
+  Third - zsh (detached, id=third-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptLsRaw.test_raw_multiple_sessions[screen-bash]
+  '''
+  # Given session (name="Alpha")
+  # Given session (name="Beta")
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: alpha-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Alpha
+  default_name: term-1
+  display_label: Alpha (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  session_id: beta-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Beta
+  default_name: term-2
+  display_label: Beta (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptLsRaw.test_raw_multiple_sessions[screen-zsh]
+  '''
+  # Given session (name="Alpha")
+  # Given session (name="Beta")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: alpha-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Alpha
+  default_name: term-1
+  display_label: Alpha (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  session_id: beta-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Beta
+  default_name: term-2
+  display_label: Beta (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptLsRaw.test_raw_output_fields[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptLsRaw.test_raw_output_fields[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---

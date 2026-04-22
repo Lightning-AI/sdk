@@ -1,0 +1,585 @@
+# serializer version: 1
+# name: TestAttachDetachTip.test_tip_not_shown_with_exec[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id exec-no-tip"
+  # [pty1] Snapshot - no tip with exec
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachDetachTip.test_tip_not_shown_with_exec[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id exec-no-tip"
+  # [pty1] Snapshot - no tip with exec
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachDetachTip.test_tip_shown_on_interactive_attach[screen-bash]
+  '''
+  # Given session (name="Tipped")
+  # [pty1] Start: bash lightningterminal.sh attach --id tipped-XXXXXXXX
+  # The tip below is visible in real terminals (scrollback) but not in
+  # pyte snapshots — screen's redraw (ESC[H ESC[J) clears the display.
+  # Verified via wait_for assertion on the PTY stream:
+  #
+  #   ── Tip: detach with Ctrl+T, D (or lightningterminal.sh detach) ──
+  #
+  # [pty1] Snapshot - after attach (tip was shown before screen redraw)
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachDetachTip.test_tip_shown_on_interactive_attach[screen-zsh]
+  '''
+  # Given session (name="Tipped")
+  # [pty1] Start: zsh lightningterminal.sh attach --id tipped-XXXXXXXX
+  # The tip below is visible in real terminals (scrollback) but not in
+  # pyte snapshots — screen's redraw (ESC[H ESC[J) clears the display.
+  # Verified via wait_for assertion on the PTY stream:
+  #
+  #   ── Tip: detach with Ctrl+T, D (or lightningterminal.sh detach) ──
+  #
+  # [pty1] Snapshot - after attach (tip was shown before screen redraw)
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachDetachTip.test_tip_suppressed_by_quiet[screen-bash]
+  '''
+  # Given session (name="Quiet")
+  # [pty1] Start: bash lightningterminal.sh attach --id quiet-XXXXXXXX
+  # [pty1] Snapshot - no tip when quiet
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachDetachTip.test_tip_suppressed_by_quiet[screen-zsh]
+  '''
+  # Given session (name="Quiet")
+  # [pty1] Start: zsh lightningterminal.sh attach --id quiet-XXXXXXXX
+  # [pty1] Snapshot - no tip when quiet
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachWithMotd.test_motd_after_rc[screen-bash]
+  '''
+  # Given session (name="MotdAfter")
+  # [pty1] Start: bash lightningterminal.sh attach --id motdafter-XXXXXXXX
+  # [pty1] Snapshot - motd after lightningterminal.rc
+  Welcome to Lightning Studios
+  Documentation: https://docs.example.com
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachWithMotd.test_motd_after_rc[screen-zsh]
+  '''
+  # Given session (name="MotdAfter")
+  # [pty1] Start: zsh lightningterminal.sh attach --id motdafter-XXXXXXXX
+  # [pty1] Snapshot - motd after lightningterminal.rc
+  Welcome to Lightning Studios
+  Documentation: https://docs.example.com
+  $
+  
+  
+  '''
+# ---
+# name: TestAttachWithMotd.test_motd_before_rc[screen-bash]
+  '''
+  # Given session (name="MotdBefore")
+  # [pty1] Start: bash lightningterminal.sh attach --id motdbefore-XXXXXXXX
+  # [pty1] Snapshot - motd before lightningterminal.rc
+  $
+  See "man sudo_root" for details.
+  
+  
+  '''
+# ---
+# name: TestAttachWithMotd.test_motd_before_rc[screen-zsh]
+  '''
+  # Given session (name="MotdBefore")
+  # [pty1] Start: zsh lightningterminal.sh attach --id motdbefore-XXXXXXXX
+  # [pty1] Snapshot - motd before lightningterminal.rc
+  See "man sudo_root" for details.
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_creates_by_id[screen-bash]
+  '''
+  # [pty1] Start: bash lightningterminal.sh attach --id fresh-session
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  term-1 - bash (attached, id=fresh-session)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_creates_by_id[screen-zsh]
+  '''
+  # [pty1] Start: zsh lightningterminal.sh attach --id fresh-session
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  term-1 - zsh (attached, id=fresh-session)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_creates_by_name[screen-bash]
+  '''
+  # [pty1] Start: bash lightningterminal.sh attach --name BrandNew
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  BrandNew - bash (attached, id=brandnew-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_creates_by_name[screen-zsh]
+  '''
+  # [pty1] Start: zsh lightningterminal.sh attach --name BrandNew
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  BrandNew - zsh (attached, id=brandnew-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_no_create_nonexistent[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh attach --id nonexistent-id --no-create
+  [STDERR] error: no terminal session found with id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_no_create_nonexistent[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh attach --id nonexistent-id --no-create
+  [STDERR] error: no terminal session found with id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_no_create_requires_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh attach --no-create
+  [STDERR] error: --id or --name is required with --no-create
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_no_create_requires_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh attach --no-create
+  [STDERR] error: --id or --name is required with --no-create
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_reuses_existing_by_name[screen-bash]
+  '''
+  # Given session (name="Existing")
+  # [pty1] Start: bash lightningterminal.sh attach --name Existing
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: existing-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Existing
+  default_name: term-1
+  display_label: Existing (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_reuses_existing_by_name[screen-zsh]
+  '''
+  # Given session (name="Existing")
+  # [pty1] Start: zsh lightningterminal.sh attach --name Existing
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: existing-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Existing
+  default_name: term-1
+  display_label: Existing (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_shows_as_attached[screen-bash]
+  '''
+  # Given session (name="Target")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id target-XXXXXXXX
+  Target - bash (detached, id=target-XXXXXXXX)
+  
+  # [pty1] Start: bash lightningterminal.sh attach --id target-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh status --id target-XXXXXXXX
+  Target - bash (attached, id=target-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_attach_shows_as_attached[screen-zsh]
+  '''
+  # Given session (name="Target")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id target-XXXXXXXX
+  Target - zsh (detached, id=target-XXXXXXXX)
+  
+  # [pty1] Start: zsh lightningterminal.sh attach --id target-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id target-XXXXXXXX
+  Target - zsh (attached, id=target-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_detach_returns_to_detached[screen-bash]
+  '''
+  # Given session (name="Detachable")
+  # [pty1] Start: bash lightningterminal.sh attach --id detachable-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh status --id detachable-XXXXXXXX
+  Detachable - bash (attached, id=detachable-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --id detachable-XXXXXXXX
+  Detachable - bash (detached, id=detachable-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_detach_returns_to_detached[screen-zsh]
+  '''
+  # Given session (name="Detachable")
+  # [pty1] Start: zsh lightningterminal.sh attach --id detachable-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id detachable-XXXXXXXX
+  Detachable - zsh (attached, id=detachable-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id detachable-XXXXXXXX
+  Detachable - zsh (detached, id=detachable-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_pty_interaction[screen-bash]
+  '''
+  # Given session (name="Interactive")
+  # [pty1] Start: bash lightningterminal.sh attach --id interactive-XXXXXXXX
+  # [pty1] Send: echo PTY_MARKER_42\n
+  # [pty1] Snapshot - marker visible
+  $ echo PTY_MARKER_42
+  PTY_MARKER_42
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptAttach.test_pty_interaction[screen-zsh]
+  '''
+  # Given session (name="Interactive")
+  # [pty1] Start: zsh lightningterminal.sh attach --id interactive-XXXXXXXX
+  # [pty1] Send: echo PTY_MARKER_42\n
+  # [pty1] Snapshot - marker visible
+  $ echo PTY_MARKER_42
+  PTY_MARKER_42
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_anonymous[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec"
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  term-1 - bash (attached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_anonymous[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec"
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  term-1 - zsh (attached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_command_tracking[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id tracking"
+  # [pty1] Send: echo hello\n
+  # Execute: SHELL=bash bash lightningterminal.sh last_command --id tracking
+  echo
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_command_tracking[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id tracking"
+  # [pty1] Send: echo hello\n
+  # Execute: SHELL=zsh zsh lightningterminal.sh last_command --id tracking
+  echo
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_env_vars[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id env-check"
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Snapshot - env var is set
+  $ echo SID=$LIGHTNING_TERMINAL_SESSION_ID
+  SID=env-check
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_env_vars[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id env-check"
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Snapshot - env var is set
+  $ echo SID=$LIGHTNING_TERMINAL_SESSION_ID
+  SID=env-check
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_visible_in_status[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id status-check"
+  # Execute: SHELL=bash bash lightningterminal.sh status --id status-check
+  term-1 - bash (attached, id=status-check)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_visible_in_status[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id status-check"
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id status-check
+  term-1 - zsh (attached, id=status-check)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_with_explicit_id[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id my-test-session"
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  term-1 - bash (attached, id=my-test-session)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachExec.test_exec_with_explicit_id[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id my-test-session"
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  term-1 - zsh (attached, id=my-test-session)
+  
+  
+  '''
+# ---
+# name: TestScriptAttachSource.test_source_on_attach_create[screen-bash]
+  '''
+  # [pty1] Start: bash lightningterminal.sh attach --id agent-session --source agent
+  # Execute: SHELL=bash bash lightningterminal.sh status --id agent-session --raw
+  session_id: agent-session
+  pid: XXXXXXX
+  status: attached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: agent
+  
+  
+  '''
+# ---
+# name: TestScriptAttachSource.test_source_on_attach_create[screen-zsh]
+  '''
+  # [pty1] Start: zsh lightningterminal.sh attach --id agent-session --source agent
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id agent-session --raw
+  session_id: agent-session
+  pid: XXXXXXX
+  status: attached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: agent
+  
+  
+  '''
+# ---
+# name: TestScriptAttachSource.test_source_on_exec[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id platform-session --source platform"
+  # Execute: SHELL=bash bash lightningterminal.sh status --id platform-session --raw
+  session_id: platform-session
+  pid: XXXXXXX
+  status: attached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: platform
+  
+  
+  '''
+# ---
+# name: TestScriptAttachSource.test_source_on_exec[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id platform-session --source platform"
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id platform-session --raw
+  session_id: platform-session
+  pid: XXXXXXX
+  status: attached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: platform
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_by_name_to_current_errors[screen-bash]
+  '''
+  # Given session (name="Named")
+  # [pty1] Start: bash lightningterminal.sh attach --id named-XXXXXXXX
+  # [pty1] Send: lt attach --name Named --no-create\n
+  # [pty1] Snapshot - self-attach by name error
+  $ lt attach --name Named --no-create
+  error: cannot attach to session 'named-XXXXXXXX' — already inside it (or an ance
+  stor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_by_name_to_current_errors[screen-zsh]
+  '''
+  # Given session (name="Named")
+  # [pty1] Start: zsh lightningterminal.sh attach --id named-XXXXXXXX
+  # [pty1] Send: lt attach --name Named --no-create\n
+  # [pty1] Snapshot - self-attach by name error
+  $ lt attach --name Named --no-create
+  error: cannot attach to session 'named-XXXXXXXX' — already inside it (or an ance
+  stor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_ancestor_session_errors[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt attach --id outer-XXXXXXXX --no-create\n
+  # [pty1] Snapshot - ancestor-attach error
+  $ lt attach --id outer-XXXXXXXX --no-create
+  error: cannot attach to session 'outer-XXXXXXXX' — already inside it (or an ance
+  stor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_ancestor_session_errors[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt attach --id outer-XXXXXXXX --no-create\n
+  # [pty1] Snapshot - ancestor-attach error
+  $ lt attach --id outer-XXXXXXXX --no-create
+  error: cannot attach to session 'outer-XXXXXXXX' — already inside it (or an ance
+  stor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_current_session_errors[screen-bash]
+  '''
+  # Given session (name="Current")
+  # [pty1] Start: bash lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt attach --id current-XXXXXXXX --no-create\n
+  # [pty1] Snapshot - self-attach error
+  $ lt attach --id current-XXXXXXXX --no-create
+  error: cannot attach to session 'current-XXXXXXXX' — already inside it (or an an
+  cestor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_current_session_errors[screen-zsh]
+  '''
+  # Given session (name="Current")
+  # [pty1] Start: zsh lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt attach --id current-XXXXXXXX --no-create\n
+  # [pty1] Snapshot - self-attach error
+  $ lt attach --id current-XXXXXXXX --no-create
+  error: cannot attach to session 'current-XXXXXXXX' — already inside it (or an an
+  cestor)
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_different_session_still_works[screen-bash]
+  '''
+  # Given session (name="Current")
+  # Given session (name="Other")
+  # [pty1] Start: bash lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt attach --id other-XXXXXXXX\n
+  # [pty1] Send: echo MARKER_IN_OTHER\n
+  # [pty1] Snapshot - attach to sibling works
+  $ echo MARKER_IN_OTHER
+  MARKER_IN_OTHER
+  $
+  
+  
+  '''
+# ---
+# name: TestSelfAttachGuard.test_attach_to_different_session_still_works[screen-zsh]
+  '''
+  # Given session (name="Current")
+  # Given session (name="Other")
+  # [pty1] Start: zsh lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt attach --id other-XXXXXXXX\n
+  # [pty1] Send: echo MARKER_IN_OTHER\n
+  # [pty1] Snapshot - attach to sibling works
+  $ echo MARKER_IN_OTHER
+  MARKER_IN_OTHER
+  $
+  
+  
+  '''
+# ---

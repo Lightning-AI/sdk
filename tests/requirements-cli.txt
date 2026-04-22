@@ -1,0 +1,3 @@
+syrupy==5.1.0  # snapshot testing for CLI output
+pyte==0.8.2  # terminal emulator for PTY integration tests
+pytest-xdist==3.8.0  # parallel test execution, for when running locally

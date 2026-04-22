@@ -1,0 +1,177 @@
+# serializer version: 1
+# name: TestLtHelp.test_lt_dash_dash_help[screen-bash]
+  '''
+  # Given session (name="DashHelper")
+  # [pty1] Start: bash lightningterminal.sh attach --id dashhelper-XXXXXXXX
+  # [pty1] Send: lt --help\n
+  # [pty1] Snapshot - lt --help output
+  $ lt --help
+  Usage: lt <command> [args]
+  Commands:
+    ls [--raw]                            List all sessions
+    new [--id|--name <..>]  [--source X]  Create a session (detached)
+    attach [options]                      Attach to a new or existing session
+      --id <id>                           Session to attach to
+      --name <n>                          Find or create by name
+      --exec                              Replace process (for .lightningrc)
+      --no-create                         Error if session doesn't exist
+      --source <s>                        Source tag for the session
+    detach                                Detach from the current session
+    kill [--id|--name <..>]               Kill a session (default: current)
+    status [--id|--name <..>] [--raw]     Show session status (default: current)
+      --ancestors                         Include ancestor sessions (tree view)
+    send --id|--name <..> <cmd>           Send command to session
+    read --id|--name <..>                 Read session buffer
+    last_command --id|--name <..>         Last command for a session
+    rename [--id|--name <..>] <new_name>  Rename a session (default: current)
+    resolve [--by <f>] <target>           Resolve name/PID to session_id
+  Session identification:
+    --id <session_id>   Stable programmatic identifier [a-zA-Z0-9_-].
+                        Intended for scripts and tooling.
+    --name <name>       User-facing name shown in ls/status output.
+                        Matches terminal name or default name (term-<N>).
+                        Names are not unique — use --id if ambiguous.
+                        Sessions can be renamed with the rename command.
+  Keyboard shortcuts (inside a session):
+    Ctrl+T, D            Detach (works even when terminal is busy)
+    Ctrl+T, Ctrl+D       Detach (alternative)
+    Ctrl+T, Ctrl+T       Send literal Ctrl+T
+  Commands marked (default: current) fall back to the current
+  session if neither --id nor --name is provided.
+  $
+  
+  
+  '''
+# ---
+# name: TestLtHelp.test_lt_dash_dash_help[screen-zsh]
+  '''
+  # Given session (name="DashHelper")
+  # [pty1] Start: zsh lightningterminal.sh attach --id dashhelper-XXXXXXXX
+  # [pty1] Send: lt --help\n
+  # [pty1] Snapshot - lt --help output
+  $ lt --help
+  Usage: lt <command> [args]
+  Commands:
+    ls [--raw]                            List all sessions
+    new [--id|--name <..>]  [--source X]  Create a session (detached)
+    attach [options]                      Attach to a new or existing session
+      --id <id>                           Session to attach to
+      --name <n>                          Find or create by name
+      --exec                              Replace process (for .lightningrc)
+      --no-create                         Error if session doesn't exist
+      --source <s>                        Source tag for the session
+    detach                                Detach from the current session
+    kill [--id|--name <..>]               Kill a session (default: current)
+    status [--id|--name <..>] [--raw]     Show session status (default: current)
+      --ancestors                         Include ancestor sessions (tree view)
+    send --id|--name <..> <cmd>           Send command to session
+    read --id|--name <..>                 Read session buffer
+    last_command --id|--name <..>         Last command for a session
+    rename [--id|--name <..>] <new_name>  Rename a session (default: current)
+    resolve [--by <f>] <target>           Resolve name/PID to session_id
+  Session identification:
+    --id <session_id>   Stable programmatic identifier [a-zA-Z0-9_-].
+                        Intended for scripts and tooling.
+    --name <name>       User-facing name shown in ls/status output.
+                        Matches terminal name or default name (term-<N>).
+                        Names are not unique — use --id if ambiguous.
+                        Sessions can be renamed with the rename command.
+  Keyboard shortcuts (inside a session):
+    Ctrl+T, D            Detach (works even when terminal is busy)
+    Ctrl+T, Ctrl+D       Detach (alternative)
+    Ctrl+T, Ctrl+T       Send literal Ctrl+T
+  Commands marked (default: current) fall back to the current
+  session if neither --id nor --name is provided.
+  $
+  
+  
+  '''
+# ---
+# name: TestLtHelp.test_lt_help[screen-bash]
+  '''
+  # Given session (name="Helper")
+  # [pty1] Start: bash lightningterminal.sh attach --id helper-XXXXXXXX
+  # [pty1] Send: lt help\n
+  # [pty1] Snapshot - lt help output
+  $ lt help
+  Usage: lt <command> [args]
+  Commands:
+    ls [--raw]                            List all sessions
+    new [--id|--name <..>]  [--source X]  Create a session (detached)
+    attach [options]                      Attach to a new or existing session
+      --id <id>                           Session to attach to
+      --name <n>                          Find or create by name
+      --exec                              Replace process (for .lightningrc)
+      --no-create                         Error if session doesn't exist
+      --source <s>                        Source tag for the session
+    detach                                Detach from the current session
+    kill [--id|--name <..>]               Kill a session (default: current)
+    status [--id|--name <..>] [--raw]     Show session status (default: current)
+      --ancestors                         Include ancestor sessions (tree view)
+    send --id|--name <..> <cmd>           Send command to session
+    read --id|--name <..>                 Read session buffer
+    last_command --id|--name <..>         Last command for a session
+    rename [--id|--name <..>] <new_name>  Rename a session (default: current)
+    resolve [--by <f>] <target>           Resolve name/PID to session_id
+  Session identification:
+    --id <session_id>   Stable programmatic identifier [a-zA-Z0-9_-].
+                        Intended for scripts and tooling.
+    --name <name>       User-facing name shown in ls/status output.
+                        Matches terminal name or default name (term-<N>).
+                        Names are not unique — use --id if ambiguous.
+                        Sessions can be renamed with the rename command.
+  Keyboard shortcuts (inside a session):
+    Ctrl+T, D            Detach (works even when terminal is busy)
+    Ctrl+T, Ctrl+D       Detach (alternative)
+    Ctrl+T, Ctrl+T       Send literal Ctrl+T
+  Commands marked (default: current) fall back to the current
+  session if neither --id nor --name is provided.
+  $
+  
+  
+  '''
+# ---
+# name: TestLtHelp.test_lt_help[screen-zsh]
+  '''
+  # Given session (name="Helper")
+  # [pty1] Start: zsh lightningterminal.sh attach --id helper-XXXXXXXX
+  # [pty1] Send: lt help\n
+  # [pty1] Snapshot - lt help output
+  $ lt help
+  Usage: lt <command> [args]
+  Commands:
+    ls [--raw]                            List all sessions
+    new [--id|--name <..>]  [--source X]  Create a session (detached)
+    attach [options]                      Attach to a new or existing session
+      --id <id>                           Session to attach to
+      --name <n>                          Find or create by name
+      --exec                              Replace process (for .lightningrc)
+      --no-create                         Error if session doesn't exist
+      --source <s>                        Source tag for the session
+    detach                                Detach from the current session
+    kill [--id|--name <..>]               Kill a session (default: current)
+    status [--id|--name <..>] [--raw]     Show session status (default: current)
+      --ancestors                         Include ancestor sessions (tree view)
+    send --id|--name <..> <cmd>           Send command to session
+    read --id|--name <..>                 Read session buffer
+    last_command --id|--name <..>         Last command for a session
+    rename [--id|--name <..>] <new_name>  Rename a session (default: current)
+    resolve [--by <f>] <target>           Resolve name/PID to session_id
+  Session identification:
+    --id <session_id>   Stable programmatic identifier [a-zA-Z0-9_-].
+                        Intended for scripts and tooling.
+    --name <name>       User-facing name shown in ls/status output.
+                        Matches terminal name or default name (term-<N>).
+                        Names are not unique — use --id if ambiguous.
+                        Sessions can be renamed with the rename command.
+  Keyboard shortcuts (inside a session):
+    Ctrl+T, D            Detach (works even when terminal is busy)
+    Ctrl+T, Ctrl+D       Detach (alternative)
+    Ctrl+T, Ctrl+T       Send literal Ctrl+T
+  Commands marked (default: current) fall back to the current
+  session if neither --id nor --name is provided.
+  $
+  
+  
+  '''
+# ---

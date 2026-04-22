@@ -1,0 +1,177 @@
+# serializer version: 1
+# name: TestScriptResolve.test_resolve_not_found[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh resolve nonexistent
+  [STDERR] error: no session found matching 'nonexistent'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptResolve.test_resolve_not_found[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve nonexistent
+  [STDERR] error: no session found matching 'nonexistent'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_ambiguous_name[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh resolve --by terminal_name Worker
+  [STDERR] error: multiple sessions match 'Worker'
+  [STDERR]   Worker - bash (detached, id=worker-XXXXXXXX)
+  [STDERR]   Worker - bash (detached, id=worker-XXXXXXXX)
+  [STDERR] Use --id to specify which session.
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_ambiguous_name[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve --by terminal_name Worker
+  [STDERR] error: multiple sessions match 'Worker'
+  [STDERR]   Worker - zsh (detached, id=worker-XXXXXXXX)
+  [STDERR]   Worker - zsh (detached, id=worker-XXXXXXXX)
+  [STDERR] Use --id to specify which session.
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_any[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh resolve Backend
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_any[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve Backend
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_default_name[screen-bash]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=bash bash lightningterminal.sh resolve --by default_name term-1
+  session-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_default_name[screen-zsh]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve --by default_name term-1
+  session-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_pid[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=bash bash lightningterminal.sh resolve --by pid XXXXXXX
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_pid[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve --by pid XXXXXXX
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_session_id[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh resolve --by session_id backend-XXXXXXXX
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_session_id[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve --by session_id backend-XXXXXXXX
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_terminal_name[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh resolve --by terminal_name Backend
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestScriptResolveFields.test_resolve_by_terminal_name[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh resolve --by terminal_name Backend
+  backend-XXXXXXXX
+  
+  
+  '''
+# ---

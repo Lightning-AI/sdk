@@ -1,0 +1,369 @@
+# serializer version: 1
+# name: TestScriptNew.test_anonymous_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_anonymous_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_duplicate_session_id_rejected[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name first
+  session_id: first-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: first
+  
+  # Execute: SHELL=bash bash lightningterminal.sh new --id first-XXXXXXXX
+  [STDERR] error: session 'first-XXXXXXXX' already exists
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_duplicate_session_id_rejected[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name first
+  session_id: first-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: first
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --id first-XXXXXXXX
+  [STDERR] error: session 'first-XXXXXXXX' already exists
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_explicit_session_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --id my-valid_id-XXXXXXX
+  session_id: my-valid_id-XXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_explicit_session_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --id my-valid_id-XXXXXXX
+  session_id: my-valid_id-XXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_invalid_session_id_rejected[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --id bad session id!
+  [STDERR] error: session_id 'bad session id!' contains invalid characters (only a-z, A-Z, 0-9, _, - allowed)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_invalid_session_id_rejected[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --id bad session id!
+  [STDERR] error: session_id 'bad session id!' contains invalid characters (only a-z, A-Z, 0-9, _, - allowed)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_name_sanitised_in_session_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name My Service!!!
+  session_id: my-service-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: My Service!!!
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_name_sanitised_in_session_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name My Service!!!
+  session_id: my-service-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: My Service!!!
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_named_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name Backend
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_named_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name Backend
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_named_with_explicit_id[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --id custom-id --name My Service
+  session_id: custom-id
+  pid: XXXXXXX
+  status: detached
+  terminal_name: My Service
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_named_with_explicit_id[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --id custom-id --name My Service
+  session_id: custom-id
+  pid: XXXXXXX
+  status: detached
+  terminal_name: My Service
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_spaces_in_session_id_rejected[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --id has spaces
+  [STDERR] error: session_id 'has spaces' contains invalid characters (only a-z, A-Z, 0-9, _, - allowed)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNew.test_spaces_in_session_id_rejected[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --id has spaces
+  [STDERR] error: session_id 'has spaces' contains invalid characters (only a-z, A-Z, 0-9, _, - allowed)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_invalid_source_rejected[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name Bad --source unknown
+  [STDERR] error: --source must be one of: platform, user, agent, application
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_invalid_source_rejected[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name Bad --source unknown
+  [STDERR] error: --source must be one of: platform, user, agent, application
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_no_source[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name Plain
+  session_id: plain-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Plain
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: plain-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Plain
+  default_name: term-1
+  display_label: Plain (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_no_source[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name Plain
+  session_id: plain-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Plain
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: plain-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Plain
+  default_name: term-1
+  display_label: Plain (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_appears_in_raw_ls[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name AgentTask --source agent
+  session_id: agenttask-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: AgentTask
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: agenttask-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: AgentTask
+  default_name: term-1
+  display_label: AgentTask (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: agent
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_appears_in_raw_ls[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name AgentTask --source agent
+  session_id: agenttask-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: AgentTask
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: agenttask-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: AgentTask
+  default_name: term-1
+  display_label: AgentTask (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: agent
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_platform[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --name Studio --source platform
+  session_id: studio-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Studio
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: studio-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Studio
+  default_name: term-1
+  display_label: Studio (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: platform
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_platform[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --name Studio --source platform
+  session_id: studio-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Studio
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: studio-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Studio
+  default_name: term-1
+  display_label: Studio (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: platform
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_without_name[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh new --source application
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: application
+  
+  
+  '''
+# ---
+# name: TestScriptNewSource.test_source_without_name[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh new --source application
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name:
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  source: application
+  
+  
+  '''
+# ---

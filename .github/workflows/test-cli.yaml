@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-22.04", "macos-14"]  # todo: add "windows-2022"
+        os: ["ubuntu-24.04", "macos-14"]  # todo: add "windows-2022"
         python-version: ["3.12"]
         install-extras: ["", "serve"]
     timeout-minutes: 10
@@ -31,12 +31,53 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip' # caching pip dependencies
 
+    # Install zsh for terminal integration tests (script must work in both bash and zsh)
+    - name: Install zsh
+      if: runner.os == 'Linux'
+      run: sudo apt-get update -qq && sudo apt-get install -y -qq zsh
+
+    # Install GNU screen 5.x for terminal integration tests.
+    # Studios ship screen 5.0.1 (built from source in base-images repo).
+    # We build from source here to match. The build is cached across runs.
+    # TODO: Switch to downloading the pre-built .deb from S3 once CI has
+    #       access to the screen-builds bucket (see base-images/build-screen.yml).
+    - name: Cache screen build
+      if: runner.os == 'Linux'
+      id: cache-screen
+      uses: actions/cache@v4
+      with:
+        path: /tmp/screen-build/screen.deb
+        key: screen-5.0.1-${{ matrix.os }}
+
+    - name: Build screen 5.0.1 from source
+      if: runner.os == 'Linux' && steps.cache-screen.outputs.cache-hit != 'true'
+      run: |
+        set -euo pipefail
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq autoconf automake build-essential libncurses5-dev libpam0g-dev checkinstall
+
+        mkdir -p /tmp/screen-build && cd /tmp/screen-build
+        wget -q "https://ftp.gnu.org/gnu/screen/screen-5.0.1.tar.gz"
+        tar -xzf screen-5.0.1.tar.gz
+        cd screen-5.0.1
+        ./autogen.sh
+        ./configure --prefix=/usr --enable-colors256 --with-socket-dir=/var/run/screen --enable-socket-dir
+        make -j$(nproc)
+        sudo checkinstall -y --pkgname=screen --pkgversion=5.0.1
+        cp *.deb /tmp/screen-build/screen.deb
+
+    - name: Install screen 5.0.1
+      if: runner.os == 'Linux'
+      run: |
+        sudo dpkg -i /tmp/screen-build/screen.deb || sudo apt-get install -f -y
+        screen --version
+
     - name: Install package and test dependencies
-      run: pip install . --upgrade -r tests/requirements.txt
+      run: pip install . --upgrade -r tests/requirements.txt -r tests/requirements-cli.txt
 
     - name: Re-Install dependencies with `${{ matrix.install-extras }}`
       if: ${{ matrix.install-extras != '' }}
-      run: pip install '.[${{ matrix.install-extras }}]' --upgrade -r tests/requirements.txt
+      run: pip install '.[${{ matrix.install-extras }}]' --upgrade -r tests/requirements.txt -r tests/requirements-cli.txt
 
     - name: show pip list
       run: pip list
@@ -52,6 +93,7 @@ jobs:
       env: # the following values are just dummies since the actual http calls are mocked out
         LIGHTNING_USER_ID: ${{ secrets.LIGHTNING_USER_ID }}
         LIGHTNING_API_KEY: ${{ secrets.LIGHTNING_API_KEY }}
+        LIGHTNING_TERMINAL_CI_REQUIRE_BACKEND: ${{ runner.os == 'Linux' && '1' || '0' }}
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
         coverage run --source lightning_sdk -m pytest cli/ -vv -s

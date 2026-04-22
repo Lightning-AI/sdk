@@ -1,0 +1,599 @@
+# serializer version: 1
+# name: TestScriptStatus.test_ambiguous_name[screen-bash]
+  '''
+  # Given session (name="Duplicate")
+  # Given session (name="Duplicate")
+  # Execute: SHELL=bash bash lightningterminal.sh status --name Duplicate
+  [STDERR] error: multiple sessions match 'Duplicate'
+  [STDERR]   Duplicate - bash (detached, id=duplicate-XXXXXXXX)
+  [STDERR]   Duplicate - bash (detached, id=duplicate-XXXXXXXX)
+  [STDERR] Use --id to specify which session.
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_ambiguous_name[screen-zsh]
+  '''
+  # Given session (name="Duplicate")
+  # Given session (name="Duplicate")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --name Duplicate
+  [STDERR] error: multiple sessions match 'Duplicate'
+  [STDERR]   Duplicate - zsh (detached, id=duplicate-XXXXXXXX)
+  [STDERR]   Duplicate - zsh (detached, id=duplicate-XXXXXXXX)
+  [STDERR] Use --id to specify which session.
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_anonymous_session[screen-bash]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=bash bash lightningterminal.sh status --id session-XXXXXXXX
+  term-1 - bash (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_anonymous_session[screen-zsh]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id session-XXXXXXXX
+  term-1 - zsh (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_by_default_name[screen-bash]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=bash bash lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --name term-1
+  term-1 - bash (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_by_default_name[screen-zsh]
+  '''
+  # Given session (name=<anon>)
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls --raw
+  session_id: session-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: 
+  default_name: term-1
+  display_label: term-1 (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --name term-1
+  term-1 - zsh (detached, id=session-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_by_name[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh status --name Backend
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_by_name[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --name Backend
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_nonexistent_name[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh status --name nonexistent
+  [STDERR] error: no session found matching 'nonexistent'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_nonexistent_name[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --name nonexistent
+  [STDERR] error: no session found matching 'nonexistent'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_nonexistent_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh status --id nonexistent-session
+  [STDERR] error: no terminal session found with session_id 'nonexistent-session'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_nonexistent_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id nonexistent-session
+  [STDERR] error: no terminal session found with session_id 'nonexistent-session'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_contains_name_status_id[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id backend-XXXXXXXX
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_contains_name_status_id[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id backend-XXXXXXXX
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_shows_last_command[screen-bash]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=bash bash lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=bash bash lightningterminal.sh status --id worker-XXXXXXXX
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_shows_last_command[screen-zsh]
+  '''
+  # Given session (name="Worker")
+  # Execute: SHELL=zsh zsh lightningterminal.sh send --id worker-XXXXXXXX echo hello
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id worker-XXXXXXXX
+  Worker - echo (detached, id=worker-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_vs_raw[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id backend-XXXXXXXX
+  Backend - bash (detached, id=backend-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_oneliner_vs_raw[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id backend-XXXXXXXX
+  Backend - zsh (detached, id=backend-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_status_current_session[screen-bash]
+  '''
+  # Given session (name="Current")
+  # [pty1] Start: bash lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt status\n
+  # [pty1] Snapshot - status output from inside session
+  $ lt status
+  Current - lt (attached, id=current-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_status_current_session[screen-zsh]
+  '''
+  # Given session (name="Current")
+  # [pty1] Start: zsh lightningterminal.sh attach --id current-XXXXXXXX
+  # [pty1] Send: lt status\n
+  # [pty1] Snapshot - status output from inside session
+  $ lt status
+  Current - lt (attached, id=current-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_status_no_session_errors[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh status
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh status [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatus.test_status_no_session_errors[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh status
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh status [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptStatusRaw.test_raw_named_session[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptStatusRaw.test_raw_named_session[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptStatusRaw.test_raw_output_fields[screen-bash]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestScriptStatusRaw.test_raw_output_fields[screen-zsh]
+  '''
+  # Given session (name="Backend")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id backend-XXXXXXXX --raw
+  session_id: backend-XXXXXXXX
+  pid: XXXXXXX
+  status: detached
+  terminal_name: Backend
+  default_name: term-1
+  display_label: Backend (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_from_inside_session[screen-bash]
+  '''
+  # Given session (name="MySession")
+  # [pty1] Start: bash lightningterminal.sh attach --id mysession-XXXXXXXX
+  # [pty1] Send: lt status --ancestors\n
+  # [pty1] Snapshot - ancestors from inside session
+  $ lt status --ancestors
+  MySession - lt (attached, id=mysession-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_from_inside_session[screen-zsh]
+  '''
+  # Given session (name="MySession")
+  # [pty1] Start: zsh lightningterminal.sh attach --id mysession-XXXXXXXX
+  # [pty1] Send: lt status --ancestors\n
+  # [pty1] Snapshot - ancestors from inside session
+  $ lt status --ancestors
+  MySession - lt (attached, id=mysession-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_nested_shows_both[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --ancestors\n
+  # [pty1] Snapshot - ancestors from nested session
+  $ lt status --ancestors
+  Inner - lt (attached, id=inner-XXXXXXXX)
+  └─ Outer - lt (attached, id=outer-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_nested_shows_both[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --ancestors\n
+  # [pty1] Snapshot - ancestors from nested session
+  $ lt status --ancestors
+  Inner - lt (attached, id=inner-XXXXXXXX)
+  └─ Outer - lt (attached, id=outer-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_outside_session_is_empty[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh status --ancestors
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_outside_session_is_empty[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --ancestors
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_outside_session_raw_is_empty[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh status --ancestors --raw
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_outside_session_raw_is_empty[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --ancestors --raw
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_raw_from_inside_session[screen-bash]
+  '''
+  # Given session (name="RawTest")
+  # [pty1] Start: bash lightningterminal.sh attach --id rawtest-XXXXXXXX
+  # [pty1] Send: lt status --ancestors --raw\n
+  # [pty1] Snapshot - ancestors raw from inside session
+  $ lt status --ancestors --raw
+  session_id: rawtest-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: RawTest
+  default_name: term-1
+  display_label: RawTest (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_raw_from_inside_session[screen-zsh]
+  '''
+  # Given session (name="RawTest")
+  # [pty1] Start: zsh lightningterminal.sh attach --id rawtest-XXXXXXXX
+  # [pty1] Send: lt status --ancestors --raw\n
+  # [pty1] Snapshot - ancestors raw from inside session
+  $ lt status --ancestors --raw
+  session_id: rawtest-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: RawTest
+  default_name: term-1
+  display_label: RawTest (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  $
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_tree_fan_out_raw[screen-bash]
+  '''
+  # Given session (name="GrandparentA")
+  # Given session (name="ParentA")
+  # Given session (name="ParentB")
+  # Given session (name="Child")
+  # [pty1] Start: bash lightningterminal.sh attach --id grandparenta-XXXXXXXX
+  # [pty1] Send: lt attach --id parenta-XXXXXXXX\n
+  # [pty1] Send: lt attach --id child-XXXXXXXX\n
+  # [pty2] Start: bash lightningterminal.sh attach --id parentb-XXXXXXXX
+  # [pty2] Send: lt attach --id child-XXXXXXXX\n
+  # Execute: SHELL=bash bash lightningterminal.sh status --ancestors --id child-XXXXXXXX --raw
+  session_id: child-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Child
+  default_name: term-4
+  display_label: Child (bash)
+  last_command: bash
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  session_id: parenta-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: ParentA
+  default_name: term-2
+  display_label: ParentA (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: child-XXXXXXXX
+  
+  
+  session_id: grandparenta-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: GrandparentA
+  default_name: term-1
+  display_label: GrandparentA (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: parenta-XXXXXXXX
+  
+  
+  session_id: parentb-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: ParentB
+  default_name: term-3
+  display_label: ParentB (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: child-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_tree_fan_out_raw[screen-zsh]
+  '''
+  # Given session (name="GrandparentA")
+  # Given session (name="ParentA")
+  # Given session (name="ParentB")
+  # Given session (name="Child")
+  # [pty1] Start: zsh lightningterminal.sh attach --id grandparenta-XXXXXXXX
+  # [pty1] Send: lt attach --id parenta-XXXXXXXX\n
+  # [pty1] Send: lt attach --id child-XXXXXXXX\n
+  # [pty2] Start: zsh lightningterminal.sh attach --id parentb-XXXXXXXX
+  # [pty2] Send: lt attach --id child-XXXXXXXX\n
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --ancestors --id child-XXXXXXXX --raw
+  session_id: child-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Child
+  default_name: term-4
+  display_label: Child (zsh)
+  last_command: zsh
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
+  session_id: parenta-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: ParentA
+  default_name: term-2
+  display_label: ParentA (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: child-XXXXXXXX
+  
+  
+  session_id: grandparenta-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: GrandparentA
+  default_name: term-1
+  display_label: GrandparentA (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: parenta-XXXXXXXX
+  
+  
+  session_id: parentb-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: ParentB
+  default_name: term-3
+  display_label: ParentB (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: child-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_tree_with_fan_out[screen-bash]
+  '''
+  # Given session (name="GrandparentA")
+  # Given session (name="ParentA")
+  # Given session (name="ParentB")
+  # Given session (name="Child")
+  # [pty1] Start: bash lightningterminal.sh attach --id grandparenta-XXXXXXXX
+  # [pty1] Send: lt attach --id parenta-XXXXXXXX\n
+  # [pty1] Send: lt attach --id child-XXXXXXXX\n
+  # [pty2] Start: bash lightningterminal.sh attach --id parentb-XXXXXXXX
+  # [pty2] Send: lt attach --id child-XXXXXXXX\n
+  # Execute: SHELL=bash bash lightningterminal.sh status --ancestors --id child-XXXXXXXX
+  Child - bash (attached, id=child-XXXXXXXX)
+  ├─ ParentA - lt (attached, id=parenta-XXXXXXXX)
+  │  └─ GrandparentA - lt (attached, id=grandparenta-XXXXXXXX)
+  └─ ParentB - lt (attached, id=parentb-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestStatusAncestors.test_ancestors_tree_with_fan_out[screen-zsh]
+  '''
+  # Given session (name="GrandparentA")
+  # Given session (name="ParentA")
+  # Given session (name="ParentB")
+  # Given session (name="Child")
+  # [pty1] Start: zsh lightningterminal.sh attach --id grandparenta-XXXXXXXX
+  # [pty1] Send: lt attach --id parenta-XXXXXXXX\n
+  # [pty1] Send: lt attach --id child-XXXXXXXX\n
+  # [pty2] Start: zsh lightningterminal.sh attach --id parentb-XXXXXXXX
+  # [pty2] Send: lt attach --id child-XXXXXXXX\n
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --ancestors --id child-XXXXXXXX
+  Child - zsh (attached, id=child-XXXXXXXX)
+  ├─ ParentA - lt (attached, id=parenta-XXXXXXXX)
+  │  └─ GrandparentA - lt (attached, id=grandparenta-XXXXXXXX)
+  └─ ParentB - lt (attached, id=parentb-XXXXXXXX)
+  
+  
+  '''
+# ---

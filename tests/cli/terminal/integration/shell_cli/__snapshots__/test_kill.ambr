@@ -1,0 +1,217 @@
+# serializer version: 1
+# name: TestScriptKill.test_kill_and_verify[screen-bash]
+  '''
+  # Given session (name="Doomed")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Doomed - bash (detached, id=doomed-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id doomed-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_and_verify[screen-zsh]
+  '''
+  # Given session (name="Doomed")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Doomed - zsh (detached, id=doomed-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id doomed-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_attached_session[screen-bash]
+  '''
+  # Given session (name="Attached")
+  # [pty1] Start: bash lightningterminal.sh attach --id attached-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id attached-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_attached_session[screen-zsh]
+  '''
+  # Given session (name="Attached")
+  # [pty1] Start: zsh lightningterminal.sh attach --id attached-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id attached-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_by_name[screen-bash]
+  '''
+  # Given session (name="Doomed")
+  # Execute: SHELL=bash bash lightningterminal.sh kill --name Doomed
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_by_name[screen-zsh]
+  '''
+  # Given session (name="Doomed")
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --name Doomed
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_cleans_metadata[screen-bash]
+  '''
+  # Given session (name="Cleanup")
+  # Execute: SHELL=bash bash lightningterminal.sh status --id cleanup-XXXXXXXX
+  Cleanup - bash (detached, id=cleanup-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id cleanup-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh status --id cleanup-XXXXXXXX
+  [STDERR] error: no terminal session found with session_id 'cleanup-XXXXXXXX'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_cleans_metadata[screen-zsh]
+  '''
+  # Given session (name="Cleanup")
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id cleanup-XXXXXXXX
+  Cleanup - zsh (detached, id=cleanup-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id cleanup-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id cleanup-XXXXXXXX
+  [STDERR] error: no terminal session found with session_id 'cleanup-XXXXXXXX'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_current_session[screen-bash]
+  '''
+  # Given session (name="Doomed")
+  # [pty1] Start: bash lightningterminal.sh attach --id doomed-XXXXXXXX
+  # [pty1] Send: lt kill\n
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_current_session[screen-zsh]
+  '''
+  # Given session (name="Doomed")
+  # [pty1] Start: zsh lightningterminal.sh attach --id doomed-XXXXXXXX
+  # [pty1] Send: lt kill\n
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_no_session_errors[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh kill
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh kill [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_no_session_errors[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill
+  [STDERR] error: --id is required (not inside a session)
+  [STDERR] Usage: lightningterminal.sh kill [--id <session_id>]
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_nonexistent_session[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id nonexistent-id
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_nonexistent_session[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id nonexistent-id
+  [STDERR] error: no terminal session found with session_id 'nonexistent-id'
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_one_of_multiple[screen-bash]
+  '''
+  # Given session (name="Survivor")
+  # Given session (name="Victim")
+  # Execute: SHELL=bash bash lightningterminal.sh kill --id victim-XXXXXXXX
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  Survivor - bash (detached, id=survivor-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_one_of_multiple[screen-zsh]
+  '''
+  # Given session (name="Survivor")
+  # Given session (name="Victim")
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill --id victim-XXXXXXXX
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  Survivor - zsh (detached, id=survivor-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_positional_arg_rejected[screen-bash]
+  '''
+  # Given session (name="DontKillMe")
+  # Execute: SHELL=bash bash lightningterminal.sh kill DontKillMe
+  [STDERR] error: unexpected argument: DontKillMe
+  exit: 1
+  
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  DontKillMe - bash (detached, id=dontkillme-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_kill_positional_arg_rejected[screen-zsh]
+  '''
+  # Given session (name="DontKillMe")
+  # Execute: SHELL=zsh zsh lightningterminal.sh kill DontKillMe
+  [STDERR] error: unexpected argument: DontKillMe
+  exit: 1
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  DontKillMe - zsh (detached, id=dontkillme-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestScriptKill.test_two_clients_one_exits[screen-bash]
+  '''
+  # Given session (name="Shared")
+  # [pty1] Start: bash lightningterminal.sh attach --id shared-XXXXXXXX
+  # [pty2] Start: bash lightningterminal.sh attach --id shared-XXXXXXXX
+  # [pty1] Send: echo FROM_CLIENT_A\n
+  # [pty2] Snapshot - B sees A's echo
+  $ echo FROM_CLIENT_A
+  FROM_CLIENT_A
+  $
+  
+  # [pty2] Send: exit\n
+  
+  '''
+# ---
+# name: TestScriptKill.test_two_clients_one_exits[screen-zsh]
+  '''
+  # Given session (name="Shared")
+  # [pty1] Start: zsh lightningterminal.sh attach --id shared-XXXXXXXX
+  # [pty2] Start: zsh lightningterminal.sh attach --id shared-XXXXXXXX
+  # [pty1] Send: echo FROM_CLIENT_A\n
+  # [pty2] Snapshot - B sees A's echo
+  $ echo FROM_CLIENT_A
+  FROM_CLIENT_A
+  $
+  
+  # [pty2] Send: exit\n
+  
+  '''
+# ---

@@ -1,0 +1,15 @@
+# serializer version: 1
+# name: TestDetachFromExecSession.test_session_survives_detach[screen-bash]
+  '''
+  # [pty1] Start: bash -c "exec lightningterminal.sh attach --exec --id exec-test"
+  # [pty1] Send: lt detach\n
+  
+  '''
+# ---
+# name: TestDetachFromExecSession.test_session_survives_detach[screen-zsh]
+  '''
+  # [pty1] Start: zsh -c "exec lightningterminal.sh attach --exec --id exec-test"
+  # [pty1] Send: lt detach\n
+  
+  '''
+# ---

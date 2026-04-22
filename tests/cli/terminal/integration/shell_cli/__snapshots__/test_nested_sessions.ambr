@@ -1,0 +1,95 @@
+# serializer version: 1
+# name: TestAttachFromInsideSession.test_attach_inner_from_outer[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: echo INNER_MARKER\n
+  
+  '''
+# ---
+# name: TestAttachFromInsideSession.test_attach_inner_from_outer[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: echo INNER_MARKER\n
+  
+  '''
+# ---
+# name: TestAttachFromInsideSession.test_delegation_metadata[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # Execute: SHELL=bash bash lightningterminal.sh status --id outer-XXXXXXXX --raw
+  session_id: outer-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Outer
+  default_name: term-1
+  display_label: Outer (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: inner-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestAttachFromInsideSession.test_delegation_metadata[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id outer-XXXXXXXX --raw
+  session_id: outer-XXXXXXXX
+  pid: XXXXXXX
+  status: attached
+  terminal_name: Outer
+  default_name: term-1
+  display_label: Outer (lt)
+  last_command: lt
+  created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  delegated_to: inner-XXXXXXXX
+  
+  
+  '''
+# ---
+# name: TestNestedSessions.test_second_session_has_own_identity[screen-bash]
+  '''
+  # Given session (name="First")
+  # Given session (name="Second")
+  # Execute: SHELL=bash bash lightningterminal.sh ls
+  First - bash (detached, id=first-XXXXXXXX)
+  Second - bash (detached, id=second-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --id first-XXXXXXXX
+  First - bash (detached, id=first-XXXXXXXX)
+  
+  # Execute: SHELL=bash bash lightningterminal.sh status --id second-XXXXXXXX
+  Second - bash (detached, id=second-XXXXXXXX)
+  
+  
+  '''
+# ---
+# name: TestNestedSessions.test_second_session_has_own_identity[screen-zsh]
+  '''
+  # Given session (name="First")
+  # Given session (name="Second")
+  # Execute: SHELL=zsh zsh lightningterminal.sh ls
+  First - zsh (detached, id=first-XXXXXXXX)
+  Second - zsh (detached, id=second-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id first-XXXXXXXX
+  First - zsh (detached, id=first-XXXXXXXX)
+  
+  # Execute: SHELL=zsh zsh lightningterminal.sh status --id second-XXXXXXXX
+  Second - zsh (detached, id=second-XXXXXXXX)
+  
+  
+  '''
+# ---

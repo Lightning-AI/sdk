@@ -1,0 +1,291 @@
+# serializer version: 1
+# name: TestKeyboardDetach.test_ctrl_t_ctrl_d_detaches[screen-bash]
+  '''
+  # Given session (name="Target")
+  # [pty1] Start: bash lightningterminal.sh attach --id target-XXXXXXXX
+  # [pty1] Send: 
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_ctrl_d_detaches[screen-zsh]
+  '''
+  # Given session (name="Target")
+  # [pty1] Start: zsh lightningterminal.sh attach --id target-XXXXXXXX
+  # [pty1] Send: 
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_ctrl_t_sends_literal[screen-bash]
+  '''
+  # Given session (name="Typing")
+  # [pty1] Start: bash lightningterminal.sh attach --id typing-XXXXXXXX
+  # [pty1] Send: 
+  # [pty1] Send: lt status\n
+  # [pty1] Snapshot - still attached after Ctrl+T Ctrl+T
+  $ lt status
+  Typing - lt (attached, id=typing-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_ctrl_t_sends_literal[screen-zsh]
+  '''
+  # Given session (name="Typing")
+  # [pty1] Start: zsh lightningterminal.sh attach --id typing-XXXXXXXX
+  # [pty1] Send: 
+  # [pty1] Send: lt status\n
+  # [pty1] Snapshot - still attached after Ctrl+T Ctrl+T
+  $ lt status
+  Typing - lt (attached, id=typing-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_d_detaches[screen-bash]
+  '''
+  # Given session (name="Target")
+  # [pty1] Start: bash lightningterminal.sh attach --id target-XXXXXXXX
+  # [pty1] Send: lt status\n
+  # [pty1] Send: d
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_d_detaches[screen-zsh]
+  '''
+  # Given session (name="Target")
+  # [pty1] Start: zsh lightningterminal.sh attach --id target-XXXXXXXX
+  # [pty1] Send: lt status\n
+  # [pty1] Send: d
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_d_detaches_inner_not_outer[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Send: d
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id outer-XXXXXXXX\n
+  # [pty1] Snapshot - back in outer after Ctrl+T D
+  $ lt attach --id inner-XXXXXXXX
+  [detached from XXXXXXX.inner-XXXXXXXX]
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (detached, id=inner-XXXXXXXX)
+  $ lt status --id outer-XXXXXXXX
+  Outer - lt (attached, id=outer-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestKeyboardDetach.test_ctrl_t_d_detaches_inner_not_outer[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Send: d
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id outer-XXXXXXXX\n
+  # [pty1] Snapshot - back in outer after Ctrl+T D
+  $ lt attach --id inner-XXXXXXXX
+  [detached from XXXXXXX.inner-XXXXXXXX]
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (detached, id=inner-XXXXXXXX)
+  $ lt status --id outer-XXXXXXXX
+  Outer - lt (attached, id=outer-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestNestedDetach.test_four_levels_unwind[screen-bash]
+  '''
+  # Given session (name="L1")
+  # Given session (name="L2")
+  # Given session (name="L3")
+  # Given session (name="L4")
+  # [pty1] Start: bash lightningterminal.sh attach --id l1-XXXXXXXX
+  # [pty1] Send: lt attach --id l2-XXXXXXXX\n
+  # [pty1] Send: lt attach --id l3-XXXXXXXX\n
+  # [pty1] Send: lt attach --id l4-XXXXXXXX\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  
+  '''
+# ---
+# name: TestNestedDetach.test_four_levels_unwind[screen-zsh]
+  '''
+  # Given session (name="L1")
+  # Given session (name="L2")
+  # Given session (name="L3")
+  # Given session (name="L4")
+  # [pty1] Start: zsh lightningterminal.sh attach --id l1-XXXXXXXX
+  # [pty1] Send: lt attach --id l2-XXXXXXXX\n
+  # [pty1] Send: lt attach --id l3-XXXXXXXX\n
+  # [pty1] Send: lt attach --id l4-XXXXXXXX\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: echo SID=$LIGHTNING_TERMINAL_SESSION_ID\n
+  
+  '''
+# ---
+# name: TestNestedDetach.test_three_levels_deep[screen-bash]
+  '''
+  # Given session (name="LevelA")
+  # Given session (name="LevelB")
+  # Given session (name="LevelC")
+  # [pty1] Start: bash lightningterminal.sh attach --id levela-XXXXXXXX
+  # [pty1] Send: lt attach --id levelb-XXXXXXXX\n
+  # [pty1] Send: lt attach --id levelc-XXXXXXXX\n
+  # [pty1] Send: echo IN_LEVEL_C\n
+  # [pty1] Snapshot - in C
+  $ echo IN_LEVEL_C
+  IN_LEVEL_C
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Snapshot - back in B
+  $ lt attach --id levelc-XXXXXXXX
+  [detached from XXXXXXX.levelc-XXXXXXXX]
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Snapshot - back in A
+  $ lt attach --id levelb-XXXXXXXX
+  [detached from XXXXXXX.levelb-XXXXXXXX]
+  $
+  
+  
+  '''
+# ---
+# name: TestNestedDetach.test_three_levels_deep[screen-zsh]
+  '''
+  # Given session (name="LevelA")
+  # Given session (name="LevelB")
+  # Given session (name="LevelC")
+  # [pty1] Start: zsh lightningterminal.sh attach --id levela-XXXXXXXX
+  # [pty1] Send: lt attach --id levelb-XXXXXXXX\n
+  # [pty1] Send: lt attach --id levelc-XXXXXXXX\n
+  # [pty1] Send: echo IN_LEVEL_C\n
+  # [pty1] Snapshot - in C
+  $ echo IN_LEVEL_C
+  IN_LEVEL_C
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Snapshot - back in B
+  $ lt attach --id levelc-XXXXXXXX
+  [detached from XXXXXXX.levelc-XXXXXXXX]
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Snapshot - back in A
+  $ lt attach --id levelb-XXXXXXXX
+  [detached from XXXXXXX.levelb-XXXXXXXX]
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_from_attached_session[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt detach\n
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_from_attached_session[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt detach\n
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_outside_session_errors[screen-bash]
+  '''
+  # Execute: SHELL=bash bash lightningterminal.sh detach
+  [STDERR] error: not inside a session (LIGHTNING_TERMINAL_SESSION_ID not set)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_outside_session_errors[screen-zsh]
+  '''
+  # Execute: SHELL=zsh zsh lightningterminal.sh detach
+  [STDERR] error: not inside a session (LIGHTNING_TERMINAL_SESSION_ID not set)
+  exit: 1
+  
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_restores_status[screen-bash]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: bash lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Snapshot - inner attached
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (attached, id=inner-XXXXXXXX)
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Snapshot - inner detached after lt detach
+  $ lt attach --id inner-XXXXXXXX
+  [detached from XXXXXXX.inner-XXXXXXXX]
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (detached, id=inner-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
+# name: TestScriptDetach.test_detach_restores_status[screen-zsh]
+  '''
+  # Given session (name="Outer")
+  # Given session (name="Inner")
+  # [pty1] Start: zsh lightningterminal.sh attach --id outer-XXXXXXXX
+  # [pty1] Send: lt attach --id inner-XXXXXXXX\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Snapshot - inner attached
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (attached, id=inner-XXXXXXXX)
+  $
+  
+  # [pty1] Send: lt detach\n
+  # [pty1] Send: lt status --id inner-XXXXXXXX\n
+  # [pty1] Snapshot - inner detached after lt detach
+  $ lt attach --id inner-XXXXXXXX
+  [detached from XXXXXXX.inner-XXXXXXXX]
+  $ lt status --id inner-XXXXXXXX
+  Inner - lt (detached, id=inner-XXXXXXXX)
+  $
+  
+  
+  '''
+# ---
