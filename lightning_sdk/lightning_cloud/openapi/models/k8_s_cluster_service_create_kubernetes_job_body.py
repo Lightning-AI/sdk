@@ -43,6 +43,7 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
     swagger_types = {
         'job_name': 'str',
         'job_namespace': 'str',
+        'node_names': 'list[str]',
         'node_validation_type': 'str',
         'queue_name': 'str',
         'spec': 'str',
@@ -52,16 +53,18 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
     attribute_map = {
         'job_name': 'jobName',
         'job_namespace': 'jobNamespace',
+        'node_names': 'nodeNames',
         'node_validation_type': 'nodeValidationType',
         'queue_name': 'queueName',
         'spec': 'spec',
         'user_id': 'userId'
     }
 
-    def __init__(self, job_name: 'str' =None, job_namespace: 'str' =None, node_validation_type: 'str' =None, queue_name: 'str' =None, spec: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, job_name: 'str' =None, job_namespace: 'str' =None, node_names: 'list[str]' =None, node_validation_type: 'str' =None, queue_name: 'str' =None, spec: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """K8SClusterServiceCreateKubernetesJobBody - a model defined in Swagger"""  # noqa: E501
         self._job_name = None
         self._job_namespace = None
+        self._node_names = None
         self._node_validation_type = None
         self._queue_name = None
         self._spec = None
@@ -71,6 +74,8 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
             self.job_name = job_name
         if job_namespace is not None:
             self.job_namespace = job_namespace
+        if node_names is not None:
+            self.node_names = node_names
         if node_validation_type is not None:
             self.node_validation_type = node_validation_type
         if queue_name is not None:
@@ -121,6 +126,27 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
         """
 
         self._job_namespace = job_namespace
+
+    @property
+    def node_names(self) -> 'list[str]':
+        """Gets the node_names of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+
+
+        :return: The node_names of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._node_names
+
+    @node_names.setter
+    def node_names(self, node_names: 'list[str]'):
+        """Sets the node_names of this K8SClusterServiceCreateKubernetesJobBody.
+
+
+        :param node_names: The node_names of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._node_names = node_names
 
     @property
     def node_validation_type(self) -> 'str':

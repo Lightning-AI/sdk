@@ -49,6 +49,7 @@ class V1Sandbox(object):
         'name': 'str',
         'organization_id': 'str',
         'ports': 'list[str]',
+        'runtime': 'str',
         'spot': 'bool',
         'status': 'str',
         'updated_at': 'datetime'
@@ -63,12 +64,13 @@ class V1Sandbox(object):
         'name': 'name',
         'organization_id': 'organizationId',
         'ports': 'ports',
+        'runtime': 'runtime',
         'spot': 'spot',
         'status': 'status',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -78,6 +80,7 @@ class V1Sandbox(object):
         self._name = None
         self._organization_id = None
         self._ports = None
+        self._runtime = None
         self._spot = None
         self._status = None
         self._updated_at = None
@@ -98,6 +101,8 @@ class V1Sandbox(object):
             self.organization_id = organization_id
         if ports is not None:
             self.ports = ports
+        if runtime is not None:
+            self.runtime = runtime
         if spot is not None:
             self.spot = spot
         if status is not None:
@@ -272,6 +277,27 @@ class V1Sandbox(object):
         """
 
         self._ports = ports
+
+    @property
+    def runtime(self) -> 'str':
+        """Gets the runtime of this V1Sandbox.  # noqa: E501
+
+
+        :return: The runtime of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._runtime
+
+    @runtime.setter
+    def runtime(self, runtime: 'str'):
+        """Sets the runtime of this V1Sandbox.
+
+
+        :param runtime: The runtime of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._runtime = runtime
 
     @property
     def spot(self) -> 'bool':

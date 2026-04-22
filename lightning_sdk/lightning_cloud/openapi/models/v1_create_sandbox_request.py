@@ -47,7 +47,9 @@ class V1CreateSandboxRequest(object):
         'name': 'str',
         'organization_id': 'str',
         'ports': 'list[str]',
-        'spot': 'bool'
+        'runtime': 'str',
+        'spot': 'bool',
+        'storage_gb': 'str'
     }
 
     attribute_map = {
@@ -57,10 +59,12 @@ class V1CreateSandboxRequest(object):
         'name': 'name',
         'organization_id': 'organizationId',
         'ports': 'ports',
-        'spot': 'spot'
+        'runtime': 'runtime',
+        'spot': 'spot',
+        'storage_gb': 'storageGb'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -68,7 +72,9 @@ class V1CreateSandboxRequest(object):
         self._name = None
         self._organization_id = None
         self._ports = None
+        self._runtime = None
         self._spot = None
+        self._storage_gb = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -82,8 +88,12 @@ class V1CreateSandboxRequest(object):
             self.organization_id = organization_id
         if ports is not None:
             self.ports = ports
+        if runtime is not None:
+            self.runtime = runtime
         if spot is not None:
             self.spot = spot
+        if storage_gb is not None:
+            self.storage_gb = storage_gb
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -212,6 +222,27 @@ class V1CreateSandboxRequest(object):
         self._ports = ports
 
     @property
+    def runtime(self) -> 'str':
+        """Gets the runtime of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The runtime of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._runtime
+
+    @runtime.setter
+    def runtime(self, runtime: 'str'):
+        """Sets the runtime of this V1CreateSandboxRequest.
+
+
+        :param runtime: The runtime of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._runtime = runtime
+
+    @property
     def spot(self) -> 'bool':
         """Gets the spot of this V1CreateSandboxRequest.  # noqa: E501
 
@@ -231,6 +262,29 @@ class V1CreateSandboxRequest(object):
         """
 
         self._spot = spot
+
+    @property
+    def storage_gb(self) -> 'str':
+        """Gets the storage_gb of this V1CreateSandboxRequest.  # noqa: E501
+
+        Optional override for the sandbox's writable disk size, in GB. When unset (0) the sandbox inherits the instance-type default from the `cpu-sandbox-*` accelerator (10 / 40 / 60 / 80 GB for cpu-2/4/8/16). Only applies to CPU sandboxes — GPU / VM paths ignore this field.  # noqa: E501
+
+        :return: The storage_gb of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._storage_gb
+
+    @storage_gb.setter
+    def storage_gb(self, storage_gb: 'str'):
+        """Sets the storage_gb of this V1CreateSandboxRequest.
+
+        Optional override for the sandbox's writable disk size, in GB. When unset (0) the sandbox inherits the instance-type default from the `cpu-sandbox-*` accelerator (10 / 40 / 60 / 80 GB for cpu-2/4/8/16). Only applies to CPU sandboxes — GPU / VM paths ignore this field.  # noqa: E501
+
+        :param storage_gb: The storage_gb of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._storage_gb = storage_gb
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

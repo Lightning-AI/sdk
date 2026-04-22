@@ -42,21 +42,26 @@ class V1CreateGitCredentialsRequest(object):
     """
     swagger_types = {
         'password': 'str',
+        'provider_id': 'str',
         'registry_url': 'str'
     }
 
     attribute_map = {
         'password': 'password',
+        'provider_id': 'providerId',
         'registry_url': 'registryUrl'
     }
 
-    def __init__(self, password: 'str' =None, registry_url: 'str' =None):  # noqa: E501
+    def __init__(self, password: 'str' =None, provider_id: 'str' =None, registry_url: 'str' =None):  # noqa: E501
         """V1CreateGitCredentialsRequest - a model defined in Swagger"""  # noqa: E501
         self._password = None
+        self._provider_id = None
         self._registry_url = None
         self.discriminator = None
         if password is not None:
             self.password = password
+        if provider_id is not None:
+            self.provider_id = provider_id
         if registry_url is not None:
             self.registry_url = registry_url
 
@@ -80,6 +85,27 @@ class V1CreateGitCredentialsRequest(object):
         """
 
         self._password = password
+
+    @property
+    def provider_id(self) -> 'str':
+        """Gets the provider_id of this V1CreateGitCredentialsRequest.  # noqa: E501
+
+
+        :return: The provider_id of this V1CreateGitCredentialsRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_id
+
+    @provider_id.setter
+    def provider_id(self, provider_id: 'str'):
+        """Sets the provider_id of this V1CreateGitCredentialsRequest.
+
+
+        :param provider_id: The provider_id of this V1CreateGitCredentialsRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_id = provider_id
 
     @property
     def registry_url(self) -> 'str':

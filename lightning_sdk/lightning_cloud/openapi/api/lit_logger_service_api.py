@@ -1766,6 +1766,7 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param str org_id: filter projects by org id
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1794,12 +1795,13 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param str org_id: filter projects by org id
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids']  # noqa: E501
+        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1842,6 +1844,8 @@ class LitLoggerServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

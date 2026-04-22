@@ -41,24 +41,60 @@ class V1AutoscalingTargetMetric(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'autoscaling_window_seconds': 'str',
         'name': 'str',
-        'target': 'str'
+        'overflow_policy': 'V1AutoscalingOverflowPolicy',
+        'target': 'str',
+        'target_utilization_percentage': 'str'
     }
 
     attribute_map = {
+        'autoscaling_window_seconds': 'autoscalingWindowSeconds',
         'name': 'name',
-        'target': 'target'
+        'overflow_policy': 'overflowPolicy',
+        'target': 'target',
+        'target_utilization_percentage': 'targetUtilizationPercentage'
     }
 
-    def __init__(self, name: 'str' =None, target: 'str' =None):  # noqa: E501
+    def __init__(self, autoscaling_window_seconds: 'str' =None, name: 'str' =None, overflow_policy: 'V1AutoscalingOverflowPolicy' =None, target: 'str' =None, target_utilization_percentage: 'str' =None):  # noqa: E501
         """V1AutoscalingTargetMetric - a model defined in Swagger"""  # noqa: E501
+        self._autoscaling_window_seconds = None
         self._name = None
+        self._overflow_policy = None
         self._target = None
+        self._target_utilization_percentage = None
         self.discriminator = None
+        if autoscaling_window_seconds is not None:
+            self.autoscaling_window_seconds = autoscaling_window_seconds
         if name is not None:
             self.name = name
+        if overflow_policy is not None:
+            self.overflow_policy = overflow_policy
         if target is not None:
             self.target = target
+        if target_utilization_percentage is not None:
+            self.target_utilization_percentage = target_utilization_percentage
+
+    @property
+    def autoscaling_window_seconds(self) -> 'str':
+        """Gets the autoscaling_window_seconds of this V1AutoscalingTargetMetric.  # noqa: E501
+
+
+        :return: The autoscaling_window_seconds of this V1AutoscalingTargetMetric.  # noqa: E501
+        :rtype: str
+        """
+        return self._autoscaling_window_seconds
+
+    @autoscaling_window_seconds.setter
+    def autoscaling_window_seconds(self, autoscaling_window_seconds: 'str'):
+        """Sets the autoscaling_window_seconds of this V1AutoscalingTargetMetric.
+
+
+        :param autoscaling_window_seconds: The autoscaling_window_seconds of this V1AutoscalingTargetMetric.  # noqa: E501
+        :type: str
+        """
+
+        self._autoscaling_window_seconds = autoscaling_window_seconds
 
     @property
     def name(self) -> 'str':
@@ -84,6 +120,27 @@ class V1AutoscalingTargetMetric(object):
         self._name = name
 
     @property
+    def overflow_policy(self) -> 'V1AutoscalingOverflowPolicy':
+        """Gets the overflow_policy of this V1AutoscalingTargetMetric.  # noqa: E501
+
+
+        :return: The overflow_policy of this V1AutoscalingTargetMetric.  # noqa: E501
+        :rtype: V1AutoscalingOverflowPolicy
+        """
+        return self._overflow_policy
+
+    @overflow_policy.setter
+    def overflow_policy(self, overflow_policy: 'V1AutoscalingOverflowPolicy'):
+        """Sets the overflow_policy of this V1AutoscalingTargetMetric.
+
+
+        :param overflow_policy: The overflow_policy of this V1AutoscalingTargetMetric.  # noqa: E501
+        :type: V1AutoscalingOverflowPolicy
+        """
+
+        self._overflow_policy = overflow_policy
+
+    @property
     def target(self) -> 'str':
         """Gets the target of this V1AutoscalingTargetMetric.  # noqa: E501
 
@@ -103,6 +160,27 @@ class V1AutoscalingTargetMetric(object):
         """
 
         self._target = target
+
+    @property
+    def target_utilization_percentage(self) -> 'str':
+        """Gets the target_utilization_percentage of this V1AutoscalingTargetMetric.  # noqa: E501
+
+
+        :return: The target_utilization_percentage of this V1AutoscalingTargetMetric.  # noqa: E501
+        :rtype: str
+        """
+        return self._target_utilization_percentage
+
+    @target_utilization_percentage.setter
+    def target_utilization_percentage(self, target_utilization_percentage: 'str'):
+        """Sets the target_utilization_percentage of this V1AutoscalingTargetMetric.
+
+
+        :param target_utilization_percentage: The target_utilization_percentage of this V1AutoscalingTargetMetric.  # noqa: E501
+        :type: str
+        """
+
+        self._target_utilization_percentage = target_utilization_percentage
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

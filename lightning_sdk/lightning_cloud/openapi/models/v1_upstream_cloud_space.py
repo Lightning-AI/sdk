@@ -43,6 +43,7 @@ class V1UpstreamCloudSpace(object):
     swagger_types = {
         'auto_start': 'bool',
         'cloudspace_id': 'str',
+        'cluster_id': 'str',
         'command': 'str',
         'instance_type': 'str',
         'port': 'str',
@@ -54,6 +55,7 @@ class V1UpstreamCloudSpace(object):
     attribute_map = {
         'auto_start': 'autoStart',
         'cloudspace_id': 'cloudspaceId',
+        'cluster_id': 'clusterId',
         'command': 'command',
         'instance_type': 'instanceType',
         'port': 'port',
@@ -62,10 +64,11 @@ class V1UpstreamCloudSpace(object):
         'type': 'type'
     }
 
-    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, command: 'str' =None, instance_type: 'str' =None, port: 'str' =None, studio_job_id: 'str' =None, terminal_session_id: 'str' =None, type: 'V1EndpointType' =None):  # noqa: E501
+    def __init__(self, auto_start: 'bool' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, instance_type: 'str' =None, port: 'str' =None, studio_job_id: 'str' =None, terminal_session_id: 'str' =None, type: 'V1EndpointType' =None):  # noqa: E501
         """V1UpstreamCloudSpace - a model defined in Swagger"""  # noqa: E501
         self._auto_start = None
         self._cloudspace_id = None
+        self._cluster_id = None
         self._command = None
         self._instance_type = None
         self._port = None
@@ -77,6 +80,8 @@ class V1UpstreamCloudSpace(object):
             self.auto_start = auto_start
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if command is not None:
             self.command = command
         if instance_type is not None:
@@ -131,6 +136,27 @@ class V1UpstreamCloudSpace(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1UpstreamCloudSpace.  # noqa: E501
+
+
+        :return: The cluster_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1UpstreamCloudSpace.
+
+
+        :param cluster_id: The cluster_id of this V1UpstreamCloudSpace.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def command(self) -> 'str':

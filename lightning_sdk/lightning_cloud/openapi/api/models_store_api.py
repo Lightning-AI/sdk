@@ -1840,6 +1840,8 @@ class ModelsStoreApi(object):
         :param str sort_order: ascending or descending
         :param str metrics_stream_id: filter models that have a version linked to this experiment
         :param bool include_versions: when true, populate Model.versions for each model
+        :param str org_id: filter projects by org id
+        :param list[str] user_ids: filter projects by user ids
         :return: V1ListModelsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1868,12 +1870,14 @@ class ModelsStoreApi(object):
         :param str sort_order: ascending or descending
         :param str metrics_stream_id: filter models that have a version linked to this experiment
         :param bool include_versions: when true, populate Model.versions for each model
+        :param str org_id: filter projects by org id
+        :param list[str] user_ids: filter projects by user ids
         :return: V1ListModelsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'name', 'page_token', 'limit', 'sort_by', 'sort_order', 'metrics_stream_id', 'include_versions']  # noqa: E501
+        all_params = ['project_id', 'name', 'page_token', 'limit', 'sort_by', 'sort_order', 'metrics_stream_id', 'include_versions', 'org_id', 'user_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1914,6 +1918,11 @@ class ModelsStoreApi(object):
             query_params.append(('metricsStreamId', params['metrics_stream_id']))  # noqa: E501
         if 'include_versions' in params:
             query_params.append(('includeVersions', params['include_versions']))  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 

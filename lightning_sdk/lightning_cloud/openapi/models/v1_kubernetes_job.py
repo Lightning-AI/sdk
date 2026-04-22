@@ -54,8 +54,10 @@ class V1KubernetesJob(object):
         'job_status_reason': 'str',
         'job_uid': 'str',
         'node_validation_type': 'str',
+        'nodes': 'list[str]',
         'queue_name': 'str',
         'schedule_id': 'str',
+        'started_at': 'datetime',
         'updated_at': 'datetime',
         'user_id': 'str'
     }
@@ -74,13 +76,15 @@ class V1KubernetesJob(object):
         'job_status_reason': 'jobStatusReason',
         'job_uid': 'jobUid',
         'node_validation_type': 'nodeValidationType',
+        'nodes': 'nodes',
         'queue_name': 'queueName',
         'schedule_id': 'scheduleId',
+        'started_at': 'startedAt',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, completed_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, desired_state: 'str' =None, id: 'str' =None, job_name: 'str' =None, job_namespace: 'str' =None, job_status: 'str' =None, job_status_message: 'str' =None, job_status_reason: 'str' =None, job_uid: 'str' =None, node_validation_type: 'str' =None, queue_name: 'str' =None, schedule_id: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, completed_at: 'datetime' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, desired_state: 'str' =None, id: 'str' =None, job_name: 'str' =None, job_namespace: 'str' =None, job_status: 'str' =None, job_status_message: 'str' =None, job_status_reason: 'str' =None, job_uid: 'str' =None, node_validation_type: 'str' =None, nodes: 'list[str]' =None, queue_name: 'str' =None, schedule_id: 'str' =None, started_at: 'datetime' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1KubernetesJob - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._completed_at = None
@@ -95,8 +99,10 @@ class V1KubernetesJob(object):
         self._job_status_reason = None
         self._job_uid = None
         self._node_validation_type = None
+        self._nodes = None
         self._queue_name = None
         self._schedule_id = None
+        self._started_at = None
         self._updated_at = None
         self._user_id = None
         self.discriminator = None
@@ -126,10 +132,14 @@ class V1KubernetesJob(object):
             self.job_uid = job_uid
         if node_validation_type is not None:
             self.node_validation_type = node_validation_type
+        if nodes is not None:
+            self.nodes = nodes
         if queue_name is not None:
             self.queue_name = queue_name
         if schedule_id is not None:
             self.schedule_id = schedule_id
+        if started_at is not None:
+            self.started_at = started_at
         if updated_at is not None:
             self.updated_at = updated_at
         if user_id is not None:
@@ -409,6 +419,27 @@ class V1KubernetesJob(object):
         self._node_validation_type = node_validation_type
 
     @property
+    def nodes(self) -> 'list[str]':
+        """Gets the nodes of this V1KubernetesJob.  # noqa: E501
+
+
+        :return: The nodes of this V1KubernetesJob.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._nodes
+
+    @nodes.setter
+    def nodes(self, nodes: 'list[str]'):
+        """Sets the nodes of this V1KubernetesJob.
+
+
+        :param nodes: The nodes of this V1KubernetesJob.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._nodes = nodes
+
+    @property
     def queue_name(self) -> 'str':
         """Gets the queue_name of this V1KubernetesJob.  # noqa: E501
 
@@ -449,6 +480,27 @@ class V1KubernetesJob(object):
         """
 
         self._schedule_id = schedule_id
+
+    @property
+    def started_at(self) -> 'datetime':
+        """Gets the started_at of this V1KubernetesJob.  # noqa: E501
+
+
+        :return: The started_at of this V1KubernetesJob.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._started_at
+
+    @started_at.setter
+    def started_at(self, started_at: 'datetime'):
+        """Sets the started_at of this V1KubernetesJob.
+
+
+        :param started_at: The started_at of this V1KubernetesJob.  # noqa: E501
+        :type: datetime
+        """
+
+        self._started_at = started_at
 
     @property
     def updated_at(self) -> 'datetime':
