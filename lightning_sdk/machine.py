@@ -10,8 +10,8 @@ class CloudProvider(Enum):
     DGX = "DGX"
     VOLTAGE_PARK = "VOLTAGE_PARK"
     NEBIUS = "NEBIUS"
-    MACHINE = "MACHINE"
     LIGHTNING = "LIGHTNING"
+    LIGHTNING_AGGREGATE = "LIGHTNING_AGGREGATE"
 
     def __str__(self) -> str:
         """Converts the CloudProvider to a str."""

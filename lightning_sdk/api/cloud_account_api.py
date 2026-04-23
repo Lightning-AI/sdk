@@ -97,7 +97,7 @@ class CloudAccountApi:
             )
 
         if is_default:
-            res = self._list_default_cluster_accelerators(teamspace_id=teamspace_id, cloud_provider=cloud_provider)
+            res = self._list_default_cluster_accelerators(teamspace_id=teamspace_id, cloud_provider=str(cloud_provider))
         else:
             res = self._client.cluster_service_list_cluster_accelerators(
                 id=cloud_account_id,
@@ -112,7 +112,7 @@ class CloudAccountApi:
         self, teamspace_id: str, cloud_provider: Union[str, "CloudProvider"]
     ) -> V1ListDefaultClusterAcceleratorsResponse:
         return self._client.cluster_service_list_default_cluster_accelerators(
-            project_id=teamspace_id, cloud_provider=str(cloud_provider)
+            project_id=teamspace_id, cloud_provider=self.cloud_provider_to_v1_cloud_provider(cloud_provider)
         )
 
     @lru_cache(maxsize=None)  # noqa: B019
@@ -161,7 +161,7 @@ class CloudAccountApi:
 
         if cloud_account.spec and cloud_account.spec.driver:
             if cloud_account.spec.driver == V1CloudProvider.LIGHTNING:
-                return CloudProvider.LIGHTNING
+                return CloudProvider.LIGHTNING_AGGREGATE
 
             if cloud_account.spec.driver == V1CloudProvider.DGX:
                 return CloudProvider.DGX
@@ -178,7 +178,7 @@ class CloudAccountApi:
             if cloud_account.spec.nebius_v1:
                 return CloudProvider.NEBIUS
             if cloud_account.spec.machine_v1:
-                return CloudProvider.MACHINE
+                return CloudProvider.LIGHTNING
         return None
 
     def resolve_cloud_account(
@@ -224,3 +224,26 @@ class CloudAccountApi:
             return CloudProvider.AWS
 
         raise ValueError(f"ConnectionType {ConnectionType} currently not supported!")
+
+    @staticmethod
+    def cloud_provider_to_v1_cloud_provider(cloud_provider: Union[str, "CloudProvider"]) -> str:
+        from lightning_sdk.machine import CloudProvider
+
+        if isinstance(cloud_provider, str):
+            cloud_provider = CloudProvider.from_str(cloud_provider)
+
+        if cloud_provider in (
+            CloudProvider.AWS,
+            CloudProvider.GCP,
+            CloudProvider.DGX,
+            CloudProvider.LAMBDA_LABS,
+            CloudProvider.NEBIUS,
+            CloudProvider.LIGHTNING_AGGREGATE,
+            CloudProvider.VOLTAGE_PARK,
+        ):
+            return getattr(V1CloudProvider, str(cloud_provider))
+
+        if cloud_provider == CloudProvider.LIGHTNING:
+            return V1CloudProvider.MACHINE
+
+        raise ValueError(f"Provided unsupported cloud provider {cloud_provider}")

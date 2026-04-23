@@ -1,6 +1,6 @@
 import pytest
 
-from lightning_sdk import Machine
+from lightning_sdk import CloudProvider, Machine
 from lightning_sdk.lightning_cloud.openapi import V1ClusterAccelerator, V1Resources
 
 
@@ -57,6 +57,19 @@ from lightning_sdk.lightning_cloud.openapi import V1ClusterAccelerator, V1Resour
 )
 def test_machine_equal(machine_str: str, expected_enum: Machine):
     assert getattr(Machine, machine_str) == expected_enum
+
+
+@pytest.mark.parametrize(
+    ("provider_str", "expected_enum"),
+    [
+        ("LIGHTNING", CloudProvider.LIGHTNING),
+        ("lightning", CloudProvider.LIGHTNING),
+        ("LIGHTNING_AGGREGATE", CloudProvider.LIGHTNING_AGGREGATE),
+        ("lightning_aggregate", CloudProvider.LIGHTNING_AGGREGATE),
+    ],
+)
+def test_cloud_provider_from_str(provider_str: str, expected_enum: CloudProvider):
+    assert CloudProvider.from_str(provider_str) == expected_enum
 
 
 @pytest.mark.parametrize(

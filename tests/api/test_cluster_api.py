@@ -9,6 +9,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
     V1ExternalCluster,
     V1ExternalClusterSpec,
+    V1MachineDirectV1,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_list_cluster_accelerators_response import (
     V1ListClusterAcceleratorsResponse,
@@ -74,6 +75,36 @@ def test_list_cloud_account_accelerators(mock_client, accelerator_response):
     cloud_account_api = CloudAccountApi()
     res = cloud_account_api.list_cloud_account_accelerators("test-teamspace", "test-cluster", "test-org")
     assert res == accelerator_response
+    mock_client.return_value.cluster_service_list_default_cluster_accelerators.assert_called_once_with(
+        project_id="test-teamspace",
+        cloud_provider=V1CloudProvider.AWS,
+    )
+
+
+@patch("lightning_sdk.api.cloud_account_api.LightningClient")
+def test_list_default_lightning_accelerators_uses_machine_provider(mock_client, accelerator_response):
+    mock_cloud_account = V1ExternalCluster(
+        id="test-cluster",
+        spec=V1ExternalClusterSpec(
+            cluster_type=V1ClusterType.GLOBAL,
+            machine_v1=V1MachineDirectV1(),
+        ),
+    )
+
+    mock_client.return_value.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[mock_cloud_account]
+    )
+    mock_client.return_value.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+    mock_client.return_value.cluster_service_list_default_cluster_accelerators.return_value = accelerator_response
+
+    cloud_account_api = CloudAccountApi()
+    res = cloud_account_api.list_cloud_account_accelerators("test-teamspace", "test-cluster", "test-org")
+
+    assert res == accelerator_response
+    mock_client.return_value.cluster_service_list_default_cluster_accelerators.assert_called_once_with(
+        project_id="test-teamspace",
+        cloud_provider=V1CloudProvider.MACHINE,
+    )
 
 
 @patch("lightning_sdk.api.cloud_account_api.LightningClient")
@@ -150,3 +181,34 @@ def test_returns_none_if_nothing_matches(api):
         teamspace_id="ts", cloud_account=None, cloud_provider=None, default_cloud_account=None
     )
     assert result is None
+
+
+@pytest.mark.parametrize(
+    ("cloud_provider", "v1_cloud_provider"),
+    [
+        (CloudProvider.AWS, V1CloudProvider.AWS),
+        (CloudProvider.GCP, V1CloudProvider.GCP),
+        (CloudProvider.DGX, V1CloudProvider.DGX),
+        (CloudProvider.LAMBDA_LABS, V1CloudProvider.LAMBDA_LABS),
+        (CloudProvider.NEBIUS, V1CloudProvider.NEBIUS),
+        (CloudProvider.VOLTAGE_PARK, V1CloudProvider.VOLTAGE_PARK),
+        (CloudProvider.LIGHTNING_AGGREGATE, V1CloudProvider.LIGHTNING_AGGREGATE),
+        (CloudProvider.LIGHTNING, V1CloudProvider.MACHINE),
+        ("lightning", V1CloudProvider.MACHINE),
+    ],
+)
+def test_cloud_provider_to_v1_cloud_provider(api, cloud_provider, v1_cloud_provider):
+    assert api.cloud_provider_to_v1_cloud_provider(cloud_provider) == v1_cloud_provider
+
+
+@pytest.mark.parametrize(
+    ("cluster_spec", "expected_provider"),
+    [
+        (V1ExternalClusterSpec(driver=V1CloudProvider.LIGHTNING), CloudProvider.LIGHTNING_AGGREGATE),
+        (V1ExternalClusterSpec(machine_v1=V1MachineDirectV1()), CloudProvider.LIGHTNING),
+    ],
+)
+def test_get_cloud_account_provider_distinguishes_lightning_providers(api, cluster_spec, expected_provider):
+    cluster = V1ExternalCluster(id="acc-lightning", spec=cluster_spec)
+
+    assert api._get_cloud_account_provider(cluster) == expected_provider
