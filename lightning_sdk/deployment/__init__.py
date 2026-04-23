@@ -7,6 +7,7 @@ from lightning_sdk.api.deployment_api import (
     ExecHealthCheck,
     HttpHealthCheck,
     ReleaseStrategy,
+    RequestCaptureExportResult,
     RollingUpdateReleaseStrategy,
     Secret,
     TokenAuth,
@@ -26,4 +27,5 @@ __all__ = [
     "TokenAuth",
     "Deployment",
     "ApiKeyAuth",
+    "RequestCaptureExportResult",
 ]

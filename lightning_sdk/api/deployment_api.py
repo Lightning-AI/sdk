@@ -1,5 +1,14 @@
+import csv
+import gzip
+import json
+from contextlib import suppress
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
 from time import sleep
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Sequence, TextIO, Union
+
+import requests
 
 from lightning_sdk.api.utils import _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
@@ -22,6 +31,45 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 _METRICS = ["GPU", "CPU", "RPM"]
+DEFAULT_REQUEST_CAPTURE_PATH = "/v1/chat/completions"
+_CSV_FIELDNAMES = (
+    "request_id",
+    "received_at",
+    "status_code",
+    "method",
+    "path",
+    "latency_ms",
+    "resource_id",
+    "captured",
+    "request_body_size",
+    "response_body_size",
+    "request_body",
+    "response_body",
+    "raw_content",
+    "content_missing",
+    "content_error",
+)
+
+
+DateTimeLike = Union[datetime, str]
+PathLike = Union[Path, str]
+
+
+@dataclass
+class RequestCaptureExportResult:
+    output_dir: Path
+    manifest_path: Path
+    csv_path: Path
+    jsonl_path: Path
+    row_count: int
+    captured_count: int
+    uncaptured_count: int
+    missing_content_count: int
+    content_error_count: int
+
+
+class MissingRequestContentError(RuntimeError):
+    pass
 
 
 class Env:
@@ -342,6 +390,377 @@ class DeploymentApi:
             deployment = self.get_deployment_by_name(deployment.name, deployment.project_id)
 
         return deployment
+
+    def export_request_captures(
+        self,
+        deployment: V1Deployment,
+        *,
+        start: DateTimeLike,
+        end: DateTimeLike,
+        output_dir: PathLike,
+        paths: Optional[Sequence[str]] = None,
+        include_all_paths: bool = False,
+        status_codes: Optional[Sequence[int]] = None,
+        page_size: int = 500,
+        max_pages: Optional[int] = None,
+        strict: bool = False,
+        request_timeout: Union[float, tuple] = 60,
+        overwrite: bool = False,
+    ) -> RequestCaptureExportResult:
+        """Export captured request telemetry for a deployment to local artifacts."""
+        return _export_deployment_request_captures(
+            client=self._client,
+            teamspace_id=deployment.project_id,
+            deployment_id=deployment.id,
+            deployment_name=deployment.name,
+            start=start,
+            end=end,
+            output_dir=output_dir,
+            paths=paths,
+            include_all_paths=include_all_paths,
+            status_codes=status_codes,
+            page_size=page_size,
+            max_pages=max_pages,
+            strict=strict,
+            request_timeout=request_timeout,
+            overwrite=overwrite,
+        )
+
+
+def _export_deployment_request_captures(
+    *,
+    client: Any,
+    teamspace_id: str,
+    deployment_id: str,
+    deployment_name: Optional[str],
+    start: DateTimeLike,
+    end: DateTimeLike,
+    output_dir: PathLike,
+    paths: Optional[Sequence[str]] = None,
+    include_all_paths: bool = False,
+    status_codes: Optional[Sequence[int]] = None,
+    page_size: int = 500,
+    max_pages: Optional[int] = None,
+    strict: bool = False,
+    request_timeout: Union[float, tuple] = 60,
+    overwrite: bool = False,
+) -> RequestCaptureExportResult:
+    if start is None or end is None:
+        raise ValueError("start and end are required for request capture export")
+    if include_all_paths and paths is not None:
+        raise ValueError("include_all_paths and paths are mutually exclusive")
+    if paths is not None and not paths:
+        raise ValueError("paths must not be empty")
+    if page_size <= 0:
+        raise ValueError("page_size must be greater than 0")
+    if max_pages is not None and max_pages <= 0:
+        raise ValueError("max_pages must be greater than 0")
+
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    csv_path = output_path / "requests.csv"
+    jsonl_path = output_path / "requests.jsonl"
+    manifest_path = output_path / "manifest.json"
+    _validate_artifact_paths([csv_path, jsonl_path, manifest_path], overwrite=overwrite)
+
+    if include_all_paths:
+        path_filter = None
+    elif paths is None:
+        path_filter = [DEFAULT_REQUEST_CAPTURE_PATH]
+    else:
+        path_filter = list(paths)
+    status_filter = None if status_codes is None else list(status_codes)
+
+    counts = {
+        "row_count": 0,
+        "captured_count": 0,
+        "uncaptured_count": 0,
+        "missing_content_count": 0,
+        "content_error_count": 0,
+    }
+    last_request_id = None
+    seen_page_boundaries = set()
+    pages_fetched = 0
+
+    try:
+        with csv_path.open("w", newline="", encoding="utf-8") as csv_file, jsonl_path.open(
+            "w", encoding="utf-8"
+        ) as jsonl_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=_CSV_FIELDNAMES)
+            csv_writer.writeheader()
+
+            while max_pages is None or pages_fetched < max_pages:
+                query_kwargs = {
+                    "project_id": teamspace_id,
+                    "id": deployment_id,
+                    "start": start,
+                    "end": end,
+                    "limit": page_size,
+                }
+                if path_filter is not None:
+                    query_kwargs["path"] = path_filter
+                if status_filter is not None:
+                    query_kwargs["status_code"] = status_filter
+                if last_request_id is not None:
+                    query_kwargs["last_request_id"] = last_request_id
+
+                response = client.jobs_service_list_deployment_routing_telemetry(**query_kwargs)
+                telemetry_items = list(getattr(response, "routing_telemetry", None) or [])
+                pages_fetched += 1
+
+                for telemetry in telemetry_items:
+                    row = _build_export_row(
+                        client=client,
+                        teamspace_id=teamspace_id,
+                        deployment_id=deployment_id,
+                        telemetry=telemetry,
+                        strict=strict,
+                        request_timeout=request_timeout,
+                    )
+                    _update_counts(counts, row)
+                    _write_row(csv_writer, jsonl_file, row)
+
+                if len(telemetry_items) < page_size:
+                    break
+
+                next_last_request_id = getattr(telemetry_items[-1], "id", None)
+                if not next_last_request_id or next_last_request_id in seen_page_boundaries:
+                    break
+                seen_page_boundaries.add(next_last_request_id)
+                last_request_id = next_last_request_id
+        manifest = _build_manifest(
+            teamspace_id=teamspace_id,
+            deployment_id=deployment_id,
+            deployment_name=deployment_name,
+            start=start,
+            end=end,
+            paths=path_filter,
+            include_all_paths=include_all_paths,
+            status_codes=status_filter,
+            page_size=page_size,
+            pages_fetched=pages_fetched,
+            counts=counts,
+            csv_path=csv_path,
+            jsonl_path=jsonl_path,
+        )
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+        return RequestCaptureExportResult(
+            output_dir=output_path,
+            manifest_path=manifest_path,
+            csv_path=csv_path,
+            jsonl_path=jsonl_path,
+            row_count=manifest["row_count"],
+            captured_count=manifest["captured_count"],
+            uncaptured_count=manifest["uncaptured_count"],
+            missing_content_count=manifest["missing_content_count"],
+            content_error_count=manifest["content_error_count"],
+        )
+    except Exception:
+        if strict:
+            _remove_artifacts([csv_path, jsonl_path, manifest_path])
+        raise
+
+
+def _build_export_row(
+    *,
+    client: Any,
+    teamspace_id: str,
+    deployment_id: str,
+    telemetry: Any,
+    strict: bool,
+    request_timeout: Union[float, tuple],
+) -> Dict[str, Any]:
+    row = {
+        "request_id": getattr(telemetry, "id", None),
+        "received_at": _serialize_datetime(getattr(telemetry, "received_at", None)),
+        "status_code": getattr(telemetry, "status_code", None),
+        "method": getattr(telemetry, "method", None),
+        "path": getattr(telemetry, "path", None),
+        "latency_ms": _duration_to_milliseconds(getattr(telemetry, "duration", None)),
+        "resource_id": getattr(telemetry, "resource_id", None),
+        "captured": bool(getattr(telemetry, "captured", False)),
+        "request_body_size": getattr(telemetry, "request_body_size", None),
+        "response_body_size": getattr(telemetry, "response_body_size", None),
+        "request_body": None,
+        "response_body": None,
+        "raw_content": None,
+        "content_missing": False,
+        "content_error": None,
+    }
+
+    if not row["captured"]:
+        return row
+
+    try:
+        payload = _download_request_content(
+            client=client,
+            teamspace_id=teamspace_id,
+            deployment_id=deployment_id,
+            request_id=row["request_id"],
+            request_timeout=request_timeout,
+        )
+    except MissingRequestContentError as ex:
+        if strict:
+            raise
+        row["content_missing"] = True
+        row["content_error"] = str(ex)
+        return row
+    except requests.RequestException as ex:
+        if strict:
+            raise
+        row["content_error"] = str(ex)
+        return row
+    except Exception as ex:
+        if strict:
+            raise
+        row["content_error"] = f"failed to download captured content: {ex}"
+        return row
+
+    try:
+        content = json.loads(payload)
+    except json.JSONDecodeError as ex:
+        row["raw_content"] = payload
+        row["content_error"] = f"failed to parse captured content: {ex}"
+        return row
+
+    row["request_body"] = content.get("request_body")
+    row["response_body"] = content.get("response_body")
+    return row
+
+
+def _download_request_content(
+    *,
+    client: Any,
+    teamspace_id: str,
+    deployment_id: str,
+    request_id: Optional[str],
+    request_timeout: Union[float, tuple],
+) -> str:
+    if not request_id:
+        raise MissingRequestContentError("missing request id for captured request content")
+
+    response = client.jobs_service_get_deployment_routing_telemetry_content(
+        project_id=teamspace_id,
+        id=deployment_id,
+        request_id=request_id,
+    )
+    url = getattr(response, "url", None)
+    if not url:
+        raise MissingRequestContentError(f"missing content URL for request {request_id}")
+
+    download = requests.get(url, timeout=request_timeout)
+    if download.status_code == 404:
+        raise MissingRequestContentError(f"captured content not found for request {request_id}")
+    download.raise_for_status()
+    return _decode_content(download.content)
+
+
+def _decode_content(content: bytes) -> str:
+    if len(content) >= 2 and content[0] == 0x1F and content[1] == 0x8B:
+        content = gzip.decompress(content)
+    return content.decode("utf-8")
+
+
+def _validate_artifact_paths(paths: Sequence[Path], *, overwrite: bool) -> None:
+    if overwrite:
+        return
+    existing_paths = [str(path) for path in paths if path.exists()]
+    if existing_paths:
+        raise FileExistsError(f"export artifact already exists: {', '.join(existing_paths)}")
+
+
+def _remove_artifacts(paths: Sequence[Path]) -> None:
+    for path in paths:
+        with suppress(OSError):
+            path.unlink(missing_ok=True)
+
+
+def _update_counts(counts: Dict[str, int], row: Dict[str, Any]) -> None:
+    counts["row_count"] += 1
+    if row["captured"]:
+        counts["captured_count"] += 1
+    else:
+        counts["uncaptured_count"] += 1
+    if row["content_missing"]:
+        counts["missing_content_count"] += 1
+    if row["content_error"] and not row["content_missing"]:
+        counts["content_error_count"] += 1
+
+
+def _write_row(csv_writer: csv.DictWriter, jsonl_file: TextIO, row: Dict[str, Any]) -> None:
+    csv_writer.writerow({field: _csv_value(row.get(field)) for field in _CSV_FIELDNAMES})
+    jsonl_file.write(json.dumps(row, default=_json_default, sort_keys=True) + "\n")
+
+
+def _build_manifest(
+    *,
+    teamspace_id: str,
+    deployment_id: str,
+    deployment_name: Optional[str],
+    start: DateTimeLike,
+    end: DateTimeLike,
+    paths: Optional[Sequence[str]],
+    include_all_paths: bool,
+    status_codes: Optional[Sequence[int]],
+    page_size: int,
+    pages_fetched: int,
+    counts: Dict[str, int],
+    csv_path: Path,
+    jsonl_path: Path,
+) -> Dict[str, Any]:
+    return {
+        "teamspace_id": teamspace_id,
+        "deployment_id": deployment_id,
+        "deployment_name": deployment_name,
+        "start": _serialize_datetime(start),
+        "end": _serialize_datetime(end),
+        "paths": list(paths) if paths is not None else None,
+        "include_all_paths": include_all_paths,
+        "status_codes": list(status_codes) if status_codes is not None else None,
+        "page_size": page_size,
+        "pages_fetched": pages_fetched,
+        "row_count": counts["row_count"],
+        "captured_count": counts["captured_count"],
+        "uncaptured_count": counts["uncaptured_count"],
+        "missing_content_count": counts["missing_content_count"],
+        "content_error_count": counts["content_error_count"],
+        "artifacts": {
+            "csv": str(csv_path),
+            "jsonl": str(jsonl_path),
+        },
+    }
+
+
+def _csv_value(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, default=_json_default, sort_keys=True)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+def _serialize_datetime(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.isoformat()
+    return str(value)
+
+
+def _duration_to_milliseconds(value: Any) -> Any:
+    if value is None:
+        return None
+    total_seconds = getattr(value, "total_seconds", None)
+    if callable(total_seconds):
+        return int(total_seconds() * 1000)
+    return value
+
+
+def _json_default(value: Any) -> str:
+    return _serialize_datetime(value) or str(value)
 
 
 def restore_release_strategy(strategy: V1DeploymentStrategy) -> Optional[ReleaseStrategy]:

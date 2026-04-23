@@ -10,11 +10,14 @@ from lightning_sdk.api.deployment_api import (
     Auth,
     AutoScaleConfig,
     BasicAuth,
+    DateTimeLike,
     DeploymentApi,
     Env,
     ExecHealthCheck,
     HttpHealthCheck,
+    PathLike,
     ReleaseStrategy,
+    RequestCaptureExportResult,
     Secret,
     TokenAuth,
     compose_commands,
@@ -335,6 +338,36 @@ class Deployment(metaclass=TrackCallsMeta):
     def stop(self) -> None:
         """All the deployment replicas will be stopped and all their traffic blocked."""
         self._deployment = self._deployment_api.stop(self._deployment)
+
+    def export_request_captures(
+        self,
+        *,
+        start: DateTimeLike,
+        end: DateTimeLike,
+        output_dir: PathLike,
+        paths: Optional[List[str]] = None,
+        include_all_paths: bool = False,
+        status_codes: Optional[List[int]] = None,
+        strict: bool = False,
+        request_timeout: Union[float, tuple] = 60,
+        overwrite: bool = False,
+    ) -> RequestCaptureExportResult:
+        """Export captured request telemetry to local CSV, JSONL, and manifest files."""
+        if not self._deployment:
+            raise RuntimeError("This deployment has not been created.")
+
+        return self._deployment_api.export_request_captures(
+            self._deployment,
+            start=start,
+            end=end,
+            output_dir=output_dir,
+            paths=paths,
+            include_all_paths=include_all_paths,
+            status_codes=status_codes,
+            strict=strict,
+            request_timeout=request_timeout,
+            overwrite=overwrite,
+        )
 
     @property
     def name(self) -> Optional[str]:

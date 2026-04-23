@@ -1,4 +1,5 @@
 import re
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
@@ -41,6 +42,42 @@ def test_deployment_resolve_teamspace(monkeypatch):
     assert kwargs["org"] == "org"
     assert kwargs["user"] == "user"
     assert isinstance(deployment._user, user.User)
+
+
+def test_deployment_export_request_captures_wrapper(tmp_path):
+    result = object()
+    export_mock = MagicMock(return_value=result)
+
+    deployment = object.__new__(deployment_module.Deployment)
+    deployment._deployment = SimpleNamespace(id="deployment-id")
+    deployment._deployment_api = SimpleNamespace(export_request_captures=export_mock)
+    deployment._teamspace = SimpleNamespace(id="project-id")
+
+    assert (
+        deployment.export_request_captures(
+            start="2026-04-20T00:00:00Z",
+            end="2026-04-22T00:00:00Z",
+            output_dir=tmp_path,
+            paths=["/v1/chat/completions"],
+            status_codes=[200],
+            strict=True,
+            request_timeout=5,
+            overwrite=True,
+        )
+        is result
+    )
+    export_mock.assert_called_once_with(
+        deployment._deployment,
+        start="2026-04-20T00:00:00Z",
+        end="2026-04-22T00:00:00Z",
+        output_dir=tmp_path,
+        paths=["/v1/chat/completions"],
+        include_all_paths=False,
+        status_codes=[200],
+        strict=True,
+        request_timeout=5,
+        overwrite=True,
+    )
 
 
 def test_to_autoscaling():
