@@ -42,6 +42,7 @@ class V1Schedule(object):
     """
     swagger_types = {
         'action_type': 'V1ScheduleActionType',
+        'cluster_id': 'str',
         'command': 'str',
         'created_at': 'datetime',
         'cron_expression': 'str',
@@ -63,6 +64,7 @@ class V1Schedule(object):
 
     attribute_map = {
         'action_type': 'actionType',
+        'cluster_id': 'clusterId',
         'command': 'command',
         'created_at': 'createdAt',
         'cron_expression': 'cronExpression',
@@ -82,9 +84,10 @@ class V1Schedule(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, action_type: 'V1ScheduleActionType' =None, command: 'str' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, parallel_runs: 'bool' =None, parent_resource_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, timezone: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, action_type: 'V1ScheduleActionType' =None, cluster_id: 'str' =None, command: 'str' =None, created_at: 'datetime' =None, cron_expression: 'str' =None, display_name: 'str' =None, id: 'str' =None, name: 'str' =None, next: 'datetime' =None, parallel_runs: 'bool' =None, parent_resource_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'V1ScheduleResourceType' =None, state: 'str' =None, timezone: 'str' =None, total: 'int' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Schedule - a model defined in Swagger"""  # noqa: E501
         self._action_type = None
+        self._cluster_id = None
         self._command = None
         self._created_at = None
         self._cron_expression = None
@@ -105,6 +108,8 @@ class V1Schedule(object):
         self.discriminator = None
         if action_type is not None:
             self.action_type = action_type
+        if cluster_id is not None:
+            self.cluster_id = cluster_id
         if command is not None:
             self.command = command
         if created_at is not None:
@@ -160,6 +165,27 @@ class V1Schedule(object):
         """
 
         self._action_type = action_type
+
+    @property
+    def cluster_id(self) -> 'str':
+        """Gets the cluster_id of this V1Schedule.  # noqa: E501
+
+
+        :return: The cluster_id of this V1Schedule.  # noqa: E501
+        :rtype: str
+        """
+        return self._cluster_id
+
+    @cluster_id.setter
+    def cluster_id(self, cluster_id: 'str'):
+        """Sets the cluster_id of this V1Schedule.
+
+
+        :param cluster_id: The cluster_id of this V1Schedule.  # noqa: E501
+        :type: str
+        """
+
+        self._cluster_id = cluster_id
 
     @property
     def command(self) -> 'str':

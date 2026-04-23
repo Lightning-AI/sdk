@@ -41,35 +41,46 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cron_expression': 'str',
         'job_name': 'str',
         'job_namespace': 'str',
         'node_names': 'list[str]',
         'node_validation_type': 'str',
         'queue_name': 'str',
+        'scheduled_start': 'datetime',
         'spec': 'str',
+        'timezone': 'str',
         'user_id': 'str'
     }
 
     attribute_map = {
+        'cron_expression': 'cronExpression',
         'job_name': 'jobName',
         'job_namespace': 'jobNamespace',
         'node_names': 'nodeNames',
         'node_validation_type': 'nodeValidationType',
         'queue_name': 'queueName',
+        'scheduled_start': 'scheduledStart',
         'spec': 'spec',
+        'timezone': 'timezone',
         'user_id': 'userId'
     }
 
-    def __init__(self, job_name: 'str' =None, job_namespace: 'str' =None, node_names: 'list[str]' =None, node_validation_type: 'str' =None, queue_name: 'str' =None, spec: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cron_expression: 'str' =None, job_name: 'str' =None, job_namespace: 'str' =None, node_names: 'list[str]' =None, node_validation_type: 'str' =None, queue_name: 'str' =None, scheduled_start: 'datetime' =None, spec: 'str' =None, timezone: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """K8SClusterServiceCreateKubernetesJobBody - a model defined in Swagger"""  # noqa: E501
+        self._cron_expression = None
         self._job_name = None
         self._job_namespace = None
         self._node_names = None
         self._node_validation_type = None
         self._queue_name = None
+        self._scheduled_start = None
         self._spec = None
+        self._timezone = None
         self._user_id = None
         self.discriminator = None
+        if cron_expression is not None:
+            self.cron_expression = cron_expression
         if job_name is not None:
             self.job_name = job_name
         if job_namespace is not None:
@@ -80,10 +91,35 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
             self.node_validation_type = node_validation_type
         if queue_name is not None:
             self.queue_name = queue_name
+        if scheduled_start is not None:
+            self.scheduled_start = scheduled_start
         if spec is not None:
             self.spec = spec
+        if timezone is not None:
+            self.timezone = timezone
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def cron_expression(self) -> 'str':
+        """Gets the cron_expression of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+
+
+        :return: The cron_expression of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cron_expression
+
+    @cron_expression.setter
+    def cron_expression(self, cron_expression: 'str'):
+        """Sets the cron_expression of this K8SClusterServiceCreateKubernetesJobBody.
+
+
+        :param cron_expression: The cron_expression of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cron_expression = cron_expression
 
     @property
     def job_name(self) -> 'str':
@@ -191,6 +227,27 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
         self._queue_name = queue_name
 
     @property
+    def scheduled_start(self) -> 'datetime':
+        """Gets the scheduled_start of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+
+
+        :return: The scheduled_start of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._scheduled_start
+
+    @scheduled_start.setter
+    def scheduled_start(self, scheduled_start: 'datetime'):
+        """Sets the scheduled_start of this K8SClusterServiceCreateKubernetesJobBody.
+
+
+        :param scheduled_start: The scheduled_start of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._scheduled_start = scheduled_start
+
+    @property
     def spec(self) -> 'str':
         """Gets the spec of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
 
@@ -210,6 +267,27 @@ class K8SClusterServiceCreateKubernetesJobBody(object):
         """
 
         self._spec = spec
+
+    @property
+    def timezone(self) -> 'str':
+        """Gets the timezone of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+
+
+        :return: The timezone of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, timezone: 'str'):
+        """Sets the timezone of this K8SClusterServiceCreateKubernetesJobBody.
+
+
+        :param timezone: The timezone of this K8SClusterServiceCreateKubernetesJobBody.  # noqa: E501
+        :type: str
+        """
+
+        self._timezone = timezone
 
     @property
     def user_id(self) -> 'str':
