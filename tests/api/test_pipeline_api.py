@@ -213,7 +213,9 @@ class TestCreatePipeline:
         assert body.parent_pipeline_id == parent_id
 
         # Check old schedules were listed and deleted
-        mock_lightning_client.schedules_service_list_schedules.assert_called_once_with(PROJECT_ID)
+        mock_lightning_client.schedules_service_list_schedules.assert_called_once_with(
+            PROJECT_ID, resource_id=parent_id
+        )
 
         expected_delete_calls = [
             call(PROJECT_ID, "sch_old_1"),
