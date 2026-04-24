@@ -63,6 +63,7 @@ def test_deployment_export_request_captures_wrapper(tmp_path):
             strict=True,
             request_timeout=5,
             overwrite=True,
+            remote_path="lightning_storage/blackbox-exports/daily",
         )
         is result
     )
@@ -77,6 +78,7 @@ def test_deployment_export_request_captures_wrapper(tmp_path):
         strict=True,
         request_timeout=5,
         overwrite=True,
+        remote_path="lightning_storage/blackbox-exports/daily",
     )
 
 

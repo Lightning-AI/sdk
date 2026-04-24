@@ -20,7 +20,8 @@ def path_join(*args: Any) -> str:
 
 
 def parse_studio_path(studio_path: str) -> PathResult:
-    path_string = studio_path.removeprefix("lit://")
+    prefix = "lit://"
+    path_string = studio_path[len(prefix) :] if studio_path.startswith(prefix) else studio_path
     if not path_string:
         raise ValueError("Studio path cannot be empty after prefix")
 
@@ -61,7 +62,8 @@ def parse_studio_path(studio_path: str) -> PathResult:
 
 
 def parse_teamspace_uploads_path(teamspace_path: str) -> PathResult:
-    path_string = teamspace_path.removeprefix("lit://")
+    prefix = "lit://"
+    path_string = teamspace_path[len(prefix) :] if teamspace_path.startswith(prefix) else teamspace_path
     if not path_string:
         raise ValueError("Teamspace path cannot be empty after prefix")
 

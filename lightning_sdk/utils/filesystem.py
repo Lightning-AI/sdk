@@ -9,7 +9,8 @@ class PathResult(TypedDict):
 
 
 def parse_lit_url(url: str) -> PathResult:
-    path_string = url.removeprefix("lit://")
+    prefix = "lit://"
+    path_string = url[len(prefix) :] if url.startswith(prefix) else url
     if not path_string:
         raise ValueError("Teamspace path cannot be empty after prefix")
 

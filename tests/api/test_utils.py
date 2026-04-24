@@ -20,6 +20,7 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
+    StorageServiceCompleteUploadProjectArtifactBody,
     StorageServiceUploadProjectArtifactBody,
     StorageServiceUploadProjectArtifactPartsBody,
     V1ListProjectArtifactsResponse,
@@ -32,13 +33,14 @@ from lightning_sdk.lightning_cloud.openapi import (
 from lightning_sdk.machine import Machine
 
 
-def _make_mocked_file_uploader(monkeypatch, file_path, remote_path):
+def _make_mocked_file_uploader(monkeypatch, file_path, remote_path, data_connection_id=None):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
     return _FileUploader(
         client=Mock(),
         teamspace_id="test-project-id",
         cloud_account="test-cluster-id",
+        data_connection_id=data_connection_id,
         progress_bar=False,
         file_path=file_path,
         remote_path=remote_path,
@@ -98,6 +100,55 @@ def test_file_uploader(_, tmp_path, monkeypatch):
 
     # 0 because mocked data has length 0
     assert uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
+
+
+@mock.patch("lightning_sdk.api.utils.requests")
+def test_file_uploader_includes_data_connection_id(_, tmp_path, monkeypatch):
+    file_path = tmp_path / "file"
+    file_path.touch()
+    uploader = _make_mocked_file_uploader(
+        monkeypatch,
+        file_path=file_path,
+        remote_path="path/to/file/on/remote",
+        data_connection_id="data-connection-id",
+    )
+
+    uploader.client.storage_service_upload_project_artifact.return_value = Mock(upload_id="test-upload-id")
+    uploader.client.storage_service_upload_project_artifact_parts.return_value = V1UploadProjectArtifactPartsResponse(
+        urls=[V1PresignedUrl(url="test-url-1", part_number=1)]
+    )
+    uploader.client.storage_service_complete_upload_project_artifact = Mock()
+
+    uploader()
+
+    uploader.client.storage_service_upload_project_artifact.assert_called_once_with(
+        body=StorageServiceUploadProjectArtifactBody(
+            filename="path/to/file/on/remote",
+            cluster_id="test-cluster-id",
+            data_connection_id="data-connection-id",
+        ),
+        project_id="test-project-id",
+    )
+    uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
+        StorageServiceUploadProjectArtifactPartsBody(
+            filename="path/to/file/on/remote",
+            parts=[1],
+            cluster_id="test-cluster-id",
+            data_connection_id="data-connection-id",
+        ),
+        "test-project-id",
+        "test-upload-id",
+    )
+    uploader.client.storage_service_complete_upload_project_artifact.assert_called_once_with(
+        body=StorageServiceCompleteUploadProjectArtifactBody(
+            filename="path/to/file/on/remote",
+            parts=[mock.ANY],
+            upload_id="test-upload-id",
+            cluster_id="test-cluster-id",
+            data_connection_id="data-connection-id",
+        ),
+        project_id="test-project-id",
+    )
 
 
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):

@@ -351,8 +351,14 @@ class Deployment(metaclass=TrackCallsMeta):
         strict: bool = False,
         request_timeout: Union[float, tuple] = 60,
         overwrite: bool = False,
+        remote_path: Optional[str] = None,
     ) -> RequestCaptureExportResult:
-        """Export captured request telemetry to local CSV, JSONL, and manifest files."""
+        """Export captured request telemetry to local artifacts.
+
+        The export is always written to ``output_dir``. If ``remote_path`` is provided,
+        the same artifacts are also uploaded to that remote destination. This currently
+        supports ``lightning_storage`` targets only.
+        """
         if not self._deployment:
             raise RuntimeError("This deployment has not been created.")
 
@@ -367,6 +373,7 @@ class Deployment(metaclass=TrackCallsMeta):
             strict=strict,
             request_timeout=request_timeout,
             overwrite=overwrite,
+            remote_path=remote_path,
         )
 
     @property

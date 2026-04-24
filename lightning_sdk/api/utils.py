@@ -137,14 +137,16 @@ class _FileUploader:
         self,
         client: LightningClient,
         teamspace_id: str,
-        cloud_account: str,
+        cloud_account: Optional[str],
         file_path: str,
         remote_path: str,
         progress_bar: bool,
+        data_connection_id: Optional[str] = None,
     ) -> None:
         self.client = client
         self.teamspace_id = teamspace_id
         self.cloud_account = cloud_account
+        self.data_connection_id = data_connection_id
 
         self.local_path = file_path
 
@@ -180,7 +182,12 @@ class _FileUploader:
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload."""
-        body = StorageServiceUploadProjectArtifactBody(cluster_id=self.cloud_account, filename=self.remote_path)
+        body_kwargs = {"filename": self.remote_path}
+        if self.cloud_account is not None:
+            body_kwargs["cluster_id"] = self.cloud_account
+        if self.data_connection_id is not None:
+            body_kwargs["data_connection_id"] = self.data_connection_id
+        body = StorageServiceUploadProjectArtifactBody(**body_kwargs)
         resp: V1UploadProjectArtifactResponse = self.client.storage_service_upload_project_artifact(
             body=body, project_id=self.teamspace_id
         )
@@ -195,9 +202,16 @@ class _FileUploader:
             for batch in batched_indices:
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
 
-        completed_body = StorageServiceCompleteUploadProjectArtifactBody(
-            cluster_id=self.cloud_account, filename=self.remote_path, parts=completed, upload_id=resp.upload_id
-        )
+        completed_body_kwargs = {
+            "filename": self.remote_path,
+            "parts": completed,
+            "upload_id": resp.upload_id,
+        }
+        if self.cloud_account is not None:
+            completed_body_kwargs["cluster_id"] = self.cloud_account
+        if self.data_connection_id is not None:
+            completed_body_kwargs["data_connection_id"] = self.data_connection_id
+        completed_body = StorageServiceCompleteUploadProjectArtifactBody(**completed_body_kwargs)
         self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
 
     def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
@@ -208,9 +222,15 @@ class _FileUploader:
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
         """Requests urls for a batch of parts."""
-        body = StorageServiceUploadProjectArtifactPartsBody(
-            filename=self.remote_path, parts=parts, cluster_id=self.cloud_account
-        )
+        body_kwargs = {
+            "filename": self.remote_path,
+            "parts": parts,
+        }
+        if self.cloud_account is not None:
+            body_kwargs["cluster_id"] = self.cloud_account
+        if self.data_connection_id is not None:
+            body_kwargs["data_connection_id"] = self.data_connection_id
+        body = StorageServiceUploadProjectArtifactPartsBody(**body_kwargs)
         resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
             body, self.teamspace_id, upload_id
         )
