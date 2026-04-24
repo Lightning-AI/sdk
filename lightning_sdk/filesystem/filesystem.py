@@ -2,12 +2,18 @@ import logging
 import os
 from typing import Generator, List, Tuple
 
+from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
 from lightning_sdk.utils.filesystem import parse_lit_url
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 logger = logging.getLogger(__name__)
+
+
+def _is_lightning_storage_destination(path: str) -> bool:
+    normalized = path.strip("/")
+    return normalized == "lightning_storage" or normalized.startswith("lightning_storage/")
 
 
 class Filesystem(metaclass=TrackCallsMeta):
@@ -117,4 +123,13 @@ class Filesystem(metaclass=TrackCallsMeta):
                 )
         else:
             # upload
-            raise NotImplementedError("Filesystem upload is not implemented.")
+            if not _is_lightning_storage_destination(path_result["destination"] or ""):
+                raise NotImplementedError("Filesystem upload is not implemented.")
+            lightning_storage_upload_api.copy_local_path_to_lightning_storage(
+                client=self._filesystem_api.client,
+                teamspace_id=selected_teamspace.id,
+                local_path=local_path,
+                remote_path=destination,
+                recursive=recursive,
+                progress_bar=progress_bar,
+            )

@@ -9,13 +9,14 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
+import lightning_sdk.api.lightning_storage_upload as lightning_storage_upload_module
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.api.deployment_api import (
     DEFAULT_REQUEST_CAPTURE_PATH,
     DeploymentApi,
     MissingRequestContentError,
 )
-from lightning_sdk.lightning_cloud.openapi import DataConnectionServiceCreateDataConnectionBody
+from lightning_sdk.lightning_cloud.openapi import DataConnectionServiceCreateDataConnectionBody, V1R2DataConnection
 
 
 class _FakeResponse:
@@ -208,7 +209,7 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
     )
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
     sleeps = []
-    monkeypatch.setattr(deployment_api_module, "sleep", lambda seconds: sleeps.append(seconds))
+    monkeypatch.setattr(lightning_storage_upload_module, "sleep", lambda seconds: sleeps.append(seconds))
 
     uploads = []
     manifest_uploads = []
@@ -249,7 +250,7 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
         create_resources=True,
         force=True,
         writable=True,
-        r2=deployment_api_module.V1R2DataConnection(name="blackbox-exports"),
+        r2=V1R2DataConnection(name="blackbox-exports"),
     )
     assert [upload["remote_path"] for upload in uploads] == [
         "daily/2026-04-22/requests.csv",
@@ -259,7 +260,7 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
     assert manifest_uploads[0]["uploaded_artifacts"] == result.uploaded_artifacts
     assert all(upload["data_connection_id"] == "data-connection-id" for upload in uploads)
     assert all(upload["cloud_account"] == "project-cluster-id" for upload in uploads)
-    assert sleeps == [deployment_api_module._LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS]
+    assert sleeps == [lightning_storage_upload_module.LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS]
 
 
 def test_export_keeps_local_manifest_honest_when_manifest_upload_fails(tmp_path, monkeypatch):
@@ -421,13 +422,13 @@ def test_wait_for_lightning_storage_folder_ready_respects_timeout_window(monkeyp
     clock = {"now": 0.0}
     sleeps = []
 
-    monkeypatch.setattr(deployment_api_module, "monotonic", lambda: clock["now"])
+    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
 
     def fake_sleep(seconds):
         sleeps.append(seconds)
         clock["now"] += seconds
 
-    monkeypatch.setattr(deployment_api_module, "sleep", fake_sleep)
+    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
 
     result = deployment_api_module._wait_for_lightning_storage_folder_ready(
         client=client,
@@ -462,13 +463,13 @@ def test_wait_for_lightning_storage_folder_ready_caps_final_sleep(monkeypatch):
     clock = {"now": 0.0}
     sleeps = []
 
-    monkeypatch.setattr(deployment_api_module, "monotonic", lambda: clock["now"])
+    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
 
     def fake_sleep(seconds):
         sleeps.append(seconds)
         clock["now"] += seconds
 
-    monkeypatch.setattr(deployment_api_module, "sleep", fake_sleep)
+    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
 
     with pytest.raises(RuntimeError, match="was not ready for upload within 31s"):
         deployment_api_module._wait_for_lightning_storage_folder_ready(
@@ -504,13 +505,13 @@ def test_wait_for_lightning_storage_folder_ready_sleeps_before_repolling_initial
     clock = {"now": 0.0}
     sleeps = []
 
-    monkeypatch.setattr(deployment_api_module, "monotonic", lambda: clock["now"])
+    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
 
     def fake_sleep(seconds):
         sleeps.append(seconds)
         clock["now"] += seconds
 
-    monkeypatch.setattr(deployment_api_module, "sleep", fake_sleep)
+    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
 
     result = deployment_api_module._wait_for_lightning_storage_folder_ready(
         client=client,
@@ -608,7 +609,7 @@ def test_parse_remote_upload_path_accepts_lightning_storage_forms(remote_path, e
         ("blackbox-exports/daily", "lightning_storage destinations only"),
         ("uploads/blackbox-exports/daily", "lightning_storage destinations only"),
         ("lit://my-org/my-teamspace/uploads/blackbox-exports/daily", "lightning_storage destinations only"),
-        ("lightning_storage/blackbox-exports/../daily", "must not contain '\\.\\.'"),
+        ("lightning_storage/blackbox-exports/../daily", r"must not be '\.\.'"),
     ],
 )
 def test_export_rejects_invalid_remote_path(tmp_path, remote_path, match):
@@ -804,7 +805,7 @@ def test_export_rejects_ambiguous_path_arguments(tmp_path):
 def test_export_rejects_existing_artifacts_unless_overwrite_is_enabled(tmp_path):
     (tmp_path / "requests.csv").write_text("existing", encoding="utf-8")
 
-    with pytest.raises(FileExistsError, match="requests.csv"):
+    with pytest.raises(FileExistsError, match=r"requests\.csv"):
         _deployment_api(_FakeClient(pages=[])).export_request_captures(
             _deployment(),
             start="2026-04-20T00:00:00Z",

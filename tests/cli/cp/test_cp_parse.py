@@ -4,7 +4,7 @@ from lightning_sdk.cli.cp import parse_lit_url
 
 
 def test_parse_lit_url_missing_scheme():
-    with pytest.raises(ValueError, match="URL must contain '://'"):
+    with pytest.raises(ValueError, match="URL must start with 'lit://"):
         parse_lit_url("teamspace/org/studios/my-studio")
 
 
@@ -22,3 +22,8 @@ def test_parse_lit_url_s3_folders():
 
 def test_parse_lit_url_lightning_storage():
     assert parse_lit_url("lit://org/teamspace/lightning_storage/my-data") == "lightning_storage"
+
+
+def test_parse_lit_url_missing_resource_type():
+    with pytest.raises(ValueError, match="Invalid lit URL format"):
+        parse_lit_url("lit://org/teamspace")

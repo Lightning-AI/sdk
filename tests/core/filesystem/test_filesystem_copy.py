@@ -165,15 +165,47 @@ def test_copy_raises_if_both_local():
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.filesystem.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.filesystem.parse_lit_url")
-def test_copy_upload_raises_not_implemented(
-    mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get, fake_teamspace, fake_path_result
+def test_copy_upload_to_lightning_storage(
+    mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace, fake_path_result
 ):
-    mock_parse_lit_url.return_value = fake_path_result
+    upload_url = "lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt"
+    mock_parse_lit_url.return_value = {
+        **fake_path_result,
+        "destination": "lightning_storage/my-storage/data/model.ckpt",
+    }
     mock_resolve.return_value = fake_teamspace
+    mock_authenticate.return_value = FAKE_TOKEN
     mock_client_cls.return_value.api_client.configuration.host = HOST
+    mock_upload = mock.Mock()
 
-    fs = Filesystem()
-    with pytest.raises(NotImplementedError):
-        fs.copy(LOCAL_PATH, LIT_URL)
+    with mock.patch(
+        "lightning_sdk.filesystem.filesystem.lightning_storage_upload_api.copy_local_path_to_lightning_storage",
+        mock_upload,
+    ):
+        fs = Filesystem()
+        fs.copy(LOCAL_PATH, upload_url)
+
+    mock_upload.assert_called_once_with(
+        client=fs._filesystem_api.client,
+        teamspace_id=TEAMSPACE_ID,
+        local_path=LOCAL_PATH,
+        remote_path=upload_url,
+        recursive=False,
+        progress_bar=True,
+    )
+
+
+def test_copy_upload_non_lightning_storage_raises_not_implemented(fake_teamspace):
+    fs = Filesystem.__new__(Filesystem)
+    fs._filesystem_api = mock.Mock()
+
+    with mock.patch(
+        "lightning_sdk.filesystem.filesystem.parse_lit_url",
+        return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data/model.ckpt"},
+    ), mock.patch("lightning_sdk.filesystem.filesystem.resolve_teamspace", return_value=fake_teamspace), pytest.raises(
+        NotImplementedError, match="Filesystem upload is not implemented"
+    ):
+        fs.copy(LOCAL_PATH, "lit://my-org/my-teamspace/uploads/data/model.ckpt")

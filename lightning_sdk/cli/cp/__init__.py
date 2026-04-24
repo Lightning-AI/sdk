@@ -1,6 +1,6 @@
 """CP CLI commands."""
 
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 import click
 
@@ -10,19 +10,37 @@ from lightning_sdk.cli.studio.cp import cp_upload as studio_cp_upload
 from lightning_sdk.filesystem.filesystem import Filesystem
 
 
-def parse_lit_url(url: str) -> tuple[str, list[str], Literal["studios", "uploads"]]:
+def parse_lit_url(url: str) -> str:
     """Parse lit:// URL and extract resource type."""
-    if "://" not in url:
-        raise ValueError("URL must contain '://'")
+    if not url.startswith("lit://"):
+        raise ValueError("URL must start with 'lit://'")
 
     path = url.split("://")[-1].split("/")
+    if len(path) < 3 or not path[2]:
+        raise ValueError("Invalid lit URL format. Expected 'lit://<owner>/<teamspace>/<resource_type>'")
     return path[2].lower()
 
 
-def route_cp_operation(source: str, destination: str, **options: Any) -> None:
+def _canonicalize_lit_resource_type(url: str) -> str:
+    """Normalize the lit:// resource type segment to its canonical lowercase form."""
+    parse_lit_url(url)
+    path = url.split("://", maxsplit=1)[-1].split("/")
+    path[2] = path[2].lower()
+    return "lit://" + "/".join(path)
+
+
+def route_cp_operation(source: str, destination: Optional[str], **options: Any) -> None:
     """Route copy operation based on URL structure."""
+    if destination is None:
+        raise ValueError("Destination path must be provided.")
+
     source_is_lit = source.startswith("lit://")
     dest_is_lit = destination.startswith("lit://")
+
+    if source_is_lit:
+        source = _canonicalize_lit_resource_type(source)
+    if dest_is_lit:
+        destination = _canonicalize_lit_resource_type(destination)
 
     if source_is_lit and dest_is_lit:
         raise ValueError("Cannot copy between two remote URLs. One path must be local.")
@@ -44,8 +62,14 @@ def route_cp_operation(source: str, destination: str, **options: Any) -> None:
             or resource_type == "gcs_connections"
         ):
             fs = Filesystem()
-            source = source.replace("uploads/", "Uploads/")
-            return fs.copy(source=source, destination=destination, recursive=options.get("recursive", False))
+            if resource_type == "uploads":
+                source = source.replace("uploads/", "Uploads/")
+            return fs.copy(
+                source=source,
+                destination=destination,
+                recursive=options.get("recursive", False),
+                progress_bar=options.get("progress_bar", True),
+            )
         raise ValueError(f"Resource type: {resource_type} is not supported")
     else:
         resource_type = parse_lit_url(destination)
@@ -53,6 +77,14 @@ def route_cp_operation(source: str, destination: str, **options: Any) -> None:
             return studio_cp_upload(source, destination, options.get("recursive", False))
         if resource_type == "uploads":
             return teamspace_uploads_cp_upload(source, destination, options)
+        if resource_type == "lightning_storage":
+            fs = Filesystem()
+            return fs.copy(
+                source=source,
+                destination=destination,
+                recursive=options.get("recursive", False),
+                progress_bar=options.get("progress_bar", True),
+            )
         raise ValueError(f"Resource type: {resource_type} is not supported")
 
 
@@ -64,6 +96,7 @@ def register_commands(command: click.Command) -> None:
             source=source,
             destination=destination,
             recursive=recursive,
+            **kwargs,
         )
 
     command.callback = new_callback

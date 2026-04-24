@@ -1,20 +1,19 @@
 import csv
 import gzip
 import json
-import os
 from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
-from time import monotonic, sleep
+from time import sleep
 from typing import Any, Dict, List, Literal, Optional, Sequence, TextIO, Tuple, Union
 
 import requests
 
+from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
 from lightning_sdk.api.utils import _FileUploader, _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
-    DataConnectionServiceCreateDataConnectionBody,
     JobsServiceCreateDeploymentBody,
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
@@ -27,7 +26,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1HealthCheckHttpGet,
     V1JobHealthCheckConfig,
     V1JobSpec,
-    V1R2DataConnection,
     V1RollingUpdateStrategy,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -37,9 +35,6 @@ from lightning_sdk.utils.filesystem import parse_lit_url
 
 _METRICS = ["GPU", "CPU", "RPM"]
 DEFAULT_REQUEST_CAPTURE_PATH = "/v1/chat/completions"
-_LIGHTNING_STORAGE_READY_STATE = "DATA_CONNECTION_STATE_CREATED"
-_LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS = 2
-_LIGHTNING_STORAGE_POLL_TIMEOUT_SECONDS = 30
 _CSV_FIELDNAMES = (
     "request_id",
     "received_at",
@@ -774,22 +769,16 @@ def _resolve_lightning_storage_upload_target(
         teamspace_id=teamspace_id,
         remote_path=remote_path,
     )
-    folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
-    cloud_account = _resolve_lightning_storage_upload_cloud_account(client=client, teamspace_id=teamspace_id)
-    data_connection = _get_or_create_lightning_storage_folder(
+    resolved_target = lightning_storage_upload_api.resolve_lightning_storage_upload_target(
         client=client,
         teamspace_id=teamspace_id,
-        folder_name=folder_name,
+        remote_path=remote_path,
     )
-    data_connection_id = getattr(data_connection, "id", None)
-    if not data_connection_id:
-        raise RuntimeError(f"lightning_storage folder '{folder_name}' is missing an id")
-
     return _LightningStorageUploadTarget(
-        data_connection_id=data_connection_id,
-        cloud_account=cloud_account,
-        folder_name=folder_name,
-        relative_parts=relative_parts,
+        data_connection_id=resolved_target.data_connection_id,
+        cloud_account=resolved_target.cloud_account,
+        folder_name=resolved_target.folder_name,
+        relative_parts=resolved_target.relative_parts,
     )
 
 
@@ -824,8 +813,7 @@ def _validate_remote_upload_path_target(*, client: Any, teamspace_id: str, remot
 
 
 def _extract_lit_remote_destination(remote_path: str) -> str:
-    parsed = parse_lit_url(remote_path)
-    return str(parsed.get("destination") or "").strip("/")
+    return lightning_storage_upload_api._extract_lit_remote_destination(remote_path)
 
 
 def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
@@ -850,34 +838,7 @@ def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
 
 
 def _parse_lightning_storage_path(remote_path: str) -> Tuple[str, Tuple[str, ...]]:
-    normalized = str(remote_path or "").strip()
-    if not normalized:
-        raise ValueError("remote_path must not be empty")
-
-    if normalized.startswith("lit://"):
-        normalized = _extract_lit_remote_destination(normalized)
-
-    matched_lightning_storage_prefix = False
-    for prefix in ("/teamspace/lightning_storage", "teamspace/lightning_storage", "lightning_storage"):
-        if normalized == prefix:
-            normalized = ""
-            matched_lightning_storage_prefix = True
-            break
-        if normalized.startswith(prefix + "/"):
-            normalized = normalized[len(prefix) + 1 :].lstrip("/")
-            matched_lightning_storage_prefix = True
-            break
-
-    if not matched_lightning_storage_prefix:
-        raise ValueError("remote_path currently supports lightning_storage destinations only")
-
-    parts = [part for part in PurePosixPath(normalized).parts if part not in ("", ".", "/")]
-    if not parts:
-        raise ValueError("remote_path must include a lightning_storage folder name")
-    if any(part == ".." for part in parts):
-        raise ValueError("remote_path must not contain '..'")
-
-    return parts[0], tuple(parts[1:])
+    return lightning_storage_upload_api._parse_lightning_storage_path(remote_path)
 
 
 def _get_or_create_lightning_storage_folder(
@@ -886,30 +847,7 @@ def _get_or_create_lightning_storage_folder(
     teamspace_id: str,
     folder_name: str,
 ) -> Any:
-    existing = _find_lightning_storage_folder(client=client, teamspace_id=teamspace_id, folder_name=folder_name)
-    if existing is not None:
-        return _wait_for_lightning_storage_folder_ready(
-            client=client,
-            teamspace_id=teamspace_id,
-            folder_name=folder_name,
-            initial_connection=existing,
-        )
-
-    body = DataConnectionServiceCreateDataConnectionBody(
-        name=folder_name,
-        create_resources=True,
-        force=True,
-        writable=True,
-        r2=V1R2DataConnection(name=folder_name),
-    )
-    try:
-        client.data_connection_service_create_data_connection(body=body, project_id=teamspace_id)
-    except ApiException as ex:
-        error_body = str(getattr(ex, "body", ex))
-        if "duplicate key value violates unique constraint" not in error_body:
-            raise
-
-    return _wait_for_lightning_storage_folder_ready(
+    return lightning_storage_upload_api._get_or_create_lightning_storage_folder(
         client=client,
         teamspace_id=teamspace_id,
         folder_name=folder_name,
@@ -917,68 +855,22 @@ def _get_or_create_lightning_storage_folder(
 
 
 def _resolve_lightning_storage_upload_cloud_account(*, client: Any, teamspace_id: str) -> str:
-    cloud_account = os.getenv("LIGHTNING_CLUSTER_ID")
-    if cloud_account:
-        return cloud_account
-
-    cluster_bindings = list(
-        getattr(client.projects_service_list_project_cluster_bindings(project_id=teamspace_id), "clusters", None) or []
-    )
-    cluster_ids = [binding.cluster_id for binding in cluster_bindings if getattr(binding, "cluster_id", None)]
-    if len(cluster_ids) == 1:
-        return cluster_ids[0]
-
-    preferred_cluster = getattr(
-        getattr(client.projects_service_get_project(teamspace_id), "project_settings", None),
-        "preferred_cluster",
-        None,
-    )
-    if preferred_cluster:
-        return preferred_cluster
-
-    if not cluster_ids:
-        raise RuntimeError(
-            "Could not determine the current cloud account for lightning_storage upload "
-            "because no clusters are bound to the teamspace"
-        )
-
-    raise RuntimeError(
-        "Could not determine the current cloud account for lightning_storage upload. "
-        f"Choices are: {', '.join(cluster_ids)}"
+    return lightning_storage_upload_api._resolve_lightning_storage_upload_cloud_account(
+        client=client,
+        teamspace_id=teamspace_id,
     )
 
 
 def _find_lightning_storage_folder(*, client: Any, teamspace_id: str, folder_name: str) -> Optional[Any]:
-    response = client.data_connection_service_list_data_connections(project_id=teamspace_id)
-    for connection in list(getattr(response, "data_connections", None) or []):
-        if getattr(connection, "name", None) != folder_name:
-            continue
-        if getattr(connection, "r2", None) is None:
-            raise ValueError(f"data connection '{folder_name}' exists but is not a lightning_storage folder")
-        if getattr(connection, "writable", None) is False:
-            raise ValueError(f"lightning_storage folder '{folder_name}' is not writable")
-        return connection
-    return None
+    return lightning_storage_upload_api._find_lightning_storage_folder(
+        client=client,
+        teamspace_id=teamspace_id,
+        folder_name=folder_name,
+    )
 
 
 def _is_lightning_storage_folder_ready(connection: Any) -> bool:
-    if connection is None:
-        return False
-
-    r2 = getattr(connection, "r2", None)
-    if r2 is None:
-        return False
-
-    state = str(getattr(connection, "state", "") or "")
-    source = str(getattr(r2, "source", "") or "")
-    account_id = str(getattr(r2, "account_id", "") or "")
-
-    return (
-        state == _LIGHTNING_STORAGE_READY_STATE
-        and source.startswith("r2://")
-        and source != "tmp"
-        and account_id not in ("", "tmp")
-    )
+    return lightning_storage_upload_api._is_lightning_storage_folder_ready(connection)
 
 
 def _wait_for_lightning_storage_folder_ready(
@@ -987,37 +879,16 @@ def _wait_for_lightning_storage_folder_ready(
     teamspace_id: str,
     folder_name: str,
     initial_connection: Optional[Any] = None,
-    timeout_seconds: int = _LIGHTNING_STORAGE_POLL_TIMEOUT_SECONDS,
-    poll_interval_seconds: int = _LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS,
+    timeout_seconds: int = lightning_storage_upload_api.LIGHTNING_STORAGE_POLL_TIMEOUT_SECONDS,
+    poll_interval_seconds: int = lightning_storage_upload_api.LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS,
 ) -> Any:
-    connection = initial_connection
-    deadline = monotonic() + timeout_seconds
-    first_poll = initial_connection is None
-
-    while True:
-        if _is_lightning_storage_folder_ready(connection):
-            return connection
-
-        remaining = deadline - monotonic()
-        if remaining <= 0:
-            break
-
-        if not first_poll:
-            sleep(min(poll_interval_seconds, remaining))
-
-        connection = _find_lightning_storage_folder(
-            client=client,
-            teamspace_id=teamspace_id,
-            folder_name=folder_name,
-        )
-        first_poll = False
-
-    state = getattr(connection, "state", None)
-    r2 = getattr(connection, "r2", None)
-    source = getattr(r2, "source", None) if r2 is not None else None
-    raise RuntimeError(
-        f"lightning_storage folder '{folder_name}' was not ready for upload within {timeout_seconds}s "
-        f"(state={state}, source={source})"
+    return lightning_storage_upload_api._wait_for_lightning_storage_folder_ready(
+        client=client,
+        teamspace_id=teamspace_id,
+        folder_name=folder_name,
+        initial_connection=initial_connection,
+        timeout_seconds=timeout_seconds,
+        poll_interval_seconds=poll_interval_seconds,
     )
 
 
@@ -1028,17 +899,21 @@ def _upload_request_export_artifact(
     upload_target: _LightningStorageUploadTarget,
     local_path: Path,
 ) -> None:
-    remote_path = upload_target.remote_artifact_path(local_path.name)
     try:
-        _FileUploader(
+        lightning_storage_upload_api.upload_file_to_resolved_lightning_storage_target(
             client=client,
             teamspace_id=teamspace_id,
-            cloud_account=upload_target.cloud_account,
-            data_connection_id=upload_target.data_connection_id,
-            file_path=str(local_path),
-            remote_path=remote_path,
+            upload_target=lightning_storage_upload_api.LightningStorageUploadTarget(
+                data_connection_id=upload_target.data_connection_id,
+                cloud_account=upload_target.cloud_account,
+                folder_name=upload_target.folder_name,
+                relative_parts=upload_target.relative_parts,
+            ),
+            local_path=local_path,
+            destination_parts=(local_path.name,),
             progress_bar=False,
-        )()
+            uploader_cls=_FileUploader,
+        )
     except Exception as ex:
         destination = upload_target.absolute_artifact_path(local_path.name)
         raise RuntimeError(f"failed to upload request export artifact '{local_path.name}' to {destination}") from ex
@@ -1381,7 +1256,7 @@ def to_spec(
     health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
     quantity: Optional[int] = None,
     include_credentials: Optional[bool] = None,
-    cloudspace_id: Optional[None] = None,
+    cloudspace_id: Optional[str] = None,
     max_runtime: Optional[int] = None,
     machine_image_version: Optional[str] = None,
     path_mappings: Optional[Dict[str, str]] = None,

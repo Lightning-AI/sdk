@@ -18,6 +18,10 @@ class FilesystemApi:
         self._client = LightningClient(max_tries=7)
         self._token = _authenticate_and_get_token(self._client)
 
+    @property
+    def client(self) -> LightningClient:
+        return self._client
+
     def list_files(self, teamspace_id: str, path: str, recursive: bool = False) -> List[Dict]:
         path = path.strip("/")
         query_params = {"recursive": "false"}
