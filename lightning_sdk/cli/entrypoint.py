@@ -10,14 +10,26 @@ from lightning_sdk.api.studio_api import _cloud_url
 
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
+    api,
     base_studio,
     config,
+    container,
     cp,
-    # job,
+    file,
+    folder,
+    job,
     license,
-    # mmt,
+    machine,
+    mmt,
+    model,
+    ssh,
     studio,
     vm,
+)
+from lightning_sdk.cli.legacy_redirects import (
+    build_hidden_alias_group,
+    build_legacy_forward_command,
+    build_legacy_forward_group,
 )
 from lightning_sdk.cli.utils import CustomHelpFormatter
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
@@ -72,54 +84,137 @@ def logout() -> None:
 
 # Add new command groups
 main_cli.add_command(config)
-# main_cli.add_command(job)
-# main_cli.add_command(mmt)
+main_cli.add_command(job)
+main_cli.add_command(mmt)
+main_cli.add_command(machine)
+main_cli.add_command(api)
+main_cli.add_command(container)
+main_cli.add_command(model)
+main_cli.add_command(file)
+main_cli.add_command(folder)
+main_cli.add_command(ssh)
 main_cli.add_command(studio)
 main_cli.add_command(vm)
 main_cli.add_command(base_studio)
 main_cli.add_command(license)
 main_cli.add_command(cp)
 
+# hidden plural aliases for noun-first groups
+main_cli.add_command(build_hidden_alias_group("apis", api))
+main_cli.add_command(build_hidden_alias_group("jobs", job))
+main_cli.add_command(build_hidden_alias_group("mmts", mmt))
+main_cli.add_command(build_hidden_alias_group("machines", machine))
+main_cli.add_command(build_hidden_alias_group("containers", container))
+main_cli.add_command(build_hidden_alias_group("models", model))
+main_cli.add_command(build_hidden_alias_group("files", file))
+main_cli.add_command(build_hidden_alias_group("folders", folder))
+main_cli.add_command(build_hidden_alias_group("studios", studio))
+main_cli.add_command(build_hidden_alias_group("vms", vm))
+main_cli.add_command(build_hidden_alias_group("base-studios", base_studio))
+
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####
-    # these commands are currently supported for backwards compatibility, but will potentially be removed in the future.
-    # they've grown pretty wild and provide a very inconsistent UX.
     from lightning_sdk.cli.legacy.ai_hub import aihub
-    from lightning_sdk.cli.legacy.configure import configure
-    from lightning_sdk.cli.legacy.connect import connect
-    from lightning_sdk.cli.legacy.create import create
-    from lightning_sdk.cli.legacy.delete import delete
-    from lightning_sdk.cli.legacy.deploy.serve import deploy
-    from lightning_sdk.cli.legacy.docker_cli import dockerize
-    from lightning_sdk.cli.legacy.download import download
-    from lightning_sdk.cli.legacy.generate import generate
-    from lightning_sdk.cli.legacy.inspection import inspect
-    from lightning_sdk.cli.legacy.list import list_cli
-    from lightning_sdk.cli.legacy.open import open as open_cmd
-    from lightning_sdk.cli.legacy.run import run
-    from lightning_sdk.cli.legacy.start import start
-    from lightning_sdk.cli.legacy.stop import stop
-    from lightning_sdk.cli.legacy.switch import switch
-    from lightning_sdk.cli.legacy.upload import upload
 
-    # Add old command groups
     main_cli.add_command(aihub)
-    main_cli.add_command(configure)
-    main_cli.add_command(connect)
-    main_cli.add_command(create)
-    main_cli.add_command(delete)
-    main_cli.add_command(deploy)
-    main_cli.add_command(dockerize)
-    main_cli.add_command(download)
-    main_cli.add_command(generate)
-    main_cli.add_command(inspect)
-    main_cli.add_command(list_cli)
-    main_cli.add_command(open_cmd)
-    main_cli.add_command(run)
-    main_cli.add_command(start)
-    main_cli.add_command(stop)
-    main_cli.add_command(switch)
-    main_cli.add_command(upload)
+    main_cli.add_command(
+        build_legacy_forward_group("configure", {"ssh": ("lightning ssh configure", ssh.commands["configure"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("connect", {"studio": ("lightning studio ssh", studio.commands["ssh"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("create", {"studio": ("lightning studio create", studio.commands["create"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "delete",
+            {
+                "container": ("lightning container delete", container.commands["delete"]),
+                "job": ("lightning job delete", job.commands["delete"]),
+                "mmt": ("lightning mmt delete", mmt.commands["delete"]),
+                "studio": ("lightning studio delete", studio.commands["delete"]),
+            },
+        )
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("deploy", {"api": ("lightning api deploy", api.commands["deploy"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("dockerize", {"api": ("lightning api dockerize", api.commands["dockerize"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "download",
+            {
+                "container": ("lightning container download", container.commands["download"]),
+                "file": ("lightning file download", file.commands["download"]),
+                "folder": ("lightning folder download", folder.commands["download"]),
+                "model": ("lightning model download", model.commands["download"]),
+            },
+        )
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("generate", {"ssh": ("lightning ssh generate", ssh.commands["generate"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "inspect",
+            {
+                "job": ("lightning job inspect", job.commands["inspect"]),
+                "mmt": ("lightning mmt inspect", mmt.commands["inspect"]),
+            },
+        )
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "list",
+            {
+                "containers": ("lightning container list", container.commands["list"]),
+                "jobs": ("lightning job list", job.commands["list"]),
+                "machines": ("lightning machine list", machine.commands["list"]),
+                "mmts": ("lightning mmt list", mmt.commands["list"]),
+                "studios": ("lightning studio list", studio.commands["list"]),
+            },
+        )
+    )
+    main_cli.add_command(build_legacy_forward_command("open", "lightning studio open", studio.commands["open"]))
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "run",
+            {
+                "job": ("lightning job run", job.commands["run"]),
+                "mmt": ("lightning mmt run", mmt.commands["run"]),
+            },
+        )
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("start", {"studio": ("lightning studio start", studio.commands["start"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "stop",
+            {
+                "job": ("lightning job stop", job.commands["stop"]),
+                "mmt": ("lightning mmt stop", mmt.commands["stop"]),
+                "studio": ("lightning studio stop", studio.commands["stop"]),
+            },
+        )
+    )
+    main_cli.add_command(
+        build_legacy_forward_group("switch", {"studio": ("lightning studio switch", studio.commands["switch"])})
+    )
+    main_cli.add_command(
+        build_legacy_forward_group(
+            "upload",
+            {
+                "container": ("lightning container upload", container.commands["upload"]),
+                "file": ("lightning file upload", file.commands["upload"]),
+                "folder": ("lightning folder upload", folder.commands["upload"]),
+                "model": ("lightning model upload", model.commands["upload"]),
+            },
+        )
+    )
 
 
 if __name__ == "__main__":

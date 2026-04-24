@@ -1,0 +1,56 @@
+"""API deploy command."""
+
+from typing import Any
+
+import click
+
+from lightning_sdk.cli.legacy.deploy.serve import api_impl
+
+
+@click.command("deploy")
+@click.argument("script_path")
+@click.option("--easy", is_flag=True, default=False, help="Generate a client for the model")
+@click.option("--cloud", is_flag=True, default=False, help="Run the model on cloud")
+@click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
+@click.option(
+    "--non-interactive", "--non_interactive", is_flag=True, default=False, help="Do not prompt for confirmation"
+)
+@click.option("--machine", default="CPU", help="Machine type to deploy the API on. Defaults to CPU.")
+@click.option(
+    "--devbox",
+    default=None,
+    help="Machine type to build the API on. Setting this argument will open the server in a Studio.",
+)
+@click.option(
+    "--interruptible", is_flag=True, default=False, help="Whether the machine should be interruptible (spot) or not."
+)
+@click.option(
+    "--teamspace",
+    default=None,
+    help="The teamspace the deployment should be associated with. Defaults to the current teamspace.",
+)
+@click.option(
+    "--org", default=None, help="The organization owning the teamspace (if any). Defaults to the current organization."
+)
+@click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
+@click.option("--cloud-account", "--cloud_account", default=None, help="The cloud account to run the deployment on.")
+@click.option(
+    "--cloud-provider",
+    "--cloud_provider",
+    default=None,
+    help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
+)
+@click.option("--port", default=None, type=int, help="The port to expose the API on.")
+@click.option("--min_replica", "--min-replica", default=None, type=int, help="Number of replicas to start with.")
+@click.option("--max_replica", "--max-replica", default=None, type=int, help="Number of replicas to scale up to.")
+@click.option("--replicas", default=None, type=int, help="Deployment will start with this many replicas.")
+@click.option(
+    "--no_credentials",
+    "--no-credentials",
+    is_flag=True,
+    default=False,
+    help="Whether to include credentials in the deployment.",
+)
+def deploy_api(**kwargs: Any) -> None:
+    """Deploy a LitServe model script."""
+    api_impl(**kwargs)

@@ -1,42 +1,23 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_connect_studio():
-    result = subprocess.run("lightning studio connect --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio connect --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio connect [OPTIONS] [NAME]
+    assert "Usage: lightning studio connect [OPTIONS] [NAME]" in result_text
+    assert "Connect to a Studio." in result_text
+    assert "Example:     lightning studio connect" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "--cloud-provider" in result_text
+    assert "--cloud-account TEXT" in result_text
+    assert "--machine" in result_text
+    assert "--gpus TEXT" in result_text
+    assert "--studio-type TEXT" in result_text
+    assert "--interruptible" in result_text
 
-  Connect to a Studio.
 
-  Example:     lightning studio connect
-
-Options:
-  --teamspace TEXT                Override default teamspace (format:
-                                  owner/teamspace)
-  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING|LIGHTNING_AGGREGATE]
-                                  The cloud provider to start the studio on.
-                                  Defaults to teamspace default.
-  --cloud-account TEXT            The cloud account to create the studio on.
-                                  Defaults to teamspace default.
-  --machine [CPU_SMALL|CPU|CPU_X_2|CPU_X_4|CPU_X_8|CPU_X_16|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4_SMALL|T4|T4_X_2|T4_X_4|T4_X_8|L4|L4_X_2|L4_X_4|L4_X_8|L40S|L40S_X_2|L40S_X_4|L40S_X_8|RTXP_6000|RTXP_6000_X_2|RTXP_6000_X_4|RTXP_6000_X_8|A100|A100_X_2|A100_X_4|A100_X_8|H100|H100_X_2|H100_X_4|H100_X_8|H200|H200_X_8|B200_X_8]
-                                  The machine type to start the studio on.
-                                  Defaults to CPU-4
-  --gpus TEXT                     The number and type of GPUs to start the
-                                  studio on (format: TYPE:COUNT, e.g. L4:4)
-  --studio-type TEXT              The base studio template name to use for
-                                  creating the studio. Must be lowercase and
-                                  hyphenated (use '-' instead of spaces). Run
-                                  'lightning base-studio list' to see all
-                                  available templates. Defaults to the first
-                                  available template.
-  --interruptible                 Start the studio on an interruptible
-                                  instance.
-  --help                          Show this message and exit.
-"""  # noqa: E501
-    )
+def test_studios_connect_help() -> None:
+    assert_help_contains("lightning studios connect --help", "Usage: lightning studios connect", "Connect to a Studio.")
 
 
 def test_connect_studio_machine_and_gpus_mutually_exclusive(monkeypatch):
@@ -276,8 +257,8 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
-        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
-    ):
+        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
+    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
         teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
             cloud_account="account-123",
@@ -420,8 +401,8 @@ def test_parse_args_or_get_from_current_studio_cloud_provider_conversion(monkeyp
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
-        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
-    ):
+        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
+    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
         for provider_str in ["AWS", "GCP", "LAMBDA_LABS"]:
             _, _, _, _, cloud_provider, _ = _parse_args_or_get_from_current_studio(
                 teamspace="owner/teamspace",
@@ -449,6 +430,8 @@ def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
+        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
+    ), patch(
         "lightning_sdk.cli.studio.connect.random_unique_name", return_value="generated-unique-name"
     ) as mock_random_name:
         _, _, _, _, _, name = _parse_args_or_get_from_current_studio(

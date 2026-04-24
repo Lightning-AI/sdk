@@ -1,36 +1,37 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_create_studio():
-    result = subprocess.run("lightning studio create --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio create --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio create [OPTIONS]
+    assert "Usage: lightning studio create [OPTIONS]" in result_text
+    assert "Create a new Studio." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "--cloud-provider" in result_text
+    assert "--cloud-account TEXT" in result_text
+    assert "--studio-type TEXT" in result_text
 
-  Create a new Studio.
 
-  Example:     lightning studio create
+def test_studios_create_help() -> None:
+    assert_help_contains("lightning studios create --help", "Usage: lightning studios create", "Create a new Studio.")
 
-Options:
-  --name TEXT                     The name of the studio to create. If not
-                                  provided, a random name will be generated.
-  --teamspace TEXT                Override default teamspace (format:
-                                  owner/teamspace)
-  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING|LIGHTNING_AGGREGATE]
-                                  The cloud provider to start the studio on.
-                                  Defaults to teamspace default.
-  --cloud-account TEXT            The cloud account to create the studio on.
-                                  Defaults to teamspace default.
-  --studio-type TEXT              The base studio template name to use for
-                                  creating the studio. Must be lowercase and
-                                  hyphenated (use '-' instead of spaces). Run
-                                  'lightning base-studio list' to see all
-                                  available templates. Defaults to the first
-                                  available template.
-  --help                          Show this message and exit.
-"""
+
+def test_create_help() -> None:
+    text = assert_help_contains(
+        "lightning create --help",
+        "`lightning create` has moved to noun-first commands:",
+        "studio -> lightning studio create",
+    )
+    assert "Deprecation warning:" not in text
+
+
+def test_create_studio_legacy_help() -> None:
+    assert_help_contains(
+        "lightning create studio --help",
+        "Deprecation warning:",
+        "Use `lightning studio create` instead of `lightning create studio`.",
+        "Usage: lightning create studio [OPTIONS]",
     )
 
 

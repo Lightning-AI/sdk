@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -6,34 +5,20 @@ import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.cp import cp_download, cp_impl, cp_studio_file, cp_upload, resolve_studio
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_cp_help():
-    result = subprocess.run("lightning studio cp --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio cp --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio cp [OPTIONS] SOURCE DESTINATION
+    assert "Usage: lightning studio cp [OPTIONS] SOURCE DESTINATION" in result_text
+    assert "Copy a Studio file." in result_text
+    assert "lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>" in result_text
+    assert "-r, --recursive" in result_text
 
-  Copy a Studio file.
 
-  SOURCE: Source file to copy from. For Studio files, use the format
-  lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
-
-  DESTINATION: Destination file to copy to. For Studio files, use the format
-  lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
-
-  Example:     lightning studio cp source.txt lit://<owner>/<my-
-  teamspace>/studios/<my-studio>/destination.txt     lightning studio cp -r
-  source_folder/ lit://<owner>/<my-teamspace>/studios/<my-
-  studio>/destination_folder/
-
-Options:
-  -r, --recursive  Copy directories recursively
-  --help           Show this message and exit.
-"""
-    )
+def test_studios_cp_help() -> None:
+    assert_help_contains("lightning studios cp --help", "Usage: lightning studios cp", "Copy a Studio file.")
 
 
 def test_cp_impl_both_studio_files_raises_error():

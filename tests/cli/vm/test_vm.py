@@ -1,26 +1,22 @@
-import subprocess
+from tests.cli.help import command_text
 
 
 def test_vm_help():
-    result = subprocess.run("lightning vm --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning vm --help")
 
-    assert (
-        result_text
-        == """Usage: lightning vm [OPTIONS] COMMAND [ARGS]...
+    assert "Usage: lightning vm [OPTIONS] COMMAND [ARGS]..." in result_text
+    assert "Manage Lightning AI VMs." in result_text
+    assert "  create  Create a new VM." in result_text
+    assert "  delete  Delete a VM." in result_text
+    assert "  list    List VMs in a teamspace." in result_text
+    assert "  ssh     SSH into a VM." in result_text
+    assert "  start   Start a VM." in result_text
+    assert "  stop    Stop a VM." in result_text
+    assert "  switch  Switch a VM to a different machine type." in result_text
 
-  Manage Lightning AI VMs.
 
-Options:
-  --help  Show this message and exit.
+def test_vms_help():
+    result_text = command_text("lightning vms --help")
 
-Commands:
-  create  Create a new VM.
-  delete  Delete a VM.
-  list    List VMs in a teamspace.
-  ssh     SSH into a VM.
-  start   Start a VM.
-  stop    Stop a VM.
-  switch  Switch a VM to a different machine type.
-"""
-    )
+    assert "Usage: lightning vms [OPTIONS] COMMAND [ARGS]..." in result_text
+    assert "Manage Lightning AI VMs." in result_text

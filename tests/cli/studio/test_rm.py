@@ -1,37 +1,28 @@
 """Tests for Studio rm command."""
 
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.rm import rm_file, rm_folder, rm_impl, rm_studio_file
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_rm_help():
     """Test the rm command help text."""
-    result = subprocess.run("lightning studio rm --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio rm --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio rm [OPTIONS] PATH
+    assert "Usage: lightning studio rm [OPTIONS] PATH" in result_text
+    assert "Remove a Studio file or directory." in result_text
+    assert "studios/<my-studio>/<filepath>" in result_text
+    assert "-r, --recursive" in result_text
+    assert "-f, --force" in result_text
 
-  Remove a Studio file or directory.
 
-  PATH: Studio path to remove. Use the format lit://<owner>/<my-
-  teamspace>/studios/<my-studio>/<filepath>.
-
-  Example:     lightning studio rm lit://<owner>/<my-teamspace>/studios/<my-
-  studio>/file.txt     lightning studio rm -r lit://<owner>/<my-
-  teamspace>/studios/<my-studio>/folder/
-
-Options:
-  -r, --recursive  Remove directories recursively
-  -f, --force      Ignore nonexistent files, never prompt
-  --help           Show this message and exit.
-"""
+def test_studios_rm_help() -> None:
+    assert_help_contains(
+        "lightning studios rm --help", "Usage: lightning studios rm", "Remove a Studio file or directory."
     )
 
 

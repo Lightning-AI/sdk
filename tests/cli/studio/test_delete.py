@@ -1,23 +1,23 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_delete_studio():
-    result = subprocess.run("lightning studio delete --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio delete --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio delete [OPTIONS]
+    assert "Usage: lightning studio delete [OPTIONS]" in result_text
+    assert "Delete a Studio." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
 
-  Delete a Studio.
 
-  Example:   lightning studio delete --name my-studio
+def test_studios_delete_help() -> None:
+    assert_help_contains("lightning studios delete --help", "Usage: lightning studios delete", "Delete a Studio.")
 
-Options:
-  --name TEXT       The name of the studio to delete. If not provided, will
-                    try to infer from environment, use the default value from
-                    the config or prompt for interactive selection.
-  --teamspace TEXT  Override default teamspace (format: owner/teamspace)
-  --help            Show this message and exit.
-"""
+
+def test_delete_studio_legacy_help() -> None:
+    assert_help_contains(
+        "lightning delete studio --help",
+        "Deprecation warning:",
+        "Use `lightning studio delete` instead of `lightning delete studio`.",
+        "Usage: lightning delete studio [OPTIONS]",
     )

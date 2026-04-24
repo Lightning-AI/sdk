@@ -1,28 +1,18 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_switch_vm():
-    result = subprocess.run("lightning vm switch --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning vm switch --help")
 
-    assert (
-        result_text
-        == """Usage: lightning vm switch [OPTIONS]
+    assert "Usage: lightning vm switch [OPTIONS]" in result_text
+    assert "Switch a VM to a different machine type." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "--machine" in result_text
+    assert "--interruptible" in result_text
 
-  Switch a VM to a different machine type.
 
-Options:
-  --name TEXT                     The name of the VM to switch to a different
-                                  machine. If not provided, will try to infer
-                                  from environment, use the default value from
-                                  the config or prompt for interactive
-                                  selection.
-  --teamspace TEXT                Override default teamspace (format:
-                                  owner/teamspace)
-  --machine [CPU_SMALL|CPU|CPU_X_2|CPU_X_4|CPU_X_8|CPU_X_16|DATA_PREP|DATA_PREP_MAX|DATA_PREP_ULTRA|T4_SMALL|T4|T4_X_2|T4_X_4|T4_X_8|L4|L4_X_2|L4_X_4|L4_X_8|L40S|L40S_X_2|L40S_X_4|L40S_X_8|RTXP_6000|RTXP_6000_X_2|RTXP_6000_X_4|RTXP_6000_X_8|A100|A100_X_2|A100_X_4|A100_X_8|A100_40GB|A100_40GB_X_2|A100_40GB_X_4|A100_40GB_X_8|A100_80GB|A100_80GB_X_2|A100_80GB_X_4|A100_80GB_X_8|H100|H100_X_2|H100_X_4|H100_X_8|H200|H200_X_8|B200_X_8]
-                                  The machine type to switch the studio to.
-  --interruptible                 Switch the studio to an interruptible
-                                  instance.
-  --help                          Show this message and exit.
-"""  # noqa: E501
+def test_vms_switch_help() -> None:
+    assert_help_contains(
+        "lightning vms switch --help", "Usage: lightning vms switch", "Switch a VM to a different machine type."
     )

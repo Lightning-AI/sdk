@@ -1,25 +1,33 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_ssh_studio():
-    result = subprocess.run("lightning studio ssh --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio ssh --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio ssh [OPTIONS]
+    assert "Usage: lightning studio ssh [OPTIONS]" in result_text
+    assert "SSH into a Studio." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "-o, --option TEXT" in result_text
 
-  SSH into a Studio.
 
-  Example:     lightning studio ssh --name my-studio
+def test_studios_ssh_help() -> None:
+    assert_help_contains("lightning studios ssh --help", "Usage: lightning studios ssh", "SSH into a Studio.")
 
-Options:
-  --name TEXT        The name of the studio to ssh into. If not provided, will
-                     try to infer from environment, use the default value from
-                     the config or prompt for interactive selection.
-  --teamspace TEXT   Override default teamspace (format: owner/teamspace)
-  -o, --option TEXT  Additional options to pass to the SSH command. Can be
-                     specified multiple times.
-  --help             Show this message and exit.
-"""
+
+def test_connect_help() -> None:
+    text = assert_help_contains(
+        "lightning connect --help",
+        "`lightning connect` has moved to noun-first commands:",
+        "studio -> lightning studio ssh",
+    )
+    assert "Deprecation warning:" not in text
+
+
+def test_connect_studio_legacy_help() -> None:
+    assert_help_contains(
+        "lightning connect studio --help",
+        "Deprecation warning:",
+        "Use `lightning studio ssh` instead of `lightning connect studio`.",
+        "Usage: lightning connect studio [OPTIONS]",
     )

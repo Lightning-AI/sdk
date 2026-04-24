@@ -1,25 +1,26 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_list_studio():
-    result = subprocess.run("lightning studio list --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio list --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio list [OPTIONS]
+    assert "Usage: lightning studio list [OPTIONS]" in result_text
+    assert "List Studios in a teamspace." in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "--all" in result_text
+    assert "--sort-by" in result_text
 
-  List Studios in a teamspace.
 
-  Example:     lightning studio list --teamspace owner/teamspace
+def test_studios_list_help() -> None:
+    assert_help_contains(
+        "lightning studios list --help", "Usage: lightning studios list", "List Studios in a teamspace."
+    )
 
-Options:
-  --teamspace TEXT                Override default teamspace (format:
-                                  owner/teamspace)
-  --all                           List all studios, not just the ones
-                                  belonging to the authed user
-  --sort-by [name|teamspace|status|machine|cloud-account]
-                                  the attribute to sort the studios by.
-  --help                          Show this message and exit.
-"""
+
+def test_list_studios_legacy_help() -> None:
+    assert_help_contains(
+        "lightning list studios --help",
+        "Deprecation warning:",
+        "Use `lightning studio list` instead of `lightning list studios`.",
+        "Usage: lightning list studios [OPTIONS]",
     )

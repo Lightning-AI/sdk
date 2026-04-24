@@ -1,9 +1,60 @@
 import os
+import subprocess
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login
+from tests.cli.help import assert_help_contains
+
+
+def test_help():
+    result_text = assert_help_contains(
+        "lightning --help",
+        "Usage: lightning [OPTIONS] COMMAND [ARGS]...",
+        "  api          Manage Lightning AI APIs.",
+        "  base-studio  Manage Lightning AI Base Studios.",
+        "  config       Manage Lightning SDK and CLI configuration.",
+        "  cp           Copy files between local filesystem, Studios,",
+        "  container    Manage Lightning AI containers.",
+        "  file         Manage file transfers.",
+        "  folder       Manage folder transfers.",
+        "  job          Manage Lightning AI Jobs.",
+        "  license      Manage Lightning AI Product Licenses.",
+        "  machine      Manage Lightning AI machine types.",
+        "  mmt          Manage Lightning AI Multi-Machine Training (MMT).",
+        "  model        Manage Lightning AI Models.",
+        "  ssh          Manage SSH configuration.",
+        "  studio       Manage Lightning AI Studios.",
+        "  vm           Manage Lightning AI VMs.",
+    )
+    assert "  create" not in result_text
+    assert "  delete" not in result_text
+    assert "  download" not in result_text
+    assert "  jobs" not in result_text
+    assert "  open" not in result_text
+    assert "  run" not in result_text
+    assert "  studios" not in result_text
+    assert "  upload" not in result_text
+
+
+def test_help_uvx():
+    result = subprocess.run("uvx --with-editable=../ lightning-sdk --help", shell=True, capture_output=True, text=True)
+    result_text = result.stdout + result.stderr
+
+    if "Usage: lightning-sdk [OPTIONS] COMMAND [ARGS]..." in result_text:
+        assert "  api          Manage Lightning AI APIs." in result_text
+        assert "  cp           Copy files between local filesystem, Studios," in result_text
+        assert "  container    Manage Lightning AI containers." in result_text
+        assert "  job          Manage Lightning AI Jobs." in result_text
+        assert "  license      Manage Lightning AI Product Licenses." in result_text
+        assert "  machine      Manage Lightning AI machine types." in result_text
+        assert "  mmt          Manage Lightning AI Multi-Machine Training (MMT)." in result_text
+        assert "  ssh          Manage SSH configuration." in result_text
+        assert "  studio       Manage Lightning AI Studios." in result_text
+        return
+
+    assert "does not appear to be a Python project" in result_text
 
 
 def test_login_already_authed_can_get_username(monkeypatch):
@@ -28,6 +79,18 @@ def test_login_already_authed_can_get_username(monkeypatch):
     mock_auth_cls.assert_called_once()
     mock_auth_instance.clear.assert_not_called()
     mock_auth_instance.authenticate.assert_not_called()
+
+
+def test_login_help():
+    result_text = assert_help_contains("lightning login --help", "Usage: lightning login [OPTIONS]")
+
+    assert "Login to Lightning AI Studios." in result_text
+
+
+def test_logout_help():
+    result_text = assert_help_contains("lightning logout --help", "Usage: lightning logout [OPTIONS]")
+
+    assert "Logout from Lightning AI Studios." in result_text
 
 
 def test_login_already_authed_cannot_get_username(monkeypatch):

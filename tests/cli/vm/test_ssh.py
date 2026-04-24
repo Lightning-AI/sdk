@@ -1,25 +1,15 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_ssh_vm():
-    result = subprocess.run("lightning vm ssh --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning vm ssh --help")
 
-    assert (
-        result_text
-        == """Usage: lightning vm ssh [OPTIONS]
+    assert "Usage: lightning vm ssh [OPTIONS]" in result_text
+    assert "SSH into a VM." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "-o, --option TEXT" in result_text
 
-  SSH into a VM.
 
-  Example:     lightning vm ssh --name my-vm
-
-Options:
-  --name TEXT        The name of the VM to ssh into. If not provided, will try
-                     to infer from environment, use the default value from the
-                     config or prompt for interactive selection.
-  --teamspace TEXT   Override default teamspace (format: owner/teamspace)
-  -o, --option TEXT  Additional options to pass to the SSH command. Can be
-                     specified multiple times.
-  --help             Show this message and exit.
-"""
-    )
+def test_vms_ssh_help() -> None:
+    assert_help_contains("lightning vms ssh --help", "Usage: lightning vms ssh", "SSH into a VM.")

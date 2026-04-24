@@ -35,7 +35,7 @@ def get_teamspace() -> None:
 
 @get.command("studio")
 def get_studio() -> None:
-    """Get the default sutdio name from the config."""
+    """Get the default studio name from the config."""
     config = Config()
     studio = config.get_value(DefaultConfigKeys.studio)
     click.echo(studio)

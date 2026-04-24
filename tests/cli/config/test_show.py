@@ -1,0 +1,5 @@
+from tests.cli.help import assert_help_contains
+
+
+def test_config_show_help() -> None:
+    assert_help_contains("lightning config show --help", "Usage: lightning config show", "Show configuration values.")

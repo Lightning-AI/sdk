@@ -1,23 +1,23 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_stop_studio():
-    result = subprocess.run("lightning studio stop --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio stop --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio stop [OPTIONS]
+    assert "Usage: lightning studio stop [OPTIONS]" in result_text
+    assert "Stop a Studio." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
 
-  Stop a Studio.
 
-  Example:     lightning studio stop --name my-studio
+def test_studios_stop_help() -> None:
+    assert_help_contains("lightning studios stop --help", "Usage: lightning studios stop", "Stop a Studio.")
 
-Options:
-  --name TEXT       The name of the studio to stop. If not provided, will try
-                    to infer from environment, use the default value from the
-                    config or prompt for interactive selection.
-  --teamspace TEXT  Override default teamspace (format: owner/teamspace)
-  --help            Show this message and exit.
-"""
+
+def test_stop_studio_legacy_help() -> None:
+    assert_help_contains(
+        "lightning stop studio --help",
+        "Deprecation warning:",
+        "Use `lightning studio stop` instead of `lightning stop studio`.",
+        "Usage: lightning stop studio [OPTIONS]",
     )

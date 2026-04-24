@@ -1,28 +1,16 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_create_vm():
-    result = subprocess.run("lightning vm create --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning vm create --help")
 
-    assert (
-        result_text
-        == """Usage: lightning vm create [OPTIONS]
+    assert "Usage: lightning vm create [OPTIONS]" in result_text
+    assert "Create a new VM." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
+    assert "--cloud-provider" in result_text
+    assert "--cloud-account TEXT" in result_text
 
-  Create a new VM.
 
-  Example:     lightning vm create
-
-Options:
-  --name TEXT                     The name of the VM to create. If not
-                                  provided, a random name will be generated.
-  --teamspace TEXT                Override default teamspace (format:
-                                  owner/teamspace)
-  --cloud-provider [AWS|GCP|LAMBDA_LABS|DGX|VOLTAGE_PARK|NEBIUS|LIGHTNING|LIGHTNING_AGGREGATE]
-                                  The cloud provider to start the VM on.
-                                  Defaults to teamspace default.
-  --cloud-account TEXT            The cloud account to create the VM on.
-                                  Defaults to teamspace default.
-  --help                          Show this message and exit.
-"""
-    )
+def test_vms_create_help() -> None:
+    assert_help_contains("lightning vms create --help", "Usage: lightning vms create", "Create a new VM.")

@@ -1,23 +1,14 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_delete_vm():
-    result = subprocess.run("lightning vm delete --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning vm delete --help")
 
-    assert (
-        result_text
-        == """Usage: lightning vm delete [OPTIONS]
+    assert "Usage: lightning vm delete [OPTIONS]" in result_text
+    assert "Delete a VM." in result_text
+    assert "--name TEXT" in result_text
+    assert "--teamspace TEXT" in result_text
 
-  Delete a VM.
 
-  Example:   lightning vm delete --name my-vm
-
-Options:
-  --name TEXT       The name of the VM to delete. If not provided, will try to
-                    infer from environment, use the default value from the
-                    config or prompt for interactive selection.
-  --teamspace TEXT  Override default teamspace (format: owner/teamspace)
-  --help            Show this message and exit.
-"""
-    )
+def test_vms_delete_help() -> None:
+    assert_help_contains("lightning vms delete --help", "Usage: lightning vms delete", "Delete a VM.")

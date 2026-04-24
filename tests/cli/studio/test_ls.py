@@ -1,20 +1,25 @@
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.ls import ls_impl, ls_studio
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_ls_help():
     """Test that the help message is displayed correctly."""
-    result = subprocess.run("lightning studio ls --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio ls --help")
 
     assert "Usage: lightning studio ls [OPTIONS] PATH" in result_text
     assert "List contents of a directory in Studio." in result_text
     assert "lit://<owner>/<teamspace>/studios/<studio>/<directory-path>" in result_text
+
+
+def test_studios_ls_help() -> None:
+    assert_help_contains(
+        "lightning studios ls --help", "Usage: lightning studios ls", "List contents of a directory in Studio."
+    )
 
 
 def test_ls_impl_local_path_raises_error():

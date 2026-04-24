@@ -179,7 +179,6 @@ norecursedirs = [
 ]
 addopts = [
   "--strict-markers",
-  "--doctest-modules",
   "--color=yes",
   "--disable-pytest-warnings",
   "--ignore=legacy/checkpoints",

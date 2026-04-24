@@ -1,30 +1,26 @@
-import subprocess
+from tests.cli.help import command_text
 
 
 def test_studio_help():
-    result = subprocess.run("lightning studio --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning studio --help")
 
-    assert (
-        result_text
-        == """Usage: lightning studio [OPTIONS] COMMAND [ARGS]...
+    assert "Usage: lightning studio [OPTIONS] COMMAND [ARGS]..." in result_text
+    assert "  connect  Connect to a Studio." in result_text
+    assert "  cp       Copy a Studio file." in result_text
+    assert "  create   Create a new Studio." in result_text
+    assert "  delete   Delete a Studio." in result_text
+    assert "  list     List Studios in a teamspace." in result_text
+    assert "  ls       List contents of a directory in Studio." in result_text
+    assert "  open     Open a local file or folder in a Lightning Studio." in result_text
+    assert "  rm       Remove a Studio file or directory." in result_text
+    assert "  ssh      SSH into a Studio." in result_text
+    assert "  start    Start a Studio." in result_text
+    assert "  stop     Stop a Studio." in result_text
+    assert "  switch   Switch a Studio to a different machine type." in result_text
 
-  Manage Lightning AI Studios.
 
-Options:
-  --help  Show this message and exit.
+def test_studios_help():
+    result_text = command_text("lightning studios --help")
 
-Commands:
-  connect  Connect to a Studio.
-  cp       Copy a Studio file.
-  create   Create a new Studio.
-  delete   Delete a Studio.
-  list     List Studios in a teamspace.
-  ls       List contents of a directory in Studio.
-  rm       Remove a Studio file or directory.
-  ssh      SSH into a Studio.
-  start    Start a Studio.
-  stop     Stop a Studio.
-  switch   Switch a Studio to a different machine type.
-"""
-    )
+    assert "Usage: lightning studios [OPTIONS] COMMAND [ARGS]..." in result_text
+    assert "Manage Lightning AI Studios." in result_text

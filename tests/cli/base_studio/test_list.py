@@ -1,22 +1,19 @@
-import subprocess
+from tests.cli.help import assert_help_contains, command_text
 
 
 def test_list_base_studios():
-    result = subprocess.run("lightning base-studio list --help", shell=True, capture_output=True, text=True)
-    result_text = result.stdout + result.stderr
+    result_text = command_text("lightning base-studio list --help")
 
-    assert (
-        result_text
-        == """Usage: lightning base-studio list [OPTIONS]
+    assert "Usage: lightning base-studio list [OPTIONS]" in result_text
+    assert "List Base Studios in an org." in result_text
+    assert "Example:     lightning base-studio list" in result_text
+    assert "--include-disabled" in result_text
+    assert "Show this message and exit." in result_text
 
-  List Base Studios in an org.
 
-  Example:     lightning base-studio list
-
-Options:
-  --include-disabled  Include disabled Base Studios in the list.
-  --help              Show this message and exit.
-"""
+def test_list_base_studios_plural_help():
+    assert_help_contains(
+        "lightning base-studios list --help", "Usage: lightning base-studios list", "List Base Studios in an org."
     )
 
 
