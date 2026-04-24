@@ -2411,6 +2411,139 @@ class JobsServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def jobs_service_get_job_artifacts_page(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetArtifactsPageResponse':  # noqa: E501
+        """jobs_service_get_job_artifacts_page  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job_artifacts_page(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str page_number:
+        :param str prefix:
+        :param bool include_download_url:
+        :param str cluster_id:
+        :param bool local_index: if true, fetch from the local index
+        :param bool include_folder_index: if true, include the folder index in the response
+        :param bool only_direct_children: if true, only include direct children of the prefix
+        :param bool include_hidden_files: if true, include hidden files
+        :return: V1GetArtifactsPageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_get_job_artifacts_page_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_get_job_artifacts_page_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_get_job_artifacts_page_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1GetArtifactsPageResponse':  # noqa: E501
+        """jobs_service_get_job_artifacts_page  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_job_artifacts_page_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :param str page_number:
+        :param str prefix:
+        :param bool include_download_url:
+        :param str cluster_id:
+        :param bool local_index: if true, fetch from the local index
+        :param bool include_folder_index: if true, include the folder index in the response
+        :param bool only_direct_children: if true, only include direct children of the prefix
+        :param bool include_hidden_files: if true, include hidden files
+        :return: V1GetArtifactsPageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id', 'page_number', 'prefix', 'include_download_url', 'cluster_id', 'local_index', 'include_folder_index', 'only_direct_children', 'include_hidden_files']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_get_job_artifacts_page" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_get_job_artifacts_page`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `jobs_service_get_job_artifacts_page`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'page_number' in params:
+            query_params.append(('pageNumber', params['page_number']))  # noqa: E501
+        if 'prefix' in params:
+            query_params.append(('prefix', params['prefix']))  # noqa: E501
+        if 'include_download_url' in params:
+            query_params.append(('includeDownloadUrl', params['include_download_url']))  # noqa: E501
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'local_index' in params:
+            query_params.append(('localIndex', params['local_index']))  # noqa: E501
+        if 'include_folder_index' in params:
+            query_params.append(('includeFolderIndex', params['include_folder_index']))  # noqa: E501
+        if 'only_direct_children' in params:
+            query_params.append(('onlyDirectChildren', params['only_direct_children']))  # noqa: E501
+        if 'include_hidden_files' in params:
+            query_params.append(('includeHiddenFiles', params['include_hidden_files']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/jobs/{id}/artifacts/page', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetArtifactsPageResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def jobs_service_get_job_by_name(self, project_owner_name: 'str', project_name: 'str', job_name: 'str', **kwargs) -> 'V1Job':  # noqa: E501
         """jobs_service_get_job_by_name  # noqa: E501
 
@@ -2967,6 +3100,123 @@ class JobsServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetJobSystemMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def jobs_service_get_logs(self, project_id: 'str', **kwargs) -> 'V1GetLogsResponse':  # noqa: E501
+        """jobs_service_get_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_logs(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str deployment_id:
+        :param str mmt_id:
+        :param str job_id:
+        :param str since:
+        :param str until:
+        :param str query:
+        :return: V1GetLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.jobs_service_get_logs_with_http_info(project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.jobs_service_get_logs_with_http_info(project_id, **kwargs)  # noqa: E501
+            return data
+
+    def jobs_service_get_logs_with_http_info(self, project_id: 'str', **kwargs) -> 'V1GetLogsResponse':  # noqa: E501
+        """jobs_service_get_logs  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.jobs_service_get_logs_with_http_info(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str deployment_id:
+        :param str mmt_id:
+        :param str job_id:
+        :param str since:
+        :param str until:
+        :param str query:
+        :return: V1GetLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'deployment_id', 'mmt_id', 'job_id', 'since', 'until', 'query']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method jobs_service_get_logs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `jobs_service_get_logs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+        if 'deployment_id' in params:
+            query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
+        if 'mmt_id' in params:
+            query_params.append(('mmtId', params['mmt_id']))  # noqa: E501
+        if 'job_id' in params:
+            query_params.append(('jobId', params['job_id']))  # noqa: E501
+        if 'since' in params:
+            query_params.append(('since', params['since']))  # noqa: E501
+        if 'until' in params:
+            query_params.append(('until', params['until']))  # noqa: E501
+        if 'query' in params:
+            query_params.append(('query', params['query']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/page-logs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetLogsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
