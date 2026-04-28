@@ -142,10 +142,17 @@ class _JobV1(_BaseJob):
         Returns:
             The submitted job.
 
+        Raises:
+            NotImplementedError: Always raised; submitting new jobs via V1 is not supported.
         """
         raise NotImplementedError("Cannot submit new jobs with JobsV1!")
 
     def _update_internal_job(self) -> None:
+        """Refresh the internal job state from the remote API.
+
+        Raises:
+            ValueError: If the job does not exist in the given teamspace.
+        """
         try:
             self._job = self._job_api.get_job(self._name, self.teamspace.id)
         except ValueError as e:
@@ -153,7 +160,14 @@ class _JobV1(_BaseJob):
 
     @property
     def status(self) -> "Status":
-        """Returns the status of the job."""
+        """Returns the status of the job.
+
+        Returns:
+            Status: The current status of the job.
+
+        Raises:
+            RuntimeError: If the job no longer exists (e.g. was deleted).
+        """
         try:
             status = self._job_api.get_job_status(self._job.id, self.teamspace.id)
             return _internal_status_to_external_status(status)
@@ -178,7 +192,14 @@ class _JobV1(_BaseJob):
 
     @cached_property
     def work(self) -> Work:
-        """Get the work associated with the job."""
+        """Get the work associated with the job.
+
+        Returns:
+            Work: The Work object associated with this job.
+
+        Raises:
+            ValueError: If no works are found for the job.
+        """
         _work = self._job_api.list_works(self._job.id, self.teamspace.id)
         if len(_work) == 0:
             raise ValueError("No works found for job")
@@ -186,12 +207,20 @@ class _JobV1(_BaseJob):
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """Get the machine the job is running on."""
+        """Get the machine the job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type this job runs on.
+        """
         return self.work.machine
 
     @property
     def public_ip(self) -> Optional[str]:
-        """Get the public IP of the machine the job is running on."""
+        """Get the public IP of the machine the job is running on.
+
+        Returns:
+            Optional[str]: The public IP address, or None if not available.
+        """
         try:
             return self._job.status.ip_address
         except AttributeError:
@@ -199,38 +228,66 @@ class _JobV1(_BaseJob):
 
     @property
     def name(self) -> str:
-        """The name of the job."""
+        """The name of the job.
+
+        Returns:
+            str: The job's name.
+        """
         return self._job.name
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """The path to the artifacts of the job in the distributed teamspace filesystem."""
+        """The path to the artifacts of the job in the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path, or None if not available.
+        """
         return self.work.artifact_path
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """The path to the snapshot of the job in the distributed teamspace filesystem."""
+        """The path to the snapshot of the job in the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path within the teamspace filesystem.
+        """
         return f"/teamspace/jobs/{self.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
-        """The path to the share of the job in the distributed teamspace filesystem."""
+        """The path to the share of the job in the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The share path within the teamspace filesystem.
+        """
         return f"/teamspace/jobs/{self.name}/share"
 
     @property
     def logs(self) -> str:
-        """The logs of the job."""
+        """The logs of the job.
+
+        Returns:
+            str: The complete logs from the job's execution.
+        """
         return self.work.logs
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the job."""
+        """The image used to submit the job.
+
+        Returns:
+            Optional[str]: Always None as V1 jobs do not support custom images.
+        """
         # jobsv1 don't support images, so return None here
         return None
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job."""
+        """The studio used to submit the job.
+
+        Returns:
+            Optional[Studio]: The Studio instance used to submit this job.
+        """
         from lightning_sdk.studio import Studio
 
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
@@ -238,7 +295,11 @@ class _JobV1(_BaseJob):
 
     @property
     def command(self) -> str:
-        """The command the job is running."""
+        """The command the job is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._job_api.get_command(self._guaranteed_job)
 
     # the following and functions are solely to make the Work class function
@@ -247,11 +308,26 @@ class _JobV1(_BaseJob):
         return self._guaranteed_job.id
 
     def _name_filter(self, name: str) -> str:
+        """Strip the ``root.`` prefix from a work name.
+
+        Args:
+            name: Raw work name as returned by the API.
+
+        Returns:
+            str: The name with the ``root.`` prefix removed.
+        """
         return name.replace("root.", "")
 
 
 def _internal_status_to_external_status(internal_status: str) -> "Status":
-    """Converts internal status strings from HTTP requests to external enums."""
+    """Converts internal status strings from HTTP requests to external enums.
+
+    Args:
+        internal_status: The raw status string returned by the Lightning AI API.
+
+    Returns:
+        Status: The corresponding external Status enum value.
+    """
     return {
         # don't get a status if no instance alive
         None: Status.Stopped,

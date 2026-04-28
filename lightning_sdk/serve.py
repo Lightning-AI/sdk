@@ -50,6 +50,21 @@ class _LitServeDeployer:
         tag: str = "litserve-model",
         print_success: bool = True,
     ) -> str:
+        """Generate (or locate) a Dockerfile for the LitServe API and return its absolute path.
+
+        Args:
+            server_filename: The Python file containing the LitServe server definition.
+            port: The port the server listens on inside the container.
+            gpu: Whether to use a CUDA-enabled base image.
+            tag: Docker image tag to use when building.
+            print_success: Whether to print build/run instructions after generation.
+
+        Returns:
+            str: Absolute path to the Dockerfile (either newly created or pre-existing).
+
+        Raises:
+            FileNotFoundError: If ``server_filename`` is not found in the current directory.
+        """
         import litserve as ls
         from litserve import docker_builder
 
@@ -132,13 +147,19 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
     def _docker_build_with_logs(
         self, path: str, repository: str, tag: str, platform: str = "linux/amd64"
     ) -> Generator[str, None, None]:
-        """Build Docker image using CLI with real-time log streaming.
+        """Build a Docker image via the CLI and stream log lines as a generator.
+
+        Args:
+            path: Build context path (passed to ``docker build``).
+            repository: Image repository name.
+            tag: Image tag.
+            platform: Target platform (default ``linux/amd64``).
 
         Returns:
-            Tuple: (image_id, logs generator)
+            Generator[str, None, None]: Lines of build output as they arrive.
 
         Raises:
-            RuntimeError: On build failure
+            RuntimeError: If the build fails or an error line is detected.
         """
         cmd = f"docker build --platform {platform} -t {repository}:{tag} ."
         proc = subprocess.Popen(
@@ -165,6 +186,19 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         return log_generator()
 
     def build_container(self, path: str, repository: str, tag: str) -> Generator[str, None, None]:
+        """Build the Docker container and yield log lines, raising on any error output.
+
+        Args:
+            path: Build context path.
+            repository: Image repository name.
+            tag: Image tag.
+
+        Returns:
+            Generator[str, None, None]: Stripped build log lines.
+
+        Raises:
+            RuntimeError: If any build log line contains ``"error"``.
+        """
         build_logs = self._docker_build_with_logs(path, repository, tag=tag)
 
         for line in build_logs:
@@ -181,6 +215,22 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         lit_cr: LitContainerApi,
         cloud_account: str,
     ) -> Generator[dict, None, dict]:
+        """Authenticate, push the container to LitCR, and yield status dicts.
+
+        Args:
+            repository: The image repository name (without tag).
+            tag: The image tag.
+            teamspace: The teamspace to push into.
+            lit_cr: An authenticated :class:`LitContainerApi` instance.
+            cloud_account: The cloud account for the container registry.
+
+        Returns:
+            Generator[dict, None, dict]: Status dicts with ``"status"`` and optionally
+            ``"finish"``, ``"url"``, and ``"image"`` keys on the final yield.
+
+        Raises:
+            RuntimeError: If the push encounters an error line.
+        """
         lit_cr.authenticate()
         push_status = lit_cr.upload_container(
             repository, teamspace, tag=tag, cloud_account=cloud_account, platform=None
@@ -218,6 +268,23 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
     ) -> None:
+        """Apply updated configuration to an existing deployment.
+
+        Args:
+            deployment: The deployment to update.
+            machine: New machine type for the replicas.
+            image: New container image.
+            entrypoint: New container entrypoint.
+            command: New container command.
+            env: New environment variables or secrets.
+            min_replica: Minimum number of replicas for autoscaling.
+            max_replica: Maximum number of replicas for autoscaling.
+            spot: Whether to use spot/interruptible instances.
+            replicas: Fixed replica count.
+            cloud_account: Cloud account for the replicas.
+            port: Port to expose on the replicas.
+            include_credentials: Whether to inject SDK auth env vars.
+        """
         return deployment.update(
             machine=machine,
             image=image,

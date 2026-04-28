@@ -13,6 +13,15 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 def track_calls() -> Callable[..., any]:
+    """Decorator factory that records every SDK call and its arguments to the command history API.
+
+    On error, the exception details and traceback are appended to the history record before
+    the exception is re-raised.
+
+    Returns:
+        Callable: A decorator that wraps a function with call-tracking logic.
+    """
+
     def decorator(func: Callable[..., any]) -> Callable[..., any]:
         @functools.wraps(func)
         def wrapper(*args: Tuple[any, ...], **kwargs: Dict[str, any]) -> any:
@@ -51,6 +60,12 @@ def track_calls() -> Callable[..., any]:
 
 
 class TrackCallsMeta(type):
+    """Metaclass that automatically wraps every callable attribute with :func:`track_calls`.
+
+    Properties are wrapped per accessor (``fget``, ``fset``, ``fdel``).  Dunder methods
+    other than ``__init__`` and ``__call__`` are left untouched.
+    """
+
     def __new__(cls, name: any, bases: any, attrs: any) -> type.__new__:
         for attr_name, attr_value in attrs.items():
             if attr_name.startswith("__") and attr_name not in ("__init__", "__call__"):

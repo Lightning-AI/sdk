@@ -38,17 +38,35 @@ def _normalize_remote_path(remote_path: str) -> str:
 
 @dataclass
 class LightningStorageUploadTarget:
+    """Resolved upload destination in Lightning Storage, carrying the data connection ID and path components."""
+
     data_connection_id: str
     cloud_account: Optional[str]
     folder_name: str
     relative_parts: Tuple[str, ...]
 
     def absolute_path(self, *parts: str) -> str:
+        """Return the absolute artifact path (``/teamspace/lightning_storage/…``) for the given filename parts.
+
+        Args:
+            *parts: Path components to append after the folder and relative parts.
+
+        Returns:
+            str: The absolute artifact path starting with ``/teamspace/lightning_storage/``.
+        """
         return "/" + _join_remote_parts(
             "teamspace", "lightning_storage", self.folder_name, *self.relative_parts, *parts
         )
 
     def remote_path(self, *parts: str) -> str:
+        """Return the relative upload path within the storage folder for the given filename parts.
+
+        Args:
+            *parts: Path components to append after the relative parts.
+
+        Returns:
+            str: The relative upload path within the storage folder.
+        """
         return _join_remote_parts(*self.relative_parts, *parts)
 
 
@@ -59,6 +77,11 @@ def resolve_lightning_storage_upload_target(
     remote_path: str,
     cloud_account: Optional[str] = None,
 ) -> LightningStorageUploadTarget:
+    """Resolve a ``remote_path`` to a ``LightningStorageUploadTarget``, creating the storage folder if needed.
+
+    Returns:
+        LightningStorageUploadTarget: The resolved upload target with folder name, relative parts, and cloud account.
+    """
     folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
     return _resolve_lightning_storage_upload_target_from_parts(
         client=client,
@@ -89,6 +112,13 @@ def copy_local_path_to_lightning_storage(
     Recursive directory uploads also mirror ``cp -r`` semantics:
     - ``remote_path`` is treated as the destination directory root
     - files under ``local_path`` keep their relative paths beneath that root
+
+    Returns:
+        List[str]: Absolute artifact paths for every file uploaded.
+
+    Raises:
+        FileNotFoundError: If ``local_path`` does not exist.
+        ValueError: If ``local_path`` is a directory and ``recursive`` is ``False``.
     """
     local_path = Path(local_path)
     if not local_path.exists():
@@ -130,6 +160,11 @@ def upload_file_to_resolved_lightning_storage_target(
     progress_bar: bool = False,
     uploader_cls: Optional[Type[Any]] = None,
 ) -> str:
+    """Upload ``local_path`` to a pre-resolved ``LightningStorageUploadTarget`` and return the absolute artifact path.
+
+    Returns:
+        str: The absolute artifact path (``/teamspace/lightning_storage/…``) of the uploaded file.
+    """
     uploader_cls = _FileUploader if uploader_cls is None else uploader_cls
     local_path = Path(local_path)
     destination_parts = tuple(destination_parts)

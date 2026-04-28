@@ -78,6 +78,16 @@ class Pipeline:
     def run(
         self, steps: List[Union[JobStep, DeploymentStep, MMTStep]], schedules: Optional[List["Schedule"]] = None
     ) -> None:
+        """Submit the pipeline DAG for execution.
+
+        Args:
+            steps: Ordered list of pipeline steps to execute.  Must not be empty.
+            schedules: Optional cron schedules that trigger the pipeline automatically.
+
+        Raises:
+            ValueError: If ``steps`` is empty or a schedule timezone is unsupported.
+            RuntimeError: If the teamspace cannot be resolved.
+        """
         if len(steps) == 0:
             raise ValueError("The provided steps is empty")
 
@@ -144,12 +154,14 @@ class Pipeline:
         printer.print_summary()
 
     def stop(self) -> None:
+        """Stop a running pipeline execution."""
         if self._pipeline is None:
             return
 
         self._pipeline_api.stop(self._pipeline)
 
     def delete(self) -> None:
+        """Permanently delete this pipeline and all its runs."""
         if self._pipeline is None:
             return
 
@@ -157,10 +169,16 @@ class Pipeline:
 
     @property
     def name(self) -> Optional[str]:
+        """The pipeline's display name, or ``None`` if it has not been created yet."""
         if self._pipeline:
             return self._pipeline.name
         return None
 
     @classmethod
     def from_env(cls) -> "Pipeline":
+        """Construct a Pipeline from the ``LIGHTNING_PIPELINE_ID`` environment variable.
+
+        Returns:
+            Pipeline: A Pipeline instance bound to the running pipeline ID.
+        """
         return Pipeline(name=os.getenv("LIGHTNING_PIPELINE_ID", ""))

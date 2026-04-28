@@ -26,6 +26,18 @@ class PipelineApi:
         self._cloud_account_api = CloudAccountApi()
 
     def get_pipeline_by_id(self, project_id: str, pipeline_id_or_name: str) -> Optional[V1Pipeline]:
+        """Fetch a pipeline by its ID (prefix ``pip_``) or by name; returns ``None`` if not found.
+
+        Args:
+            project_id: The teamspace ID that owns the pipeline.
+            pipeline_id_or_name: A pipeline ID (starting with ``pip_``) or a pipeline name.
+
+        Returns:
+            Optional[V1Pipeline]: The matching pipeline, or ``None`` if not found.
+
+        Raises:
+            ApiException: If the API returns an unexpected error.
+        """
         if pipeline_id_or_name.startswith("pip_"):
             try:
                 return self._client.pipelines_service_get_pipeline(project_id=project_id, id=pipeline_id_or_name)
@@ -52,6 +64,19 @@ class PipelineApi:
         schedules: List["Schedule"],
         parent_pipeline_id: Optional[str],
     ) -> V1Pipeline:
+        """Create a pipeline with the given steps and schedules, replacing the parent pipeline's schedules if provided.
+
+        Args:
+            name: Display name for the new pipeline.
+            teamspace: The teamspace to create the pipeline in.
+            steps: Ordered list of pipeline steps.
+            shared_filesystem: Whether to enable a shared filesystem between steps.
+            schedules: List of schedules to attach to the pipeline.
+            parent_pipeline_id: ID of an existing pipeline whose schedules should be replaced.
+
+        Returns:
+            V1Pipeline: The created pipeline record.
+        """
         body = PipelinesServiceCreatePipelineBody(
             name=name,
             steps=steps,
@@ -86,11 +111,28 @@ class PipelineApi:
         return pipeline
 
     def stop(self, pipeline: V1Pipeline) -> V1Pipeline:
+        """Request to stop a running pipeline.
+
+        Args:
+            pipeline: The pipeline to stop.
+
+        Returns:
+            V1Pipeline: The updated pipeline record after the stop request.
+        """
         body = pipeline
         body.state = "stop"
         return self._client.pipelines_service_update_pipeline(body)
 
     def delete(self, project_id: str, pipeline_id: str) -> V1DeletePipelineResponse:
+        """Permanently delete a pipeline.
+
+        Args:
+            project_id: The teamspace ID that owns the pipeline.
+            pipeline_id: The unique ID of the pipeline to delete.
+
+        Returns:
+            V1DeletePipelineResponse: The deletion response from the server.
+        """
         return self._client.pipelines_service_delete_pipeline(project_id, pipeline_id)
 
     def _prepare_shared_filesystem(

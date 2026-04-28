@@ -107,14 +107,17 @@ class LLM:
 
     @property
     def name(self) -> str:
+        """The model name portion of the identifier (everything after the first ``/``)."""
         return self._model_name
 
     @property
     def provider(self) -> str:
+        """The provider prefix of the model identifier (e.g. ``openai``, ``anthropic``)."""
         return self._model_provider
 
     @property
     def metadata(self) -> ModelMetadata:
+        """Lazily fetched metadata for this model, including pricing and capabilities."""
         if self._metadata is None:
             model = self._llm_api.get_model_metadata(self._teamspace_id, self._model_name)
             abilities = (
@@ -155,7 +158,18 @@ class LLM:
         return self._context_length
 
     def get_context_length(self, model: Optional[str] = None) -> Optional[int]:
-        """Get context length for the given model."""
+        """Return the context-window length for the given model.
+
+        Args:
+            model: Full ``provider/name`` model identifier to query.  Defaults to this
+                instance's model when ``None``.
+
+        Returns:
+            Optional[int]: Context length in tokens, or ``None`` if unavailable.
+
+        Raises:
+            ValueError: If the model metadata cannot be retrieved.
+        """
         context_info = self._public_assistants.get(model)
         if context_info and "context_length" in context_info:
             return int(context_info["context_length"])
@@ -167,6 +181,21 @@ class LLM:
             raise ValueError(f"Cannot access context length of model '{model}': {e}") from e
 
     def _get_auth_info(self, teamspace_owner: Optional[str] = None, teamspace_name: Optional[str] = None) -> None:
+        """Resolve and cache teamspace / user auth information for billing.
+
+        On the first call the method resolves the teamspace from the given owner/name
+        combination (or falls back to environment variables and the default teamspace) and
+        caches the result on the class so subsequent ``LLM`` instances reuse it.
+
+        Args:
+            teamspace_owner: Username or organisation that owns the target teamspace.
+            teamspace_name: Name of the target teamspace (or organisation name when
+                ``teamspace_owner`` is ``None``).
+
+        Raises:
+            ValueError: If the teamspace cannot be resolved or no teamspace information
+                is available at all.
+        """
         if not LLM._auth_info_cached:
             if teamspace_owner and teamspace_name:
                 # org with specific teamspace
@@ -261,8 +290,17 @@ class LLM:
         provider, model_name = name.split("/", maxsplit=1)
         return provider.lower(), model_name
 
-    # returns the assistant ID
     def _get_model_id(self) -> str:
+        """Resolve the assistant ID for the current model.
+
+        Tries public model providers first, then organisation models, then user models.
+
+        Returns:
+            str: The assistant ID used by the LLM API.
+
+        Raises:
+            ValueError: If no matching model is found for the configured provider and name.
+        """
         if self._model_provider in PUBLIC_MODEL_PROVIDERS:
             # if prod
             if (
@@ -324,6 +362,7 @@ class LLM:
             ) from user_error
 
     def _get_conversations(self) -> None:
+        """Fetch remote conversations for this model and merge them into the local cache."""
         conversations = self._llm_api.list_conversations(assistant_id=self._model_id)
         for conversation in conversations:
             if conversation.name and conversation.name not in self._conversations:
@@ -335,6 +374,19 @@ class LLM:
         conversation: Optional[str] = None,
         full_response: bool = False,
     ) -> Generator[str, None, None]:
+        """Yield text chunks (or full response objects) from a streaming conversation result.
+
+        Args:
+            result: Raw streaming generator from the LLM API.
+            conversation: Conversation name; used to cache the conversation ID from the
+                first chunk.
+            full_response: When ``True``, yield the raw ``V1ConversationResponseChunk``
+                objects instead of the extracted text content.
+
+        Returns:
+            Generator[str, None, None]: Stream of response text chunks (or raw chunk
+            objects when ``full_response=True``).
+        """
         first_line = next(result, None)
         if first_line:
             if conversation and first_line.conversation_id:
@@ -462,13 +514,38 @@ class LLM:
         return self._stream_chat_response(output, conversation=conversation, full_response=full_response)
 
     def list_conversations(self) -> List[Dict]:
+        """Return the names of all conversations for this model.
+
+        Returns:
+            List[Dict]: Conversation names tracked for the current model instance.
+        """
         self._get_conversations()
         return list(self._conversations.keys())
 
     def _get_conversation_messages(self, conversation_id: str) -> Optional[str]:
+        """Fetch the raw message list for a conversation by its ID.
+
+        Args:
+            conversation_id: The API-level ID of the conversation to retrieve.
+
+        Returns:
+            Optional[str]: The conversation messages as returned by the LLM API.
+        """
         return self._llm_api.get_conversation(assistant_id=self._model_id, conversation_id=conversation_id)
 
     def get_history(self, conversation: str) -> Optional[List[Dict]]:
+        """Return the message history of a named conversation as a list of role/content dicts.
+
+        Args:
+            conversation: The display name of the conversation to retrieve.
+
+        Returns:
+            Optional[List[Dict]]: A list of ``{"role": ..., "content": ...}`` dicts for each
+            message in the conversation, in chronological order.
+
+        Raises:
+            ValueError: If no conversation with the given name exists.
+        """
         if conversation not in self._conversations:
             self._get_conversations()
 
@@ -487,6 +564,14 @@ class LLM:
         return history
 
     def reset_conversation(self, conversation: str) -> None:
+        """Clear the message history for a named conversation.
+
+        The conversation is deleted on the server and removed from the local cache.
+        Sending a new message under the same name will start a fresh conversation.
+
+        Args:
+            conversation: The display name of the conversation to reset.
+        """
         if conversation not in self._conversations:
             self._get_conversations()
         if conversation in self._conversations:

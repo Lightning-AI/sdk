@@ -162,6 +162,13 @@ class Argument:
     """A holder for the service argument."""
 
     def __init__(self, name: str, type: str, **kwargs: Any) -> None:  # noqa: A002
+        """Initialize an Argument.
+
+        Args:
+            name: The name of the argument.
+            type: The type of the argument (``"Text"`` or ``"File"``).
+            **kwargs: Additional keyword arguments stored for future use.
+        """
         self._name = name
         self._type = type
         self._value = None

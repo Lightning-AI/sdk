@@ -9,6 +9,20 @@ class PathResult(TypedDict):
 
 
 def parse_lit_url(url: str) -> PathResult:
+    """Parse a ``lit://`` URL into its owner, teamspace, and destination components.
+
+    Args:
+        url: A URL in ``lit://owner/teamspace[/destination]`` format, or a bare
+            ``owner/teamspace[/destination]`` path without the prefix.
+
+    Returns:
+        PathResult: A dict with ``owner``, ``teamspace``, ``studio``, and ``destination``
+        keys.  ``studio`` is always ``None`` (reserved for future use).
+
+    Raises:
+        ValueError: If the path is empty after stripping the prefix, or if fewer than
+            two path components are present.
+    """
     prefix = "lit://"
     path_string = url[len(prefix) :] if url.startswith(prefix) else url
     if not path_string:

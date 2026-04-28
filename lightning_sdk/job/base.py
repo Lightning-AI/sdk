@@ -50,6 +50,10 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             org: the name of the organization owning the :param`teamspace` in case it is owned by an org
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
+
+        Raises:
+            ValueError: If the teamspace cannot be resolved from the provided arguments, or if the job
+                is not found when ``_fetch_job=True``.
         """
         _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if _teamspace is None:
@@ -139,6 +143,13 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _BaseJob: The newly submitted job instance.
+
+        Raises:
+            ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
+            RuntimeError: If image and studio are both provided.
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -320,6 +331,9 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _BaseJob: This job instance, updated with the submitted job state.
         """
 
     @abstractmethod
@@ -343,6 +357,9 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             interval: The number of seconds to spend in-between status checks.
             timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
             stop_on_timeout: Whether to stop the job if it didn't finish within the timeout.
+
+        Raises:
+            TimeoutError: If the job doesn't finish within the provided timeout.
         """
         import time
 
@@ -369,6 +386,9 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             interval: The number of seconds to spend in-between status checks.
             timeout: The maximum number of seconds to wait before raising an error. If None, waits forever.
             stop_on_timeout: Whether to stop the job if it didn't finish within the timeout.
+
+        Raises:
+            TimeoutError: If the job doesn't finish within the provided timeout.
         """
         import asyncio
 
@@ -413,16 +433,24 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
 
     @abstractmethod
     def _update_internal_job(self) -> None:
-        pass
+        """Refresh the internal job state from the remote API."""
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._teamspace
 
     @property
@@ -446,7 +474,12 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         """The command the job is running."""
 
     def dict(self) -> JobDict:
-        """Dict representation of this job."""
+        """Dict representation of this job.
+
+        Returns:
+            JobDict: A dictionary containing the job's name, teamspace, studio, image, command,
+                status, machine, and total_cost.
+        """
         studio = self.studio
 
         return {
@@ -461,14 +494,25 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         }
 
     def json(self) -> str:
-        """JSON representation of this job."""
+        """JSON representation of this job.
+
+        Returns:
+            str: A JSON-formatted string of the job's dict representation.
+        """
         import json
 
         return json.dumps(self.dict(), indent=4, sort_keys=True, default=str)
 
     @property
     def link(self) -> str:
-        """A link to view the current job in the UI."""
+        """A link to view the current job in the UI.
+
+        Returns:
+            str: The URL to view this job in the Lightning AI UI.
+
+        Raises:
+            RuntimeError: If the studio name cannot be extracted from the job.
+        """
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
         if not studio_name:
             raise RuntimeError("Cannot extract studio name from job")
@@ -482,6 +526,9 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         """Guarantees that the job was fetched at some point before returning it.
 
         Doesn't guarantee to have the lastest version of the job. Use _latest_job for that.
+
+        Returns:
+            Any: The internal job object, fetched at least once from the remote API.
         """
         if getattr(self, "_job", None) is None:
             self._update_internal_job()
@@ -490,12 +537,20 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
 
     @property
     def total_cost(self) -> float:
-        """The number of credits the job was consuming so far."""
+        """The number of credits the job was consuming so far.
+
+        Returns:
+            float: The total credits consumed by this job so far.
+        """
         return self._job_api.get_total_cost(self._latest_job)
 
     @property
     def _latest_job(self) -> Any:
-        """Guarantees to fetch the latest version of a job before returning it."""
+        """Guarantees to fetch the latest version of a job before returning it.
+
+        Returns:
+            Any: The most up-to-date internal job object from the remote API.
+        """
         # in some cases we know we just refetched the latest state, no need to refetch again
         if self._prevent_refetch_latest:
             return self._guaranteed_job

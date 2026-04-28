@@ -26,11 +26,22 @@ class Owner(ABC, metaclass=TrackCallsABCMeta):
 
     @abstractmethod
     def create_teamspace(self, name: str) -> "Teamspace":
-        """Creates a new teamspace."""
+        """Creates a new teamspace.
+
+        Args:
+            name: The display name for the new teamspace.
+
+        Returns:
+            Teamspace: The newly created teamspace.
+        """
 
     @property
     def teamspaces(self) -> List["Teamspace"]:
-        """All teamspaces by this owner."""
+        """All teamspaces owned by this owner.
+
+        Returns:
+            List[Teamspace]: Every teamspace belonging to this user or organisation.
+        """
         from lightning_sdk.teamspace import Teamspace
         from lightning_sdk.user import User
 

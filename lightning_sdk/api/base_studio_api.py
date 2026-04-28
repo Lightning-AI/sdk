@@ -14,11 +14,24 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class BaseStudioApi:
+    """Internal API client for base studio (environment template) operations."""
+
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
 
     def get_base_studio(self, base_studio_id: str, org_id: Optional[str] = None) -> V1CloudSpaceEnvironmentTemplate:
-        """Retrieve the base studio by its ID."""
+        """Retrieve the base studio by its ID.
+
+        Args:
+            base_studio_id: The unique ID of the base studio to retrieve.
+            org_id: The organisation ID context for the lookup; defaults to empty string when ``None``.
+
+        Returns:
+            V1CloudSpaceEnvironmentTemplate: The matching base studio template.
+
+        Raises:
+            ValueError: If no base studio with the given ID exists.
+        """
         try:
             return self._client.cloud_space_environment_template_service_get_cloud_space_environment_template(
                 base_studio_id, org_id=org_id or ""
@@ -27,7 +40,14 @@ class BaseStudioApi:
             raise ValueError(f"Base studio {base_studio_id} does not exist") from e
 
     def get_all_base_studios(self, org_id: Optional[str]) -> V1ListCloudSpaceEnvironmentTemplatesResponse:
-        """Retrieve all base studios for a given organization."""
+        """Retrieve all base studios for a given organization.
+
+        Args:
+            org_id: The organisation ID to list base studios for; if ``None``, only managed templates are returned.
+
+        Returns:
+            V1ListCloudSpaceEnvironmentTemplatesResponse: Combined list of managed and org-specific templates.
+        """
         result = self._client.cloud_space_environment_template_service_list_managed_cloud_space_environment_templates(
             org_id=org_id or ""
         )
@@ -52,6 +72,22 @@ class BaseStudioApi:
         machine_image_version: Optional[str] = None,
         setup_script_text: Optional[str] = None,
     ) -> V1CloudSpaceEnvironmentTemplate:
+        """Patch a base studio environment template; only non-``None`` arguments are applied.
+
+        Args:
+            base_studio_id: The unique ID of the base studio to update.
+            org_id: The organisation that owns the base studio.
+            name: New display name for the template.
+            allowed_machines: Updated list of allowed machine types.
+            default_machine: New default machine type.
+            disabled: Whether the template should be disabled.
+            environment_type: New environment type for the template.
+            machine_image_version: New machine image version string.
+            setup_script_text: New setup script content.
+
+        Returns:
+            V1CloudSpaceEnvironmentTemplate: The updated base studio template.
+        """
         base_studio = self.get_base_studio(base_studio_id, org_id)
 
         # Get the current configuration for the base studio
@@ -82,6 +118,16 @@ class BaseStudioApi:
 
 
 def apply_change(spec: Any, key: str, value: Any) -> bool:
+    """Set ``key`` on ``spec`` to ``value`` if ``value`` is not ``None`` and differs from the current value.
+
+    Args:
+        spec: The object whose attribute to update.
+        key: The attribute name to set.
+        value: The new value; no-op when ``None``.
+
+    Returns:
+        ``True`` if the attribute was changed, ``False`` otherwise.
+    """
     if value is None:
         return False
 

@@ -75,6 +75,17 @@ class _SinglePartFileUploader:
         headers: Optional[Dict[str, str]] = None,
         notify_completion: bool = False,
     ) -> None:
+        """Initialise the uploader with the target URL and file metadata.
+
+        Args:
+            client: The Lightning API client (stored for potential future use).
+            file_path: Local path of the file to upload.
+            url: Pre-signed PUT URL for the upload.
+            query_params: Query parameters to append to every request.
+            progress_bar: Whether to show a tqdm progress bar during upload.
+            headers: Optional extra HTTP headers to include in the PUT request.
+            notify_completion: Whether to POST a completion notification after upload.
+        """
         self.client = client
         self.local_path = file_path
         self.url = url
@@ -85,6 +96,7 @@ class _SinglePartFileUploader:
         self.show_progress = progress_bar
 
     def __call__(self) -> None:
+        """Execute the upload, including the optional completion notification."""
         self._upload_with_retry()
         if self.notify_completion:
             self._notify_completion()
@@ -93,6 +105,11 @@ class _SinglePartFileUploader:
         backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
     )
     def _upload_with_retry(self) -> None:
+        """Upload the file via HTTP PUT, retrying on transient errors.
+
+        Raises:
+            RuntimeError: If the server returns a non-200 status code after all retries.
+        """
         with open(self.local_path, "rb") as f:
             if self.show_progress:
                 with tqdm.wrapattr(
@@ -117,7 +134,11 @@ class _SinglePartFileUploader:
         backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=3
     )
     def _notify_completion(self) -> None:
-        """Notify the server that the upload is complete to trigger sidecar notification."""
+        """Notify the server that the upload is complete to trigger sidecar notification.
+
+        Raises:
+            RuntimeError: If the completion notification returns a non-200/204 status code.
+        """
         complete_url = f"{self.url}/complete"
         r = requests.post(complete_url, params=self.query_params, timeout=10)
         if r.status_code not in (200, 204):
@@ -143,6 +164,17 @@ class _FileUploader:
         progress_bar: bool,
         data_connection_id: Optional[str] = None,
     ) -> None:
+        """Initialise the multi-part-aware uploader.
+
+        Args:
+            client: The Lightning API client used to obtain upload URLs.
+            teamspace_id: ID of the target teamspace.
+            cloud_account: Cloud account to store the file in.
+            file_path: Local path of the file to upload.
+            remote_path: Destination path within the storage connection.
+            progress_bar: Whether to display a tqdm progress bar.
+            data_connection_id: Optional data-connection ID for direct connection uploads.
+        """
         self.client = client
         self.teamspace_id = teamspace_id
         self.cloud_account = cloud_account
@@ -181,7 +213,11 @@ class _FileUploader:
         return self._multipart_upload(count=count)
 
     def _multipart_upload(self, count: int) -> None:
-        """Does a parallel multipart upload."""
+        """Does a parallel multipart upload.
+
+        Args:
+            count: Total number of parts to split the file into.
+        """
         body_kwargs = {"filename": self.remote_path}
         if self.cloud_account is not None:
             body_kwargs["cluster_id"] = self.cloud_account
@@ -215,13 +251,27 @@ class _FileUploader:
         self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
 
     def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
-        """Uploads a single batch of chunks in parallel."""
+        """Uploads a single batch of chunks in parallel.
+
+        Args:
+            executor: The thread-pool executor to submit upload tasks to.
+            batch: List of 1-based part numbers in this batch.
+            upload_id: The multipart upload session ID.
+        """
         urls = self._request_urls(parts=batch, upload_id=upload_id)
         func = partial(self._handle_uploading_single_part, upload_id=upload_id)
         return executor.map(func, urls)
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
-        """Requests urls for a batch of parts."""
+        """Requests urls for a batch of parts.
+
+        Args:
+            parts: List of 1-based part numbers to request presigned URLs for.
+            upload_id: The multipart upload session ID.
+
+        Returns:
+            List[V1PresignedUrl]: Presigned URLs for each requested part.
+        """
         body_kwargs = {
             "filename": self.remote_path,
             "parts": parts,
@@ -237,7 +287,15 @@ class _FileUploader:
         return resp.urls
 
     def _handle_uploading_single_part(self, presigned_url: V1PresignedUrl, upload_id: str) -> V1CompleteUpload:
-        """Uploads a single part of a multipart upload including retires with backoff."""
+        """Uploads a single part of a multipart upload including retires with backoff.
+
+        Args:
+            presigned_url: The presigned URL and part metadata for this chunk.
+            upload_id: The multipart upload session ID used for retry URL requests.
+
+        Returns:
+            V1CompleteUpload: The ETag and part number for the completed upload.
+        """
         try:
             return self._handle_upload_presigned_url(
                 presigned_url=presigned_url,
@@ -246,7 +304,14 @@ class _FileUploader:
             return self._error_handling_upload(part=presigned_url.part_number, upload_id=upload_id)
 
     def _handle_upload_presigned_url(self, presigned_url: V1PresignedUrl) -> V1CompleteUpload:
-        """Straightforward uploads the part given a single url."""
+        """Straightforward uploads the part given a single url.
+
+        Args:
+            presigned_url: The presigned URL and part metadata for this chunk.
+
+        Returns:
+            V1CompleteUpload: The ETag and part number for the completed upload.
+        """
         with open(self.local_path, "rb") as f:
             f.seek((int(presigned_url.part_number) - 1) * self.chunk_size)
             data = f.read(self.chunk_size)
@@ -261,7 +326,18 @@ class _FileUploader:
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
     def _error_handling_upload(self, part: int, upload_id: str) -> V1CompleteUpload:
-        """Retries uploading with re-requesting the url."""
+        """Retries uploading with re-requesting the url.
+
+        Args:
+            part: The 1-based part number to retry.
+            upload_id: The multipart upload session ID.
+
+        Returns:
+            V1CompleteUpload: The ETag and part number for the completed upload.
+
+        Raises:
+            ValueError: If the re-requested URL list does not contain exactly one URL.
+        """
         urls = self._request_urls(
             parts=[part],
             upload_id=upload_id,
@@ -324,7 +400,11 @@ class _ModelFileUploader:
         return self._multipart_upload(count=count)
 
     def _multipart_upload(self, count: int) -> None:
-        """Does a parallel multipart upload."""
+        """Does a parallel multipart upload.
+
+        Args:
+            count: Total number of parts to split the file into.
+        """
         body = ModelsStoreCreateMultiPartUploadBody(filepath=self.remote_path)
         resp = self.client.models_store_create_multi_part_upload(
             body,
@@ -353,13 +433,27 @@ class _ModelFileUploader:
         )
 
     def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
-        """Uploads a single batch of chunks in parallel."""
+        """Uploads a single batch of chunks in parallel.
+
+        Args:
+            executor: The thread-pool executor to submit upload tasks to.
+            batch: List of 1-based part numbers in this batch.
+            upload_id: The multipart upload session ID.
+        """
         urls = self._request_urls(parts=batch, upload_id=upload_id)
         func = partial(self._handle_uploading_single_part, upload_id=upload_id)
         return executor.map(func, urls)
 
     def _request_urls(self, parts: List[int], upload_id: str) -> List[V1SignedUrl]:
-        """Requests urls for a batch of parts."""
+        """Requests urls for a batch of parts.
+
+        Args:
+            parts: List of 1-based part numbers to request signed URLs for.
+            upload_id: The multipart upload session ID.
+
+        Returns:
+            List[V1SignedUrl]: Signed URLs for each requested part.
+        """
         body = ModelsStoreGetModelFileUploadUrlsBody(filepath=self.remote_path, parts=parts)
         resp = self.client.models_store_get_model_file_upload_urls(
             body,
@@ -371,7 +465,15 @@ class _ModelFileUploader:
         return resp.urls
 
     def _handle_uploading_single_part(self, presigned_url: V1SignedUrl, upload_id: str) -> V1CompletedPart:
-        """Uploads a single part of a multipart upload including retires with backoff."""
+        """Uploads a single part of a multipart upload including retires with backoff.
+
+        Args:
+            presigned_url: The signed URL and part metadata for this chunk.
+            upload_id: The multipart upload session ID used for retry URL requests.
+
+        Returns:
+            V1CompletedPart: The ETag and part number for the completed upload.
+        """
         try:
             return self._handle_upload_presigned_url(
                 presigned_url=presigned_url,
@@ -380,7 +482,14 @@ class _ModelFileUploader:
             return self._error_handling_upload(part=presigned_url.part_number, upload_id=upload_id)
 
     def _handle_upload_presigned_url(self, presigned_url: V1SignedUrl) -> V1CompletedPart:
-        """Straightforward uploads the part given a single url."""
+        """Straightforward uploads the part given a single url.
+
+        Args:
+            presigned_url: The signed URL and part metadata for this chunk.
+
+        Returns:
+            V1CompletedPart: The ETag and part number for the completed upload.
+        """
         with open(self.local_path, "rb") as f:
             f.seek((int(presigned_url.part_number) - 1) * self.chunk_size)
             data = f.read(self.chunk_size)
@@ -395,7 +504,18 @@ class _ModelFileUploader:
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
     def _error_handling_upload(self, part: int, upload_id: str) -> V1CompletedPart:
-        """Retries uploading with re-requesting the url."""
+        """Retries uploading with re-requesting the url.
+
+        Args:
+            part: The 1-based part number to retry.
+            upload_id: The multipart upload session ID.
+
+        Returns:
+            V1CompletedPart: The ETag and part number for the completed upload.
+
+        Raises:
+            ValueError: If the re-requested URL list does not contain exactly one URL.
+        """
         urls = self._request_urls(
             parts=[part],
             upload_id=upload_id,
@@ -746,7 +866,19 @@ def _create_app(
     plugin_type: str,
     **other_arguments: Any,
 ) -> Externalv1LightningappInstance:
-    """Creates an arbitrary app."""
+    """Creates an arbitrary app.
+
+    Args:
+        client: The CloudSpace service API client.
+        studio_id: The studio (cloudspace) ID to create the app in.
+        teamspace_id: The teamspace (project) ID that owns the studio.
+        cloud_account: The cloud account (cluster) ID for the app.
+        plugin_type: The plugin type identifier for the app to create.
+        **other_arguments: Additional plugin arguments forwarded to the request body.
+
+    Returns:
+        Externalv1LightningappInstance: The created app instance.
+    """
     from lightning_sdk.utils.resolve import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
 
     # Check if 'interruptible' is in the arguments and convert it to a string
@@ -840,21 +972,40 @@ class AccessibleResource(Enum):
     Settings = "settings"
 
     def __str__(self) -> str:
-        """Return the string representation of the resource type."""
+        """Return the string representation of the resource type.
+
+        Returns:
+            str: The string value of the resource type.
+        """
         return self.value
 
     def __repr__(self) -> str:
-        """Return the string representation of the resource type."""
+        """Return the string representation of the resource type.
+
+        Returns:
+            str: The string value of the resource type.
+        """
         return self.value
 
     def __eq__(self, other: object) -> bool:
-        """Return True if the resource type is equal to the other resource type."""
+        """Return True if the resource type is equal to the other resource type.
+
+        Args:
+            other: The object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` represents the same resource type.
+        """
         if isinstance(other, AccessibleResource):
             return self.value == other.value
         return str(other) == self.value
 
     def __hash__(self) -> int:
-        """Return the hash of the resource type."""
+        """Return the hash of the resource type.
+
+        Returns:
+            int: Hash of the resource type's string value.
+        """
         return hash(self.value)
 
 

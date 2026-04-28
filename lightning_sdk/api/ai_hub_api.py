@@ -23,10 +23,24 @@ from lightning_sdk.machine import Machine
 
 
 class AIHubApi:
+    """Internal API client for Lightning AI Hub (deployment template gallery) operations."""
+
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
     def api_info(self, api_id: str) -> Tuple[V1DeploymentTemplate, List[Dict[str, str]]]:
+        """Fetch a deployment template and its normalized parameter spec by template ID.
+
+        Args:
+            api_id: The unique identifier of the AI Hub deployment template.
+
+        Returns:
+            A tuple of (template, argument_list) where argument_list contains dicts with
+            keys ``name``, ``short_description``, ``required``, ``type``, and ``default``.
+
+        Raises:
+            ValueError: If the template is not found.
+        """
         try:
             template = self._client.deployment_templates_service_get_deployment_template(api_id)
         except Exception as e:
@@ -62,6 +76,14 @@ class AIHubApi:
 
     @backoff.on_predicate(backoff.expo, lambda x: not x, max_tries=5)
     def list_apis(self, search_query: str) -> List[V1DeploymentTemplateGalleryResponse]:
+        """Search the AI Hub gallery and return matching published deployment templates.
+
+        Args:
+            search_query: Free-text query to filter templates by name or description.
+
+        Returns:
+            List[V1DeploymentTemplateGalleryResponse]: Matching published deployment templates.
+        """
         kwargs = {"show_globally_visible": True}
         return self._client.deployment_templates_service_list_published_deployment_templates(
             search_query=search_query, **kwargs
@@ -71,6 +93,14 @@ class AIHubApi:
     def _update_parameters(
         job: V1JobSpec, placements: List[V1DeploymentTemplateParameterPlacement], pattern: str, value: str
     ) -> None:
+        """Replace ``pattern`` with ``value`` in the job's command, entrypoint, or env vars based on ``placements``.
+
+        Args:
+            job: The job spec to modify in-place.
+            placements: Where to apply the substitution (command, entrypoint, or env).
+            pattern: The placeholder string to replace (e.g. ``${param_name}``).
+            value: The replacement value.
+        """
         for placement in placements:
             if placement == V1DeploymentTemplateParameterPlacement.COMMAND:
                 job.command = job.command.replace(pattern, str(value))
@@ -86,6 +116,19 @@ class AIHubApi:
     def _set_parameters(
         job: V1JobSpec, parameters: List[V1DeploymentTemplateParameter], api_arguments: Dict[str, str]
     ) -> V1JobSpec:
+        """Apply ``api_arguments`` to the job spec, filling defaults for any missing optional parameters.
+
+        Args:
+            job: The job spec to modify in-place.
+            parameters: The list of template parameter definitions.
+            api_arguments: Caller-supplied parameter name → value overrides.
+
+        Returns:
+            V1JobSpec: The modified job spec.
+
+        Raises:
+            ValueError: If a required parameter is missing from ``api_arguments``.
+        """
         for p in parameters:
             if p.name not in api_arguments:
                 if p.type == V1DeploymentTemplateParameterType.INPUT and p.input and p.input.default_value:
@@ -125,6 +168,20 @@ class AIHubApi:
         machine: Optional[Union[str, Machine]],
         quantity: Optional[int],
     ) -> V1Deployment:
+        """Instantiate an AI Hub deployment from a template with the given arguments.
+
+        Args:
+            template_id: ID of the deployment template to run.
+            project_id: Teamspace ID to create the deployment in.
+            cloud_account: Cloud account ID for the deployment; uses template default if empty.
+            name: Override for the deployment name; falls back to the template name.
+            api_arguments: Parameter name → value overrides for the template.
+            machine: Machine type override; uses the template's default if not given.
+            quantity: Replica quantity override; warns if it differs from the template default.
+
+        Returns:
+            The created ``V1Deployment`` object.
+        """
         template = self._client.deployment_templates_service_get_deployment_template(template_id)
         name = name or template.name
         template.spec_v2.endpoint.id = None
@@ -170,4 +227,10 @@ class AIHubApi:
         )
 
     def delete_api(self, deployment_id: str, teamspace_id: str) -> None:
+        """Permanently delete an AI Hub deployment.
+
+        Args:
+            deployment_id: The unique ID of the deployment to delete.
+            teamspace_id: The teamspace that owns the deployment.
+        """
         self._client.jobs_service_delete_deployment(project_id=teamspace_id, id=deployment_id)

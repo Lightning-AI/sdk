@@ -15,6 +15,8 @@ class K8sClusterApiError(Exception):
 
 
 class RowData(TypedDict):
+    """Raw per-sample GPU metrics row as returned by the cluster metrics API."""
+
     num_allocated_gpus: int
     num_requested_gpus: int
     num_gpus: int
@@ -29,6 +31,9 @@ def _calculate_billed_k8s_gpus(row: RowData) -> int:
     2. If the number of requested GPUs (`num_requested_gpus`) exceeds the available GPUs (`num_gpus`),
        it returns the available GPUs.
     3. Otherwise, it returns the number of requested GPUs.
+
+    Args:
+        row: A dict-like object with keys ``num_allocated_gpus``, ``num_requested_gpus``, and ``num_gpus``.
 
     Returns:
         int: The number of GPUs to be billed.
@@ -66,8 +71,15 @@ class K8sClusterApi:
     def get_billing_usage(self, print_data: bool = False, **kwargs: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Gets the k8s usage metrics.
 
+        Args:
+            print_data: When ``True``, pretty-print the usage table to the console via Rich.
+            **kwargs: Additional keyword arguments forwarded to the cluster metrics API call.
+
         Returns:
             The k8s usage metrics as a list of dictionaries.
+
+        Raises:
+            K8sClusterApiError: If the API call fails.
         """
         try:
             response = self._client.k8_s_cluster_service_list_cluster_metrics(self.cloud_account, **kwargs)

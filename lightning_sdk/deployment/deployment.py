@@ -173,15 +173,9 @@ class Deployment(metaclass=TrackCallsMeta):
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
-            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
-                represents the data-connection name and the path inside that connection.
-                Should be of form
-                    {
-                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
-                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
-                    }
-                If the path inside the connection is omitted it's assumed to be the root path of that connection.
-                Only applicable when deploying docker containers.
+            path_mappings: Maps container paths to data-connection paths in the form
+                ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
+                for the root of a connection. Only applicable when deploying docker containers.
 
         Note:
             Since a teamspace can either be owned by an org or by a user directly,
@@ -305,6 +299,37 @@ class Deployment(metaclass=TrackCallsMeta):
         max_runtime: Optional[int] = None,
         path_mappings: Optional[Dict[str, str]] = None,
     ) -> None:
+        """Update the deployment configuration.
+
+        Changes to ``machine``, ``image``, ``entrypoint``, ``command``/``commands``, ``env``,
+        ``spot``, ``cloud_account``, or ``health_check`` create a new release.  All other
+        arguments (replica counts, ports, auth, etc.) are applied in-place without a new release.
+
+        Args:
+            machine: New machine type for the replicas.
+            image: New docker image for the replicas.
+            entrypoint: New container entrypoint.
+            command: New container command string.
+            commands: List of command strings, joined into a single command.  Mutually exclusive
+                with ``command``.
+            env: Environment variables or secrets to inject into replicas.
+            spot: Whether to use spot/interruptible instances.
+            cloud_account: Cloud account to run replicas on.
+            health_check: Readiness probe configuration.
+            min_replicas: New minimum replica count for autoscaling.
+            max_replicas: New maximum replica count for autoscaling.
+            name: New display name for the deployment.
+            ports: Exposed port numbers.
+            release_strategy: How to roll out the new release (e.g. blue/green).
+            replicas: Fixed number of replicas (overrides autoscaling).
+            auth: Authentication configuration for the deployment endpoint.
+            custom_domain: Custom domain to attach to the deployment.
+            cluster: Deprecated — use ``cloud_account`` instead.
+            quantity: Number of machines per replica.
+            include_credentials: Whether to inject SDK authentication env vars.
+            max_runtime: Maximum machine allocation duration in seconds.
+            path_mappings: Container-path → data-connection-path mappings for docker jobs.
+        """
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
         cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
 
@@ -358,6 +383,24 @@ class Deployment(metaclass=TrackCallsMeta):
         The export is always written to ``output_dir``. If ``remote_path`` is provided,
         the same artifacts are also uploaded to that remote destination. This currently
         supports ``lightning_storage`` targets only.
+
+        Args:
+            start: Start of the time range to export captures for.
+            end: End of the time range to export captures for.
+            output_dir: Local directory where exported artifacts will be written.
+            paths: Optional list of request paths to filter exports by.
+            include_all_paths: If ``True``, export captures for all request paths.
+            status_codes: Optional list of HTTP status codes to filter exports by.
+            strict: If ``True``, raise an error on any export failure instead of skipping.
+            request_timeout: Timeout in seconds (or ``(connect, read)`` tuple) for each request.
+            overwrite: If ``True``, overwrite existing files in ``output_dir``.
+            remote_path: Optional remote destination path for uploading exported artifacts.
+
+        Returns:
+            RequestCaptureExportResult: Summary of the export operation.
+
+        Raises:
+            RuntimeError: If the deployment has not been created yet.
         """
         if not self._deployment:
             raise RuntimeError("This deployment has not been created.")
@@ -385,7 +428,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def replicas(self) -> Optional[int]:
-        """The default number of replicas the release starts with."""
+        """The default number of replicas the release starts with.
+
+        Returns:
+            Optional[int]: The replica count, or ``None`` if the deployment has not been started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.replicas
@@ -393,7 +440,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def min_replicas(self) -> Optional[int]:
-        """The minimum number of replicas."""
+        """The minimum number of replicas.
+
+        Returns:
+            Optional[int]: The autoscaling minimum replica count, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return int(self._deployment.autoscaling.min_replicas)
@@ -401,7 +452,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def max_replicas(self) -> Optional[int]:
-        """The maximum number of replicas."""
+        """The maximum number of replicas.
+
+        Returns:
+            Optional[int]: The autoscaling maximum replica count, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return int(self._deployment.autoscaling.max_replicas)
@@ -409,7 +464,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def ports(self) -> Optional[int]:
-        """The exposed ports on which you can reach your deployment."""
+        """The exposed ports on which you can reach your deployment.
+
+        Returns:
+            Optional[int]: List of exposed port numbers, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return [int(p) for p in self._deployment.endpoint.ports]
@@ -417,7 +476,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def release_strategy(self) -> Optional[ReleaseStrategy]:
-        """The release strategy of the deployment."""
+        """The release strategy of the deployment.
+
+        Returns:
+            Optional[ReleaseStrategy]: The current release strategy, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_release_strategy(self._deployment.strategy)
@@ -425,7 +488,12 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def health_check(self) -> Optional[Union[HttpHealthCheck, ExecHealthCheck]]:
-        """The health check to validate the replicas are ready to receive traffic."""
+        """The health check to validate the replicas are ready to receive traffic.
+
+        Returns:
+            Optional[Union[HttpHealthCheck, ExecHealthCheck]]: The readiness probe configuration,
+            or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_health_check(self._deployment.spec.readiness_probe)
@@ -433,7 +501,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def auth(self) -> Optional[Auth]:
-        """The authentification configuration of the deployment."""
+        """The authentification configuration of the deployment.
+
+        Returns:
+            Optional[Auth]: The authentication configuration, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_auth(self._deployment.endpoint.auth)
@@ -441,7 +513,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def autoscale(self) -> Optional[AutoScaleConfig]:
-        """The autoscaling configuration of the deployment."""
+        """The autoscaling configuration of the deployment.
+
+        Returns:
+            Optional[AutoScaleConfig]: The autoscaling configuration, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_autoscale(self._deployment.autoscaling)
@@ -449,7 +525,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def env(self) -> Optional[List[Union[Secret, Env]]]:
-        """The env configuration of the deployment."""
+        """The env configuration of the deployment.
+
+        Returns:
+            Optional[List[Union[Secret, Env]]]: The environment variables and secrets, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_env(self._deployment.spec.env)
@@ -457,7 +537,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def urls(self) -> Optional[List[str]]:
-        """The urls to reach the deployment."""
+        """The urls to reach the deployment.
+
+        Returns:
+            Optional[List[str]]: The list of URLs for the deployment, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return self._deployment.status.urls
@@ -465,7 +549,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def pending_replicas(self) -> Optional[int]:
-        """The number of pending replicas."""
+        """The number of pending replicas.
+
+        Returns:
+            Optional[int]: The count of replicas currently pending, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return int(self._deployment.status.pending_replicas)
@@ -473,7 +561,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     @property
     def running_replicas(self) -> Optional[int]:
-        """The number of failing replicas."""
+        """The number of failing replicas.
+
+        Returns:
+            Optional[int]: The count of replicas currently running and ready, or ``None`` if not started.
+        """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return int(self._deployment.status.ready_replicas)

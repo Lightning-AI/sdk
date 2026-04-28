@@ -102,10 +102,21 @@ class _MMTV1(_BaseMMT):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _MMTV1: This MMT V1 instance, updated with the submitted job state.
+
+        Raises:
+            NotImplementedError: Always raised; submitting new MMTs via V1 is not supported.
         """
         raise NotImplementedError("Cannot submit new mmts with MMTV1!")
 
     def _update_internal_job(self) -> None:
+        """Refresh the internal job state from the remote API.
+
+        Raises:
+            ValueError: If the job does not exist in the given teamspace.
+        """
         try:
             self._job = self._job_api.get_job(self._name, self.teamspace.id)
         except ValueError as e:
@@ -113,7 +124,11 @@ class _MMTV1(_BaseMMT):
 
     @property
     def machines(self) -> Tuple["Work", ...]:
-        """Returns the sub-jobs for each individual instance."""
+        """Returns the sub-jobs for each individual instance.
+
+        Returns:
+            Tuple[Work, ...]: A tuple of Work objects, one per machine.
+        """
         works = self._job_api.list_works(self._guaranteed_job.id, self.teamspace.id)
 
         return tuple(Work(w.id, self, self.teamspace) for w in works)
@@ -133,7 +148,14 @@ class _MMTV1(_BaseMMT):
 
     @property
     def status(self) -> "Status":
-        """The current status of the job."""
+        """The current status of the job.
+
+        Returns:
+            Status: The current job status.
+
+        Raises:
+            RuntimeError: If the job no longer exists (e.g. was deleted).
+        """
         try:
             status = self._job_api.get_job_status(self._job.id, self.teamspace.id)
             return _internal_status_to_external_status(status)
@@ -144,27 +166,47 @@ class _MMTV1(_BaseMMT):
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
+        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path within the teamspace filesystem.
+        """
         return f"/teamspace/jobs/{self.name}"
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path within the teamspace filesystem.
+        """
         return f"/teamspace/jobs/{self.name}/snapshot"
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """Returns the machine type this job is running on."""
+        """Returns the machine type this job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type used by this multi-machine job.
+        """
         return self.machines[0].machine
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._teamspace
 
     @property
@@ -176,13 +218,21 @@ class _MMTV1(_BaseMMT):
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the job."""
+        """The image used to submit the job.
+
+        Returns:
+            Optional[str]: Always None as V1 MMTs do not support custom images.
+        """
         # mmtv1 don't support images, so return None here
         return None
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job."""
+        """The studio used to submit the job.
+
+        Returns:
+            Optional[Studio]: The Studio instance used to submit this job.
+        """
         from lightning_sdk.studio import Studio
 
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
@@ -190,7 +240,11 @@ class _MMTV1(_BaseMMT):
 
     @property
     def command(self) -> str:
-        """The command the job is running."""
+        """The command the job is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._job_api.get_command(self._guaranteed_job)
 
     # the following and functions are solely to make the Work class function
@@ -199,4 +253,12 @@ class _MMTV1(_BaseMMT):
         return self._guaranteed_job.id
 
     def _name_filter(self, name: str) -> str:
+        """Strip the ``root.`` prefix from a work name.
+
+        Args:
+            name: Raw work name as returned by the API.
+
+        Returns:
+            str: The name with the ``root.`` prefix removed.
+        """
         return name.replace("root.", "")

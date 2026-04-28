@@ -4,6 +4,8 @@ from typing import Any, ClassVar, Optional, Tuple
 
 
 class CloudProvider(Enum):
+    """Cloud provider for running Studios and Jobs on the Lightning AI platform."""
+
     AWS = "AWS"
     GCP = "GCP"
     LAMBDA_LABS = "LAMBDA_LABS"
@@ -19,7 +21,17 @@ class CloudProvider(Enum):
 
     @classmethod
     def from_str(cls, provider: str) -> "CloudProvider":
-        """Converts a string to a CloudProvider enum member."""
+        """Convert a string to a CloudProvider enum member.
+
+        Args:
+            provider: The string name of the cloud provider (case-insensitive).
+
+        Returns:
+            CloudProvider: The matching enum member.
+
+        Raises:
+            ValueError: If the string does not match any known provider.
+        """
         for cp in cls:
             if cp.value.lower() == provider.lower():
                 return cp
@@ -28,6 +40,13 @@ class CloudProvider(Enum):
 
 @dataclass(frozen=True)
 class Machine:
+    """Hardware configuration for running Studios and Jobs on the Lightning AI platform.
+
+    Use the pre-defined class attributes (e.g. ``Machine.A10G``, ``Machine.H100``) rather than
+    constructing instances directly. Pass a ``Machine`` to :meth:`~lightning_sdk.Studio.start`,
+    :meth:`~lightning_sdk.Job.run`, or :meth:`~lightning_sdk.MMT.run` to select the hardware.
+    """
+
     # supported CPU variations
     CPU_X_2: ClassVar["Machine"]
     CPU_X_4: ClassVar["Machine"]
@@ -126,6 +145,18 @@ class Machine:
 
     @classmethod
     def from_str(cls, machine: str, *additional_machine_ids: Any) -> "Machine":
+        """Resolve a machine from one or more string identifiers.
+
+        Tries to match against known machine names, slugs, and instance types in order.
+        Falls back to constructing an ad-hoc ``Machine`` if no match is found.
+
+        Args:
+            machine: Primary machine identifier (name, slug, or instance type).
+            *additional_machine_ids: Extra identifiers to try when the primary does not match.
+
+        Returns:
+            Machine: The resolved or constructed machine instance.
+        """
         possible_values: Tuple["Machine", ...] = tuple(
             [machine for machine in cls.__dict__.values() if isinstance(machine, cls)]
         )
@@ -144,6 +175,16 @@ class Machine:
 
     @classmethod
     def _from_accelerator(cls, accelerator: Any) -> "Machine":
+        """Construct a Machine from a raw accelerator object returned by the cluster API.
+
+        Args:
+            accelerator: An accelerator descriptor with ``accelerator_type``, ``resources``,
+                ``slug_multi_cloud``, ``slug``, ``instance_id``, ``secondary_instance_id``,
+                and ``family`` attributes.
+
+        Returns:
+            Machine: The resolved or ad-hoc ``Machine`` instance.
+        """
         if accelerator.accelerator_type == "GPU":
             accelerator_resources_count = accelerator.resources.gpu
         else:

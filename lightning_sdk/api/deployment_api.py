@@ -278,6 +278,18 @@ class DeploymentApi:
         self._wait_on_stop = wait_on_stop
 
     def get_deployment_by_name(self, name: str, teamspace_id: str) -> Optional[V1Deployment]:
+        """Fetch a deployment by name, returning ``None`` if it does not exist.
+
+        Args:
+            name: The name of the deployment to fetch.
+            teamspace_id: The teamspace that owns the deployment.
+
+        Returns:
+            Optional[V1Deployment]: The deployment, or ``None`` if not found.
+
+        Raises:
+            ApiException: If the API returns an unexpected error.
+        """
         try:
             return self._client.jobs_service_get_deployment_by_name(project_id=teamspace_id, name=name)
         except ApiException as ex:
@@ -286,6 +298,18 @@ class DeploymentApi:
             raise ex
 
     def get_deployment_by_id(self, deployment_id: str, teamspace_id: str) -> Optional[V1Deployment]:
+        """Fetch a deployment by its unique ID, returning ``None`` if it does not exist.
+
+        Args:
+            deployment_id: The unique ID of the deployment to fetch.
+            teamspace_id: The teamspace that owns the deployment.
+
+        Returns:
+            Optional[V1Deployment]: The deployment, or ``None`` if not found.
+
+        Raises:
+            ApiException: If the API returns an unexpected error.
+        """
         try:
             return self._client.jobs_service_get_deployment(project_id=teamspace_id, id=deployment_id)
         except ApiException as ex:
@@ -299,6 +323,16 @@ class DeploymentApi:
         from_onboarding: Optional[bool] = None,
         from_litserve: Optional[bool] = None,
     ) -> V1Deployment:
+        """Create a deployment from a ``V1Deployment`` object and return the server-created resource.
+
+        Args:
+            deployment: The deployment configuration to create.
+            from_onboarding: Flag indicating the deployment was created through the onboarding flow.
+            from_litserve: Flag indicating the deployment was created from LitServe.
+
+        Returns:
+            V1Deployment: The created deployment as returned by the server.
+        """
         return self._client.jobs_service_create_deployment(
             project_id=deployment.project_id,
             body=JobsServiceCreateDeploymentBody(
@@ -339,6 +373,41 @@ class DeploymentApi:
         max_runtime: Optional[int] = None,
         path_mappings: Optional[Dict[str, str]] = None,
     ) -> V1Deployment:
+        """Apply changes to a deployment in-place and persist them via the API.
+
+        Any change to ``image``, ``entrypoint``, ``command``, ``env``, ``health_check``,
+        ``cloud_account``, ``spot``, ``quantity``, ``include_credentials``, or ``max_runtime``
+        triggers a new release; a ``release_strategy`` is required in that case.
+
+        Args:
+            deployment: The deployment object to update (modified in-place).
+            machine: New machine type for the deployment.
+            image: New container image.
+            entrypoint: New container entrypoint.
+            command: New container command.
+            env: New list of environment variables or secrets.
+            spot: Whether to use spot instances.
+            cloud_account: New cloud account ID.
+            min_replicas: New minimum replica count for autoscaling.
+            max_replicas: New maximum replica count for autoscaling.
+            name: New deployment name.
+            ports: New list of exposed ports.
+            release_strategy: Release strategy required when a new release is triggered.
+            replicas: New fixed replica count.
+            health_check: New readiness probe configuration.
+            auth: New authentication configuration.
+            custom_domain: New custom domain for the endpoint.
+            quantity: New quantity override for the job spec.
+            include_credentials: Whether to inject credentials into the deployment.
+            max_runtime: New maximum runtime in seconds.
+            path_mappings: New path-to-data-connection mappings.
+
+        Returns:
+            V1Deployment: The updated deployment as returned by the server.
+
+        Raises:
+            RuntimeError: If a new release is required but no ``release_strategy`` is provided.
+        """
         # Update the deployment in place
 
         apply_change(deployment, "name", name)
@@ -395,6 +464,14 @@ class DeploymentApi:
         )
 
     def stop(self, deployment: V1Deployment) -> V1Deployment:
+        """Scale a deployment to zero replicas and wait until all replicas have stopped.
+
+        Args:
+            deployment: The deployment to stop.
+
+        Returns:
+            V1Deployment: The updated deployment once all replicas reach zero.
+        """
         deployment.autoscaling.min_replicas = 0
         deployment.autoscaling.max_replicas = 0
 
@@ -433,6 +510,24 @@ class DeploymentApi:
         The export is always written to ``output_dir``. If ``remote_path`` is provided,
         the same artifacts are also uploaded remotely. This currently supports
         ``lightning_storage`` destinations only.
+
+        Args:
+            deployment: The deployment whose request captures to export.
+            start: Start of the time range to export (datetime or ISO string).
+            end: End of the time range to export (datetime or ISO string).
+            output_dir: Local directory to write CSV, JSONL, and manifest files.
+            paths: URL paths to filter; defaults to ``["/v1/chat/completions"]``.
+            include_all_paths: When ``True``, export all paths regardless of ``paths``.
+            status_codes: HTTP status codes to filter; defaults to all codes.
+            page_size: Number of records to fetch per API page.
+            max_pages: Maximum number of pages to fetch; ``None`` means no limit.
+            strict: When ``True``, raise on any content download error.
+            request_timeout: Timeout in seconds for individual content download requests.
+            overwrite: When ``True``, overwrite existing output files.
+            remote_path: Optional ``lightning_storage`` destination path for remote upload.
+
+        Returns:
+            RequestCaptureExportResult: Paths and counts for the exported artifacts.
         """
         return _export_deployment_request_captures(
             client=self._client,
@@ -653,6 +748,11 @@ def _build_export_row(
     strict: bool,
     request_timeout: Union[float, tuple],
 ) -> Dict[str, Any]:
+    """Build a flat export row dict from a routing telemetry entry, downloading captured content if available.
+
+    Returns:
+        Dict[str, Any]: A flat dictionary of request metadata and optionally decoded request/response bodies.
+    """
     row = {
         "request_id": getattr(telemetry, "id", None),
         "received_at": _serialize_datetime(getattr(telemetry, "received_at", None)),
@@ -719,6 +819,22 @@ def _download_request_content(
     request_id: Optional[str],
     request_timeout: Union[float, tuple],
 ) -> str:
+    """Download and decode the body content for a captured request.
+
+    Args:
+        client: The API client used to fetch the content URL.
+        teamspace_id: ID of the teamspace that owns the deployment.
+        deployment_id: ID of the deployment.
+        request_id: ID of the captured request whose content to retrieve.
+        request_timeout: Timeout for the HTTP download request.
+
+    Returns:
+        str: The decoded (UTF-8) body content of the captured request.
+
+    Raises:
+        MissingRequestContentError: If request_id is absent, the content URL is
+            missing, or the content cannot be found (404).
+    """
     if not request_id:
         raise MissingRequestContentError("missing request id for captured request content")
 

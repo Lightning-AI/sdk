@@ -18,17 +18,41 @@ class AgentApi:
         self._client = LightningClient(max_tries=7)
 
     def get_agent(self, agent_id: str) -> V1Assistant:
-        """Retrieve the agent by its ID."""
+        """Retrieve the agent by its ID.
+
+        Args:
+            agent_id: The unique ID of the agent to retrieve.
+
+        Returns:
+            V1Assistant: The agent record.
+
+        Raises:
+            ValueError: If no agent with the given ID exists.
+        """
         try:
             return self._client.assistants_service_get_assistant(agent_id)
         except ValueError as e:
             raise ValueError(f"Agent {agent_id} does not exist") from e
 
     def delete_agent(self, agent_id: str, teamspace_id: str) -> None:
-        """Delete the agent by its ID."""
+        """Delete the agent by its ID.
+
+        Args:
+            agent_id: The unique ID of the agent to delete.
+            teamspace_id: The teamspace that owns the agent.
+        """
         self._client.assistants_service_delete_assistant(id=agent_id, project_id=teamspace_id)
 
     def _get_agent_endpoint(self, endpoint_id: str, teampsace_id: str) -> V1Endpoint:
+        """Fetch the raw endpoint object backing the given agent.
+
+        Args:
+            endpoint_id: The unique ID of the endpoint to fetch.
+            teampsace_id: The teamspace that owns the endpoint.
+
+        Returns:
+            V1Endpoint: The raw endpoint object.
+        """
         return self._client.endpoint_service_get_endpoint(project_id=teampsace_id, ref=endpoint_id)
 
     def update_agent(
@@ -44,7 +68,23 @@ class AgentApi:
         publish_status: Optional[str] = None,
         file_uploads_enabled: Optional[bool] = None,
     ) -> V1Assistant:
-        """Update the agent with provided details."""
+        """Update the agent metadata; only non-``None`` arguments are applied.
+
+        Args:
+            agent_id: The unique ID of the agent to update.
+            teamspace_id: The teamspace that owns the agent.
+            name: New display name for the agent.
+            model: New model identifier.
+            description: New human-readable description.
+            prompt_template: New system prompt template.
+            prompt_suggestions: New list of suggested user prompts.
+            knowledge: New knowledge-base content or reference.
+            publish_status: New publish status (e.g. ``"published"`` or ``"draft"``).
+            file_uploads_enabled: Whether to allow file uploads in the chat UI.
+
+        Returns:
+            V1Assistant: The updated agent record.
+        """
         agent = self.get_agent(agent_id)
         body = AssistantsServiceUpdateAssistantBody(
             cloudspace_id=agent.cloudspace_id,
@@ -89,7 +129,17 @@ class AgentApi:
     def update_agent_endpoint(
         self, teamspace_id: str, endpoint_id: str, base_url: Optional[str] = None, api_key: Optional[str] = None
     ) -> V1Endpoint:
-        """Update the agent endpoint with provided details."""
+        """Update the OpenAI-compatible endpoint backing an agent.
+
+        Args:
+            teamspace_id: The teamspace that owns the endpoint.
+            endpoint_id: The unique ID of the endpoint to update.
+            base_url: New base URL for the upstream model endpoint.
+            api_key: New API key for authenticating with the endpoint.
+
+        Returns:
+            V1Endpoint: The updated endpoint record.
+        """
         endpoint = self._get_agent_endpoint(teampsace_id=teamspace_id, endpoint_id=endpoint_id)
 
         body = EndpointServiceUpdateEndpointBody(

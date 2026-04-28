@@ -42,6 +42,10 @@ class MMT(_BaseMMT):
             org: the name of the organization owning the :param`teamspace` in case it is owned by an org
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
+
+        Raises:
+            ValueError: If the job is not found in the given teamspace.
+            PermissionError: If the user does not have access to jobs in the given teamspace.
         """
         teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, teamspace_id=teamspace.id)
@@ -112,7 +116,7 @@ class MMT(_BaseMMT):
 
         Args:
             name: The name of the job. Needs to be unique within the teamspace.
-            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            machine: The machine type to run the job on.
             num_machines: The number of machines to run on.
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
@@ -140,17 +144,18 @@ class MMT(_BaseMMT):
                 To use the pre-defined entrypoint of the provided image with a specified command,
                 set this to an empty string.
                 Only applicable when submitting docker jobs.
-            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
-                represents the data-connection name and the path inside that connection.
-                Should be of form
-                    {
-                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
-                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
-                    }
-                If the path inside the connection is omitted it's assumed to be the root path of that connection.
-                Only applicable when submitting docker jobs.
+            path_mappings: Maps container paths to data-connection paths in the form
+                ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
+                for the root of a connection. Only applicable when submitting docker jobs.
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            MMT: The newly submitted multi-machine job instance.
+
+        Raises:
+            ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
+            RuntimeError: If both image and studio are provided.
         """
         ret_val = super().run(
             name=name,
@@ -208,7 +213,7 @@ class MMT(_BaseMMT):
 
         Args:
             num_machines: The number of machines to run on.
-            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            machine: The machine type to run the job on.
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
             studio: The studio env to run the job with. Mutually exclusive with image.
@@ -232,21 +237,18 @@ class MMT(_BaseMMT):
                 To use the pre-defined entrypoint of the provided image with a specified command,
                 set this to an empty string.
                 Only applicable when submitting docker jobs.
-            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
-                represents the data-connection name and the path inside that connection.
-                Should be of form
-                    {
-                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
-                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
-                    }
-                If the path inside the connection is omitted it's assumed to be the root path of that connection.
-                Only applicable when submitting docker jobs.
+            path_mappings: Maps container paths to data-connection paths in the form
+                ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
+                for the root of a connection. Only applicable when submitting docker jobs.
             max_runtime: the duration (in seconds) for which to allocate the machine.
                 Irrelevant for most machines, required for some of the top-end machines on GCP.
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            MMT: This MMT instance, updated with the submitted job state.
         """
         self._job = self._internal_mmt._submit(
             num_machines=num_machines,
@@ -282,32 +284,56 @@ class MMT(_BaseMMT):
 
     @property
     def status(self) -> "Status":
-        """The current status of the job (accumulated over all machines)."""
+        """The current status of the job (accumulated over all machines).
+
+        Returns:
+            Status: The current accumulated status across all machines.
+        """
         return self._internal_mmt.status
 
     @property
     def machines(self) -> Tuple[MMTMachine, ...]:
-        """Returns the sub-jobs for each individual instance."""
+        """Returns the sub-jobs for each individual instance.
+
+        Returns:
+            Tuple[MMTMachine, ...]: A tuple of MMTMachine instances, one per machine.
+        """
         return self._internal_mmt.machines
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """Returns the machine type this job is running on."""
+        """Returns the machine type this job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type used by this multi-machine job.
+        """
         return self._internal_mmt.machine
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
+        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path, or None if not available.
+        """
         return self._internal_mmt.artifact_path
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path, or None if not available.
+        """
         return self._internal_mmt.snapshot_path
 
     @property
     def share_path(self) -> Optional[str]:
-        """Path to the jobs share path."""
+        """Path to the jobs share path.
+
+        Returns:
+            Optional[str]: Always None for multi-machine jobs.
+        """
         return None
 
     def _update_internal_job(self) -> None:
@@ -315,35 +341,67 @@ class MMT(_BaseMMT):
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._internal_mmt.name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._internal_mmt._teamspace
 
     @property
     def link(self) -> str:
+        """The Lightning AI web URL to view this multi-machine job.
+
+        Returns:
+            str: Direct URL to the job's page on lightning.ai.
+        """
         return self._internal_mmt.link
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the MMT."""
+        """The studio used to submit the MMT.
+
+        Returns:
+            Optional[Studio]: The Studio instance used to submit this job, or None if an image was used.
+        """
         return self._internal_mmt.studio
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the MMT."""
+        """The image used to submit the MMT.
+
+        Returns:
+            Optional[str]: The docker image name, or None if a studio was used.
+        """
         return self._internal_mmt.image
 
     @property
     def command(self) -> str:
-        """The command the MMT is running."""
+        """The command the MMT is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._internal_mmt.command
 
     def __getattr__(self, key: str) -> Any:
-        """Forward the attribute lookup to the internal job implementation."""
+        """Forward the attribute lookup to the internal job implementation.
+
+        Args:
+            key: The attribute name to look up.
+
+        Returns:
+            Any: The attribute value from the internal MMT implementation.
+        """
         try:
             return getattr(super(), key)
         except AttributeError:

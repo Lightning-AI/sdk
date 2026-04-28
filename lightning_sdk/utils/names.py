@@ -1175,5 +1175,10 @@ _COLORS = [
 
 
 def random_unique_name() -> str:
+    """Generate a random unique name in the form ``<adjective>-<color>-<4 chars>``.
+
+    Returns:
+        str: A randomly generated name, e.g. ``"brave-coral-x7k2"``.
+    """
     suffix = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
     return f"{random.choice(_ADJECTIVES)}-{random.choice(_COLORS)}-{suffix}"

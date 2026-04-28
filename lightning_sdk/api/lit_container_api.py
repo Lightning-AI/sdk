@@ -14,15 +14,19 @@ from lightning_sdk.teamspace import Teamspace
 
 
 class LCRAuthFailedError(Exception):
+    """Raised when authentication with the Lightning Container Registry fails."""
+
     def __init__(self) -> None:
         super().__init__("Failed to authenticate with Lightning Container Registry. Please try again.")
 
 
 class DockerPushError(Exception):
-    pass
+    """Raised when a Docker image push operation fails."""
 
 
 class DockerNotRunningError(Exception):
+    """Raised when the Docker daemon is unreachable."""
+
     def __init__(self, message: str = "Failed to connect to Docker") -> None:
         self.message = message
         super().__init__(self.message)
@@ -38,6 +42,15 @@ class DockerNotRunningError(Exception):
 
 
 def retry_on_lcr_auth_failure(func: Callable) -> Callable:
+    """Decorator that re-authenticates once and retries the wrapped method on ``LCRAuthFailedError``.
+
+    Args:
+        func: The method to wrap; must be a bound method of ``LitContainerApi``.
+
+    Returns:
+        Callable: The wrapped function that retries after re-authentication.
+    """
+
     def generator_wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Callable:
         try:
             gen = func(self, *args, **kwargs)
@@ -62,6 +75,8 @@ def retry_on_lcr_auth_failure(func: Callable) -> Callable:
 
 
 class LitContainerApi:
+    """Internal API client for Lightning Container Registry (LitCR) operations."""
+
     def __init__(self) -> None:
         self._client = LightningClient(max_tries=3)
 
@@ -73,6 +88,14 @@ class LitContainerApi:
             raise DockerNotRunningError() from None
 
     def authenticate(self, reauth: bool = False) -> bool:
+        """Authenticate the Docker client against the Lightning Container Registry.
+
+        Args:
+            reauth: Force re-authentication even if a valid session already exists.
+
+        Returns:
+            ``True`` if authentication succeeded, ``False`` otherwise.
+        """
         resp = None
         try:
             authed_user = self._client.auth_service_get_user()
@@ -105,6 +128,13 @@ class LitContainerApi:
         :param project_id: The non-human readable project ID used internally to identify projects.
         :param cloud_account: The cluster ID of the cloud account. If None, will use the default cluster.
         :return:
+
+        Args:
+            project_id: The non-human readable project ID used internally to identify projects.
+            cloud_account: The cluster ID of the cloud account; uses the default cluster if ``None``.
+
+        Returns:
+            List: The list of container repositories in the project registry.
         """
         if cloud_account is None:
             project = self._client.lit_registry_service_get_lit_project_registry(project_id)
@@ -119,6 +149,16 @@ class LitContainerApi:
         :param project_id: The non-human readable project ID used internally to identify projects.
         :param container: The name of the docker container a user wants to push up, ie, nginx, vllm, etc
         :return:
+
+        Args:
+            project_id: The non-human readable project ID used internally to identify projects.
+            container: The name of the container repository to delete.
+
+        Returns:
+            V1DeleteLitRepositoryResponse: The deletion response from the server.
+
+        Raises:
+            ValueError: If the container cannot be deleted.
         """
         try:
             return self._client.lit_registry_service_delete_lit_repository(project_id, container)
@@ -131,6 +171,14 @@ class LitContainerApi:
         :param project_id: The non-human readable project ID used internally to identify projects.
         :param container: The name of the docker container a user wants to push up, ie, nginx, vllm, etc
         :param digest: The hash digest of the container to delete
+
+        Args:
+            project_id: The non-human readable project ID used internally to identify projects.
+            container: The name of the container repository.
+            digest: The content-addressable digest of the image to delete.
+
+        Raises:
+            ValueError: If the digest cannot be deleted.
         """
         try:
             self._client.lit_registry_service_delete_lit_registry_repository_image_artifact_version_by_digest(
@@ -144,7 +192,17 @@ class LitContainerApi:
     def get_container_url(
         self, repository: str, tag: str, teamspace: Teamspace, cloud_account: Optional[str] = None
     ) -> str:
-        """Docker container will be pushed to the URL returned from this function."""
+        """Docker container will be pushed to the URL returned from this function.
+
+        Args:
+            repository: The local image name (e.g. ``nginx`` or ``org/vllm``).
+            tag: The image tag.
+            teamspace: The teamspace the container will be stored in.
+            cloud_account: Optional BYOC cluster ID; uses Lightning SaaS storage if ``None``.
+
+        Returns:
+            str: The full registry URL to push the tagged image to.
+        """
         registry_url = _get_registry_url()
         container_basename = repository.split("/")[-1]
         return (
@@ -175,6 +233,22 @@ class LitContainerApi:
         :param platform: If empty will be linux/amd64. This is important because our entire deployment infra runs on
             linux/amd64. Will show user a warning otherwise.
         :return: Generator[dict, None, dict]
+
+        Args:
+            container: The local image name to push (e.g. ``nginx``, ``vllm``).
+            teamspace: The teamspace the container will appear in.
+            tag: The image tag to push.
+            cloud_account: BYOC cluster ID, or empty string for Lightning SaaS storage.
+            platform: Target platform (e.g. ``linux/amd64``).
+            return_final_dict: When ``True``, yield a final summary dict with the container URL.
+
+        Returns:
+            Generator[dict, None, Dict]: Progress/status dicts from the Docker push, optionally followed by a
+            summary dict when ``return_final_dict`` is ``True``.
+
+        Raises:
+            ValueError: If the container image cannot be found or tagged.
+            DockerPushError: If the push fails after all retries.
         """
         try:
             self._docker_client.images.get(f"{container}:{tag}")
@@ -206,6 +280,20 @@ class LitContainerApi:
             }
 
     def _push_with_retry(self, repository: str, tag: str, max_retries: int = 3) -> Iterator[Dict[str, Any]]:
+        """Push an image to a registry repository, retrying on auth or timeout errors up to ``max_retries`` times.
+
+        Args:
+            repository: The full registry repository URL to push to.
+            tag: The image tag to push.
+            max_retries: Maximum number of push attempts before raising.
+
+        Returns:
+            Iterator[Dict[str, Any]]: Progress/status dicts streamed from the Docker push API.
+
+        Raises:
+            DockerPushError: If the push fails after all retries or encounters a non-recoverable error.
+        """
+
         def is_auth_error(error_msg: str) -> bool:
             auth_errors = ["unauthorized", "authentication required", "unauth"]
             return any(err in error_msg.lower() for err in auth_errors)
@@ -254,6 +342,19 @@ class LitContainerApi:
         :param teamspace: The teamspace containing the container
         :param tag: The tag of the container to download
         :return: Generator yielding download status
+
+        Args:
+            container: The name of the container to download.
+            teamspace: The teamspace containing the container.
+            tag: The image tag to download.
+            cloud_account: Optional BYOC cluster ID; uses Lightning SaaS storage if ``None``.
+
+        Returns:
+            Generator[str, None, None]: Status output from the Docker pull operation.
+
+        Raises:
+            LCRAuthFailedError: If authentication with the registry fails.
+            ValueError: If the container cannot be pulled.
         """
         registry_url = _get_registry_url()
         repository = (

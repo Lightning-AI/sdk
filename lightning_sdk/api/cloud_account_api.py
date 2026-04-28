@@ -23,13 +23,18 @@ class CloudAccountApi:
         self._client = LightningClient(max_tries=7)
 
     def get_cloud_account(self, cloud_account_id: str, teamspace_id: str, org_id: str) -> Externalv1Cluster:
-        """Gets the cluster from given params cluster_id, project_id and owner.
+        """Return a cloud account by ID.
 
         Args:
-            cloud_account_id: the cloud account to get
-            teamspace_id: the teamspace the cloud_account is supposed to be associated with
-            org_id: The owning org of this teamspace
+            cloud_account_id: The cloud account ID to fetch.
+            teamspace_id: The teamspace the cloud account is associated with.
+            org_id: The owning organisation of the teamspace.
 
+        Returns:
+            Externalv1Cluster: The matching cloud account.
+
+        Raises:
+            ValueError: If no cloud account with the given ID exists.
         """
         res = self._client.cluster_service_get_cluster(id=cloud_account_id, org_id=org_id, project_id=teamspace_id)
         if not res:
@@ -64,6 +69,15 @@ class CloudAccountApi:
         return cloud_accounts
 
     def get_cloud_account_non_org(self, teamspace_id: str, cloud_account_id: str) -> Optional[V1ExternalCluster]:
+        """Return the cloud account object by ID without requiring an org ID, or None if not found.
+
+        Args:
+            teamspace_id: The teamspace whose cloud accounts to search.
+            cloud_account_id: The cloud account ID to look up.
+
+        Returns:
+            Optional[V1ExternalCluster]: The matching cloud account, or ``None`` if not found.
+        """
         for cluster in self.list_cloud_accounts(teamspace_id=teamspace_id):
             if cluster.id == cloud_account_id:
                 return cluster
@@ -77,10 +91,19 @@ class CloudAccountApi:
         cloud_account_id: str,
         org_id: str,
     ) -> Union[V1ListClusterAcceleratorsResponse, V1ListDefaultClusterAcceleratorsResponse]:
-        """Lists the accelerators for a given cloud account.
+        """List the accelerators available on a cloud account.
 
         Args:
-            cloud_account_id: cluster ID to list accelerators for
+            teamspace_id: The teamspace to query within.
+            cloud_account_id: The cloud account ID whose accelerators to list.
+            org_id: The owning organisation of the teamspace.
+
+        Returns:
+            Union[V1ListClusterAcceleratorsResponse, V1ListDefaultClusterAcceleratorsResponse]:
+            The accelerator list response.
+
+        Raises:
+            ValueError: If the cloud account is not found or has no accelerators.
         """
         # map cloud_account to provider
         cloud_provider = None
@@ -111,16 +134,31 @@ class CloudAccountApi:
     def _list_default_cluster_accelerators(
         self, teamspace_id: str, cloud_provider: Union[str, "CloudProvider"]
     ) -> V1ListDefaultClusterAcceleratorsResponse:
+        """Fetch the default accelerator list for a given provider.
+
+        Args:
+            teamspace_id: The teamspace used as context for the request.
+            cloud_provider: The cloud provider to query accelerators for.
+
+        Returns:
+            V1ListDefaultClusterAcceleratorsResponse: The default accelerators response.
+        """
         return self._client.cluster_service_list_default_cluster_accelerators(
             project_id=teamspace_id, cloud_provider=self.cloud_provider_to_v1_cloud_provider(cloud_provider)
         )
 
     @lru_cache(maxsize=None)  # noqa: B019
     def list_global_cloud_accounts(self, teamspace_id: str) -> List[V1ExternalCluster]:
-        """Lists the accelerators for a given teamspace.
+        """List the global (non-organisation-specific) cloud accounts for a teamspace.
 
         Args:
-            teamspace_id: id of the teamspace to get the associated cloud_accounts for
+            teamspace_id: The teamspace whose global cloud accounts to list.
+
+        Returns:
+            List[V1ExternalCluster]: Cloud accounts of type ``GLOBAL`` excluding aggregate providers.
+
+        Raises:
+            ValueError: If no cloud accounts are associated with the teamspace.
         """
         cloud_accounts = self.list_cloud_accounts(teamspace_id=teamspace_id)
         if not cloud_accounts:
@@ -133,7 +171,14 @@ class CloudAccountApi:
         return list(filtered_cloud_accounts)
 
     def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", V1ExternalCluster]:
-        """Gets the cloud account <-> provider mapping."""
+        """Return a mapping from cloud provider to the corresponding cloud account.
+
+        Args:
+            teamspace_id: The teamspace whose cloud accounts to map.
+
+        Returns:
+            Dict[CloudProvider, V1ExternalCluster]: Provider → cloud account mapping.
+        """
         res = self.list_cloud_accounts(teamspace_id=teamspace_id)
         cloud_accounts = {cloud_account.id: cloud_account for cloud_account in res}
         providers = {cloud_account.id: self._get_cloud_account_provider(cloud_account) for cloud_account in res}
@@ -188,6 +233,22 @@ class CloudAccountApi:
         cloud_provider: Optional[Union["CloudProvider", str]],
         default_cloud_account: Optional[str],
     ) -> Optional[str]:
+        """Resolve the best cloud account ID from the combination of explicit account, provider, and default.
+
+        Priority: explicit ``cloud_account`` > provider mapping > ``default_cloud_account`` > None.
+
+        Args:
+            teamspace_id: The teamspace to resolve cloud accounts within.
+            cloud_account: An explicit cloud account ID, if provided.
+            cloud_provider: A preferred provider; used to find the matching account when no explicit ID is given.
+            default_cloud_account: Fallback account ID when neither explicit account nor provider resolves.
+
+        Returns:
+            str | None: The resolved cloud account ID, or None if none can be determined.
+
+        Raises:
+            RuntimeError: If both ``cloud_account`` and ``cloud_provider`` are given but do not agree.
+        """
         from lightning_sdk.machine import CloudProvider
 
         if cloud_provider and not isinstance(cloud_provider, CloudProvider):
@@ -217,6 +278,17 @@ class CloudAccountApi:
 
     @staticmethod
     def get_cloud_provider_for_connection_type(connection_type: "ConnectionType") -> "CloudProvider":
+        """Return the cloud provider required for a given connection type.
+
+        Args:
+            connection_type: The connection type to look up.
+
+        Returns:
+            CloudProvider: The cloud provider associated with the given connection type.
+
+        Raises:
+            ValueError: If the connection type is not currently supported.
+        """
         from lightning_sdk.machine import CloudProvider
         from lightning_sdk.teamspace import ConnectionType
 
@@ -227,6 +299,17 @@ class CloudAccountApi:
 
     @staticmethod
     def cloud_provider_to_v1_cloud_provider(cloud_provider: Union[str, "CloudProvider"]) -> str:
+        """Convert a ``CloudProvider`` enum or string to the corresponding V1 API string value.
+
+        Args:
+            cloud_provider: A ``CloudProvider`` enum member or its string representation.
+
+        Returns:
+            str: The V1 API cloud-provider string.
+
+        Raises:
+            ValueError: If the cloud provider is not supported.
+        """
         from lightning_sdk.machine import CloudProvider
 
         if isinstance(cloud_provider, str):

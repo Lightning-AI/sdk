@@ -11,6 +11,11 @@ class LLMFinetune(Client):
     """
 
     def __init__(self, teamspace: str) -> None:
+        """Connect to the LLM Finetune Service in the given teamspace.
+
+        Args:
+            teamspace: The name of the teamspace that hosts the LLM Finetune Service.
+        """
         super().__init__(name="lightning-al/llm-finetunes", teamspace=teamspace)
 
     def run(
@@ -23,7 +28,18 @@ class LLMFinetune(Client):
         micro_batch_size: int = 2,
         global_batch_size: int = 8,
     ) -> None:
-        """The run method executes the LLM Finetune Service."""
+        """Fine-tune a large language model using the LLM Finetune Service.
+
+        Args:
+            data_path: Path to the training data file.
+            model: Base model to fine-tune. Defaults to ``"tiny-llama"``.
+            mode: Fine-tuning mode — ``"lora"`` for LoRA or ``"full"`` for full fine-tuning.
+                Defaults to ``"lora"``.
+            epochs: Number of training epochs. Defaults to 3.
+            learning_rate: Learning rate for training. Defaults to 0.0002.
+            micro_batch_size: Micro-batch size per GPU. Defaults to 2.
+            global_batch_size: Total batch size across all GPUs. Defaults to 8.
+        """
         super().run(
             data_path=data_path,
             model=model,

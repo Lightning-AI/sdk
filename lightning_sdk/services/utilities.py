@@ -68,6 +68,15 @@ def _get_cluster(
 
 
 def _get_service_url(cloud_space_id: str, file_endpoint_id: str) -> str:
+    """Construct the public URL for a studio file-endpoint service.
+
+    Args:
+        cloud_space_id: The cloud space (studio) ID.
+        file_endpoint_id: The file-endpoint service ID.
+
+    Returns:
+        str: The full URL to the service endpoint.
+    """
     url = _get_cloud_url()
     domain = _get_domain(url)
     protocol = _get_protocol(url)
@@ -75,6 +84,14 @@ def _get_service_url(cloud_space_id: str, file_endpoint_id: str) -> str:
 
 
 def _get_domain(url: str) -> str:
+    """Extract the domain (host[:port]) from a full URL string.
+
+    Args:
+        url: A URL such as ``https://lightning.ai`` or ``http://localhost:9800``.
+
+    Returns:
+        str: The domain portion, e.g. ``"lightning.ai"`` or ``"local.litng.ai:8118"``.
+    """
     base_url = url.split("//")[1].split("/")[0]
     if "localhost:9800" in base_url:
         return "local.litng.ai:8118"
@@ -84,6 +101,14 @@ def _get_domain(url: str) -> str:
 
 
 def _get_protocol(url: str) -> str:
+    """Extract the protocol scheme (including the colon) from a URL.
+
+    Args:
+        url: A URL such as ``https://lightning.ai``.
+
+    Returns:
+        str: The protocol prefix, e.g. ``"https:"``.
+    """
     return url.split("//")[0]
 
 

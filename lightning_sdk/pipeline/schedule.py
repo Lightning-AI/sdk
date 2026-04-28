@@ -846,14 +846,17 @@ _TIMEZONES_TYPE = Literal[
 
 @dataclass
 class Schedule:
-    # The cron expression used for the schedule to execute upon
+    """Cron-based schedule for a pipeline.
+
+    Attributes:
+        cron_expression: Cron expression that controls when the pipeline runs.
+        name: Optional human-readable name for this schedule.
+        timezone: Timezone in which the cron expression is evaluated. Defaults to UTC.
+        parallel_runs: Whether multiple pipeline runs can execute concurrently.
+            Defaults to False.
+    """
+
     cron_expression: str
-
-    # The name of the schedule
     name: Optional[str] = None
-
-    # The timezone used by the schedule. Default to UTC
     timezone: Optional[_TIMEZONES_TYPE] = None
-
-    # Whether the schedule is allowed to create multiple running pipeline at the same time. Default is False
     parallel_runs: Optional[bool] = None

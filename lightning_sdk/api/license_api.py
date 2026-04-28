@@ -4,6 +4,8 @@ from lightning_sdk.lightning_cloud.openapi import ProductLicenseServiceApi, Prod
 
 
 class LicenseApi:
+    """Internal API client for Lightning product license validation."""
+
     def __init__(self, login_token: str) -> None:
         self._cloud_url = _cloud_url()
         self._auth = Auth()
@@ -34,4 +36,4 @@ class LicenseApi:
 
 
 class InvalidLicenseError(Exception):
-    pass
+    """Raised when a license key fails validation."""

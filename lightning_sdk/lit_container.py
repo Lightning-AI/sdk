@@ -9,6 +9,8 @@ from lightning_sdk.utils.resolve import _resolve_teamspace
 
 
 class LitContainer:
+    """SDK interface for managing Lightning Container Registry (LitCR) repositories."""
+
     def __init__(self) -> None:
         self._api = LitContainerApi()
 

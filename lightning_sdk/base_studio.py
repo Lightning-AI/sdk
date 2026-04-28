@@ -80,6 +80,17 @@ class BaseStudio:
         machine_image_version: Optional[str] = None,
         setup_script_text: Optional[str] = None,
     ) -> None:
+        """Update fields on this base studio template; only non-``None`` arguments are applied.
+
+        Args:
+            name: New display name for the base studio.
+            allowed_machines: List of machine slugs that may be selected for this template.
+            default_machine: The default machine slug pre-selected when launching.
+            disabled: When ``True``, the template is hidden from the launcher.
+            environment_type: The environment type (e.g. notebook vs. interactive).
+            machine_image_version: Pinned machine image version for reproducibility.
+            setup_script_text: Shell script executed when the studio is first created.
+        """
         org_id = self._teamspace._org.id if self._teamspace._org is not None else None
         # TODO: if not in an org, can't update them
         self._base_studio = self._base_studio_api.update_base_studio(

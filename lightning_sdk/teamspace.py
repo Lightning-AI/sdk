@@ -39,23 +39,35 @@ if TYPE_CHECKING:
 
 
 class FolderLocation(Enum):
+    """Cloud provider location for a Teamspace folder."""
+
     AWS = "AWS"
     GCP = "GCP"
     CLOUD_AGNOSTIC = "CLOUD_AGNOSTIC"
 
     def __str__(self) -> str:
-        """Converts the FolderLocation to a str."""
+        """Converts the FolderLocation to a str.
+
+        Returns:
+            str: The string value of the enum member (e.g. ``"AWS"``).
+        """
         return self.value
 
 
 class ConnectionType(Enum):
+    """Type of external data source that can be connected to a Teamspace."""
+
     EFS = "EFS"
     S3 = "S3"
     GCS = "GCS"
     FILESTORE = "FILESTORE"
 
     def __str__(self) -> str:
-        """Converts the FolderLocation to a str."""
+        """Converts the ConnectionType to a str.
+
+        Returns:
+            str: The string value of the enum member (e.g. ``"EFS"``).
+        """
         return self.value
 
 
@@ -133,22 +145,38 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def name(self) -> str:
-        """The teamspace's name."""
+        """The teamspace's name.
+
+        Returns:
+            str: The name of this teamspace.
+        """
         return self._teamspace.name
 
     @property
     def id(self) -> str:
-        """The teamspace's ID."""
+        """The teamspace's ID.
+
+        Returns:
+            str: The unique identifier of this teamspace.
+        """
         return self._teamspace.id
 
     @property
     def owner(self) -> Owner:
-        """The teamspace's owner."""
+        """The teamspace's owner.
+
+        Returns:
+            Owner: The owning :class:`~lightning_sdk.owner.Owner` (user or org).
+        """
         return self._owner
 
     @property
     def studios(self) -> List["Studio"]:
-        """All studios within that teamspace."""
+        """All studios within that teamspace.
+
+        Returns:
+            List[Studio]: Every Studio belonging to this teamspace.
+        """
         raise_access_error_if_not_allowed(AccessibleResource.Studios, self.id)
         from lightning_sdk.studio import Studio
 
@@ -156,6 +184,14 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def vms(self) -> List["VM"]:
+        """All VMs within this teamspace.
+
+        Returns:
+            list[VM]: The VMs belonging to this teamspace.
+
+        Raises:
+            PermissionError: If the authenticated user cannot access Studios in this teamspace.
+        """
         try:
             raise_access_error_if_not_allowed(AccessibleResource.Studios, self.id)
         except PermissionError as e:
@@ -180,6 +216,13 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def default_cloud_account(self) -> Optional[str]:
+        """The default cloud account for this teamspace.
+
+        Falls back to the owning organization's preferred cloud account when the teamspace has none set.
+
+        Returns:
+            str | None: The preferred cloud account ID, or None if not configured.
+        """
         owner_preferred_cluster = (
             getattr(self.owner, "default_cloud_account", None) if isinstance(self.owner, Organization) else None
         )
@@ -187,22 +230,39 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def start_studios_on_interruptible(self) -> bool:
+        """Whether new Studios in this teamspace start on interruptible (spot) instances by default.
+
+        Returns:
+            bool: True if Studios default to interruptible instances.
+        """
         return self._teamspace.project_settings.start_studio_on_spot_instance
 
     @property
     def cloud_accounts(self) -> List[str]:
-        """All cloud accounts associated with that teamspace."""
+        """All cloud accounts associated with that teamspace.
+
+        Returns:
+            List[str]: The cloud account names for this teamspace.
+        """
         cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
         return [cl.cluster_name for cl in cloud_accounts]
 
     @property
     def cloud_account_objs(self) -> List[V1ProjectClusterBinding]:
-        """All cloud accounts associated with that teamspace."""
+        """All cloud accounts associated with that teamspace.
+
+        Returns:
+            List[V1ProjectClusterBinding]: The raw cloud account binding objects for this teamspace.
+        """
         return self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
 
     @property
     def clusters(self) -> List[str]:
-        """All clusters associated with that teamspace."""
+        """All clusters associated with that teamspace.
+
+        Returns:
+            List[str]: The cluster names for this teamspace. Deprecated — use :attr:`cloud_accounts` instead.
+        """
         warnings.warn(
             "The 'clusters' attribute is deprecated and will be removed in the future. "
             "Please use the 'cloud_accounts' attribute instead.",
@@ -212,6 +272,14 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def jobs(self) -> Tuple["Job", ...]:
+        """All single-machine jobs in this teamspace.
+
+        Returns:
+            tuple[Job, ...]: Every Job belonging to this teamspace.
+
+        Raises:
+            PermissionError: If the authenticated user cannot access Jobs in this teamspace.
+        """
         from lightning_sdk.job import Job
         from lightning_sdk.plugin import forced_v1
 
@@ -238,6 +306,14 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def multi_machine_jobs(self) -> Tuple["MMT", ...]:
+        """All multi-machine training jobs in this teamspace.
+
+        Returns:
+            tuple[MMT, ...]: Every MMT job belonging to this teamspace.
+
+        Raises:
+            PermissionError: If the authenticated user cannot access Jobs in this teamspace.
+        """
         from lightning_sdk.mmt import MMT
         from lightning_sdk.plugin import forced_v1
 
@@ -268,11 +344,23 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         Note:
             Once created, the secret values are encrypted and cannot be viewed here anymore.
+
+        Returns:
+            Dict[str, str]: A mapping of secret names to their (encrypted) values.
         """
         return self._teamspace_api.get_secrets(self.id)
 
     def set_secret(self, key: str, value: str) -> None:
-        """Set the (encrypted) secrets for the teamspace."""
+        """Set an encrypted secret for the teamspace.
+
+        Args:
+            key: Secret name. Must start with a letter or underscore and contain only
+                alphanumeric characters and underscores.
+            value: The secret value to store.
+
+        Raises:
+            ValueError: If ``key`` contains invalid characters.
+        """
         if not self._teamspace_api.verify_secret_name(key):
             raise ValueError(
                 "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
@@ -291,6 +379,10 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         Returns:
             List of available machines, excluding out-of-capacity machines.
+
+        Raises:
+            RuntimeError: If no cloud account can be resolved.
+            ValueError: If the provided machine name is not a valid Machine value.
         """
         if cloud_account is None:
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID", None)
@@ -341,17 +433,32 @@ class Teamspace(metaclass=TrackCallsMeta):
         ]
 
     def __eq__(self, other: "Teamspace") -> bool:
-        """Checks whether the provided other object is equal to this one."""
+        """Checks whether the provided other object is equal to this one.
+
+        Args:
+            other: The other Teamspace to compare against.
+
+        Returns:
+            bool: True if both Teamspaces share the same name, id, and owner.
+        """
         return (
             type(self) is type(other) and self.name == other.name and self.id == other.id and self.owner == other.owner
         )
 
     def __repr__(self) -> str:
-        """Returns reader friendly representation."""
+        """Returns reader friendly representation.
+
+        Returns:
+            str: A string of the form ``Teamspace(name=..., owner=...)``.
+        """
         return f"Teamspace(name={self.name}, owner={self.owner!r})"
 
     def __str__(self) -> str:
-        """Returns reader friendly representation."""
+        """Returns reader friendly representation.
+
+        Returns:
+            str: Same value as :meth:`__repr__`.
+        """
         return repr(self)
 
     def create_agent(
@@ -366,6 +473,22 @@ class Teamspace(metaclass=TrackCallsMeta):
         prompt_suggestions: Optional[List[str]] = None,
         file_uploads_enabled: Optional[bool] = None,
     ) -> "Agent":
+        """Create a new AI agent backed by a custom model endpoint.
+
+        Args:
+            name: Display name for the agent.
+            api_key: API key used to authenticate requests to the model endpoint.
+            base_url: Base URL of the model endpoint (e.g. an OpenAI-compatible server).
+            model: Model identifier to use (e.g. ``"gpt-4o"``).
+            org_id: Optional organization ID to associate with the agent. Defaults to ``""``.
+            prompt_template: System prompt template shown to the model. Defaults to ``""``.
+            description: Human-readable description of the agent. Defaults to ``""``.
+            prompt_suggestions: Suggested user prompts shown in the chat UI. Defaults to None.
+            file_uploads_enabled: Whether the agent accepts file uploads from users. Defaults to None.
+
+        Returns:
+            Agent: The newly created agent.
+        """
         agent = self._teamspace_api.create_agent(
             teamspace_id=self.id,
             name=name,
@@ -402,6 +525,15 @@ class Teamspace(metaclass=TrackCallsMeta):
             progress_bar: Whether to show a progress bar for the upload.
             metadata: Metadata to attach to the model. Can be a dictionary.
             experiment: The experiment producing this model.
+
+        Returns:
+            UploadedModelInfo: An object describing the uploaded model (name, version, teamspace, cloud_account).
+
+        Raises:
+            ValueError: If no path or name is provided, or if metadata is not a dict.
+            FileNotFoundError: If the path contains no files.
+            RuntimeError: If multiple paths resolve to conflicting relative paths.
+            TypeError: If metadata is not a dictionary.
         """
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not path:
@@ -483,6 +615,9 @@ class Teamspace(metaclass=TrackCallsMeta):
         Returns:
             The absolute path to the downloaded model file or folder.
 
+        Raises:
+            ValueError: If no model name is provided.
+            RuntimeError: If the model upload is not yet complete or no files were downloaded.
         """
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not name:
@@ -528,12 +663,27 @@ class Teamspace(metaclass=TrackCallsMeta):
         self._teamspace_api.delete_model(name=name, version=version, teamspace_id=self.id)
 
     def list_models(self) -> List[V1Model]:
-        """List all models in the model store."""
+        """List all models in the model store.
+
+        Returns:
+            List[V1Model]: All models stored in this teamspace's model store.
+        """
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         return self._teamspace_api.list_models(teamspace_id=self.id)
 
     def list_model_versions(self, name: str) -> List[V1ModelVersionArchive]:
-        """List all versions of a model in the model store."""
+        """List all versions of a model in the model store.
+
+        Args:
+            name: The model name to list versions for. Must not include a version tag (no colon).
+
+        Returns:
+            List[V1ModelVersionArchive]: All available versions of the specified model.
+
+        Raises:
+            ValueError: If ``name`` contains a colon (version tag).
+            PermissionError: If the authenticated user cannot access Models in this teamspace.
+        """
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if ":" in name:
             raise ValueError(
@@ -548,7 +698,14 @@ class Teamspace(metaclass=TrackCallsMeta):
         progress_bar: bool = True,
         cloud_account: Optional[str] = None,
     ) -> None:
-        """Uploads file to given remote path in the Teamspace drive."""
+        """Upload a file to the Teamspace drive.
+
+        Args:
+            file_path: Local path of the file to upload.
+            remote_path: Destination path inside the Teamspace drive. Defaults to the file's basename.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+            cloud_account: Cloud account to use for storage. Defaults to the teamspace default.
+        """
         if remote_path is None:
             remote_path = os.path.split(file_path)[1]
 
@@ -573,7 +730,18 @@ class Teamspace(metaclass=TrackCallsMeta):
         progress_bar: bool = True,
         cloud_account: Optional[str] = None,
     ) -> None:
-        """Uploads a given folder to a remote path in the Teamspace drive."""
+        """Upload a local directory to the Teamspace drive.
+
+        Args:
+            folder_path: Local directory to upload.
+            remote_path: Destination directory inside the Teamspace drive.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+            cloud_account: Cloud account to use for storage. Defaults to the teamspace default.
+
+        Raises:
+            ValueError: If ``folder_path`` is ``None``.
+            NotADirectoryError: If ``folder_path`` is a file or does not exist.
+        """
         if folder_path is None:
             raise ValueError("Cannot upload a folder that is None.")
         folder_path = os.path.normpath(folder_path)
@@ -603,7 +771,13 @@ class Teamspace(metaclass=TrackCallsMeta):
     def download_file(
         self, remote_path: str, file_path: Optional[str] = None, cloud_account: Optional[str] = None
     ) -> None:
-        """Downloads a given file in Teamspace drive to a target location."""
+        """Download a file from the Teamspace drive to a local path.
+
+        Args:
+            remote_path: Path of the file inside the Teamspace drive.
+            file_path: Local destination path. Defaults to ``remote_path``.
+            cloud_account: Cloud account to use. Defaults to ``None``.
+        """
         if file_path is None:
             file_path = remote_path
 
@@ -617,7 +791,13 @@ class Teamspace(metaclass=TrackCallsMeta):
     def download_folder(
         self, remote_path: str, target_path: Optional[str] = None, cloud_account: Optional[str] = None
     ) -> None:
-        """Downloads a folder in the Teamspace drive to a given target path."""
+        """Download a directory from the Teamspace drive to a local path.
+
+        Args:
+            remote_path: Path of the directory inside the Teamspace drive.
+            target_path: Local destination directory. Defaults to ``remote_path``.
+            cloud_account: Cloud account to use. Defaults to ``None``.
+        """
         if target_path is None:
             target_path = remote_path
 
@@ -637,6 +817,9 @@ class Teamspace(metaclass=TrackCallsMeta):
             name: The name of the folder. Folders will be accesible under `/teamspace/folders/<name>`
             location: The location of the folder. Defaults to cloud agnostic.
             cloud_account: The cloud account to create the folder in. Not used for cloud agnostic folders.
+
+        Raises:
+            ValueError: If the specified cloud account cannot be found in this teamspace.
         """
         if cloud_account is None:
             cloud_account = self.default_cloud_account
@@ -696,6 +879,9 @@ class Teamspace(metaclass=TrackCallsMeta):
             If not specified, will retrieve the cloud-account that matches the required provider type
             starting with private cloud accounts and falling back to public if necessary.
           region: which provider region this data is in. Required for some connection types only.
+
+        Raises:
+            ValueError: If region is not specified for EFS connections, or if the resolved cloud account is not found.
         """
         provider_for_connection = self._cloud_account_api.get_cloud_provider_for_connection_type(connection_type)
 
@@ -720,7 +906,17 @@ class Teamspace(metaclass=TrackCallsMeta):
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:
-    """List all folders in a directory and return them as a list and relative path."""
+    """List all folders in a directory and return them as a list and relative path.
+
+    Args:
+        path: The local file or directory path to enumerate.
+
+    Returns:
+        Tuple[List[Path], List[str]]: A tuple of (absolute paths, relative path strings).
+
+    Raises:
+        FileNotFoundError: If the given path does not exist.
+    """
     path = Path(path).resolve()
     if not path.exists():
         raise FileNotFoundError(f"Path {path} does not exist")
@@ -732,7 +928,16 @@ def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:
 
 
 def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name: str) -> ValueError:
-    """Resolves the ValueError Message and replaces it with a nicer message."""
+    """Resolves the ValueError Message and replaces it with a nicer message.
+
+    Args:
+        error: The original ValueError raised during teamspace resolution.
+        owner: The owner (user or org) used in the lookup.
+        teamspace_name: The name of the teamspace that could not be found.
+
+    Returns:
+        ValueError: A new ValueError with a more descriptive message.
+    """
     message = error.args[0]
     if message.startswith("Teamspace") and message.endswith("does not exist"):
         entire_ts_name = f"{owner.name}/{teamspace_name}"

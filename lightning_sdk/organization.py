@@ -45,9 +45,22 @@ class Organization(Owner):
 
     @property
     def default_cloud_account(self) -> Optional[str]:
+        """The organization's preferred cloud account ID, or None if not set.
+
+        Returns:
+            str | None: The preferred cloud account ID.
+        """
         return self._org.preferred_cluster or None
 
     def create_teamspace(self, name: str) -> "Teamspace":
+        """Create a new teamspace owned by this organization.
+
+        Args:
+            name: The name for the new teamspace.
+
+        Returns:
+            Teamspace: The newly created teamspace.
+        """
         from lightning_sdk.teamspace import Teamspace
 
         self._org_api.create_teamspace(name, self.id)

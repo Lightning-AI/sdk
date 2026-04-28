@@ -29,6 +29,8 @@ if TYPE_CHECKING:
 
 
 class MMTApiV1(JobApiV1):
+    """Legacy (v1 app-based) API client for multi-machine training jobs."""
+
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
@@ -45,7 +47,22 @@ class MMTApiV1(JobApiV1):
         interruptible: bool,
         strategy: str,
     ) -> Externalv1LightningappInstance:
-        """Creates a multi-machine job with given commands."""
+        """Creates a multi-machine job with given commands.
+
+        Args:
+            name: The name to assign to the new multi-machine job.
+            num_machines: The number of machines to allocate for the job.
+            command: The shell command each machine will execute, or ``None``.
+            cloud_account: The cloud account identifier to use for compute, or ``None``.
+            teamspace_id: The ID of the teamspace that will own the job.
+            studio_id: The ID of the Studio from which the job is launched.
+            machine: The machine type (as a ``Machine`` enum or a string slug) to run the job on.
+            interruptible: Whether the job may run on interruptible (spot) instances.
+            strategy: The distributed training strategy (e.g. ``"ddp"``).
+
+        Returns:
+            The newly created ``Externalv1LightningappInstance`` object.
+        """
         distributed_args = {
             "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_machines,
@@ -65,6 +82,8 @@ class MMTApiV1(JobApiV1):
 
 
 class MMTApiV2:
+    """Native (v2 jobs-service) API client for multi-machine training jobs."""
+
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = LightningClient(max_tries=7)
@@ -90,6 +109,31 @@ class MMTApiV2:
         max_runtime: Optional[int],
         reuse_snapshot: bool,
     ) -> V1MultiMachineJob:
+        """Submit a v2 multi-machine job and return the created job object.
+
+        Args:
+            name: The name to assign to the new multi-machine job.
+            num_machines: The number of machines to allocate for the job.
+            command: The shell command each machine will execute, or ``None`` when using a custom entrypoint.
+            cloud_account: The cloud account identifier to use for compute, or ``None`` to use the default.
+            teamspace_id: The ID of the teamspace that will own the job.
+            studio_id: The ID of the Studio from which the job is launched, or ``None``.
+            image: The container image to run, or ``None`` to use the Studio snapshot.
+            machine: The machine type (as a ``Machine`` enum or a string slug) to run the job on.
+            interruptible: Whether the job may run on interruptible (spot) instances.
+            env: Optional mapping of environment variable names to values.
+            image_credentials: Name of the secret holding image-pull credentials, or ``None``.
+            cloud_account_auth: Whether to pass cloud-account credentials into the container.
+            entrypoint: The entrypoint command used to launch the job process.
+            path_mappings: Optional mapping of local paths to remote artifact destinations.
+            artifacts_local: Deprecated local artifacts path (use ``path_mappings`` instead).
+            artifacts_remote: Deprecated remote artifacts path (use ``path_mappings`` instead).
+            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
+
+        Returns:
+            The newly created ``V1MultiMachineJob`` object.
+        """
         body = self._create_mmt_body(
             name=name,
             num_machines=num_machines,
@@ -134,6 +178,31 @@ class MMTApiV2:
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
+        """Build the request body for creating a v2 multi-machine job.
+
+        Args:
+            name: The name to assign to the new multi-machine job.
+            num_machines: The number of machines to allocate for the job.
+            command: The shell command each machine will execute, or ``None`` when using a custom entrypoint.
+            cloud_account: The cloud account identifier to use for compute, or ``None`` to use the default.
+            studio_id: The ID of the Studio from which the job is launched, or ``None``.
+            image: The container image to run, or ``None`` to use the Studio snapshot.
+            machine: The machine type (as a ``Machine`` enum or a string slug) to run the job on.
+            interruptible: Whether the job may run on interruptible (spot) instances.
+            env: Optional mapping of environment variable names to values.
+            image_credentials: Name of the secret holding image-pull credentials, or ``None``.
+            cloud_account_auth: Whether to pass cloud-account credentials into the container.
+            entrypoint: The entrypoint command used to launch the job process.
+            path_mappings: Optional mapping of local paths to remote artifact destinations.
+            artifacts_local: Deprecated local artifacts path (use ``path_mappings`` instead).
+            artifacts_remote: Deprecated remote artifacts path (use ``path_mappings`` instead).
+            reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
+            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            machine_image_version: Pinned machine-image version string, or ``None`` for the default.
+
+        Returns:
+            A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
+        """
         env_vars = []
         if env is not None:
             for k, v in env.items():
@@ -175,16 +244,40 @@ class MMTApiV2:
         )
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1MultiMachineJob:
+        """Fetch a multi-machine job by its unique name within a teamspace.
+
+        Args:
+            name: The name of the multi-machine job to look up.
+            teamspace_id: The ID of the teamspace that owns the job.
+
+        Returns:
+            The matching ``V1MultiMachineJob`` object.
+        """
         job: V1MultiMachineJob = self._client.jobs_service_get_multi_machine_job_by_name(
             project_id=teamspace_id, name=name
         )
         return job
 
     def get_job(self, job_id: str, teamspace_id: str) -> V1MultiMachineJob:
+        """Fetch a multi-machine job by its unique ID.
+
+        Args:
+            job_id: The unique identifier of the multi-machine job to retrieve.
+            teamspace_id: The ID of the teamspace that owns the job.
+
+        Returns:
+            The matching ``V1MultiMachineJob`` object.
+        """
         job: V1MultiMachineJob = self._client.jobs_service_get_multi_machine_job(project_id=teamspace_id, id=job_id)
         return job
 
     def stop_job(self, job_id: str, teamspace_id: str) -> None:
+        """Request to stop a running multi-machine job and wait until it reaches a terminal state.
+
+        Args:
+            job_id: The unique identifier of the multi-machine job to stop.
+            teamspace_id: The ID of the teamspace that owns the job.
+        """
         from lightning_sdk.status import Status
 
         current_job = self.get_job(job_id=job_id, teamspace_id=teamspace_id)
@@ -214,13 +307,37 @@ class MMTApiV2:
             time.sleep(1)
 
     def delete_job(self, job_id: str, teamspace_id: str) -> None:
+        """Permanently delete a multi-machine job.
+
+        Args:
+            job_id: The unique identifier of the multi-machine job to delete.
+            teamspace_id: The ID of the teamspace that owns the job.
+        """
         self._client.jobs_service_delete_multi_machine_job(project_id=teamspace_id, id=job_id)
 
     def list_mmt_subjobs(self, job_id: str, teamspace_id: str) -> List[V1Job]:
+        """Return the individual machine sub-jobs that make up a multi-machine job.
+
+        Args:
+            job_id: The unique identifier of the parent multi-machine job.
+            teamspace_id: The ID of the teamspace that owns the job.
+
+        Returns:
+            A list of ``V1Job`` objects representing each per-machine sub-job.
+        """
         jobs_resp = self._client.jobs_service_list_jobs(project_id=teamspace_id, multi_machine_job_id=job_id)
         return jobs_resp.jobs
 
     def _job_state_to_external(self, state: V1MultiMachineJobState) -> "Status":
+        """Convert a raw ``V1MultiMachineJobState`` enum value to the public ``Status`` enum.
+
+        Args:
+            state: The raw ``V1MultiMachineJobState`` value returned by the jobs service.
+
+        Returns:
+            The corresponding public ``Status`` enum value, defaulting to ``Status.Pending``
+            for any unrecognised state.
+        """
         from lightning_sdk.status import Status
 
         if str(state) == V1MultiMachineJobState.UNSPECIFIED:
@@ -238,6 +355,14 @@ class MMTApiV2:
         return Status.Pending
 
     def get_studio_name(self, job: V1MultiMachineJob) -> Optional[str]:
+        """Return the name of the Studio linked to this job, or ``None`` if none is attached.
+
+        Args:
+            job: The multi-machine job whose linked Studio name is resolved.
+
+        Returns:
+            The display name of the Studio, or ``None`` if the job has no associated Studio.
+        """
         if job.spec.cloudspace_id:
             cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
                 project_id=job.project_id, id=job.spec.cloudspace_id
@@ -247,12 +372,39 @@ class MMTApiV2:
         return None
 
     def get_image_name(self, job: V1MultiMachineJob) -> Optional[str]:
+        """Return the container image used by this job, or ``None`` if not set.
+
+        Args:
+            job: The multi-machine job whose image name is retrieved.
+
+        Returns:
+            The container image string, or ``None`` if no image was specified.
+        """
         return job.spec.image or None
 
     def get_command(self, job: V1MultiMachineJob) -> str:
+        """Return the shell command that the job executes.
+
+        Args:
+            job: The multi-machine job whose command is retrieved.
+
+        Returns:
+            The shell command string stored in the job spec.
+        """
         return job.spec.command
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec, teamspace_id: str, org_id: str) -> "Machine":
+        """Resolve the ``Machine`` object from a job spec by matching against available accelerators.
+
+        Args:
+            spec: The job spec containing the instance name and cluster identifier.
+            teamspace_id: The ID of the teamspace used for the accelerator lookup.
+            org_id: The organisation ID used for the accelerator lookup.
+
+        Returns:
+            The ``Machine`` enum value that matches the spec's instance, falling back to
+            ``Machine.from_str`` if no accelerator record matches.
+        """
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id,
             cloud_account_id=spec.cluster_id,
@@ -275,6 +427,16 @@ class MMTApiV2:
     def _get_machines_for_cloud_account(
         self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
+        """Return only the enabled accelerators for a given cloud account.
+
+        Args:
+            teamspace_id: The ID of the teamspace used for the accelerator lookup.
+            cloud_account_id: The cloud account whose accelerators are queried.
+            org_id: The organisation ID used for the accelerator lookup.
+
+        Returns:
+            A list of ``V1ClusterAccelerator`` objects that are marked as enabled.
+        """
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
@@ -289,7 +451,23 @@ class MMTApiV2:
         return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
+        """Return the accumulated cost for this multi-machine job in USD.
+
+        Args:
+            job: The multi-machine job whose cost is retrieved.
+
+        Returns:
+            The total cost incurred by the job, expressed in US dollars.
+        """
         return job.total_cost
 
     def get_num_machines(self, job: V1MultiMachineJob) -> int:
+        """Return the number of machines allocated for this multi-machine job.
+
+        Args:
+            job: The multi-machine job whose machine count is retrieved.
+
+        Returns:
+            The number of machines allocated for the job.
+        """
         return job.machines

@@ -20,31 +20,55 @@ class MMTMachine(Protocol):
 
     @property
     def name(self) -> str:
-        """The Name of the individual machine. Usually corresponds to the rank."""
+        """The Name of the individual machine. Usually corresponds to the rank.
+
+        Returns:
+            str: The name of this machine instance.
+        """
         ...
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """The actual machine type this node is running on."""
+        """The actual machine type this node is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type of this node.
+        """
         ...
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """The path to the artifacts of this job."""
+        """The path to the artifacts of this job.
+
+        Returns:
+            Optional[str]: The artifact path, or None if not available.
+        """
         ...
 
     @property
     def status(self) -> "Status":
-        """The status of this job."""
+        """The status of this job.
+
+        Returns:
+            Status: The current status of this machine's job.
+        """
         ...
 
     @property
     def logs(self) -> str:
-        """The logs of the given machine."""
+        """The logs of the given machine.
+
+        Returns:
+            str: The complete logs from this machine's execution.
+        """
         ...
 
     def dict(self) -> "MachineDict":
-        """Dict representation of the given machine."""
+        """Dict representation of the given machine.
+
+        Returns:
+            MachineDict: A dictionary containing the machine's name, status, and machine type.
+        """
         ...
 
 
@@ -124,6 +148,13 @@ class _BaseMMT(_BaseJob):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _BaseMMT: The newly submitted multi-machine job instance.
+
+        Raises:
+            ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
+            RuntimeError: If both image and studio are provided.
         """
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
@@ -297,6 +328,9 @@ class _BaseMMT(_BaseJob):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _BaseMMT: This MMT instance, updated with the submitted job state.
         """
 
     @property
@@ -306,7 +340,11 @@ class _BaseMMT(_BaseJob):
 
     @property
     def num_machines(self) -> int:
-        """Returns the number of machines assigned to this multi-machine job."""
+        """Returns the number of machines assigned to this multi-machine job.
+
+        Returns:
+            int: The number of machines in this multi-machine job.
+        """
         return len(self.machines)
 
     @property
@@ -333,7 +371,11 @@ class _BaseMMT(_BaseJob):
     @property
     @abstractmethod
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
+        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path, or None if not available.
+        """
 
     @property
     @abstractmethod
@@ -342,22 +384,38 @@ class _BaseMMT(_BaseJob):
 
     @property
     def share_path(self) -> Optional[str]:
-        """Path to the jobs share path."""
+        """Path to the jobs share path.
+
+        Returns:
+            Optional[str]: Always None for multi-machine jobs.
+        """
         return None
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._teamspace
 
     @property
     def logs(self) -> str:
-        """Logs of the rank 0 machine."""
+        """Logs of the rank 0 machine.
+
+        Returns:
+            str: The complete logs from the rank 0 machine.
+        """
         return self.machines[0].logs
 
     def dict(
@@ -374,7 +432,12 @@ class _BaseMMT(_BaseJob):
             List[Dict[str, Union[str, "Status", "Machine"]]],
         ],
     ]:
-        """Dict representation of this job."""
+        """Dict representation of this job.
+
+        Returns:
+            Dict: A dictionary containing the job's name, teamspace, studio, image, command,
+                status, machine, machines list, and total_cost.
+        """
         studio = self.studio
 
         return {
@@ -394,4 +457,4 @@ class _BaseMMT(_BaseJob):
 
     @abstractmethod
     def _update_internal_job(self) -> None:
-        pass
+        """Refresh the internal job state from the remote API."""

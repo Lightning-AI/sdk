@@ -61,6 +61,35 @@ class DeploymentStep:
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         cloud_provider: Optional[Union["CloudProvider", str]] = None,
     ) -> None:
+        """Configure a deployment step in a pipeline.
+
+        Args:
+            name: Name of the deployment step.
+            studio: Studio environment to use. Mutually exclusive with image.
+            machine: Machine type to run on. Defaults to CPU.
+            image: Docker image to run. Mutually exclusive with studio.
+            autoscale: Auto-scaling configuration. Defaults to single-replica CPU/GPU scaling.
+            ports: Ports to expose from the deployment.
+            release_strategy: Strategy for releasing new versions of the deployment.
+            entrypoint: Container entrypoint override.
+            command: Command to run in the container.
+            commands: List of commands to run in the container.
+            env: Environment variables or secrets to inject.
+            spot: Whether to use spot/interruptible instances.
+            replicas: Number of initial replicas. Defaults to 1.
+            health_check: Health check configuration for the deployment.
+            auth: Authentication configuration for the deployment endpoint.
+            cloud_account: Cloud account to run the deployment on.
+            custom_domain: Custom domain for the deployment endpoint.
+            quantity: Number of GPUs per replica (for multi-GPU setups).
+            include_credentials: Whether to pass user credentials to the deployment.
+            max_runtime: Maximum runtime in seconds.
+            wait_for: Names of steps that must complete before this step starts.
+            cloud_provider: Cloud provider to select the cloud account from.
+
+        Raises:
+            ValueError: If cloud_account and studio are both specified with mismatched accounts.
+        """
         self.name = name
         self.studio = _get_studio(studio)
         if cloud_account and studio and cloud_account != studio.cloud_account != cloud_account:
@@ -178,6 +207,33 @@ class JobStep:
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> None:
+        """Configure a job step in a pipeline.
+
+        Args:
+            machine: Machine type to run on. Defaults to CPU.
+            name: Name of the job step.
+            command: Command to run inside the job. Required if using a studio.
+            studio: Studio environment to use. Mutually exclusive with image.
+            image: Docker image to run. Mutually exclusive with studio.
+            teamspace: Teamspace the job belongs to.
+            org: Organization owning the teamspace.
+            user: User owning the teamspace.
+            cloud_account: Cloud account to run the job on.
+            cloud_provider: Cloud provider to select the cloud account from.
+            env: Environment variables to inject into the job.
+            interruptible: Whether to use interruptible instances. Defaults to False.
+            image_credentials: Name of the secret with credentials for pulling a private image.
+            cloud_account_auth: Whether to use cloud account credentials to pull the image.
+            entrypoint: Container entrypoint. Defaults to ``sh -c``.
+            path_mappings: Mappings from container paths to data-connection paths.
+            max_runtime: Maximum runtime in seconds.
+            wait_for: Names of steps that must complete before this step starts.
+            reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
+            scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
+
+        Raises:
+            ValueError: If cloud_account and studio are both specified with mismatched accounts.
+        """
         self.name = name
         self.machine = machine or Machine.CPU
         self.command = command
@@ -280,6 +336,32 @@ class MMTStep:
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         reuse_snapshot: bool = True,
     ) -> None:
+        """Configure a multi-machine training step in a pipeline.
+
+        Args:
+            name: Name of the multi-machine training step.
+            machine: Machine type to run on.
+            num_machines: Number of machines to allocate. Defaults to 2.
+            command: Command to run inside the job. Required if using a studio.
+            studio: Studio environment to use. Mutually exclusive with image.
+            image: Docker image to run. Mutually exclusive with studio.
+            teamspace: Teamspace the job belongs to.
+            org: Organization owning the teamspace.
+            user: User owning the teamspace.
+            cloud_account: Cloud account to run the job on.
+            env: Environment variables to inject into the job.
+            interruptible: Whether to use interruptible instances. Defaults to False.
+            image_credentials: Name of the secret with credentials for pulling a private image.
+            cloud_account_auth: Whether to use cloud account credentials to pull the image.
+            entrypoint: Container entrypoint. Defaults to ``sh -c``.
+            path_mappings: Mappings from container paths to data-connection paths.
+            max_runtime: Maximum runtime in seconds.
+            wait_for: Names of steps that must complete before this step starts.
+            reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
+
+        Raises:
+            ValueError: If cloud_account and studio are both specified with mismatched accounts.
+        """
         self.machine = machine or Machine.CPU
         self.num_machines = num_machines
         self.name = name
@@ -353,6 +435,16 @@ class MMTStep:
 
 class DeploymentReleaseStep(DeploymentStep):
     def __init__(self, *args: Any, deployment_name: Optional[str] = None, **kwargs: Any) -> None:
+        """Configure a deployment release step that updates an existing deployment.
+
+        Args:
+            *args: Positional arguments forwarded to :class:`DeploymentStep`.
+            deployment_name: Name of the existing deployment to update. Required.
+            **kwargs: Keyword arguments forwarded to :class:`DeploymentStep`.
+
+        Raises:
+            ValueError: If deployment_name is not provided.
+        """
         if not deployment_name:
             raise ValueError("The deployment name is required")
         self._deployment_name = deployment_name

@@ -8,6 +8,14 @@ from lightning_sdk.api.utils import to_iso_z
 
 @dataclass
 class HourlyUsage:
+    """GPU billing data for a single one-hour window.
+
+    Attributes:
+        time: Start of the hour (UTC).
+        available_gpus: Total GPUs allocated during this hour.
+        billed_gpus: GPUs that were actively billed during this hour.
+    """
+
     time: datetime
     available_gpus: int
     billed_gpus: int
@@ -15,20 +23,26 @@ class HourlyUsage:
 
 @dataclass
 class K8sUsageResponse:
+    """Aggregated GPU billing response for a queried time range.
+
+    Attributes:
+        hours: Per-hour breakdown of GPU usage.
+        total_usage: Sum of billed GPUs across all hours.
+    """
+
     hours: List[HourlyUsage]
     total_usage: float
 
 
 class K8sCluster:
-    """A class to interact with the k8s API and retrieve usage-related information.
-
-    Methods:
-    -------
-    get_k8s_usage(account_cloud: str)
-      Retrieves Kubernetes usage information for a given cloud account.
-    """
+    """Interact with a Kubernetes cluster to retrieve GPU billing usage."""
 
     def __init__(self, cloud_account: str) -> None:
+        """Connect to a Kubernetes cluster by cloud account.
+
+        Args:
+            cloud_account: The cloud account ID associated with the cluster.
+        """
         self._cloud_account = cloud_account
         self._k8s_cluster = K8sClusterApi(cloud_account=cloud_account)
 
@@ -62,15 +76,15 @@ class K8sCluster:
         end_date: Optional[datetime] = None,
         print_data: bool = False,
     ) -> K8sUsageResponse:
-        """Gets the k8s usage metrics.
+        """Retrieve GPU billing usage for this cluster.
 
         Args:
-            cloud_account: The cloud account to get usage for
-            start_date: The UTC start date for the usage period (optional)
-            end_date: The UTC end date for the usage period (optional)
+            start_date: UTC start of the query window. Defaults to None (no lower bound).
+            end_date: UTC end of the query window. Defaults to None (no upper bound).
+            print_data: Whether to print the raw usage data to stdout. Defaults to False.
 
         Returns:
-            K8sUsageResponse: The Kubernetes usage response containing hourly usage and total usage.
+            K8sUsageResponse: Hourly GPU usage breakdown and the total billed GPU count.
         """
         k8s_args = {}
         if start_date is not None:

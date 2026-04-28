@@ -40,6 +40,10 @@ class Job(_BaseJob):
             org: the name of the organization owning the :param`teamspace` in case it is owned by an org
             user: the name of the user owning the :param`teamspace`
                 in case it is owned directly by a user instead of an org.
+
+        Raises:
+            ValueError: If the job is not found in the given teamspace.
+            PermissionError: If the user does not have access to jobs in the given teamspace.
         """
         teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
@@ -109,49 +113,41 @@ class Job(_BaseJob):
         """Run async workloads using a docker image or a compute environment from your studio.
 
         Args:
-        name: The name of the job. Needs to be unique within the teamspace.
-        machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
-        command: The command to run inside your job. Required if using a studio. Optional if using an image.
-            If not provided for images, will run the container entrypoint and default command.
-        studio: The studio env to run the job with. Mutually exclusive with image.
-        image: The docker image to run the job with. Mutually exclusive with studio.
-        teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
-        org: The organization owning the teamspace (if any). Defaults to the current organization.
-        user: The user owning the teamspace (if any). Defaults to the current user.
-        cloud_account: The cloud account to run the job on.
-            Defaults to the studio cloud account if running with studio compute env.
-            If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-            will fall back to the teamspaces default cloud account.
-        cloud_account_provider: The provider to select the cloud-account from.
-            If set, must be in agreement with the provider from the cloud_account (if specified).
-            If not specified, falls backto the teamspace default cloud account.
-        env: Environment variables to set inside the job.
-        interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-        image_credentials: The credentials used to pull the image. Required if the image is private.
-            This should be the name of the respective credentials secret created on the Lightning AI platform.
-        cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
-            Required if the registry is part of a cloud provider (e.g. ECR).
-        entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-            just runs the provided command in a standard shell if a command is provided.
-            If no command is provided, it will run the pre-defined entrypoint of the provided image.
-            To use the pre-defined entrypoint of the provided image with a specified command,
-            set this to an empty string.
-            Only applicable when submitting docker jobs.
-        path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
-            represents the data-connection name and the path inside that connection.
-            Should be of form
-                {
-                    "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
-                    "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
-                }
-            If the path inside the connection is omitted it's assumed to be the root path of that connection.
-            Only applicable when submitting docker jobs.
-        max_runtime: the duration (in seconds) for which to allocate the machine.
-                Irrelevant for most machines, required for some of the top-end machines on GCP.
-                If in doubt, set it. Won't have an effect on machines not requiring it.
-                Defaults to 3h
-        reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
-                submitted. Turning this off may result in longer job startup times. Defaults to True.
+            name: The name of the job. Needs to be unique within the teamspace.
+            machine: The machine type to run the job on.
+            command: The command to run inside your job. Required if using a studio. Optional if using an image.
+                If not provided for images, will run the container entrypoint and default command.
+            studio: The studio env to run the job with. Mutually exclusive with image.
+            image: The docker image to run the job with. Mutually exclusive with studio.
+            teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
+            org: The organization owning the teamspace (if any). Defaults to the current organization.
+            user: The user owning the teamspace (if any). Defaults to the current user.
+            cloud_account: The cloud account to run the job on. Defaults to the studio cloud account if
+                running with studio compute env, otherwise falls back to the teamspace default.
+            cloud_account_provider: The provider to select the cloud account from. If set, must agree
+                with the provider of the cloud_account (if specified).
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. Cheaper but can be preempted.
+            image_credentials: Credentials secret name used to pull a private image.
+            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
+                Required if the registry is part of a cloud provider (e.g. ECR).
+            entrypoint: The entrypoint of your docker container. Defaults to ``sh -c``.
+                Set to an empty string to use the image's pre-defined entrypoint with a command.
+                Only applicable when submitting docker jobs.
+            path_mappings: Maps container paths to data-connection paths in the form
+                ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
+                for the root of a connection. Only applicable when submitting docker jobs.
+            max_runtime: Duration in seconds to allocate the machine. Required for some top-end GCP machines.
+                Defaults to 3 hours.
+            reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer startup times. Defaults to True.
+
+        Returns:
+            Job: The newly submitted Job instance.
+
+        Raises:
+            ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
+            RuntimeError: If both image and studio are provided.
         """
         ret_val = super().run(
             name=name,
@@ -247,6 +243,9 @@ class Job(_BaseJob):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            Job: This job instance, updated with the submitted job state.
         """
         self._job = self._internal_job._submit(
             machine=machine,
@@ -285,32 +284,56 @@ class Job(_BaseJob):
 
     @property
     def status(self) -> Optional["Status"]:
-        """The current status of the job."""
+        """The current status of the job.
+
+        Returns:
+            Optional[Status]: The current job status, or None if unavailable.
+        """
         return self._internal_job.status
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """The machine type the job is running on."""
+        """The machine type the job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type this job runs on.
+        """
         return self._internal_job.machine
 
     @property
     def public_ip(self) -> Optional[str]:
-        """The public IP address of the machine the job is running on."""
+        """The public IP address of the machine the job is running on.
+
+        Returns:
+            Optional[str]: The public IP address, or None if not available.
+        """
         return self._internal_job.public_ip
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
+        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path, or None if not available.
+        """
         return self._internal_job.artifact_path
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path, or None if not available.
+        """
         return self._internal_job.snapshot_path
 
     @property
     def share_path(self) -> Optional[str]:
-        """Path to the jobs share path."""
+        """Path to the jobs share path.
+
+        Returns:
+            Optional[str]: The share path, or None if not available.
+        """
         return self._internal_job.share_path
 
     def _update_internal_job(self) -> None:
@@ -318,32 +341,59 @@ class Job(_BaseJob):
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._internal_job.name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._internal_job._teamspace
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job."""
+        """The studio used to submit the job.
+
+        Returns:
+            Optional[Studio]: The studio used to submit this job, or None if an image was used.
+        """
         return self._internal_job.studio
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the job."""
+        """The image used to submit the job.
+
+        Returns:
+            Optional[str]: The docker image name, or None if a studio was used.
+        """
         return self._internal_job.image
 
     @property
     def command(self) -> str:
-        """The command the job is running."""
+        """The command the job is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._internal_job.command
 
     @property
     def logs(self) -> str:
-        """The logs of the job."""
+        """The logs of the job.
+
+        Returns:
+            str: The complete logs from the job's execution.
+
+        Raises:
+            RuntimeError: If the job is still pending or running.
+        """
         from lightning_sdk.status import Status
 
         if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
@@ -351,7 +401,14 @@ class Job(_BaseJob):
         return self._internal_job.logs
 
     def __getattr__(self, key: str) -> Any:
-        """Forward the attribute lookup to the internal job implementation."""
+        """Forward the attribute lookup to the internal job implementation.
+
+        Args:
+            key: The attribute name to look up.
+
+        Returns:
+            Any: The attribute value from the internal job implementation.
+        """
         try:
             return getattr(super(), key)
         except AttributeError:
@@ -359,4 +416,9 @@ class Job(_BaseJob):
 
     @property
     def link(self) -> str:
+        """The Lightning AI web URL to view this job.
+
+        Returns:
+            str: Direct URL to the job's page on lightning.ai.
+        """
         return self._internal_job.link

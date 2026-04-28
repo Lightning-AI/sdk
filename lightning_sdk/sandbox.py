@@ -95,7 +95,17 @@ class _Sandbox:
         self._studio.delete()
 
     def run(self, command: str) -> Output:
-        """Runs the command and returns the output."""
+        """Run a shell command inside the sandbox and return its output.
+
+        Args:
+            command: The shell command to execute.
+
+        Returns:
+            Output: The captured stdout and exit code of the command.
+
+        Raises:
+            Exception: If the command exits with a non-zero exit code.
+        """
         output, exit_code = self._studio.run_with_exit_code(command)
         if exit_code != 0:
             raise Exception(f"Command failed with exit code {exit_code}: {output}")

@@ -18,6 +18,15 @@ if TYPE_CHECKING:
 # TODO: Maybe just have a `Model` object?
 @dataclass
 class UploadedModelInfo:
+    """Metadata returned after a successful model upload.
+
+    Attributes:
+        name: The model name as registered in the store.
+        version: The assigned version tag (e.g. ``"v1"``).
+        teamspace: Name of the teamspace the model was uploaded to.
+        cloud_account: Cloud account ID where the model files are stored.
+    """
+
     name: str
     version: str
     teamspace: str
@@ -27,6 +36,21 @@ class UploadedModelInfo:
 def _get_teamspace_and_path(
     ts: V1Membership, org_api: OrgApi, user_api: UserApi, authed_user: User
 ) -> Tuple[str, Dict[str, Any]]:
+    """Return a ``(display_path, kwargs)`` tuple for a teamspace membership.
+
+    Args:
+        ts: The teamspace membership record.
+        org_api: API client used to look up organisation names.
+        user_api: API client used to look up user names.
+        authed_user: The currently authenticated user.
+
+    Returns:
+        Tuple[str, Dict[str, Any]]: A display path such as ``"org/teamspace"`` and a dict
+        of keyword arguments suitable for constructing a :class:`~lightning_sdk.Teamspace`.
+
+    Raises:
+        RuntimeError: If the membership has an unknown owner type.
+    """
     if ts.owner_type == V1OwnerType.ORGANIZATION:
         org = org_api._get_org_by_id(ts.owner_id)
         return f"{org.name}/{ts.name}", {"name": ts.name, "org": org.name}
@@ -42,6 +66,11 @@ def _get_teamspace_and_path(
 
 
 def _list_teamspaces() -> List[str]:
+    """Return display paths for all teamspaces accessible to the authenticated user.
+
+    Returns:
+        List[str]: Paths in ``"owner/teamspace"`` format for every accessible teamspace.
+    """
     org_api = OrgApi()
     user_api = UserApi()
     authed_user = _get_authed_user()
@@ -112,13 +141,20 @@ def download_model(
     download_dir: Union[Path, str] = ".",
     progress_bar: bool = True,
 ) -> List[str]:
-    """Download a Model.
+    """Download a model from the Lightning model store.
 
     Args:
-        name: The name of the Model you want to download.
-        This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
-        download_dir: The directory where the Model should be downloaded.
-        progress_bar: Whether to show a progress bar when downloading.
+        name: The fully-qualified model name in the format
+            ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>`` or
+            ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>:<VERSION>``.
+        download_dir: Local directory to write the downloaded files into.
+        progress_bar: Whether to display a download progress bar.
+
+    Returns:
+        List[str]: Local file paths of all downloaded model files.
+
+    Raises:
+        RuntimeError: If the model is not found or the download fails.
     """
     name = _extend_model_name_with_teamspace(name)
     teamspace_owner_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
@@ -150,18 +186,21 @@ def upload_model(
     metadata: Optional[Dict[str, Any]] = None,
     experiment: Optional[Experiment] = None,
 ) -> UploadedModelInfo:
-    """Upload a Model.
+    """Upload a model to the Lightning model store.
 
     Args:
-        name: The name of the Model you want to upload.
-            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
-        path: The path to the file or directory you want to upload. Defaults to the current directory.
-        cloud_account: The name of the cloud account to store the Model in.
-            If not provided, the default cloud account for the Teamspace will be used.
-        progress_bar: Whether to show a progress bar for the upload.
-        metadata: Metadata to attach to the uploaded model.
-            If not provided, an empty dictionary will be used.
-        experiment: The experiment producing this model.
+        name: Fully-qualified model name in the format
+            ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>`` or
+            ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>:<VERSION>``.
+        path: Local file or directory to upload.  Defaults to the current directory.
+        cloud_account: Cloud account to store the model files in.
+            Falls back to the teamspace default when not provided.
+        progress_bar: Whether to display an upload progress bar.
+        metadata: Arbitrary key-value metadata attached to this model version.
+        experiment: Optional experiment record to associate with this upload.
+
+    Returns:
+        UploadedModelInfo: Metadata about the newly uploaded model version.
     """
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, version = _parse_org_teamspace_model_version(name)
@@ -201,8 +240,11 @@ def list_model_versions(
     """List all versions of a model.
 
     Args:
-        name: The name of the model you want to list versions for.
-            This should have the format <ORGANIZATION-NAME>/<TEAMSPACE-NAME>/<MODEL-NAME>.
+        name: Fully-qualified model name in the format
+            ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>``.
+
+    Returns:
+        List[V1ModelVersionArchive]: All registered version archives for the model.
     """
     name = _extend_model_name_with_teamspace(name)
     org_name, teamspace_name, model_name, _ = _parse_org_teamspace_model_version(name)

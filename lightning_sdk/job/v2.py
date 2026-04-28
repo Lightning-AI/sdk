@@ -105,6 +105,12 @@ class _JobV2(_BaseJob):
                 the volume in GiB. For example, { "data": 100 } will add a 100GiB volume available under
                 /teamspace/scratch/data.
 
+        Returns:
+            _JobV2: This job instance, updated with the submitted job state.
+
+        Raises:
+            ValueError: If required arguments are missing, mutually exclusive arguments are provided,
+                or scratch_disk configuration is invalid.
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -198,7 +204,14 @@ class _JobV2(_BaseJob):
 
     @property
     def status(self) -> "Status":
-        """The current status of the job."""
+        """The current status of the job.
+
+        Returns:
+            Status: The current job status.
+
+        Raises:
+            RuntimeError: If the job no longer exists (e.g. was deleted).
+        """
         try:
             return self._job_api._job_state_to_external(self._latest_job.state)
         except Exception:
@@ -208,7 +221,11 @@ class _JobV2(_BaseJob):
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """The machine type the job is running on."""
+        """The machine type the job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type this job runs on.
+        """
         # only fetch the job it it hasn't been fetched yet as machine cannot change over time
 
         return self._job_api._get_job_machine_from_spec(
@@ -219,7 +236,11 @@ class _JobV2(_BaseJob):
 
     @property
     def public_ip(self) -> Optional[str]:
-        """Get the public IP of the machine the job is running on."""
+        """Get the public IP of the machine the job is running on.
+
+        Returns:
+            Optional[str]: The public IP address, or None if not available.
+        """
         try:
             return self._job.public_ip_address
         except AttributeError:
@@ -227,7 +248,11 @@ class _JobV2(_BaseJob):
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """The path to the artifacts of the job within the distributed teamspace filesystem."""
+        """The path to the artifacts of the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path, or None if the job uses an image without artifact persistence.
+        """
         if self._guaranteed_job.spec.image != "":
             if self._guaranteed_job.spec.artifacts_destination != "":
                 splits = self._guaranteed_job.spec.artifacts_destination.split(":")
@@ -238,14 +263,22 @@ class _JobV2(_BaseJob):
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """The path to the snapshot of the Studio used to create the job within the distributed teamspace filesystem."""
+        """The path to the snapshot of the Studio used to create the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path, or None if the job uses a custom image.
+        """
         if self._guaranteed_job.spec.image != "":
             return None
         return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
-        """The path to the share of the job within the distributed teamspace filesystem."""
+        """The path to the share of the job within the distributed teamspace filesystem.
+
+        Raises:
+            NotImplementedError: This property is not yet implemented.
+        """
         raise NotImplementedError("Not implemented yet")
 
     @property
@@ -275,12 +308,20 @@ class _JobV2(_BaseJob):
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the job."""
+        """The image used to submit the job.
+
+        Returns:
+            Optional[str]: The docker image name, or None if a studio was used.
+        """
         return self._job_api.get_image_name(self._guaranteed_job)
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job."""
+        """The studio used to submit the job.
+
+        Returns:
+            Optional[Studio]: The Studio instance used to submit this job, or None if an image was used.
+        """
         from lightning_sdk.studio import Studio
 
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
@@ -292,10 +333,15 @@ class _JobV2(_BaseJob):
 
     @property
     def command(self) -> str:
-        """The command the job is running."""
+        """The command the job is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._job_api.get_command(self._guaranteed_job)
 
     def _update_internal_job(self) -> None:
+        """Refresh the internal job state from the remote API."""
         if getattr(self, "_job", None) is None:
             self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
             return

@@ -74,7 +74,12 @@ class StudioApi:
         self._keep_alive_events: Mapping[str, Event] = {}
 
     def start_keeping_alive(self, teamspace_id: str, studio_id: str) -> None:
-        """Starts keeping the studio alive."""
+        """Starts keeping the studio alive.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID to keep alive.
+        """
         key = f"{teamspace_id}-{studio_id}"
         self._keep_alive_threads[key] = Thread(
             target=self._send_keepalives, kwargs={"teamspace_id": teamspace_id, "studio_id": studio_id}, daemon=True
@@ -83,7 +88,12 @@ class StudioApi:
         self._keep_alive_threads[key].start()
 
     def stop_keeping_alive(self, teamspace_id: str, studio_id: str) -> None:
-        """Stops keeping the studio alive."""
+        """Stops keeping the studio alive.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID to stop keeping alive.
+        """
         key = f"{teamspace_id}-{studio_id}"
 
         if key in self._keep_alive_threads:
@@ -91,7 +101,12 @@ class StudioApi:
             self._keep_alive_threads[key].join()
 
     def _send_keepalives(self, teamspace_id: str, studio_id: str) -> None:
-        """Sends keepalive requests as long as the event isn't set."""
+        """Sends keepalive requests as long as the event isn't set.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID to send keepalives for.
+        """
         keep_alive_freq = os.environ.get("LIGHTNING_KEEPALIVE_FREQUENCY", 30)
         key = f"{teamspace_id}-{studio_id}"
         while not self._keep_alive_events[key].is_set():
@@ -105,7 +120,18 @@ class StudioApi:
         name: str,
         teamspace_id: str,
     ) -> V1CloudSpace:
-        """Gets the current studio corresponding to the given name in the given teamspace."""
+        """Gets the current studio corresponding to the given name in the given teamspace.
+
+        Args:
+            name: Name of the Studio to look up.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            The matching ``V1CloudSpace`` object.
+
+        Raises:
+            ValueError: If no Studio with the given name exists in the teamspace.
+        """
         res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id, name=name)
         if not res.cloudspaces:
             raise ValueError(f"Studio {name} does not exist")
@@ -116,7 +142,15 @@ class StudioApi:
         studio_id: str,
         teamspace_id: str,
     ) -> V1CloudSpace:
-        """Gets the current studio corresponding to the passed id."""
+        """Gets the current studio corresponding to the passed id.
+
+        Args:
+            studio_id: Studio (cloud space) ID to look up.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            The matching ``V1CloudSpace`` object.
+        """
         return self._client.cloud_space_service_get_cloud_space(project_id=teamspace_id, id=studio_id)
 
     def create_studio(
@@ -129,7 +163,20 @@ class StudioApi:
         sandbox: bool = False,
         cloud_space_environment_template_id: Optional[str] = None,
     ) -> V1CloudSpace:
-        """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account."""
+        """Create a Studio with a given name in a given Teamspace on a possibly given cloud_account.
+
+        Args:
+            name: Name for the new Studio.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Optional cloud account (cluster) ID to create the Studio on.
+            source: Optional source type for the Studio.
+            disable_secrets: Whether to disable secrets for the Studio.
+            sandbox: Whether to create the Studio in sandbox mode.
+            cloud_space_environment_template_id: Optional environment template ID to apply.
+
+        Returns:
+            The created ``V1CloudSpace`` object.
+        """
         body = CloudSpaceServiceCreateCloudSpaceBody(
             cluster_id=cloud_account,
             name=name,
@@ -153,7 +200,15 @@ class StudioApi:
         return studio
 
     def get_studio_status(self, studio_id: str, teamspace_id: str) -> V1GetCloudSpaceInstanceStatusResponse:
-        """Gets the current (internal) Studio status."""
+        """Gets the current (internal) Studio status.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            The ``V1GetCloudSpaceInstanceStatusResponse`` for the Studio.
+        """
         return self._client.cloud_space_service_get_cloud_space_instance_status(
             project_id=teamspace_id,
             id=studio_id,
@@ -161,7 +216,15 @@ class StudioApi:
 
     @backoff.on_exception(backoff.expo, AttributeError, max_tries=10)
     def _check_code_status_top_up_restore_finished(self, studio_id: str, teamspace_id: str) -> bool:
-        """Retries checking the top_up_restore_finished value of the code status when there's an AttributeError."""
+        """Retries checking the top_up_restore_finished value of the code status when there's an AttributeError.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            ``True`` if the top-up restore has finished, ``False`` otherwise.
+        """
         if (
             self.get_studio_status(studio_id, teamspace_id) is None
             or self.get_studio_status(studio_id, teamspace_id).in_use is None
@@ -178,7 +241,15 @@ class StudioApi:
         interruptible: bool = False,
         max_runtime: Optional[int] = None,
     ) -> None:
-        """Start an existing Studio."""
+        """Start an existing Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID to start.
+            teamspace_id: ID of the owning teamspace.
+            machine: Machine type to start the Studio on.
+            interruptible: Whether to use a spot (interruptible) instance.
+            max_runtime: Optional maximum runtime in seconds before the Studio is stopped.
+        """
         # need to go via kwargs for typing compatibility since autogenerated apis accept None but aren't typed with None
         optional_kwargs_compute_body = {}
 
@@ -214,7 +285,15 @@ class StudioApi:
         interruptible: bool = False,
         max_runtime: Optional[int] = None,
     ) -> None:
-        """Start an existing Studio without blocking."""
+        """Start an existing Studio without blocking.
+
+        Args:
+            studio_id: Studio (cloud space) ID to start.
+            teamspace_id: ID of the owning teamspace.
+            machine: Machine type to start the Studio on.
+            interruptible: Whether to use a spot (interruptible) instance.
+            max_runtime: Optional maximum runtime in seconds before the Studio is stopped.
+        """
         # need to go via kwargs for typing compatibility since autogenerated apis accept None but aren't typed with None
         optional_kwargs_compute_body = {}
 
@@ -233,7 +312,12 @@ class StudioApi:
         )
 
     def stop_studio(self, studio_id: str, teamspace_id: str) -> None:
-        """Stop an existing Studio."""
+        """Stop an existing Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID to stop.
+            teamspace_id: ID of the owning teamspace.
+        """
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
 
         self._client.cloud_space_service_stop_cloud_space_instance(
@@ -249,7 +333,15 @@ class StudioApi:
             time.sleep(1)
 
     def _get_studio_instance_status(self, studio_id: str, teamspace_id: str) -> Optional[str]:
-        """Returns status of the in-use instance of the Studio."""
+        """Returns status of the in-use instance of the Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            Phase string of the in-use instance, or ``None`` if no instance is running.
+        """
         internal_status = self.get_studio_status(studio_id=studio_id, teamspace_id=teamspace_id).in_use
         if internal_status is None:
             return None
@@ -257,6 +349,14 @@ class StudioApi:
         return internal_status.phase
 
     def _get_studio_instance_status_from_object(self, studio: V1CloudSpace) -> Optional[str]:
+        """Extract the running instance phase string from a studio object without a network call.
+
+        Args:
+            studio: The ``V1CloudSpace`` object to inspect.
+
+        Returns:
+            Phase string of the in-use instance, or ``None`` if not available.
+        """
         return getattr(getattr(studio.code_status, "in_use", None), "phase", None)
 
     def _request_switch(
@@ -267,7 +367,15 @@ class StudioApi:
         interruptible: bool,
         cloud_account: Optional[str],
     ) -> None:
-        """Switches given Studio to a new machine type."""
+        """Switches given Studio to a new machine type.
+
+        Args:
+            studio_id: Studio (cloud space) ID to switch.
+            teamspace_id: ID of the owning teamspace.
+            machine: Target machine type.
+            interruptible: Whether to use a spot (interruptible) instance.
+            cloud_account: Optional cloud account ID to override the cluster.
+        """
         compute_name = _machine_to_compute_name(machine)
         # TODO: UI sends disk size here, maybe we need to also?
         body = CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody(
@@ -289,7 +397,15 @@ class StudioApi:
         interruptible: bool,
         cloud_account: Optional[str],
     ) -> None:
-        """Switches given Studio to a new machine type."""
+        """Switches given Studio to a new machine type.
+
+        Args:
+            studio_id: Studio (cloud space) ID to switch.
+            teamspace_id: ID of the owning teamspace.
+            machine: Target machine type.
+            interruptible: Whether to use a spot (interruptible) instance.
+            cloud_account: Optional cloud account ID to override the cluster.
+        """
         self._request_switch(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
@@ -343,7 +459,16 @@ class StudioApi:
         progress: Any,  # StudioProgressTracker - avoid circular import
         cloud_account: Optional[str],
     ) -> None:
-        """Switches given Studio to a new machine type with progress tracking."""
+        """Switches given Studio to a new machine type with progress tracking.
+
+        Args:
+            studio_id: Studio (cloud space) ID to switch.
+            teamspace_id: ID of the owning teamspace.
+            machine: Target machine type.
+            interruptible: Whether to use a spot (interruptible) instance.
+            progress: Progress tracker object used to report switch stages.
+            cloud_account: Optional cloud account ID to override the cluster.
+        """
         progress.update_progress(10, "Requesting machine switch...")
 
         self._request_switch(
@@ -413,7 +538,17 @@ class StudioApi:
         progress.complete("Machine switch completed successfully")
 
     def machine_is_supported(self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str) -> bool:
-        """Check if the machine is available in provided cloud_account."""
+        """Check if the machine is available in provided cloud_account.
+
+        Args:
+            machine: Machine type to check availability for.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to check against.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            ``True`` if the machine type is available, ``False`` otherwise.
+        """
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
         )
@@ -428,7 +563,17 @@ class StudioApi:
         return False
 
     def machine_has_capacity(self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str) -> bool:
-        """Check capacity of the requested machine."""
+        """Check capacity of the requested machine.
+
+        Args:
+            machine: Machine type to check capacity for.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to check against.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            ``True`` if the machine has capacity, ``False`` if it is out of capacity.
+        """
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
         )
@@ -447,7 +592,17 @@ class StudioApi:
         return True
 
     def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str, org_id: str) -> Machine:
-        """Get the current machine type the given Studio is running on."""
+        """Get the current machine type the given Studio is running on.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to look up accelerator details.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            The ``Machine`` instance corresponding to the Studio's current compute config.
+        """
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
@@ -466,7 +621,15 @@ class StudioApi:
         return Machine.from_str(response.compute_config.name)
 
     def get_interruptible(self, studio_id: str, teamspace_id: str) -> bool:
-        """Get whether the Studio is running on a interruptible instance."""
+        """Get whether the Studio is running on a interruptible instance.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            ``True`` if the Studio is using a spot (interruptible) instance, ``False`` otherwise.
+        """
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
@@ -474,7 +637,15 @@ class StudioApi:
         return response.compute_config.spot
 
     def get_public_ip(self, studio_id: str, teamspace_id: str) -> Optional[str]:
-        """Get the public IP address of the Studio."""
+        """Get the public IP address of the Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            The public IP address string, or ``None`` if the Studio has no running instance.
+        """
         internal_status = self.get_studio_status(studio_id=studio_id, teamspace_id=teamspace_id).in_use
         if internal_status is None:
             return None
@@ -484,6 +655,16 @@ class StudioApi:
     def _get_machines_for_cloud_account(
         self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
+        """Return only the enabled accelerators for a given cloud account.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to query accelerators for.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            List of enabled ``V1ClusterAccelerator`` objects for the cloud account.
+        """
         from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
         cloud_account_api = CloudAccountApi()
@@ -500,7 +681,19 @@ class StudioApi:
     def _get_detached_command_status(
         self, studio_id: str, teamspace_id: str, session_id: str
     ) -> V1GetLongRunningCommandInCloudSpaceResponse:
-        """Get the status of a detached command."""
+        """Get the status of a detached command.
+
+        Args:
+            studio_id: Studio (cloud space) ID the command is running in.
+            teamspace_id: ID of the owning teamspace.
+            session_id: Session name returned when the command was submitted.
+
+        Returns:
+            Generator yielding ``V1GetLongRunningCommandInCloudSpaceResponse`` result objects.
+
+        Raises:
+            RuntimeError: If the server returns an empty response.
+        """
         # we need to decode this manually since this is ndjson and not usual json
         response_data = self._client.cloud_space_service_get_long_running_command_in_cloud_space_stream(
             project_id=teamspace_id, id=studio_id, session=session_id, _preload_content=False
@@ -528,7 +721,18 @@ class StudioApi:
         """Run given commands in a given Studio and yield the output and exit code for the given timeout.
 
         Args:
-            timeout: wait for this many seconds for the command to finish.
+            studio_id: Studio (cloud space) ID to run the commands in.
+            teamspace_id: ID of the owning teamspace.
+            *commands: One or more shell commands to execute sequentially.
+            timeout: Wait for this many seconds for the command to finish.
+            check_interval: Seconds to wait between status poll requests.
+
+        Returns:
+            Generator yielding ``(output, exit_code)`` tuples as output becomes available.
+
+        Raises:
+            RuntimeError: If the command could not be submitted, the session name is missing,
+                or the exit code is ambiguous across response chunks.
         """
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
             CloudSpaceServiceExecuteCommandInCloudSpaceBody("; ".join(commands), detached=True),
@@ -569,7 +773,20 @@ class StudioApi:
                 time.sleep(check_interval)
 
     def run_studio_commands(self, studio_id: str, teamspace_id: str, *commands: str) -> Tuple[str, int]:
-        """Run given commands in a given Studio."""
+        """Run given commands in a given Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID to run the commands in.
+            teamspace_id: ID of the owning teamspace.
+            *commands: One or more shell commands to execute sequentially.
+
+        Returns:
+            Tuple of ``(combined_output, exit_code)`` after the commands finish.
+
+        Raises:
+            RuntimeError: If the command could not be submitted, the session name is missing,
+                or the exit code is ambiguous across response chunks.
+        """
         response_submit = self._client.cloud_space_service_execute_command_in_cloud_space(
             CloudSpaceServiceExecuteCommandInCloudSpaceBody("; ".join(commands), detached=True),
             project_id=teamspace_id,
@@ -612,7 +829,17 @@ class StudioApi:
         enabled: Optional[bool] = None,
         idle_shutdown_seconds: Optional[int] = None,
     ) -> V1CloudSpaceInstanceConfig:
-        """Update the autoshutdown time and behaviour of the given Studio."""
+        """Update the autoshutdown time and behaviour of the given Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID to update.
+            teamspace_id: ID of the owning teamspace.
+            enabled: Whether auto-shutdown should be enabled. ``None`` leaves the current setting unchanged.
+            idle_shutdown_seconds: Idle time in seconds before shutdown. ``None`` leaves unchanged.
+
+        Returns:
+            The updated ``V1CloudSpaceInstanceConfig`` object.
+        """
         body = CloudSpaceServiceUpdateCloudSpaceSleepConfigBody(
             disable_auto_shutdown=not enabled if enabled is not None else None,
             idle_shutdown_seconds=idle_shutdown_seconds,
@@ -631,7 +858,18 @@ class StudioApi:
         machine: Machine = Machine.CPU,
         new_name: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Duplicates the given Studio from a given Teamspace into a given target Teamspace."""
+        """Duplicates the given Studio from a given Teamspace into a given target Teamspace.
+
+        Args:
+            studio_id: Studio (cloud space) ID to duplicate.
+            teamspace_id: ID of the source teamspace.
+            target_teamspace_id: ID of the target teamspace to fork the Studio into.
+            machine: Machine type to start the duplicated Studio on.
+            new_name: Optional name for the duplicated Studio; the original name is used if ``None``.
+
+        Returns:
+            Dict of keyword arguments suitable for re-initializing the duplicated Studio object.
+        """
         target_teamspace = self._client.projects_service_get_project(target_teamspace_id)
         init_kwargs = {}
         if target_teamspace.owner_type == "user":
@@ -659,11 +897,27 @@ class StudioApi:
         return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
-        """Delete existing given Studio."""
+        """Delete existing given Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID to delete.
+            teamspace_id: ID of the owning teamspace.
+        """
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
     def get_tree(self, studio_id: str, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+        """Fetch the directory tree at ``path`` inside a Studio from the artifact REST API.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+            path: Artifact path to inspect.
+            query_params: Extra query parameters merged with the auth token.
+
+        Returns:
+            Parsed JSON response from the server.
+        """
         token = _authenticate_and_get_token(self._client)
 
         if query_params is None:
@@ -679,6 +933,17 @@ class StudioApi:
         return r.json()
 
     def get_path_info(self, studio_id: str, teamspace_id: str, path: str = "") -> dict:
+        """Return existence, type, and size metadata for a path inside a Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+            path: Artifact path to check; empty string means root directory.
+
+        Returns:
+            Dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or ``None``),
+            and ``size`` (int bytes for files, ``None`` otherwise).
+        """
         path = path.strip("/")
 
         if "/" in path:
@@ -712,7 +977,16 @@ class StudioApi:
         teamspace_id: str,
         path: str = "",
     ) -> List[Dict]:
-        """Recursively list all files in a directory tree."""
+        """Recursively list all files in a directory tree.
+
+        Args:
+            studio_id: Studio (cloud space) ID.
+            teamspace_id: ID of the owning teamspace.
+            path: Root path inside the Studio to list; defaults to the root directory.
+
+        Returns:
+            List of file-info dicts from the recursive tree response.
+        """
         path = path.strip("/")
         return self.get_tree(studio_id, teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
 
@@ -728,6 +1002,14 @@ class StudioApi:
         """Uploads file to given remote path in the studio.
 
         Uses single-part upload for files <= 5MB, multipart upload for larger files.
+
+        Args:
+            studio_id: Studio (cloud space) ID to upload the file into.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID used for multipart uploads.
+            file_path: Local filesystem path of the file to upload.
+            remote_path: Destination path inside the Studio.
+            progress_bar: Whether to display a progress bar during upload.
         """
         file_size = os.path.getsize(file_path)
         multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -766,7 +1048,19 @@ class StudioApi:
         cloud_account: str,
         progress_bar: bool = True,
     ) -> None:
-        """Downloads a given file from a Studio to a target location."""
+        """Downloads a given file from a Studio to a target location.
+
+        Args:
+            path: Path of the file inside the Studio to download.
+            target_path: Local filesystem path to write the downloaded file to.
+            studio_id: Studio (cloud space) ID containing the file.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID used to locate the artifact.
+            progress_bar: Whether to display a progress bar during download.
+
+        Raises:
+            RuntimeError: If the server returns a non-200 status code.
+        """
         # TODO: Update this endpoint to permit basic auth
         token = _authenticate_and_get_token(self._client)
 
@@ -819,7 +1113,17 @@ class StudioApi:
         token: str,
         pbar: Optional[tqdm],
     ) -> None:
-        """Download a single file from Studio with progress tracking."""
+        """Download a single file from Studio with progress tracking.
+
+        Args:
+            file_info: Dict containing at least a ``"path"`` key with the file's artifact path.
+            base_path: Base directory path prepended to the relative file path when building the request URL.
+            download_dir: Local directory where the downloaded file is written.
+            studio_id: Studio (cloud space) ID containing the file.
+            teamspace_id: ID of the owning teamspace.
+            token: Authentication token for the artifact API.
+            pbar: Optional tqdm progress bar to update as bytes are written.
+        """
         relative_path = file_info["path"].lstrip("/")
         local_file = download_dir / relative_path
         local_file.parent.mkdir(parents=True, exist_ok=True)
@@ -852,7 +1156,17 @@ class StudioApi:
         progress_bar: bool = True,
         num_workers: Optional[int] = None,
     ) -> None:
-        """Downloads a given folder from a Studio to a target location."""
+        """Downloads a given folder from a Studio to a target location.
+
+        Args:
+            path: Path of the folder inside the Studio to download.
+            target_path: Local filesystem path to write the downloaded files to.
+            studio_id: Studio (cloud space) ID containing the folder.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID used to locate the artifacts.
+            progress_bar: Whether to display a progress bar during download.
+            num_workers: Number of parallel download threads; defaults to ``cpu_count * 4``.
+        """
         # TODO: implement resumable downloads
 
         if num_workers is None:
@@ -906,7 +1220,18 @@ class StudioApi:
             pbar.close()
 
     def remove_file(self, studio_id: str, teamspace_id: str, path: str) -> None:
-        """Removes a file from a Studio."""
+        """Removes a file from a Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID containing the file.
+            teamspace_id: ID of the owning teamspace.
+            path: Path of the file to remove inside the Studio.
+
+        Raises:
+            FileNotFoundError: If the path does not exist in the Studio.
+            IsADirectoryError: If the path points to a directory rather than a file.
+            RuntimeError: If the server returns a non-204 status code.
+        """
         info = self.get_path_info(studio_id, teamspace_id, path=path)
 
         if not info["exists"]:
@@ -929,7 +1254,18 @@ class StudioApi:
         raise RuntimeError(f"Failed to remove file '{path}' from the Studio. Status code: {r.status_code}")
 
     def remove_folder(self, studio_id: str, teamspace_id: str, path: str) -> None:
-        """Removes a folder (directory) from a Studio."""
+        """Removes a folder (directory) from a Studio.
+
+        Args:
+            studio_id: Studio (cloud space) ID containing the folder.
+            teamspace_id: ID of the owning teamspace.
+            path: Path of the folder to remove inside the Studio.
+
+        Raises:
+            FileNotFoundError: If the path does not exist in the Studio.
+            ValueError: If the path points to a file rather than a directory.
+            RuntimeError: If the server returns a non-204 status code.
+        """
         info = self.get_path_info(studio_id, teamspace_id, path=path)
 
         if not info["exists"]:
@@ -952,7 +1288,19 @@ class StudioApi:
         raise RuntimeError(f"Failed to remove folder '{path}' from the Studio. Status code: {r.status_code}")
 
     def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
-        """Installs the given plugin."""
+        """Installs the given plugin.
+
+        Args:
+            studio_id: Studio (cloud space) ID to install the plugin into.
+            teamspace_id: ID of the owning teamspace.
+            plugin_name: Identifier of the plugin to install.
+
+        Returns:
+            Additional info string returned by the server after successful installation.
+
+        Raises:
+            RuntimeError: If the plugin installation fails.
+        """
         resp: V1Plugin = self._client.cloud_space_service_install_plugin(
             project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
         )
@@ -964,7 +1312,16 @@ class StudioApi:
         return additional_info.strip("\n").strip()
 
     def uninstall_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> None:
-        """Uninstalls the given plugin."""
+        """Uninstalls the given plugin.
+
+        Args:
+            studio_id: Studio (cloud space) ID to uninstall the plugin from.
+            teamspace_id: ID of the owning teamspace.
+            plugin_name: Identifier of the plugin to uninstall.
+
+        Raises:
+            RuntimeError: If the plugin uninstallation fails.
+        """
         resp: V1Plugin = self._client.cloud_space_service_uninstall_plugin(
             project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
         )
@@ -972,7 +1329,19 @@ class StudioApi:
             raise RuntimeError(f"Failed to uninstall plugin {plugin_name}: {resp.error}")
 
     def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> Tuple[str, int]:
-        """Executes the given plugin."""
+        """Executes the given plugin.
+
+        Args:
+            studio_id: Studio (cloud space) ID to execute the plugin in.
+            teamspace_id: ID of the owning teamspace.
+            plugin_name: Identifier of the plugin to execute.
+
+        Returns:
+            Tuple of ``(output_message, port)`` where ``port > 0`` means the plugin is interactive.
+
+        Raises:
+            RuntimeError: If the plugin execution fails.
+        """
         resp: V1Plugin = self._client.cloud_space_service_execute_plugin(
             project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
         )
@@ -1002,14 +1371,30 @@ class StudioApi:
         return output_str, port
 
     def list_available_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
-        """Lists the available plugins."""
+        """Lists the available plugins.
+
+        Args:
+            studio_id: Studio (cloud space) ID to list plugins for.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            Dict mapping plugin identifiers to their display names.
+        """
         resp: V1PluginsListResponse = self._client.cloud_space_service_list_available_plugins(
             project_id=teamspace_id, id=studio_id
         )
         return resp.plugins
 
     def list_installed_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
-        """Lists all installed plugins."""
+        """Lists all installed plugins.
+
+        Args:
+            studio_id: Studio (cloud space) ID to list installed plugins for.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            Dict mapping plugin identifiers to their display names.
+        """
         resp: V1PluginsListResponse = self._client.cloud_space_service_list_installed_plugins(
             project_id=teamspace_id, id=studio_id
         )
@@ -1025,7 +1410,20 @@ class StudioApi:
         cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
-        """Creates a job with given commands."""
+        """Creates a job with given commands.
+
+        Args:
+            entrypoint: Shell command or script path to run as the job entrypoint.
+            name: Display name for the job.
+            machine: Machine type to run the job on.
+            studio_id: Studio (cloud space) ID associated with the job.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID for the job's compute resources.
+            interruptible: Whether to use a spot (interruptible) instance.
+
+        Returns:
+            The created ``Externalv1LightningappInstance`` representing the job.
+        """
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
@@ -1049,7 +1447,22 @@ class StudioApi:
         cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
-        """Creates a multi-machine job with given commands."""
+        """Creates a multi-machine job with given commands.
+
+        Args:
+            entrypoint: Shell command or script path to run as the job entrypoint.
+            name: Display name for the job.
+            num_instances: Number of machines to run in parallel.
+            machine: Machine type for each instance.
+            strategy: Distributed training strategy identifier.
+            studio_id: Studio (cloud space) ID associated with the job.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID for the job's compute resources.
+            interruptible: Whether to use spot (interruptible) instances.
+
+        Returns:
+            The created ``Externalv1LightningappInstance`` representing the multi-machine job.
+        """
         distributed_args = {
             "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_instances,
@@ -1077,7 +1490,21 @@ class StudioApi:
         cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
-        """Creates a multi-machine job with given commands."""
+        """Creates a multi-machine job with given commands.
+
+        Args:
+            entrypoint: Shell command or script path to run as the job entrypoint.
+            name: Display name for the job.
+            num_instances: Number of machines to run in parallel.
+            machine: Machine type for each instance.
+            studio_id: Studio (cloud space) ID associated with the job.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID for the job's compute resources.
+            interruptible: Whether to use spot (interruptible) instances.
+
+        Returns:
+            The created ``Externalv1LightningappInstance`` representing the data preparation job.
+        """
         data_prep_args = {
             "cloud_compute": _machine_to_compute_name(machine),
             "num_instances": num_instances,
@@ -1110,7 +1537,27 @@ class StudioApi:
         cloud_account: str,
         interruptible: bool,
     ) -> Externalv1LightningappInstance:
-        """Creates an inference job for given endpoint."""
+        """Creates an inference job for given endpoint.
+
+        Args:
+            entrypoint: Shell command or script path to run as the inference server.
+            name: Display name for the inference job.
+            machine: Machine type to run the inference server on.
+            min_replicas: Minimum number of replicas to keep running.
+            max_replicas: Maximum number of replicas to scale up to.
+            max_batch_size: Maximum request batch size per replica.
+            timeout_batching: Maximum wait time in seconds to form a batch.
+            scale_in_interval: Seconds of low traffic before scaling in.
+            scale_out_interval: Seconds of high traffic before scaling out.
+            endpoint: URL path prefix for the inference endpoint.
+            studio_id: Studio (cloud space) ID associated with the job.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID for the job's compute resources.
+            interruptible: Whether to use spot (interruptible) instances.
+
+        Returns:
+            The created ``Externalv1LightningappInstance`` representing the inference job.
+        """
         return self._create_app(
             studio_id=studio_id,
             teamspace_id=teamspace_id,
@@ -1130,7 +1577,18 @@ class StudioApi:
         )
 
     def add_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> V1Endpoint:
-        """Starts a new port to the given Studio."""
+        """Starts a new port to the given Studio.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID to expose the port on.
+            name: Display name for the endpoint.
+            port: Port number to expose.
+            auto_start: Whether the endpoint should auto-start the Studio if stopped.
+
+        Returns:
+            The created ``V1Endpoint`` object.
+        """
         return self._client.endpoint_service_create_endpoint(
             project_id=teamspace_id,
             body=EndpointServiceCreateEndpointBody(
@@ -1145,6 +1603,20 @@ class StudioApi:
     def get_port_url(
         self, teamspace_id: str, studio_id: str, port: Optional[int] = None, name: Optional[str] = None
     ) -> str:
+        """Return the public URL for an exposed endpoint, looked up by port number or endpoint name.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID.
+            port: Port number to look up.
+            name: Endpoint name to look up when ``port`` is not provided.
+
+        Returns:
+            The public URL string for the matching endpoint.
+
+        Raises:
+            ValueError: If neither argument is given, or no matching endpoint is found.
+        """
         if port is None and name is None:
             raise ValueError("Either 'port' or 'name' must be provided")
 
@@ -1162,13 +1634,32 @@ class StudioApi:
         raise ValueError(f"Endpoint with {identifier} not found")
 
     def list_ports(self, teamspace_id: str, studio_id: str) -> List[V1Endpoint]:
-        """List ports that are exposed in the Studio."""
+        """List ports that are exposed in the Studio.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            studio_id: Studio (cloud space) ID to list endpoints for.
+
+        Returns:
+            List of ``V1Endpoint`` objects representing the exposed ports.
+        """
         return self._client.endpoint_service_list_endpoints(
             project_id=teamspace_id,
             cloudspace_id=studio_id,
         ).endpoints
 
     def create_assistant(self, studio_id: str, teamspace_id: str, port: int, assistant_name: str) -> V1Assistant:
+        """Create a managed AI assistant backed by a Studio's inference endpoint.
+
+        Args:
+            studio_id: Studio (cloud space) ID hosting the model server.
+            teamspace_id: ID of the owning teamspace.
+            port: Port on which the model server is listening.
+            assistant_name: Display name for the created assistant.
+
+        Returns:
+            The created ``V1Assistant`` object.
+        """
         target_teamspace = self._client.projects_service_get_project(teamspace_id)
         org_id = ""
         if target_teamspace.owner_type == "ORGANIZATION":
@@ -1221,7 +1712,18 @@ class StudioApi:
     def _create_app(
         self, studio_id: str, teamspace_id: str, cloud_account: str, plugin_type: str, **other_arguments: Any
     ) -> Externalv1LightningappInstance:
-        """Creates an arbitrary app."""
+        """Creates an arbitrary app.
+
+        Args:
+            studio_id: Studio (cloud space) ID to associate the app with.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account: Cloud account ID for the app's compute resources.
+            plugin_type: Plugin type identifier that determines the app kind.
+            **other_arguments: Additional keyword arguments forwarded to the underlying app creator.
+
+        Returns:
+            The created ``Externalv1LightningappInstance``.
+        """
         return _create_app(
             self._client,
             studio_id=studio_id,
@@ -1232,6 +1734,14 @@ class StudioApi:
         )
 
     def _update_cloudspace(self, studio: V1CloudSpace, teamspace_id: str, key: str, value: Any) -> None:
+        """Patch a single field on the cloudspace, keeping all other fields unchanged.
+
+        Args:
+            studio: The ``V1CloudSpace`` object whose current field values populate the update body.
+            teamspace_id: ID of the owning teamspace.
+            key: Name of the field to update on the cloudspace body.
+            value: New value to set for the specified field.
+        """
         body = CloudSpaceServiceUpdateCloudSpaceBody(
             code_url=studio.code_url,
             data_connection_mounts=studio.data_connection_mounts,
@@ -1277,6 +1787,8 @@ class StudioApi:
         """Set the environment variables for the Studio.
 
         Args:
+            studio: The ``V1CloudSpace`` object whose current env vars are used as the base.
+            teamspace_id: ID of the owning teamspace.
             new_env: The new environment variables to set.
             partial: Whether to only set the environment variables that are provided.
                 If False, existing environment variables that are not in new_env will be removed.
@@ -1294,4 +1806,12 @@ class StudioApi:
         self._update_cloudspace(studio, teamspace_id, "env", updated_env)
 
     def get_env(self, studio: V1CloudSpace) -> Dict[str, str]:
+        """Return the Studio's environment variables as a plain name → value dictionary.
+
+        Args:
+            studio: The ``V1CloudSpace`` object to read environment variables from.
+
+        Returns:
+            Dict mapping environment variable names to their values.
+        """
         return {env.name: env.value for env in studio.env}

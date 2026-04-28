@@ -1,57 +1,87 @@
-name: "Build (& deploy) Docs"
+name: Docs
+
 on:
-  workflow_dispatch:
-#   push:
-#     branches: [main]
-#   pull_request:
-#     branches: [main]
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
 
 jobs:
-  build:
-    uses: Lightning-AI/utilities/.github/workflows/check-docs.yml@main
-    with:
-      requirements-file: "docs/requirements.txt"
-      install-tex: true
-      make-target: "['html', 'doctest', 'linkcheck', 'latexpdf']"
+  docs-build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
 
-  # https://github.com/marketplace/actions/deploy-to-github-pages
-  # build-docs-deploy:
-  #   needs: build-docs
-  #   if: github.event_name != 'pull_request'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout 🛎️
-  #       uses: actions/checkout@v4
-  #       # If you're using actions/checkout v3+ you must set persist-credentials to false in most cases for the deployment to work correctly.
-  #       with:
-  #         persist-credentials: false
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: docs-${{ github.sha }}
-  #         path: docs/build/html
-  #         merge-multiple: true
+    steps:
+    - uses: actions/checkout@v4
 
-  #     - name: Deploy 🚀
-  #       uses: JamesIves/github-pages-deploy-action@v4.4.3
-  #       if: ${{ github.event_name == 'push' }}
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         branch: gh-pages # The branch the action should deploy to.
-  #         folder: docs/build/html # The folder the action should deploy.
-  #         clean: true # Automatically remove deleted files from the deploy branch
-  #         target-folder: docs # If you'd like to push the contents of the deployment folder into a specific directory
-  #         single-commit: true # you'd prefer to have a single commit on the deployment branch instead of full history
+    - name: Install uv and setup python
+      uses: astral-sh/setup-uv@v5
+      with:
+        activate-environment: true
+        python-version: "3.12"
+        enable-cache: true
+
+    - name: Install package & doc dependencies
+      run: |
+        uv sync --group docs
+        uv pip install -e .
+        uv pip list
+
+    - name: Build docs
+      working-directory: docs
+      run: |
+        make html SPHINXOPTS="-W --keep-going"
+
+    - name: Upload docs artifact
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: docs-build
+        path: docs/build/html/
+        retention-days: 7
+
+  docs-linkcheck:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv and setup python
+      uses: astral-sh/setup-uv@v5
+      with:
+        activate-environment: true
+        python-version: "3.12"
+        enable-cache: true
+
+    - name: Install package & doc dependencies
+      run: |
+        uv sync --group docs
+        uv pip install -e .
+
+    - name: Check links
+      working-directory: docs
+      run: |
+        make linkcheck
 
   guardian-docs:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [docs-build, docs-linkcheck]
     if: always()
     steps:
-    - run: echo "${{ needs.build.result }}"
+    - run: |
+        echo "build: ${{ needs.docs-build.result }}"
+        echo "linkcheck: ${{ needs.docs-linkcheck.result }}"
     - name: failing...
-      if: needs.build.result == 'failure'
+      if: |
+        needs.docs-build.result == 'failure' ||
+        needs.docs-linkcheck.result == 'failure'
       run: exit 1
     - name: cancelled or skipped...
-      if: contains(fromJSON('["cancelled", "skipped"]'), needs.build.result)
+      if: |
+        contains(fromJSON('["cancelled", "skipped"]'), needs.docs-build.result) ||
+        contains(fromJSON('["cancelled", "skipped"]'), needs.docs-linkcheck.result)
       timeout-minutes: 1
       run: sleep 90

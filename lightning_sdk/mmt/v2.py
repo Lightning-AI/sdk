@@ -104,6 +104,12 @@ class _MMTV2(_BaseMMT):
                 Defaults to 3h
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            _MMTV2: This MMT V2 instance, updated with the submitted job state.
+
+        Raises:
+            ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
         """
         # Command is required if Studio is provided to know what to run
         # Image is mutually exclusive with Studio
@@ -155,7 +161,11 @@ class _MMTV2(_BaseMMT):
 
     @property
     def machines(self) -> Tuple["Job", ...]:
-        """Returns the sub-jobs for each individual instance."""
+        """Returns the sub-jobs for each individual instance.
+
+        Returns:
+            Tuple[Job, ...]: A tuple of Job objects, one per machine.
+        """
         from lightning_sdk.job import Job
 
         return tuple(
@@ -181,24 +191,46 @@ class _MMTV2(_BaseMMT):
 
     @property
     def status(self) -> "Status":
-        """The current status of the job."""
+        """The current status of the job.
+
+        Returns:
+            Status: The current job status.
+        """
         return self._job_api._job_state_to_external(self._latest_job.state)
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem."""
+        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The artifact path within the teamspace filesystem.
+
+        Raises:
+            NotImplementedError: Unified artifact path grouping is not yet supported on the backend.
+        """
         # TODO: Since grouping for those is not done yet on the BE, we cannot yet have a unified link here
         raise NotImplementedError
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem."""
+        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem.
+
+        Returns:
+            Optional[str]: The snapshot path within the teamspace filesystem.
+
+        Raises:
+            NotImplementedError: Unified snapshot path grouping is not yet supported on the backend.
+        """
         # TODO: Since grouping for those is not done yet on the BE, we cannot yet have a unified link here
         raise NotImplementedError
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """Returns the machine type this job is running on."""
+        """Returns the machine type this job is running on.
+
+        Returns:
+            Union[Machine, str]: The machine type used by this multi-machine job.
+        """
         return self._job_api._get_job_machine_from_spec(
             self._guaranteed_job.spec,
             self.teamspace.id,
@@ -206,6 +238,7 @@ class _MMTV2(_BaseMMT):
         )
 
     def _update_internal_job(self) -> None:
+        """Refresh the internal job state from the remote API."""
         if getattr(self, "_job", None) is None:
             self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
             return
@@ -214,12 +247,20 @@ class _MMTV2(_BaseMMT):
 
     @property
     def name(self) -> str:
-        """The job's name."""
+        """The job's name.
+
+        Returns:
+            str: The job's name.
+        """
         return self._name
 
     @property
     def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of."""
+        """The teamspace the job is part of.
+
+        Returns:
+            Teamspace: The teamspace this job belongs to.
+        """
         return self._teamspace
 
     @property
@@ -229,12 +270,20 @@ class _MMTV2(_BaseMMT):
 
     @property
     def image(self) -> Optional[str]:
-        """The image used to submit the job."""
+        """The image used to submit the job.
+
+        Returns:
+            Optional[str]: The docker image name, or None if a studio was used.
+        """
         return self._job_api.get_image_name(self._guaranteed_job)
 
     @property
     def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job."""
+        """The studio used to submit the job.
+
+        Returns:
+            Optional[Studio]: The Studio instance used to submit this job, or None if an image was used.
+        """
         from lightning_sdk.studio import Studio
 
         studio_name = self._job_api.get_studio_name(self._guaranteed_job)
@@ -246,10 +295,18 @@ class _MMTV2(_BaseMMT):
 
     @property
     def command(self) -> str:
-        """The command the job is running."""
+        """The command the job is running.
+
+        Returns:
+            str: The command being executed by this job.
+        """
         return self._job_api.get_command(self._guaranteed_job)
 
     @property
     def num_machines(self) -> int:
-        """Returns the number of machines assigned to this multi-machine job."""
+        """Returns the number of machines assigned to this multi-machine job.
+
+        Returns:
+            int: The number of machines in this multi-machine job.
+        """
         return self._job_api.get_num_machines(self._guaranteed_job)

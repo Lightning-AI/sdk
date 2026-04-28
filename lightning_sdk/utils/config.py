@@ -72,18 +72,35 @@ class Config:
         self._config_file = os.path.expanduser(config_file)
 
     def _load_config(self) -> Dict[str, Any]:
+        """Load the YAML config file from disk.
+
+        Returns:
+            Dict[str, Any]: The parsed config as a nested dictionary, or an empty dict
+            if the file does not exist.
+        """
         if not os.path.exists(self._config_file):
             return {}  # Return empty dict if config doesn't exist
         with open(self._config_file) as f:
             return yaml.safe_load(f) or {}
 
     def _save_config(self, config: Dict[str, Any]) -> None:
+        """Persist the config dictionary to disk as a YAML file.
+
+        Args:
+            config: The flat or nested config dictionary to save.
+        """
         os.makedirs(os.path.dirname(self._config_file), exist_ok=True)
         config = _unflatten_dict(config)
         with open(self._config_file, "w") as f:
             yaml.safe_dump(config, f, default_flow_style=False, sort_keys=True)
 
     def _set_nested(self, keys: Sequence[str], value: str) -> None:
+        """Set a value at a nested path within the config.
+
+        Args:
+            keys: Sequence of key names forming the path from the root.
+            value: The value to store at the given path.
+        """
         config = self._load_config()
         curr = config
         for k in keys[:-1]:
@@ -160,9 +177,23 @@ class Config:
         )
 
     def get(self, key: str) -> Optional[str]:
+        """Get a config value by dot-notation key.
+
+        Args:
+            key: Dot-separated key path (e.g. ``"teamspace.name"``).
+
+        Returns:
+            Optional[str]: The value if found, or None.
+        """
         return self.get_value(key)
 
     def set(self, key: str, value: str) -> None:
+        """Set a config value at the root level.
+
+        Args:
+            key: The top-level config key to set.
+            value: The value to assign.
+        """
         self._set_nested([key], value)
 
 

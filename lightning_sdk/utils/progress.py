@@ -31,7 +31,15 @@ class StartupPhase(Enum):
 
 
 def get_switching_progress_message(percentage: int, is_base_studio: bool) -> str:
-    """Get progress message for switching studios."""
+    """Get progress message for switching studios.
+
+    Args:
+        percentage: Current completion percentage (0-100).
+        is_base_studio: Whether the studio being restored is a base studio.
+
+    Returns:
+        str: A formatted ``"(N%) <phase message>"`` string.
+    """
     percentage = max(0, min(100, round(percentage)))
 
     if percentage > 98:
@@ -48,13 +56,30 @@ def get_switching_progress_message(percentage: int, is_base_studio: bool) -> str
 def estimated_studio_ready_in_seconds(
     cloud_space: Any, cloud_space_instance_status: Any, accelerators: Optional[List[V1ClusterAccelerator]] = None
 ) -> int:
-    """Calculate estimated seconds until studio is ready."""
+    """Calculate estimated seconds until studio is ready.
+
+    Args:
+        cloud_space: The cloud space descriptor.
+        cloud_space_instance_status: The current instance status.
+        accelerators: Optional list of available cluster accelerators.
+
+    Returns:
+        int: Estimated seconds until the studio is ready.
+    """
     # Default estimate
     return 120
 
 
 def progress_bar_growth(default_timeout: int, counter: float) -> int:
-    """Calculate progress bar growth based on timeout and counter."""
+    """Calculate progress bar completion percentage based on elapsed time.
+
+    Args:
+        default_timeout: Total expected duration in seconds.
+        counter: Remaining seconds (i.e. ``default_timeout - elapsed``).
+
+    Returns:
+        int: Completion percentage between 0 and 100.
+    """
     if default_timeout <= 0:
         return 100
 
@@ -86,7 +111,11 @@ class StudioProgressTracker:
         self._last_message = ""
 
     def __enter__(self) -> "StudioProgressTracker":
-        """Enter context manager."""
+        """Start the progress bar and return self.
+
+        Returns:
+            StudioProgressTracker: This tracker instance.
+        """
         if self.show_progress:
             self.progress = Progress(
                 SpinnerColumn(),
@@ -107,12 +136,25 @@ class StudioProgressTracker:
         exc_val: Union[BaseException, None],
         exc_tb: Union[types.TracebackType, None],
     ) -> None:
-        """Exit context manager."""
+        """Stop the progress bar on context manager exit.
+
+        Args:
+            exc_type: Exception type, if any.
+            exc_val: Exception value, if any.
+            exc_tb: Exception traceback, if any.
+        """
         if self.progress:
             self.progress.stop()
 
     def update_progress(self, percentage: int, message: str = "", is_base_studio: bool = False) -> None:
-        """Update progress bar with current percentage and message."""
+        """Update the progress bar with the current percentage and phase message.
+
+        Args:
+            percentage: Current completion percentage (0-100).
+            message: Status message to display alongside the bar.
+            is_base_studio: Whether the studio being restored is a base studio,
+                used to select the appropriate switching phase message.
+        """
         if not self.progress or self.task_id is None:
             return
 
@@ -134,7 +176,12 @@ class StudioProgressTracker:
         self.progress.refresh()
 
     def complete(self, success_message: str = "") -> None:
-        """Mark operation as complete."""
+        """Mark the operation as complete and advance the progress bar to 100%.
+
+        Args:
+            success_message: Message to display when the operation finishes.
+                Defaults to ``"Done"``.
+        """
         if self.progress and self.task_id is not None:
             self.progress.update(self.task_id, completed=100, description=success_message or "Done")
 
@@ -144,7 +191,13 @@ class StudioProgressTracker:
         accelerators: Optional[List[V1ClusterAccelerator]] = None,
         timeout: int = 600,
     ) -> None:
-        """Track startup phases and update progress accordingly."""
+        """Poll the studio status and advance the progress bar through startup phases.
+
+        Args:
+            status_getter: Callable that returns the current cloud-space instance status.
+            accelerators: Optional list of accelerators used to estimate startup time.
+            timeout: Maximum seconds to wait before giving up. Defaults to 600.
+        """
         start_time = time.time()
         last_progress = 5
         phase_start_times = {}

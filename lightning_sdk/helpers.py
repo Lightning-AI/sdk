@@ -25,9 +25,17 @@ class VersionChecker:
         self._cached_version: Optional[str] = None
 
     def _get_newer_version(self, curr_version: str) -> Optional[str]:
-        """Check PyPI for newer versions of ``lightning-sdk``.
+        """Check PyPI for a newer stable release of ``lightning-sdk``.
 
-        Returning the newest version if different from the current or ``None`` otherwise.
+        The result is cached after the first successful network call.
+
+        Args:
+            curr_version: The currently installed version string (e.g. ``"0.9.0"``).
+
+        Returns:
+            Optional[str]: The latest stable version if it differs from ``curr_version``,
+            or ``None`` if the current version is up to date, not from PyPI, or the check
+            is disabled.
         """
         if self._cached_version is not None:
             return self._cached_version
@@ -54,10 +62,13 @@ class VersionChecker:
             return None
 
     def check_and_prompt_upgrade(self, curr_version: str) -> None:
-        """Checks that the current version of ``lightning-sdk`` is the latest on PyPI.
+        """Emit a ``UserWarning`` if a newer ``lightning-sdk`` release is available on PyPI.
 
-        If not, warn the user to upgrade ``lightning-sdk``.
-        Tracks if the warning has already been shown in this session to avoid duplicate warnings.
+        The warning is only emitted once per instance to avoid duplicate messages in
+        multi-threaded scenarios.
+
+        Args:
+            curr_version: The currently installed version string.
         """
         if self._warning_shown:
             return
@@ -74,6 +85,12 @@ class VersionChecker:
 
 
 def set_tqdm_envvars_noninteractive() -> None:
+    """Configure tqdm environment variables for non-interactive (CI/headless) environments.
+
+    In TTY environments the env vars are cleared so tqdm uses its defaults.
+    In non-TTY environments ``TQDM_POSITION=-1`` and ``TQDM_MININTERVAL=1`` are set
+    to avoid cluttered progress-bar output in log files.
+    """
     # note: stderr is the default stream tqdm writes progressbars to
     # so we check that one.
     if os.isatty(sys.stderr.fileno()):

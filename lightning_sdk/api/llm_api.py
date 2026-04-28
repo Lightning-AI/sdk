@@ -66,12 +66,25 @@ def authenticate(model: str, shall_confirm: bool = True) -> None:
 
 
 class LLMApi:
+    """Internal API client for Lightning AI LLM (LitAI) conversation and model operations."""
+
     def __init__(self) -> None:
         self._client = LightningClient(retry=False, max_tries=0)
         self._assistant = None
         self._model = None
 
     def get_assistant(self, model_provider: str, model_name: str, user_name: str, org_name: str) -> str:
+        """Resolve the assistant ID for a given managed model, caching the result on the instance.
+
+        Args:
+            model_provider: The provider of the managed model (e.g. ``"openai"``).
+            model_name: The name of the managed model.
+            user_name: The username context for the lookup.
+            org_name: The organisation name context for the lookup.
+
+        Returns:
+            str: The assistant ID for the resolved managed model.
+        """
         result = self._client.assistants_service_get_managed_model_assistant(
             model_provider=model_provider, model_name=model_name, user_name=user_name, org_name=org_name
         )
@@ -79,6 +92,15 @@ class LLMApi:
         return result.id
 
     def get_model_metadata(self, teamspace_id: str, model_name: str) -> V1ManagedModel:
+        """Return cached metadata for the managed model, fetching from the API on first call.
+
+        Args:
+            teamspace_id: The teamspace ID used to scope the model lookup.
+            model_name: The name of the managed model to retrieve metadata for.
+
+        Returns:
+            V1ManagedModel: The managed model metadata.
+        """
         if self._assistant and not self._model:
             self._model = self._client.assistants_service_get_managed_model_by_name(
                 teamspace_id, self._assistant.managed_endpoint_id, model_name
@@ -86,6 +108,14 @@ class LLMApi:
         return self._model
 
     def _parse_stream_line(self, decoded_line: str) -> Optional[V1ConversationResponseChunk]:
+        """Parse a single ndjson line from a streaming response into a ``V1ConversationResponseChunk``.
+
+        Args:
+            decoded_line: A single UTF-8 decoded line from the streaming response body.
+
+        Returns:
+            Optional[V1ConversationResponseChunk]: The parsed chunk, or ``None`` if the line cannot be decoded.
+        """
         try:
             payload = json.loads(decoded_line)
             result_data = payload.get("result", {})
@@ -117,6 +147,14 @@ class LLMApi:
     def _stream_chat_response(
         self, result: StreamResultOfV1ConversationResponseChunk
     ) -> Generator[V1ConversationResponseChunk, None, None]:
+        """Yield parsed ``V1ConversationResponseChunk`` objects from a streaming API result.
+
+        Args:
+            result: The raw streaming result object from the API client.
+
+        Returns:
+            Generator[V1ConversationResponseChunk, None, None]: Parsed response chunks.
+        """
         for line in result.stream():
             decoded_lines = line.decode("utf-8").strip()
             for decoded_line in decoded_lines.splitlines():
@@ -125,6 +163,14 @@ class LLMApi:
                     yield chunk
 
     def _encode_image_bytes_to_data_url(self, image: str) -> str:
+        """Read a local image file and return it as a base64-encoded data URL.
+
+        Args:
+            image: Local filesystem path to the image file.
+
+        Returns:
+            str: A base64-encoded data URL of the form ``data:image/<ext>;base64,<data>``.
+        """
         with open(image, "rb") as image_file:
             b64 = base64.b64encode(image_file.read()).decode("utf-8")
             extension = image.split(".")[-1]
@@ -146,6 +192,27 @@ class LLMApi:
         reasoning_effort: Optional[str] = None,
         **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
+        """Send a prompt to the assistant and return the response or a streaming generator.
+
+        Args:
+            prompt: The user message to send.
+            system_prompt: Optional system prompt to set the assistant's behaviour.
+            max_completion_tokens: Maximum number of tokens to generate.
+            assistant_id: The assistant ID to send the message to.
+            images: Optional list of local image paths or HTTP URLs to include.
+            conversation_id: ID of an existing conversation to continue; ``None`` starts a new one.
+            billing_project_id: Project ID for billing attribution.
+            name: Optional name for a new conversation.
+            metadata: Optional key-value metadata to attach to the conversation.
+            stream: When ``True``, return a generator of response chunks.
+            tools: Optional list of tool definitions to pass to the model.
+            reasoning_effort: Optional reasoning effort level for supported models.
+            **kwargs: Additional fields forwarded to the request body.
+
+        Returns:
+            Union[V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None]]:
+            A single response chunk when ``stream=False``, or a generator of chunks when ``stream=True``.
+        """
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
         ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
         if ephemeral:
@@ -209,6 +276,26 @@ class LLMApi:
         reasoning_effort: Optional[str] = None,
         **kwargs: Any,
     ) -> Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
+        """Async variant of ``start_conversation``; returns a response or an async streaming generator.
+
+        Args:
+            prompt: The user message to send.
+            system_prompt: Optional system prompt to set the assistant's behaviour.
+            max_completion_tokens: Maximum number of tokens to generate.
+            assistant_id: The assistant ID to send the message to.
+            images: Optional list of local image paths or HTTP URLs to include.
+            conversation_id: ID of an existing conversation to continue; ``None`` starts a new one.
+            billing_project_id: Project ID for billing attribution.
+            name: Optional name for a new conversation.
+            metadata: Optional key-value metadata to attach to the conversation.
+            stream: When ``True``, return an async generator of response chunks.
+            reasoning_effort: Optional reasoning effort level for supported models.
+            **kwargs: Additional fields forwarded to the request body.
+
+        Returns:
+            Union[V1ConversationResponseChunk, AsyncGenerator[V1ConversationResponseChunk, None]]:
+            A single response chunk when ``stream=False``, or an async generator of chunks when ``stream=True``.
+        """
         is_internal_conversation = os.getenv("LIGHTNING_INTERNAL_CONVERSATION", "false").lower() == "true"
         ephemeral = os.getenv("LIGHTNING_EPHEMERAL", "false").lower() == "true"
         if ephemeral:
@@ -270,6 +357,14 @@ class LLMApi:
         return self.stream_response(conversation_thread)
 
     async def stream_response(self, thread: Any) -> AsyncGenerator[V1ConversationResponseChunk, None]:
+        """Yield ``V1ConversationResponseChunk`` objects from a background thread running a streaming API call.
+
+        Args:
+            thread: An async thread result object whose ``.get()`` returns the raw streaming response.
+
+        Returns:
+            AsyncGenerator[V1ConversationResponseChunk, None]: Parsed response chunks streamed asynchronously.
+        """
         loop = asyncio.get_event_loop()
         response = await asyncio.to_thread(thread.get)
 
@@ -295,12 +390,35 @@ class LLMApi:
             yield item
 
     def list_conversations(self, assistant_id: str) -> List[str]:
+        """Return all conversation IDs for the given assistant.
+
+        Args:
+            assistant_id: The assistant whose conversations to list.
+
+        Returns:
+            List[str]: The list of conversation IDs.
+        """
         result = self._client.assistants_service_list_conversations(assistant_id)
         return result.conversations
 
     def get_conversation(self, assistant_id: str, conversation_id: str) -> V1ConversationResponseChunk:
+        """Fetch all messages for a specific conversation.
+
+        Args:
+            assistant_id: The assistant that owns the conversation.
+            conversation_id: The unique ID of the conversation to retrieve.
+
+        Returns:
+            V1ConversationResponseChunk: The messages in the conversation.
+        """
         result = self._client.assistants_service_get_conversation(assistant_id, conversation_id)
         return result.messages
 
     def reset_conversation(self, assistant_id: str, conversation_id: str) -> None:
+        """Delete a conversation and all its messages.
+
+        Args:
+            assistant_id: The assistant that owns the conversation.
+            conversation_id: The unique ID of the conversation to delete.
+        """
         self._client.assistants_service_delete_conversation(assistant_id, conversation_id)

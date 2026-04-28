@@ -46,8 +46,8 @@ class Studio(metaclass=TrackCallsMeta):
     Args:
         name: the name of the studio
         teamspace: the name of the teamspace the studio is contained by
-        org: the name of the organization owning the :param`teamspace` in case it is owned by an org
-        user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
+        org: the name of the organization owning the the teamspace in case it is owned by an org
+        user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
         cloud_account: the name of the cloud account, the studio should be created on.
             Doesn't matter when the studio already exists.
         cloud_account_provider: The provider to select the cloud-account from.
@@ -221,7 +221,11 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def name(self) -> str:
-        """Returns the name of the studio."""
+        """Returns the name of the studio.
+
+        Returns:
+            str: The studio name.
+        """
         return self._studio.name
 
     @property
@@ -230,6 +234,8 @@ class Studio(metaclass=TrackCallsMeta):
 
         Can be one of { NotCreated | Pending | Running | Stopping | Stopped | Failed }
 
+        Returns:
+            Status: The current :class:`~lightning_sdk.status.Status` of the Studio.
         """
         internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
         return _internal_status_to_external_status(
@@ -238,17 +244,29 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def teamspace(self) -> Teamspace:
-        """Returns the name of the Teamspace."""
+        """Returns the name of the Teamspace.
+
+        Returns:
+            Teamspace: The :class:`~lightning_sdk.teamspace.Teamspace` this Studio belongs to.
+        """
         return self._teamspace
 
     @property
     def owner(self) -> Owner:
-        """Returns the name of the owner (either user or org)."""
+        """Returns the name of the owner (either user or org).
+
+        Returns:
+            Owner: The owning :class:`~lightning_sdk.owner.Owner` (user or org).
+        """
         return self.teamspace.owner
 
     @property
     def machine(self) -> Optional[Machine]:
-        """Returns the current machine type the Studio is running on."""
+        """Returns the current machine type the Studio is running on.
+
+        Returns:
+            Optional[Machine]: The active :class:`~lightning_sdk.machine.Machine`, or None if not running.
+        """
         if self.status != Status.Running:
             return None
         return self._studio_api.get_machine(
@@ -260,7 +278,11 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def public_ip(self) -> Optional[str]:
-        """Returns the public IP address of the machine the Studio is running on."""
+        """Returns the public IP address of the machine the Studio is running on.
+
+        Returns:
+            Optional[str]: The public IP, or None if unavailable.
+        """
         return self._studio_api.get_public_ip(
             self._studio.id,
             self._teamspace.id,
@@ -268,7 +290,11 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def interruptible(self) -> bool:
-        """Returns whether the Studio is running on a interruptible instance."""
+        """Returns whether the Studio is running on a interruptible instance.
+
+        Returns:
+            bool: True if the Studio is on an interruptible instance, None if not running.
+        """
         if self.status != Status.Running:
             return None
 
@@ -276,7 +302,11 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def cluster(self) -> str:
-        """Returns the cluster the Studio is running on."""
+        """Returns the cluster the Studio is running on.
+
+        Returns:
+            str: The cloud account (cluster) ID.
+        """
         warnings.warn(
             f"{self._cls_name}.cluster is deprecated. Use {self._cls_name}.cloud_account instead", DeprecationWarning
         )
@@ -284,6 +314,11 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def cloud_account(self) -> str:
+        """The cloud account ID this Studio is associated with.
+
+        Returns:
+            str: The cloud account (cluster) ID.
+        """
         return self._studio.cluster_id
 
     def start(
@@ -302,6 +337,9 @@ class Studio(metaclass=TrackCallsMeta):
                 If in doubt, set it. Won't have an effect on machines not requiring it.
                 Defaults to 3h
 
+        Raises:
+            RuntimeError: If the Studio is already running on a different machine or is not stopped.
+            RuntimeError: If the requested machine is not supported or has no available capacity.
         """
         # Check to see if we're inside a studio and if its running
         current_studio_machine = None
@@ -398,7 +436,11 @@ class Studio(metaclass=TrackCallsMeta):
         self._setup()
 
     def stop(self) -> None:
-        """Stops a running Studio."""
+        """Stops a running Studio.
+
+        Raises:
+            RuntimeError: If the Studio is not currently running or pending.
+        """
         status = self.status
         if status not in (Status.Running, Status.Pending):
             raise RuntimeError(f"Cannot stop a studio that is not running. Studio {self.name} is {status}.")
@@ -422,6 +464,12 @@ class Studio(metaclass=TrackCallsMeta):
                 If not provided, defaults to current teamspace.
             machine: the machine to start the duplicated studio on.
                 Defaults to CPU
+
+        Returns:
+            Studio: The newly created duplicate Studio.
+
+        Raises:
+            ValueError: If the target teamspace cannot be resolved.
         """
         if target_teamspace is None:
             target_teamspace_id = self._teamspace.id
@@ -462,6 +510,8 @@ class Studio(metaclass=TrackCallsMeta):
         Note:
             this call is blocking until the new machine is provisioned
 
+        Raises:
+            RuntimeError: If the Studio is not currently running.
         """
         status = self.status
         if status != Status.Running:
@@ -515,8 +565,16 @@ class Studio(metaclass=TrackCallsMeta):
         The command will continue to run in the background.
 
         Args:
-            timeout: wait for this many seconds for the command to finish.
-            check_interval: check the status of the command every this many seconds.
+            *commands: The shell commands to execute in sequence.
+            timeout: Wait for this many seconds for the command to finish. Defaults to ``10``.
+            check_interval: Poll the command status every this many seconds. Defaults to ``1``.
+
+        Returns:
+            Tuple of (output, exit_code) collected up to the timeout.
+
+        Raises:
+            ValueError: If ``check_interval`` is greater than ``timeout``.
+            RuntimeError: If the Studio is not currently running.
         """
         if check_interval > timeout:
             raise ValueError("check_interval must be less than timeout")
@@ -548,6 +606,11 @@ class Studio(metaclass=TrackCallsMeta):
         Args:
             commands: the commands to run on the Studio in sequence.
 
+        Returns:
+            Tuple[str, int]: A tuple of (output, exit_code).
+
+        Raises:
+            RuntimeError: If the Studio is not currently running.
         """
         if _LIGHTNING_DEBUG:
             print(f"Running {commands=}")
@@ -572,6 +635,11 @@ class Studio(metaclass=TrackCallsMeta):
         Args:
             commands: the commands to run on the Studio in sequence.
 
+        Returns:
+            str: The combined stdout output of the commands.
+
+        Raises:
+            RuntimeError: If any command exits with a non-zero exit code.
         """
         output, exit_code = self.run_with_exit_code(*commands)
         if exit_code != 0:
@@ -579,7 +647,13 @@ class Studio(metaclass=TrackCallsMeta):
         return output
 
     def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
-        """Uploads a given file to a remote path on the Studio."""
+        """Uploads a given file to a remote path on the Studio.
+
+        Args:
+            file_path: Local path of the file to upload.
+            remote_path: Destination path inside the Studio. Defaults to the file's basename.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+        """
         if remote_path is None:
             remote_path = os.path.split(file_path)[1]
 
@@ -593,7 +667,17 @@ class Studio(metaclass=TrackCallsMeta):
         )
 
     def upload_folder(self, folder_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
-        """Uploads a given folder to a remote path on the Studio."""
+        """Uploads a given folder to a remote path on the Studio.
+
+        Args:
+            folder_path: Local directory to upload.
+            remote_path: Destination directory inside the Studio. Defaults to preserving the relative structure.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+
+        Raises:
+            ValueError: If ``folder_path`` is ``None``.
+            NotADirectoryError: If ``folder_path`` is a file or does not exist.
+        """
         if folder_path is None:
             raise ValueError("Cannot upload a folder that is None.")
         folder_path = os.path.normpath(folder_path)
@@ -623,7 +707,12 @@ class Studio(metaclass=TrackCallsMeta):
             progress_bar.close()
 
     def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
-        """Downloads a file from the Studio to a given target path."""
+        """Downloads a file from the Studio to a given target path.
+
+        Args:
+            remote_path: Path of the file inside the Studio to download.
+            file_path: Local destination path. Defaults to ``remote_path``.
+        """
         if file_path is None:
             file_path = remote_path
 
@@ -636,7 +725,12 @@ class Studio(metaclass=TrackCallsMeta):
         )
 
     def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
-        """Downloads a folder from the Studio to a given target path."""
+        """Downloads a folder from the Studio to a given target path.
+
+        Args:
+            remote_path: Path of the directory inside the Studio to download.
+            target_path: Local destination directory. Defaults to ``remote_path``.
+        """
         if target_path is None:
             target_path = remote_path
 
@@ -661,12 +755,15 @@ class Studio(metaclass=TrackCallsMeta):
 
         Args:
             name: The name of the job. Needs to be unique within the teamspace.
-            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            machine: The machine type to run the job on.
             command: The command to run inside your job.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            Job: The submitted :class:`Job` instance.
         """
         from lightning_sdk.job import Job
 
@@ -697,10 +794,13 @@ class Studio(metaclass=TrackCallsMeta):
         Args:
             name: The name of the job. Needs to be unique within the teamspace.
             num_machines: The number of machines to run on.
-            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
+            machine: The machine type to run the job on.
             command: The command to run inside your job.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+
+        Returns:
+            MMT: The submitted :class:`MMT` instance.
         """
         from lightning_sdk.mmt import MMT
 
@@ -727,10 +827,8 @@ class Studio(metaclass=TrackCallsMeta):
                 - dict[str, int]: Named ports (e.g., {"web": 8080})
 
         Returns:
-            List of V1Endpoint objects. Access endpoint properties like:
-                - endpoint.name: Port name (None for unnamed ports)
-                - endpoint.ports: List of port numbers
-                - endpoint.urls: List of accessible URLs
+            Endpoints for the added ports. Each entry exposes ``name``,
+            ``ports``, and ``urls`` attributes.
         """
         if isinstance(ports, dict):
             port_items = ports.items()
@@ -745,10 +843,23 @@ class Studio(metaclass=TrackCallsMeta):
         ]
 
     def list_ports(self) -> List[V1Endpoint]:
-        """List ports that are exposed in the Studio."""
+        """List ports that are exposed in the Studio.
+
+        Returns:
+            List[V1Endpoint]: The currently exposed port endpoints.
+        """
         return self._studio_api.list_ports(self._teamspace.id, self._studio.id)
 
     def create_assistant(self, name: str, port: int) -> None:
+        """Create a Lightning AI assistant backed by a service running on this Studio.
+
+        Args:
+            name: Display name for the assistant.
+            port: The port on this Studio that serves the assistant endpoint.
+
+        Returns:
+            ``None``; the assistant ID is stored on the instance for later use.
+        """
         assistant = self._studio_api.create_assistant(
             studio_id=self._studio.id, teamspace_id=self._teamspace.id, port=port, assistant_name=name
         )
@@ -757,7 +868,11 @@ class Studio(metaclass=TrackCallsMeta):
         _logger.info(assistant_info)
 
     def rename(self, new_name: str) -> None:
-        """Renames the current Studio to the provided new name."""
+        """Renames the current Studio to the provided new name.
+
+        Args:
+            new_name: The new display name for the Studio.
+        """
         if new_name == self._studio.name:
             return
 
@@ -766,11 +881,21 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def auto_sleep(self) -> bool:
-        """Returns if a Studio has auto-sleep enabled."""
+        """Returns if a Studio has auto-sleep enabled.
+
+        Returns:
+            bool: True if auto-sleep is enabled for this Studio.
+        """
         return not self._studio.code_config.disable_auto_shutdown
 
     @auto_sleep.setter
     def auto_sleep(self, value: bool) -> None:
+        """Enable or disable auto-sleep for this Studio.
+
+        Args:
+            value: Pass ``True`` to enable auto-sleep, ``False`` to disable it.
+                Disabling auto-sleep on a CPU Studio converts it from free to paid.
+        """
         if not value and self.machine == Machine.CPU:
             warnings.warn(f"Disabling auto-sleep will convert the {self._cls_name} from free to paid!")
         self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value)
@@ -778,37 +903,72 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def auto_sleep_time(self) -> int:
-        """Returns the time in seconds a Studio has to be idle for auto-sleep to kick in (if enabled)."""
+        """Returns the time in seconds a Studio has to be idle for auto-sleep to kick in (if enabled).
+
+        Returns:
+            int: Idle timeout in seconds before auto-sleep activates.
+        """
         return self._studio.code_config.idle_shutdown_seconds
 
     @auto_sleep_time.setter
     def auto_sleep_time(self, value: int) -> None:
+        """Set the idle timeout before auto-sleep kicks in.
+
+        Args:
+            value: Idle time in seconds before the Studio is automatically stopped.
+                Setting this converts a free CPU Studio to paid.
+        """
         warnings.warn(f"Setting auto-sleep time will convert the {self._cls_name} from free to paid!")
         self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, idle_shutdown_seconds=value)
         self._update_studio_reference()
 
     @property
     def auto_shutdown(self) -> bool:
+        """Whether auto-sleep is enabled. Deprecated — use :attr:`auto_sleep` instead.
+
+        Returns:
+            bool: True if auto-sleep is currently enabled.
+        """
         warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
         return self.auto_sleep
 
     @auto_shutdown.setter
     def auto_shutdown(self, value: bool) -> None:
+        """Enable or disable auto-sleep. Deprecated — use :attr:`auto_sleep` instead.
+
+        Args:
+            value: Pass ``True`` to enable auto-sleep, ``False`` to disable it.
+        """
         warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
         self.auto_sleep = value
 
     @property
     def auto_shutdown_time(self) -> int:
+        """Idle timeout in seconds before auto-sleep. Deprecated — use :attr:`auto_sleep_time` instead.
+
+        Returns:
+            int: The current idle timeout in seconds.
+        """
         warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
         return self.auto_sleep_time
 
     @auto_shutdown_time.setter
     def auto_shutdown_time(self, value: int) -> None:
+        """Set idle timeout in seconds. Deprecated — use :attr:`auto_sleep_time` instead.
+
+        Args:
+            value: Idle time in seconds before the Studio is automatically stopped.
+        """
         warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
         self.auto_sleep_time = value
 
     @property
     def env(self) -> Dict[str, str]:
+        """All environment variables currently set on this Studio.
+
+        Returns:
+            dict[str, str]: Mapping of environment variable names to their values.
+        """
         self._update_studio_reference()
         return self._studio_api.get_env(self._studio)
 
@@ -825,16 +985,31 @@ class Studio(metaclass=TrackCallsMeta):
 
     @property
     def available_plugins(self) -> Mapping[str, str]:
-        """All available plugins to install in the current Studio."""
+        """All available plugins to install in the current Studio.
+
+        Returns:
+            Mapping[str, str]: A mapping of plugin names to their descriptions.
+        """
         return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
 
     @property
     def installed_plugins(self) -> Mapping[str, "Plugin"]:
-        """All plugins that are currently installed in this Studio."""
+        """All plugins that are currently installed in this Studio.
+
+        Returns:
+            Mapping[str, Plugin]: A mapping of plugin names to their :class:`~lightning_sdk.plugin.Plugin` instances.
+        """
         return self._plugins
 
     def install_plugin(self, plugin_name: str) -> None:
-        """Installs a given plugin to a Studio."""
+        """Installs a given plugin to a Studio.
+
+        Args:
+            plugin_name: The name of the plugin to install.
+
+        Raises:
+            RuntimeError: If the plugin installation fails.
+        """
         try:
             additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
         except RuntimeError as e:
@@ -847,11 +1022,27 @@ class Studio(metaclass=TrackCallsMeta):
         self._add_plugin(plugin_name)
 
     def run_plugin(self, plugin_name: str, *args: Any, **kwargs: Any) -> str:
-        """Runs a given plugin in a Studio."""
+        """Runs a given plugin in a Studio.
+
+        Args:
+            plugin_name: The name of the installed plugin to run.
+            *args: Positional arguments forwarded to the plugin's run method.
+            **kwargs: Keyword arguments forwarded to the plugin's run method.
+
+        Returns:
+            str: The output produced by the plugin.
+        """
         return self._plugins[plugin_name].run(*args, **kwargs)
 
     def uninstall_plugin(self, plugin_name: str) -> None:
-        """Uninstalls the given plugin from the Studio."""
+        """Uninstalls the given plugin from the Studio.
+
+        Args:
+            plugin_name: The name of the plugin to uninstall.
+
+        Raises:
+            RuntimeError: If the plugin uninstallation fails.
+        """
         try:
             self._studio_api.uninstall_plugin(self._studio.id, self._teamspace.id, plugin_name)
         except RuntimeError as e:
@@ -861,11 +1052,19 @@ class Studio(metaclass=TrackCallsMeta):
         self._plugins.pop(plugin_name)
 
     def _list_installed_plugins(self) -> Mapping[str, str]:
-        """Lists all plugins that should be installed."""
+        """Lists all plugins that should be installed.
+
+        Returns:
+            Mapping[str, str]: A mapping of plugin names to their descriptions.
+        """
         return self._studio_api.list_installed_plugins(self._studio.id, self._teamspace.id)
 
     def _add_plugin(self, plugin_name: str) -> None:
-        """Adds the just installed plugin to the internal list of plugins."""
+        """Adds the just installed plugin to the internal list of plugins.
+
+        Args:
+            plugin_name: The name of the plugin to add.
+        """
         from lightning_sdk.plugin import (
             CustomPortPlugin,
             InferenceServerPlugin,
@@ -889,13 +1088,27 @@ class Studio(metaclass=TrackCallsMeta):
         self._plugins[plugin_name] = plugin_cls(plugin_name, description, self)
 
     def _execute_plugin(self, plugin_name: str) -> Tuple[str, int]:
-        """Executes a plugin command on the Studio."""
+        """Executes a plugin command on the Studio.
+
+        Args:
+            plugin_name: The name of the plugin to execute.
+
+        Returns:
+            Tuple[str, int]: The command output and its exit code.
+        """
         output = self._studio_api.execute_plugin(self._studio.id, self._teamspace.id, plugin_name)
         _logger.info(output)
         return output
 
     def __eq__(self, other: "Studio") -> bool:
-        """Checks for equality with other Studios."""
+        """Checks for equality with other Studios.
+
+        Args:
+            other: The other Studio to compare against.
+
+        Returns:
+            bool: True if both Studios share the same name, teamspace, and owner.
+        """
         return (
             isinstance(other, Studio)
             and self.name == other.name
@@ -904,11 +1117,19 @@ class Studio(metaclass=TrackCallsMeta):
         )
 
     def __repr__(self) -> str:
-        """Returns reader friendly representation."""
+        """Returns reader friendly representation.
+
+        Returns:
+            str: A string of the form ``Studio(name=..., teamspace=...)``.
+        """
         return f"Studio(name={self.name}, teamspace={self.teamspace!r})"
 
     def __str__(self) -> str:
-        """Returns reader friendly representation."""
+        """Returns reader friendly representation.
+
+        Returns:
+            str: Same value as :meth:`__repr__`.
+        """
         return repr(self)
 
     def _update_studio_reference(self) -> None:
@@ -928,8 +1149,8 @@ class VM(Studio):
     Args:
         name: the name of the vm
         teamspace: the name of the teamspace the vm is contained by
-        org: the name of the organization owning the :param`teamspace` in case it is owned by an org
-        user: the name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
+        org: the name of the organization owning the the teamspace in case it is owned by an org
+        user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
         cloud_account: the name of the cloud account, the vm should be created on.
             Doesn't matter when the vm already exists.
         cloud_account_provider: The provider to select the cloud-account from.
@@ -946,7 +1167,14 @@ class VM(Studio):
 
 
 def _internal_status_to_external_status(internal_status: str) -> Status:
-    """Converts internal status strings from HTTP requests to external enums."""
+    """Converts internal status strings from HTTP requests to external enums.
+
+    Args:
+        internal_status: The raw status string returned by the API (e.g. ``"CLOUD_SPACE_INSTANCE_STATE_RUNNING"``).
+
+    Returns:
+        Status: The corresponding :class:`~lightning_sdk.status.Status` enum value.
+    """
     return {
         # don't get a status if no instance alive
         None: Status.Stopped,

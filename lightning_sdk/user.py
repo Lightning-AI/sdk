@@ -51,7 +51,16 @@ class User(Owner):
         return self._user_api.get_secrets()
 
     def set_secret(self, key: str, value: str) -> None:
-        """Set a (encrypted) secret for the user."""
+        """Set an encrypted secret for the user.
+
+        Args:
+            key: Secret name. Must contain only alphanumeric characters and underscores,
+                and must not start with a digit.
+            value: The secret value to store (encrypted at rest).
+
+        Raises:
+            ValueError: If the key contains invalid characters.
+        """
         if not self._user_api.verify_secret_name(key):
             raise ValueError(
                 "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
@@ -60,6 +69,19 @@ class User(Owner):
         self._user_api.set_secret(key, value)
 
     def create_teamspace(self, name: str) -> "Teamspace":
+        """Create a new teamspace owned by this user.
+
+        Can only be called for the currently authenticated user.
+
+        Args:
+            name: The name for the new teamspace.
+
+        Returns:
+            Teamspace: The newly created teamspace.
+
+        Raises:
+            ValueError: If called for a user other than the authenticated user.
+        """
         from lightning_sdk.teamspace import Teamspace
 
         if not _get_authed_user().id == self.id:
@@ -70,6 +92,16 @@ class User(Owner):
 
     @property
     def organizations(self) -> List["Organization"]:
+        """All organizations the user belongs to.
+
+        Can only be retrieved for the currently authenticated user.
+
+        Returns:
+            list[Organization]: The organizations this user is a member of.
+
+        Raises:
+            ValueError: If called for a user other than the authenticated user.
+        """
         if not _get_authed_user().id == self.id:
             raise ValueError("Can only list organizations for currently authenticated user")
 

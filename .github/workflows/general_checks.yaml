@@ -27,7 +27,7 @@ jobs:
       testing-matrix: |
         {
           "os": ["ubuntu-24.04", "macos-latest"],
-          "python-version": [ "3.10", "3.11"]
+          "python-version": [ "3.11", "3.12"]
         }
       env-vars: |
         {
@@ -51,7 +51,7 @@ jobs:
     - name: Set up Python 🐍
       uses: actions/setup-python@v5
       with:
-        python-version: "3.10"
+        python-version: "3.11"
 
     - name: Determine cache hash
       run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV

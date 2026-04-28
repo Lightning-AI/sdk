@@ -25,6 +25,14 @@ class Filesystem(metaclass=TrackCallsMeta):
         self._filesystem_api = FilesystemApi()
 
     def listdir(self, uri: str) -> List[str]:
+        """List the immediate children of a remote directory.
+
+        Args:
+            uri: Remote path in ``lit://[owner/][teamspace/]destination`` format.
+
+        Returns:
+            List[str]: Basenames of the entries directly inside the given directory.
+        """
         path_result = parse_lit_url(uri)
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
         output = self._filesystem_api.list_files(
@@ -33,6 +41,16 @@ class Filesystem(metaclass=TrackCallsMeta):
         return [os.path.basename(item["path"]) for item in output]
 
     def walk(self, url: str) -> Generator[Tuple[str, List[str], List[str]], None, None]:
+        """Recursively walk a remote directory tree, yielding ``(dirpath, subdirs, files)`` tuples.
+
+        Args:
+            url: Remote path in ``lit://[owner/][teamspace/]destination`` format.
+
+        Returns:
+            Generator[Tuple[str, List[str], List[str]], None, None]: Each tuple contains the
+            current directory path, a list of its immediate subdirectory names, and a list of
+            its immediate file names — mirroring the behaviour of :func:`os.walk`.
+        """
         path_result = parse_lit_url(url)
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
         output = self._filesystem_api.list_files(
@@ -66,6 +84,24 @@ class Filesystem(metaclass=TrackCallsMeta):
         recursive: bool = False,
         progress_bar: bool = True,
     ) -> None:
+        """Copy a file or directory between a local path and a remote ``lit://`` location.
+
+        Exactly one of ``source`` or ``destination`` must be a ``lit://`` URL; the other
+        must be a local path.  Upload is restricted to ``lightning_storage`` destinations.
+
+        Args:
+            source: Source path — either a local filesystem path or a ``lit://`` URL.
+            destination: Destination path — either a local filesystem path or a ``lit://`` URL.
+            recursive: When ``True``, copy directories recursively.  Required when the source
+                is a remote directory or a local directory.
+            progress_bar: Whether to display an upload/download progress bar.
+
+        Raises:
+            ValueError: If both paths are remote, neither path is remote, the remote file does
+                not exist, or a directory is copied without ``recursive=True``.
+            NotImplementedError: If the destination is a remote path that is not a
+                ``lightning_storage`` location.
+        """
         source_is_lit = source.startswith("lit://")
         dest_is_lit = destination.startswith("lit://")
 

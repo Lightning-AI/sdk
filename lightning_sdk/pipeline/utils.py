@@ -61,6 +61,14 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
 
 
 def _get_studio(studio: Union["Studio", str, None]) -> Union[Studio, None]:
+    """Resolve a Studio from a name string or return the instance unchanged.
+
+    Args:
+        studio: A ``Studio`` instance, a studio name string, or ``None``.
+
+    Returns:
+        Union[Studio, None]: The resolved ``Studio`` instance, or ``None``.
+    """
     if studio is None:
         return None
 
@@ -73,6 +81,16 @@ def _get_studio(studio: Union["Studio", str, None]) -> Union[Studio, None]:
 def _validate_cloud_account(
     pipeline_cloud_account: str, step_cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
 ) -> None:
+    """Raise if two cloud account IDs conflict when a shared filesystem is enabled.
+
+    Args:
+        pipeline_cloud_account: The pipeline-level cloud account ID (may be empty string).
+        step_cloud_account: The step-level cloud account ID (may be empty string).
+        shared_filesystem: Whether the shared filesystem is enabled (bool or config object).
+
+    Raises:
+        ValueError: If both IDs are non-empty and do not match while shared filesystem is on.
+    """
     shared_filesystem_enable = (
         shared_filesystem.enabled if isinstance(shared_filesystem, V1SharedFilesystem) else shared_filesystem
     )
@@ -87,6 +105,15 @@ def _validate_cloud_account(
 
 
 def _to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[Union[List[str], Literal["DEFAULT"]]]:
+    """Normalise a ``wait_for`` value to a list (or the sentinel ``"DEFAULT"``).
+
+    Args:
+        wait_for: A step name, list of step names, ``None``, or the ``DEFAULT`` sentinel.
+
+    Returns:
+        Union[List[str], Literal["DEFAULT"]]: An empty list when ``None``, the original list,
+        a single-element list when a bare string is given, or the ``DEFAULT`` sentinel.
+    """
     if wait_for == DEFAULT:
         return wait_for
 
@@ -97,6 +124,14 @@ def _to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[Union[Li
 
 
 def _get_cloud_account(steps: List[V1PipelineStep]) -> Optional[str]:
+    """Return the cloud account ID used across all steps (sorted first when multiple exist).
+
+    Args:
+        steps: The list of pipeline steps to inspect.
+
+    Returns:
+        Optional[str]: The selected cloud account ID, or ``None`` if there are no steps.
+    """
     if len(steps) == 0:
         return None
 
@@ -109,6 +144,14 @@ def _get_cloud_account(steps: List[V1PipelineStep]) -> Optional[str]:
 
 
 def _get_spec(step: Any) -> V1JobSpec:
+    """Extract the job spec from a pipeline step, regardless of its step type.
+
+    Args:
+        step: A pipeline step proto with a ``type`` attribute and matching payload field.
+
+    Returns:
+        V1JobSpec: The job specification embedded in the step.
+    """
     if step.type == V1PipelineStepType.DEPLOYMENT:
         return step.deployment.spec
     if step.type == V1PipelineStepType.MMT:

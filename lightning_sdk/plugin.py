@@ -407,7 +407,15 @@ class CustomPortPlugin(_Plugin):
     _slug_name = "custom-port"
 
     def run(self, name: Optional[str] = None, port: int = 8000) -> str:
-        """Starts a new port to the given Studio."""
+        """Expose a custom port on the Studio and return its public URL.
+
+        Args:
+            name: Display name for the port. Auto-generated if not provided.
+            port: The port number to expose on the Studio. Defaults to ``8000``.
+
+        Returns:
+            str: The public URL at which the exposed port can be reached.
+        """
         if name is None:
             name = _run_name("port")
 
