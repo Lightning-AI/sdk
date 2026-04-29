@@ -58,7 +58,8 @@ class V1KubernetesDirectV1(object):
         'kubevirt_config': 'V1KubevirtConfig',
         'prometheus_url': 'str',
         'settings': 'V1KubernetesDirectSettingsV1',
-        'skip_user_label_injection': 'bool'
+        'skip_user_label_injection': 'bool',
+        'supported_nvidia_driver_versions': 'list[str]'
     }
 
     attribute_map = {
@@ -79,10 +80,11 @@ class V1KubernetesDirectV1(object):
         'kubevirt_config': 'kubevirtConfig',
         'prometheus_url': 'prometheusUrl',
         'settings': 'settings',
-        'skip_user_label_injection': 'skipUserLabelInjection'
+        'skip_user_label_injection': 'skipUserLabelInjection',
+        'supported_nvidia_driver_versions': 'supportedNvidiaDriverVersions'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
@@ -102,6 +104,7 @@ class V1KubernetesDirectV1(object):
         self._prometheus_url = None
         self._settings = None
         self._skip_user_label_injection = None
+        self._supported_nvidia_driver_versions = None
         self.discriminator = None
         if automate_agent_installation is not None:
             self.automate_agent_installation = automate_agent_installation
@@ -139,6 +142,8 @@ class V1KubernetesDirectV1(object):
             self.settings = settings
         if skip_user_label_injection is not None:
             self.skip_user_label_injection = skip_user_label_injection
+        if supported_nvidia_driver_versions is not None:
+            self.supported_nvidia_driver_versions = supported_nvidia_driver_versions
 
     @property
     def automate_agent_installation(self) -> 'bool':
@@ -517,6 +522,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._skip_user_label_injection = skip_user_label_injection
+
+    @property
+    def supported_nvidia_driver_versions(self) -> 'list[str]':
+        """Gets the supported_nvidia_driver_versions of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The supported_nvidia_driver_versions of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._supported_nvidia_driver_versions
+
+    @supported_nvidia_driver_versions.setter
+    def supported_nvidia_driver_versions(self, supported_nvidia_driver_versions: 'list[str]'):
+        """Sets the supported_nvidia_driver_versions of this V1KubernetesDirectV1.
+
+
+        :param supported_nvidia_driver_versions: The supported_nvidia_driver_versions of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._supported_nvidia_driver_versions = supported_nvidia_driver_versions
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

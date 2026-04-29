@@ -1523,6 +1523,129 @@ class LitLoggerServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def lit_logger_service_list_all_metrics_streams(self, **kwargs) -> 'V1ListMetricsStreamsResponse':  # noqa: E501
+        """lit_logger_service_list_all_metrics_streams  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_logger_service_list_all_metrics_streams(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param list[str] user_ids:
+        :param str org_id: filter projects by org id
+        :param str project_id:
+        :param str cloud_space_id:
+        :param str app_id:
+        :param int limit:
+        :param int offset:
+        :param str order_by:
+        :param list[str] ids: filter by specific metric stream IDs
+        :return: V1ListMetricsStreamsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.lit_logger_service_list_all_metrics_streams_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.lit_logger_service_list_all_metrics_streams_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def lit_logger_service_list_all_metrics_streams_with_http_info(self, **kwargs) -> 'V1ListMetricsStreamsResponse':  # noqa: E501
+        """lit_logger_service_list_all_metrics_streams  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.lit_logger_service_list_all_metrics_streams_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param list[str] user_ids:
+        :param str org_id: filter projects by org id
+        :param str project_id:
+        :param str cloud_space_id:
+        :param str app_id:
+        :param int limit:
+        :param int offset:
+        :param str order_by:
+        :param list[str] ids: filter by specific metric stream IDs
+        :return: V1ListMetricsStreamsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['user_ids', 'org_id', 'project_id', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method lit_logger_service_list_all_metrics_streams" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'cloud_space_id' in params:
+            query_params.append(('cloudSpaceId', params['cloud_space_id']))  # noqa: E501
+        if 'app_id' in params:
+            query_params.append(('appId', params['app_id']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'offset' in params:
+            query_params.append(('offset', params['offset']))  # noqa: E501
+        if 'order_by' in params:
+            query_params.append(('orderBy', params['order_by']))  # noqa: E501
+        if 'ids' in params:
+            query_params.append(('ids', params['ids']))  # noqa: E501
+            collection_formats['ids'] = 'multi'  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/metrics-streams/all', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListMetricsStreamsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def lit_logger_service_list_lit_logger_media(self, project_id: 'str', metrics_stream_id: 'str', **kwargs) -> 'V1ListLitLoggerMediaResponse':  # noqa: E501
         """lit_logger_service_list_lit_logger_media  # noqa: E501
 
@@ -1766,7 +1889,6 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
-        :param str org_id: filter projects by org id
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1795,13 +1917,12 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
-        :param str org_id: filter projects by org id
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids', 'org_id']  # noqa: E501
+        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1844,8 +1965,6 @@ class LitLoggerServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
-        if 'org_id' in params:
-            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

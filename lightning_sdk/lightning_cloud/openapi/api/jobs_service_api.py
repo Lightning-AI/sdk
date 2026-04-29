@@ -2115,6 +2115,8 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
         :return: V1GetDeploymentRoutingTelemetryContentCSVResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2137,12 +2139,14 @@ class JobsServiceApi(object):
         :param async_req bool
         :param str project_id: (required)
         :param str id: Deployment ID (required)
+        :param datetime start: Optional to filter
+        :param datetime end: Optional to filter
         :return: V1GetDeploymentRoutingTelemetryContentCSVResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id']  # noqa: E501
+        all_params = ['project_id', 'id', 'start', 'end']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2175,6 +2179,10 @@ class JobsServiceApi(object):
             path_params['id'] = params['id']  # noqa: E501
 
         query_params = []
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
 
         header_params = {}
 
