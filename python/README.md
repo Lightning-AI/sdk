@@ -1,22 +1,16 @@
 # Lightning SDK
 
-Software Development Kit (SDK) for Lightning AI.
-
-This repository is a monorepo: the published Python package (**`lightning-sdk`**, import name `lightning_sdk`) lives under [`python/`](python/), alongside tests and Sphinx docs. Packaging metadata (`pyproject.toml`, `setup.py`) is in [`python/`](python/) as well. To hack on it locally, from the repository root run **`pip install -e ./python`** (or `cd python && pip install -e .`).
+Software Development Kit (SDK) for Lightning AI
 
 ## Installation
 
-Install from PyPI:
-
-```bash
-pip install lightning-sdk
-```
+The package can be installed using `pip install lightning-sdk`
 
 ## Usage
 
-Export `LIGHTNING_USER_ID` and `LIGHTNING_API_KEY` from your account settings → Keys → Programmatic Login.
+To use the SDK, you need to export the environment variables `LIGHTNING_USER_ID` and `LIGHTNING_API_KEY` with the values found in your account settings -> Keys -> Programmatic Login.
 
-Inside a Studio, those variables are usually already set.
+If you want to use it from within a Studio, these variables are already available for you.
 
 ## Example
 
@@ -67,7 +61,3 @@ s.delete()
 duplicate.stop()
 duplicate.delete()
 ```
-
-## JavaScript
-
-Additional client SDKs (for example JavaScript) can live alongside `python/` as this repo grows.

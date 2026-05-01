@@ -19,25 +19,43 @@ jobs:
 
   check-package:
     if: github.event.pull_request.draft == false
-    uses: Lightning-AI/utilities/.github/workflows/check-package.yml@main
-    with:
-      actions-ref: main
-      artifact-name: dist-packages-${{ github.sha }}
-      import-name: "lightning_sdk"
-      testing-matrix: |
-        {
-          "os": ["ubuntu-24.04", "macos-latest"],
-          "python-version": [ "3.11", "3.12"]
-        }
-      env-vars: |
-        {
-          "LIGHTNING_USER_ID": "dummy-user-id",
-          "LIGHTNING_API_KEY": "dummy-api-key"
-        }
-      # adding testing that the JSON are included in the package
-      custom-import-code: |
-        from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
-        assert len(PUBLIC_MODELS.keys())
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    env:
+      LIGHTNING_USER_ID: dummy-user-id
+      LIGHTNING_API_KEY: dummy-api-key
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: pip
+    - name: Build wheel and smoke-install
+      run: |
+        cd python
+        pip install build twine
+        python -m build
+        twine check dist/*
+        pip install dist/*.whl
+        python -c "import lightning_sdk; from lightning_sdk.llm.public_assistants import PUBLIC_MODELS; assert len(PUBLIC_MODELS.keys())"
+
+  pkg-guardian:
+    runs-on: ubuntu-latest
+    needs: check-package
+    if: always()
+    steps:
+      - run: echo "${{ needs.check-package.result }}"
+      - name: failing...
+        if: needs.check-package.result == 'failure'
+        run: exit 1
+      - name: cancelled or skipped...
+        if: contains(fromJSON('["cancelled", "skipped"]'), needs.check-package.result)
+        timeout-minutes: 1
+        run: sleep 90
 
   pre-commit:
     runs-on: ubuntu-24.04
@@ -60,7 +78,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
-        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml', 'python/pyproject.toml') }}
 
     - name: Run pre-commit
       uses: pre-commit/action@v3.0.1

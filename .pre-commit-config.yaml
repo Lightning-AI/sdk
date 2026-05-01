@@ -14,7 +14,7 @@
 
 exclude: |
   (?x)^(
-    lightning_sdk/lightning_cloud/.* |
+    python/lightning_sdk/lightning_cloud/.* |
     .*__snapshots__/.*\.ambr$
   )$
 

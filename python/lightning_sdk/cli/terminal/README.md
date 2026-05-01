@@ -166,25 +166,25 @@ a glance.
 ### Running tests
 
 ```bash
-# All terminal tests (from repo root or from tests/)
-pytest tests/cli/terminal/ -v
-cd tests && pytest cli/terminal/ -v
+# All terminal tests (from repo root or from python/tests/)
+pytest python/tests/cli/terminal/ -v
+cd python/tests && pytest cli/terminal/ -v
 
 # Just shell script tests
-pytest tests/cli/terminal/integration/shell_cli/ -v
+pytest python/tests/cli/terminal/integration/shell_cli/ -v
 
 # Just Python CLI tests (coming soon)
-# pytest tests/cli/terminal/integration/python_cli/ -v
+# pytest python/tests/cli/terminal/integration/python_cli/ -v
 
 # Just unit tests (coming soon)
-# pytest tests/cli/terminal/unit/ -v
+# pytest python/tests/cli/terminal/unit/ -v
 
 # Regenerate snapshots after intentional output changes
-pytest tests/cli/terminal/ --snapshot-update
+pytest python/tests/cli/terminal/ --snapshot-update
 
 # Run in parallel (requires pytest-xdist)
 # --dist loadfile groups tests by file so snapshot writes don't conflict
-pytest tests/cli/terminal/ -n auto --dist loadfile
+pytest python/tests/cli/terminal/ -n auto --dist loadfile
 ```
 
 ### Detecting PTY leaks
@@ -197,7 +197,7 @@ To check for leaks, compare PTY count before and after a test run:
 
 ```bash
 echo "before: $(ls /dev/pts/ | wc -l)"
-pytest tests/cli/terminal/ -v
+pytest python/tests/cli/terminal/ -v
 echo "after: $(ls /dev/pts/ | wc -l)"
 ```
 

@@ -63,7 +63,8 @@ lightning-sdk = "lightning_sdk.cli.entrypoint:main_cli"
 version = {attr = "lightning_sdk.__version__.__version__"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "examples*"]
+where = ["."]
+exclude = ["tests*", "examples*", "demo*", "docs*"]
 
 [tool.setuptools.package-data]
 "lightning_sdk.llm" = ["*.json"]
@@ -179,33 +180,6 @@ convention = "google"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
-
-[tool.pytest]
-mock_use_standalone_module = "true"
-mock_traceback_monkeypatch = "false"
-norecursedirs = [
-    ".git",
-    ".github",
-    "dist",
-    "build",
-    "docs",
-]
-addopts = [
-  "--strict-markers",
-  "--color=yes",
-  "--disable-pytest-warnings",
-  "--ignore=legacy/checkpoints",
-]
-markers = [
-    "project_permission_test: marker for project permission tests",
-]
-filterwarnings = [
-  "error::FutureWarning",
-  "error::pytest.PytestUnhandledThreadExceptionWarning",
-]
-xfail_strict = true
-junit_duration_report = "call"
-
 
 [tool.coverage.run]
 source = ["lightning_sdk"]
