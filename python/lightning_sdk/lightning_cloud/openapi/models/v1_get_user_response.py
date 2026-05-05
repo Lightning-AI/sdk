@@ -46,6 +46,7 @@ class V1GetUserResponse(object):
         'api_key': 'str',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
+        'can_see_project_migration_opt_in': 'bool',
         'country': 'str',
         'disable_shell_persistence': 'bool',
         'email': 'str',
@@ -64,12 +65,16 @@ class V1GetUserResponse(object):
         'opted_in_marketing_emails': 'bool',
         'organization': 'str',
         'organizations': 'list[V1Organization]',
+        'personal_project_migration_at': 'datetime',
+        'personal_project_migration_error': 'str',
+        'personal_project_migration_status': 'str',
         'phone_number': 'str',
         'picture_url': 'str',
         'preferred_color_scheme': 'str',
         'preferred_ide': 'str',
         'preferred_shell': 'str',
         'preferred_vscode_marketplace': 'str',
+        'project_migration_opt_in_at': 'datetime',
         'role': 'str',
         'saw_create_first_project_dialog': 'bool',
         'saw_forums_login_merge_dialog': 'bool',
@@ -92,6 +97,7 @@ class V1GetUserResponse(object):
         'api_key': 'apiKey',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
+        'can_see_project_migration_opt_in': 'canSeeProjectMigrationOptIn',
         'country': 'country',
         'disable_shell_persistence': 'disableShellPersistence',
         'email': 'email',
@@ -110,12 +116,16 @@ class V1GetUserResponse(object):
         'opted_in_marketing_emails': 'optedInMarketingEmails',
         'organization': 'organization',
         'organizations': 'organizations',
+        'personal_project_migration_at': 'personalProjectMigrationAt',
+        'personal_project_migration_error': 'personalProjectMigrationError',
+        'personal_project_migration_status': 'personalProjectMigrationStatus',
         'phone_number': 'phoneNumber',
         'picture_url': 'pictureUrl',
         'preferred_color_scheme': 'preferredColorScheme',
         'preferred_ide': 'preferredIde',
         'preferred_shell': 'preferredShell',
         'preferred_vscode_marketplace': 'preferredVscodeMarketplace',
+        'project_migration_opt_in_at': 'projectMigrationOptInAt',
         'role': 'role',
         'saw_create_first_project_dialog': 'sawCreateFirstProjectDialog',
         'saw_forums_login_merge_dialog': 'sawForumsLoginMergeDialog',
@@ -132,13 +142,14 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, can_see_project_migration_opt_in: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, personal_project_migration_at: 'datetime' =None, personal_project_migration_error: 'str' =None, personal_project_migration_status: 'str' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, project_migration_opt_in_at: 'datetime' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
         self._api_key = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
+        self._can_see_project_migration_opt_in = None
         self._country = None
         self._disable_shell_persistence = None
         self._email = None
@@ -157,12 +168,16 @@ class V1GetUserResponse(object):
         self._opted_in_marketing_emails = None
         self._organization = None
         self._organizations = None
+        self._personal_project_migration_at = None
+        self._personal_project_migration_error = None
+        self._personal_project_migration_status = None
         self._phone_number = None
         self._picture_url = None
         self._preferred_color_scheme = None
         self._preferred_ide = None
         self._preferred_shell = None
         self._preferred_vscode_marketplace = None
+        self._project_migration_opt_in_at = None
         self._role = None
         self._saw_create_first_project_dialog = None
         self._saw_forums_login_merge_dialog = None
@@ -188,6 +203,8 @@ class V1GetUserResponse(object):
             self.auto_replenish_amount = auto_replenish_amount
         if auto_replenish_threshold is not None:
             self.auto_replenish_threshold = auto_replenish_threshold
+        if can_see_project_migration_opt_in is not None:
+            self.can_see_project_migration_opt_in = can_see_project_migration_opt_in
         if country is not None:
             self.country = country
         if disable_shell_persistence is not None:
@@ -224,6 +241,12 @@ class V1GetUserResponse(object):
             self.organization = organization
         if organizations is not None:
             self.organizations = organizations
+        if personal_project_migration_at is not None:
+            self.personal_project_migration_at = personal_project_migration_at
+        if personal_project_migration_error is not None:
+            self.personal_project_migration_error = personal_project_migration_error
+        if personal_project_migration_status is not None:
+            self.personal_project_migration_status = personal_project_migration_status
         if phone_number is not None:
             self.phone_number = phone_number
         if picture_url is not None:
@@ -236,6 +259,8 @@ class V1GetUserResponse(object):
             self.preferred_shell = preferred_shell
         if preferred_vscode_marketplace is not None:
             self.preferred_vscode_marketplace = preferred_vscode_marketplace
+        if project_migration_opt_in_at is not None:
+            self.project_migration_opt_in_at = project_migration_opt_in_at
         if role is not None:
             self.role = role
         if saw_create_first_project_dialog is not None:
@@ -371,6 +396,27 @@ class V1GetUserResponse(object):
         """
 
         self._auto_replenish_threshold = auto_replenish_threshold
+
+    @property
+    def can_see_project_migration_opt_in(self) -> 'bool':
+        """Gets the can_see_project_migration_opt_in of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The can_see_project_migration_opt_in of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._can_see_project_migration_opt_in
+
+    @can_see_project_migration_opt_in.setter
+    def can_see_project_migration_opt_in(self, can_see_project_migration_opt_in: 'bool'):
+        """Sets the can_see_project_migration_opt_in of this V1GetUserResponse.
+
+
+        :param can_see_project_migration_opt_in: The can_see_project_migration_opt_in of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._can_see_project_migration_opt_in = can_see_project_migration_opt_in
 
     @property
     def country(self) -> 'str':
@@ -751,6 +797,69 @@ class V1GetUserResponse(object):
         self._organizations = organizations
 
     @property
+    def personal_project_migration_at(self) -> 'datetime':
+        """Gets the personal_project_migration_at of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The personal_project_migration_at of this V1GetUserResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._personal_project_migration_at
+
+    @personal_project_migration_at.setter
+    def personal_project_migration_at(self, personal_project_migration_at: 'datetime'):
+        """Sets the personal_project_migration_at of this V1GetUserResponse.
+
+
+        :param personal_project_migration_at: The personal_project_migration_at of this V1GetUserResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._personal_project_migration_at = personal_project_migration_at
+
+    @property
+    def personal_project_migration_error(self) -> 'str':
+        """Gets the personal_project_migration_error of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The personal_project_migration_error of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._personal_project_migration_error
+
+    @personal_project_migration_error.setter
+    def personal_project_migration_error(self, personal_project_migration_error: 'str'):
+        """Sets the personal_project_migration_error of this V1GetUserResponse.
+
+
+        :param personal_project_migration_error: The personal_project_migration_error of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._personal_project_migration_error = personal_project_migration_error
+
+    @property
+    def personal_project_migration_status(self) -> 'str':
+        """Gets the personal_project_migration_status of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The personal_project_migration_status of this V1GetUserResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._personal_project_migration_status
+
+    @personal_project_migration_status.setter
+    def personal_project_migration_status(self, personal_project_migration_status: 'str'):
+        """Sets the personal_project_migration_status of this V1GetUserResponse.
+
+
+        :param personal_project_migration_status: The personal_project_migration_status of this V1GetUserResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._personal_project_migration_status = personal_project_migration_status
+
+    @property
     def phone_number(self) -> 'str':
         """Gets the phone_number of this V1GetUserResponse.  # noqa: E501
 
@@ -875,6 +984,27 @@ class V1GetUserResponse(object):
         """
 
         self._preferred_vscode_marketplace = preferred_vscode_marketplace
+
+    @property
+    def project_migration_opt_in_at(self) -> 'datetime':
+        """Gets the project_migration_opt_in_at of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The project_migration_opt_in_at of this V1GetUserResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._project_migration_opt_in_at
+
+    @project_migration_opt_in_at.setter
+    def project_migration_opt_in_at(self, project_migration_opt_in_at: 'datetime'):
+        """Sets the project_migration_opt_in_at of this V1GetUserResponse.
+
+
+        :param project_migration_opt_in_at: The project_migration_opt_in_at of this V1GetUserResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._project_migration_opt_in_at = project_migration_opt_in_at
 
     @property
     def role(self) -> 'str':

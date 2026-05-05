@@ -49,7 +49,8 @@ class V1CreateSandboxRequest(object):
         'ports': 'list[str]',
         'runtime': 'str',
         'spot': 'bool',
-        'storage_gb': 'str'
+        'storage_gb': 'str',
+        'timeout': 'str'
     }
 
     attribute_map = {
@@ -61,10 +62,11 @@ class V1CreateSandboxRequest(object):
         'ports': 'ports',
         'runtime': 'runtime',
         'spot': 'spot',
-        'storage_gb': 'storageGb'
+        'storage_gb': 'storageGb',
+        'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -75,6 +77,7 @@ class V1CreateSandboxRequest(object):
         self._runtime = None
         self._spot = None
         self._storage_gb = None
+        self._timeout = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -94,6 +97,8 @@ class V1CreateSandboxRequest(object):
             self.spot = spot
         if storage_gb is not None:
             self.storage_gb = storage_gb
+        if timeout is not None:
+            self.timeout = timeout
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -285,6 +290,29 @@ class V1CreateSandboxRequest(object):
         """
 
         self._storage_gb = storage_gb
+
+    @property
+    def timeout(self) -> 'str':
+        """Gets the timeout of this V1CreateSandboxRequest.  # noqa: E501
+
+        Maximum duration in milliseconds that the sandbox can run before being automatically stopped.  # noqa: E501
+
+        :return: The timeout of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, timeout: 'str'):
+        """Sets the timeout of this V1CreateSandboxRequest.
+
+        Maximum duration in milliseconds that the sandbox can run before being automatically stopped.  # noqa: E501
+
+        :param timeout: The timeout of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._timeout = timeout
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

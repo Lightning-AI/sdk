@@ -1494,6 +1494,7 @@ class OrganizationsServiceApi(object):
         :param bool include_guests:
         :param str sort_by:
         :param str sort_order:
+        :param bool exclude_internal_users:
         :return: V1ListOrgMembersResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1518,12 +1519,13 @@ class OrganizationsServiceApi(object):
         :param bool include_guests:
         :param str sort_by:
         :param str sort_order:
+        :param bool exclude_internal_users:
         :return: V1ListOrgMembersResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'include_guests', 'sort_by', 'sort_order']  # noqa: E501
+        all_params = ['org_id', 'include_guests', 'sort_by', 'sort_order', 'exclude_internal_users']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1556,6 +1558,8 @@ class OrganizationsServiceApi(object):
             query_params.append(('sortBy', params['sort_by']))  # noqa: E501
         if 'sort_order' in params:
             query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
+        if 'exclude_internal_users' in params:
+            query_params.append(('excludeInternalUsers', params['exclude_internal_users']))  # noqa: E501
 
         header_params = {}
 

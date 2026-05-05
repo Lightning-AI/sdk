@@ -43,6 +43,7 @@ class V1KubernetesDirectV1(object):
     swagger_types = {
         'automate_agent_installation': 'bool',
         'aws': 'V1KubernetesAWSConfig',
+        'gpu_sla_terms': 'list[V1GpuSlaTerm]',
         'grafana_dashboard_url': 'str',
         'grafana_namespace': 'str',
         'grafana_service_name': 'str',
@@ -65,6 +66,7 @@ class V1KubernetesDirectV1(object):
     attribute_map = {
         'automate_agent_installation': 'automateAgentInstallation',
         'aws': 'aws',
+        'gpu_sla_terms': 'gpuSlaTerms',
         'grafana_dashboard_url': 'grafanaDashboardUrl',
         'grafana_namespace': 'grafanaNamespace',
         'grafana_service_name': 'grafanaServiceName',
@@ -84,10 +86,11 @@ class V1KubernetesDirectV1(object):
         'supported_nvidia_driver_versions': 'supportedNvidiaDriverVersions'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
+        self._gpu_sla_terms = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
         self._grafana_service_name = None
@@ -110,6 +113,8 @@ class V1KubernetesDirectV1(object):
             self.automate_agent_installation = automate_agent_installation
         if aws is not None:
             self.aws = aws
+        if gpu_sla_terms is not None:
+            self.gpu_sla_terms = gpu_sla_terms
         if grafana_dashboard_url is not None:
             self.grafana_dashboard_url = grafana_dashboard_url
         if grafana_namespace is not None:
@@ -186,6 +191,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._aws = aws
+
+    @property
+    def gpu_sla_terms(self) -> 'list[V1GpuSlaTerm]':
+        """Gets the gpu_sla_terms of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The gpu_sla_terms of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: list[V1GpuSlaTerm]
+        """
+        return self._gpu_sla_terms
+
+    @gpu_sla_terms.setter
+    def gpu_sla_terms(self, gpu_sla_terms: 'list[V1GpuSlaTerm]'):
+        """Sets the gpu_sla_terms of this V1KubernetesDirectV1.
+
+
+        :param gpu_sla_terms: The gpu_sla_terms of this V1KubernetesDirectV1.  # noqa: E501
+        :type: list[V1GpuSlaTerm]
+        """
+
+        self._gpu_sla_terms = gpu_sla_terms
 
     @property
     def grafana_dashboard_url(self) -> 'str':

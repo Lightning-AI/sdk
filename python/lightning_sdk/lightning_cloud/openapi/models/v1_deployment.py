@@ -42,6 +42,7 @@ class V1Deployment(object):
     """
     swagger_types = {
         'source': 'str',
+        'allow_logs': 'bool',
         'api_standard': 'str',
         'apis': 'list[V1DeploymentAPI]',
         'assistant_id': 'str',
@@ -78,6 +79,7 @@ class V1Deployment(object):
 
     attribute_map = {
         'source': 'Source',
+        'allow_logs': 'allowLogs',
         'api_standard': 'apiStandard',
         'apis': 'apis',
         'assistant_id': 'assistantId',
@@ -112,9 +114,10 @@ class V1Deployment(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, source: 'str' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Deployment - a model defined in Swagger"""  # noqa: E501
         self._source = None
+        self._allow_logs = None
         self._api_standard = None
         self._apis = None
         self._assistant_id = None
@@ -150,6 +153,8 @@ class V1Deployment(object):
         self.discriminator = None
         if source is not None:
             self.source = source
+        if allow_logs is not None:
+            self.allow_logs = allow_logs
         if api_standard is not None:
             self.api_standard = api_standard
         if apis is not None:
@@ -237,6 +242,27 @@ class V1Deployment(object):
         """
 
         self._source = source
+
+    @property
+    def allow_logs(self) -> 'bool':
+        """Gets the allow_logs of this V1Deployment.  # noqa: E501
+
+
+        :return: The allow_logs of this V1Deployment.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_logs
+
+    @allow_logs.setter
+    def allow_logs(self, allow_logs: 'bool'):
+        """Sets the allow_logs of this V1Deployment.
+
+
+        :param allow_logs: The allow_logs of this V1Deployment.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_logs = allow_logs
 
     @property
     def api_standard(self) -> 'str':
