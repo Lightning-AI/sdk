@@ -147,8 +147,12 @@ export class Sandbox {
   // ---------------------------------------------------------------------------
 
   static async create(params: CreateSandboxParams): Promise<Sandbox> {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const defaultName = `sandbox-${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}-${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`;
+
     const body: V1CreateSandboxRequest = {
-      name: params.name,
+      name: params.name ?? defaultName,
       instanceType: params.instanceType,
       spot: params.spot ?? false,
       ports: (params.ports ?? []).map(String),

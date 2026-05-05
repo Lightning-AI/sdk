@@ -59,16 +59,43 @@ jobs:
         coverage report
         coverage xml
 
+  js-unittests:
+    runs-on: "ubuntu-22.04"
+    if: github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["22"]
+    timeout-minutes: 40
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: js/package-lock.json
+    - name: Install dependencies
+      working-directory: js
+      run: npm ci
+    - name: Run tests
+      working-directory: js
+      run: npm test
+
   guardian-unittest:
     runs-on: ubuntu-latest
-    needs: cpu-unittests
+    needs: [cpu-unittests, js-unittests]
     if: always()
     steps:
-    - run: echo "${{ needs.cpu-unittests.result }}"
+    - run: |
+        echo "cpu-unittests: ${{ needs.cpu-unittests.result }}"
+        echo "js-unittests: ${{ needs.js-unittests.result }}"
     - name: failing...
-      if: needs.cpu-unittests.result == 'failure'
+      if: needs.cpu-unittests.result == 'failure' || needs.js-unittests.result == 'failure'
       run: exit 1
     - name: cancelled or skipped...
-      if: contains(fromJSON('["cancelled", "skipped"]'), needs.cpu-unittests.result)
+      if: |
+        contains(fromJSON('["cancelled", "skipped"]'), needs.cpu-unittests.result) ||
+        contains(fromJSON('["cancelled", "skipped"]'), needs.js-unittests.result)
       timeout-minutes: 1
       run: sleep 90

@@ -115,6 +115,16 @@ describe("Sandbox", () => {
       assert.ok(fetchQueue.length === 0);
     });
 
+    it("generates a default name when none is provided", async () => {
+      let capturedBody: Record<string, unknown> = {};
+      globalThis.fetch = ((_input, init) => {
+        if (init?.body) {
+          capturedBody = JSON.parse(String(init.body));
+        }
+        return Promise.resolve(jsonResponse(sampleV1({ status: "running" })));
+      }) as typeof fetch;
+      await Sandbox.create({ instanceType: "cpu-1" });
+    });
     it("polls until running", async () => {
       enqueueJson(sampleV1({ status: "pending" }));
       enqueueJson(sampleV1({ status: "running" }));
