@@ -36,13 +36,6 @@ jobs:
         pip install "./python[serve]" --upgrade
         pip list
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.BYOC_SANDBOX_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.BYOC_SANDBOX_AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
     - name: Tests w/o CLI
       working-directory: python/tests
       run: |
