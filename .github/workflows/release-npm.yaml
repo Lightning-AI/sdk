@@ -97,4 +97,4 @@ jobs:
       # node_modules are absent here, so --ignore-scripts skips lifecycle hooks and publishes as-is.
       - name: Publish distribution to npm
         working-directory: package
-        run: npm publish --access public --ignore-scripts --provenance
+        run: npm publish --access public --ignore-scripts --provenance --tag latest
