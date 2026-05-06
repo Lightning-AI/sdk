@@ -94,3 +94,12 @@ export interface ReadFileParams {
 export interface CreateDirectoryParams {
   path: string;
 }
+
+export interface FileStat {
+  /** File type from `%F` (e.g. `regular file`, `directory`, `symbolic link`). */
+  fileType: string;
+  size: number;
+  mtime: Date;
+  /** Permission bits as an octal string (e.g. `644`). */
+  mode: string;
+}

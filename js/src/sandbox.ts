@@ -27,6 +27,7 @@ import type {
   V1Sandbox,
 } from "./lightning_cloud/openapi/data-contracts.js";
 import { getApiKey, getBaseUrl, mergeSandboxConfig, resolveOrgId } from "./config.js";
+import { FileSystem } from "./filesystem.js";
 
 function buildQuery(params: Record<string, string | undefined>): string {
   const qs = new URLSearchParams();
@@ -116,6 +117,9 @@ export class Sandbox {
   readonly createdAt: Date;
   readonly updatedAt: Date;
 
+  /** Path-oriented file helpers that run commands inside the sandbox (see {@link FileSystem}). */
+  readonly fs: FileSystem;
+
   private constructor(data: SandboxData) {
     this.sandboxId = data.id;
     this.name = data.name;
@@ -129,6 +133,7 @@ export class Sandbox {
     this.runtime = data.runtime ?? "";
     this.createdAt = new Date(data.createdAt);
     this.updatedAt = new Date(data.updatedAt);
+    this.fs = new FileSystem(this);
   }
 
   // ---------------------------------------------------------------------------

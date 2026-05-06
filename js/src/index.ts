@@ -1,4 +1,5 @@
 export { Sandbox } from "./sandbox.js";
+export { FileSystem } from "./filesystem.js";
 export type {
   SandboxConfig,
   SandboxData,
@@ -13,4 +14,5 @@ export type {
   WriteFileParams,
   ReadFileParams,
   CreateDirectoryParams,
+  FileStat,
 } from "./types.js";

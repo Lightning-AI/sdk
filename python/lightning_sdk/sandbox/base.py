@@ -4,7 +4,7 @@ import shlex
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from lightning_sdk.api.sandbox_api import CommandLog, CommandResult, CommandStatus, SandboxApi
 from lightning_sdk.lightning_cloud.openapi import (
@@ -17,6 +17,9 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.sandbox.config import SandboxConfig
 from lightning_sdk.utils.logging import TrackCallsMeta
+
+if TYPE_CHECKING:
+    from lightning_sdk.sandbox.filesystem import FileSystem
 
 _sandbox_config: dict[str, Any] = {}
 _sandbox_config.update(SandboxConfig.from_env().to_api_dict())
@@ -186,6 +189,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         self._v1 = data
         self._runtime = runtime
         self._sandbox_api = sandbox_api or _api
+        self._fs_inst: Any = None
 
     @classmethod
     def _from_v1(
@@ -244,6 +248,14 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     @property
     def updated_at(self) -> datetime:
         return self._v1.updated_at
+
+    @property
+    def fs(self) -> FileSystem:
+        from lightning_sdk.sandbox.filesystem import FileSystem
+
+        if self._fs_inst is None:
+            self._fs_inst = FileSystem(self)
+        return self._fs_inst
 
     @classmethod
     def configure(
