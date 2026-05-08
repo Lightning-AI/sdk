@@ -28,7 +28,7 @@ export interface SandboxData {
 }
 
 export interface CreateSandboxParams {
-  name: string;
+  name?: string;
   instanceType: string;
   spot?: boolean;
   ports?: number[];
