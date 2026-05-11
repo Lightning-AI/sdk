@@ -1,5 +1,6 @@
 export { Sandbox } from "./sandbox.js";
 export { FileSystem } from "./filesystem.js";
+export { Command } from "./command.js";
 export type {
   SandboxConfig,
   SandboxData,
@@ -8,9 +9,9 @@ export type {
   ListSandboxesParams,
   ListSandboxesResponse,
   RunCommandOpts,
-  CommandResult,
   CommandStatus,
   CommandLog,
+  WaitForCommandOptions,
   WriteFileParams,
   ReadFileParams,
   CreateDirectoryParams,

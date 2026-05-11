@@ -3,11 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from lightning_sdk.api.sandbox_api import CommandResult
 from lightning_sdk.sandbox.base import SandboxInstance, WriteFileParams
+from lightning_sdk.sandbox.command import Command
 
 
-def _assert_command_ok(r: CommandResult, what: str) -> None:
+def _assert_command_ok(r: Command, what: str) -> None:
     if r.exit_code == 0:
         return
     tail = r.output.strip()

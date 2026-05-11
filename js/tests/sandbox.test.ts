@@ -199,5 +199,65 @@ describe("Sandbox", () => {
       const st = await sb.getCommand("cmd-1");
       assert.equal(st.running, true);
     });
+
+    it("runCommand({detached:true}).wait() polls until command exits", async () => {
+      const sb = await runningSandbox();
+      const responses: Array<unknown> = [
+        { cmdId: "c-bg", output: "", exitCode: 0 },
+        { output: "", exitCode: 0, running: true },
+        { output: "done\n", exitCode: 7, running: false },
+      ];
+      globalThis.fetch = (() =>
+        Promise.resolve(jsonResponse(responses.shift()))) as typeof fetch;
+
+      const cmd = await sb.runCommand({ cmd: "sleep", args: ["5"], detached: true });
+      assert.equal(cmd.exitCode, null);
+      assert.equal(cmd.running, true);
+
+      const result = await cmd.wait({ pollIntervalMs: 0 });
+      assert.equal(result.exitCode, 7);
+      assert.equal(result.running, false);
+      assert.equal(result.output, "done\n");
+      assert.strictEqual(result, cmd);
+    });
+
+    it("runCommand without detached returns Command with exitCode populated", async () => {
+      const sb = await runningSandbox();
+      globalThis.fetch = (() =>
+        Promise.resolve(
+          jsonResponse({ cmdId: "c1", output: "hi\n", exitCode: 0 }),
+        )) as typeof fetch;
+      const cmd = await sb.runCommand("echo", ["hi"]);
+      assert.equal(cmd.exitCode, 0);
+      assert.equal(cmd.running, false);
+      const result = await cmd.wait({ pollIntervalMs: 0 });
+      assert.strictEqual(result, cmd);
+    });
+
+    it("waitForCommand polls getCommand until running is false", async () => {
+      const sb = await runningSandbox();
+      const responses: Array<{ output: string; exitCode: number; running: boolean }> = [
+        { output: "", exitCode: 0, running: true },
+        { output: "done\n", exitCode: 0, running: false },
+      ];
+      globalThis.fetch = (() =>
+        Promise.resolve(jsonResponse(responses.shift()))) as typeof fetch;
+      const final = await sb.waitForCommand("cmd-1", { pollIntervalMs: 0 });
+      assert.equal(final.running, false);
+      assert.equal(final.output, "done\n");
+      assert.equal(responses.length, 0);
+    });
+
+    it("waitForCommand throws when timeout elapses", async () => {
+      const sb = await runningSandbox();
+      globalThis.fetch = (() =>
+        Promise.resolve(
+          jsonResponse({ output: "", exitCode: 0, running: true }),
+        )) as typeof fetch;
+      await assert.rejects(
+        () => sb.waitForCommand("cmd-1", { pollIntervalMs: 0, timeoutMs: 0 }),
+        /Timed out waiting for command/,
+      );
+    });
   });
 });

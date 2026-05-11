@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from lightning_sdk.api.sandbox_api import CommandLog, CommandResult, CommandStatus, SandboxApi
+from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus, SandboxApi
 from lightning_sdk.lightning_cloud.openapi import (
     SandboxesServiceApi,
     SandboxesServiceWriteSandboxFileBody,
@@ -15,6 +15,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
+from lightning_sdk.sandbox.command import Command
 from lightning_sdk.sandbox.config import SandboxConfig
 from lightning_sdk.utils.logging import TrackCallsMeta
 
@@ -371,8 +372,17 @@ class SandboxInstance(metaclass=TrackCallsMeta):
                 return
             raise
 
-    def run_command(self, command_or_opts: str | RunCommandOpts, args: list[str] | None = None) -> CommandResult:
+    def run_command(self, command_or_opts: str | RunCommandOpts, args: list[str] | None = None) -> Command:
+        """Run a command inside the sandbox.
+
+        Returns a :class:`~lightning_sdk.sandbox.command.Command` handle. When
+        called without ``detached=True``, the server has already waited for the
+        process to exit and the returned handle has :attr:`Command.exit_code`
+        populated. With ``detached=True``, the call returns immediately; call
+        :meth:`Command.wait` to block until completion.
+        """
         org = self.organization_id or None
+        detached = False
         if isinstance(command_or_opts, str):
             if args is None and " " in command_or_opts:
                 try:
@@ -381,22 +391,31 @@ class SandboxInstance(metaclass=TrackCallsMeta):
                     parts = command_or_opts.split()
                 command_or_opts = parts[0]
                 args = parts[1:]
-            return self._sandbox_api.run_command(
+            api_result = self._sandbox_api.run_command(
                 self.sandbox_id,
                 command=command_or_opts,
                 args=args or [],
                 organization_id=org,
             )
-        o = command_or_opts
-        return self._sandbox_api.run_command(
-            self.sandbox_id,
-            command=o.cmd,
-            args=o.args or [],
-            organization_id=org,
-            cwd=o.cwd,
-            env=o.env,
-            sudo=o.sudo,
-            detached=o.detached,
+        else:
+            o = command_or_opts
+            detached = bool(o.detached)
+            api_result = self._sandbox_api.run_command(
+                self.sandbox_id,
+                command=o.cmd,
+                args=o.args or [],
+                organization_id=org,
+                cwd=o.cwd,
+                env=o.env,
+                sudo=o.sudo,
+                detached=o.detached,
+            )
+
+        return Command(
+            self,
+            cmd_id=api_result.cmd_id,
+            output=api_result.output,
+            exit_code=None if detached else api_result.exit_code,
         )
 
     def get_command_logs(self, cmd_id: str) -> list[CommandLog]:
@@ -407,6 +426,40 @@ class SandboxInstance(metaclass=TrackCallsMeta):
 
     def get_command(self, cmd_id: str) -> CommandStatus:
         return self._sandbox_api.get_command(self.sandbox_id, cmd_id, self.organization_id or None)
+
+    def wait_for_command(
+        self,
+        cmd_id: str,
+        *,
+        timeout: float | None = None,
+        poll_interval: float = 0.5,
+    ) -> CommandStatus:
+        """Poll :meth:`get_command` until the command exits and return its final status.
+
+        Useful after launching a background command with ``detached=True``::
+
+            r = sandbox.run_command(RunCommandOpts(cmd="long-task", detached=True))
+            status = sandbox.get_command(r.cmd_id)
+            if status.running:
+                final = sandbox.wait_for_command(r.cmd_id)
+                print(final.exit_code)
+
+        Args:
+            cmd_id: Command identifier returned by :meth:`run_command`.
+            timeout: Maximum seconds to wait. ``None`` (default) waits indefinitely.
+            poll_interval: Seconds between polls.
+
+        Raises:
+            TimeoutError: If ``timeout`` elapses before the command exits.
+        """
+        deadline = (time.monotonic() + timeout) if timeout is not None else None
+        while True:
+            status = self.get_command(cmd_id)
+            if not status.running:
+                return status
+            if deadline is not None and time.monotonic() >= deadline:
+                raise TimeoutError(f"Timed out waiting for command {cmd_id} to finish")
+            time.sleep(poll_interval)
 
     def write_file(self, path: str, content: str) -> None:
         body = SandboxesServiceWriteSandboxFileBody(path=path, content=content)

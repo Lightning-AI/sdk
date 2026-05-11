@@ -32,7 +32,14 @@ def test_parse_run_command_response_with_to_dict():
 
 def test_parse_get_command_response_none():
     s = sandbox_api_mod._parse_get_command_response(None)
-    assert s == CommandStatus(output="", exit_code=0)
+    assert s == CommandStatus(output="", exit_code=0, running=False)
+
+
+def test_parse_get_command_response_running_true():
+    resp = mock.MagicMock()
+    resp.to_dict.return_value = {"output": "tail", "exit_code": 0, "running": True}
+    s = sandbox_api_mod._parse_get_command_response(resp)
+    assert s == CommandStatus(output="tail", exit_code=0, running=True)
 
 
 def test_parse_command_logs_response_empty():
@@ -98,7 +105,7 @@ def test_run_command_maps_api_exception_to_runtime_error(patched_sandbox_api):
 def test_get_command_returns_command_status(patched_sandbox_api):
     api, mock_svc = patched_sandbox_api
     resp = mock.MagicMock()
-    resp.to_dict.return_value = {"output": "partial", "exit_code": 1}
+    resp.to_dict.return_value = {"output": "partial", "exit_code": 1, "running": True}
     mock_svc.sandboxes_service_get_sandbox_command.return_value = resp
 
     status = api.get_command("sandbox-1", "cmd-1", organization_id="org-1")
@@ -106,6 +113,7 @@ def test_get_command_returns_command_status(patched_sandbox_api):
     assert isinstance(status, CommandStatus)
     assert status.output == "partial"
     assert status.exit_code == 1
+    assert status.running is True
     mock_svc.sandboxes_service_get_sandbox_command.assert_called_once_with(
         "sandbox-1", "cmd-1", organization_id="org-1"
     )

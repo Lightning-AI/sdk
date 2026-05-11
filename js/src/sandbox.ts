@@ -6,13 +6,14 @@ import type {
   ListSandboxesParams,
   ListSandboxesResponse,
   RunCommandOpts,
-  CommandResult,
   CommandStatus,
   CommandLog,
+  WaitForCommandOptions,
   WriteFileParams,
   ReadFileParams,
   CreateDirectoryParams,
 } from "./types.js";
+import { Command } from "./command.js";
 import type {
   SandboxesServiceCreateSandboxDirectoryBody,
   SandboxesServiceRunSandboxCommandBody,
@@ -99,6 +100,15 @@ function toSandboxData(v: V1Sandbox): SandboxData {
  *
  * const result = await sandbox.runCommand("echo", ["hello"]);
  * console.log(result.output);
+ *
+ * // Detached execution: returns immediately, await `wait()` to block until done.
+ * const detachedCmd = await sandbox.runCommand({
+ *   cmd: "sleep",
+ *   args: ["5"],
+ *   detached: true,
+ * });
+ * const finished = await detachedCmd.wait();
+ * if (finished.exitCode !== 0) console.error("Something went wrong...");
  *
  * await sandbox.delete();
  * ```
@@ -256,16 +266,25 @@ export class Sandbox {
   // Instance methods — commands
   // ---------------------------------------------------------------------------
 
-  async runCommand(command: string, args?: string[]): Promise<CommandResult>;
-  async runCommand(opts: RunCommandOpts): Promise<CommandResult>;
+  /**
+   * Run a command inside the sandbox.
+   *
+   * When called without `detached: true`, the server waits for the process to
+   * exit and the returned {@link Command} has `exitCode` populated. When
+   * `detached: true` is passed, the call returns immediately with `exitCode`
+   * equal to `null`; await {@link Command.wait} to block until completion.
+   */
+  async runCommand(command: string, args?: string[]): Promise<Command>;
+  async runCommand(opts: RunCommandOpts): Promise<Command>;
   async runCommand(
     commandOrOpts: string | RunCommandOpts,
     args?: string[],
-  ): Promise<CommandResult> {
+  ): Promise<Command> {
     const body: SandboxesServiceRunSandboxCommandBody = {
       organizationId: this.organizationId || undefined,
     };
 
+    let detached = false;
     if (typeof commandOrOpts === "string") {
       body.command = commandOrOpts;
       body.args = args ?? [];
@@ -275,7 +294,10 @@ export class Sandbox {
       if (commandOrOpts.cwd) body.cwd = commandOrOpts.cwd;
       if (commandOrOpts.env) body.env = commandOrOpts.env;
       if (commandOrOpts.sudo !== undefined) body.sudo = commandOrOpts.sudo;
-      if (commandOrOpts.detached !== undefined) body.detached = commandOrOpts.detached;
+      if (commandOrOpts.detached !== undefined) {
+        body.detached = commandOrOpts.detached;
+        detached = commandOrOpts.detached;
+      }
     }
 
     const data = await request<V1RunSandboxCommandResponse>(
@@ -284,11 +306,11 @@ export class Sandbox {
       body,
     );
 
-    return {
+    return new Command(this, {
       cmdId: data.cmdId ?? "",
       output: data.output ?? "",
-      exitCode: data.exitCode ?? 0,
-    };
+      exitCode: detached ? null : (data.exitCode ?? 0),
+    });
   }
 
   async getCommandLogs(cmdId: string): Promise<{ logs: CommandLog[] }> {
@@ -329,6 +351,34 @@ export class Sandbox {
       exitCode: data.exitCode ?? 0,
       running: data.running ?? false,
     };
+  }
+
+  /**
+   * Poll {@link getCommand} until the command exits and return its final status.
+   *
+   * Useful after launching a background command with `detached: true`:
+   *
+   * ```ts
+   * const r = await sandbox.runCommand({ cmd: "long-task", detached: true });
+   * const status = await sandbox.getCommand(r.cmdId);
+   * if (status.running) {
+   *   const final = await sandbox.waitForCommand(r.cmdId);
+   *   console.log(final.exitCode);
+   * }
+   * ```
+   */
+  async waitForCommand(cmdId: string, opts: WaitForCommandOptions = {}): Promise<CommandStatus> {
+    const pollIntervalMs = opts.pollIntervalMs ?? 500;
+    const deadline = opts.timeoutMs !== undefined ? Date.now() + opts.timeoutMs : undefined;
+
+    while (true) {
+      const status = await this.getCommand(cmdId);
+      if (!status.running) return status;
+      if (deadline !== undefined && Date.now() >= deadline) {
+        throw new Error(`Timed out waiting for command ${cmdId} to finish`);
+      }
+      await new Promise((r) => setTimeout(r, pollIntervalMs));
+    }
   }
 
   // ---------------------------------------------------------------------------

@@ -18,6 +18,15 @@ from lightning_sdk.lightning_cloud.rest_client import LightningClient
 class CommandStatus:
     output: str
     exit_code: int
+    #: ``True`` while the command is still executing; ``False`` once it has exited.
+    #:
+    #: Synchronous (non-``detached``) commands return ``False`` here once
+    #: :meth:`~lightning_sdk.sandbox.base.SandboxInstance.run_command` returns. To
+    #: check whether a ``detached`` command is still running, fetch its status via
+    #: :meth:`~lightning_sdk.sandbox.base.SandboxInstance.get_command` (or block
+    #: until completion with
+    #: :meth:`~lightning_sdk.sandbox.base.SandboxInstance.wait_for_command`).
+    running: bool = False
 
 
 @dataclass
@@ -60,11 +69,12 @@ def _parse_run_command_response(resp: Any) -> CommandResult:
 
 def _parse_get_command_response(resp: Any) -> CommandStatus:
     if resp is None:
-        return CommandStatus(output="", exit_code=0)
+        return CommandStatus(output="", exit_code=0, running=False)
     d = resp.to_dict() if hasattr(resp, "to_dict") else {}
     return CommandStatus(
         output=str(d.get("output") or ""),
         exit_code=int(d.get("exit_code") or 0),
+        running=bool(d.get("running") or False),
     )
 
 

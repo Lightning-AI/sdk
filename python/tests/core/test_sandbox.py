@@ -4,10 +4,10 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.api.sandbox_api import CommandResult, SandboxApi
+from lightning_sdk.api.sandbox_api import CommandResult, CommandStatus, SandboxApi
 from lightning_sdk.lightning_cloud.openapi import V1ListSandboxesResponse, V1Sandbox
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.sandbox import RunCommandOpts, Sandbox, SandboxConfig, WriteFileParams
+from lightning_sdk.sandbox import Command, RunCommandOpts, Sandbox, SandboxConfig, WriteFileParams
 from lightning_sdk.sandbox.base import SandboxInstance, _resolve_sandbox_api, create_sandbox
 
 
@@ -93,7 +93,7 @@ def test_sandbox_instance_run_command_run_command_opts():
     mock_api.run_command.return_value = CommandResult(cmd_id="d1", output="", exit_code=0)
     sb = SandboxInstance(_v1(id="sb-3", organization_id="o"), sandbox_api=mock_api)
 
-    sb.run_command(
+    cmd = sb.run_command(
         RunCommandOpts(
             cmd="sh",
             args=["-c", "echo ok"],
@@ -103,6 +103,10 @@ def test_sandbox_instance_run_command_run_command_opts():
         )
     )
 
+    assert isinstance(cmd, Command)
+    assert cmd.cmd_id == "d1"
+    assert cmd.exit_code is None
+    assert cmd.running is True
     mock_api.run_command.assert_called_once_with(
         "sb-3",
         command="sh",
@@ -113,6 +117,96 @@ def test_sandbox_instance_run_command_run_command_opts():
         sudo=None,
         detached=True,
     )
+
+
+def test_sandbox_instance_run_command_non_detached_returns_finished_command():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
+    sb = SandboxInstance(_v1(id="sb-nd", organization_id="o"), sandbox_api=mock_api)
+
+    cmd = sb.run_command("echo", args=["hi"])
+
+    assert isinstance(cmd, Command)
+    assert cmd.cmd_id == "c1"
+    assert cmd.exit_code == 0
+    assert cmd.running is False
+    assert cmd.output == "hi"
+
+
+def test_command_wait_polls_until_done_for_detached():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="c-bg", output="", exit_code=0)
+    mock_api.get_command.side_effect = [
+        CommandStatus(output="", exit_code=0, running=True),
+        CommandStatus(output="done\n", exit_code=7, running=False),
+    ]
+    sb = SandboxInstance(_v1(id="sb-bg", organization_id="o"), sandbox_api=mock_api)
+
+    cmd = sb.run_command(RunCommandOpts(cmd="sleep", args=["5"], detached=True))
+    assert cmd.exit_code is None
+
+    with mock.patch("lightning_sdk.sandbox.base.time.sleep"):
+        result = cmd.wait(poll_interval=0.0)
+
+    assert result is cmd
+    assert cmd.exit_code == 7
+    assert cmd.running is False
+    assert cmd.output == "done\n"
+
+
+def test_command_wait_returns_immediately_when_already_finished():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
+    sb = SandboxInstance(_v1(id="sb-done", organization_id="o"), sandbox_api=mock_api)
+
+    cmd = sb.run_command("echo", args=["hi"])
+    result = cmd.wait()
+
+    assert result is cmd
+    mock_api.get_command.assert_not_called()
+
+
+def test_command_kill_calls_kill_command():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="c-k", output="", exit_code=0)
+    sb = SandboxInstance(_v1(id="sb-k", organization_id="org-k"), sandbox_api=mock_api)
+
+    cmd = sb.run_command(RunCommandOpts(cmd="sleep", args=["100"], detached=True))
+    cmd.kill()
+
+    mock_api.kill_command.assert_called_once_with("sb-k", "c-k", "org-k")
+
+
+def test_sandbox_instance_wait_for_command_polls_until_done():
+    mock_api = mock.MagicMock()
+    mock_api.get_command.side_effect = [
+        CommandStatus(output="", exit_code=0, running=True),
+        CommandStatus(output="done\n", exit_code=0, running=False),
+    ]
+    sb = SandboxInstance(_v1(id="sb-w", organization_id="org-w"), sandbox_api=mock_api)
+
+    with mock.patch("lightning_sdk.sandbox.base.time.sleep"):
+        final = sb.wait_for_command("c-1", poll_interval=0.0)
+
+    assert final.running is False
+    assert final.output == "done\n"
+    assert mock_api.get_command.call_count == 2
+    mock_api.get_command.assert_called_with("sb-w", "c-1", "org-w")
+
+
+def test_sandbox_instance_wait_for_command_times_out():
+    mock_api = mock.MagicMock()
+    mock_api.get_command.return_value = CommandStatus(output="", exit_code=0, running=True)
+    sb = SandboxInstance(_v1(id="sb-t"), sandbox_api=mock_api)
+
+    monotonic_values = iter([0.0, 0.0, 10.0])
+
+    with (
+        mock.patch("lightning_sdk.sandbox.base.time.sleep"),
+        mock.patch("lightning_sdk.sandbox.base.time.monotonic", side_effect=lambda: next(monotonic_values)),
+        pytest.raises(TimeoutError, match="Timed out"),
+    ):
+        sb.wait_for_command("c-1", timeout=1.0, poll_interval=0.0)
 
 
 def test_sandbox_instance_read_file_returns_none_on_404():

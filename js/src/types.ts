@@ -65,16 +65,25 @@ export interface RunCommandOpts {
   detached?: boolean;
 }
 
-export interface CommandResult {
-  cmdId: string;
-  output: string;
-  exitCode: number;
-}
-
 export interface CommandStatus {
   output: string;
   exitCode: number;
+  /**
+   * `true` while the command is still executing; `false` once it has exited.
+   *
+   * Synchronous (non-`detached`) commands return ``false`` here once
+   * {@link Sandbox.runCommand} resolves. To check whether a `detached` command
+   * is still running, fetch its status via {@link Sandbox.getCommand} (or block
+   * until completion with {@link Sandbox.waitForCommand}).
+   */
   running: boolean;
+}
+
+export interface WaitForCommandOptions {
+  /** Maximum time to wait in milliseconds. Defaults to no timeout. */
+  timeoutMs?: number;
+  /** Time between polls in milliseconds. Defaults to 500ms. */
+  pollIntervalMs?: number;
 }
 
 export interface CommandLog {

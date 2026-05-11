@@ -1,7 +1,8 @@
 import type { Sandbox } from "./sandbox.js";
-import type { CommandResult, FileStat, WriteFileParams } from "./types.js";
+import type { Command } from "./command.js";
+import type { FileStat, WriteFileParams } from "./types.js";
 
-function assertCommandOk(r: CommandResult, what: string): void {
+function assertCommandOk(r: Command, what: string): void {
   if (r.exitCode === 0) return;
   const tail = r.output.trim();
   throw new Error(`${what} failed (exit ${r.exitCode})${tail ? `: ${tail}` : ""}`);
