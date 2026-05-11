@@ -68,6 +68,7 @@ class JobsServiceUpdateDeploymentBody(object):
         'spec': 'V1JobSpec',
         'status': 'V1DeploymentStatus',
         'strategy': 'V1DeploymentStrategy',
+        'supports_prod_deployment': 'bool',
         'template_id': 'str',
         'total_cost': 'float',
         'updated_at': 'datetime',
@@ -103,6 +104,7 @@ class JobsServiceUpdateDeploymentBody(object):
         'spec': 'spec',
         'status': 'status',
         'strategy': 'strategy',
+        'supports_prod_deployment': 'supportsProdDeployment',
         'template_id': 'templateId',
         'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
@@ -110,7 +112,7 @@ class JobsServiceUpdateDeploymentBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, source: 'str' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, supports_prod_deployment: 'bool' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """JobsServiceUpdateDeploymentBody - a model defined in Swagger"""  # noqa: E501
         self._source = None
         self._allow_logs = None
@@ -139,6 +141,7 @@ class JobsServiceUpdateDeploymentBody(object):
         self._spec = None
         self._status = None
         self._strategy = None
+        self._supports_prod_deployment = None
         self._template_id = None
         self._total_cost = None
         self._updated_at = None
@@ -199,6 +202,8 @@ class JobsServiceUpdateDeploymentBody(object):
             self.status = status
         if strategy is not None:
             self.strategy = strategy
+        if supports_prod_deployment is not None:
+            self.supports_prod_deployment = supports_prod_deployment
         if template_id is not None:
             self.template_id = template_id
         if total_cost is not None:
@@ -778,6 +783,27 @@ class JobsServiceUpdateDeploymentBody(object):
         """
 
         self._strategy = strategy
+
+    @property
+    def supports_prod_deployment(self) -> 'bool':
+        """Gets the supports_prod_deployment of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The supports_prod_deployment of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._supports_prod_deployment
+
+    @supports_prod_deployment.setter
+    def supports_prod_deployment(self, supports_prod_deployment: 'bool'):
+        """Sets the supports_prod_deployment of this JobsServiceUpdateDeploymentBody.
+
+
+        :param supports_prod_deployment: The supports_prod_deployment of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._supports_prod_deployment = supports_prod_deployment
 
     @property
     def template_id(self) -> 'str':

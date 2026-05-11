@@ -210,6 +210,12 @@ export interface V1CreateSandboxRequest {
    * @format uint64
    */
   timeout?: string;
+  /**
+   * Network access policy for the sandbox. Controls which external hosts the
+   * sandbox can communicate with. When unset, the sandbox inherits the default
+   * network policy.
+   */
+  networkPolicy?: V1NetworkPolicy;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -225,6 +231,7 @@ export interface V1GetSandboxCommandResponse {
   output?: string;
   /** @format int32 */
   exitCode?: number;
+  running?: boolean;
 }
 
 export interface V1GetSandboxFileResponse {
@@ -244,6 +251,35 @@ export interface V1ListSandboxesResponse {
 export interface V1LogMessage {
   timestamp?: string;
   message?: string;
+}
+
+/** NetworkPolicy controls outbound network access for a sandbox. */
+export interface V1NetworkPolicy {
+  /**
+   * The network access policy mode.
+   * - "allow-all": permit all outbound traffic.
+   * - "deny-all": block all outbound traffic.
+   * - "custom": specify explicit allow/deny rules via the fields below.
+   * - "default-allow": allow all traffic except for explicit deny rules.
+   * - "default-deny": deny all traffic except for explicit allow rules.
+   */
+  mode?: string;
+  /**
+   * List of domain names the sandbox is allowed to connect to. Only applies
+   * when mode is "custom". Supports wildcard patterns (e.g., "*.example.com"
+   * matches all subdomains).
+   */
+  allowedDomains?: string[];
+  /**
+   * List of IP address ranges (in CIDR notation) the sandbox is allowed to
+   * connect to. Traffic to these addresses bypasses domain-based restrictions.
+   */
+  allowedCidrs?: string[];
+  /**
+   * List of IP address ranges (in CIDR notation) the sandbox is blocked from
+   * connecting to. These rules take precedence over all allowed rules.
+   */
+  deniedCidrs?: string[];
 }
 
 export interface V1RunSandboxCommandResponse {

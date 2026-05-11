@@ -45,6 +45,7 @@ class V1CreateSandboxRequest(object):
         'cluster_id': 'str',
         'instance_type': 'str',
         'name': 'str',
+        'network_policy': 'V1NetworkPolicy',
         'organization_id': 'str',
         'ports': 'list[str]',
         'runtime': 'str',
@@ -58,6 +59,7 @@ class V1CreateSandboxRequest(object):
         'cluster_id': 'clusterId',
         'instance_type': 'instanceType',
         'name': 'name',
+        'network_policy': 'networkPolicy',
         'organization_id': 'organizationId',
         'ports': 'ports',
         'runtime': 'runtime',
@@ -66,12 +68,13 @@ class V1CreateSandboxRequest(object):
         'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._instance_type = None
         self._name = None
+        self._network_policy = None
         self._organization_id = None
         self._ports = None
         self._runtime = None
@@ -87,6 +90,8 @@ class V1CreateSandboxRequest(object):
             self.instance_type = instance_type
         if name is not None:
             self.name = name
+        if network_policy is not None:
+            self.network_policy = network_policy
         if organization_id is not None:
             self.organization_id = organization_id
         if ports is not None:
@@ -183,6 +188,27 @@ class V1CreateSandboxRequest(object):
         """
 
         self._name = name
+
+    @property
+    def network_policy(self) -> 'V1NetworkPolicy':
+        """Gets the network_policy of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The network_policy of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: V1NetworkPolicy
+        """
+        return self._network_policy
+
+    @network_policy.setter
+    def network_policy(self, network_policy: 'V1NetworkPolicy'):
+        """Sets the network_policy of this V1CreateSandboxRequest.
+
+
+        :param network_policy: The network_policy of this V1CreateSandboxRequest.  # noqa: E501
+        :type: V1NetworkPolicy
+        """
+
+        self._network_policy = network_policy
 
     @property
     def organization_id(self) -> 'str':

@@ -63,7 +63,6 @@ class V1MetricsStream(object):
         'store_step': 'bool',
         'system_info': 'V1SystemInfo',
         'tags': 'list[V1MetricsTags]',
-        'trackers': 'dict(str, V1MetricsTracker)',
         'updated_at': 'datetime',
         'updates_counter': 'int',
         'user_id': 'str',
@@ -94,7 +93,6 @@ class V1MetricsStream(object):
         'store_step': 'storeStep',
         'system_info': 'systemInfo',
         'tags': 'tags',
-        'trackers': 'trackers',
         'updated_at': 'updatedAt',
         'updates_counter': 'updatesCounter',
         'user_id': 'userId',
@@ -102,7 +100,7 @@ class V1MetricsStream(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, guest: 'bool' =None, id: 'str' =None, job_id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, guest: 'bool' =None, id: 'str' =None, job_id: 'str' =None, job_name: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, plugin_id: 'str' =None, project_id: 'str' =None, source_id: 'str' =None, stopped_at: 'datetime' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, updated_at: 'datetime' =None, updates_counter: 'int' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None, work_id: 'str' =None):  # noqa: E501
         """V1MetricsStream - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
@@ -126,7 +124,6 @@ class V1MetricsStream(object):
         self._store_step = None
         self._system_info = None
         self._tags = None
-        self._trackers = None
         self._updated_at = None
         self._updates_counter = None
         self._user_id = None
@@ -177,8 +174,6 @@ class V1MetricsStream(object):
             self.system_info = system_info
         if tags is not None:
             self.tags = tags
-        if trackers is not None:
-            self.trackers = trackers
         if updated_at is not None:
             self.updated_at = updated_at
         if updates_counter is not None:
@@ -651,27 +646,6 @@ class V1MetricsStream(object):
         """
 
         self._tags = tags
-
-    @property
-    def trackers(self) -> 'dict(str, V1MetricsTracker)':
-        """Gets the trackers of this V1MetricsStream.  # noqa: E501
-
-
-        :return: The trackers of this V1MetricsStream.  # noqa: E501
-        :rtype: dict(str, V1MetricsTracker)
-        """
-        return self._trackers
-
-    @trackers.setter
-    def trackers(self, trackers: 'dict(str, V1MetricsTracker)'):
-        """Sets the trackers of this V1MetricsStream.
-
-
-        :param trackers: The trackers of this V1MetricsStream.  # noqa: E501
-        :type: dict(str, V1MetricsTracker)
-        """
-
-        self._trackers = trackers
 
     @property
     def updated_at(self) -> 'datetime':

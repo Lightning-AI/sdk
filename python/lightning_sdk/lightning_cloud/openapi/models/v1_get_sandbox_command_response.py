@@ -42,23 +42,28 @@ class V1GetSandboxCommandResponse(object):
     """
     swagger_types = {
         'exit_code': 'int',
-        'output': 'str'
+        'output': 'str',
+        'running': 'bool'
     }
 
     attribute_map = {
         'exit_code': 'exitCode',
-        'output': 'output'
+        'output': 'output',
+        'running': 'running'
     }
 
-    def __init__(self, exit_code: 'int' =None, output: 'str' =None):  # noqa: E501
+    def __init__(self, exit_code: 'int' =None, output: 'str' =None, running: 'bool' =None):  # noqa: E501
         """V1GetSandboxCommandResponse - a model defined in Swagger"""  # noqa: E501
         self._exit_code = None
         self._output = None
+        self._running = None
         self.discriminator = None
         if exit_code is not None:
             self.exit_code = exit_code
         if output is not None:
             self.output = output
+        if running is not None:
+            self.running = running
 
     @property
     def exit_code(self) -> 'int':
@@ -101,6 +106,27 @@ class V1GetSandboxCommandResponse(object):
         """
 
         self._output = output
+
+    @property
+    def running(self) -> 'bool':
+        """Gets the running of this V1GetSandboxCommandResponse.  # noqa: E501
+
+
+        :return: The running of this V1GetSandboxCommandResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._running
+
+    @running.setter
+    def running(self, running: 'bool'):
+        """Sets the running of this V1GetSandboxCommandResponse.
+
+
+        :param running: The running of this V1GetSandboxCommandResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._running = running
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

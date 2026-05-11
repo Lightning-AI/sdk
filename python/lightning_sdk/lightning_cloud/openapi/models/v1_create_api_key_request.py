@@ -45,6 +45,8 @@ class V1CreateAPIKeyRequest(object):
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
+        'resource_id': 'str',
+        'resource_type': 'str',
         'role': 'str'
     }
 
@@ -53,15 +55,19 @@ class V1CreateAPIKeyRequest(object):
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
+        'resource_id': 'resourceId',
+        'resource_type': 'resourceType',
         'role': 'role'
     }
 
-    def __init__(self, description: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, role: 'str' =None):  # noqa: E501
         """V1CreateAPIKeyRequest - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._name = None
         self._org_id = None
         self._project_id = None
+        self._resource_id = None
+        self._resource_type = None
         self._role = None
         self.discriminator = None
         if description is not None:
@@ -72,6 +78,10 @@ class V1CreateAPIKeyRequest(object):
             self.org_id = org_id
         if project_id is not None:
             self.project_id = project_id
+        if resource_id is not None:
+            self.resource_id = resource_id
+        if resource_type is not None:
+            self.resource_type = resource_type
         if role is not None:
             self.role = role
 
@@ -158,6 +168,48 @@ class V1CreateAPIKeyRequest(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1CreateAPIKeyRequest.  # noqa: E501
+
+
+        :return: The resource_id of this V1CreateAPIKeyRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1CreateAPIKeyRequest.
+
+
+        :param resource_id: The resource_id of this V1CreateAPIKeyRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
+
+    @property
+    def resource_type(self) -> 'str':
+        """Gets the resource_type of this V1CreateAPIKeyRequest.  # noqa: E501
+
+
+        :return: The resource_type of this V1CreateAPIKeyRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_type
+
+    @resource_type.setter
+    def resource_type(self, resource_type: 'str'):
+        """Sets the resource_type of this V1CreateAPIKeyRequest.
+
+
+        :param resource_type: The resource_type of this V1CreateAPIKeyRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_type = resource_type
 
     @property
     def role(self) -> 'str':

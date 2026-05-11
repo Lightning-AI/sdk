@@ -43,25 +43,30 @@ class V1RuleCondition(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'project_id': 'str',
+        'resource_id': 'str',
         'resource_owner': 'bool'
     }
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'project_id': 'projectId',
+        'resource_id': 'resourceId',
         'resource_owner': 'resourceOwner'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, project_id: 'str' =None, resource_owner: 'bool' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_owner: 'bool' =None):  # noqa: E501
         """V1RuleCondition - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._project_id = None
+        self._resource_id = None
         self._resource_owner = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if project_id is not None:
             self.project_id = project_id
+        if resource_id is not None:
+            self.resource_id = resource_id
         if resource_owner is not None:
             self.resource_owner = resource_owner
 
@@ -106,6 +111,27 @@ class V1RuleCondition(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1RuleCondition.  # noqa: E501
+
+
+        :return: The resource_id of this V1RuleCondition.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1RuleCondition.
+
+
+        :param resource_id: The resource_id of this V1RuleCondition.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
 
     @property
     def resource_owner(self) -> 'bool':

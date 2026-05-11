@@ -49,7 +49,8 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         'image_url': 'str',
         'lit_page_id': 'str',
         'published_at': 'datetime',
-        'title': 'str'
+        'title': 'str',
+        'unpublished_access_via_link': 'bool'
     }
 
     attribute_map = {
@@ -61,10 +62,11 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         'image_url': 'imageUrl',
         'lit_page_id': 'litPageId',
         'published_at': 'publishedAt',
-        'title': 'title'
+        'title': 'title',
+        'unpublished_access_via_link': 'unpublishedAccessViaLink'
     }
 
-    def __init__(self, author_id: 'str' =None, category: 'str' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, published_at: 'datetime' =None, title: 'str' =None):  # noqa: E501
+    def __init__(self, author_id: 'str' =None, category: 'str' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, image_url: 'str' =None, lit_page_id: 'str' =None, published_at: 'datetime' =None, title: 'str' =None, unpublished_access_via_link: 'bool' =None):  # noqa: E501
         """BlogPostsServiceUpdateBlogPostBody - a model defined in Swagger"""  # noqa: E501
         self._author_id = None
         self._category = None
@@ -75,6 +77,7 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         self._lit_page_id = None
         self._published_at = None
         self._title = None
+        self._unpublished_access_via_link = None
         self.discriminator = None
         if author_id is not None:
             self.author_id = author_id
@@ -94,6 +97,8 @@ class BlogPostsServiceUpdateBlogPostBody(object):
             self.published_at = published_at
         if title is not None:
             self.title = title
+        if unpublished_access_via_link is not None:
+            self.unpublished_access_via_link = unpublished_access_via_link
 
     @property
     def author_id(self) -> 'str':
@@ -283,6 +288,27 @@ class BlogPostsServiceUpdateBlogPostBody(object):
         """
 
         self._title = title
+
+    @property
+    def unpublished_access_via_link(self) -> 'bool':
+        """Gets the unpublished_access_via_link of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+
+
+        :return: The unpublished_access_via_link of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unpublished_access_via_link
+
+    @unpublished_access_via_link.setter
+    def unpublished_access_via_link(self, unpublished_access_via_link: 'bool'):
+        """Sets the unpublished_access_via_link of this BlogPostsServiceUpdateBlogPostBody.
+
+
+        :param unpublished_access_via_link: The unpublished_access_via_link of this BlogPostsServiceUpdateBlogPostBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._unpublished_access_via_link = unpublished_access_via_link
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -54,6 +54,7 @@ class V1BlogPost(object):
         'lit_page_id': 'str',
         'published_at': 'datetime',
         'title': 'str',
+        'unpublished_access_via_link': 'bool',
         'updated_at': 'datetime'
     }
 
@@ -71,10 +72,11 @@ class V1BlogPost(object):
         'lit_page_id': 'litPageId',
         'published_at': 'publishedAt',
         'title': 'title',
+        'unpublished_access_via_link': 'unpublishedAccessViaLink',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, author: 'V1Author' =None, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page: 'V1LitPage' =None, lit_page_id: 'str' =None, published_at: 'datetime' =None, title: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, author: 'V1Author' =None, author_id: 'str' =None, category: 'str' =None, created_at: 'datetime' =None, customer_logo_url: 'str' =None, customer_name: 'str' =None, description: 'str' =None, id: 'str' =None, image_url: 'str' =None, lit_page: 'V1LitPage' =None, lit_page_id: 'str' =None, published_at: 'datetime' =None, title: 'str' =None, unpublished_access_via_link: 'bool' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1BlogPost - a model defined in Swagger"""  # noqa: E501
         self._author = None
         self._author_id = None
@@ -89,6 +91,7 @@ class V1BlogPost(object):
         self._lit_page_id = None
         self._published_at = None
         self._title = None
+        self._unpublished_access_via_link = None
         self._updated_at = None
         self.discriminator = None
         if author is not None:
@@ -117,6 +120,8 @@ class V1BlogPost(object):
             self.published_at = published_at
         if title is not None:
             self.title = title
+        if unpublished_access_via_link is not None:
+            self.unpublished_access_via_link = unpublished_access_via_link
         if updated_at is not None:
             self.updated_at = updated_at
 
@@ -392,6 +397,27 @@ class V1BlogPost(object):
         """
 
         self._title = title
+
+    @property
+    def unpublished_access_via_link(self) -> 'bool':
+        """Gets the unpublished_access_via_link of this V1BlogPost.  # noqa: E501
+
+
+        :return: The unpublished_access_via_link of this V1BlogPost.  # noqa: E501
+        :rtype: bool
+        """
+        return self._unpublished_access_via_link
+
+    @unpublished_access_via_link.setter
+    def unpublished_access_via_link(self, unpublished_access_via_link: 'bool'):
+        """Sets the unpublished_access_via_link of this V1BlogPost.
+
+
+        :param unpublished_access_via_link: The unpublished_access_via_link of this V1BlogPost.  # noqa: E501
+        :type: bool
+        """
+
+        self._unpublished_access_via_link = unpublished_access_via_link
 
     @property
     def updated_at(self) -> 'datetime':

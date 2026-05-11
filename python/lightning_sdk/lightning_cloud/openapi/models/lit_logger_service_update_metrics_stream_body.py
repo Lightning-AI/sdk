@@ -46,8 +46,7 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         'name': 'str',
         'persisted': 'bool',
         'phase': 'V1PhaseType',
-        'tags': 'list[V1MetricsTags]',
-        'trackers': 'dict(str, V1MetricsTracker)'
+        'tags': 'list[V1MetricsTags]'
     }
 
     attribute_map = {
@@ -56,11 +55,10 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         'name': 'name',
         'persisted': 'persisted',
         'phase': 'phase',
-        'tags': 'tags',
-        'trackers': 'trackers'
+        'tags': 'tags'
     }
 
-    def __init__(self, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, tags: 'list[V1MetricsTags]' =None, trackers: 'dict(str, V1MetricsTracker)' =None):  # noqa: E501
+    def __init__(self, dark_color: 'str' =None, light_color: 'str' =None, name: 'str' =None, persisted: 'bool' =None, phase: 'V1PhaseType' =None, tags: 'list[V1MetricsTags]' =None):  # noqa: E501
         """LitLoggerServiceUpdateMetricsStreamBody - a model defined in Swagger"""  # noqa: E501
         self._dark_color = None
         self._light_color = None
@@ -68,7 +66,6 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         self._persisted = None
         self._phase = None
         self._tags = None
-        self._trackers = None
         self.discriminator = None
         if dark_color is not None:
             self.dark_color = dark_color
@@ -82,8 +79,6 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
             self.phase = phase
         if tags is not None:
             self.tags = tags
-        if trackers is not None:
-            self.trackers = trackers
 
     @property
     def dark_color(self) -> 'str':
@@ -210,27 +205,6 @@ class LitLoggerServiceUpdateMetricsStreamBody(object):
         """
 
         self._tags = tags
-
-    @property
-    def trackers(self) -> 'dict(str, V1MetricsTracker)':
-        """Gets the trackers of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
-
-
-        :return: The trackers of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
-        :rtype: dict(str, V1MetricsTracker)
-        """
-        return self._trackers
-
-    @trackers.setter
-    def trackers(self, trackers: 'dict(str, V1MetricsTracker)'):
-        """Sets the trackers of this LitLoggerServiceUpdateMetricsStreamBody.
-
-
-        :param trackers: The trackers of this LitLoggerServiceUpdateMetricsStreamBody.  # noqa: E501
-        :type: dict(str, V1MetricsTracker)
-        """
-
-        self._trackers = trackers
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
