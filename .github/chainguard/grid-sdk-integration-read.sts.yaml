@@ -1,0 +1,13 @@
+issuer: https://token.actions.githubusercontent.com
+subject_pattern: repo:gridai/grid:(ref:refs/heads/.*|pull_request)
+audience: octo-sts.gridai.dev
+claim_pattern:
+  workflow_ref: "gridai/grid/\\.github/workflows/(\
+    test-sdk-integration\\.yml|\
+    test-with-tired-proxy\\.yml|\
+    test-baremetal-agent\\.yml|\
+    vendor_cloud_with_sdk\\.yml\
+    )@refs/(heads|pull)/.*"
+
+permissions:
+  contents: read

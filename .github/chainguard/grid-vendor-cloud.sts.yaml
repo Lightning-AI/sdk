@@ -1,6 +1,8 @@
 issuer: https://token.actions.githubusercontent.com
-subject_pattern: repo:gridai/grid:.*
+subject: repo:gridai/grid:ref:refs/heads/master
 audience: octo-sts.gridai.dev
+claim_pattern:
+  workflow_ref: gridai/grid/\.github/workflows/vendor_cloud_with_sdk\.yml@refs/heads/master
 
 permissions:
   contents: write
