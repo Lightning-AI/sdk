@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache, partial
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, TypedDict, Union, runtime_checkable
+from typing import Any, Callable, Dict, Iterator, List, Optional, Protocol, Tuple, TypedDict, Union, runtime_checkable
 
 import backoff
 import requests
@@ -60,6 +60,19 @@ _SIZE_LIMIT_SINGLE_PART = 5 * _BYTES_PER_GB
 _MAX_SIZE_MULTI_PART_CHUNK = 100 * _BYTES_PER_MB
 _MAX_BATCH_SIZE = 50
 _MAX_WORKERS = 10
+
+
+class _IterableFileWrapper:
+    """Workaround for requests 2.34.0 stream detection regression."""
+
+    def __init__(self, wrapped: Any) -> None:
+        self._wrapped = wrapped
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._wrapped, name)
+
+    def __iter__(self) -> Iterator[Any]:
+        return iter(self._wrapped)
 
 
 class _SinglePartFileUploader:
@@ -122,7 +135,11 @@ class _SinglePartFileUploader:
                     unit_divisor=1000,
                 ) as wrapped_file:
                     r = requests.put(
-                        self.url, data=wrapped_file, params=self.query_params, timeout=30, headers=self.headers
+                        self.url,
+                        data=_IterableFileWrapper(wrapped_file),
+                        params=self.query_params,
+                        timeout=30,
+                        headers=self.headers,
                     )
             else:
                 r = requests.put(self.url, data=f, params=self.query_params, timeout=30, headers=self.headers)

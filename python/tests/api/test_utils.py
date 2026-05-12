@@ -444,3 +444,62 @@ def test_sanitize_studio_remote_path():
     path = ""
     result = _sanitize_studio_remote_path(path, studio_id)
     assert result == f"/cloudspaces/{studio_id}/code/content/"
+
+
+def _make_single_part_uploader(tmp_path, progress_bar=False, notify_completion=False, headers=None):
+    file_path = tmp_path / "test_file.txt"
+    file_path.write_text("hello world")
+    return utils._SinglePartFileUploader(
+        client=Mock(),
+        file_path=str(file_path),
+        url="http://example.com/upload",
+        query_params={"token": "test-token"},
+        progress_bar=progress_bar,
+        headers=headers,
+        notify_completion=notify_completion,
+    )
+
+
+@mock.patch("lightning_sdk.api.utils.requests")
+def test_single_part_uploader_basic(mock_requests, tmp_path):
+    uploader = _make_single_part_uploader(tmp_path)
+
+    mock_requests.put.return_value = Mock(status_code=200)
+
+    uploader()
+
+    assert mock_requests.put.call_count == 1
+    call = mock_requests.put.call_args
+    assert call.args[0] == "http://example.com/upload"
+    assert call.kwargs["params"] == {"token": "test-token"}
+    assert call.kwargs["timeout"] == 30
+    assert call.kwargs["headers"] is None
+
+
+@mock.patch("lightning_sdk.api.utils.requests")
+def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path):
+    uploader = _make_single_part_uploader(tmp_path, progress_bar=True)
+
+    mock_requests.put.return_value = Mock(status_code=200)
+
+    uploader()
+
+    assert mock_requests.put.call_count == 1
+    call = mock_requests.put.call_args
+    # Body should be wrapped in _IterableFileWrapper when progress_bar=True
+    assert isinstance(call.kwargs["data"], utils._IterableFileWrapper)
+
+
+@mock.patch("time.sleep", return_value=None)
+@mock.patch("lightning_sdk.api.utils.requests")
+def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path):
+    uploader = _make_single_part_uploader(tmp_path)
+
+    mock_requests.put.side_effect = [
+        requests.exceptions.RequestException(),
+        Mock(status_code=200),
+    ]
+
+    uploader()
+
+    assert mock_requests.put.call_count == 2
