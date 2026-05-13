@@ -112,3 +112,80 @@ export interface FileStat {
   /** Permission bits as an octal string (e.g. `644`). */
   mode: string;
 }
+
+// ---------------------------------------------------------------------------
+// PTY (interactive shell) types
+// ---------------------------------------------------------------------------
+
+/** Terminal dimensions in columns and rows. */
+export interface PtySize {
+  cols: number;
+  rows: number;
+}
+
+/** Parameters for creating a new PTY session. */
+export interface PtyCreateOpts {
+  /**
+   * Caller-chosen identifier for the session. Re-using the same name with
+   * `connectPty` reattaches to the same WebSocket-side session within the
+   * SDK process (cross-process persistence requires a server follow-up).
+   */
+  sessionName: string;
+  /**
+   * Cluster the sandbox is running on. Required because the controlplane
+   * attach endpoint is keyed on `(clusterId, sandboxId)`.
+   */
+  clusterId: string;
+
+  /** Working directory the session starts in. Sent as `cd ... && clear`. */
+  cwd?: string;
+  /** Environment variables exported in the session before any user input. */
+  envs?: Record<string, string>;
+  /** Initial terminal columns. Defaults to 80. */
+  cols?: number;
+  /** Initial terminal rows. Defaults to 24. */
+  rows?: number;
+  /**
+   * Callback invoked for every chunk of bytes received from the shell
+   * (combined stdout/stderr). Bytes are delivered exactly as the server
+   * forwards them, with no buffering or line-splitting on the SDK side.
+   */
+  onData?: (data: Uint8Array) => void;
+}
+
+/** Parameters for connecting to an existing PTY session. */
+export interface PtyConnectOpts {
+  /** See {@link PtyCreateOpts.onData}. */
+  onData?: (data: Uint8Array) => void;
+}
+
+/** Result returned when a PTY session terminates. */
+export interface PtyResult {
+  /**
+   * Exit code of the underlying process. The Lightning xterm wire protocol
+   * does not currently propagate the SSH command's exit status, so this is
+   * `0` for a clean WebSocket close, `-1` for an abnormal close, and `null`
+   * if the session is still running.
+   */
+  exitCode: number | null;
+  /** Termination reason for abnormal exits. */
+  error: string | null;
+}
+
+/** Snapshot of a PTY session's state. */
+export interface PtySessionInfo {
+  /** The session id supplied when the session was created. */
+  id: string;
+  /** Whether a WebSocket is currently attached to the session. */
+  active: boolean;
+  /** Terminal columns. */
+  cols?: number;
+  /** Terminal rows. */
+  rows?: number;
+  /** Working directory the session was created with. */
+  cwd?: string;
+  /** ISO timestamp the session was created. */
+  createdAt?: string;
+  /** Underlying process id, when available. */
+  processId?: number;
+}

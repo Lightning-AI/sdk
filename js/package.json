@@ -5,39 +5,39 @@
     "type": "module",
     "license": "Apache-2.0",
     "engines": {
-      "node": ">=22.0.0"
+        "node": ">=22.0.0"
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
     },
     "files": [
-      "dist"
+        "dist"
     ],
     "scripts": {
-      "clean": "rm -rf dist",
-      "build": "tsc",
-      "prepublishOnly": "npm run clean && npm run build",
-        "test": "node --test --import tsx tests/config.test.ts tests/sandbox.test.ts tests/filesystem.test.ts"
+        "clean": "rm -rf dist",
+        "build": "tsc",
+        "prepublishOnly": "npm run clean && npm run build",
+        "test": "node --test --import tsx tests/config.test.ts tests/sandbox.test.ts tests/filesystem.test.ts tests/pty.test.ts"
     },
     "dependencies": {
         "axios": "^1.7.0"
     },
     "devDependencies": {
-      "@types/node": "^22.0.0",
-      "tsx": "^4.0.0",
-      "typescript": "^5.4.0"
+        "@types/node": "^22.19.18",
+        "tsx": "^4.0.0",
+        "typescript": "^5.4.0"
     },
     "publishConfig": {
-      "access": "public"
+        "access": "public"
     },
-      "repository": {
+    "repository": {
         "type": "git",
         "url": "https://github.com/gridai/lightning-sdk.git",
         "directory": "js"
     }
-  }
+}

@@ -21,6 +21,7 @@ from lightning_sdk.utils.logging import TrackCallsMeta
 
 if TYPE_CHECKING:
     from lightning_sdk.sandbox.filesystem import FileSystem
+    from lightning_sdk.sandbox.process import SandboxProcess
 
 _sandbox_config: dict[str, Any] = {}
 _sandbox_config.update(SandboxConfig.from_env().to_api_dict())
@@ -191,6 +192,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         self._runtime = runtime
         self._sandbox_api = sandbox_api or _api
         self._fs_inst: Any = None
+        self._process_inst: Any = None
 
     @classmethod
     def _from_v1(
@@ -257,6 +259,62 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         if self._fs_inst is None:
             self._fs_inst = FileSystem(self)
         return self._fs_inst
+
+    @property
+    def process(self) -> SandboxProcess:
+        r"""Interactive process namespace for this sandbox.
+
+        Provides PTY sessions and shell-style helpers. Mirrors Daytona's
+        ``sandbox.process`` surface.
+
+        ::
+
+            pty = sandbox.process.create_pty(PtyCreateOpts(
+                session_name="shell",
+                cluster_id=sandbox.cluster_id,
+                on_data=lambda chunk: sys.stdout.buffer.write(chunk),
+            ))
+            pty.send_input("ls -la\n")
+        """
+        from lightning_sdk.sandbox.process import SandboxProcess, SandboxProcessContext
+
+        if self._process_inst is None:
+            self._process_inst = SandboxProcess(
+                SandboxProcessContext(
+                    sandbox_id=self.sandbox_id,
+                    organization_id=self.organization_id,
+                    get_api_key=self._get_api_key,
+                    get_base_url=self._get_base_url,
+                    run_command=self._run_command_for_process,
+                )
+            )
+        return self._process_inst
+
+    # -- internal helpers used by the PTY namespace ---------------------------
+
+    def _get_api_key(self) -> str:
+        """Best-effort lookup of the bearer token from the OpenAPI client.
+
+        Mirrors the lazy lookup the JS SDK performs so that
+        :meth:`SandboxInstance.configure` calls made after the sandbox object
+        was created are still honored.
+        """
+        headers = getattr(self._sandbox_api.client.api_client, "default_headers", {})
+        auth = headers.get("Authorization", "") if isinstance(headers, dict) else ""
+        if isinstance(auth, str) and auth.startswith("Bearer "):
+            return auth[len("Bearer ") :]
+        return auth or ""
+
+    def _get_base_url(self) -> str:
+        return self._sandbox_api.host
+
+    def _run_command_for_process(self, *, cmd: str, args: list[str] | None = None) -> Command:
+        """Adapt :meth:`run_command` to the kwarg shape ``SandboxProcess`` expects.
+
+        Avoids exposing the ``RunCommandOpts`` dataclass to the
+        :class:`SandboxProcess` module, which keeps the two modules decoupled.
+        """
+        return self.run_command(RunCommandOpts(cmd=cmd, args=args or []))
 
     @classmethod
     def configure(

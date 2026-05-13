@@ -30,6 +30,7 @@ dependencies = [ # alphabetically sorted
     "tqdm", # for progressbars
     "urllib3<=2.5.0", # for downloading files via urls
     "uvicorn", # for login
+    "websocket-client>=1.6", # for sandbox PTY sessions
 ]
 
 dynamic = ["version"]

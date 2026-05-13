@@ -29,6 +29,7 @@ import type {
 } from "./lightning_cloud/openapi/data-contracts.js";
 import { getApiKey, getBaseUrl, mergeSandboxConfig, resolveOrgId } from "./config.js";
 import { FileSystem } from "./filesystem.js";
+import { SandboxProcess } from "./process.js";
 
 function buildQuery(params: Record<string, string | undefined>): string {
   const qs = new URLSearchParams();
@@ -57,6 +58,7 @@ async function request<T>(
   }
 
   const resp = await fetch(url, init);
+  console.log(url)
   if (!resp.ok) {
     const text = await resp.text();
     throw new Error(`Lightning API error ${resp.status}: ${text}`);
@@ -130,6 +132,9 @@ export class Sandbox {
   /** Path-oriented file helpers that run commands inside the sandbox (see {@link FileSystem}). */
   readonly fs: FileSystem;
 
+  /** Lazily-instantiated PTY namespace; see {@link Sandbox.process}. */
+  private _process?: SandboxProcess;
+
   private constructor(data: SandboxData) {
     this.sandboxId = data.id;
     this.name = data.name;
@@ -144,6 +149,32 @@ export class Sandbox {
     this.createdAt = new Date(data.createdAt);
     this.updatedAt = new Date(data.updatedAt);
     this.fs = new FileSystem(this);
+  }
+
+  /**
+   * Interactive process namespace for this sandbox: PTY sessions and
+   * shell-style helpers. Mirrors Daytona's `sandbox.process` surface.
+   *
+   * ```ts
+   * const pty = await sandbox.process.createPty({
+   *   sessionName: "shell",
+   *   clusterId: sandbox.clusterId,
+   *   onData: (chunk) => process.stdout.write(chunk),
+   * });
+   * await pty.sendInput("ls -la\n");
+   * ```
+   */
+  get process(): SandboxProcess {
+    if (!this._process) {
+      this._process = new SandboxProcess({
+        sandboxId: this.sandboxId,
+        organizationId: this.organizationId,
+        getApiKey: () => getApiKey(),
+        getBaseUrl: () => getBaseUrl(),
+        runCommand: (opts) => this.runCommand(opts),
+      });
+    }
+    return this._process;
   }
 
   // ---------------------------------------------------------------------------
