@@ -12,6 +12,7 @@ from lightning_sdk.api.utils import (
     _download_teamspace_files,
     _FileDownloader,
     _FileUploader,
+    _local_file_matches_size,
     _machine_to_compute_name,
     _ModelFileUploader,
     _sanitize_studio_remote_path,
@@ -254,6 +255,44 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tm
     assert file_downloader_mock.call_count == 2
     assert wait_mock.call_count == 1
 
+    # By default, skip_if_exists is forwarded as True to every _FileDownloader instantiation
+    for call in file_downloader_mock.call_args_list:
+        assert call.kwargs["skip_if_exists"] is True
+
+
+@mock.patch("lightning_sdk.api.utils._FileDownloader")
+@mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
+@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
+def test_download_model_files_forwards_skip_if_exists_false(
+    wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch
+):
+    tqdm_mock = MagicMock()
+    monkeypatch.setattr(utils, "tqdm", tqdm_mock)
+    client = Mock()
+
+    client.models_store_get_model_files.return_value = Mock(
+        model_id="test-model-id",
+        project_id="test-project-id",
+        version="latest",
+        files=[],
+        filepaths=["path/to/file1"],
+        size_bytes=5,
+    )
+
+    _download_model_files(
+        client=client,
+        teamspace_name="test-project",
+        teamspace_owner_name="test-user",
+        name="modelname",
+        version="latest",
+        download_dir=tmp_path,
+        progress_bar=False,
+        skip_if_exists=False,
+    )
+
+    assert file_downloader_mock.call_count == 1
+    assert file_downloader_mock.call_args.kwargs["skip_if_exists"] is False
+
 
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
@@ -291,6 +330,39 @@ def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock
 
     assert file_downloader_mock.call_count == 2
     assert wait_mock.call_count == 1
+
+    # By default, skip_if_exists is forwarded as True to every _FileDownloader instantiation
+    for call in file_downloader_mock.call_args_list:
+        assert call.kwargs["skip_if_exists"] is True
+
+
+@mock.patch("lightning_sdk.api.utils._FileDownloader")
+@mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
+@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
+def test_download_teamspace_files_forwards_skip_if_exists_false(
+    wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch
+):
+    tqdm_mock = MagicMock()
+    monkeypatch.setattr(utils, "tqdm", tqdm_mock)
+    client = Mock()
+
+    client.storage_service_list_project_artifacts.return_value = V1ListProjectArtifactsResponse(
+        artifacts=[V1ProjectArtifact(filename="file1", url="http://example.com/file1", size_bytes="10")],
+        next_page_token="",
+    )
+
+    _download_teamspace_files(
+        client=client,
+        teamspace_id="test-project-id",
+        cluster_id="test-cluster-id",
+        prefix="test-prefix",
+        download_dir=tmp_path,
+        progress_bar=True,
+        skip_if_exists=False,
+    )
+
+    assert file_downloader_mock.call_count == 1
+    assert file_downloader_mock.call_args.kwargs["skip_if_exists"] is False
 
 
 def mock_iter_content(chunk_size):
@@ -381,6 +453,165 @@ def test_download_chunk_failure_and_retry_success(mock_get, _):
     mock_get.assert_any_call(new_url, headers={"Range": "bytes=0-100"}, stream=True)
 
     assert refresh_fn_mock.call_count == 1
+
+
+# ---------------------------------------------------------------------------
+# Tests for the skip-if-exists optimization on downloads
+# ---------------------------------------------------------------------------
+
+
+class TestLocalFileMatchesSize:
+    """Tests for the _local_file_matches_size helper."""
+
+    def test_returns_false_when_expected_size_is_none(self, tmp_path):
+        f = tmp_path / "file"
+        f.write_bytes(b"hello")
+        assert _local_file_matches_size(str(f), None) is False
+
+    def test_returns_false_when_file_missing(self, tmp_path):
+        assert _local_file_matches_size(str(tmp_path / "missing"), 10) is False
+
+    def test_returns_false_when_size_mismatch(self, tmp_path):
+        f = tmp_path / "file"
+        f.write_bytes(b"hello")  # 5 bytes
+        assert _local_file_matches_size(str(f), 10) is False
+
+    def test_returns_true_when_size_matches(self, tmp_path):
+        f = tmp_path / "file"
+        f.write_bytes(b"hello")  # 5 bytes
+        assert _local_file_matches_size(str(f), 5) is True
+
+    def test_returns_true_when_expected_size_is_string(self, tmp_path):
+        # The artifact API returns size_bytes as a string; helper must coerce it.
+        f = tmp_path / "file"
+        f.write_bytes(b"hello")
+        assert _local_file_matches_size(str(f), "5") is True
+
+    def test_returns_false_on_directory(self, tmp_path):
+        # A directory is not a regular file, even if some size could be computed.
+        assert _local_file_matches_size(str(tmp_path), 0) is False
+
+
+def _make_file_downloader(file_path, size=None, url=None, refresh_fn=None, skip_if_exists=True, progress_bar=None):
+    return _FileDownloader(
+        teamspace_id="ts",
+        remote_path="remote/path",
+        file_path=str(file_path),
+        num_workers=1,
+        progress_bar=progress_bar,
+        executor=Mock(),
+        url=url,
+        size=size,
+        refresh_fn=refresh_fn,
+        skip_if_exists=skip_if_exists,
+    )
+
+
+def test_downloader_skips_when_local_file_matches_size(tmp_path):
+    """If size is known up-front and local file matches, no network nor refresh should happen."""
+    local = tmp_path / "file"
+    local.write_bytes(b"hello")  # 5 bytes
+
+    refresh_fn = Mock()
+    progress_bar = Mock()
+    downloader = _make_file_downloader(
+        local,
+        size=5,
+        url="http://example.com/file",
+        refresh_fn=refresh_fn,
+        progress_bar=progress_bar,
+    )
+
+    with mock.patch.object(downloader, "_create_empty_file") as create_mock, mock.patch.object(
+        downloader, "_multipart_download"
+    ) as multipart_mock:
+        downloader.download()
+
+    # No file was (re)created, no download happened, refresh wasn't called.
+    create_mock.assert_not_called()
+    multipart_mock.assert_not_called()
+    refresh_fn.assert_not_called()
+    # Progress bar advanced by the skipped size so totals stay correct.
+    progress_bar.update.assert_called_once_with(5)
+
+
+def test_downloader_skips_after_refresh_when_size_only_known_post_refresh(tmp_path):
+    """For the model-files flow, size is only known after refresh(); we should still skip."""
+    local = tmp_path / "file"
+    local.write_bytes(b"hello")  # 5 bytes
+
+    # url is None initially -> downloader must call refresh() first.
+    refresh_fn = Mock(return_value={"url": "http://example.com/file", "size": 5})
+    downloader = _make_file_downloader(local, size=None, url=None, refresh_fn=refresh_fn)
+
+    with mock.patch.object(downloader, "_create_empty_file") as create_mock, mock.patch.object(
+        downloader, "_multipart_download"
+    ) as multipart_mock:
+        downloader.download()
+
+    refresh_fn.assert_called_once()
+    create_mock.assert_not_called()
+    multipart_mock.assert_not_called()
+
+
+def test_downloader_does_not_skip_when_size_mismatches(tmp_path):
+    """If the local file exists but has the wrong size, the download must proceed."""
+    local = tmp_path / "file"
+    local.write_bytes(b"hi")  # 2 bytes, expected 5
+
+    downloader = _make_file_downloader(local, size=5, url="http://example.com/file")
+
+    with mock.patch.object(downloader, "_create_empty_file") as create_mock, mock.patch.object(
+        downloader, "_multipart_download"
+    ) as multipart_mock, mock.patch("lightning_sdk.api.utils.os.rename") as rename_mock:
+        downloader.download()
+
+    create_mock.assert_called_once()
+    multipart_mock.assert_called_once()
+    rename_mock.assert_called_once()
+
+
+def test_downloader_does_not_skip_when_local_file_missing(tmp_path):
+    """If the local file does not exist, the download must proceed even if skip_if_exists=True."""
+    local = tmp_path / "does_not_exist"
+
+    downloader = _make_file_downloader(local, size=5, url="http://example.com/file")
+
+    with mock.patch.object(downloader, "_create_empty_file") as create_mock, mock.patch.object(
+        downloader, "_multipart_download"
+    ) as multipart_mock, mock.patch("lightning_sdk.api.utils.os.rename"):
+        downloader.download()
+
+    create_mock.assert_called_once()
+    multipart_mock.assert_called_once()
+
+
+def test_downloader_skip_if_exists_false_forces_download(tmp_path):
+    """With skip_if_exists=False, a matching local file must NOT short-circuit the download."""
+    local = tmp_path / "file"
+    local.write_bytes(b"hello")  # 5 bytes, matches expected
+
+    downloader = _make_file_downloader(local, size=5, url="http://example.com/file", skip_if_exists=False)
+
+    with mock.patch.object(downloader, "_create_empty_file") as create_mock, mock.patch.object(
+        downloader, "_multipart_download"
+    ) as multipart_mock, mock.patch("lightning_sdk.api.utils.os.rename") as rename_mock:
+        downloader.download()
+
+    create_mock.assert_called_once()
+    multipart_mock.assert_called_once()
+    rename_mock.assert_called_once()
+
+
+def test_downloader_skip_does_not_touch_progress_bar_when_none(tmp_path):
+    """The skip path must be safe when no progress bar is attached."""
+    local = tmp_path / "file"
+    local.write_bytes(b"hello")
+
+    downloader = _make_file_downloader(local, size=5, url="http://example.com/file", progress_bar=None)
+
+    # Should simply return without raising.
+    downloader.download()
 
 
 def test_resolve_path_mappings():

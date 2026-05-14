@@ -62,6 +62,18 @@ _MAX_BATCH_SIZE = 50
 _MAX_WORKERS = 10
 
 
+def _local_file_matches_size(local_path: str, expected_size: Optional[int]) -> bool:
+    """Return True if a local file exists and its size matches the expected size."""
+    if expected_size is None:
+        return False
+    try:
+        if not os.path.isfile(local_path):
+            return False
+        return os.path.getsize(local_path) == int(expected_size)
+    except OSError:
+        return False
+
+
 class _IterableFileWrapper:
     """Workaround for requests 2.34.0 stream detection regression."""
 
@@ -605,6 +617,7 @@ class _FileDownloader:
         url: Optional[str] = None,
         size: Optional[int] = None,
         refresh_fn: Optional[Callable[[], _RefreshResponse]] = None,
+        skip_if_exists: bool = True,
     ) -> None:
         self.teamspace_id = teamspace_id
         self.local_path = file_path
@@ -615,6 +628,7 @@ class _FileDownloader:
         self._size = size
         self.executor = executor
         self.refresh_fn = refresh_fn
+        self.skip_if_exists = skip_if_exists
 
     @backoff.on_exception(backoff.expo, ApiException, max_tries=10)
     def refresh(self) -> None:
@@ -694,8 +708,18 @@ class _FileDownloader:
         concurrent.futures.wait(futures)
 
     def download(self) -> None:
+        # Fast path: if size is already known and the local file matches, skip without hitting the API.
+        if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            self.update_progress(self._size)
+            return
+
         if self.url is None:
             self.refresh()
+
+        # Re-check after refresh in case size was previously unknown (e.g. model files flow).
+        if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            self.update_progress(self._size)
+            return
 
         tmp_filename = f"{self.local_path}.download"
 
@@ -751,6 +775,7 @@ def _download_model_files(
     download_dir: Path,
     progress_bar: bool,
     num_workers: int = 20,
+    skip_if_exists: bool = True,
 ) -> List[str]:
     response = client.models_store_get_model_files(
         project_name=teamspace_name, project_owner_name=teamspace_owner_name, name=name, version=version
@@ -794,6 +819,7 @@ def _download_model_files(
                 progress_bar=pbar,
                 executor=part_executor,
                 refresh_fn=lambda f=filepath: refresh_fn(f),
+                skip_if_exists=skip_if_exists,
             )
 
             futures.append(file_executor.submit(file_downloader.download))
@@ -812,6 +838,7 @@ def _download_teamspace_files(
     download_dir: Path,
     progress_bar: bool,
     num_workers: int = os.cpu_count() * 4,
+    skip_if_exists: bool = True,
 ) -> None:
     response = None
 
@@ -865,6 +892,7 @@ def _download_teamspace_files(
                     url=file.url,
                     size=int(file.size_bytes),
                     refresh_fn=lambda f=file: refresh_fn(f.filename),
+                    skip_if_exists=skip_if_exists,
                 )
 
                 page_futures.append(file_executor.submit(file_downloader.download))
