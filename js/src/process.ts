@@ -1,6 +1,6 @@
+import type { Command } from "./command.js";
 import { PtyHandle } from "./pty.js";
 import type {
-  CommandResult,
   PtyConnectOpts,
   PtyCreateOpts,
   PtySessionInfo,
@@ -27,7 +27,7 @@ export interface SandboxProcessContext {
   /** Returns the resolved base URL (with no trailing slash). */
   getBaseUrl(): string;
   /** Forwards to `Sandbox.runCommand`. */
-  runCommand(opts: RunCommandOpts): Promise<CommandResult>;
+  runCommand(opts: RunCommandOpts): Promise<Command>;
 }
 
 /**
