@@ -181,6 +181,45 @@ class TestCreatePipeline:
         assert body2.cron_expression == "0 0 * * 0"
         assert body2.display_name == "weekly"
 
+    @pytest.mark.parametrize(
+        ("parent_pipeline_id", "expected_parent_resource_id"),
+        [
+            (None, PIPELINE_ID),
+            ("pip_old", "pip_old"),
+        ],
+    )
+    def test_create_schedule_uses_parent_resource_id_for_hierarchy(
+        self,
+        pipeline_api,
+        mock_lightning_client,
+        parent_pipeline_id,
+        expected_parent_resource_id,
+    ):
+        """Schedule create body uses pipeline.id as parent when there is no parent, else the parent id."""
+        mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)
+        mock_lightning_client.pipelines_service_create_pipeline.return_value = mock_created_pipeline
+        mock_lightning_client.schedules_service_list_schedules.return_value = MagicMock(schedules=[])
+
+        schedule = Schedule(cron_expression="0 0 * * *", name="nightly")
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+
+        teamspace = MagicMock()
+        teamspace.id = PROJECT_ID
+
+        pipeline_api.create_pipeline(
+            name=PIPELINE_NAME,
+            teamspace=teamspace,
+            steps=[],
+            shared_filesystem=True,
+            schedules=[schedule],
+            parent_pipeline_id=parent_pipeline_id,
+        )
+
+        mock_lightning_client.schedules_service_create_schedule.assert_called_once()
+        body, _ = mock_lightning_client.schedules_service_create_schedule.call_args[0]
+        assert body.resource_id == PIPELINE_ID
+        assert body.parent_resource_id == expected_parent_resource_id
+
     def test_create_with_parent_pipeline(self, pipeline_api, mock_lightning_client):
         """Test creating a pipeline that replaces a parent, deleting old schedules."""
         parent_id = "pip_old"

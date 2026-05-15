@@ -100,7 +100,7 @@ class PipelineApi:
                     cron_expression=schedule.cron_expression,
                     display_name=schedule.name,
                     resource_id=pipeline.id,
-                    parent_resource_id=parent_pipeline_id or "",
+                    parent_resource_id=parent_pipeline_id or pipeline.id,
                     resource_type=V1ScheduleResourceType.PIPELINE,
                     timezone=schedule.timezone,
                     parallel_runs=schedule.parallel_runs or False,
