@@ -89,7 +89,7 @@ class PipelineApi:
         # Delete the previous schedules
         if parent_pipeline_id is not None:
             current_schedules = self._client.schedules_service_list_schedules(
-                teamspace.id, resource_id=parent_pipeline_id
+                teamspace.id, parent_resource_id=parent_pipeline_id
             ).schedules
             for schedule in current_schedules:
                 self._client.schedules_service_delete_schedule(teamspace.id, schedule.id)

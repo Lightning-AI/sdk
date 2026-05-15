@@ -212,9 +212,9 @@ class TestCreatePipeline:
         body = mock_lightning_client.pipelines_service_create_pipeline.call_args[0][0]
         assert body.parent_pipeline_id == parent_id
 
-        # Check old schedules were listed and deleted
+        # Check old schedules were listed by parent pipeline and deleted
         mock_lightning_client.schedules_service_list_schedules.assert_called_once_with(
-            PROJECT_ID, resource_id=parent_id
+            PROJECT_ID, parent_resource_id=parent_id
         )
 
         expected_delete_calls = [
