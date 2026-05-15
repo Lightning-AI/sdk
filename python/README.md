@@ -12,6 +12,144 @@ To use the SDK, you need to export the environment variables `LIGHTNING_USER_ID`
 
 If you want to use it from within a Studio, these variables are already available for you.
 
+## Deployment CLI
+
+Deployment commands are available through the SDK CLI. The examples below use
+`uvx lightning-sdk`, but the same arguments work with `lightning`.
+
+```bash
+export LIGHTNING_USER_ID="..."
+export LIGHTNING_API_KEY="..."
+lightning login
+```
+
+Create an `nginx:latest` deployment:
+
+```bash
+uvx lightning-sdk deployment create nginx-demo \
+  --teamspace owner/teamspace \
+  --image nginx:latest \
+  --machine CPU \
+  --port 80 \
+  --replicas 1 \
+  --api-key-auth
+```
+
+Example output:
+
+```text
+Created deployment nginx-demo.
+```
+
+List deployments with replica status:
+
+```bash
+uvx lightning-sdk deployment list --teamspace owner/teamspace
+```
+
+Example output:
+
+```text
+Name         Teamspace        State    Replicas  Machine  Image         Cloud account
+nginx-demo   owner/teamspace  RUNNING  1/1       cpu-4    nginx:latest  lightning-public-prod
+```
+
+Inspect one deployment, including the replica jobs:
+
+```bash
+uvx lightning-sdk deployment inspect nginx-demo --teamspace owner/teamspace --jobs
+```
+
+Example output:
+
+```json
+{
+  "current_state": "DEPLOYMENT_STATE_RUNNING",
+  "id": "dep_0123456789abcdef",
+  "jobs": [
+    {
+      "id": "job_0123456789abcdef",
+      "name": "nginx-demo-0",
+      "state": "running"
+    }
+  ],
+  "name": "nginx-demo",
+  "replicas": 1
+}
+```
+
+Update a deployment:
+
+```bash
+uvx lightning-sdk deployment update nginx-demo \
+  --teamspace owner/teamspace \
+  --new-name nginx-demo-v2 \
+  --replicas 2
+```
+
+Example output:
+
+```text
+Updated deployment nginx-demo-v2.
+```
+
+Get logs for a deployment by name or ID:
+
+```bash
+uvx lightning-sdk deployment logs nginx-demo-v2 --teamspace owner/teamspace
+```
+
+Example output:
+
+```text
+server started on port 80
+GET /health 200
+```
+
+If persisted log pages have not been produced yet, the command also checks the
+live websocket log stream for recent lines.
+
+Get logs for a specific job in that deployment:
+
+```bash
+uvx lightning-sdk deployment logs nginx-demo-v2 \
+  --teamspace owner/teamspace \
+  --job-id job_0123456789abcdef
+```
+
+Example output:
+
+```text
+server started on port 80
+GET /predict 200
+```
+
+Follow live logs:
+
+```bash
+uvx lightning-sdk deployment logs nginx-demo-v2 --teamspace owner/teamspace --follow
+```
+
+Example output:
+
+```text
+server started on port 80
+GET /health 200
+GET /predict 200
+```
+
+Delete a deployment:
+
+```bash
+uvx lightning-sdk deployment delete nginx-demo-v2 --teamspace owner/teamspace --yes
+```
+
+Example output:
+
+```text
+Deleted deployment nginx-demo-v2.
+```
+
 ## Example
 
 ```python

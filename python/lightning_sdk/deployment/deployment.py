@@ -359,6 +359,8 @@ class Deployment(metaclass=TrackCallsMeta):
             max_runtime=max_runtime,
             path_mappings=path_mappings,
         )
+        if self._deployment is not None:
+            self._name = self._deployment.name
 
     def stop(self) -> None:
         """All the deployment replicas will be stopped and all their traffic blocked."""

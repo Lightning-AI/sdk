@@ -7,6 +7,7 @@ from lightning_sdk.cli.base_studio import register_commands as register_base_stu
 from lightning_sdk.cli.config import register_commands as register_config_commands
 from lightning_sdk.cli.container import register_commands as register_container_commands
 from lightning_sdk.cli.cp import register_commands as register_cp_commands
+from lightning_sdk.cli.deployment import register_commands as register_deployment_commands
 from lightning_sdk.cli.file import register_commands as register_file_commands
 from lightning_sdk.cli.folder import register_commands as register_folder_commands
 from lightning_sdk.cli.job import register_commands as register_job_commands
@@ -47,6 +48,11 @@ def config() -> None:
 @click.group(name="api")
 def api() -> None:
     """Manage Lightning AI APIs."""
+
+
+@click.group(name="deployment")
+def deployment() -> None:
+    """Manage Lightning AI Deployments."""
 
 
 @click.group(name="vm")
@@ -116,6 +122,7 @@ register_machine_commands(machine)
 register_studio_commands(studio)
 register_config_commands(config)
 register_api_commands(api)
+register_deployment_commands(deployment)
 register_vm_commands(vm)
 register_container_commands(container)
 register_model_commands(model)

@@ -24,7 +24,9 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1EnvVar,
     V1HealthCheckExec,
     V1HealthCheckHttpGet,
+    V1Job,
     V1JobHealthCheckConfig,
+    V1JobLogsResponse,
     V1JobSpec,
     V1RollingUpdateStrategy,
 )
@@ -317,6 +319,56 @@ class DeploymentApi:
                 return None
             raise ex
 
+    def list_deployments(
+        self,
+        teamspace_id: str,
+        *,
+        cloudspace_id: Optional[str] = None,
+        user_ids: Optional[List[str]] = None,
+        standalone: Optional[bool] = None,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        limit: int = 100,
+    ) -> List[V1Deployment]:
+        """List deployments in a teamspace, following API pagination.
+
+        Args:
+            teamspace_id: The teamspace that owns the deployments.
+            cloudspace_id: Optional Studio/cloudspace filter.
+            user_ids: Optional user ID filter.
+            standalone: Optional standalone deployment filter.
+            sort_by: Optional server-side sort key.
+            sort_order: Optional sort order.
+            limit: Page size for each API request.
+
+        Returns:
+            List[V1Deployment]: All matching deployments.
+        """
+        deployments = []
+        page_token = None
+
+        while True:
+            kwargs = {
+                "cloudspace_id": cloudspace_id,
+                "user_ids": user_ids,
+                "standalone": standalone,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+                "limit": limit,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            if page_token:
+                kwargs["page_token"] = page_token
+
+            response = self._client.jobs_service_list_deployments(project_id=teamspace_id, **kwargs)
+            deployments.extend(response.deployments or [])
+
+            page_token = response.next_page_token
+            if not page_token:
+                break
+
+        return deployments
+
     def create_deployment(
         self,
         deployment: V1Deployment,
@@ -462,6 +514,93 @@ class DeploymentApi:
             id=deployment.id,
             body=deployment,
         )
+
+    def delete_deployment(self, deployment: V1Deployment) -> None:
+        """Delete a deployment.
+
+        Args:
+            deployment: The deployment to delete.
+        """
+        self._client.jobs_service_delete_deployment(project_id=deployment.project_id, id=deployment.id)
+
+    def list_deployment_jobs(
+        self,
+        teamspace_id: str,
+        deployment_id: str,
+        *,
+        state: Optional[str] = None,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        limit: int = 100,
+    ) -> List[V1Job]:
+        """List jobs that belong to a deployment, following API pagination.
+
+        Args:
+            teamspace_id: The teamspace that owns the deployment.
+            deployment_id: The deployment ID.
+            state: Optional job state filter.
+            sort_by: Optional server-side sort key.
+            sort_order: Optional sort order.
+            limit: Page size for each API request.
+
+        Returns:
+            List[V1Job]: All matching jobs.
+        """
+        jobs = []
+        page_token = None
+
+        while True:
+            kwargs = {
+                "deployment_id": deployment_id,
+                "state": state,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+                "limit": limit,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            if page_token:
+                kwargs["page_token"] = page_token
+
+            response = self._client.jobs_service_list_jobs(project_id=teamspace_id, **kwargs)
+            jobs.extend(response.jobs or [])
+
+            page_token = response.next_page_token
+            if not page_token:
+                break
+
+        return jobs
+
+    def get_job_logs(
+        self,
+        teamspace_id: str,
+        job_id: str,
+        *,
+        deployment_id: Optional[str] = None,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        rank: Optional[int] = None,
+    ) -> V1JobLogsResponse:
+        """Get paginated log metadata for a deployment job.
+
+        Args:
+            teamspace_id: The teamspace that owns the job.
+            job_id: The job ID.
+            deployment_id: Optional deployment ID filter.
+            since: Optional start timestamp.
+            until: Optional end timestamp.
+            rank: Optional distributed job rank.
+
+        Returns:
+            V1JobLogsResponse: Log page metadata and follow URL.
+        """
+        kwargs = {
+            "deployment_id": deployment_id,
+            "since": since,
+            "until": until,
+            "rank": rank,
+        }
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        return self._client.jobs_service_get_job_logs(project_id=teamspace_id, id=job_id, **kwargs)
 
     def stop(self, deployment: V1Deployment) -> V1Deployment:
         """Scale a deployment to zero replicas and wait until all replicas have stopped.

@@ -15,6 +15,7 @@ from lightning_sdk.cli.groups import (
     config,
     container,
     cp,
+    deployment,
     file,
     folder,
     job,
@@ -88,6 +89,7 @@ main_cli.add_command(job)
 main_cli.add_command(mmt)
 main_cli.add_command(machine)
 main_cli.add_command(api)
+main_cli.add_command(deployment)
 main_cli.add_command(container)
 main_cli.add_command(model)
 main_cli.add_command(file)
@@ -104,6 +106,7 @@ main_cli.add_command(build_hidden_alias_group("apis", api))
 main_cli.add_command(build_hidden_alias_group("jobs", job))
 main_cli.add_command(build_hidden_alias_group("mmts", mmt))
 main_cli.add_command(build_hidden_alias_group("machines", machine))
+main_cli.add_command(build_hidden_alias_group("deployments", deployment))
 main_cli.add_command(build_hidden_alias_group("containers", container))
 main_cli.add_command(build_hidden_alias_group("models", model))
 main_cli.add_command(build_hidden_alias_group("files", file))
