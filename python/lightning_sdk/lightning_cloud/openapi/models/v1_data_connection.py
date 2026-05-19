@@ -46,6 +46,7 @@ class V1DataConnection(object):
         'aws': 'V1AwsDataConnection',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'disk_data_connection': 'V1DiskDataConnection',
         'efs': 'V1EfsConfig',
         'error': 'str',
         'filestore': 'V1FilestoreDataConnection',
@@ -85,6 +86,7 @@ class V1DataConnection(object):
         'aws': 'aws',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'disk_data_connection': 'diskDataConnection',
         'efs': 'efs',
         'error': 'error',
         'filestore': 'filestore',
@@ -118,13 +120,14 @@ class V1DataConnection(object):
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, mountable_data_connection: 'V1MountableDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, sshfs: 'V1SshfsDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disk_data_connection: 'V1DiskDataConnection' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, mountable_data_connection: 'V1MountableDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, sshfs: 'V1SshfsDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
         self._aws = None
         self._cluster_id = None
         self._created_at = None
+        self._disk_data_connection = None
         self._efs = None
         self._error = None
         self._filestore = None
@@ -167,6 +170,8 @@ class V1DataConnection(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if disk_data_connection is not None:
+            self.disk_data_connection = disk_data_connection
         if efs is not None:
             self.efs = efs
         if error is not None:
@@ -334,6 +339,27 @@ class V1DataConnection(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def disk_data_connection(self) -> 'V1DiskDataConnection':
+        """Gets the disk_data_connection of this V1DataConnection.  # noqa: E501
+
+
+        :return: The disk_data_connection of this V1DataConnection.  # noqa: E501
+        :rtype: V1DiskDataConnection
+        """
+        return self._disk_data_connection
+
+    @disk_data_connection.setter
+    def disk_data_connection(self, disk_data_connection: 'V1DiskDataConnection'):
+        """Sets the disk_data_connection of this V1DataConnection.
+
+
+        :param disk_data_connection: The disk_data_connection of this V1DataConnection.  # noqa: E501
+        :type: V1DiskDataConnection
+        """
+
+        self._disk_data_connection = disk_data_connection
 
     @property
     def efs(self) -> 'V1EfsConfig':

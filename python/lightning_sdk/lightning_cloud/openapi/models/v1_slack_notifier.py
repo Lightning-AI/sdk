@@ -44,6 +44,7 @@ class V1SlackNotifier(object):
         'api_key': 'str',
         'channel_id': 'str',
         'disable_incident_notification': 'bool',
+        'disable_owner_tagging_in_ready_for_maintenance_notification': 'bool',
         'notify_on_high_memory_utilization': 'bool',
         'notify_on_pod_terminal_state': 'bool',
         'notify_on_ready_for_maintenance': 'bool',
@@ -55,6 +56,7 @@ class V1SlackNotifier(object):
         'api_key': 'apiKey',
         'channel_id': 'channelId',
         'disable_incident_notification': 'disableIncidentNotification',
+        'disable_owner_tagging_in_ready_for_maintenance_notification': 'disableOwnerTaggingInReadyForMaintenanceNotification',
         'notify_on_high_memory_utilization': 'notifyOnHighMemoryUtilization',
         'notify_on_pod_terminal_state': 'notifyOnPodTerminalState',
         'notify_on_ready_for_maintenance': 'notifyOnReadyForMaintenance',
@@ -62,11 +64,12 @@ class V1SlackNotifier(object):
         'url': 'url'
     }
 
-    def __init__(self, api_key: 'str' =None, channel_id: 'str' =None, disable_incident_notification: 'bool' =None, notify_on_high_memory_utilization: 'bool' =None, notify_on_pod_terminal_state: 'bool' =None, notify_on_ready_for_maintenance: 'bool' =None, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, channel_id: 'str' =None, disable_incident_notification: 'bool' =None, disable_owner_tagging_in_ready_for_maintenance_notification: 'bool' =None, notify_on_high_memory_utilization: 'bool' =None, notify_on_pod_terminal_state: 'bool' =None, notify_on_ready_for_maintenance: 'bool' =None, type: 'V1SlackNotifierType' =None, url: 'str' =None):  # noqa: E501
         """V1SlackNotifier - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._channel_id = None
         self._disable_incident_notification = None
+        self._disable_owner_tagging_in_ready_for_maintenance_notification = None
         self._notify_on_high_memory_utilization = None
         self._notify_on_pod_terminal_state = None
         self._notify_on_ready_for_maintenance = None
@@ -79,6 +82,8 @@ class V1SlackNotifier(object):
             self.channel_id = channel_id
         if disable_incident_notification is not None:
             self.disable_incident_notification = disable_incident_notification
+        if disable_owner_tagging_in_ready_for_maintenance_notification is not None:
+            self.disable_owner_tagging_in_ready_for_maintenance_notification = disable_owner_tagging_in_ready_for_maintenance_notification
         if notify_on_high_memory_utilization is not None:
             self.notify_on_high_memory_utilization = notify_on_high_memory_utilization
         if notify_on_pod_terminal_state is not None:
@@ -152,6 +157,27 @@ class V1SlackNotifier(object):
         """
 
         self._disable_incident_notification = disable_incident_notification
+
+    @property
+    def disable_owner_tagging_in_ready_for_maintenance_notification(self) -> 'bool':
+        """Gets the disable_owner_tagging_in_ready_for_maintenance_notification of this V1SlackNotifier.  # noqa: E501
+
+
+        :return: The disable_owner_tagging_in_ready_for_maintenance_notification of this V1SlackNotifier.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_owner_tagging_in_ready_for_maintenance_notification
+
+    @disable_owner_tagging_in_ready_for_maintenance_notification.setter
+    def disable_owner_tagging_in_ready_for_maintenance_notification(self, disable_owner_tagging_in_ready_for_maintenance_notification: 'bool'):
+        """Sets the disable_owner_tagging_in_ready_for_maintenance_notification of this V1SlackNotifier.
+
+
+        :param disable_owner_tagging_in_ready_for_maintenance_notification: The disable_owner_tagging_in_ready_for_maintenance_notification of this V1SlackNotifier.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_owner_tagging_in_ready_for_maintenance_notification = disable_owner_tagging_in_ready_for_maintenance_notification
 
     @property
     def notify_on_high_memory_utilization(self) -> 'bool':

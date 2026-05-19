@@ -45,6 +45,7 @@ class ClusterServiceCreateMachineBody(object):
         'address': 'str',
         'bootstrap': 'V1MachineBootstrap',
         'ca_cert': 'str',
+        'env': 'list[V1EnvVar]',
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
@@ -69,6 +70,7 @@ class ClusterServiceCreateMachineBody(object):
         'address': 'address',
         'bootstrap': 'bootstrap',
         'ca_cert': 'caCert',
+        'env': 'env',
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
@@ -88,12 +90,13 @@ class ClusterServiceCreateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, ca_cert: 'str' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
         self._bootstrap = None
         self._ca_cert = None
+        self._env = None
         self._id = None
         self._instance_type = None
         self._management_api_url = None
@@ -120,6 +123,8 @@ class ClusterServiceCreateMachineBody(object):
             self.bootstrap = bootstrap
         if ca_cert is not None:
             self.ca_cert = ca_cert
+        if env is not None:
+            self.env = env
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -238,6 +243,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._ca_cert = ca_cert
+
+    @property
+    def env(self) -> 'list[V1EnvVar]':
+        """Gets the env of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The env of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: list[V1EnvVar]
+        """
+        return self._env
+
+    @env.setter
+    def env(self, env: 'list[V1EnvVar]'):
+        """Sets the env of this ClusterServiceCreateMachineBody.
+
+
+        :param env: The env of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: list[V1EnvVar]
+        """
+
+        self._env = env
 
     @property
     def id(self) -> 'str':

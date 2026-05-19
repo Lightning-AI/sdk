@@ -41,7 +41,6 @@ class CloudSpaceServiceCreateLightningRunInstanceBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'auth': 'V1LightningAuth',
         'cluster_id': 'str',
         'desired_state': 'V1LightningappInstanceState',
         'display_name': 'str',
@@ -57,7 +56,6 @@ class CloudSpaceServiceCreateLightningRunInstanceBody(object):
     }
 
     attribute_map = {
-        'auth': 'auth',
         'cluster_id': 'clusterId',
         'desired_state': 'desiredState',
         'display_name': 'displayName',
@@ -72,9 +70,8 @@ class CloudSpaceServiceCreateLightningRunInstanceBody(object):
         'source_app': 'sourceApp'
     }
 
-    def __init__(self, auth: 'V1LightningAuth' =None, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, machines_reservation_time_minutes: 'str' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, desired_state: 'V1LightningappInstanceState' =None, display_name: 'str' =None, domain: 'str' =None, env: 'list[V1EnvVar]' =None, keep_machines_after_stop: 'bool' =None, linked_project_id: 'str' =None, linked_user_id: 'str' =None, machines_reservation_time_minutes: 'str' =None, name: 'str' =None, queue_server_type: 'V1QueueServerType' =None, source_app: 'str' =None):  # noqa: E501
         """CloudSpaceServiceCreateLightningRunInstanceBody - a model defined in Swagger"""  # noqa: E501
-        self._auth = None
         self._cluster_id = None
         self._desired_state = None
         self._display_name = None
@@ -88,8 +85,6 @@ class CloudSpaceServiceCreateLightningRunInstanceBody(object):
         self._queue_server_type = None
         self._source_app = None
         self.discriminator = None
-        if auth is not None:
-            self.auth = auth
         if cluster_id is not None:
             self.cluster_id = cluster_id
         if desired_state is not None:
@@ -114,27 +109,6 @@ class CloudSpaceServiceCreateLightningRunInstanceBody(object):
             self.queue_server_type = queue_server_type
         if source_app is not None:
             self.source_app = source_app
-
-    @property
-    def auth(self) -> 'V1LightningAuth':
-        """Gets the auth of this CloudSpaceServiceCreateLightningRunInstanceBody.  # noqa: E501
-
-
-        :return: The auth of this CloudSpaceServiceCreateLightningRunInstanceBody.  # noqa: E501
-        :rtype: V1LightningAuth
-        """
-        return self._auth
-
-    @auth.setter
-    def auth(self, auth: 'V1LightningAuth'):
-        """Sets the auth of this CloudSpaceServiceCreateLightningRunInstanceBody.
-
-
-        :param auth: The auth of this CloudSpaceServiceCreateLightningRunInstanceBody.  # noqa: E501
-        :type: V1LightningAuth
-        """
-
-        self._auth = auth
 
     @property
     def cluster_id(self) -> 'str':

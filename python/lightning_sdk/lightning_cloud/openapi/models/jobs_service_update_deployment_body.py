@@ -42,15 +42,18 @@ class JobsServiceUpdateDeploymentBody(object):
     """
     swagger_types = {
         'source': 'str',
+        'acknowledged_warnings': 'list[str]',
         'allow_logs': 'bool',
         'api_standard': 'str',
         'apis': 'list[V1DeploymentAPI]',
         'assistant_id': 'str',
         'autoscaling': 'V1AutoscalingSpec',
+        'byom_spec': 'V1BYOMSpec',
         'cloudspace_id': 'str',
         'created_at': 'datetime',
         'current_state': 'V1DeploymentState',
         'debug': 'bool',
+        'dedicated': 'bool',
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
         'is_published': 'bool',
@@ -78,15 +81,18 @@ class JobsServiceUpdateDeploymentBody(object):
 
     attribute_map = {
         'source': 'Source',
+        'acknowledged_warnings': 'acknowledgedWarnings',
         'allow_logs': 'allowLogs',
         'api_standard': 'apiStandard',
         'apis': 'apis',
         'assistant_id': 'assistantId',
         'autoscaling': 'autoscaling',
+        'byom_spec': 'byomSpec',
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
         'current_state': 'currentState',
         'debug': 'debug',
+        'dedicated': 'dedicated',
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
         'is_published': 'isPublished',
@@ -112,18 +118,21 @@ class JobsServiceUpdateDeploymentBody(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, source: 'str' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, supports_prod_deployment: 'bool' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, acknowledged_warnings: 'list[str]' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, dedicated: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, supports_prod_deployment: 'bool' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """JobsServiceUpdateDeploymentBody - a model defined in Swagger"""  # noqa: E501
         self._source = None
+        self._acknowledged_warnings = None
         self._allow_logs = None
         self._api_standard = None
         self._apis = None
         self._assistant_id = None
         self._autoscaling = None
+        self._byom_spec = None
         self._cloudspace_id = None
         self._created_at = None
         self._current_state = None
         self._debug = None
+        self._dedicated = None
         self._desired_state = None
         self._endpoint = None
         self._is_published = None
@@ -150,6 +159,8 @@ class JobsServiceUpdateDeploymentBody(object):
         self.discriminator = None
         if source is not None:
             self.source = source
+        if acknowledged_warnings is not None:
+            self.acknowledged_warnings = acknowledged_warnings
         if allow_logs is not None:
             self.allow_logs = allow_logs
         if api_standard is not None:
@@ -160,6 +171,8 @@ class JobsServiceUpdateDeploymentBody(object):
             self.assistant_id = assistant_id
         if autoscaling is not None:
             self.autoscaling = autoscaling
+        if byom_spec is not None:
+            self.byom_spec = byom_spec
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if created_at is not None:
@@ -168,6 +181,8 @@ class JobsServiceUpdateDeploymentBody(object):
             self.current_state = current_state
         if debug is not None:
             self.debug = debug
+        if dedicated is not None:
+            self.dedicated = dedicated
         if desired_state is not None:
             self.desired_state = desired_state
         if endpoint is not None:
@@ -237,6 +252,27 @@ class JobsServiceUpdateDeploymentBody(object):
         """
 
         self._source = source
+
+    @property
+    def acknowledged_warnings(self) -> 'list[str]':
+        """Gets the acknowledged_warnings of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The acknowledged_warnings of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._acknowledged_warnings
+
+    @acknowledged_warnings.setter
+    def acknowledged_warnings(self, acknowledged_warnings: 'list[str]'):
+        """Sets the acknowledged_warnings of this JobsServiceUpdateDeploymentBody.
+
+
+        :param acknowledged_warnings: The acknowledged_warnings of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._acknowledged_warnings = acknowledged_warnings
 
     @property
     def allow_logs(self) -> 'bool':
@@ -344,6 +380,27 @@ class JobsServiceUpdateDeploymentBody(object):
         self._autoscaling = autoscaling
 
     @property
+    def byom_spec(self) -> 'V1BYOMSpec':
+        """Gets the byom_spec of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The byom_spec of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: V1BYOMSpec
+        """
+        return self._byom_spec
+
+    @byom_spec.setter
+    def byom_spec(self, byom_spec: 'V1BYOMSpec'):
+        """Sets the byom_spec of this JobsServiceUpdateDeploymentBody.
+
+
+        :param byom_spec: The byom_spec of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: V1BYOMSpec
+        """
+
+        self._byom_spec = byom_spec
+
+    @property
     def cloudspace_id(self) -> 'str':
         """Gets the cloudspace_id of this JobsServiceUpdateDeploymentBody.  # noqa: E501
 
@@ -426,6 +483,27 @@ class JobsServiceUpdateDeploymentBody(object):
         """
 
         self._debug = debug
+
+    @property
+    def dedicated(self) -> 'bool':
+        """Gets the dedicated of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The dedicated of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._dedicated
+
+    @dedicated.setter
+    def dedicated(self, dedicated: 'bool'):
+        """Sets the dedicated of this JobsServiceUpdateDeploymentBody.
+
+
+        :param dedicated: The dedicated of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._dedicated = dedicated
 
     @property
     def desired_state(self) -> 'V1DeploymentState':

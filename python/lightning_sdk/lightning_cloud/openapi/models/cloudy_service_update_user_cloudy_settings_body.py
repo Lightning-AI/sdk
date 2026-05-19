@@ -41,6 +41,7 @@ class CloudyServiceUpdateUserCloudySettingsBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'closed_by_default': 'bool',
         'default_mode': 'str',
         'preferred_diff_viewer': 'str',
         'preferred_experts': 'list[str]',
@@ -48,19 +49,23 @@ class CloudyServiceUpdateUserCloudySettingsBody(object):
     }
 
     attribute_map = {
+        'closed_by_default': 'closedByDefault',
         'default_mode': 'defaultMode',
         'preferred_diff_viewer': 'preferredDiffViewer',
         'preferred_experts': 'preferredExperts',
         'preferred_models': 'preferredModels'
     }
 
-    def __init__(self, default_mode: 'str' =None, preferred_diff_viewer: 'str' =None, preferred_experts: 'list[str]' =None, preferred_models: 'list[str]' =None):  # noqa: E501
+    def __init__(self, closed_by_default: 'bool' =None, default_mode: 'str' =None, preferred_diff_viewer: 'str' =None, preferred_experts: 'list[str]' =None, preferred_models: 'list[str]' =None):  # noqa: E501
         """CloudyServiceUpdateUserCloudySettingsBody - a model defined in Swagger"""  # noqa: E501
+        self._closed_by_default = None
         self._default_mode = None
         self._preferred_diff_viewer = None
         self._preferred_experts = None
         self._preferred_models = None
         self.discriminator = None
+        if closed_by_default is not None:
+            self.closed_by_default = closed_by_default
         if default_mode is not None:
             self.default_mode = default_mode
         if preferred_diff_viewer is not None:
@@ -69,6 +74,27 @@ class CloudyServiceUpdateUserCloudySettingsBody(object):
             self.preferred_experts = preferred_experts
         if preferred_models is not None:
             self.preferred_models = preferred_models
+
+    @property
+    def closed_by_default(self) -> 'bool':
+        """Gets the closed_by_default of this CloudyServiceUpdateUserCloudySettingsBody.  # noqa: E501
+
+
+        :return: The closed_by_default of this CloudyServiceUpdateUserCloudySettingsBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._closed_by_default
+
+    @closed_by_default.setter
+    def closed_by_default(self, closed_by_default: 'bool'):
+        """Sets the closed_by_default of this CloudyServiceUpdateUserCloudySettingsBody.
+
+
+        :param closed_by_default: The closed_by_default of this CloudyServiceUpdateUserCloudySettingsBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._closed_by_default = closed_by_default
 
     @property
     def default_mode(self) -> 'str':

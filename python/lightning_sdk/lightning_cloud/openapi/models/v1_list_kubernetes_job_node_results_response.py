@@ -42,23 +42,23 @@ class V1ListKubernetesJobNodeResultsResponse(object):
     """
     swagger_types = {
         'results': 'list[V1KubernetesJobNodeResult]',
-        'source_live': 'bool'
+        'source': 'V1KubernetesJobNodeResultSource'
     }
 
     attribute_map = {
         'results': 'results',
-        'source_live': 'sourceLive'
+        'source': 'source'
     }
 
-    def __init__(self, results: 'list[V1KubernetesJobNodeResult]' =None, source_live: 'bool' =None):  # noqa: E501
+    def __init__(self, results: 'list[V1KubernetesJobNodeResult]' =None, source: 'V1KubernetesJobNodeResultSource' =None):  # noqa: E501
         """V1ListKubernetesJobNodeResultsResponse - a model defined in Swagger"""  # noqa: E501
         self._results = None
-        self._source_live = None
+        self._source = None
         self.discriminator = None
         if results is not None:
             self.results = results
-        if source_live is not None:
-            self.source_live = source_live
+        if source is not None:
+            self.source = source
 
     @property
     def results(self) -> 'list[V1KubernetesJobNodeResult]':
@@ -82,27 +82,25 @@ class V1ListKubernetesJobNodeResultsResponse(object):
         self._results = results
 
     @property
-    def source_live(self) -> 'bool':
-        """Gets the source_live of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
+    def source(self) -> 'V1KubernetesJobNodeResultSource':
+        """Gets the source of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
 
-        True iff the underlying NodeValidation CR was found on-cluster. False when the CR has been garbage-collected and no per-node results are available.  # noqa: E501
 
-        :return: The source_live of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
-        :rtype: bool
+        :return: The source of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
+        :rtype: V1KubernetesJobNodeResultSource
         """
-        return self._source_live
+        return self._source
 
-    @source_live.setter
-    def source_live(self, source_live: 'bool'):
-        """Sets the source_live of this V1ListKubernetesJobNodeResultsResponse.
+    @source.setter
+    def source(self, source: 'V1KubernetesJobNodeResultSource'):
+        """Sets the source of this V1ListKubernetesJobNodeResultsResponse.
 
-        True iff the underlying NodeValidation CR was found on-cluster. False when the CR has been garbage-collected and no per-node results are available.  # noqa: E501
 
-        :param source_live: The source_live of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
-        :type: bool
+        :param source: The source of this V1ListKubernetesJobNodeResultsResponse.  # noqa: E501
+        :type: V1KubernetesJobNodeResultSource
         """
 
-        self._source_live = source_live
+        self._source = source
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

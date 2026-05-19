@@ -44,6 +44,7 @@ from lightning_sdk.lightning_cloud.openapi.api.sdk_command_history_service_api i
 from lightning_sdk.lightning_cloud.openapi.api.ssh_public_key_service_api import SSHPublicKeyServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.sandboxes_service_api import SandboxesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.schedules_service_api import SchedulesServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.search_service_api import SearchServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.secret_service_api import SecretServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.slurm_jobs_user_service_api import SlurmJobsUserServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.snowflake_service_api import SnowflakeServiceApi

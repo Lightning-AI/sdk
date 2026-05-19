@@ -43,6 +43,7 @@ class V1KubernetesDirectV1(object):
     swagger_types = {
         'automate_agent_installation': 'bool',
         'aws': 'V1KubernetesAWSConfig',
+        'gpu_operator_config': 'V1GpuOperatorConfig',
         'gpu_sla_terms': 'list[V1GpuSlaTerm]',
         'grafana_dashboard_url': 'str',
         'grafana_namespace': 'str',
@@ -66,6 +67,7 @@ class V1KubernetesDirectV1(object):
     attribute_map = {
         'automate_agent_installation': 'automateAgentInstallation',
         'aws': 'aws',
+        'gpu_operator_config': 'gpuOperatorConfig',
         'gpu_sla_terms': 'gpuSlaTerms',
         'grafana_dashboard_url': 'grafanaDashboardUrl',
         'grafana_namespace': 'grafanaNamespace',
@@ -86,10 +88,11 @@ class V1KubernetesDirectV1(object):
         'supported_nvidia_driver_versions': 'supportedNvidiaDriverVersions'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_operator_config: 'V1GpuOperatorConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._automate_agent_installation = None
         self._aws = None
+        self._gpu_operator_config = None
         self._gpu_sla_terms = None
         self._grafana_dashboard_url = None
         self._grafana_namespace = None
@@ -113,6 +116,8 @@ class V1KubernetesDirectV1(object):
             self.automate_agent_installation = automate_agent_installation
         if aws is not None:
             self.aws = aws
+        if gpu_operator_config is not None:
+            self.gpu_operator_config = gpu_operator_config
         if gpu_sla_terms is not None:
             self.gpu_sla_terms = gpu_sla_terms
         if grafana_dashboard_url is not None:
@@ -191,6 +196,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._aws = aws
+
+    @property
+    def gpu_operator_config(self) -> 'V1GpuOperatorConfig':
+        """Gets the gpu_operator_config of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The gpu_operator_config of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: V1GpuOperatorConfig
+        """
+        return self._gpu_operator_config
+
+    @gpu_operator_config.setter
+    def gpu_operator_config(self, gpu_operator_config: 'V1GpuOperatorConfig'):
+        """Sets the gpu_operator_config of this V1KubernetesDirectV1.
+
+
+        :param gpu_operator_config: The gpu_operator_config of this V1KubernetesDirectV1.  # noqa: E501
+        :type: V1GpuOperatorConfig
+        """
+
+        self._gpu_operator_config = gpu_operator_config
 
     @property
     def gpu_sla_terms(self) -> 'list[V1GpuSlaTerm]':

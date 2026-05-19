@@ -48,6 +48,7 @@ class V1Sandbox(object):
         'instance_type': 'str',
         'name': 'str',
         'organization_id': 'str',
+        'persistent': 'bool',
         'ports': 'list[str]',
         'runtime': 'str',
         'spot': 'bool',
@@ -63,6 +64,7 @@ class V1Sandbox(object):
         'instance_type': 'instanceType',
         'name': 'name',
         'organization_id': 'organizationId',
+        'persistent': 'persistent',
         'ports': 'ports',
         'runtime': 'runtime',
         'spot': 'spot',
@@ -70,7 +72,7 @@ class V1Sandbox(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -79,6 +81,7 @@ class V1Sandbox(object):
         self._instance_type = None
         self._name = None
         self._organization_id = None
+        self._persistent = None
         self._ports = None
         self._runtime = None
         self._spot = None
@@ -99,6 +102,8 @@ class V1Sandbox(object):
             self.name = name
         if organization_id is not None:
             self.organization_id = organization_id
+        if persistent is not None:
+            self.persistent = persistent
         if ports is not None:
             self.ports = ports
         if runtime is not None:
@@ -258,6 +263,29 @@ class V1Sandbox(object):
         self._organization_id = organization_id
 
     @property
+    def persistent(self) -> 'bool':
+        """Gets the persistent of this V1Sandbox.  # noqa: E501
+
+        Mirrors CreateSandboxRequest.persistent. Reflects the durability setting the sandbox was created with. See sandbox_fuse_snapshot_restore.md for the lifecycle.  # noqa: E501
+
+        :return: The persistent of this V1Sandbox.  # noqa: E501
+        :rtype: bool
+        """
+        return self._persistent
+
+    @persistent.setter
+    def persistent(self, persistent: 'bool'):
+        """Sets the persistent of this V1Sandbox.
+
+        Mirrors CreateSandboxRequest.persistent. Reflects the durability setting the sandbox was created with. See sandbox_fuse_snapshot_restore.md for the lifecycle.  # noqa: E501
+
+        :param persistent: The persistent of this V1Sandbox.  # noqa: E501
+        :type: bool
+        """
+
+        self._persistent = persistent
+
+    @property
     def ports(self) -> 'list[str]':
         """Gets the ports of this V1Sandbox.  # noqa: E501
 
@@ -324,6 +352,7 @@ class V1Sandbox(object):
     def status(self) -> 'str':
         """Gets the status of this V1Sandbox.  # noqa: E501
 
+        Lifecycle status of the sandbox. In addition to the underlying server states (running, stopping, stopped, error, ...) the controlplane surfaces:   - \"paused\":  the sandbox is a persistent sandbox whose server                row no longer exists, but whose auto-snapshot does.                ListSandboxes and GetSandbox synthesise a Sandbox                from the most recent auto-snapshot so the sandbox                id keeps appearing in user-facing surfaces while it                is hibernated. Resume via UpdateSandbox(resume=true).  # noqa: E501
 
         :return: The status of this V1Sandbox.  # noqa: E501
         :rtype: str
@@ -334,6 +363,7 @@ class V1Sandbox(object):
     def status(self, status: 'str'):
         """Sets the status of this V1Sandbox.
 
+        Lifecycle status of the sandbox. In addition to the underlying server states (running, stopping, stopped, error, ...) the controlplane surfaces:   - \"paused\":  the sandbox is a persistent sandbox whose server                row no longer exists, but whose auto-snapshot does.                ListSandboxes and GetSandbox synthesise a Sandbox                from the most recent auto-snapshot so the sandbox                id keeps appearing in user-facing surfaces while it                is hibernated. Resume via UpdateSandbox(resume=true).  # noqa: E501
 
         :param status: The status of this V1Sandbox.  # noqa: E501
         :type: str

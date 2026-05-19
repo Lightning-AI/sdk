@@ -15,6 +15,23 @@ export interface SandboxesServiceCreateSandboxDirectoryBody {
   path?: string;
 }
 
+export interface SandboxesServiceCreateSandboxSnapshotBody {
+  organizationId?: string;
+  /**
+   * Optional expiration in milliseconds. When unset, the platform default applies.
+   * Use 0 to request no expiration.
+   * @format uint64
+   */
+  expiration?: string;
+  /** Optional tar exclude override for this snapshot. When unset, the platform default applies. */
+  excludes?: string[];
+  /**
+   * project_id is required: snapshots are stored in the cluster bucket
+   * under the project's prefix and authorization is project-scoped.
+   */
+  projectId?: string;
+}
+
 export interface SandboxesServiceExtendSandboxTimeoutBody {
   organizationId?: string;
   /**
@@ -22,6 +39,46 @@ export interface SandboxesServiceExtendSandboxTimeoutBody {
    * @format uint64
    */
   timeout?: string;
+}
+
+export interface SandboxesServiceFinalizeSandboxSnapshotBody {
+  organizationId?: string;
+  /**
+   * sha256 digest of the manifest body the agent just PUT to
+   * object_key. Lets the controlplane verify it's actually there
+   * before flipping the row to "ready".
+   */
+  manifestSha256?: string;
+  /**
+   * Total logical size of the snapshot — sum of all unique blob
+   * sizes plus the manifest body. Surfaced in the row's size_bytes
+   * for billing/display.
+   * @format uint64
+   */
+  sizeBytes?: string;
+  /**
+   * rootfs digest the snapshot was captured against; persisted on
+   * the row so restore-compatibility check doesn't have to fetch
+   * and parse the manifest.
+   */
+  rootfsDigest?: string;
+}
+
+export interface SandboxesServiceGetSandboxSnapshotBlobDownloadUrlsBody {
+  organizationId?: string;
+  sha256Digests?: string[];
+}
+
+export interface SandboxesServiceGetSandboxSnapshotBlobUploadUrlsBody {
+  organizationId?: string;
+  /**
+   * sha256 hex digests of the unique blobs the caller wants to upload.
+   * The server checks each against the cluster blob store; missing
+   * ones get presigned URLs returned in `upload_urls`, present ones
+   * are echoed in `existing_digests` so the caller skips them.
+   * Empty list rejected.
+   */
+  sha256Digests?: string[];
 }
 
 export interface SandboxesServiceRunSandboxCommandBody {
@@ -32,6 +89,30 @@ export interface SandboxesServiceRunSandboxCommandBody {
   cwd?: string;
   env?: Record<string, string>;
   sudo?: boolean;
+}
+
+export interface SandboxesServiceStopSandboxBody {
+  organizationId?: string;
+  /**
+   * Optional project the auto-snapshot is written under for persistent
+   * sandboxes. When unset, the controlplane falls back to the project the
+   * sandbox was originally created in (recorded on the underlying server
+   * row). Ignored for non-persistent sandboxes (no snapshot is taken in
+   * that case).
+   */
+  projectId?: string;
+}
+
+export interface SandboxesServiceUpdateSandboxBody {
+  organizationId?: string;
+  /**
+   * When true, resume a previously stopped persistent sandbox from
+   * its most recent auto-snapshot. The sandbox id is preserved. The
+   * call is a no-op (returns the current Sandbox) when the sandbox
+   * is already running. Returns an error when the sandbox is not
+   * persistent or has no resumable auto-snapshot.
+   */
+  resume?: boolean;
 }
 
 export interface SandboxesServiceWriteSandboxFileBody {
@@ -216,9 +297,35 @@ export interface V1CreateSandboxRequest {
    * network policy.
    */
   networkPolicy?: V1NetworkPolicy;
+  snapshotId?: string;
+  /**
+   * Whether the sandbox persists its state across restarts via automatic
+   * snapshots. Defaults to true.
+   *
+   * When true, the controlplane automatically snapshots the sandbox on idle,
+   * sleep, or eviction, and transparently restores it (via the FUSE
+   * snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next
+   * time the sandbox id is accessed. This makes the sandbox id a durable
+   * handle suitable for long-lived workflow orchestration that may pause
+   * across step boundaries.
+   *
+   * When false, the sandbox is best-effort ephemeral: state is lost on
+   * stop, idle reclaim, or host reschedule.
+   */
+  persistent?: boolean;
+  /**
+   * Project the sandbox is owned by. Recommended for persistent
+   * sandboxes — the controlplane needs a project to scope the
+   * auto-snapshot bucket prefix on idle eviction and on later
+   * StopSandbox calls without an explicit project_id. Optional for
+   * non-persistent sandboxes (no auto-snapshot is taken).
+   */
+  projectId?: string;
 }
 
 export type V1DeleteSandboxResponse = object;
+
+export type V1DeleteSandboxSnapshotResponse = object;
 
 export type V1ExtendSandboxTimeoutResponse = object;
 
@@ -238,7 +345,29 @@ export interface V1GetSandboxFileResponse {
   content?: string;
 }
 
+export interface V1GetSandboxSnapshotBlobDownloadUrlsResponse {
+  downloadUrls?: V1SandboxSnapshotBlobDownloadUrl[];
+}
+
+export interface V1GetSandboxSnapshotBlobUploadUrlsResponse {
+  /** Presigned PUT URL per blob the caller still needs to upload. */
+  uploadUrls?: V1SandboxSnapshotBlobUploadUrl[];
+  /**
+   * sha256 digests already present in the cluster bucket. Caller
+   * skips upload for these.
+   */
+  existingDigests?: string[];
+}
+
 export type V1KillSandboxCommandResponse = object;
+
+export interface V1ListSandboxSnapshotsResponse {
+  snapshots?: V1SandboxSnapshot[];
+  nextPageToken?: string;
+  previousPageToken?: string;
+  /** @format int64 */
+  totalSize?: string;
+}
 
 export interface V1ListSandboxesResponse {
   sandboxes?: V1Sandbox[];
@@ -296,6 +425,17 @@ export interface V1Sandbox {
   clusterId?: string;
   instanceType?: string;
   spot?: boolean;
+  /**
+   * Lifecycle status of the sandbox. In addition to the underlying
+   * server states (running, stopping, stopped, error, ...) the
+   * controlplane surfaces:
+   *   - "paused":  the sandbox is a persistent sandbox whose server
+   *                row no longer exists, but whose auto-snapshot does.
+   *                ListSandboxes and GetSandbox synthesise a Sandbox
+   *                from the most recent auto-snapshot so the sandbox
+   *                id keeps appearing in user-facing surfaces while it
+   *                is hibernated. Resume via UpdateSandbox(resume=true).
+   */
   status?: string;
   cloudspaceId?: string;
   ports?: string[];
@@ -304,6 +444,94 @@ export interface V1Sandbox {
   createdAt?: string;
   /** @format date-time */
   updatedAt?: string;
+  /**
+   * Mirrors CreateSandboxRequest.persistent. Reflects the durability
+   * setting the sandbox was created with. See
+   * sandbox_fuse_snapshot_restore.md for the lifecycle.
+   */
+  persistent?: boolean;
+}
+
+export interface V1SandboxSnapshot {
+  id?: string;
+  organizationId?: string;
+  projectId?: string;
+  sourceSandboxId?: string;
+  /**
+   * status transitions on the controlplane:
+   *   - "saving": row created, agent capture + S3 upload in progress.
+   *   - "ready":  tarball lives in object storage; restorable.
+   *   - "failed": capture or upload failed; not restorable.
+   * Only "ready" snapshots may be used to create a new sandbox.
+   */
+  status?: string;
+  /** @format uint64 */
+  sizeBytes?: string;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
+  /** @format date-time */
+  expiresAt?: string;
+  runtime?: string;
+  runtimeImage?: string;
+  rootfsDigest?: string;
+  tarExcludes?: string[];
+  /**
+   * True when this snapshot was auto-captured by the controlplane
+   * because its source sandbox was created with `persistent = true`
+   * and was stopped (via StopSandbox or idle/eviction). Auto-snapshots
+   * represent the durable state of a paused persistent sandbox: one
+   * current auto-snapshot per sandbox id, rotated in place on each
+   * capture. A persistent sandbox is resumed from its auto-snapshot
+   * via UpdateSandbox(resume=true), which preserves the sandbox id.
+   *
+   * User-initiated snapshots created via CreateSandboxSnapshot have
+   * this field set to false, and `source_sandbox_id` may point at a
+   * sandbox that has since been deleted.
+   */
+  sourceSandboxPersistent?: boolean;
+  /**
+   * The source sandbox's instance type at capture time, in the form
+   * the controlplane persisted on `Server.Spec.InstanceType` (i.e. the
+   * post-translation sandbox-pool slug such as "cpu-sandbox-4").
+   * Replayed verbatim by UpdateSandbox(resume=true) so the resumed
+   * sandbox comes back with the same CPU / memory / disk shape as the
+   * original. Best-effort: empty for snapshots captured before this
+   * field landed; the resume path then falls back to a default.
+   */
+  sourceSandboxInstanceType?: string;
+}
+
+/**
+ * SandboxSnapshotBlobDownloadUrl pairs a sha256 with its presigned GET
+ * URL. One per requested digest, in request order.
+ */
+export interface V1SandboxSnapshotBlobDownloadUrl {
+  sha256?: string;
+  url?: string;
+}
+
+/**
+ * SandboxSnapshotBlobUploadUrl pairs a sha256 digest with the presigned
+ * PUT URL the agent uses to push that blob. Digests are echoed back so
+ * the agent doesn't need to maintain its own index-to-URL mapping when
+ * it issues a batched request.
+ */
+export interface V1SandboxSnapshotBlobUploadUrl {
+  sha256?: string;
+  url?: string;
+}
+
+export interface V1StopSandboxResponse {
+  /**
+   * For sandboxes created with `persistent = true`, the id of the
+   * auto-snapshot the controlplane captured before stopping the
+   * server. Subsequent UpdateSandbox(resume=true) calls against the
+   * sandbox id will resume from this snapshot. Empty when the
+   * sandbox is non-persistent (no snapshot is taken in that case).
+   */
+  autoSnapshotId?: string;
 }
 
 export type V1WriteSandboxFileResponse = object;

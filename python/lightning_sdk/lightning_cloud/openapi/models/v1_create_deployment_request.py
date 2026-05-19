@@ -41,9 +41,11 @@ class V1CreateDeploymentRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'acknowledged_warnings': 'list[str]',
         'api_standard': 'str',
         'apis': 'list[V1DeploymentAPI]',
         'autoscaling': 'V1AutoscalingSpec',
+        'byom_spec': 'V1BYOMSpec',
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'endpoint': 'V1Endpoint',
@@ -63,9 +65,11 @@ class V1CreateDeploymentRequest(object):
     }
 
     attribute_map = {
+        'acknowledged_warnings': 'acknowledgedWarnings',
         'api_standard': 'apiStandard',
         'apis': 'apis',
         'autoscaling': 'autoscaling',
+        'byom_spec': 'byomSpec',
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'endpoint': 'endpoint',
@@ -84,11 +88,13 @@ class V1CreateDeploymentRequest(object):
         'strategy': 'strategy'
     }
 
-    def __init__(self, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, acknowledged_warnings: 'list[str]' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
         """V1CreateDeploymentRequest - a model defined in Swagger"""  # noqa: E501
+        self._acknowledged_warnings = None
         self._api_standard = None
         self._apis = None
         self._autoscaling = None
+        self._byom_spec = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._endpoint = None
@@ -106,12 +112,16 @@ class V1CreateDeploymentRequest(object):
         self._spec = None
         self._strategy = None
         self.discriminator = None
+        if acknowledged_warnings is not None:
+            self.acknowledged_warnings = acknowledged_warnings
         if api_standard is not None:
             self.api_standard = api_standard
         if apis is not None:
             self.apis = apis
         if autoscaling is not None:
             self.autoscaling = autoscaling
+        if byom_spec is not None:
+            self.byom_spec = byom_spec
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
@@ -144,6 +154,27 @@ class V1CreateDeploymentRequest(object):
             self.spec = spec
         if strategy is not None:
             self.strategy = strategy
+
+    @property
+    def acknowledged_warnings(self) -> 'list[str]':
+        """Gets the acknowledged_warnings of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The acknowledged_warnings of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._acknowledged_warnings
+
+    @acknowledged_warnings.setter
+    def acknowledged_warnings(self, acknowledged_warnings: 'list[str]'):
+        """Sets the acknowledged_warnings of this V1CreateDeploymentRequest.
+
+
+        :param acknowledged_warnings: The acknowledged_warnings of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._acknowledged_warnings = acknowledged_warnings
 
     @property
     def api_standard(self) -> 'str':
@@ -207,6 +238,27 @@ class V1CreateDeploymentRequest(object):
         """
 
         self._autoscaling = autoscaling
+
+    @property
+    def byom_spec(self) -> 'V1BYOMSpec':
+        """Gets the byom_spec of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The byom_spec of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: V1BYOMSpec
+        """
+        return self._byom_spec
+
+    @byom_spec.setter
+    def byom_spec(self, byom_spec: 'V1BYOMSpec'):
+        """Sets the byom_spec of this V1CreateDeploymentRequest.
+
+
+        :param byom_spec: The byom_spec of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: V1BYOMSpec
+        """
+
+        self._byom_spec = byom_spec
 
     @property
     def cloudspace_id(self) -> 'str':

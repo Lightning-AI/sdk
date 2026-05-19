@@ -56,6 +56,7 @@ class AssistantsServiceUpdateAssistantBody(object):
         'knowledge_configuration': 'V1KnowledgeConfiguration',
         'managed_endpoint_id': 'str',
         'model': 'str',
+        'model_id': 'str',
         'model_provider': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -84,6 +85,7 @@ class AssistantsServiceUpdateAssistantBody(object):
         'knowledge_configuration': 'knowledgeConfiguration',
         'managed_endpoint_id': 'managedEndpointId',
         'model': 'model',
+        'model_id': 'modelId',
         'model_provider': 'modelProvider',
         'name': 'name',
         'org_id': 'orgId',
@@ -96,7 +98,7 @@ class AssistantsServiceUpdateAssistantBody(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, aliases: 'list[str]' =None, cloudspace_id: 'str' =None, cloudy_compatible: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, managed_endpoint_id: 'str' =None, model: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, aliases: 'list[str]' =None, cloudspace_id: 'str' =None, cloudy_compatible: 'bool' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, endpoint_id: 'str' =None, expected_cold_start_time: 'str' =None, file_uploads_enabled: 'bool' =None, internal_assistant_name: 'str' =None, knowledge: 'str' =None, knowledge_configuration: 'V1KnowledgeConfiguration' =None, managed_endpoint_id: 'str' =None, model: 'str' =None, model_id: 'str' =None, model_provider: 'str' =None, name: 'str' =None, org_id: 'str' =None, prompt_suggestions: 'list[V1PromptSuggestion]' =None, prompt_template: 'str' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, thumbnail_url: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """AssistantsServiceUpdateAssistantBody - a model defined in Swagger"""  # noqa: E501
         self._aliases = None
         self._cloudspace_id = None
@@ -113,6 +115,7 @@ class AssistantsServiceUpdateAssistantBody(object):
         self._knowledge_configuration = None
         self._managed_endpoint_id = None
         self._model = None
+        self._model_id = None
         self._model_provider = None
         self._name = None
         self._org_id = None
@@ -154,6 +157,8 @@ class AssistantsServiceUpdateAssistantBody(object):
             self.managed_endpoint_id = managed_endpoint_id
         if model is not None:
             self.model = model
+        if model_id is not None:
+            self.model_id = model_id
         if model_provider is not None:
             self.model_provider = model_provider
         if name is not None:
@@ -489,6 +494,27 @@ class AssistantsServiceUpdateAssistantBody(object):
         """
 
         self._model = model
+
+    @property
+    def model_id(self) -> 'str':
+        """Gets the model_id of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+
+
+        :return: The model_id of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._model_id
+
+    @model_id.setter
+    def model_id(self, model_id: 'str'):
+        """Sets the model_id of this AssistantsServiceUpdateAssistantBody.
+
+
+        :param model_id: The model_id of this AssistantsServiceUpdateAssistantBody.  # noqa: E501
+        :type: str
+        """
+
+        self._model_id = model_id
 
     @property
     def model_provider(self) -> 'str':

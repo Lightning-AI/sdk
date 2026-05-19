@@ -48,6 +48,7 @@ class V1Machine(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'disable_monitoring': 'bool',
+        'env': 'list[V1EnvVar]',
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
@@ -79,6 +80,7 @@ class V1Machine(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'disable_monitoring': 'disableMonitoring',
+        'env': 'env',
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
@@ -102,7 +104,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -111,6 +113,7 @@ class V1Machine(object):
         self._cluster_id = None
         self._created_at = None
         self._disable_monitoring = None
+        self._env = None
         self._id = None
         self._instance_type = None
         self._management_api_url = None
@@ -147,6 +150,8 @@ class V1Machine(object):
             self.created_at = created_at
         if disable_monitoring is not None:
             self.disable_monitoring = disable_monitoring
+        if env is not None:
+            self.env = env
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -336,6 +341,27 @@ class V1Machine(object):
         """
 
         self._disable_monitoring = disable_monitoring
+
+    @property
+    def env(self) -> 'list[V1EnvVar]':
+        """Gets the env of this V1Machine.  # noqa: E501
+
+
+        :return: The env of this V1Machine.  # noqa: E501
+        :rtype: list[V1EnvVar]
+        """
+        return self._env
+
+    @env.setter
+    def env(self, env: 'list[V1EnvVar]'):
+        """Sets the env of this V1Machine.
+
+
+        :param env: The env of this V1Machine.  # noqa: E501
+        :type: list[V1EnvVar]
+        """
+
+        self._env = env
 
     @property
     def id(self) -> 'str':

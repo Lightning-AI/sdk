@@ -47,8 +47,11 @@ class V1CreateSandboxRequest(object):
         'name': 'str',
         'network_policy': 'V1NetworkPolicy',
         'organization_id': 'str',
+        'persistent': 'bool',
         'ports': 'list[str]',
+        'project_id': 'str',
         'runtime': 'str',
+        'snapshot_id': 'str',
         'spot': 'bool',
         'storage_gb': 'str',
         'timeout': 'str'
@@ -61,14 +64,17 @@ class V1CreateSandboxRequest(object):
         'name': 'name',
         'network_policy': 'networkPolicy',
         'organization_id': 'organizationId',
+        'persistent': 'persistent',
         'ports': 'ports',
+        'project_id': 'projectId',
         'runtime': 'runtime',
+        'snapshot_id': 'snapshotId',
         'spot': 'spot',
         'storage_gb': 'storageGb',
         'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -76,8 +82,11 @@ class V1CreateSandboxRequest(object):
         self._name = None
         self._network_policy = None
         self._organization_id = None
+        self._persistent = None
         self._ports = None
+        self._project_id = None
         self._runtime = None
+        self._snapshot_id = None
         self._spot = None
         self._storage_gb = None
         self._timeout = None
@@ -94,10 +103,16 @@ class V1CreateSandboxRequest(object):
             self.network_policy = network_policy
         if organization_id is not None:
             self.organization_id = organization_id
+        if persistent is not None:
+            self.persistent = persistent
         if ports is not None:
             self.ports = ports
+        if project_id is not None:
+            self.project_id = project_id
         if runtime is not None:
             self.runtime = runtime
+        if snapshot_id is not None:
+            self.snapshot_id = snapshot_id
         if spot is not None:
             self.spot = spot
         if storage_gb is not None:
@@ -232,6 +247,29 @@ class V1CreateSandboxRequest(object):
         self._organization_id = organization_id
 
     @property
+    def persistent(self) -> 'bool':
+        """Gets the persistent of this V1CreateSandboxRequest.  # noqa: E501
+
+        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox on idle, sleep, or eviction, and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, idle reclaim, or host reschedule.  # noqa: E501
+
+        :return: The persistent of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._persistent
+
+    @persistent.setter
+    def persistent(self, persistent: 'bool'):
+        """Sets the persistent of this V1CreateSandboxRequest.
+
+        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox on idle, sleep, or eviction, and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, idle reclaim, or host reschedule.  # noqa: E501
+
+        :param persistent: The persistent of this V1CreateSandboxRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._persistent = persistent
+
+    @property
     def ports(self) -> 'list[str]':
         """Gets the ports of this V1CreateSandboxRequest.  # noqa: E501
 
@@ -253,6 +291,29 @@ class V1CreateSandboxRequest(object):
         self._ports = ports
 
     @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1CreateSandboxRequest.  # noqa: E501
+
+        Project the sandbox is owned by. Recommended for persistent sandboxes — the controlplane needs a project to scope the auto-snapshot bucket prefix on idle eviction and on later StopSandbox calls without an explicit project_id. Optional for non-persistent sandboxes (no auto-snapshot is taken).  # noqa: E501
+
+        :return: The project_id of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1CreateSandboxRequest.
+
+        Project the sandbox is owned by. Recommended for persistent sandboxes — the controlplane needs a project to scope the auto-snapshot bucket prefix on idle eviction and on later StopSandbox calls without an explicit project_id. Optional for non-persistent sandboxes (no auto-snapshot is taken).  # noqa: E501
+
+        :param project_id: The project_id of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
+
+    @property
     def runtime(self) -> 'str':
         """Gets the runtime of this V1CreateSandboxRequest.  # noqa: E501
 
@@ -272,6 +333,27 @@ class V1CreateSandboxRequest(object):
         """
 
         self._runtime = runtime
+
+    @property
+    def snapshot_id(self) -> 'str':
+        """Gets the snapshot_id of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The snapshot_id of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._snapshot_id
+
+    @snapshot_id.setter
+    def snapshot_id(self, snapshot_id: 'str'):
+        """Sets the snapshot_id of this V1CreateSandboxRequest.
+
+
+        :param snapshot_id: The snapshot_id of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._snapshot_id = snapshot_id
 
     @property
     def spot(self) -> 'bool':
