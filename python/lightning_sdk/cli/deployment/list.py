@@ -25,7 +25,18 @@ from lightning_sdk.lightning_cloud.openapi import V1Deployment
     "--sort-by",
     default=None,
     type=click.Choice(
-        ["name", "teamspace", "state", "replicas", "ready", "pending", "failing", "machine", "image", "cloud-account"],
+        [
+            "name",
+            "teamspace",
+            "state",
+            "replicas",
+            "ready",
+            "pending",
+            "failing",
+            "machine",
+            "source",
+            "cloud-account",
+        ],
         case_sensitive=False,
     ),
     help="The attribute to sort deployments by.",
@@ -48,7 +59,7 @@ def list_deployments(
     table.add_column("State", no_wrap=True)
     table.add_column("Replicas", no_wrap=True)
     table.add_column("Machine", no_wrap=True)
-    table.add_column("Image", overflow="fold")
+    table.add_column("Source", overflow="fold")
     table.add_column("Cloud account", no_wrap=True)
 
     for resolved_teamspace, deployment in sorted(rows, key=_sort_key(sort_by)):
@@ -59,7 +70,7 @@ def list_deployments(
             _state(deployment),
             _replicas(deployment),
             _string(getattr(spec, "instance_name", None) or getattr(spec, "instance_type", None)),
-            _string(getattr(spec, "image", None)),
+            _source_label(deployment),
             _string(getattr(spec, "cluster_id", None)),
         )
 
@@ -76,10 +87,23 @@ def _sort_key(sort_by: Optional[str]) -> Callable:
         "pending": lambda item: int(getattr(item[1].status, "pending_replicas", 0) or 0),
         "failing": lambda item: int(getattr(item[1].status, "failing_replicas", 0) or 0),
         "machine": lambda item: str(getattr(item[1].spec, "instance_name", None) or ""),
-        "image": lambda item: str(getattr(item[1].spec, "image", None) or ""),
+        "source": lambda item: _source_label(item[1]),
         "cloud-account": lambda item: str(getattr(item[1].spec, "cluster_id", None) or ""),
     }
     return sort_key_map.get(sort_by, lambda item: str(item[1].name or ""))
+
+
+def _source_label(deployment: V1Deployment) -> str:
+    byom = getattr(deployment, "byom_spec", None)
+    if byom and getattr(byom, "served_model_name", None):
+        return f"model:{byom.served_model_name}"
+    spec = deployment.spec
+    if getattr(spec, "image", None):
+        return f"image:{spec.image}"
+    cloudspace_id = getattr(deployment, "cloudspace_id", None) or getattr(spec, "cloudspace_id", None)
+    if cloudspace_id:
+        return f"studio:{cloudspace_id}"
+    return ""
 
 
 def _state(deployment: V1Deployment) -> str:

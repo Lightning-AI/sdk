@@ -6,7 +6,7 @@ from click.testing import CliRunner
 from lightning_sdk.cli.deployment.create import create_deployment
 from lightning_sdk.cli.deployment.list import list_deployments
 from lightning_sdk.cli.deployment.logs import _follow_url, _print_page_text, _resolve_jobs, _websocket_url
-from lightning_sdk.lightning_cloud.openapi import V1Deployment, V1DeploymentStatus, V1Job, V1JobSpec
+from lightning_sdk.lightning_cloud.openapi import V1BYOMSpec, V1Deployment, V1DeploymentStatus, V1Job, V1JobSpec
 from tests.cli.help import assert_help_contains
 
 
@@ -58,6 +58,49 @@ def test_list_deployments_includes_replicas(monkeypatch) -> None:
     assert "Replicas" in result.output
 
 
+def test_list_deployments_source_column(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id", name="test", owner=SimpleNamespace(name="ecorp"))
+    byom_dep = V1Deployment(
+        name="srv",
+        id="dep-1",
+        replicas=1,
+        status=V1DeploymentStatus(ready_replicas=1),
+        spec=V1JobSpec(instance_name="L4"),
+        byom_spec=V1BYOMSpec(served_model_name="tllm"),
+    )
+    image_dep = V1Deployment(
+        name="ngx",
+        id="dep-2",
+        replicas=1,
+        status=V1DeploymentStatus(ready_replicas=1),
+        spec=V1JobSpec(instance_name="CPU", image="nginx"),
+    )
+    studio_dep = V1Deployment(
+        name="std",
+        id="dep-3",
+        replicas=1,
+        status=V1DeploymentStatus(ready_replicas=1),
+        cloudspace_id="cs-9",
+        spec=V1JobSpec(instance_name="CPU"),
+    )
+    api = MagicMock()
+    api.list_deployments.return_value = [byom_dep, image_dep, studio_dep]
+
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment.list.iter_teamspaces",
+        lambda teamspace_arg, all_teamspaces: [teamspace],
+    )
+    monkeypatch.setattr("lightning_sdk.cli.deployment.list.DeploymentApi", MagicMock(return_value=api))
+
+    result = CliRunner().invoke(list_deployments, ["--teamspace", "ecorp/test"])
+
+    assert result.exit_code == 0
+    assert "Source" in result.output
+    assert "model:tllm" in result.output
+    assert "image:nginx" in result.output
+    assert "studio:cs-9" in result.output
+
+
 def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -90,6 +133,77 @@ def test_create_deployment_requires_name(monkeypatch) -> None:
 
     assert result.exit_code != 0
     assert "Deployment name is required" in result.output
+
+
+def test_create_deployment_image_requires_port(monkeypatch) -> None:
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+
+    result = CliRunner().invoke(create_deployment, ["api", "--image", "nginx"])
+
+    assert result.exit_code != 0
+    assert "--port is required" in result.output
+
+
+def test_create_deployment_model_mutually_exclusive_with_image(monkeypatch) -> None:
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+
+    result = CliRunner().invoke(
+        create_deployment,
+        ["api", "--image", "nginx", "--model", "meta-llama/Llama-3-8B", "--machine", "L4", "--port", "8000"],
+    )
+
+    assert result.exit_code != 0
+    assert "Exactly one of --image, --studio, or --model" in result.output
+
+
+def test_create_deployment_model_requires_gpu(monkeypatch) -> None:
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+
+    result = CliRunner().invoke(
+        create_deployment,
+        ["api", "--model", "meta-llama/Llama-3-8B", "--port", "8000"],
+    )
+
+    assert result.exit_code != 0
+    assert "GPU machine" in result.output
+
+
+def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.name = "llama"
+    deployment_cls = MagicMock(return_value=deployment)
+
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", deployment_cls)
+
+    result = CliRunner().invoke(
+        create_deployment,
+        [
+            "llama",
+            "--model",
+            "meta-llama/Llama-3-8B",
+            "--machine",
+            "L4",
+            "--tensor-parallel-size",
+            "4",
+            "--max-model-len",
+            "8192",
+            "--quantization",
+            "fp8",
+            "--vllm-arg",
+            "--enable-chunked-prefill",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    _, kwargs = deployment.start.call_args
+    assert kwargs["model"] == "meta-llama/Llama-3-8B"
+    assert kwargs["tensor_parallel_size"] == 4
+    assert kwargs["max_model_len"] == 8192
+    assert kwargs["quantization"] == "fp8"
+    assert kwargs["extra_vllm_args"] == ["--enable-chunked-prefill"]
+    assert kwargs["ports"] == [8000]  # vLLM default, no --port given
 
 
 def test_follow_url_preserves_existing_query() -> None:

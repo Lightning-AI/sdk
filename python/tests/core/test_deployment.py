@@ -13,6 +13,7 @@ from lightning_sdk.deployment.deployment import AutoScaleConfig, Env, HttpHealth
 from lightning_sdk.lightning_cloud.openapi import (
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
+    V1BYOMSpec,
     V1Deployment,
     V1DeploymentStatus,
     V1Endpoint,
@@ -1025,3 +1026,45 @@ def test_deployment_update_with_path_mappings(monkeypatch):
     spec = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec
     assert spec.path_mappings is not None
     assert len(spec.path_mappings) == 2
+
+
+def test_deployment_start_byom_builds_spec(monkeypatch):
+    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
+    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+    monkeypatch.setattr(
+        deployment_module, "_resolve_org", MagicMock(return_value=organization_module.Organization(name="toto"))
+    )
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.side_effect = ApiException(status=400, reason="Reason: Not Found")
+    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="llama")
+    deployment.start(
+        ports=[8000],
+        cloud_account="cluster_id",
+        machine=Machine.L4,
+        model="meta-llama/Llama-3-8B",
+        tensor_parallel_size=4,
+        max_model_len=8192,
+        quantization="fp8",
+        extra_vllm_args=["--enable-chunked-prefill"],
+        acknowledged_warnings=["BYOM_INSUFFICIENT_VRAM_ESTIMATE"],
+    )
+
+    body = client.jobs_service_create_deployment._mock_call_args_list[0].kwargs["body"]
+    assert isinstance(body.byom_spec, V1BYOMSpec)
+    assert body.byom_spec.served_model_name == "meta-llama/Llama-3-8B"
+    assert body.byom_spec.weight_source == "WEIGHT_SOURCE_HUGGINGFACE"
+    assert body.byom_spec.tensor_parallel_size == 4
+    assert body.byom_spec.max_model_len == 8192
+    assert body.byom_spec.quantization == "fp8"
+    assert body.byom_spec.extra_vllm_args == ["--enable-chunked-prefill"]
+    assert body.acknowledged_warnings == ["BYOM_INSUFFICIENT_VRAM_ESTIMATE"]

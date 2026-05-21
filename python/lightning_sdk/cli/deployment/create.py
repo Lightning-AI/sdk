@@ -30,7 +30,7 @@ from lightning_sdk.deployment import Deployment
     type=click.Choice(MACHINE_VALUES),
     help="The machine type to run replicas on.",
 )
-@click.option("--port", "ports", multiple=True, type=float, required=True, help="Port to expose. Can be repeated.")
+@click.option("--port", "ports", multiple=True, type=float, help="Port to expose. Can be repeated.")
 @click.option("--command", help="Container command.")
 @click.option("--entrypoint", help="Container entrypoint. Omit to use the image default.")
 @click.option("--replicas", type=int, help="Fixed number of replicas to start.")
@@ -57,6 +57,23 @@ from lightning_sdk.deployment import Deployment
 )
 @click.option("--path-mappings", "--path_mappings", default="", help="Comma-separated path mappings.")
 @click.option("--max-runtime", type=int, help="Maximum machine allocation duration in seconds.")
+@click.option("--model", help="HuggingFace model id to serve (BYOM). Mutually exclusive with --image/--studio.")
+@click.option(
+    "--hf-token-secret",
+    help="Name of the Lightning secret holding your HuggingFace token (gated/private models).",
+)
+@click.option("--byom-image-variant", "base_image_variant", help="vLLM serving image variant. Defaults to 'stable'.")
+@click.option("--tensor-parallel-size", type=int, help="vLLM tensor-parallel size.")
+@click.option("--max-model-len", type=int, help="Maximum model context length.")
+@click.option("--gpu-memory-utilization", type=float, help="Fraction of GPU memory vLLM may use (0-1).")
+@click.option("--quantization", help="Quantization method (e.g. fp8, awq).")
+@click.option("--dtype", help="Model weight dtype (e.g. bfloat16).")
+@click.option(
+    "--vllm-arg",
+    "extra_vllm_args",
+    multiple=True,
+    help="Extra raw vLLM arg, repeatable (e.g. --vllm-arg --enable-chunked-prefill).",
+)
 def create_deployment(
     name: Optional[str] = None,
     name_option: Optional[str] = None,
@@ -85,18 +102,34 @@ def create_deployment(
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
     max_runtime: Optional[int] = None,
+    model: Optional[str] = None,
+    hf_token_secret: Optional[str] = None,
+    base_image_variant: Optional[str] = None,
+    tensor_parallel_size: Optional[int] = None,
+    max_model_len: Optional[int] = None,
+    gpu_memory_utilization: Optional[float] = None,
+    quantization: Optional[str] = None,
+    dtype: Optional[str] = None,
+    extra_vllm_args: Sequence[str] = (),
 ) -> None:
     """Create a deployment."""
     deployment_name = name_option or name
     if not deployment_name:
         raise click.UsageError("Deployment name is required.")
-    if image and studio:
-        raise click.UsageError("--image and --studio are mutually exclusive.")
-    if not image and not studio:
-        raise click.UsageError("Either --image or --studio is required.")
+    if sum([bool(image), bool(studio), bool(model)]) != 1:
+        raise click.UsageError("Exactly one of --image, --studio, or --model is required.")
 
     resolved_teamspace = resolve_teamspace(teamspace)
     machine_obj = resolve_machine(machine)
+
+    if model:
+        if machine_obj is None or machine_obj.is_cpu():
+            raise click.UsageError("BYOM (--model) requires a GPU machine; pass --machine (e.g. L4, A100).")
+        if not ports:
+            ports = (8000.0,)
+    elif not ports:
+        raise click.UsageError("--port is required.")
+
     deployment = Deployment(name=deployment_name, teamspace=resolved_teamspace)
     deployment.start(
         studio=studio,
@@ -123,5 +156,14 @@ def create_deployment(
         include_credentials=include_credentials,
         max_runtime=max_runtime,
         path_mappings=parse_path_mappings(path_mapping, path_mappings),
+        model=model,
+        hf_token_secret=hf_token_secret,
+        base_image_variant=base_image_variant,
+        tensor_parallel_size=tensor_parallel_size,
+        max_model_len=max_model_len,
+        gpu_memory_utilization=gpu_memory_utilization,
+        quantization=quantization,
+        dtype=dtype,
+        extra_vllm_args=list(extra_vllm_args) or None,
     )
     click.echo(f"Created deployment {deployment.name}.")

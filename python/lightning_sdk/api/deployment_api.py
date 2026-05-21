@@ -17,6 +17,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateDeploymentBody,
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
+    V1BYOMSpec,
     V1Deployment,
     V1DeploymentStrategy,
     V1Endpoint,
@@ -29,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobLogsResponse,
     V1JobSpec,
     V1RollingUpdateStrategy,
+    V1WeightSource,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -396,6 +398,8 @@ class DeploymentApi:
                 replicas=deployment.replicas,
                 spec=deployment.spec,
                 strategy=deployment.strategy,
+                byom_spec=deployment.byom_spec,
+                acknowledged_warnings=deployment.acknowledged_warnings,
                 from_onboarding=from_onboarding,
                 from_litserve=from_litserve,
             ),
@@ -1515,6 +1519,7 @@ def to_spec(
     max_runtime: Optional[int] = None,
     machine_image_version: Optional[str] = None,
     path_mappings: Optional[Dict[str, str]] = None,
+    byom: bool = False,
 ) -> V1JobSpec:
     if cloud_account is None:
         raise ValueError("The cloud account should be defined.")
@@ -1522,7 +1527,8 @@ def to_spec(
     if machine is None:
         raise ValueError("The machine should be defined.")
 
-    if image is None and cloudspace_id is None:
+    # BYOM deploys carry no client-side image; the server compiles one from the byom_spec.
+    if image is None and cloudspace_id is None and not byom:
         raise ValueError("The image should be defined.")
 
     if entrypoint is not None and cloudspace_id is not None:
@@ -1566,6 +1572,34 @@ def to_strategy(strategy: Optional[ReleaseStrategy]) -> None:
             type="rolling_update",
         )
     return None
+
+
+def to_byom_spec(
+    model: Optional[str],
+    *,
+    hf_token_secret: Optional[str] = None,
+    base_image_variant: Optional[str] = None,
+    tensor_parallel_size: Optional[int] = None,
+    max_model_len: Optional[int] = None,
+    gpu_memory_utilization: Optional[float] = None,
+    quantization: Optional[str] = None,
+    dtype: Optional[str] = None,
+    extra_vllm_args: Optional[Sequence[str]] = None,
+) -> Optional[V1BYOMSpec]:
+    if not model:
+        return None
+    return V1BYOMSpec(
+        served_model_name=model,
+        weight_source=V1WeightSource.HUGGINGFACE,
+        hf_token_secret_name=hf_token_secret,
+        base_image_variant=base_image_variant,
+        tensor_parallel_size=tensor_parallel_size,
+        max_model_len=max_model_len,
+        gpu_memory_utilization=gpu_memory_utilization,
+        quantization=quantization,
+        dtype=dtype,
+        extra_vllm_args=list(extra_vllm_args) if extra_vllm_args else None,
+    )
 
 
 def apply_change(spec: Any, key: str, value: Any) -> bool:
