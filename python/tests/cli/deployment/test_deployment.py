@@ -1,3 +1,4 @@
+import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -7,7 +8,14 @@ from lightning_sdk.cli.deployment.create import create_deployment
 from lightning_sdk.cli.deployment.list import list_deployments
 from lightning_sdk.cli.deployment.logs import _follow_url, _print_page_text, _resolve_jobs, _websocket_url
 from lightning_sdk.lightning_cloud.openapi import V1BYOMSpec, V1Deployment, V1DeploymentStatus, V1Job, V1JobSpec
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from tests.cli.help import assert_help_contains
+
+
+def _unacked_exc(*codes):
+    e = ApiException(status=400, reason="Bad Request")
+    e.body = json.dumps({"code": 3, "message": "unacknowledged BYOM warnings: " + ", ".join(codes)})
+    return e
 
 
 def test_deployment_help() -> None:
@@ -204,6 +212,85 @@ def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> Non
     assert kwargs["quantization"] == "fp8"
     assert kwargs["extra_vllm_args"] == ["--enable-chunked-prefill"]
     assert kwargs["ports"] == [8000]  # vLLM default, no --port given
+
+
+def test_create_model_force_acks_and_retries(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.name = "llm"
+    deployment.start.side_effect = [_unacked_exc("BYOM_INSUFFICIENT_VRAM_ESTIMATE"), None]
+
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", MagicMock(return_value=deployment))
+
+    result = CliRunner().invoke(create_deployment, ["llm", "--model", "meta-llama/x", "--machine", "L4", "--force"])
+
+    assert result.exit_code == 0, result.output
+    assert deployment.start.call_count == 2
+    assert "BYOM_INSUFFICIENT_VRAM_ESTIMATE" in deployment.start.call_args_list[1].kwargs["acknowledged_warnings"]
+
+
+def test_create_model_non_interactive_unacked_errors(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.start.side_effect = _unacked_exc("BYOM_INSUFFICIENT_VRAM_ESTIMATE")
+
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", MagicMock(return_value=deployment))
+
+    result = CliRunner().invoke(create_deployment, ["llm", "--model", "meta-llama/x", "--machine", "L4"])
+
+    assert result.exit_code != 0
+    assert "unacknowledged warnings" in result.output
+    assert "BYOM_INSUFFICIENT_VRAM_ESTIMATE" in result.output
+
+
+def test_create_model_dry_run_skips_create(monkeypatch) -> None:
+    deployment_cls = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", deployment_cls)
+
+    result = CliRunner().invoke(create_deployment, ["llm", "--model", "meta-llama/x", "--machine", "L4", "--dry-run"])
+
+    assert result.exit_code == 0, result.output
+    assert "Dry run" in result.output
+    assert "No deployment created" in result.output
+    deployment_cls.assert_not_called()
+
+
+def test_create_ack_without_model_errors(monkeypatch) -> None:
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+
+    result = CliRunner().invoke(create_deployment, ["api", "--image", "nginx", "--port", "8000", "--ack", "X"])
+
+    assert result.exit_code != 0
+    assert "only supported with --model" in result.output
+
+
+def test_create_serving_image_variant_accepted(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.name = "llm"
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", MagicMock(return_value=deployment))
+
+    result = CliRunner().invoke(
+        create_deployment,
+        ["llm", "--model", "meta-llama/x", "--machine", "L4", "--serving-image-variant", "nightly"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert deployment.start.call_args.kwargs["base_image_variant"] == "nightly"
+
+
+def test_create_old_byom_image_variant_rejected(monkeypatch) -> None:
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+
+    result = CliRunner().invoke(
+        create_deployment, ["llm", "--model", "meta-llama/x", "--machine", "L4", "--byom-image-variant", "x"]
+    )
+
+    assert result.exit_code != 0  # flag renamed to --serving-image-variant
 
 
 def test_follow_url_preserves_existing_query() -> None:
