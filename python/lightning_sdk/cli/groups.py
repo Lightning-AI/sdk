@@ -2,6 +2,7 @@
 
 import click
 
+from lightning_sdk.cli.api import APIGroup
 from lightning_sdk.cli.api import register_commands as register_api_commands
 from lightning_sdk.cli.base_studio import register_commands as register_base_studio_commands
 from lightning_sdk.cli.config import register_commands as register_config_commands
@@ -45,9 +46,23 @@ def config() -> None:
     """Manage Lightning SDK and CLI configuration."""
 
 
-@click.group(name="api")
-def api() -> None:
-    """Manage Lightning AI APIs."""
+@click.group(
+    name="api",
+    cls=APIGroup,
+    hidden=True,
+    invoke_without_command=True,
+    no_args_is_help=False,
+    context_settings={"ignore_unknown_options": True, "allow_extra_args": True},
+)
+@click.pass_context
+def api(ctx: click.Context) -> None:
+    """Manage Lightning AI APIs.
+
+    Use `lightning api /path [options]` to make an authenticated raw HTTP request.
+    """
+    if ctx.invoked_subcommand is None and not ctx.args:
+        click.echo(ctx.get_help())
+        ctx.exit()
 
 
 @click.group(name="deployment")

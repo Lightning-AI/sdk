@@ -12,7 +12,6 @@ def test_help():
     result_text = assert_help_contains(
         "lightning --help",
         "Usage: lightning [OPTIONS] COMMAND [ARGS]...",
-        "  api          Manage Lightning AI APIs.",
         "  base-studio  Manage Lightning AI Base Studios.",
         "  config       Manage Lightning SDK and CLI configuration.",
         "  cp           Copy files between local filesystem, Studios,",
@@ -31,6 +30,7 @@ def test_help():
     assert "  create" not in result_text
     assert "  delete" not in result_text
     assert "  download" not in result_text
+    assert "  api" not in result_text
     assert "  jobs" not in result_text
     assert "  open" not in result_text
     assert "  run" not in result_text
@@ -43,7 +43,7 @@ def test_help_uvx():
     result_text = result.stdout + result.stderr
 
     if "Usage: lightning-sdk [OPTIONS] COMMAND [ARGS]..." in result_text:
-        assert "  api          Manage Lightning AI APIs." in result_text
+        assert "  api" not in result_text
         assert "  cp           Copy files between local filesystem, Studios," in result_text
         assert "  container    Manage Lightning AI containers." in result_text
         assert "  job          Manage Lightning AI Jobs." in result_text
@@ -54,7 +54,8 @@ def test_help_uvx():
         assert "  studio       Manage Lightning AI Studios." in result_text
         return
 
-    assert "does not appear to be a Python project" in result_text
+    assert "does not appear" in result_text
+    assert "to be a Python project" in result_text
 
 
 def test_login_already_authed_can_get_username(monkeypatch):

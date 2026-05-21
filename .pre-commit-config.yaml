@@ -16,6 +16,7 @@ exclude: |
   (?x)^(
     python/lightning_sdk/lightning_cloud/.* |
     js/src/lightning_cloud/.* |
+    go/internal/lightningcloud/openapi/generated/.* |
     .*__snapshots__/.*\.ambr$
   )$
 
