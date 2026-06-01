@@ -466,6 +466,7 @@
   last_command: bash
   created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
   
+  
   session_id: parenta-XXXXXXXX
   pid: XXXXXXX
   status: attached
@@ -521,6 +522,7 @@
   display_label: Child (zsh)
   last_command: zsh
   created: XXXX-XX-XXTXX:XX:XX.XXXXXXXXX+XX:XX
+  
   
   session_id: parenta-XXXXXXXX
   pid: XXXXXXX

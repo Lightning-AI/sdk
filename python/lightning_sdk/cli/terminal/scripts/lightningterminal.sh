@@ -380,6 +380,22 @@ _screen__session_exists() {
     fi
 }
 
+# Get pid and status (attached/detached) for one session.
+# Output: tab-separated "pid<TAB>status" on stdout, or empty if not found.
+# Avoids the O(N) cost of enumerating + enriching every session when the
+# caller only cares about one.
+_screen__session_info() {
+    local session_id="$1"
+    local listing pid sid session_status
+    listing=$(_screen__list_sessions)
+    while IFS=$'\t' read -r pid sid session_status; do
+        if [ "$sid" = "$session_id" ]; then
+            printf '%s\t%s\n' "$pid" "$session_status"
+            return
+        fi
+    done <<< "$listing"
+}
+
 # Get the creation time of a screen socket file as an ISO timestamp.
 # Uses stat's birth time (statx syscall, Linux 4.11+). Falls back to empty.
 _screen__session_created() {
@@ -539,6 +555,7 @@ case "$BACKEND" in
         _backend_setup()            { _screen__setup "$@"; }
         _backend_list_sessions()    { _screen__list_sessions "$@"; }
         _backend_session_exists()   { _screen__session_exists "$@"; }
+        _backend_session_info()     { _screen__session_info "$@"; }
         _backend_session_created()  { _screen__session_created "$@"; }
         _backend_create()           { _screen__create "$@"; }
         _backend_attach()           { _screen__attach "$@"; }
@@ -765,32 +782,61 @@ _session_kill() {
     _delete_meta "$session_id"
 }
 
+# Emit a single session's record without enumerating every other session.
+# Caller must have verified the session exists.
+# Args: session_id, mode ("oneliner" or "raw")
+_session_emit_one() {
+    local session_id="$1"
+    local mode="${2:-oneliner}"
+
+    local pid_status pid session_status
+    pid_status=$(_backend_session_info "$session_id")
+    pid="${pid_status%%	*}"
+    session_status="${pid_status#*	}"
+    if [ -z "$pid_status" ]; then
+        pid=$(_backend_session_exists "$session_id")
+        session_status="detached"
+    fi
+
+    _load_meta "$session_id"
+    local default_name="term-${_meta_index:-$pid}"
+    local last_cmd
+    last_cmd=$(_last_command "$pid" "$session_id")
+
+    if [ "$mode" = "raw" ]; then
+        local created="${_meta_created}"
+        if [ -z "$created" ]; then
+            created=$(_backend_session_created "$session_id")
+        fi
+        local label
+        label=$(_display_label "$_meta_name" "$default_name" "$last_cmd")
+        _emit "session_id" "$session_id"
+        _emit "pid" "$pid"
+        _emit "status" "$session_status"
+        _emit "terminal_name" "$_meta_name"
+        _emit "default_name" "$default_name"
+        _emit "display_label" "$label"
+        _emit "last_command" "$last_cmd"
+        _emit "created" "$created"
+        if [ -n "$_meta_source" ]; then
+            _emit "source" "$_meta_source"
+        fi
+        if [ -n "$_meta_delegated_to" ]; then
+            _emit "delegated_to" "$_meta_delegated_to"
+        fi
+        echo ""
+    else
+        _format_oneliner "$_meta_name" "$default_name" "$last_cmd" "$session_status" "$session_id"
+    fi
+}
+
 # Show status of a specific session.
 # Args: session_id, mode ("oneliner" or "raw")
 _session_status() {
     local session_id="$1"
     local mode="${2:-oneliner}"
     _require_session "$session_id"
-
-    local raw_output
-    raw_output=$(_session_list "raw")
-    local record
-    record=$(echo "$raw_output" | awk -v sid="$session_id" '
-        /^session_id: / { current_sid = substr($0, 13) }
-        current_sid == sid { print }
-        current_sid == sid && /^$/ { exit }
-    ')
-
-    if [ "$mode" = "raw" ]; then
-        echo "$record"
-    else
-        local terminal_name default_name last_cmd session_status
-        terminal_name=$(echo "$record" | grep "^terminal_name: " | head -1 | sed 's/^terminal_name: //')
-        default_name=$(echo "$record" | grep "^default_name: " | head -1 | sed 's/^default_name: //')
-        last_cmd=$(echo "$record" | grep "^last_command: " | head -1 | sed 's/^last_command: //')
-        session_status=$(echo "$record" | grep "^status: " | head -1 | sed 's/^status: //')
-        _format_oneliner "$terminal_name" "$default_name" "$last_cmd" "$session_status" "$session_id"
-    fi
+    _session_emit_one "$session_id" "$mode"
 }
 
 # Rename a session's terminal_name in metadata.
@@ -1050,19 +1096,30 @@ _session_status_ancestors() {
         return 0
     fi
 
-    local raw_output
-    raw_output=$(_session_list "raw")
-
     if [ "$mode" = "raw" ]; then
-        echo "$results" | while IFS=' ' read -r sid depth; do
-            echo "$raw_output" | awk -v sid="$sid" '
-                /^session_id: / { current_sid = substr($0, 13) }
-                current_sid == sid { print }
-                current_sid == sid && /^$/ { exit }
-            '
+        # Emit a record per ancestor — far cheaper than enumerating
+        # every session and filtering, when only a handful are needed.
+        local _ancestor_sid _ancestor_depth
+        while IFS=' ' read -r _ancestor_sid _ancestor_depth; do
+            [ -z "$_ancestor_sid" ] && continue
+            _session_emit_one "$_ancestor_sid" "raw"
             echo ""
-        done
-    else
+        done <<< "$results"
+        return 0
+    fi
+
+    # Tree view: build raw_output by concatenating per-ancestor records
+    # so the awk tree renderer can index into it.
+    local raw_output=""
+    local _ancestor_sid _ancestor_depth _ancestor_rec
+    while IFS=' ' read -r _ancestor_sid _ancestor_depth; do
+        [ -z "$_ancestor_sid" ] && continue
+        _ancestor_rec=$(_session_emit_one "$_ancestor_sid" "raw")
+        raw_output="${raw_output}${_ancestor_rec}
+"
+    done <<< "$results"
+
+    {
         # Use awk for the tree rendering — it handles arrays and
         # look-ahead naturally without shell word-splitting issues.
         echo "$results" | awk -v raw_output="$raw_output" '
@@ -1128,7 +1185,7 @@ _session_status_ancestors() {
                 print prefix line
             }
         }'
-    fi
+    }
 }
 
 # List ancestor session_ids for the current session (from env var).

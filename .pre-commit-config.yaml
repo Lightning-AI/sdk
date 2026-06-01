@@ -43,6 +43,7 @@ repos:
       - id: check-case-conflict
       - id: check-added-large-files
         args: ["--maxkb=150", "--enforce-all"]
+        exclude: ^go/internal/lightningcloud/openapi/generated/.*
       - id: detect-private-key
 
   - repo: https://github.com/executablebooks/mdformat
