@@ -45,6 +45,7 @@ class V1MemoryUsage(object):
         'buffers_bytes': 'str',
         'cached_bytes': 'str',
         'free_bytes': 'str',
+        'hugepage_ready': 'bool',
         'hugepage_size_bytes': 'str',
         'hugepages_free': 'str',
         'hugepages_total': 'str',
@@ -59,6 +60,7 @@ class V1MemoryUsage(object):
         'buffers_bytes': 'buffersBytes',
         'cached_bytes': 'cachedBytes',
         'free_bytes': 'freeBytes',
+        'hugepage_ready': 'hugepageReady',
         'hugepage_size_bytes': 'hugepageSizeBytes',
         'hugepages_free': 'hugepagesFree',
         'hugepages_total': 'hugepagesTotal',
@@ -68,12 +70,13 @@ class V1MemoryUsage(object):
         'used_bytes': 'usedBytes'
     }
 
-    def __init__(self, available_bytes: 'str' =None, buffers_bytes: 'str' =None, cached_bytes: 'str' =None, free_bytes: 'str' =None, hugepage_size_bytes: 'str' =None, hugepages_free: 'str' =None, hugepages_total: 'str' =None, swap_free_bytes: 'str' =None, swap_total_bytes: 'str' =None, total_bytes: 'str' =None, used_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, available_bytes: 'str' =None, buffers_bytes: 'str' =None, cached_bytes: 'str' =None, free_bytes: 'str' =None, hugepage_ready: 'bool' =None, hugepage_size_bytes: 'str' =None, hugepages_free: 'str' =None, hugepages_total: 'str' =None, swap_free_bytes: 'str' =None, swap_total_bytes: 'str' =None, total_bytes: 'str' =None, used_bytes: 'str' =None):  # noqa: E501
         """V1MemoryUsage - a model defined in Swagger"""  # noqa: E501
         self._available_bytes = None
         self._buffers_bytes = None
         self._cached_bytes = None
         self._free_bytes = None
+        self._hugepage_ready = None
         self._hugepage_size_bytes = None
         self._hugepages_free = None
         self._hugepages_total = None
@@ -90,6 +93,8 @@ class V1MemoryUsage(object):
             self.cached_bytes = cached_bytes
         if free_bytes is not None:
             self.free_bytes = free_bytes
+        if hugepage_ready is not None:
+            self.hugepage_ready = hugepage_ready
         if hugepage_size_bytes is not None:
             self.hugepage_size_bytes = hugepage_size_bytes
         if hugepages_free is not None:
@@ -188,6 +193,27 @@ class V1MemoryUsage(object):
         """
 
         self._free_bytes = free_bytes
+
+    @property
+    def hugepage_ready(self) -> 'bool':
+        """Gets the hugepage_ready of this V1MemoryUsage.  # noqa: E501
+
+
+        :return: The hugepage_ready of this V1MemoryUsage.  # noqa: E501
+        :rtype: bool
+        """
+        return self._hugepage_ready
+
+    @hugepage_ready.setter
+    def hugepage_ready(self, hugepage_ready: 'bool'):
+        """Sets the hugepage_ready of this V1MemoryUsage.
+
+
+        :param hugepage_ready: The hugepage_ready of this V1MemoryUsage.  # noqa: E501
+        :type: bool
+        """
+
+        self._hugepage_ready = hugepage_ready
 
     @property
     def hugepage_size_bytes(self) -> 'str':

@@ -200,6 +200,8 @@ type ClientService interface {
 
 	CloudSpaceServiceStopCloudSpaceInstance(params *CloudSpaceServiceStopCloudSpaceInstanceParams, opts ...ClientOption) (*CloudSpaceServiceStopCloudSpaceInstanceOK, error)
 
+	CloudSpaceServiceSuggestCloudSpaceName(params *CloudSpaceServiceSuggestCloudSpaceNameParams, opts ...ClientOption) (*CloudSpaceServiceSuggestCloudSpaceNameOK, error)
+
 	CloudSpaceServiceSwitchCloudSpaceInstance(params *CloudSpaceServiceSwitchCloudSpaceInstanceParams, opts ...ClientOption) (*CloudSpaceServiceSwitchCloudSpaceInstanceOK, error)
 
 	CloudSpaceServiceTransferCloudSpace(params *CloudSpaceServiceTransferCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceTransferCloudSpaceOK, error)
@@ -3300,6 +3302,48 @@ func (a *Client) CloudSpaceServiceStopCloudSpaceInstance(params *CloudSpaceServi
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CloudSpaceServiceStopCloudSpaceInstanceDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+CloudSpaceServiceSuggestCloudSpaceName cloud space service suggest cloud space name API
+*/
+func (a *Client) CloudSpaceServiceSuggestCloudSpaceName(params *CloudSpaceServiceSuggestCloudSpaceNameParams, opts ...ClientOption) (*CloudSpaceServiceSuggestCloudSpaceNameOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewCloudSpaceServiceSuggestCloudSpaceNameParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "CloudSpaceService_SuggestCloudSpaceName",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/cloudspaces/suggest-name",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CloudSpaceServiceSuggestCloudSpaceNameReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*CloudSpaceServiceSuggestCloudSpaceNameOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*CloudSpaceServiceSuggestCloudSpaceNameDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

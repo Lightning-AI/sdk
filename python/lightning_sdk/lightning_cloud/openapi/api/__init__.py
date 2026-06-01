@@ -21,6 +21,7 @@ from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import Endpo
 from lightning_sdk.lightning_cloud.openapi.api.experiments_service_api import ExperimentsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.file_system_service_api import FileSystemServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.git_credentials_service_api import GitCredentialsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.gpu_telemetry_service_api import GpuTelemetryServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.incidents_service_api import IncidentsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.jobs_service_api import JobsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.k8_s_cluster_service_api import K8SClusterServiceApi

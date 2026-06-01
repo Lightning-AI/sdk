@@ -114,6 +114,9 @@ type V1ClusterAccelerator struct {
 	// Largest availability of quota in all regions
 	MaxAvailableQuota string `json:"maxAvailableQuota,omitempty"`
 
+	// Prevents users from requesting instance as on-demand instance
+	NonOndemand bool `json:"nonOndemand,omitempty"`
+
 	// Prevents users from requesting instance as spot instance
 	NonSpot bool `json:"nonSpot,omitempty"`
 

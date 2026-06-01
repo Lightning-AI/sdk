@@ -29,6 +29,9 @@ type V1MemoryUsage struct {
 	// MemFree — unused (less useful than available)
 	FreeBytes string `json:"freeBytes,omitempty"`
 
+	// hugepage ready
+	HugepageReady bool `json:"hugepageReady,omitempty"`
+
 	// hugepage size bytes
 	HugepageSizeBytes string `json:"hugepageSizeBytes,omitempty"`
 
