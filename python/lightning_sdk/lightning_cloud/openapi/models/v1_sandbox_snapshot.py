@@ -52,6 +52,7 @@ class V1SandboxSnapshot(object):
         'size_bytes': 'str',
         'source_sandbox_id': 'str',
         'source_sandbox_instance_type': 'str',
+        'source_sandbox_name': 'str',
         'source_sandbox_persistent': 'bool',
         'status': 'str',
         'tar_excludes': 'list[str]',
@@ -70,13 +71,14 @@ class V1SandboxSnapshot(object):
         'size_bytes': 'sizeBytes',
         'source_sandbox_id': 'sourceSandboxId',
         'source_sandbox_instance_type': 'sourceSandboxInstanceType',
+        'source_sandbox_name': 'sourceSandboxName',
         'source_sandbox_persistent': 'sourceSandboxPersistent',
         'status': 'status',
         'tar_excludes': 'tarExcludes',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_persistent: 'bool' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_persistent: 'bool' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1SandboxSnapshot - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._expires_at = None
@@ -89,6 +91,7 @@ class V1SandboxSnapshot(object):
         self._size_bytes = None
         self._source_sandbox_id = None
         self._source_sandbox_instance_type = None
+        self._source_sandbox_name = None
         self._source_sandbox_persistent = None
         self._status = None
         self._tar_excludes = None
@@ -116,6 +119,8 @@ class V1SandboxSnapshot(object):
             self.source_sandbox_id = source_sandbox_id
         if source_sandbox_instance_type is not None:
             self.source_sandbox_instance_type = source_sandbox_instance_type
+        if source_sandbox_name is not None:
+            self.source_sandbox_name = source_sandbox_name
         if source_sandbox_persistent is not None:
             self.source_sandbox_persistent = source_sandbox_persistent
         if status is not None:
@@ -357,6 +362,29 @@ class V1SandboxSnapshot(object):
         """
 
         self._source_sandbox_instance_type = source_sandbox_instance_type
+
+    @property
+    def source_sandbox_name(self) -> 'str':
+        """Gets the source_sandbox_name of this V1SandboxSnapshot.  # noqa: E501
+
+        The source sandbox's user-facing name (CreateSandboxRequest.name) at capture time. Surfaced back via ListSandboxes / GetSandbox for paused persistent sandboxes so the original name keeps appearing while the sandbox is hibernated, and reused by UpdateSandbox( resume=true) so the resumed sandbox keeps its identity instead of regressing to a synthetic placeholder. Best-effort: empty for snapshots captured before this field landed.  # noqa: E501
+
+        :return: The source_sandbox_name of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: str
+        """
+        return self._source_sandbox_name
+
+    @source_sandbox_name.setter
+    def source_sandbox_name(self, source_sandbox_name: 'str'):
+        """Sets the source_sandbox_name of this V1SandboxSnapshot.
+
+        The source sandbox's user-facing name (CreateSandboxRequest.name) at capture time. Surfaced back via ListSandboxes / GetSandbox for paused persistent sandboxes so the original name keeps appearing while the sandbox is hibernated, and reused by UpdateSandbox( resume=true) so the resumed sandbox keeps its identity instead of regressing to a synthetic placeholder. Best-effort: empty for snapshots captured before this field landed.  # noqa: E501
+
+        :param source_sandbox_name: The source_sandbox_name of this V1SandboxSnapshot.  # noqa: E501
+        :type: str
+        """
+
+        self._source_sandbox_name = source_sandbox_name
 
     @property
     def source_sandbox_persistent(self) -> 'bool':

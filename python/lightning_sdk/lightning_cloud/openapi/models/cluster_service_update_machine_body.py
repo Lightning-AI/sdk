@@ -42,26 +42,41 @@ class ClusterServiceUpdateMachineBody(object):
     """
     swagger_types = {
         'name': 'str',
+        'ordering_index': 'int',
         'org_id': 'str',
+        'purpose': 'str',
+        'schedulable_affinity': 'V1SchedulableAffinity',
         'unschedulable': 'bool'
     }
 
     attribute_map = {
         'name': 'name',
+        'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
+        'purpose': 'purpose',
+        'schedulable_affinity': 'schedulableAffinity',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, name: 'str' =None, org_id: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._name = None
+        self._ordering_index = None
         self._org_id = None
+        self._purpose = None
+        self._schedulable_affinity = None
         self._unschedulable = None
         self.discriminator = None
         if name is not None:
             self.name = name
+        if ordering_index is not None:
+            self.ordering_index = ordering_index
         if org_id is not None:
             self.org_id = org_id
+        if purpose is not None:
+            self.purpose = purpose
+        if schedulable_affinity is not None:
+            self.schedulable_affinity = schedulable_affinity
         if unschedulable is not None:
             self.unschedulable = unschedulable
 
@@ -69,6 +84,7 @@ class ClusterServiceUpdateMachineBody(object):
     def name(self) -> 'str':
         """Gets the name of this ClusterServiceUpdateMachineBody.  # noqa: E501
 
+        Updatable fields. Each is wrapped so callers can leave a field unset and have the server preserve the existing value; sending the wrapper with an empty inner value clears that field.  # noqa: E501
 
         :return: The name of this ClusterServiceUpdateMachineBody.  # noqa: E501
         :rtype: str
@@ -79,12 +95,36 @@ class ClusterServiceUpdateMachineBody(object):
     def name(self, name: 'str'):
         """Sets the name of this ClusterServiceUpdateMachineBody.
 
+        Updatable fields. Each is wrapped so callers can leave a field unset and have the server preserve the existing value; sending the wrapper with an empty inner value clears that field.  # noqa: E501
 
         :param name: The name of this ClusterServiceUpdateMachineBody.  # noqa: E501
         :type: str
         """
 
         self._name = name
+
+    @property
+    def ordering_index(self) -> 'int':
+        """Gets the ordering_index of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+        Force an ordering over the machine listing.   - unset (nil):   leave existing value untouched   - >= 0:          set to this value (must be unique within cluster)   - <0:            reset to NULL (machine falls to the bottom of the list) Any other negative value returns InvalidArgument.  # noqa: E501
+
+        :return: The ordering_index of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._ordering_index
+
+    @ordering_index.setter
+    def ordering_index(self, ordering_index: 'int'):
+        """Sets the ordering_index of this ClusterServiceUpdateMachineBody.
+
+        Force an ordering over the machine listing.   - unset (nil):   leave existing value untouched   - >= 0:          set to this value (must be unique within cluster)   - <0:            reset to NULL (machine falls to the bottom of the list) Any other negative value returns InvalidArgument.  # noqa: E501
+
+        :param ordering_index: The ordering_index of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: int
+        """
+
+        self._ordering_index = ordering_index
 
     @property
     def org_id(self) -> 'str':
@@ -106,6 +146,50 @@ class ClusterServiceUpdateMachineBody(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def purpose(self) -> 'str':
+        """Gets the purpose of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+        Workload-class dedication (see Machine.purpose). Must be one of the values returned by storage.KnownMachinePurposes() — today: \"\" or \"sandbox\". Server returns InvalidArgument otherwise.  # noqa: E501
+
+        :return: The purpose of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._purpose
+
+    @purpose.setter
+    def purpose(self, purpose: 'str'):
+        """Sets the purpose of this ClusterServiceUpdateMachineBody.
+
+        Workload-class dedication (see Machine.purpose). Must be one of the values returned by storage.KnownMachinePurposes() — today: \"\" or \"sandbox\". Server returns InvalidArgument otherwise.  # noqa: E501
+
+        :param purpose: The purpose of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._purpose = purpose
+
+    @property
+    def schedulable_affinity(self) -> 'V1SchedulableAffinity':
+        """Gets the schedulable_affinity of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The schedulable_affinity of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: V1SchedulableAffinity
+        """
+        return self._schedulable_affinity
+
+    @schedulable_affinity.setter
+    def schedulable_affinity(self, schedulable_affinity: 'V1SchedulableAffinity'):
+        """Sets the schedulable_affinity of this ClusterServiceUpdateMachineBody.
+
+
+        :param schedulable_affinity: The schedulable_affinity of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: V1SchedulableAffinity
+        """
+
+        self._schedulable_affinity = schedulable_affinity
 
     @property
     def unschedulable(self) -> 'bool':

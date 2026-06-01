@@ -26,7 +26,7 @@ type JobsServiceDuplicateDeploymentBody struct {
 	Name string `json:"name,omitempty"`
 
 	// Who should be receiving alerts
-	Recipients *V1DeploymentAlertingRecipients `json:"recipients,omitempty"`
+	Recipients *Externalv1ResourceScopedAlertingRecipients `json:"recipients,omitempty"`
 }
 
 // Validate validates this jobs service duplicate deployment body

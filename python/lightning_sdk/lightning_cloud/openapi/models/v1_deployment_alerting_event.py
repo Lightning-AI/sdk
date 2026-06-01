@@ -45,14 +45,14 @@ class V1DeploymentAlertingEvent(object):
         'created_at': 'datetime',
         'deployment_id': 'str',
         'description': 'str',
-        'frequency': 'V1DeploymentAlertingPolicyFrequency',
+        'frequency': 'V1AlertingPolicyFrequency',
         'id': 'str',
         'limit': 'float',
         'message': 'str',
         'name': 'str',
-        'operation': 'V1DeploymentAlertingPolicyOperation',
+        'operation': 'V1AlertingPolicyOperation',
         'project_id': 'str',
-        'severity': 'V1DeploymentAlertingPolicySeverity',
+        'severity': 'V1AlertingPolicySeverity',
         'type': 'V1DeploymentAlertingPolicyType',
         'value': 'float',
         'viewed': 'bool'
@@ -76,7 +76,7 @@ class V1DeploymentAlertingEvent(object):
         'viewed': 'viewed'
     }
 
-    def __init__(self, alerting_policy_id: 'str' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, message: 'str' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, project_id: 'str' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None, viewed: 'bool' =None):  # noqa: E501
+    def __init__(self, alerting_policy_id: 'str' =None, created_at: 'datetime' =None, deployment_id: 'str' =None, description: 'str' =None, frequency: 'V1AlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, message: 'str' =None, name: 'str' =None, operation: 'V1AlertingPolicyOperation' =None, project_id: 'str' =None, severity: 'V1AlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None, viewed: 'bool' =None):  # noqa: E501
         """V1DeploymentAlertingEvent - a model defined in Swagger"""  # noqa: E501
         self._alerting_policy_id = None
         self._created_at = None
@@ -210,22 +210,22 @@ class V1DeploymentAlertingEvent(object):
         self._description = description
 
     @property
-    def frequency(self) -> 'V1DeploymentAlertingPolicyFrequency':
+    def frequency(self) -> 'V1AlertingPolicyFrequency':
         """Gets the frequency of this V1DeploymentAlertingEvent.  # noqa: E501
 
 
         :return: The frequency of this V1DeploymentAlertingEvent.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicyFrequency
+        :rtype: V1AlertingPolicyFrequency
         """
         return self._frequency
 
     @frequency.setter
-    def frequency(self, frequency: 'V1DeploymentAlertingPolicyFrequency'):
+    def frequency(self, frequency: 'V1AlertingPolicyFrequency'):
         """Sets the frequency of this V1DeploymentAlertingEvent.
 
 
         :param frequency: The frequency of this V1DeploymentAlertingEvent.  # noqa: E501
-        :type: V1DeploymentAlertingPolicyFrequency
+        :type: V1AlertingPolicyFrequency
         """
 
         self._frequency = frequency
@@ -315,22 +315,22 @@ class V1DeploymentAlertingEvent(object):
         self._name = name
 
     @property
-    def operation(self) -> 'V1DeploymentAlertingPolicyOperation':
+    def operation(self) -> 'V1AlertingPolicyOperation':
         """Gets the operation of this V1DeploymentAlertingEvent.  # noqa: E501
 
 
         :return: The operation of this V1DeploymentAlertingEvent.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicyOperation
+        :rtype: V1AlertingPolicyOperation
         """
         return self._operation
 
     @operation.setter
-    def operation(self, operation: 'V1DeploymentAlertingPolicyOperation'):
+    def operation(self, operation: 'V1AlertingPolicyOperation'):
         """Sets the operation of this V1DeploymentAlertingEvent.
 
 
         :param operation: The operation of this V1DeploymentAlertingEvent.  # noqa: E501
-        :type: V1DeploymentAlertingPolicyOperation
+        :type: V1AlertingPolicyOperation
         """
 
         self._operation = operation
@@ -357,22 +357,22 @@ class V1DeploymentAlertingEvent(object):
         self._project_id = project_id
 
     @property
-    def severity(self) -> 'V1DeploymentAlertingPolicySeverity':
+    def severity(self) -> 'V1AlertingPolicySeverity':
         """Gets the severity of this V1DeploymentAlertingEvent.  # noqa: E501
 
 
         :return: The severity of this V1DeploymentAlertingEvent.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicySeverity
+        :rtype: V1AlertingPolicySeverity
         """
         return self._severity
 
     @severity.setter
-    def severity(self, severity: 'V1DeploymentAlertingPolicySeverity'):
+    def severity(self, severity: 'V1AlertingPolicySeverity'):
         """Sets the severity of this V1DeploymentAlertingEvent.
 
 
         :param severity: The severity of this V1DeploymentAlertingEvent.  # noqa: E501
-        :type: V1DeploymentAlertingPolicySeverity
+        :type: V1AlertingPolicySeverity
         """
 
         self._severity = severity

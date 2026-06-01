@@ -41,7 +41,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'alerts_config': 'V1AlertsConfig',
+        'alerts_config': 'V1OrgAlertsConfig',
         'allow_budgeting': 'bool',
         'allow_cloud_space_publish': 'bool',
         'allow_credits_auto_replenish': 'bool',
@@ -128,7 +128,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1AlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrganizationsServiceUpdateOrganizationBody - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -256,22 +256,22 @@ class OrganizationsServiceUpdateOrganizationBody(object):
             self.workload_max_run_duration = workload_max_run_duration
 
     @property
-    def alerts_config(self) -> 'V1AlertsConfig':
+    def alerts_config(self) -> 'V1OrgAlertsConfig':
         """Gets the alerts_config of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
 
 
         :return: The alerts_config of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
-        :rtype: V1AlertsConfig
+        :rtype: V1OrgAlertsConfig
         """
         return self._alerts_config
 
     @alerts_config.setter
-    def alerts_config(self, alerts_config: 'V1AlertsConfig'):
+    def alerts_config(self, alerts_config: 'V1OrgAlertsConfig'):
         """Sets the alerts_config of this OrganizationsServiceUpdateOrganizationBody.
 
 
         :param alerts_config: The alerts_config of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
-        :type: V1AlertsConfig
+        :type: V1OrgAlertsConfig
         """
 
         self._alerts_config = alerts_config

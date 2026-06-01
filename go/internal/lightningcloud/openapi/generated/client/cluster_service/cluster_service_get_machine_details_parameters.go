@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewClusterServiceGetMachineDetailsParams creates a new ClusterServiceGetMachineDetailsParams object,
@@ -66,6 +67,9 @@ type ClusterServiceGetMachineDetailsParams struct {
 
 	// ID.
 	ID string
+
+	// IncludeDetails.
+	IncludeDetails *bool
 
 	// OrgID.
 	OrgID *string
@@ -145,6 +149,17 @@ func (o *ClusterServiceGetMachineDetailsParams) SetID(id string) {
 	o.ID = id
 }
 
+// WithIncludeDetails adds the includeDetails to the cluster service get machine details params
+func (o *ClusterServiceGetMachineDetailsParams) WithIncludeDetails(includeDetails *bool) *ClusterServiceGetMachineDetailsParams {
+	o.SetIncludeDetails(includeDetails)
+	return o
+}
+
+// SetIncludeDetails adds the includeDetails to the cluster service get machine details params
+func (o *ClusterServiceGetMachineDetailsParams) SetIncludeDetails(includeDetails *bool) {
+	o.IncludeDetails = includeDetails
+}
+
 // WithOrgID adds the orgID to the cluster service get machine details params
 func (o *ClusterServiceGetMachineDetailsParams) WithOrgID(orgID *string) *ClusterServiceGetMachineDetailsParams {
 	o.SetOrgID(orgID)
@@ -172,6 +187,23 @@ func (o *ClusterServiceGetMachineDetailsParams) WriteToRequest(r runtime.ClientR
 	// path param id
 	if err := r.SetPathParam("id", o.ID); err != nil {
 		return err
+	}
+
+	if o.IncludeDetails != nil {
+
+		// query param includeDetails
+		var qrIncludeDetails bool
+
+		if o.IncludeDetails != nil {
+			qrIncludeDetails = *o.IncludeDetails
+		}
+		qIncludeDetails := swag.FormatBool(qrIncludeDetails)
+		if qIncludeDetails != "" {
+
+			if err := r.SetQueryParam("includeDetails", qIncludeDetails); err != nil {
+				return err
+			}
+		}
 	}
 
 	if o.OrgID != nil {

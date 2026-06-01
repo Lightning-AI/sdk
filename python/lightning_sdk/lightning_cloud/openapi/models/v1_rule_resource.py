@@ -82,6 +82,8 @@ class V1RuleResource(object):
     LITDATASET = "litDataset"
     UPLOAD = "upload"
     MACHINE = "machine"
+    KUBERNETESTEMPLATE = "kubernetesTemplate"
+    K8S_JOB = "k8s_job"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

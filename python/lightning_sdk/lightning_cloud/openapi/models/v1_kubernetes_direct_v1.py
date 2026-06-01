@@ -41,6 +41,7 @@ class V1KubernetesDirectV1(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'alerts_config': 'Gridv1ClusterAlertsConfig',
         'automate_agent_installation': 'bool',
         'aws': 'V1KubernetesAWSConfig',
         'gpu_operator_config': 'V1GpuOperatorConfig',
@@ -58,6 +59,7 @@ class V1KubernetesDirectV1(object):
         'kubeconfig_agent': 'str',
         'kubeconfig_elevated': 'str',
         'kubevirt_config': 'V1KubevirtConfig',
+        'node_cordoned_budget': 'int',
         'prometheus_url': 'str',
         'settings': 'V1KubernetesDirectSettingsV1',
         'skip_user_label_injection': 'bool',
@@ -65,6 +67,7 @@ class V1KubernetesDirectV1(object):
     }
 
     attribute_map = {
+        'alerts_config': 'alertsConfig',
         'automate_agent_installation': 'automateAgentInstallation',
         'aws': 'aws',
         'gpu_operator_config': 'gpuOperatorConfig',
@@ -82,14 +85,16 @@ class V1KubernetesDirectV1(object):
         'kubeconfig_agent': 'kubeconfigAgent',
         'kubeconfig_elevated': 'kubeconfigElevated',
         'kubevirt_config': 'kubevirtConfig',
+        'node_cordoned_budget': 'nodeCordonedBudget',
         'prometheus_url': 'prometheusUrl',
         'settings': 'settings',
         'skip_user_label_injection': 'skipUserLabelInjection',
         'supported_nvidia_driver_versions': 'supportedNvidiaDriverVersions'
     }
 
-    def __init__(self, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_operator_config: 'V1GpuOperatorConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'Gridv1ClusterAlertsConfig' =None, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_operator_config: 'V1GpuOperatorConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, node_cordoned_budget: 'int' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
+        self._alerts_config = None
         self._automate_agent_installation = None
         self._aws = None
         self._gpu_operator_config = None
@@ -107,11 +112,14 @@ class V1KubernetesDirectV1(object):
         self._kubeconfig_agent = None
         self._kubeconfig_elevated = None
         self._kubevirt_config = None
+        self._node_cordoned_budget = None
         self._prometheus_url = None
         self._settings = None
         self._skip_user_label_injection = None
         self._supported_nvidia_driver_versions = None
         self.discriminator = None
+        if alerts_config is not None:
+            self.alerts_config = alerts_config
         if automate_agent_installation is not None:
             self.automate_agent_installation = automate_agent_installation
         if aws is not None:
@@ -146,6 +154,8 @@ class V1KubernetesDirectV1(object):
             self.kubeconfig_elevated = kubeconfig_elevated
         if kubevirt_config is not None:
             self.kubevirt_config = kubevirt_config
+        if node_cordoned_budget is not None:
+            self.node_cordoned_budget = node_cordoned_budget
         if prometheus_url is not None:
             self.prometheus_url = prometheus_url
         if settings is not None:
@@ -154,6 +164,27 @@ class V1KubernetesDirectV1(object):
             self.skip_user_label_injection = skip_user_label_injection
         if supported_nvidia_driver_versions is not None:
             self.supported_nvidia_driver_versions = supported_nvidia_driver_versions
+
+    @property
+    def alerts_config(self) -> 'Gridv1ClusterAlertsConfig':
+        """Gets the alerts_config of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The alerts_config of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: Gridv1ClusterAlertsConfig
+        """
+        return self._alerts_config
+
+    @alerts_config.setter
+    def alerts_config(self, alerts_config: 'Gridv1ClusterAlertsConfig'):
+        """Sets the alerts_config of this V1KubernetesDirectV1.
+
+
+        :param alerts_config: The alerts_config of this V1KubernetesDirectV1.  # noqa: E501
+        :type: Gridv1ClusterAlertsConfig
+        """
+
+        self._alerts_config = alerts_config
 
     @property
     def automate_agent_installation(self) -> 'bool':
@@ -511,6 +542,27 @@ class V1KubernetesDirectV1(object):
         """
 
         self._kubevirt_config = kubevirt_config
+
+    @property
+    def node_cordoned_budget(self) -> 'int':
+        """Gets the node_cordoned_budget of this V1KubernetesDirectV1.  # noqa: E501
+
+
+        :return: The node_cordoned_budget of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: int
+        """
+        return self._node_cordoned_budget
+
+    @node_cordoned_budget.setter
+    def node_cordoned_budget(self, node_cordoned_budget: 'int'):
+        """Sets the node_cordoned_budget of this V1KubernetesDirectV1.
+
+
+        :param node_cordoned_budget: The node_cordoned_budget of this V1KubernetesDirectV1.  # noqa: E501
+        :type: int
+        """
+
+        self._node_cordoned_budget = node_cordoned_budget
 
     @property
     def prometheus_url(self) -> 'str':

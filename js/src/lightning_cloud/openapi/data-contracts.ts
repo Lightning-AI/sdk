@@ -450,6 +450,15 @@ export interface V1Sandbox {
    * sandbox_fuse_snapshot_restore.md for the lifecycle.
    */
   persistent?: boolean;
+  /**
+   * Project the sandbox belongs to. Mirrors CreateSandboxRequest.project_id
+   * captured onto Server.Metadata.ProjectId at create time, surfaced here
+   * so list/get callers (UI, SDK) can group sandboxes per teamspace
+   * without joining against the underlying server row. Empty for
+   * sandboxes created before this field landed and for sandboxes whose
+   * create request omitted project_id.
+   */
+  projectId?: string;
 }
 
 export interface V1SandboxSnapshot {
@@ -501,6 +510,16 @@ export interface V1SandboxSnapshot {
    * field landed; the resume path then falls back to a default.
    */
   sourceSandboxInstanceType?: string;
+  /**
+   * The source sandbox's user-facing name (CreateSandboxRequest.name)
+   * at capture time. Surfaced back via ListSandboxes / GetSandbox for
+   * paused persistent sandboxes so the original name keeps appearing
+   * while the sandbox is hibernated, and reused by UpdateSandbox(
+   * resume=true) so the resumed sandbox keeps its identity instead of
+   * regressing to a synthetic placeholder. Best-effort: empty for
+   * snapshots captured before this field landed.
+   */
+  sourceSandboxName?: string;
 }
 
 /**

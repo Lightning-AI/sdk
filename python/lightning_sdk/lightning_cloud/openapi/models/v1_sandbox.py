@@ -50,6 +50,7 @@ class V1Sandbox(object):
         'organization_id': 'str',
         'persistent': 'bool',
         'ports': 'list[str]',
+        'project_id': 'str',
         'runtime': 'str',
         'spot': 'bool',
         'status': 'str',
@@ -66,13 +67,14 @@ class V1Sandbox(object):
         'organization_id': 'organizationId',
         'persistent': 'persistent',
         'ports': 'ports',
+        'project_id': 'projectId',
         'runtime': 'runtime',
         'spot': 'spot',
         'status': 'status',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -83,6 +85,7 @@ class V1Sandbox(object):
         self._organization_id = None
         self._persistent = None
         self._ports = None
+        self._project_id = None
         self._runtime = None
         self._spot = None
         self._status = None
@@ -106,6 +109,8 @@ class V1Sandbox(object):
             self.persistent = persistent
         if ports is not None:
             self.ports = ports
+        if project_id is not None:
+            self.project_id = project_id
         if runtime is not None:
             self.runtime = runtime
         if spot is not None:
@@ -305,6 +310,29 @@ class V1Sandbox(object):
         """
 
         self._ports = ports
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1Sandbox.  # noqa: E501
+
+        Project the sandbox belongs to. Mirrors CreateSandboxRequest.project_id captured onto Server.Metadata.ProjectId at create time, surfaced here so list/get callers (UI, SDK) can group sandboxes per teamspace without joining against the underlying server row. Empty for sandboxes created before this field landed and for sandboxes whose create request omitted project_id.  # noqa: E501
+
+        :return: The project_id of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1Sandbox.
+
+        Project the sandbox belongs to. Mirrors CreateSandboxRequest.project_id captured onto Server.Metadata.ProjectId at create time, surfaced here so list/get callers (UI, SDK) can group sandboxes per teamspace without joining against the underlying server row. Empty for sandboxes created before this field landed and for sandboxes whose create request omitted project_id.  # noqa: E501
+
+        :param project_id: The project_id of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     @property
     def runtime(self) -> 'str':

@@ -20,7 +20,7 @@ import (
 type OrganizationsServiceUpdateOrganizationBody struct {
 
 	// alerts config
-	AlertsConfig *V1AlertsConfig `json:"alertsConfig,omitempty"`
+	AlertsConfig *V1OrgAlertsConfig `json:"alertsConfig,omitempty"`
 
 	// allow budgeting
 	AllowBudgeting bool `json:"allowBudgeting,omitempty"`

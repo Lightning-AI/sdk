@@ -57,13 +57,14 @@ class JobsServiceUpdateDeploymentBody(object):
         'desired_state': 'V1DeploymentState',
         'endpoint': 'V1Endpoint',
         'is_published': 'bool',
+        'k8s_deployment_config': 'V1K8sDeploymentConfig',
         'managed': 'bool',
         'managed_endpoint_id': 'str',
         'name': 'str',
         'oncall_notification': 'bool',
         'parameter_spec': 'V1ParameterizationSpec',
         'pipeline_id': 'str',
-        'recipients': 'V1DeploymentAlertingRecipients',
+        'recipients': 'Externalv1ResourceScopedAlertingRecipients',
         'release_id': 'str',
         'release_notes': 'str',
         'replicas': 'int',
@@ -76,7 +77,9 @@ class JobsServiceUpdateDeploymentBody(object):
         'total_cost': 'float',
         'updated_at': 'datetime',
         'user_id': 'str',
-        'visibility': 'V1ResourceVisibility'
+        'visibility': 'V1ResourceVisibility',
+        'vm_instances_config': 'V1VMInstancesConfig',
+        'weight_version': 'str'
     }
 
     attribute_map = {
@@ -96,6 +99,7 @@ class JobsServiceUpdateDeploymentBody(object):
         'desired_state': 'desiredState',
         'endpoint': 'endpoint',
         'is_published': 'isPublished',
+        'k8s_deployment_config': 'k8sDeploymentConfig',
         'managed': 'managed',
         'managed_endpoint_id': 'managedEndpointId',
         'name': 'name',
@@ -115,10 +119,12 @@ class JobsServiceUpdateDeploymentBody(object):
         'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'user_id': 'userId',
-        'visibility': 'visibility'
+        'visibility': 'visibility',
+        'vm_instances_config': 'vmInstancesConfig',
+        'weight_version': 'weightVersion'
     }
 
-    def __init__(self, source: 'str' =None, acknowledged_warnings: 'list[str]' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, dedicated: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, supports_prod_deployment: 'bool' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, source: 'str' =None, acknowledged_warnings: 'list[str]' =None, allow_logs: 'bool' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, assistant_id: 'str' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_state: 'V1DeploymentState' =None, debug: 'bool' =None, dedicated: 'bool' =None, desired_state: 'V1DeploymentState' =None, endpoint: 'V1Endpoint' =None, is_published: 'bool' =None, k8s_deployment_config: 'V1K8sDeploymentConfig' =None, managed: 'bool' =None, managed_endpoint_id: 'str' =None, name: 'str' =None, oncall_notification: 'bool' =None, parameter_spec: 'V1ParameterizationSpec' =None, pipeline_id: 'str' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None, release_id: 'str' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, status: 'V1DeploymentStatus' =None, strategy: 'V1DeploymentStrategy' =None, supports_prod_deployment: 'bool' =None, template_id: 'str' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None, visibility: 'V1ResourceVisibility' =None, vm_instances_config: 'V1VMInstancesConfig' =None, weight_version: 'str' =None):  # noqa: E501
         """JobsServiceUpdateDeploymentBody - a model defined in Swagger"""  # noqa: E501
         self._source = None
         self._acknowledged_warnings = None
@@ -136,6 +142,7 @@ class JobsServiceUpdateDeploymentBody(object):
         self._desired_state = None
         self._endpoint = None
         self._is_published = None
+        self._k8s_deployment_config = None
         self._managed = None
         self._managed_endpoint_id = None
         self._name = None
@@ -156,6 +163,8 @@ class JobsServiceUpdateDeploymentBody(object):
         self._updated_at = None
         self._user_id = None
         self._visibility = None
+        self._vm_instances_config = None
+        self._weight_version = None
         self.discriminator = None
         if source is not None:
             self.source = source
@@ -189,6 +198,8 @@ class JobsServiceUpdateDeploymentBody(object):
             self.endpoint = endpoint
         if is_published is not None:
             self.is_published = is_published
+        if k8s_deployment_config is not None:
+            self.k8s_deployment_config = k8s_deployment_config
         if managed is not None:
             self.managed = managed
         if managed_endpoint_id is not None:
@@ -229,6 +240,10 @@ class JobsServiceUpdateDeploymentBody(object):
             self.user_id = user_id
         if visibility is not None:
             self.visibility = visibility
+        if vm_instances_config is not None:
+            self.vm_instances_config = vm_instances_config
+        if weight_version is not None:
+            self.weight_version = weight_version
 
     @property
     def source(self) -> 'str':
@@ -569,6 +584,27 @@ class JobsServiceUpdateDeploymentBody(object):
         self._is_published = is_published
 
     @property
+    def k8s_deployment_config(self) -> 'V1K8sDeploymentConfig':
+        """Gets the k8s_deployment_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The k8s_deployment_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: V1K8sDeploymentConfig
+        """
+        return self._k8s_deployment_config
+
+    @k8s_deployment_config.setter
+    def k8s_deployment_config(self, k8s_deployment_config: 'V1K8sDeploymentConfig'):
+        """Sets the k8s_deployment_config of this JobsServiceUpdateDeploymentBody.
+
+
+        :param k8s_deployment_config: The k8s_deployment_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: V1K8sDeploymentConfig
+        """
+
+        self._k8s_deployment_config = k8s_deployment_config
+
+    @property
     def managed(self) -> 'bool':
         """Gets the managed of this JobsServiceUpdateDeploymentBody.  # noqa: E501
 
@@ -695,22 +731,22 @@ class JobsServiceUpdateDeploymentBody(object):
         self._pipeline_id = pipeline_id
 
     @property
-    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+    def recipients(self) -> 'Externalv1ResourceScopedAlertingRecipients':
         """Gets the recipients of this JobsServiceUpdateDeploymentBody.  # noqa: E501
 
 
         :return: The recipients of this JobsServiceUpdateDeploymentBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingRecipients
+        :rtype: Externalv1ResourceScopedAlertingRecipients
         """
         return self._recipients
 
     @recipients.setter
-    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+    def recipients(self, recipients: 'Externalv1ResourceScopedAlertingRecipients'):
         """Sets the recipients of this JobsServiceUpdateDeploymentBody.
 
 
         :param recipients: The recipients of this JobsServiceUpdateDeploymentBody.  # noqa: E501
-        :type: V1DeploymentAlertingRecipients
+        :type: Externalv1ResourceScopedAlertingRecipients
         """
 
         self._recipients = recipients
@@ -987,6 +1023,48 @@ class JobsServiceUpdateDeploymentBody(object):
         """
 
         self._visibility = visibility
+
+    @property
+    def vm_instances_config(self) -> 'V1VMInstancesConfig':
+        """Gets the vm_instances_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The vm_instances_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: V1VMInstancesConfig
+        """
+        return self._vm_instances_config
+
+    @vm_instances_config.setter
+    def vm_instances_config(self, vm_instances_config: 'V1VMInstancesConfig'):
+        """Sets the vm_instances_config of this JobsServiceUpdateDeploymentBody.
+
+
+        :param vm_instances_config: The vm_instances_config of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: V1VMInstancesConfig
+        """
+
+        self._vm_instances_config = vm_instances_config
+
+    @property
+    def weight_version(self) -> 'str':
+        """Gets the weight_version of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+
+
+        :return: The weight_version of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._weight_version
+
+    @weight_version.setter
+    def weight_version(self, weight_version: 'str'):
+        """Sets the weight_version of this JobsServiceUpdateDeploymentBody.
+
+
+        :param weight_version: The weight_version of this JobsServiceUpdateDeploymentBody.  # noqa: E501
+        :type: str
+        """
+
+        self._weight_version = weight_version
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

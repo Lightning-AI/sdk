@@ -29,6 +29,9 @@ type V1ExternalClusterSpec struct {
 	// Configuration for AWS
 	AwsV1 *V1AWSDirectV1 `json:"awsV1,omitempty"`
 
+	// Azure Cloud configuration
+	AzureV1 *V1AzureDirectV1 `json:"azureV1,omitempty"`
+
 	// Cloudflare Cloud configuration
 	CloudflareV1 *V1CloudflareV1 `json:"cloudflareV1,omitempty"`
 
@@ -132,6 +135,10 @@ func (m *V1ExternalClusterSpec) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAwsV1(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAzureV1(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -239,6 +246,29 @@ func (m *V1ExternalClusterSpec) validateAwsV1(formats strfmt.Registry) error {
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("awsV1")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1ExternalClusterSpec) validateAzureV1(formats strfmt.Registry) error {
+	if swag.IsZero(m.AzureV1) { // not required
+		return nil
+	}
+
+	if m.AzureV1 != nil {
+		if err := m.AzureV1.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("azureV1")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("azureV1")
 			}
 
 			return err
@@ -746,6 +776,10 @@ func (m *V1ExternalClusterSpec) ContextValidate(ctx context.Context, formats str
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateAzureV1(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateCloudflareV1(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -852,6 +886,31 @@ func (m *V1ExternalClusterSpec) contextValidateAwsV1(ctx context.Context, format
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("awsV1")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1ExternalClusterSpec) contextValidateAzureV1(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AzureV1 != nil {
+
+		if swag.IsZero(m.AzureV1) { // not required
+			return nil
+		}
+
+		if err := m.AzureV1.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("azureV1")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("azureV1")
 			}
 
 			return err

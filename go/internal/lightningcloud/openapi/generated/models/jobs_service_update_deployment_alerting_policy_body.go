@@ -23,7 +23,7 @@ type JobsServiceUpdateDeploymentAlertingPolicyBody struct {
 	Description string `json:"description,omitempty"`
 
 	// frequency
-	Frequency *V1DeploymentAlertingPolicyFrequency `json:"frequency,omitempty"`
+	Frequency *V1AlertingPolicyFrequency `json:"frequency,omitempty"`
 
 	// id
 	ID string `json:"id,omitempty"`
@@ -35,13 +35,13 @@ type JobsServiceUpdateDeploymentAlertingPolicyBody struct {
 	Name string `json:"name,omitempty"`
 
 	// operation
-	Operation *V1DeploymentAlertingPolicyOperation `json:"operation,omitempty"`
+	Operation *V1AlertingPolicyOperation `json:"operation,omitempty"`
 
 	// recipients
-	Recipients *V1DeploymentAlertingRecipients `json:"recipients,omitempty"`
+	Recipients *Externalv1ResourceScopedAlertingRecipients `json:"recipients,omitempty"`
 
 	// severity
-	Severity *V1DeploymentAlertingPolicySeverity `json:"severity,omitempty"`
+	Severity *V1AlertingPolicySeverity `json:"severity,omitempty"`
 
 	// type
 	Type *V1DeploymentAlertingPolicyType `json:"type,omitempty"`

@@ -96,6 +96,8 @@ type ClientService interface {
 
 	JobsServiceGetDeploymentStatus(params *JobsServiceGetDeploymentStatusParams, opts ...ClientOption) (*JobsServiceGetDeploymentStatusOK, error)
 
+	JobsServiceGetDeploymentWeightConfig(params *JobsServiceGetDeploymentWeightConfigParams, opts ...ClientOption) (*JobsServiceGetDeploymentWeightConfigOK, error)
+
 	JobsServiceGetJob(params *JobsServiceGetJobParams, opts ...ClientOption) (*JobsServiceGetJobOK, error)
 
 	JobsServiceGetJobArtifactsPage(params *JobsServiceGetJobArtifactsPageParams, opts ...ClientOption) (*JobsServiceGetJobArtifactsPageOK, error)
@@ -141,6 +143,8 @@ type ClientService interface {
 	JobsServiceListMultiMachineJobs(params *JobsServiceListMultiMachineJobsParams, opts ...ClientOption) (*JobsServiceListMultiMachineJobsOK, error)
 
 	JobsServiceListOrgDeployments(params *JobsServiceListOrgDeploymentsParams, opts ...ClientOption) (*JobsServiceListOrgDeploymentsOK, error)
+
+	JobsServiceReloadDeploymentWeights(params *JobsServiceReloadDeploymentWeightsParams, opts ...ClientOption) (*JobsServiceReloadDeploymentWeightsOK, error)
 
 	JobsServiceReportDeploymentRoutingTelemetry(params *JobsServiceReportDeploymentRoutingTelemetryParams, opts ...ClientOption) (*JobsServiceReportDeploymentRoutingTelemetryOK, error)
 
@@ -1055,6 +1059,48 @@ func (a *Client) JobsServiceGetDeploymentStatus(params *JobsServiceGetDeployment
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceGetDeploymentStatusDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceGetDeploymentWeightConfig jobs service get deployment weight config API
+*/
+func (a *Client) JobsServiceGetDeploymentWeightConfig(params *JobsServiceGetDeploymentWeightConfigParams, opts ...ClientOption) (*JobsServiceGetDeploymentWeightConfigOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceGetDeploymentWeightConfigParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_GetDeploymentWeightConfig",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/deployments/{deploymentId}/weight-config",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceGetDeploymentWeightConfigReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceGetDeploymentWeightConfigOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceGetDeploymentWeightConfigDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2021,6 +2067,48 @@ func (a *Client) JobsServiceListOrgDeployments(params *JobsServiceListOrgDeploym
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceListOrgDeploymentsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceReloadDeploymentWeights weights reload b y o m sidecar
+*/
+func (a *Client) JobsServiceReloadDeploymentWeights(params *JobsServiceReloadDeploymentWeightsParams, opts ...ClientOption) (*JobsServiceReloadDeploymentWeightsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceReloadDeploymentWeightsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_ReloadDeploymentWeights",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/deployments/{deploymentId}/reload-weights",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceReloadDeploymentWeightsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceReloadDeploymentWeightsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceReloadDeploymentWeightsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

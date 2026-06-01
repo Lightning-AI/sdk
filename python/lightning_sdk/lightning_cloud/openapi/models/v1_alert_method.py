@@ -38,6 +38,8 @@ class V1AlertMethod(object):
     allowed enum values
     """
     EMAIL = "EMAIL"
+    SLACK = "SLACK"
+    TEXT = "TEXT"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

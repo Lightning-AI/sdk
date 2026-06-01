@@ -43,7 +43,7 @@ class JobsServiceDuplicateDeploymentBody(object):
     swagger_types = {
         'cluster_id': 'str',
         'name': 'str',
-        'recipients': 'V1DeploymentAlertingRecipients'
+        'recipients': 'Externalv1ResourceScopedAlertingRecipients'
     }
 
     attribute_map = {
@@ -52,7 +52,7 @@ class JobsServiceDuplicateDeploymentBody(object):
         'recipients': 'recipients'
     }
 
-    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None):  # noqa: E501
         """JobsServiceDuplicateDeploymentBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._name = None
@@ -108,22 +108,22 @@ class JobsServiceDuplicateDeploymentBody(object):
         self._name = name
 
     @property
-    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+    def recipients(self) -> 'Externalv1ResourceScopedAlertingRecipients':
         """Gets the recipients of this JobsServiceDuplicateDeploymentBody.  # noqa: E501
 
 
         :return: The recipients of this JobsServiceDuplicateDeploymentBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingRecipients
+        :rtype: Externalv1ResourceScopedAlertingRecipients
         """
         return self._recipients
 
     @recipients.setter
-    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+    def recipients(self, recipients: 'Externalv1ResourceScopedAlertingRecipients'):
         """Sets the recipients of this JobsServiceDuplicateDeploymentBody.
 
 
         :param recipients: The recipients of this JobsServiceDuplicateDeploymentBody.  # noqa: E501
-        :type: V1DeploymentAlertingRecipients
+        :type: Externalv1ResourceScopedAlertingRecipients
         """
 
         self._recipients = recipients

@@ -46,6 +46,9 @@ type V1Machine struct {
 	// Env vars collected from the nodes
 	Env []*V1EnvVar `json:"env"`
 
+	// health
+	Health *V1MachineHealth `json:"health,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
 
@@ -57,6 +60,9 @@ type V1Machine struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// Whether we want to force an ordering over the machine listing
+	OrderingIndex int32 `json:"orderingIndex,omitempty"`
 
 	// org Id
 	OrgID string `json:"orgId,omitempty"`
@@ -82,6 +88,15 @@ type V1Machine struct {
 	// provisioning method
 	ProvisioningMethod string `json:"provisioningMethod,omitempty"`
 
+	// Workload-class dedication. "" (default) = generic / any workload.
+	// "sandbox" reserves the machine for sandbox workloads:
+	//   - sandbox scheduler picks purpose=sandbox hosts first
+	//   - generic scheduler hides purpose=sandbox hosts entirely
+	// Set/cleared via UpdateMachine. See storage.MachinePurpose for the
+	// Go-side enum and storage.KnownMachinePurposes() for the canonical
+	// value set the server validates against.
+	Purpose string `json:"purpose,omitempty"`
+
 	// ready at
 	// Format: date-time
 	ReadyAt strfmt.DateTime `json:"readyAt,omitempty"`
@@ -94,6 +109,9 @@ type V1Machine struct {
 
 	// resources
 	Resources *V1Resources `json:"resources,omitempty"`
+
+	// Used for debugging
+	SchedulableAffinity *V1SchedulableAffinity `json:"schedulableAffinity,omitempty"`
 
 	// ssh username
 	SSHUsername string `json:"sshUsername,omitempty"`
@@ -124,11 +142,19 @@ func (m *V1Machine) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateHealth(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateReadyAt(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateResources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSchedulableAffinity(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -184,6 +210,29 @@ func (m *V1Machine) validateEnv(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1Machine) validateHealth(formats strfmt.Registry) error {
+	if swag.IsZero(m.Health) { // not required
+		return nil
+	}
+
+	if m.Health != nil {
+		if err := m.Health.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("health")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("health")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1Machine) validateReadyAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.ReadyAt) { // not required
 		return nil
@@ -219,6 +268,29 @@ func (m *V1Machine) validateResources(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1Machine) validateSchedulableAffinity(formats strfmt.Registry) error {
+	if swag.IsZero(m.SchedulableAffinity) { // not required
+		return nil
+	}
+
+	if m.SchedulableAffinity != nil {
+		if err := m.SchedulableAffinity.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("schedulableAffinity")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("schedulableAffinity")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1Machine) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -239,7 +311,15 @@ func (m *V1Machine) ContextValidate(ctx context.Context, formats strfmt.Registry
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateHealth(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateResources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSchedulableAffinity(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -278,6 +358,31 @@ func (m *V1Machine) contextValidateEnv(ctx context.Context, formats strfmt.Regis
 	return nil
 }
 
+func (m *V1Machine) contextValidateHealth(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Health != nil {
+
+		if swag.IsZero(m.Health) { // not required
+			return nil
+		}
+
+		if err := m.Health.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("health")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("health")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1Machine) contextValidateResources(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Resources != nil {
@@ -294,6 +399,31 @@ func (m *V1Machine) contextValidateResources(ctx context.Context, formats strfmt
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("resources")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1Machine) contextValidateSchedulableAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SchedulableAffinity != nil {
+
+		if swag.IsZero(m.SchedulableAffinity) { // not required
+			return nil
+		}
+
+		if err := m.SchedulableAffinity.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("schedulableAffinity")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("schedulableAffinity")
 			}
 
 			return err

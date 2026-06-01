@@ -160,6 +160,8 @@ type ClientService interface {
 
 	ClusterServiceReportMachineSystemMetrics(params *ClusterServiceReportMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceReportMachineSystemMetricsOK, error)
 
+	ClusterServiceReportSandboxResourceMetrics(params *ClusterServiceReportSandboxResourceMetricsParams, opts ...ClientOption) (*ClusterServiceReportSandboxResourceMetricsOK, error)
+
 	ClusterServiceRequestClusterAccess(params *ClusterServiceRequestClusterAccessParams, opts ...ClientOption) (*ClusterServiceRequestClusterAccessOK, error)
 
 	ClusterServiceServerCheckIn(params *ClusterServiceServerCheckInParams, opts ...ClientOption) (*ClusterServiceServerCheckInOK, error)
@@ -2407,6 +2409,48 @@ func (a *Client) ClusterServiceReportMachineSystemMetrics(params *ClusterService
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceReportMachineSystemMetricsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceReportSandboxResourceMetrics pers sandbox CPU memory samples from the baremetal agent g visor cgroups stored in click house system metrics resource type sandbox aggregated via system metrics sandbox aggregated mv
+*/
+func (a *Client) ClusterServiceReportSandboxResourceMetrics(params *ClusterServiceReportSandboxResourceMetricsParams, opts ...ClientOption) (*ClusterServiceReportSandboxResourceMetricsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceReportSandboxResourceMetricsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_ReportSandboxResourceMetrics",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/{machineId}/sandbox-resource-metrics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceReportSandboxResourceMetricsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceReportSandboxResourceMetricsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceReportSandboxResourceMetricsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

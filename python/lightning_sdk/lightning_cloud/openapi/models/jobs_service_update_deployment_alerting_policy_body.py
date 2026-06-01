@@ -42,13 +42,13 @@ class JobsServiceUpdateDeploymentAlertingPolicyBody(object):
     """
     swagger_types = {
         'description': 'str',
-        'frequency': 'V1DeploymentAlertingPolicyFrequency',
+        'frequency': 'V1AlertingPolicyFrequency',
         'id': 'str',
         'limit': 'float',
         'name': 'str',
-        'operation': 'V1DeploymentAlertingPolicyOperation',
-        'recipients': 'V1DeploymentAlertingRecipients',
-        'severity': 'V1DeploymentAlertingPolicySeverity',
+        'operation': 'V1AlertingPolicyOperation',
+        'recipients': 'Externalv1ResourceScopedAlertingRecipients',
+        'severity': 'V1AlertingPolicySeverity',
         'type': 'V1DeploymentAlertingPolicyType',
         'value': 'float'
     }
@@ -66,7 +66,7 @@ class JobsServiceUpdateDeploymentAlertingPolicyBody(object):
         'value': 'value'
     }
 
-    def __init__(self, description: 'str' =None, frequency: 'V1DeploymentAlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1DeploymentAlertingPolicyOperation' =None, recipients: 'V1DeploymentAlertingRecipients' =None, severity: 'V1DeploymentAlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
+    def __init__(self, description: 'str' =None, frequency: 'V1AlertingPolicyFrequency' =None, id: 'str' =None, limit: 'float' =None, name: 'str' =None, operation: 'V1AlertingPolicyOperation' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None, severity: 'V1AlertingPolicySeverity' =None, type: 'V1DeploymentAlertingPolicyType' =None, value: 'float' =None):  # noqa: E501
         """JobsServiceUpdateDeploymentAlertingPolicyBody - a model defined in Swagger"""  # noqa: E501
         self._description = None
         self._frequency = None
@@ -122,22 +122,22 @@ class JobsServiceUpdateDeploymentAlertingPolicyBody(object):
         self._description = description
 
     @property
-    def frequency(self) -> 'V1DeploymentAlertingPolicyFrequency':
+    def frequency(self) -> 'V1AlertingPolicyFrequency':
         """Gets the frequency of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
 
 
         :return: The frequency of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicyFrequency
+        :rtype: V1AlertingPolicyFrequency
         """
         return self._frequency
 
     @frequency.setter
-    def frequency(self, frequency: 'V1DeploymentAlertingPolicyFrequency'):
+    def frequency(self, frequency: 'V1AlertingPolicyFrequency'):
         """Sets the frequency of this JobsServiceUpdateDeploymentAlertingPolicyBody.
 
 
         :param frequency: The frequency of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :type: V1DeploymentAlertingPolicyFrequency
+        :type: V1AlertingPolicyFrequency
         """
 
         self._frequency = frequency
@@ -206,64 +206,64 @@ class JobsServiceUpdateDeploymentAlertingPolicyBody(object):
         self._name = name
 
     @property
-    def operation(self) -> 'V1DeploymentAlertingPolicyOperation':
+    def operation(self) -> 'V1AlertingPolicyOperation':
         """Gets the operation of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
 
 
         :return: The operation of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicyOperation
+        :rtype: V1AlertingPolicyOperation
         """
         return self._operation
 
     @operation.setter
-    def operation(self, operation: 'V1DeploymentAlertingPolicyOperation'):
+    def operation(self, operation: 'V1AlertingPolicyOperation'):
         """Sets the operation of this JobsServiceUpdateDeploymentAlertingPolicyBody.
 
 
         :param operation: The operation of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :type: V1DeploymentAlertingPolicyOperation
+        :type: V1AlertingPolicyOperation
         """
 
         self._operation = operation
 
     @property
-    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+    def recipients(self) -> 'Externalv1ResourceScopedAlertingRecipients':
         """Gets the recipients of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
 
 
         :return: The recipients of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingRecipients
+        :rtype: Externalv1ResourceScopedAlertingRecipients
         """
         return self._recipients
 
     @recipients.setter
-    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+    def recipients(self, recipients: 'Externalv1ResourceScopedAlertingRecipients'):
         """Sets the recipients of this JobsServiceUpdateDeploymentAlertingPolicyBody.
 
 
         :param recipients: The recipients of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :type: V1DeploymentAlertingRecipients
+        :type: Externalv1ResourceScopedAlertingRecipients
         """
 
         self._recipients = recipients
 
     @property
-    def severity(self) -> 'V1DeploymentAlertingPolicySeverity':
+    def severity(self) -> 'V1AlertingPolicySeverity':
         """Gets the severity of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
 
 
         :return: The severity of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :rtype: V1DeploymentAlertingPolicySeverity
+        :rtype: V1AlertingPolicySeverity
         """
         return self._severity
 
     @severity.setter
-    def severity(self, severity: 'V1DeploymentAlertingPolicySeverity'):
+    def severity(self, severity: 'V1AlertingPolicySeverity'):
         """Sets the severity of this JobsServiceUpdateDeploymentAlertingPolicyBody.
 
 
         :param severity: The severity of this JobsServiceUpdateDeploymentAlertingPolicyBody.  # noqa: E501
-        :type: V1DeploymentAlertingPolicySeverity
+        :type: V1AlertingPolicySeverity
         """
 
         self._severity = severity

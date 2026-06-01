@@ -22,6 +22,9 @@ import (
 // swagger:model v1KubernetesDirectV1
 type V1KubernetesDirectV1 struct {
 
+	// alerts config
+	AlertsConfig *Gridv1ClusterAlertsConfig `json:"alertsConfig,omitempty"`
+
 	// Whether agent installation is automated
 	AutomateAgentInstallation bool `json:"automateAgentInstallation,omitempty"`
 
@@ -74,6 +77,9 @@ type V1KubernetesDirectV1 struct {
 	// kubevirt config
 	KubevirtConfig *V1KubevirtConfig `json:"kubevirtConfig,omitempty"`
 
+	// The number of nodes that can be cordoned at once
+	NodeCordonedBudget int32 `json:"nodeCordonedBudget,omitempty"`
+
 	// prometheus Url
 	PrometheusURL string `json:"prometheusUrl,omitempty"`
 
@@ -90,6 +96,10 @@ type V1KubernetesDirectV1 struct {
 // Validate validates this v1 kubernetes direct v1
 func (m *V1KubernetesDirectV1) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAlertsConfig(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateAws(formats); err != nil {
 		res = append(res, err)
@@ -126,6 +136,29 @@ func (m *V1KubernetesDirectV1) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1KubernetesDirectV1) validateAlertsConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.AlertsConfig) { // not required
+		return nil
+	}
+
+	if m.AlertsConfig != nil {
+		if err := m.AlertsConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("alertsConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("alertsConfig")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -345,6 +378,10 @@ func (m *V1KubernetesDirectV1) validateSettings(formats strfmt.Registry) error {
 func (m *V1KubernetesDirectV1) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAlertsConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateAws(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -380,6 +417,31 @@ func (m *V1KubernetesDirectV1) ContextValidate(ctx context.Context, formats strf
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1KubernetesDirectV1) contextValidateAlertsConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AlertsConfig != nil {
+
+		if swag.IsZero(m.AlertsConfig) { // not required
+			return nil
+		}
+
+		if err := m.AlertsConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("alertsConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("alertsConfig")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -21,7 +21,7 @@ import (
 type V1Organization struct {
 
 	// alerts config
-	AlertsConfig *V1AlertsConfig `json:"alertsConfig,omitempty"`
+	AlertsConfig *V1OrgAlertsConfig `json:"alertsConfig,omitempty"`
 
 	// allow budgeting
 	AllowBudgeting bool `json:"allowBudgeting,omitempty"`

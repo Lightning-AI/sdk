@@ -170,6 +170,14 @@ type V1ServerSpec struct {
 	// server type
 	ServerType *V1ServerType `json:"serverType,omitempty"`
 
+	// When true, the collector skips the workload-level drain
+	// (gracefulShutdown) when this server transitions to SHUTDOWN and
+	// proceeds directly to destroyServer. Intended for callers that need
+	// fast termination — preemption / interruption, admin force-kill,
+	// GC of unresponsive servers — and accept the loss of any in-flight
+	// final-sync work and post-mortem container state.
+	SkipGracefulShutdown bool `json:"skipGracefulShutdown,omitempty"`
+
 	// spot
 	Spot bool `json:"spot,omitempty"`
 

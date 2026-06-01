@@ -7,7 +7,9 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,11 +19,28 @@ import (
 // swagger:model ClusterServiceUpdateMachineBody
 type ClusterServiceUpdateMachineBody struct {
 
-	// Updatable fields
+	// Updatable fields. Each is wrapped so callers can leave a field unset
+	// and have the server preserve the existing value; sending the wrapper
+	// with an empty inner value clears that field.
 	Name string `json:"name,omitempty"`
+
+	// Force an ordering over the machine listing.
+	//   - unset (nil):   leave existing value untouched
+	//   - >= 0:          set to this value (must be unique within cluster)
+	//   - <0:            reset to NULL (machine falls to the bottom of the list)
+	// Any other negative value returns InvalidArgument.
+	OrderingIndex int32 `json:"orderingIndex,omitempty"`
 
 	// org Id
 	OrgID string `json:"orgId,omitempty"`
+
+	// Workload-class dedication (see Machine.purpose). Must be one of the
+	// values returned by storage.KnownMachinePurposes() — today: "" or
+	// "sandbox". Server returns InvalidArgument otherwise.
+	Purpose string `json:"purpose,omitempty"`
+
+	// schedulable affinity
+	SchedulableAffinity *V1SchedulableAffinity `json:"schedulableAffinity,omitempty"`
 
 	// unschedulable
 	Unschedulable bool `json:"unschedulable,omitempty"`
@@ -29,11 +48,77 @@ type ClusterServiceUpdateMachineBody struct {
 
 // Validate validates this cluster service update machine body
 func (m *ClusterServiceUpdateMachineBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateSchedulableAffinity(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this cluster service update machine body based on context it is used
+func (m *ClusterServiceUpdateMachineBody) validateSchedulableAffinity(formats strfmt.Registry) error {
+	if swag.IsZero(m.SchedulableAffinity) { // not required
+		return nil
+	}
+
+	if m.SchedulableAffinity != nil {
+		if err := m.SchedulableAffinity.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("schedulableAffinity")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("schedulableAffinity")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cluster service update machine body based on the context it is used
 func (m *ClusterServiceUpdateMachineBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSchedulableAffinity(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ClusterServiceUpdateMachineBody) contextValidateSchedulableAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SchedulableAffinity != nil {
+
+		if swag.IsZero(m.SchedulableAffinity) { // not required
+			return nil
+		}
+
+		if err := m.SchedulableAffinity.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("schedulableAffinity")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("schedulableAffinity")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

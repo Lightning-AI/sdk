@@ -50,6 +50,9 @@ type V1CreateDeploymentRequest struct {
 	// Whether the deployment was created from the onboarding flow
 	FromOnboarding bool `json:"fromOnboarding,omitempty"`
 
+	// k8s deployment config
+	K8sDeploymentConfig V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
+
 	// Required
 	Name string `json:"name,omitempty"`
 
@@ -66,7 +69,7 @@ type V1CreateDeploymentRequest struct {
 	ProjectID string `json:"projectId,omitempty"`
 
 	// Who should be receiving alerts
-	Recipients *V1DeploymentAlertingRecipients `json:"recipients,omitempty"`
+	Recipients *Externalv1ResourceScopedAlertingRecipients `json:"recipients,omitempty"`
 
 	// Optional notes for the initial release (feature-gated)
 	ReleaseNotes string `json:"releaseNotes,omitempty"`
@@ -82,6 +85,9 @@ type V1CreateDeploymentRequest struct {
 
 	// The release strategy
 	Strategy *V1DeploymentStrategy `json:"strategy,omitempty"`
+
+	// Kind-specific config. At most one should be set; unset defaults to vm-instances.
+	VMInstancesConfig V1VMInstancesConfig `json:"vmInstancesConfig,omitempty"`
 }
 
 // Validate validates this v1 create deployment request

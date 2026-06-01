@@ -42,6 +42,7 @@ class V1PodPreemptionEvent(object):
     """
     swagger_types = {
         'event_id': 'str',
+        'message': 'str',
         'namespace': 'str',
         'preempted_by_workload': 'str',
         'preempted_by_workload_uid': 'str',
@@ -53,6 +54,7 @@ class V1PodPreemptionEvent(object):
 
     attribute_map = {
         'event_id': 'eventId',
+        'message': 'message',
         'namespace': 'namespace',
         'preempted_by_workload': 'preemptedByWorkload',
         'preempted_by_workload_uid': 'preemptedByWorkloadUid',
@@ -62,9 +64,10 @@ class V1PodPreemptionEvent(object):
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, event_id: 'str' =None, namespace: 'str' =None, preempted_by_workload: 'str' =None, preempted_by_workload_uid: 'str' =None, preempted_pod: 'str' =None, preempted_pod_uid: 'str' =None, queue: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, event_id: 'str' =None, message: 'str' =None, namespace: 'str' =None, preempted_by_workload: 'str' =None, preempted_by_workload_uid: 'str' =None, preempted_pod: 'str' =None, preempted_pod_uid: 'str' =None, queue: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1PodPreemptionEvent - a model defined in Swagger"""  # noqa: E501
         self._event_id = None
+        self._message = None
         self._namespace = None
         self._preempted_by_workload = None
         self._preempted_by_workload_uid = None
@@ -75,6 +78,8 @@ class V1PodPreemptionEvent(object):
         self.discriminator = None
         if event_id is not None:
             self.event_id = event_id
+        if message is not None:
+            self.message = message
         if namespace is not None:
             self.namespace = namespace
         if preempted_by_workload is not None:
@@ -110,6 +115,27 @@ class V1PodPreemptionEvent(object):
         """
 
         self._event_id = event_id
+
+    @property
+    def message(self) -> 'str':
+        """Gets the message of this V1PodPreemptionEvent.  # noqa: E501
+
+
+        :return: The message of this V1PodPreemptionEvent.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this V1PodPreemptionEvent.
+
+
+        :param message: The message of this V1PodPreemptionEvent.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
 
     @property
     def namespace(self) -> 'str':

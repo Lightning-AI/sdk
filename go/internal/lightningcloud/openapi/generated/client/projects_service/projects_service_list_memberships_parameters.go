@@ -62,6 +62,9 @@ ProjectsServiceListMembershipsParams contains all the parameters to send to the 
 */
 type ProjectsServiceListMembershipsParams struct {
 
+	// DisableOrgMigrationCompat.
+	DisableOrgMigrationCompat *bool
+
 	// FilterByUserID.
 	FilterByUserID *bool
 
@@ -124,6 +127,17 @@ func (o *ProjectsServiceListMembershipsParams) SetHTTPClient(client *http.Client
 	o.HTTPClient = client
 }
 
+// WithDisableOrgMigrationCompat adds the disableOrgMigrationCompat to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithDisableOrgMigrationCompat(disableOrgMigrationCompat *bool) *ProjectsServiceListMembershipsParams {
+	o.SetDisableOrgMigrationCompat(disableOrgMigrationCompat)
+	return o
+}
+
+// SetDisableOrgMigrationCompat adds the disableOrgMigrationCompat to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetDisableOrgMigrationCompat(disableOrgMigrationCompat *bool) {
+	o.DisableOrgMigrationCompat = disableOrgMigrationCompat
+}
+
 // WithFilterByUserID adds the filterByUserID to the projects service list memberships params
 func (o *ProjectsServiceListMembershipsParams) WithFilterByUserID(filterByUserID *bool) *ProjectsServiceListMembershipsParams {
 	o.SetFilterByUserID(filterByUserID)
@@ -164,6 +178,23 @@ func (o *ProjectsServiceListMembershipsParams) WriteToRequest(r runtime.ClientRe
 		return err
 	}
 	var res []error
+
+	if o.DisableOrgMigrationCompat != nil {
+
+		// query param disableOrgMigrationCompat
+		var qrDisableOrgMigrationCompat bool
+
+		if o.DisableOrgMigrationCompat != nil {
+			qrDisableOrgMigrationCompat = *o.DisableOrgMigrationCompat
+		}
+		qDisableOrgMigrationCompat := swag.FormatBool(qrDisableOrgMigrationCompat)
+		if qDisableOrgMigrationCompat != "" {
+
+			if err := r.SetQueryParam("disableOrgMigrationCompat", qDisableOrgMigrationCompat); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.FilterByUserID != nil {
 

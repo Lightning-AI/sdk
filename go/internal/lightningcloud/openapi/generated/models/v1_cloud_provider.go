@@ -86,6 +86,9 @@ const (
 
 	// V1CloudProviderTENSORDOCK captures enum value "TENSORDOCK"
 	V1CloudProviderTENSORDOCK V1CloudProvider = "TENSORDOCK"
+
+	// V1CloudProviderAZURE captures enum value "AZURE"
+	V1CloudProviderAZURE V1CloudProvider = "AZURE"
 )
 
 // for schema
@@ -93,7 +96,7 @@ var v1CloudProviderEnum []any
 
 func init() {
 	var res []V1CloudProvider
-	if err := json.Unmarshal([]byte(`["CLOUD_PROVIDER_UNSPECIFIED","AWS","GCP","VULTR","LAMBDA_LABS","SLURM","DGX","VOLTAGE_PARK","NEBIUS","CLOUDFLARE","LIGHTNING","LIGHTNING_AGGREGATE","KUBERNETES","MACHINE","LIGHTNING_ELASTIC_CLUSTER_AGGREGATE","CUDO","MITHRIL","THUNDER_CAT","TENSORDOCK"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["CLOUD_PROVIDER_UNSPECIFIED","AWS","GCP","VULTR","LAMBDA_LABS","SLURM","DGX","VOLTAGE_PARK","NEBIUS","CLOUDFLARE","LIGHTNING","LIGHTNING_AGGREGATE","KUBERNETES","MACHINE","LIGHTNING_ELASTIC_CLUSTER_AGGREGATE","CUDO","MITHRIL","THUNDER_CAT","TENSORDOCK","AZURE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

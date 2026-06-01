@@ -54,6 +54,8 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	VirtualMachineServiceConfigureClusterAutoscaling(params *VirtualMachineServiceConfigureClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceConfigureClusterAutoscalingOK, error)
+
 	VirtualMachineServiceCreateVirtualMachine(params *VirtualMachineServiceCreateVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceCreateVirtualMachineOK, error)
 
 	VirtualMachineServiceDeleteVirtualMachine(params *VirtualMachineServiceDeleteVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceDeleteVirtualMachineOK, error)
@@ -63,6 +65,8 @@ type ClientService interface {
 	VirtualMachineServiceDrainNodeVMs(params *VirtualMachineServiceDrainNodeVMsParams, opts ...ClientOption) (*VirtualMachineServiceDrainNodeVMsOK, error)
 
 	VirtualMachineServiceEnableNodeVMs(params *VirtualMachineServiceEnableNodeVMsParams, opts ...ClientOption) (*VirtualMachineServiceEnableNodeVMsOK, error)
+
+	VirtualMachineServiceGetClusterAutoscaling(params *VirtualMachineServiceGetClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceGetClusterAutoscalingOK, error)
 
 	VirtualMachineServiceGetVirtualMachine(params *VirtualMachineServiceGetVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceGetVirtualMachineOK, error)
 
@@ -77,6 +81,48 @@ type ClientService interface {
 	VirtualMachineServiceUpdateVirtualMachine(params *VirtualMachineServiceUpdateVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceUpdateVirtualMachineOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+VirtualMachineServiceConfigureClusterAutoscaling creates or updates the autoscaling configuration for a convertible cluster the config is validated against the live cluster e g min node floors cannot exceed the physical worker count saving an enabled config does not trigger immediate scaling the background reconciler acts on it
+*/
+func (a *Client) VirtualMachineServiceConfigureClusterAutoscaling(params *VirtualMachineServiceConfigureClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceConfigureClusterAutoscalingOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewVirtualMachineServiceConfigureClusterAutoscalingParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "VirtualMachineService_ConfigureClusterAutoscaling",
+		Method:             "PUT",
+		PathPattern:        "/v1/clusters/{clusterId}/autoscaling",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VirtualMachineServiceConfigureClusterAutoscalingReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*VirtualMachineServiceConfigureClusterAutoscalingOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*VirtualMachineServiceConfigureClusterAutoscalingDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
@@ -285,6 +331,48 @@ func (a *Client) VirtualMachineServiceEnableNodeVMs(params *VirtualMachineServic
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*VirtualMachineServiceEnableNodeVMsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+VirtualMachineServiceGetClusterAutoscaling returns the persisted autoscaling config together with a live snapshot of cluster capacity signals node counts g p u availability pending pods
+*/
+func (a *Client) VirtualMachineServiceGetClusterAutoscaling(params *VirtualMachineServiceGetClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceGetClusterAutoscalingOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewVirtualMachineServiceGetClusterAutoscalingParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "VirtualMachineService_GetClusterAutoscaling",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/{clusterId}/autoscaling",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VirtualMachineServiceGetClusterAutoscalingReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*VirtualMachineServiceGetClusterAutoscalingOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*VirtualMachineServiceGetClusterAutoscalingDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

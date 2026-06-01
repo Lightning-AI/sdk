@@ -164,6 +164,12 @@ const (
 
 	// V1RuleResourceMachine captures enum value "machine"
 	V1RuleResourceMachine V1RuleResource = "machine"
+
+	// V1RuleResourceKubernetesTemplate captures enum value "kubernetesTemplate"
+	V1RuleResourceKubernetesTemplate V1RuleResource = "kubernetesTemplate"
+
+	// V1RuleResourceK8sJob captures enum value "k8s_job"
+	V1RuleResourceK8sJob V1RuleResource = "k8s_job"
 )
 
 // for schema
@@ -171,7 +177,7 @@ var v1RuleResourceEnum []any
 
 func init() {
 	var res []V1RuleResource
-	if err := json.Unmarshal([]byte(`["unspecifiedResource","project","projectBilling","projectRole","projectMembership","projectMembershipRoleBinding","projectClusterBinding","session","experiment","run","datastore","cluster","lightningApp","any","sshKey","secret","org","orgRole","orgMembership","orgMembershipRoleBinding","orgBilling","orgBillingTopUp","dataConnection","cloudSpacePublication","assistant","endpoint","orgClusterBinding","orgClusterEncryptionKeys","cloudSpace","featuredOrgStudioGallery","managedEndpoint","job","deployment","model","slurmJob","multiMachineJob","litLogger","pipeline","cloudSpaceEnvironmentTemplate","orgStorage","kubernetesCluster","storageTransfer","litDataset","upload","machine"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["unspecifiedResource","project","projectBilling","projectRole","projectMembership","projectMembershipRoleBinding","projectClusterBinding","session","experiment","run","datastore","cluster","lightningApp","any","sshKey","secret","org","orgRole","orgMembership","orgMembershipRoleBinding","orgBilling","orgBillingTopUp","dataConnection","cloudSpacePublication","assistant","endpoint","orgClusterBinding","orgClusterEncryptionKeys","cloudSpace","featuredOrgStudioGallery","managedEndpoint","job","deployment","model","slurmJob","multiMachineJob","litLogger","pipeline","cloudSpaceEnvironmentTemplate","orgStorage","kubernetesCluster","storageTransfer","litDataset","upload","machine","kubernetesTemplate","k8s_job"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

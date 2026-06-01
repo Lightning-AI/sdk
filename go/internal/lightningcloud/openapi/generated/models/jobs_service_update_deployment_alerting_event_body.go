@@ -31,7 +31,7 @@ type JobsServiceUpdateDeploymentAlertingEventBody struct {
 	Description string `json:"description,omitempty"`
 
 	// frequency
-	Frequency *V1DeploymentAlertingPolicyFrequency `json:"frequency,omitempty"`
+	Frequency *V1AlertingPolicyFrequency `json:"frequency,omitempty"`
 
 	// limit
 	Limit float32 `json:"limit,omitempty"`
@@ -43,10 +43,10 @@ type JobsServiceUpdateDeploymentAlertingEventBody struct {
 	Name string `json:"name,omitempty"`
 
 	// operation
-	Operation *V1DeploymentAlertingPolicyOperation `json:"operation,omitempty"`
+	Operation *V1AlertingPolicyOperation `json:"operation,omitempty"`
 
 	// severity
-	Severity *V1DeploymentAlertingPolicySeverity `json:"severity,omitempty"`
+	Severity *V1AlertingPolicySeverity `json:"severity,omitempty"`
 
 	// type
 	Type *V1DeploymentAlertingPolicyType `json:"type,omitempty"`

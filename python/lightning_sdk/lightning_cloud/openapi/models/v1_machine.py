@@ -49,10 +49,12 @@ class V1Machine(object):
         'created_at': 'datetime',
         'disable_monitoring': 'bool',
         'env': 'list[V1EnvVar]',
+        'health': 'V1MachineHealth',
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
         'name': 'str',
+        'ordering_index': 'int',
         'org_id': 'str',
         'private_address': 'str',
         'project_id': 'str',
@@ -61,10 +63,12 @@ class V1Machine(object):
         'provider_instance_id': 'str',
         'provider_region': 'str',
         'provisioning_method': 'str',
+        'purpose': 'str',
         'ready_at': 'datetime',
         'resource_id': 'str',
         'resource_type': 'str',
         'resources': 'V1Resources',
+        'schedulable_affinity': 'V1SchedulableAffinity',
         'ssh_username': 'str',
         'status': 'str',
         'unschedulable': 'bool',
@@ -81,10 +85,12 @@ class V1Machine(object):
         'created_at': 'createdAt',
         'disable_monitoring': 'disableMonitoring',
         'env': 'env',
+        'health': 'health',
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
         'name': 'name',
+        'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
         'private_address': 'privateAddress',
         'project_id': 'projectId',
@@ -93,10 +99,12 @@ class V1Machine(object):
         'provider_instance_id': 'providerInstanceId',
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
+        'purpose': 'purpose',
         'ready_at': 'readyAt',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'resources': 'resources',
+        'schedulable_affinity': 'schedulableAffinity',
         'ssh_username': 'sshUsername',
         'status': 'status',
         'unschedulable': 'unschedulable',
@@ -104,7 +112,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -114,10 +122,12 @@ class V1Machine(object):
         self._created_at = None
         self._disable_monitoring = None
         self._env = None
+        self._health = None
         self._id = None
         self._instance_type = None
         self._management_api_url = None
         self._name = None
+        self._ordering_index = None
         self._org_id = None
         self._private_address = None
         self._project_id = None
@@ -126,10 +136,12 @@ class V1Machine(object):
         self._provider_instance_id = None
         self._provider_region = None
         self._provisioning_method = None
+        self._purpose = None
         self._ready_at = None
         self._resource_id = None
         self._resource_type = None
         self._resources = None
+        self._schedulable_affinity = None
         self._ssh_username = None
         self._status = None
         self._unschedulable = None
@@ -152,6 +164,8 @@ class V1Machine(object):
             self.disable_monitoring = disable_monitoring
         if env is not None:
             self.env = env
+        if health is not None:
+            self.health = health
         if id is not None:
             self.id = id
         if instance_type is not None:
@@ -160,6 +174,8 @@ class V1Machine(object):
             self.management_api_url = management_api_url
         if name is not None:
             self.name = name
+        if ordering_index is not None:
+            self.ordering_index = ordering_index
         if org_id is not None:
             self.org_id = org_id
         if private_address is not None:
@@ -176,6 +192,8 @@ class V1Machine(object):
             self.provider_region = provider_region
         if provisioning_method is not None:
             self.provisioning_method = provisioning_method
+        if purpose is not None:
+            self.purpose = purpose
         if ready_at is not None:
             self.ready_at = ready_at
         if resource_id is not None:
@@ -184,6 +202,8 @@ class V1Machine(object):
             self.resource_type = resource_type
         if resources is not None:
             self.resources = resources
+        if schedulable_affinity is not None:
+            self.schedulable_affinity = schedulable_affinity
         if ssh_username is not None:
             self.ssh_username = ssh_username
         if status is not None:
@@ -364,6 +384,27 @@ class V1Machine(object):
         self._env = env
 
     @property
+    def health(self) -> 'V1MachineHealth':
+        """Gets the health of this V1Machine.  # noqa: E501
+
+
+        :return: The health of this V1Machine.  # noqa: E501
+        :rtype: V1MachineHealth
+        """
+        return self._health
+
+    @health.setter
+    def health(self, health: 'V1MachineHealth'):
+        """Sets the health of this V1Machine.
+
+
+        :param health: The health of this V1Machine.  # noqa: E501
+        :type: V1MachineHealth
+        """
+
+        self._health = health
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1Machine.  # noqa: E501
 
@@ -446,6 +487,27 @@ class V1Machine(object):
         """
 
         self._name = name
+
+    @property
+    def ordering_index(self) -> 'int':
+        """Gets the ordering_index of this V1Machine.  # noqa: E501
+
+
+        :return: The ordering_index of this V1Machine.  # noqa: E501
+        :rtype: int
+        """
+        return self._ordering_index
+
+    @ordering_index.setter
+    def ordering_index(self, ordering_index: 'int'):
+        """Sets the ordering_index of this V1Machine.
+
+
+        :param ordering_index: The ordering_index of this V1Machine.  # noqa: E501
+        :type: int
+        """
+
+        self._ordering_index = ordering_index
 
     @property
     def org_id(self) -> 'str':
@@ -616,6 +678,29 @@ class V1Machine(object):
         self._provisioning_method = provisioning_method
 
     @property
+    def purpose(self) -> 'str':
+        """Gets the purpose of this V1Machine.  # noqa: E501
+
+        Workload-class dedication. \"\" (default) = generic / any workload. \"sandbox\" reserves the machine for sandbox workloads:   - sandbox scheduler picks purpose=sandbox hosts first   - generic scheduler hides purpose=sandbox hosts entirely Set/cleared via UpdateMachine. See storage.MachinePurpose for the Go-side enum and storage.KnownMachinePurposes() for the canonical value set the server validates against.  # noqa: E501
+
+        :return: The purpose of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._purpose
+
+    @purpose.setter
+    def purpose(self, purpose: 'str'):
+        """Sets the purpose of this V1Machine.
+
+        Workload-class dedication. \"\" (default) = generic / any workload. \"sandbox\" reserves the machine for sandbox workloads:   - sandbox scheduler picks purpose=sandbox hosts first   - generic scheduler hides purpose=sandbox hosts entirely Set/cleared via UpdateMachine. See storage.MachinePurpose for the Go-side enum and storage.KnownMachinePurposes() for the canonical value set the server validates against.  # noqa: E501
+
+        :param purpose: The purpose of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._purpose = purpose
+
+    @property
     def ready_at(self) -> 'datetime':
         """Gets the ready_at of this V1Machine.  # noqa: E501
 
@@ -698,6 +783,27 @@ class V1Machine(object):
         """
 
         self._resources = resources
+
+    @property
+    def schedulable_affinity(self) -> 'V1SchedulableAffinity':
+        """Gets the schedulable_affinity of this V1Machine.  # noqa: E501
+
+
+        :return: The schedulable_affinity of this V1Machine.  # noqa: E501
+        :rtype: V1SchedulableAffinity
+        """
+        return self._schedulable_affinity
+
+    @schedulable_affinity.setter
+    def schedulable_affinity(self, schedulable_affinity: 'V1SchedulableAffinity'):
+        """Sets the schedulable_affinity of this V1Machine.
+
+
+        :param schedulable_affinity: The schedulable_affinity of this V1Machine.  # noqa: E501
+        :type: V1SchedulableAffinity
+        """
+
+        self._schedulable_affinity = schedulable_affinity
 
     @property
     def ssh_username(self) -> 'str':

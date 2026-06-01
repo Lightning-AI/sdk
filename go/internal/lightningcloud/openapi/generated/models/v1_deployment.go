@@ -73,6 +73,9 @@ type V1Deployment struct {
 	// Whether the deployment was published
 	IsPublished bool `json:"isPublished,omitempty"`
 
+	// k8s deployment config
+	K8sDeploymentConfig V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
+
 	// Whether the deployment is managed e.g handled by Lightning.AI for a client
 	Managed bool `json:"managed,omitempty"`
 
@@ -95,7 +98,7 @@ type V1Deployment struct {
 	ProjectID string `json:"projectId,omitempty"`
 
 	// Who should be receiving alerts
-	Recipients *V1DeploymentAlertingRecipients `json:"recipients,omitempty"`
+	Recipients *Externalv1ResourceScopedAlertingRecipients `json:"recipients,omitempty"`
 
 	// Current release id
 	ReleaseID string `json:"releaseId,omitempty"`
@@ -136,6 +139,12 @@ type V1Deployment struct {
 
 	// The visibility of the deployment to users
 	Visibility *V1ResourceVisibility `json:"visibility,omitempty"`
+
+	// Kind-specific config. At most one should be set; unset defaults to vm-instances.
+	VMInstancesConfig V1VMInstancesConfig `json:"vmInstancesConfig,omitempty"`
+
+	// Bumped on each ReloadDeploymentWeights call; sidecars poll this to detect user-triggered reloads
+	WeightVersion string `json:"weightVersion,omitempty"`
 }
 
 // Validate validates this v1 deployment

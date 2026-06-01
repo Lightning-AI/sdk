@@ -32,6 +32,12 @@ const (
 
 	// V1AlertMethodEMAIL captures enum value "EMAIL"
 	V1AlertMethodEMAIL V1AlertMethod = "EMAIL"
+
+	// V1AlertMethodSLACK captures enum value "SLACK"
+	V1AlertMethodSLACK V1AlertMethod = "SLACK"
+
+	// V1AlertMethodTEXT captures enum value "TEXT"
+	V1AlertMethodTEXT V1AlertMethod = "TEXT"
 )
 
 // for schema
@@ -39,7 +45,7 @@ var v1AlertMethodEnum []any
 
 func init() {
 	var res []V1AlertMethod
-	if err := json.Unmarshal([]byte(`["EMAIL"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["EMAIL","SLACK","TEXT"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

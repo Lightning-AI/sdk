@@ -51,17 +51,19 @@ class V1CreateDeploymentRequest(object):
         'endpoint': 'V1Endpoint',
         'from_litserve': 'bool',
         'from_onboarding': 'bool',
+        'k8s_deployment_config': 'V1K8sDeploymentConfig',
         'name': 'str',
         'parameter_spec': 'V1ParameterizationSpec',
         'parent_template_id': 'str',
         'pipeline_reuse_deployment_between_runs': 'bool',
         'project_id': 'str',
-        'recipients': 'V1DeploymentAlertingRecipients',
+        'recipients': 'Externalv1ResourceScopedAlertingRecipients',
         'release_notes': 'str',
         'replicas': 'int',
         'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
-        'strategy': 'V1DeploymentStrategy'
+        'strategy': 'V1DeploymentStrategy',
+        'vm_instances_config': 'V1VMInstancesConfig'
     }
 
     attribute_map = {
@@ -75,6 +77,7 @@ class V1CreateDeploymentRequest(object):
         'endpoint': 'endpoint',
         'from_litserve': 'fromLitserve',
         'from_onboarding': 'fromOnboarding',
+        'k8s_deployment_config': 'k8sDeploymentConfig',
         'name': 'name',
         'parameter_spec': 'parameterSpec',
         'parent_template_id': 'parentTemplateId',
@@ -85,10 +88,11 @@ class V1CreateDeploymentRequest(object):
         'replicas': 'replicas',
         'reuse_servers': 'reuseServers',
         'spec': 'spec',
-        'strategy': 'strategy'
+        'strategy': 'strategy',
+        'vm_instances_config': 'vmInstancesConfig'
     }
 
-    def __init__(self, acknowledged_warnings: 'list[str]' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'V1DeploymentAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None):  # noqa: E501
+    def __init__(self, acknowledged_warnings: 'list[str]' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, k8s_deployment_config: 'V1K8sDeploymentConfig' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None, vm_instances_config: 'V1VMInstancesConfig' =None):  # noqa: E501
         """V1CreateDeploymentRequest - a model defined in Swagger"""  # noqa: E501
         self._acknowledged_warnings = None
         self._api_standard = None
@@ -100,6 +104,7 @@ class V1CreateDeploymentRequest(object):
         self._endpoint = None
         self._from_litserve = None
         self._from_onboarding = None
+        self._k8s_deployment_config = None
         self._name = None
         self._parameter_spec = None
         self._parent_template_id = None
@@ -111,6 +116,7 @@ class V1CreateDeploymentRequest(object):
         self._reuse_servers = None
         self._spec = None
         self._strategy = None
+        self._vm_instances_config = None
         self.discriminator = None
         if acknowledged_warnings is not None:
             self.acknowledged_warnings = acknowledged_warnings
@@ -132,6 +138,8 @@ class V1CreateDeploymentRequest(object):
             self.from_litserve = from_litserve
         if from_onboarding is not None:
             self.from_onboarding = from_onboarding
+        if k8s_deployment_config is not None:
+            self.k8s_deployment_config = k8s_deployment_config
         if name is not None:
             self.name = name
         if parameter_spec is not None:
@@ -154,6 +162,8 @@ class V1CreateDeploymentRequest(object):
             self.spec = spec
         if strategy is not None:
             self.strategy = strategy
+        if vm_instances_config is not None:
+            self.vm_instances_config = vm_instances_config
 
     @property
     def acknowledged_warnings(self) -> 'list[str]':
@@ -366,6 +376,27 @@ class V1CreateDeploymentRequest(object):
         self._from_onboarding = from_onboarding
 
     @property
+    def k8s_deployment_config(self) -> 'V1K8sDeploymentConfig':
+        """Gets the k8s_deployment_config of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The k8s_deployment_config of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: V1K8sDeploymentConfig
+        """
+        return self._k8s_deployment_config
+
+    @k8s_deployment_config.setter
+    def k8s_deployment_config(self, k8s_deployment_config: 'V1K8sDeploymentConfig'):
+        """Sets the k8s_deployment_config of this V1CreateDeploymentRequest.
+
+
+        :param k8s_deployment_config: The k8s_deployment_config of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: V1K8sDeploymentConfig
+        """
+
+        self._k8s_deployment_config = k8s_deployment_config
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1CreateDeploymentRequest.  # noqa: E501
 
@@ -471,22 +502,22 @@ class V1CreateDeploymentRequest(object):
         self._project_id = project_id
 
     @property
-    def recipients(self) -> 'V1DeploymentAlertingRecipients':
+    def recipients(self) -> 'Externalv1ResourceScopedAlertingRecipients':
         """Gets the recipients of this V1CreateDeploymentRequest.  # noqa: E501
 
 
         :return: The recipients of this V1CreateDeploymentRequest.  # noqa: E501
-        :rtype: V1DeploymentAlertingRecipients
+        :rtype: Externalv1ResourceScopedAlertingRecipients
         """
         return self._recipients
 
     @recipients.setter
-    def recipients(self, recipients: 'V1DeploymentAlertingRecipients'):
+    def recipients(self, recipients: 'Externalv1ResourceScopedAlertingRecipients'):
         """Sets the recipients of this V1CreateDeploymentRequest.
 
 
         :param recipients: The recipients of this V1CreateDeploymentRequest.  # noqa: E501
-        :type: V1DeploymentAlertingRecipients
+        :type: Externalv1ResourceScopedAlertingRecipients
         """
 
         self._recipients = recipients
@@ -595,6 +626,27 @@ class V1CreateDeploymentRequest(object):
         """
 
         self._strategy = strategy
+
+    @property
+    def vm_instances_config(self) -> 'V1VMInstancesConfig':
+        """Gets the vm_instances_config of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The vm_instances_config of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: V1VMInstancesConfig
+        """
+        return self._vm_instances_config
+
+    @vm_instances_config.setter
+    def vm_instances_config(self, vm_instances_config: 'V1VMInstancesConfig'):
+        """Sets the vm_instances_config of this V1CreateDeploymentRequest.
+
+
+        :param vm_instances_config: The vm_instances_config of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: V1VMInstancesConfig
+        """
+
+        self._vm_instances_config = vm_instances_config
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
