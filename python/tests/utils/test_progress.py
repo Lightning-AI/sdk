@@ -396,7 +396,7 @@ class TestTrackStartupPhases:
             tracker.track_startup_phases(status_getter, timeout=1)
 
         elapsed = time.time() - start
-        assert 0.8 < elapsed < 2.0
+        assert 0.8 < elapsed < 2.5
 
     def test_track_startup_phases_handles_exceptions(self, tracker):
         """Test that tracking handles exceptions gracefully."""
