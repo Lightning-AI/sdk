@@ -47,6 +47,7 @@ class V1AzureDirectV1(object):
         'directory_id': 'str',
         'primary_region': 'str',
         'regions': 'list[str]',
+        'resource_group_name': 'str',
         'tenant_id': 'str'
     }
 
@@ -57,10 +58,11 @@ class V1AzureDirectV1(object):
         'directory_id': 'directoryId',
         'primary_region': 'primaryRegion',
         'regions': 'regions',
+        'resource_group_name': 'resourceGroupName',
         'tenant_id': 'tenantId'
     }
 
-    def __init__(self, bucket_name: 'str' =None, client_id: 'str' =None, client_secret: 'str' =None, directory_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, tenant_id: 'str' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, client_id: 'str' =None, client_secret: 'str' =None, directory_id: 'str' =None, primary_region: 'str' =None, regions: 'list[str]' =None, resource_group_name: 'str' =None, tenant_id: 'str' =None):  # noqa: E501
         """V1AzureDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._client_id = None
@@ -68,6 +70,7 @@ class V1AzureDirectV1(object):
         self._directory_id = None
         self._primary_region = None
         self._regions = None
+        self._resource_group_name = None
         self._tenant_id = None
         self.discriminator = None
         if bucket_name is not None:
@@ -82,6 +85,8 @@ class V1AzureDirectV1(object):
             self.primary_region = primary_region
         if regions is not None:
             self.regions = regions
+        if resource_group_name is not None:
+            self.resource_group_name = resource_group_name
         if tenant_id is not None:
             self.tenant_id = tenant_id
 
@@ -210,6 +215,29 @@ class V1AzureDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def resource_group_name(self) -> 'str':
+        """Gets the resource_group_name of this V1AzureDirectV1.  # noqa: E501
+
+        Azure resource group where cluster VMs and associated resources are created. Created by the setup script and stored here so the controller knows where to provision.  # noqa: E501
+
+        :return: The resource_group_name of this V1AzureDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_group_name
+
+    @resource_group_name.setter
+    def resource_group_name(self, resource_group_name: 'str'):
+        """Sets the resource_group_name of this V1AzureDirectV1.
+
+        Azure resource group where cluster VMs and associated resources are created. Created by the setup script and stored here so the controller knows where to provision.  # noqa: E501
+
+        :param resource_group_name: The resource_group_name of this V1AzureDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_group_name = resource_group_name
 
     @property
     def tenant_id(self) -> 'str':

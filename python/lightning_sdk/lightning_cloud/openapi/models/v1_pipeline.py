@@ -42,6 +42,7 @@ class V1Pipeline(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'continue_on_step_failure': 'bool',
         'created_at': 'datetime',
         'created_from_ui': 'bool',
         'display_name': 'str',
@@ -64,6 +65,7 @@ class V1Pipeline(object):
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'continue_on_step_failure': 'continueOnStepFailure',
         'created_at': 'createdAt',
         'created_from_ui': 'createdFromUi',
         'display_name': 'displayName',
@@ -84,9 +86,10 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, created_from_ui: 'bool' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, created_at: 'datetime' =None, created_from_ui: 'bool' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._continue_on_step_failure = None
         self._created_at = None
         self._created_from_ui = None
         self._display_name = None
@@ -108,6 +111,8 @@ class V1Pipeline(object):
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if continue_on_step_failure is not None:
+            self.continue_on_step_failure = continue_on_step_failure
         if created_at is not None:
             self.created_at = created_at
         if created_from_ui is not None:
@@ -165,6 +170,29 @@ class V1Pipeline(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def continue_on_step_failure(self) -> 'bool':
+        """Gets the continue_on_step_failure of this V1Pipeline.  # noqa: E501
+
+        When true, only steps that transitively depend on the failed step are skipped; independent branches keep running.  # noqa: E501
+
+        :return: The continue_on_step_failure of this V1Pipeline.  # noqa: E501
+        :rtype: bool
+        """
+        return self._continue_on_step_failure
+
+    @continue_on_step_failure.setter
+    def continue_on_step_failure(self, continue_on_step_failure: 'bool'):
+        """Sets the continue_on_step_failure of this V1Pipeline.
+
+        When true, only steps that transitively depend on the failed step are skipped; independent branches keep running.  # noqa: E501
+
+        :param continue_on_step_failure: The continue_on_step_failure of this V1Pipeline.  # noqa: E501
+        :type: bool
+        """
+
+        self._continue_on_step_failure = continue_on_step_failure
 
     @property
     def created_at(self) -> 'datetime':

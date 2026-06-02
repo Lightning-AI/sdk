@@ -37,6 +37,10 @@ type V1AzureDirectV1 struct {
 	// regions
 	Regions []string `json:"regions"`
 
+	// Azure resource group where cluster VMs and associated resources are created.
+	// Created by the setup script and stored here so the controller knows where to provision.
+	ResourceGroupName string `json:"resourceGroupName,omitempty"`
+
 	// tenant Id
 	TenantID string `json:"tenantId,omitempty"`
 }

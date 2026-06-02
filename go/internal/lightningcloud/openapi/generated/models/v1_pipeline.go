@@ -24,6 +24,9 @@ type V1Pipeline struct {
 	// cluster Id
 	ClusterID string `json:"clusterId,omitempty"`
 
+	// When true, only steps that transitively depend on the failed step are skipped; independent branches keep running.
+	ContinueOnStepFailure bool `json:"continueOnStepFailure,omitempty"`
+
 	// Read only
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`

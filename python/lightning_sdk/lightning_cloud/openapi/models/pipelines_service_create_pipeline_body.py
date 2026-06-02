@@ -42,6 +42,7 @@ class PipelinesServiceCreatePipelineBody(object):
     """
     swagger_types = {
         'cluster_id': 'str',
+        'continue_on_step_failure': 'bool',
         'name': 'str',
         'parameters': 'list[V1PipelineParameter]',
         'parent_pipeline_id': 'str',
@@ -51,6 +52,7 @@ class PipelinesServiceCreatePipelineBody(object):
 
     attribute_map = {
         'cluster_id': 'clusterId',
+        'continue_on_step_failure': 'continueOnStepFailure',
         'name': 'name',
         'parameters': 'parameters',
         'parent_pipeline_id': 'parentPipelineId',
@@ -58,9 +60,10 @@ class PipelinesServiceCreatePipelineBody(object):
         'steps': 'steps'
     }
 
-    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """PipelinesServiceCreatePipelineBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
+        self._continue_on_step_failure = None
         self._name = None
         self._parameters = None
         self._parent_pipeline_id = None
@@ -69,6 +72,8 @@ class PipelinesServiceCreatePipelineBody(object):
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if continue_on_step_failure is not None:
+            self.continue_on_step_failure = continue_on_step_failure
         if name is not None:
             self.name = name
         if parameters is not None:
@@ -100,6 +105,29 @@ class PipelinesServiceCreatePipelineBody(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def continue_on_step_failure(self) -> 'bool':
+        """Gets the continue_on_step_failure of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+
+        When true, only steps that transitively depend on the failed step are skipped; independent branches keep running.  # noqa: E501
+
+        :return: The continue_on_step_failure of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._continue_on_step_failure
+
+    @continue_on_step_failure.setter
+    def continue_on_step_failure(self, continue_on_step_failure: 'bool'):
+        """Sets the continue_on_step_failure of this PipelinesServiceCreatePipelineBody.
+
+        When true, only steps that transitively depend on the failed step are skipped; independent branches keep running.  # noqa: E501
+
+        :param continue_on_step_failure: The continue_on_step_failure of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._continue_on_step_failure = continue_on_step_failure
 
     @property
     def name(self) -> 'str':
