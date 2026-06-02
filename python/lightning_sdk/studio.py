@@ -91,117 +91,109 @@ class Studio(metaclass=TrackCallsMeta):
 
         self._prevent_refetch = False
         self._teamspace = None
-
-        # don't resolve anything if we're skipping init
-        if not getattr(self._skip_init, "value", False):
-            _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-            if _teamspace is None:
-                raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
-
-            self._teamspace = _teamspace
-            raise_access_error_if_not_allowed(AccessibleResource.Studios, self._teamspace.id)
-
         self._setup_done = getattr(self._skip_setup, "value", False)
         self._disable_secrets = disable_secrets
-
         self._plugins = {}
         self._studio = None
 
-        # Check to see if we're inside a studio
-        current_studio = None
-        studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
-        if studio_id is not None and self._teamspace is not None:
-            # We're inside a studio, get it by ID
-            current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+        if getattr(self._skip_init, "value", False):
+            return
 
+        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if self._teamspace is None:
+            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+        raise_access_error_if_not_allowed(AccessibleResource.Studios, self._teamspace.id)
+
+        # Check if we're running inside a studio that can be used as source. This is only
+        # relevant if it exists within the same teamspace as the target studio (if specified).
+        current_studio = None
+        current_studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", "") or None
+        current_teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", "") or None
+        if current_studio_id is not None and current_teamspace_id == self._teamspace.id:
+            current_studio = self._studio_api.get_studio_by_id(
+                studio_id=current_studio_id, teamspace_id=current_teamspace_id
+            )
+
+        # These are only used for studio creation, but validate them early if present.
         if cloud_account or not cloud_provider:
             cloud_account = _resolve_deprecated_cluster(
                 cloud_account, cluster, current_studio.cluster_id if current_studio else None
             )
-            cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
-        else:
-            cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
+        cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
 
-        cls_name = self._cls_name
+        # If no name is provided, but we're running on a studio in the same teamspace,
+        # return the current studio.
+        if name is None and current_studio is not None:
+            self._studio = current_studio
+            self._setup()
+            return
 
-        # if we're skipping init, we don't need to resolve the cloud account as then we're not creating a studio
-        if self._teamspace is not None:
-            _cloud_account = self._cloud_account_api.resolve_cloud_account(
-                self._teamspace.id,
-                cloud_account=cloud_account,
-                cloud_provider=cloud_provider,
-                default_cloud_account=self._teamspace.default_cloud_account,
+        if name is None:
+            from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+            name = Config().get_value(DefaultConfigKeys.studio)
+
+        # If a name is provided, try to find an existing studio with that name.
+        if name is not None:
+            existing_studio = self._studio_api.find_studio(name, self._teamspace.id)
+            if existing_studio is not None:
+                self._studio = existing_studio
+
+                if (
+                    _internal_status_to_external_status(
+                        self._studio_api._get_studio_instance_status_from_object(self._studio)
+                    )
+                    == Status.Running
+                ):
+                    self._setup()
+
+                return
+
+        # Otherwise, create a new studio if allowed, or raise an error if not.
+        if not create_ok:
+            raise ValueError(
+                f"Studio '{name}' does not exist."
+                if name
+                else (
+                    f"Cannot autodetect {self._cls_name}. "
+                    f"Either use the SDK from within a {self._cls_name} or pass a name!"
+                )
             )
 
-        self._studio_type = None
+        _cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
+
         if studio_type:
-            self._base_studio = BaseStudio(teamspace=self._teamspace)
-            self._available_base_studios = self._base_studio.list()
-            for bst in self._available_base_studios:
+            available_base_studios = BaseStudio(teamspace=self._teamspace).list()
+            for bst in available_base_studios:
                 if (
                     bst.id == studio_type
                     or bst.name == studio_type
                     or bst.name.lower().replace(" ", "-") == studio_type
                 ):
-                    self._studio_type = bst.id
-
-            if not self._studio_type:
+                    studio_type = bst.id
+                    break
+            else:
                 raise ValueError(
                     f"Could not find studio type with ID or name '{studio_type}'. "
                     f"Available studio types: "
-                    f"{[bst.name.lower().replace(' ', '-') for bst in self._available_base_studios]}"
+                    f"{[bst.name.lower().replace(' ', '-') for bst in available_base_studios]}"
                 )
-        else:
-            if current_studio:
-                self._studio_type = current_studio.environment_template_id
+        elif current_studio:
+            studio_type = current_studio.environment_template_id
 
-        # Resolve studio name if not provided: explicit → env (LIGHTNING_CLOUD_SPACE_ID) → config defaults
-        if name is None and not getattr(self._skip_init, "value", False):
-            if current_studio:
-                name = current_studio.name
-            else:
-                # Try config defaults
-                from lightning_sdk.utils.config import Config, DefaultConfigKeys
-
-                config = Config()
-                name = config.get_value(DefaultConfigKeys.studio)
-                if name is None and not create_ok:
-                    raise ValueError(
-                        f"Cannot autodetect {cls_name}. Either use the SDK from within a {cls_name} or pass a name!"
-                    )
-
-        if self._studio is None and not getattr(self._skip_init, "value", False):
-            # If we have a name (explicit or from config), get studio by name
-            try:
-                if name is None:
-                    # if we don't have a name, raise an error to get
-                    # to the exception path and optionally create a studio
-                    raise ValueError(
-                        f"Cannot autodetect {cls_name}. Either use the SDK from within a {cls_name} or pass a name!"
-                    )
-                self._studio = self._studio_api.get_studio(name, self._teamspace.id)
-            except ValueError as e:
-                if create_ok:
-                    name = name or random_unique_name()
-                    self._studio = self._studio_api.create_studio(
-                        name,
-                        self._teamspace.id,
-                        cloud_account=_cloud_account,
-                        source=source,
-                        disable_secrets=self._disable_secrets,
-                        cloud_space_environment_template_id=self._studio_type,
-                    )
-                else:
-                    raise e
-
-        if (
-            not getattr(self._skip_init, "value", False)
-            and _internal_status_to_external_status(
-                self._studio_api._get_studio_instance_status_from_object(self._studio)
-            )
-            == Status.Running
-        ):
-            self._setup()
+        self._studio = self._studio_api.create_studio(
+            name or random_unique_name(),
+            self._teamspace.id,
+            cloud_account=_cloud_account,
+            source=source,
+            disable_secrets=self._disable_secrets,
+            cloud_space_environment_template_id=studio_type,
+        )
 
     def _setup(self) -> None:
         """Installs all plugins that should be currently installed."""
@@ -343,10 +335,14 @@ class Studio(metaclass=TrackCallsMeta):
         """
         # Check to see if we're inside a studio and if its running
         current_studio_machine = None
-        studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", None)
-        if studio_id is not None:
-            # We're inside a studio, get the machine if it is running
-            current_studio = self._studio_api.get_studio_by_id(studio_id=studio_id, teamspace_id=self._teamspace.id)
+        current_studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", "") or None
+        current_teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", "") or None
+        if current_studio_id is not None and current_teamspace_id == self._teamspace.id:
+            # We're inside a studio in this teamspace, get the machine if it is running.
+            # Skip when the teamspaces differ, as the by-ID lookup would 404.
+            current_studio = self._studio_api.get_studio_by_id(
+                studio_id=current_studio_id, teamspace_id=self._teamspace.id
+            )
             current_status = self._studio_api._get_studio_instance_status_from_object(current_studio)
 
             if current_status and _internal_status_to_external_status(current_status) == Status.Running:

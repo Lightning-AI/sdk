@@ -23,6 +23,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectSettings,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import Studio
 
@@ -163,7 +164,7 @@ def test_studio_init(
 
     # st-xyz does not exist and should not be created
     error_out = bool(name == "st-xyz" and not create_ok)
-    contextman = pytest.raises(ValueError, match="Studio st-xyz does not exist") if error_out else nullcontext()
+    contextman = pytest.raises(ValueError, match="Studio 'st-xyz' does not exist") if error_out else nullcontext()
 
     with contextman:
         studio = Studio(
@@ -198,7 +199,9 @@ def test_studio_init_no_teamspace(mock_resolve_teamspace, mock_config_get_value)
         )
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
@@ -298,7 +301,9 @@ def test_studio_init_detects_current_studio_from_env(
     assert studio.cloud_account == "c-abc"
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
@@ -395,7 +400,9 @@ def test_studio_init_uses_current_studio_cloud_account(
     mock_get_cloud_space.assert_called()
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
@@ -834,3 +841,185 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
     assert studio.owner.name == "org-abc"
     assert studio.name == "existing-studio"
     assert studio.cloud_account == "aws-public"
+
+
+# The current studio lives in a *different* teamspace (ts-other) than the target (ts-abc).
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-other"}, clear=False
+)
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+def test_studio_init_opens_existing_studio_when_current_studio_in_different_teamspace(
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_cloud_space,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_create_cloudspace,
+    mock_list_installed_plugins,
+    mock_list_available_plugins,
+    mock_requests_put,
+):
+    """Opening an existing studio must not depend on the current studio when it lives in another teamspace.
+
+    Previously this raised a 404, because the current studio's ID was looked up in the *target*
+    teamspace. The current studio lookup must be skipped entirely when the teamspaces differ.
+    """
+    existing_studios = {
+        "st-abc": V1CloudSpace(
+            name="st-abc", display_name="st-abc", cluster_id="c-abc", project_id="ts-abc", id="st-abc"
+        ),
+    }
+
+    # Looking up the current studio (st-current) in the target teamspace (ts-abc) is exactly the
+    # invalid cross-teamspace call that used to 404 -> fail loudly if it is ever attempted.
+    mock_get_cloud_space.side_effect = ApiException(status=404, reason="Not Found")
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="c-abc"),
+    )
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
+    )
+    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
+    mock_get_status.side_effect = lambda *a, **k: V1GetCloudSpaceInstanceStatusResponse(
+        in_use=Externalv1CloudSpaceInstanceStatus(phase=None)
+    )
+
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc", create_ok=False)
+
+    assert studio.name == "st-abc"
+    assert studio.teamspace.name == "ts-abc"
+    # The cross-teamspace current-studio lookup must have been skipped.
+    mock_get_cloud_space.assert_not_called()
+
+
+# The current studio lives in a *different* teamspace (ts-other) than the target (ts-abc).
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-other"}, clear=False
+)
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+def test_studio_init_creates_studio_when_current_studio_in_different_teamspace(
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_cloud_space,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_create_cloudspace,
+    mock_create_lightning_run,
+    mock_list_installed_plugins,
+    mock_list_available_plugins,
+    mock_requests_put,
+):
+    """Creating a studio must not depend on the current studio when it lives in another teamspace.
+
+    Same root cause as opening: the current studio lookup in the target teamspace used to 404.
+    """
+    existing_studios = {}  # st-new does not exist yet
+
+    def _create_cloudspace_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        cloudspace = V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+        )
+        existing_studios[cloudspace.name] = cloudspace
+        return cloudspace
+
+    def _create_lightning_run_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        cloudspace_id = args[3] if len(args) > 3 else kwargs.get("cloudspace_id")
+        return V1LightningRun(
+            cluster_id=body.cluster_id, cloudspace_id=cloudspace_id, project_id=project_id, id=cloudspace_id + "_run"
+        )
+
+    # The invalid cross-teamspace current-studio lookup -> fail loudly if it is ever attempted.
+    mock_get_cloud_space.side_effect = ApiException(status=404, reason="Not Found")
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="c-abc"),
+    )
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
+    )
+    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
+    mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
+    mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
+
+    studio = Studio(name="st-new", teamspace="ts-abc", org="org-abc", create_ok=True)
+
+    assert studio.name == "st-new"
+    assert studio.teamspace.name == "ts-abc"
+    mock_create_cloudspace.assert_called()
+    # The cross-teamspace current-studio lookup must have been skipped.
+    mock_get_cloud_space.assert_not_called()

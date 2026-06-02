@@ -693,7 +693,14 @@ def test_submit_job_v2_image_from_studio(
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-abc", "LIGHTNING_INTERACTIVE": "true"}):
+    with mock.patch.dict(
+        os.environ,
+        {
+            "LIGHTNING_CLOUD_SPACE_ID": "st-abc",
+            "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc001",
+            "LIGHTNING_INTERACTIVE": "true",
+        },
+    ):
         Job.run(
             "test-job",
             machine=Machine.CPU,
@@ -1029,7 +1036,14 @@ def test_submit_job_from_running_studio(
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-abc", "LIGHTNING_INTERACTIVE": "true"}):
+    with mock.patch.dict(
+        os.environ,
+        {
+            "LIGHTNING_CLOUD_SPACE_ID": "st-abc",
+            "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc001",
+            "LIGHTNING_INTERACTIVE": "true",
+        },
+    ):
         Job.run(
             "test-job",
             machine=Machine.CPU,

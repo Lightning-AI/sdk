@@ -115,6 +115,23 @@ class StudioApi:
             )
             time.sleep(keep_alive_freq)
 
+    def find_studio(
+        self,
+        name: str,
+        teamspace_id: str,
+    ) -> Optional[V1CloudSpace]:
+        """Gets the studio corresponding to the given name in the given teamspace, if it exists.
+
+        Args:
+            name: Name of the Studio to look up.
+            teamspace_id: ID of the owning teamspace.
+
+        Returns:
+            The matching ``V1CloudSpace`` object, or ``None`` if no Studio with the given name exists.
+        """
+        res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id, name=name)
+        return res.cloudspaces[0] if res.cloudspaces else None
+
     def get_studio(
         self,
         name: str,
@@ -132,10 +149,10 @@ class StudioApi:
         Raises:
             ValueError: If no Studio with the given name exists in the teamspace.
         """
-        res = self._client.cloud_space_service_list_cloud_spaces(project_id=teamspace_id, name=name)
-        if not res.cloudspaces:
+        studio = self.find_studio(name, teamspace_id)
+        if studio is None:
             raise ValueError(f"Studio {name} does not exist")
-        return res.cloudspaces[0]
+        return studio
 
     def get_studio_by_id(
         self,

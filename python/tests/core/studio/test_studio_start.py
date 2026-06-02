@@ -863,7 +863,9 @@ def test_studio_start_different_machine(
     )
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
     autospec=True,
@@ -1075,7 +1077,9 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
     assert machines["st-abc"].name == "g5.xlarge"
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
     autospec=True,
@@ -1260,7 +1264,9 @@ def test_studio_start_ignores_stopped_current_studio_machine(
     assert studio.machine == Machine.CPU
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current"}, clear=False)
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
+)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
     autospec=True,
