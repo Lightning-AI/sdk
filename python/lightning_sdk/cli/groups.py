@@ -4,6 +4,7 @@ import click
 
 from lightning_sdk.cli.api import APIGroup
 from lightning_sdk.cli.api import register_commands as register_api_commands
+from lightning_sdk.cli.api_key import register_commands as register_api_key_commands
 from lightning_sdk.cli.base_studio import register_commands as register_base_studio_commands
 from lightning_sdk.cli.config import register_commands as register_config_commands
 from lightning_sdk.cli.container import register_commands as register_container_commands
@@ -85,6 +86,16 @@ def model() -> None:
     """Manage Lightning AI Models."""
 
 
+@click.group(name="api-key")
+def api_key() -> None:
+    """Manage API keys for public model endpoints.
+
+    Org context is inferred automatically. If you use multiple orgs, set
+    LIGHTNING_ORG or `lightning config set organization.name` to match the org
+    selected in the web UI.
+    """
+
+
 @click.group(name="file")
 def file() -> None:
     """Manage file transfers."""
@@ -141,6 +152,7 @@ register_deployment_commands(deployment)
 register_vm_commands(vm)
 register_container_commands(container)
 register_model_commands(model)
+register_api_key_commands(api_key)
 register_file_commands(file)
 register_folder_commands(folder)
 register_ssh_commands(ssh)

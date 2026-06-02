@@ -11,6 +11,7 @@ from lightning_sdk.api.studio_api import _cloud_url
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
     api,
+    api_key,
     base_studio,
     config,
     container,
@@ -92,6 +93,7 @@ main_cli.add_command(api)
 main_cli.add_command(deployment)
 main_cli.add_command(container)
 main_cli.add_command(model)
+main_cli.add_command(api_key)
 main_cli.add_command(file)
 main_cli.add_command(folder)
 main_cli.add_command(ssh)

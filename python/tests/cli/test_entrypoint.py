@@ -13,6 +13,7 @@ def test_help():
         "lightning --help",
         "Usage: lightning [OPTIONS] COMMAND [ARGS]...",
         "  base-studio  Manage Lightning AI Base Studios.",
+        "  api-key      Manage API keys for public model endpoints.",
         "  config       Manage Lightning SDK and CLI configuration.",
         "  cp           Copy files between local filesystem, Studios,",
         "  container    Manage Lightning AI containers.",
@@ -30,7 +31,7 @@ def test_help():
     assert "  create" not in result_text
     assert "  delete" not in result_text
     assert "  download" not in result_text
-    assert "  api" not in result_text
+    assert not any(line.startswith("  api ") for line in result_text.splitlines())
     assert "  jobs" not in result_text
     assert "  open" not in result_text
     assert "  run" not in result_text
@@ -43,7 +44,7 @@ def test_help_uvx():
     result_text = result.stdout + result.stderr
 
     if "Usage: lightning-sdk [OPTIONS] COMMAND [ARGS]..." in result_text:
-        assert "  api" not in result_text
+        assert not any(line.startswith("  api ") for line in result_text.splitlines())
         assert "  cp           Copy files between local filesystem, Studios," in result_text
         assert "  container    Manage Lightning AI containers." in result_text
         assert "  job          Manage Lightning AI Jobs." in result_text
