@@ -3,6 +3,7 @@ from lightning_sdk.sandbox.base import (
     ListSandboxesResult,
     RunCommandOpts,
     SandboxInstance,
+    SnapshotInfo,
     WriteFileParams,
 )
 from lightning_sdk.sandbox.command import Command
@@ -37,6 +38,7 @@ __all__ = [
     "SandboxConfig",
     "SandboxInstance",
     "SandboxProcess",
+    "SnapshotInfo",
     "WriteFileParams",
     "write_to_stdout",
 ]

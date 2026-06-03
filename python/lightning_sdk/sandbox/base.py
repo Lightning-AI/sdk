@@ -9,9 +9,13 @@ from typing import TYPE_CHECKING, Any
 from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus, SandboxApi
 from lightning_sdk.lightning_cloud.openapi import (
     SandboxesServiceApi,
+    SandboxesServiceCreateSandboxSnapshotBody,
+    SandboxesServiceStopSandboxBody,
+    SandboxesServiceUpdateSandboxBody,
     SandboxesServiceWriteSandboxFileBody,
     V1CreateSandboxRequest,
     V1Sandbox,
+    V1SandboxSnapshot,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
@@ -110,6 +114,8 @@ def create_sandbox(
     organization_id: str | None = None,
     cluster_id: str | None = None,
     cloudspace_id: str | None = None,
+    snapshot_id: str | None = None,
+    persistent: bool | None = None,
     config: SandboxConfig | None = None,
     sandbox_api: SandboxApi | None = None,
 ) -> SandboxInstance:
@@ -117,6 +123,11 @@ def create_sandbox(
 
     Pass ``config=`` for a one-off :class:`SandboxConfig`, or set defaults with
     process-wide :func:`configure`.
+
+    Pass ``snapshot_id`` to restore the sandbox's filesystem from a snapshot
+    (see :meth:`SandboxInstance.snapshot`) for a fast, pre-warmed start. Pass
+    ``persistent=True`` so the sandbox's state survives :meth:`SandboxInstance.stop`
+    (via an auto-snapshot) and can be brought back with :meth:`SandboxInstance.resume`.
     """
     api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
     org_id = _resolve_org_id(organization_id, api=api)
@@ -140,11 +151,47 @@ def create_sandbox(
         body.cluster_id = cluster_id
     if cloudspace_id:
         body.cloudspace_id = cloudspace_id
+    if runtime:
+        body.runtime = runtime
+    if snapshot_id:
+        body.snapshot_id = snapshot_id
+    if persistent is not None:
+        body.persistent = persistent
 
     sb: SandboxesServiceApi = api.sandboxes()
     v1 = sb.sandboxes_service_create_sandbox(body)
     v1 = _wait_until_sandbox_running(api, v1)
     return SandboxInstance._from_v1(v1, runtime=runtime, sandbox_api=api)
+
+
+def _wait_for_snapshot_ready(
+    api: SandboxApi,
+    snapshot_id: str,
+    organization_id: str | None,
+    timeout: float,
+) -> V1SandboxSnapshot:
+    """Poll a snapshot row until it reaches ``ready`` (or ``failed``).
+
+    The create-snapshot call returns a row in ``saving``; the control plane
+    captures + uploads on a background goroutine then flips it to ``ready``.
+    Poll fast early, then back off (250ms → 2s cap).
+    """
+    sb = api.sandboxes()
+    deadline = time.monotonic() + timeout
+    delay = 0.25
+    while True:
+        if organization_id:
+            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id, organization_id=organization_id)
+        else:
+            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id)
+        if snap.status == "ready":
+            return snap
+        if snap.status == "failed":
+            raise RuntimeError(f"Snapshot {snapshot_id} entered terminal state 'failed'")
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"Snapshot {snapshot_id} not ready within {timeout}s (last status: {snap.status})")
+        time.sleep(delay)
+        delay = min(delay * 2, 2.0)
 
 
 @dataclass
@@ -169,6 +216,31 @@ class ListSandboxesResult:
     next_page_token: str
     previous_page_token: str
     total_size: int
+
+
+@dataclass
+class SnapshotInfo:
+    """A sandbox filesystem snapshot (immutable, reusable base image)."""
+
+    id: str
+    status: str
+    runtime: str
+    size_bytes: int
+    project_id: str
+
+    @classmethod
+    def _from_v1(cls, v1: V1SandboxSnapshot) -> SnapshotInfo:
+        try:
+            size = int(v1.size_bytes) if v1.size_bytes is not None else 0
+        except (TypeError, ValueError):
+            size = 0
+        return cls(
+            id=v1.id,
+            status=v1.status or "",
+            runtime=v1.runtime or "",
+            size_bytes=size,
+            project_id=v1.project_id or "",
+        )
 
 
 class SandboxInstance(metaclass=TrackCallsMeta):
@@ -231,6 +303,11 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     @property
     def spot(self) -> bool:
         return bool(self._v1.spot)
+
+    @property
+    def persistent(self) -> bool:
+        """Whether the sandbox's state survives :meth:`stop` via an auto-snapshot."""
+        return bool(getattr(self._v1, "persistent", False))
 
     @property
     def status(self) -> str:
@@ -345,6 +422,8 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         organization_id: str | None = None,
         cluster_id: str | None = None,
         cloudspace_id: str | None = None,
+        snapshot_id: str | None = None,
+        persistent: bool | None = None,
         config: SandboxConfig | None = None,
         sandbox_api: SandboxApi | None = None,
     ) -> SandboxInstance:
@@ -353,6 +432,10 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         If ``instance_type`` is omitted, a default CPU machine type is used. Pass ``instance_type``
         explicitly for GPUs or other shapes. The ``runtime`` parameter is reserved for future
         runtime-to-machine mapping and does not change the default today.
+
+        Pass ``snapshot_id`` to restore the filesystem from a snapshot for a fast,
+        pre-warmed start, and/or ``persistent=True`` to make the sandbox resumable
+        via :meth:`stop` + :meth:`resume`.
         """
         return create_sandbox(
             name=name,
@@ -363,6 +446,8 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             organization_id=organization_id,
             cluster_id=cluster_id,
             cloudspace_id=cloudspace_id,
+            snapshot_id=snapshot_id,
+            persistent=persistent,
             config=config,
             sandbox_api=sandbox_api,
         )
@@ -417,7 +502,73 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             total_size=total,
         )
 
-    def stop(self) -> None:
+    @classmethod
+    def get_snapshot(
+        cls,
+        snapshot_id: str,
+        organization_id: str | None = None,
+        config: SandboxConfig | None = None,
+        sandbox_api: SandboxApi | None = None,
+    ) -> SnapshotInfo:
+        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
+        sb: SandboxesServiceApi = api.sandboxes()
+        org_id = _resolve_org_id(organization_id, api=api)
+        if org_id:
+            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id, organization_id=org_id)
+        else:
+            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id)
+        return SnapshotInfo._from_v1(snap)
+
+    @classmethod
+    def list_snapshots(
+        cls,
+        organization_id: str | None = None,
+        project_id: str | None = None,
+        name: str | None = None,
+        page_token: str | None = None,
+        limit: int | None = None,
+        config: SandboxConfig | None = None,
+        sandbox_api: SandboxApi | None = None,
+    ) -> list[SnapshotInfo]:
+        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
+        sb: SandboxesServiceApi = api.sandboxes()
+        org_id = _resolve_org_id(organization_id, api=api)
+        kwargs: dict[str, Any] = {}
+        if org_id:
+            kwargs["organization_id"] = org_id
+        if project_id:
+            kwargs["project_id"] = project_id
+        if name:
+            kwargs["name"] = name
+        if page_token:
+            kwargs["page_token"] = page_token
+        if limit is not None:
+            kwargs["limit"] = str(limit)
+        data = sb.sandboxes_service_list_sandbox_snapshots(**kwargs)
+        return [SnapshotInfo._from_v1(s) for s in (data.snapshots or [])]
+
+    @classmethod
+    def delete_snapshot(
+        cls,
+        snapshot_id: str,
+        organization_id: str | None = None,
+        config: SandboxConfig | None = None,
+        sandbox_api: SandboxApi | None = None,
+    ) -> None:
+        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
+        sb: SandboxesServiceApi = api.sandboxes()
+        org_id = _resolve_org_id(organization_id, api=api)
+        if org_id:
+            sb.sandboxes_service_delete_sandbox_snapshot(snapshot_id, organization_id=org_id)
+        else:
+            sb.sandboxes_service_delete_sandbox_snapshot(snapshot_id)
+
+    def delete(self) -> None:
+        """Destroy the sandbox, dropping any auto-snapshot.
+
+        For a persistent sandbox use :meth:`stop` instead if you want to
+        :meth:`resume` later.
+        """
         org = self._v1.organization_id
         try:
             sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
@@ -429,6 +580,74 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             if e.status == 404:
                 return
             raise
+
+    def stop(self, *, project_id: str | None = None) -> str:
+        """Stop the sandbox.
+
+        For a ``persistent=True`` sandbox the control plane synchronously
+        captures an auto-snapshot before tearing down the server and returns its
+        id; the sandbox id keeps resolving (status ``paused``) and can be brought
+        back with :meth:`resume`. For a non-persistent sandbox this is equivalent
+        to :meth:`delete` and returns an empty string.
+        """
+        org = self._v1.organization_id
+        body = SandboxesServiceStopSandboxBody()
+        if org:
+            body.organization_id = org
+        if project_id:
+            body.project_id = project_id
+        sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
+        resp = sb.sandboxes_service_stop_sandbox(body, self._v1.id)
+        return resp.auto_snapshot_id or ""
+
+    def resume(self) -> SandboxInstance:
+        """Resume a stopped persistent sandbox from its auto-snapshot.
+
+        Preserves the sandbox id and polls until ``running``. Errors if the
+        sandbox is not persistent or has no resumable snapshot.
+        """
+        org = self._v1.organization_id
+        body = SandboxesServiceUpdateSandboxBody(resume=True)
+        if org:
+            body.organization_id = org
+        sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
+        v1 = sb.sandboxes_service_update_sandbox(body, self._v1.id)
+        self._v1 = _wait_until_sandbox_running(self._sandbox_api, v1)
+        return self
+
+    def snapshot(
+        self,
+        *,
+        project_id: str | None = None,
+        expiration: str | None = None,
+        excludes: list[str] | None = None,
+        wait: bool = True,
+        wait_timeout: float = 600.0,
+    ) -> SnapshotInfo:
+        """Snapshot this sandbox's filesystem and return the :class:`SnapshotInfo`.
+
+        The control plane pauses the sandbox, tarballs its overlay upperdir,
+        resumes it, then uploads the tarball. Only filesystem state is captured —
+        running processes are not preserved. By default this polls until the
+        snapshot is ``ready`` so the returned object is safe to immediately
+        restore from via ``Sandbox.create(snapshot_id=...)``; pass ``wait=False``
+        to return the ``saving`` row without polling.
+        """
+        org = self.organization_id or None
+        body = SandboxesServiceCreateSandboxSnapshotBody()
+        if org:
+            body.organization_id = org
+        if project_id:
+            body.project_id = project_id
+        if expiration is not None:
+            body.expiration = expiration
+        if excludes:
+            body.excludes = excludes
+        sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
+        snap = sb.sandboxes_service_create_sandbox_snapshot(body, self.sandbox_id)
+        if wait:
+            snap = _wait_for_snapshot_ready(self._sandbox_api, snap.id, org, wait_timeout)
+        return SnapshotInfo._from_v1(snap)
 
     def run_command(self, command_or_opts: str | RunCommandOpts, args: list[str] | None = None) -> Command:
         """Run a command inside the sandbox.
@@ -549,4 +768,3 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         self._sandbox_api.create_directory(self.sandbox_id, path, self.organization_id or None)
 
     create_directory = mkdir
-    delete = stop
