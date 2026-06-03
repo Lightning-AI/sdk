@@ -28,6 +28,7 @@ class Pipeline:
         cloud_provider: Optional[Union[CloudProvider, str]] = None,
         shared_filesystem: Optional[bool] = None,
         studio: Optional[Union[Studio, str]] = None,
+        stop_on_failure: bool = True,
     ) -> None:
         """The Lightning Pipeline can be used to create complex DAG.
 
@@ -39,8 +40,10 @@ class Pipeline:
             cloud_account: The cloud account to use for the entire pipeline.
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
+            stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
         """
         self._name = name
+        self._stop_on_failure = stop_on_failure
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
@@ -141,6 +144,7 @@ class Pipeline:
             self._shared_filesystem,
             schedules,
             parent_pipeline_id,
+            self._stop_on_failure,
         )
 
         printer = PipelinePrinter(

@@ -63,6 +63,7 @@ class PipelineApi:
         shared_filesystem: bool,
         schedules: List["Schedule"],
         parent_pipeline_id: Optional[str],
+        stop_on_failure: bool = True,
     ) -> V1Pipeline:
         """Create a pipeline with the given steps and schedules, replacing the parent pipeline's schedules if provided.
 
@@ -73,6 +74,7 @@ class PipelineApi:
             shared_filesystem: Whether to enable a shared filesystem between steps.
             schedules: List of schedules to attach to the pipeline.
             parent_pipeline_id: ID of an existing pipeline whose schedules should be replaced.
+            stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
 
         Returns:
             V1Pipeline: The created pipeline record.
@@ -82,6 +84,7 @@ class PipelineApi:
             steps=steps,
             shared_filesystem=self._prepare_shared_filesystem(shared_filesystem, steps, teamspace),
             parent_pipeline_id=parent_pipeline_id or "",
+            continue_on_step_failure=not stop_on_failure,
         )
 
         pipeline = self._client.pipelines_service_create_pipeline(body, teamspace.id)

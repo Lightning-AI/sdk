@@ -123,7 +123,9 @@ def test_pipeline_run(monkeypatch):
     args = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args
 
     assert "get_pipeline_by_id().name" in str(args[0])
-    assert args[-1] is None
+    # args: name, teamspace, steps, shared_filesystem, schedules, parent_pipeline_id, stop_on_failure
+    assert args[-2] is None
+    assert args[-1] is True
 
     generated = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[2]
 
@@ -328,10 +330,12 @@ def test_shared_filesystem(monkeypatch):
 
     mock_calls = pipeline_api_mock().create_pipeline._mock_mock_calls
     assert len(mock_calls[0].args)
-    assert mock_calls[0].args[-3] is True
-    assert isinstance(mock_calls[0].args[-2], list)
-    assert len(mock_calls[0].args[-2]) == 0
-    assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-1])
+    # args: ..., shared_filesystem, schedules, parent_pipeline_id, stop_on_failure
+    assert mock_calls[0].args[-4] is True
+    assert isinstance(mock_calls[0].args[-3], list)
+    assert len(mock_calls[0].args[-3]) == 0
+    assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-2])
+    assert mock_calls[0].args[-1] is True
 
     pipeline._shared_filesystem = True
 

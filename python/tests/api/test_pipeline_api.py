@@ -128,6 +128,8 @@ class TestCreatePipeline:
         assert body.name == PIPELINE_NAME
         assert body.shared_filesystem.enabled is True
         assert body.parent_pipeline_id == ""
+        # stop_on_failure defaults to True, so continue_on_step_failure should be False
+        assert body.continue_on_step_failure is False
         assert call_args[1] == PROJECT_ID
 
         # Ensure no schedule logic was triggered
@@ -136,6 +138,35 @@ class TestCreatePipeline:
         mock_lightning_client.schedules_service_create_schedule.assert_not_called()
 
         assert result == mock_created_pipeline
+
+    @pytest.mark.parametrize(
+        ("stop_on_failure", "expected_continue_on_step_failure"),
+        [(True, False), (False, True)],
+    )
+    def test_create_stop_on_failure(
+        self, pipeline_api, mock_lightning_client, stop_on_failure, expected_continue_on_step_failure
+    ):
+        """Test that stop_on_failure is mapped to continue_on_step_failure on the body."""
+        mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)
+        mock_lightning_client.pipelines_service_create_pipeline.return_value = mock_created_pipeline
+
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+
+        teamspace = MagicMock()
+        teamspace.id = PROJECT_ID
+
+        pipeline_api.create_pipeline(
+            name=PIPELINE_NAME,
+            teamspace=teamspace,
+            steps=[],
+            shared_filesystem=True,
+            schedules=[],
+            parent_pipeline_id=None,
+            stop_on_failure=stop_on_failure,
+        )
+
+        body = mock_lightning_client.pipelines_service_create_pipeline.call_args[0][0]
+        assert body.continue_on_step_failure is expected_continue_on_step_failure
 
     def test_create_with_schedules(self, pipeline_api, mock_lightning_client):
         """Test creating a pipeline with new schedules."""
