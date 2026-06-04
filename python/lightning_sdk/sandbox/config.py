@@ -17,11 +17,15 @@ _ENV_ORG_ID = "LIGHTNING_ORG_ID"
 class SandboxConfig:
     """Explicit sandbox API settings.
 
+    ``api_key`` is required. ``organization_id`` is optional — set via
+    ``LIGHTNING_ORG_ID`` or :attr:`organization_id`; when omitted, requests rely
+    on org scope implied by the API key alone.
+
     Maps to environment variables used by :meth:`from_env`:
 
-    - ``LIGHTNING_SANDBOX_API_KEY`` → ``api_key``
+    - ``LIGHTNING_SANDBOX_API_KEY`` → ``api_key`` (required)
     - ``LIGHTNING_CLOUD_URL`` → ``base_url``
-    - ``LIGHTNING_ORG_ID`` → ``organization_id``
+    - ``LIGHTNING_ORG_ID`` → ``organization_id`` (optional)
     """
 
     api_key: str | None = None
@@ -47,14 +51,20 @@ class SandboxConfig:
 
     def api(self) -> SandboxApi:
         """Build an isolated :class:`~lightning_sdk.api.sandbox_api.SandboxApi` for this config."""
+        if not self.api_key:
+            raise ValueError(
+                "api_key is required. Set LIGHTNING_SANDBOX_API_KEY or pass api_key in SandboxConfig.",
+            )
         from lightning_sdk.api.sandbox_api import SandboxApi
 
         return SandboxApi(self.to_api_dict())
 
     def to_api_dict(self) -> dict[str, Any]:
         """Shape expected by :class:`~lightning_sdk.api.sandbox_api.SandboxApi`."""
-        return {
+        out: dict[str, Any] = {
             "api_key": self.api_key,
             "base_url": self.base_url.rstrip("/") if self.base_url else None,
-            "organization_id": self.organization_id,
         }
+        if self.organization_id is not None:
+            out["organization_id"] = self.organization_id
+        return out

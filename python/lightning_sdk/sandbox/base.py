@@ -46,15 +46,18 @@ def _resolve_sandbox_api(
     return _api
 
 
+def _org_id_from_api(api: SandboxApi) -> str | None:
+    """Organization UUID from client config only (env / SandboxConfig), if set."""
+    org_id = api.config_get("organization_id")
+    return str(org_id) if org_id else None
+
+
 def _resolve_org_id(override: str | None = None, *, api: SandboxApi | None = None) -> str | None:
     if override is not None:
         return override
     if api is not None:
-        co = api.config_get("organization_id")
-        if co:
-            return str(co)
-    v = _sandbox_config.get("organization_id")
-    return str(v) if v else None
+        return _org_id_from_api(api)
+    return _org_id_from_api(_api)
 
 
 def configure(
@@ -106,31 +109,31 @@ def _wait_until_sandbox_running(api: SandboxApi, v1: V1Sandbox) -> V1Sandbox:
 
 def create_sandbox(
     *,
+    sandbox_api: SandboxApi,
     name: str | None = None,
     instance_type: str | None = None,
     runtime: str | None = None,
     spot: bool = False,
     ports: list[int | str] | None = None,
-    organization_id: str | None = None,
     cluster_id: str | None = None,
     cloudspace_id: str | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
-    config: SandboxConfig | None = None,
-    sandbox_api: SandboxApi | None = None,
 ) -> SandboxInstance:
     """Create a sandbox and block until its status is ``running``.
 
-    Pass ``config=`` for a one-off :class:`SandboxConfig`, or set defaults with
-    process-wide :func:`configure`.
+    Internal: called from :class:`~lightning_sdk.sandbox.sandbox.Sandbox` with a
+    client built via :meth:`~lightning_sdk.sandbox.config.SandboxConfig.api`.
+    ``organization_id`` on the client is optional (``LIGHTNING_ORG_ID`` or config).
 
     Pass ``snapshot_id`` to restore the sandbox's filesystem from a snapshot
     (see :meth:`SandboxInstance.snapshot`) for a fast, pre-warmed start. Pass
     ``persistent=True`` so the sandbox's state survives :meth:`SandboxInstance.stop`
     (via an auto-snapshot) and can be brought back with :meth:`SandboxInstance.resume`.
     """
-    api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-    org_id = _resolve_org_id(organization_id, api=api)
+    org_id = sandbox_api.config_get("organization_id")
+    if org_id is not None:
+        org_id = str(org_id)
     if name is None:
         name = f"sandbox-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
     if instance_type is not None:
@@ -158,10 +161,10 @@ def create_sandbox(
     if persistent is not None:
         body.persistent = persistent
 
-    sb: SandboxesServiceApi = api.sandboxes()
+    sb: SandboxesServiceApi = sandbox_api.sandboxes()
     v1 = sb.sandboxes_service_create_sandbox(body)
-    v1 = _wait_until_sandbox_running(api, v1)
-    return SandboxInstance._from_v1(v1, runtime=runtime, sandbox_api=api)
+    v1 = _wait_until_sandbox_running(sandbox_api, v1)
+    return SandboxInstance._from_v1(v1, runtime=runtime, sandbox_api=sandbox_api)
 
 
 def _wait_for_snapshot_ready(
@@ -243,14 +246,52 @@ class SnapshotInfo:
         )
 
 
+def _get_sandbox(sandbox_id: str, *, sandbox_api: SandboxApi) -> SandboxInstance:
+    sb: SandboxesServiceApi = sandbox_api.sandboxes()
+    org_id = _resolve_org_id(api=sandbox_api)
+    if org_id:
+        v1 = sb.sandboxes_service_get_sandbox(sandbox_id, organization_id=org_id)
+    else:
+        v1 = sb.sandboxes_service_get_sandbox(sandbox_id)
+    return SandboxInstance._from_v1(v1, sandbox_api=sandbox_api)
+
+
+def _list_sandboxes(
+    *,
+    sandbox_api: SandboxApi,
+    page_token: str | None = None,
+    limit: int | None = None,
+) -> ListSandboxesResult:
+    sb: SandboxesServiceApi = sandbox_api.sandboxes()
+    org_id = _resolve_org_id(api=sandbox_api)
+    kwargs: dict[str, Any] = {}
+    if org_id:
+        kwargs["organization_id"] = org_id
+    if page_token:
+        kwargs["page_token"] = page_token
+    if limit is not None:
+        kwargs["limit"] = limit
+    data = sb.sandboxes_service_list_sandboxes(**kwargs)
+    sandboxes = [SandboxInstance._from_v1(s, sandbox_api=sandbox_api) for s in (data.sandboxes or [])]
+    ts = data.total_size
+    try:
+        total = int(ts) if ts is not None else 0
+    except (TypeError, ValueError):
+        total = 0
+    return ListSandboxesResult(
+        sandboxes=sandboxes,
+        next_page_token=data.next_page_token or "",
+        previous_page_token=data.previous_page_token or "",
+        total_size=total,
+    )
+
+
 class SandboxInstance(metaclass=TrackCallsMeta):
-    """A running sandbox resource.
+    """A running sandbox returned by :class:`~lightning_sdk.sandbox.sandbox.Sandbox`.
 
-    Create with :meth:`create`, :meth:`get`, or :meth:`list` using process-wide
-    :func:`configure`, or :meth:`create_sandbox` with ``config=``.
-
-    Remote sandboxes are **not** destroyed when a Python reference goes out of
-    scope; call :meth:`delete` to release the sandbox explicitly.
+    Obtain instances via ``Sandbox(config).create(...)``, ``.get(...)``, or ``.list(...)``.
+    Remote sandboxes are **not** destroyed when a Python reference goes out of scope;
+    call :meth:`delete` to release the sandbox explicitly.
     """
 
     def __init__(
@@ -373,7 +414,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         """Best-effort lookup of the bearer token from the OpenAPI client.
 
         Mirrors the lazy lookup the JS SDK performs so that
-        :meth:`SandboxInstance.configure` calls made after the sandbox object
+        :meth:`~lightning_sdk.sandbox.sandbox.Sandbox.configure` calls made after the sandbox object
         was created are still honored.
         """
         headers = getattr(self._sandbox_api.client.api_client, "default_headers", {})
@@ -392,115 +433,6 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         :class:`SandboxProcess` module, which keeps the two modules decoupled.
         """
         return self.run_command(RunCommandOpts(cmd=cmd, args=args or []))
-
-    @classmethod
-    def configure(
-        cls,
-        config: SandboxConfig | None = None,
-        *,
-        api_key: str | None = None,
-        base_url: str | None = None,
-        organization_id: str | None = None,
-    ) -> None:
-        """Set global defaults for all subsequent calls."""
-        _configure_globals(
-            config=config,
-            api_key=api_key,
-            base_url=base_url,
-            organization_id=organization_id,
-        )
-
-    @classmethod
-    def create(
-        cls,
-        *,
-        name: str | None = None,
-        instance_type: str | None = None,
-        runtime: str | None = None,
-        spot: bool = False,
-        ports: list[int | str] | None = None,
-        organization_id: str | None = None,
-        cluster_id: str | None = None,
-        cloudspace_id: str | None = None,
-        snapshot_id: str | None = None,
-        persistent: bool | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> SandboxInstance:
-        """Create a sandbox and poll until ``running``.
-
-        If ``instance_type`` is omitted, a default CPU machine type is used. Pass ``instance_type``
-        explicitly for GPUs or other shapes. The ``runtime`` parameter is reserved for future
-        runtime-to-machine mapping and does not change the default today.
-
-        Pass ``snapshot_id`` to restore the filesystem from a snapshot for a fast,
-        pre-warmed start, and/or ``persistent=True`` to make the sandbox resumable
-        via :meth:`stop` + :meth:`resume`.
-        """
-        return create_sandbox(
-            name=name,
-            instance_type=instance_type,
-            runtime=runtime,
-            spot=spot,
-            ports=ports,
-            organization_id=organization_id,
-            cluster_id=cluster_id,
-            cloudspace_id=cloudspace_id,
-            snapshot_id=snapshot_id,
-            persistent=persistent,
-            config=config,
-            sandbox_api=sandbox_api,
-        )
-
-    @classmethod
-    def get(
-        cls,
-        sandbox_id: str,
-        organization_id: str | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> SandboxInstance:
-        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-        sb: SandboxesServiceApi = api.sandboxes()
-        org_id = _resolve_org_id(organization_id, api=api)
-        if org_id:
-            v1 = sb.sandboxes_service_get_sandbox(sandbox_id, organization_id=org_id)
-        else:
-            v1 = sb.sandboxes_service_get_sandbox(sandbox_id)
-        return cls._from_v1(v1, sandbox_api=api)
-
-    @classmethod
-    def list(
-        cls,
-        organization_id: str | None = None,
-        page_token: str | None = None,
-        limit: int | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> ListSandboxesResult:
-        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-        sb: SandboxesServiceApi = api.sandboxes()
-        org_id = _resolve_org_id(organization_id, api=api)
-        kwargs: dict[str, Any] = {}
-        if org_id:
-            kwargs["organization_id"] = org_id
-        if page_token:
-            kwargs["page_token"] = page_token
-        if limit is not None:
-            kwargs["limit"] = limit
-        data = sb.sandboxes_service_list_sandboxes(**kwargs)
-        sandboxes = [cls._from_v1(s, sandbox_api=api) for s in (data.sandboxes or [])]
-        ts = data.total_size
-        try:
-            total = int(ts) if ts is not None else 0
-        except (TypeError, ValueError):
-            total = 0
-        return ListSandboxesResult(
-            sandboxes=sandboxes,
-            next_page_token=data.next_page_token or "",
-            previous_page_token=data.previous_page_token or "",
-            total_size=total,
-        )
 
     @classmethod
     def get_snapshot(

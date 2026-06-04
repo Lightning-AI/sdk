@@ -6,6 +6,9 @@ from lightning_sdk.api.sandbox_api import SandboxApi
 from lightning_sdk.sandbox.base import (
     ListSandboxesResult,
     SandboxInstance,
+    _configure_globals,
+    _get_sandbox,
+    _list_sandboxes,
     create_sandbox,
 )
 from lightning_sdk.sandbox.config import SandboxConfig
@@ -20,23 +23,25 @@ def _sandbox_create_impl(
     runtime: str | None = None,
     spot: bool = False,
     ports: list[int | str] | None = None,
-    organization_id: str | None = None,
     cluster_id: str | None = None,
     cloudspace_id: str | None = None,
+    snapshot_id: str | None = None,
+    persistent: bool | None = None,
 ) -> SandboxInstance:
     if sandbox_api is not None and config is not None:
         raise ValueError("Pass only one of 'config' and sandbox_api (internal)")
     api = sandbox_api if sandbox_api is not None else (config if config is not None else SandboxConfig.from_env()).api()
     return create_sandbox(
+        sandbox_api=api,
         name=name,
         instance_type=instance_type,
         runtime=runtime,
         spot=spot,
         ports=ports,
-        organization_id=organization_id,
         cluster_id=cluster_id,
         cloudspace_id=cloudspace_id,
-        sandbox_api=api,
+        snapshot_id=snapshot_id,
+        persistent=persistent,
     )
 
 
@@ -62,15 +67,15 @@ class _SandboxCreate:
 
 
 class Sandbox:
-    """Sandbox API client.
+    """Entry point for the Sandbox API.
 
-    Use :meth:`create` like ``Sandbox.create(...)`` (recommended, mirrors other SDKs) or
-    ``Sandbox(...).create(...)`` with that instance credentials.
+    Construct with :class:`~lightning_sdk.sandbox.config.SandboxConfig` (or rely on env vars),
+    then call :meth:`create`, :meth:`get`, or :meth:`list`. The returned
+    :class:`~lightning_sdk.sandbox.base.SandboxInstance` is a handle for commands, files,
+    and lifecycle on that sandbox.
 
-    :meth:`create` accepts ``config`` for API credentials (otherwise env defaults), plus ``name``, ``instance_type``,
-    ``runtime``, ``spot``, ``ports``, ``organization_id``, ``cluster_id``, and ``cloudspace_id``.
-
-    Use :meth:`get` and :meth:`list` to obtain :class:`~lightning_sdk.sandbox.base.SandboxInstance` values.
+    Class methods :meth:`create` and :meth:`configure` are also available without
+    constructing a client first (mirrors other Lightning SDKs).
     """
 
     create = _SandboxCreate()
@@ -96,31 +101,25 @@ class Sandbox:
         base_url: str | None = None,
         organization_id: str | None = None,
     ) -> None:
-        SandboxInstance.configure(
+        """Set process-wide defaults for ``Sandbox.create()`` when no ``config`` is passed."""
+        _configure_globals(
             config=config,
             api_key=api_key,
             base_url=base_url,
             organization_id=organization_id,
         )
 
-    def get(
-        self,
-        sandbox_id: str,
-        *,
-        organization_id: str | None = None,
-    ) -> SandboxInstance:
-        return SandboxInstance.get(sandbox_id, organization_id=organization_id, sandbox_api=self._api)
+    def get(self, sandbox_id: str) -> SandboxInstance:
+        return _get_sandbox(sandbox_id, sandbox_api=self._api)
 
     def list(
         self,
         *,
-        organization_id: str | None = None,
         page_token: str | None = None,
         limit: int | None = None,
     ) -> ListSandboxesResult:
-        return SandboxInstance.list(
-            organization_id=organization_id,
+        return _list_sandboxes(
+            sandbox_api=self._api,
             page_token=page_token,
             limit=limit,
-            sandbox_api=self._api,
         )

@@ -35,7 +35,7 @@ def test_resolve_sandbox_api_rejects_config_and_api_together():
 
 
 def test_create_sandbox_waits_until_running():
-    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
     with mock.patch.object(api, "sandboxes", return_value=mock_sb):
         pending = _v1(id="sb-1", name="n", status="pending")
@@ -52,7 +52,7 @@ def test_create_sandbox_waits_until_running():
 
 
 def test_create_sandbox_raises_on_terminal_status():
-    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
     with mock.patch.object(api, "sandboxes", return_value=mock_sb):
         err = _v1(id="sb-1", status="error")
@@ -232,6 +232,7 @@ def test_sandbox_instance_stop_swallows_404():
 
 def test_sandbox_instance_list_builds_result():
     mock_api = mock.MagicMock()
+    mock_api.config_get.return_value = "org-z"
     sb_svc = mock.MagicMock()
     mock_api.sandboxes.return_value = sb_svc
 
@@ -244,7 +245,9 @@ def test_sandbox_instance_list_builds_result():
         total_size="2",
     )
 
-    result = SandboxInstance.list(organization_id="org-z", page_token="pt", limit=10, sandbox_api=mock_api)
+    from lightning_sdk.sandbox.base import _list_sandboxes
+
+    result = _list_sandboxes(page_token="pt", limit=10, sandbox_api=mock_api)
 
     assert result.total_size == 2
     assert result.next_page_token == "npt"
@@ -252,6 +255,20 @@ def test_sandbox_instance_list_builds_result():
     assert len(result.sandboxes) == 2
     assert {x.sandbox_id for x in result.sandboxes} == {"a", "b"}
     sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with(organization_id="org-z", page_token="pt", limit=10)
+
+
+def test_list_sandboxes_omits_organization_id_when_not_configured():
+    mock_api = mock.MagicMock()
+    mock_api.config_get.return_value = None
+    sb_svc = mock.MagicMock()
+    mock_api.sandboxes.return_value = sb_svc
+    sb_svc.sandboxes_service_list_sandboxes.return_value = V1ListSandboxesResponse(sandboxes=[])
+
+    from lightning_sdk.sandbox.base import _list_sandboxes
+
+    _list_sandboxes(sandbox_api=mock_api)
+
+    sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with()
 
 
 def test_sandbox_instance_write_files_uses_write_file():
@@ -295,22 +312,21 @@ def test_sandbox_create_classmethod_forwards():
     assert kw["name"] == "from-class"
     assert kw["cloudspace_id"] == "space-1"
     received = kw["sandbox_api"]
-    expected = cfg.api()
-    assert received.config_get("api_key") == expected.config_get("api_key")
-    assert received.config_get("base_url") == expected.config_get("base_url")
+    assert received.config_get("api_key") == "k"
+    assert received.config_get("base_url") == "https://unit.test"
 
 
 def test_sandbox_entry_get_and_list_use_sdk_api():
     with (
-        mock.patch("lightning_sdk.sandbox.sandbox.SandboxInstance.get") as m_get,
-        mock.patch("lightning_sdk.sandbox.sandbox.SandboxInstance.list") as m_list,
+        mock.patch("lightning_sdk.sandbox.sandbox._get_sandbox") as m_get,
+        mock.patch("lightning_sdk.sandbox.sandbox._list_sandboxes") as m_list,
     ):
         sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
         sdk.get("sb-x")
         sdk.list(limit=3)
 
-    m_get.assert_called_once_with("sb-x", organization_id=None, sandbox_api=sdk.api)
-    m_list.assert_called_once_with(organization_id=None, page_token=None, limit=3, sandbox_api=sdk.api)
+    m_get.assert_called_once_with("sb-x", sandbox_api=sdk.api)
+    m_list.assert_called_once_with(page_token=None, limit=3, sandbox_api=sdk.api)
 
 
 def test_configure_updates_globals_and_resets_client():
@@ -319,9 +335,10 @@ def test_configure_updates_globals_and_resets_client():
     snapshot = dict(base._sandbox_config)
     try:
         with mock.patch.object(base, "_api") as mock_api:
-            base.configure(api_key="unit-config-key", base_url="https://cfg.unit")
+            base.configure(api_key="unit-config-key", base_url="https://cfg.unit", organization_id="org-uuid")
             assert base._sandbox_config.get("api_key") == "unit-config-key"
             assert base._sandbox_config.get("base_url") == "https://cfg.unit"
+            assert base._sandbox_config.get("organization_id") == "org-uuid"
             mock_api.reset.assert_called_once()
     finally:
         base._sandbox_config.clear()
