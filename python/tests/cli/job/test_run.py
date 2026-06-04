@@ -1,7 +1,10 @@
 from typing import Dict
+from unittest.mock import MagicMock, patch
 
 import pytest
+from click.testing import CliRunner
 
+from lightning_sdk.cli.job.run import run_job
 from lightning_sdk.cli.legacy.run import _resolve_envs, _resolve_path_mapping
 from tests.cli.help import assert_help_contains
 
@@ -77,3 +80,24 @@ def test_resolve_envs(input_env: str, expected: Dict[str, str]) -> None:
 def test_resolve_invalid_envs(input_env: str) -> None:
     with pytest.raises(ValueError, match="cannot be parsed as environment variable"):
         _resolve_envs(input_env)
+
+
+@pytest.mark.parametrize(
+    ("extra_args", "expected_entrypoint"),
+    [
+        (["--studio", "my-studio", "--command", "echo hello"], None),
+        (["--image", "alpine:latest", "--command", "echo hello"], None),
+        (["--image", "alpine:latest", "--command", "echo hello", "--entrypoint", "/bin/bash"], "/bin/bash"),
+    ],
+)
+def test_job_run_entrypoint_default(extra_args: list[str], expected_entrypoint: str | None) -> None:
+    runner = CliRunner()
+    args = ["--name", "test-job", "--teamspace", "my-ts", *extra_args]
+
+    with patch("lightning_sdk.cli.job.run.Teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.run.Job.run", return_value=MagicMock()
+    ) as mock_run:
+        result = runner.invoke(run_job, args)
+
+    assert result.exit_code == 0, result.output
+    assert mock_run.call_args.kwargs["entrypoint"] == expected_entrypoint

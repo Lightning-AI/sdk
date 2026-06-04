@@ -92,7 +92,7 @@ _MACHINE_VALUES = tuple(
 )
 @click.option(
     "--entrypoint",
-    default="sh -c",
+    default=None,
     show_default=True,
     help=(
         "The entrypoint of your docker container. "
