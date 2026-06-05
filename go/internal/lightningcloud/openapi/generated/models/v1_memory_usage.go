@@ -7,7 +7,10 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -16,6 +19,9 @@ import (
 //
 // swagger:model v1MemoryUsage
 type V1MemoryUsage struct {
+
+	// used_bytes - idle hugepage reservation
+	AppUsedBytes string `json:"appUsedBytes,omitempty"`
 
 	// MemAvailable — what's actually usable
 	AvailableBytes string `json:"availableBytes,omitempty"`
@@ -26,22 +32,51 @@ type V1MemoryUsage struct {
 	// cached bytes
 	CachedBytes string `json:"cachedBytes,omitempty"`
 
+	// --- Effective (non-hugepage) accounting ------------------------------
+	// MemTotal counts reserved hugepages as "used", which makes a host that has
+	// merely pre-reserved hugepages for VMs look ~88% utilized while idle.
+	// These express utilization against memory available to non-hugepage work.
+	//
+	// total_bytes - hugepages_reserved_bytes
+	EffectiveTotalBytes string `json:"effectiveTotalBytes,omitempty"`
+
 	// MemFree — unused (less useful than available)
 	FreeBytes string `json:"freeBytes,omitempty"`
+
+	// --- Authoritative hugepage data from sysfs ---------------------------
+	// Sourced from /sys/kernel/mm/hugepages/hugepages-<size>kB/ plus the
+	// per-NUMA breakdown under /sys/devices/system/node/node.../hugepages/.
+	HugepagePools []*V1HugepagePool `json:"hugepagePools"`
 
 	// hugepage ready
 	HugepageReady bool `json:"hugepageReady,omitempty"`
 
-	// hugepage size bytes
+	// active pool page size
 	HugepageSizeBytes string `json:"hugepageSizeBytes,omitempty"`
 
-	// hugepages free
+	// active pool
 	HugepagesFree string `json:"hugepagesFree,omitempty"`
 
-	// Hugepages — important for VM workloads.
+	// sum of all pools' in-use bytes
+	HugepagesInUseBytes string `json:"hugepagesInUseBytes,omitempty"`
+
+	// sum of all pools' reserved bytes
+	HugepagesReservedBytes string `json:"hugepagesReservedBytes,omitempty"`
+
+	// --- Legacy single-pool hugepage fields (back-compat) -----------------
+	// These mirror the dominant pool from hugepage_pools. They originate from
+	// /proc/meminfo's HugePages_* / Hugepagesize, which only ever describe the
+	// *default-size* pool — so on a host booted with default_hugepagesz=1G that
+	// has switched to per-NUMA 2MB pages for VM mode, meminfo reports
+	// HugePages_Total: 0 while hundreds of GiB are actually reserved. The agent
+	// now populates these from the authoritative sysfs pool instead. Prefer
+	// hugepage_pools for new consumers.
 	//
-	// count, not bytes
+	// count, not bytes (active pool)
 	HugepagesTotal string `json:"hugepagesTotal,omitempty"`
+
+	// /proc/meminfo Hugetlb, for cross-check
+	HugetlbTotalBytes string `json:"hugetlbTotalBytes,omitempty"`
 
 	// swap free bytes
 	SwapFreeBytes string `json:"swapFreeBytes,omitempty"`
@@ -58,11 +93,88 @@ type V1MemoryUsage struct {
 
 // Validate validates this v1 memory usage
 func (m *V1MemoryUsage) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateHugepagePools(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this v1 memory usage based on context it is used
+func (m *V1MemoryUsage) validateHugepagePools(formats strfmt.Registry) error {
+	if swag.IsZero(m.HugepagePools) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.HugepagePools); i++ {
+		if swag.IsZero(m.HugepagePools[i]) { // not required
+			continue
+		}
+
+		if m.HugepagePools[i] != nil {
+			if err := m.HugepagePools[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("hugepagePools" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("hugepagePools" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this v1 memory usage based on the context it is used
 func (m *V1MemoryUsage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateHugepagePools(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1MemoryUsage) contextValidateHugepagePools(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.HugepagePools); i++ {
+
+		if m.HugepagePools[i] != nil {
+
+			if swag.IsZero(m.HugepagePools[i]) { // not required
+				return nil
+			}
+
+			if err := m.HugepagePools[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("hugepagePools" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("hugepagePools" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

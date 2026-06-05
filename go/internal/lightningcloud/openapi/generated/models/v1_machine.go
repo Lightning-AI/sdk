@@ -58,6 +58,9 @@ type V1Machine struct {
 	// Agent API URL
 	ManagementAPIURL string `json:"managementApiUrl,omitempty"`
 
+	// mode
+	Mode string `json:"mode,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -100,6 +103,9 @@ type V1Machine struct {
 	// ready at
 	// Format: date-time
 	ReadyAt strfmt.DateTime `json:"readyAt,omitempty"`
+
+	// Whether the machine on which the server is running requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
 
 	// If higher level resource is set, this is the ID of the resource
 	ResourceID string `json:"resourceId,omitempty"`

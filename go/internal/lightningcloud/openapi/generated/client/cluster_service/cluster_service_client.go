@@ -152,6 +152,8 @@ type ClientService interface {
 
 	ClusterServiceListProjectClusters(params *ClusterServiceListProjectClustersParams, opts ...ClientOption) (*ClusterServiceListProjectClustersOK, error)
 
+	ClusterServiceMintSandboxLogsToken(params *ClusterServiceMintSandboxLogsTokenParams, opts ...ClientOption) (*ClusterServiceMintSandboxLogsTokenOK, error)
+
 	ClusterServiceProvisionMachine(params *ClusterServiceProvisionMachineParams, opts ...ClientOption) (*ClusterServiceProvisionMachineOK, error)
 
 	ClusterServicePurchaseCapacityBlock(params *ClusterServicePurchaseCapacityBlockParams, opts ...ClientOption) (*ClusterServicePurchaseCapacityBlockOK, error)
@@ -161,6 +163,8 @@ type ClientService interface {
 	ClusterServiceReportMachineSystemMetrics(params *ClusterServiceReportMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceReportMachineSystemMetricsOK, error)
 
 	ClusterServiceReportSandboxResourceMetrics(params *ClusterServiceReportSandboxResourceMetricsParams, opts ...ClientOption) (*ClusterServiceReportSandboxResourceMetricsOK, error)
+
+	ClusterServiceReportSandboxTermination(params *ClusterServiceReportSandboxTerminationParams, opts ...ClientOption) (*ClusterServiceReportSandboxTerminationOK, error)
 
 	ClusterServiceRequestClusterAccess(params *ClusterServiceRequestClusterAccessParams, opts ...ClientOption) (*ClusterServiceRequestClusterAccessOK, error)
 
@@ -2246,6 +2250,48 @@ func (a *Client) ClusterServiceListProjectClusters(params *ClusterServiceListPro
 }
 
 /*
+ClusterServiceMintSandboxLogsToken mints a short lived g c s access token scoped to the sandbox logs bucket so the baremetal agent can stream sandbox logs without holding a long lived service account key the agent re calls this to refresh before expiry
+*/
+func (a *Client) ClusterServiceMintSandboxLogsToken(params *ClusterServiceMintSandboxLogsTokenParams, opts ...ClientOption) (*ClusterServiceMintSandboxLogsTokenOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceMintSandboxLogsTokenParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_MintSandboxLogsToken",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/{machineId}/sandbox-logs-token",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceMintSandboxLogsTokenReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceMintSandboxLogsTokenOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceMintSandboxLogsTokenDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceProvisionMachine cluster service provision machine API
 */
 func (a *Client) ClusterServiceProvisionMachine(params *ClusterServiceProvisionMachineParams, opts ...ClientOption) (*ClusterServiceProvisionMachineOK, error) {
@@ -2451,6 +2497,48 @@ func (a *Client) ClusterServiceReportSandboxResourceMetrics(params *ClusterServi
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceReportSandboxResourceMetricsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceReportSandboxTermination reports why a sandbox was terminated timeout user delete agent error o o m eviction the control plane records it in resources sandbox terminations so the archive surface can show the termination reason exit code alongside the soft deleted server row
+*/
+func (a *Client) ClusterServiceReportSandboxTermination(params *ClusterServiceReportSandboxTerminationParams, opts ...ClientOption) (*ClusterServiceReportSandboxTerminationOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceReportSandboxTerminationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_ReportSandboxTermination",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/{machineId}/sandbox-termination",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceReportSandboxTerminationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceReportSandboxTerminationOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceReportSandboxTerminationDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

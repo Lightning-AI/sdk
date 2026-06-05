@@ -754,6 +754,103 @@ class SandboxesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def sandboxes_service_get_archived_sandbox(self, id: 'str', **kwargs) -> 'V1ArchivedSandbox':  # noqa: E501
+        """GetArchivedSandbox returns full post-mortem detail for one archived sandbox (the table row plus the termination payload). Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_archived_sandbox(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str organization_id:
+        :return: V1ArchivedSandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_get_archived_sandbox_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_get_archived_sandbox_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_get_archived_sandbox_with_http_info(self, id: 'str', **kwargs) -> 'V1ArchivedSandbox':  # noqa: E501
+        """GetArchivedSandbox returns full post-mortem detail for one archived sandbox (the table row plus the termination payload). Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_archived_sandbox_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str organization_id:
+        :return: V1ArchivedSandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'organization_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_get_archived_sandbox" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `sandboxes_service_get_archived_sandbox`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/archived/{id}', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ArchivedSandbox',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def sandboxes_service_get_sandbox(self, id: 'str', **kwargs) -> 'V1Sandbox':  # noqa: E501
         """sandboxes_service_get_sandbox  # noqa: E501
 
@@ -1155,6 +1252,119 @@ class SandboxesServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetSandboxFileResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def sandboxes_service_get_sandbox_logs(self, id: 'str', **kwargs) -> 'V1GetSandboxLogsResponse':  # noqa: E501
+        """GetSandboxLogs returns log lines for a sandbox (live or archived) from object storage via the controlplane logs Reader. Paginated; for live tailing the UI polls with the returned next_page_token. Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_sandbox_logs(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: Sandbox id (live or archived). (required)
+        :param str organization_id:
+        :param datetime start:
+        :param datetime end:
+        :param str page_size:
+        :param str page_token:
+        :return: V1GetSandboxLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_get_sandbox_logs_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_get_sandbox_logs_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_get_sandbox_logs_with_http_info(self, id: 'str', **kwargs) -> 'V1GetSandboxLogsResponse':  # noqa: E501
+        """GetSandboxLogs returns log lines for a sandbox (live or archived) from object storage via the controlplane logs Reader. Paginated; for live tailing the UI polls with the returned next_page_token. Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_sandbox_logs_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: Sandbox id (live or archived). (required)
+        :param str organization_id:
+        :param datetime start:
+        :param datetime end:
+        :param str page_size:
+        :param str page_token:
+        :return: V1GetSandboxLogsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'organization_id', 'start', 'end', 'page_size', 'page_token']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_get_sandbox_logs" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `sandboxes_service_get_sandbox_logs`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+        if 'start' in params:
+            query_params.append(('start', params['start']))  # noqa: E501
+        if 'end' in params:
+            query_params.append(('end', params['end']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/{id}/logs', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetSandboxLogsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1567,6 +1777,103 @@ class SandboxesServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1KillSandboxCommandResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def sandboxes_service_list_archived_sandboxes(self, **kwargs) -> 'V1ListArchivedSandboxesResponse':  # noqa: E501
+        """ListArchivedSandboxes lists terminated (soft-deleted) sandboxes for the archive surface. Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_list_archived_sandboxes(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str organization_id:
+        :param str project_id:
+        :param str limit:
+        :return: V1ListArchivedSandboxesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_list_archived_sandboxes_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_list_archived_sandboxes_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_list_archived_sandboxes_with_http_info(self, **kwargs) -> 'V1ListArchivedSandboxesResponse':  # noqa: E501
+        """ListArchivedSandboxes lists terminated (soft-deleted) sandboxes for the archive surface. Gated on Feature.sandboxLogs.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_list_archived_sandboxes_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str organization_id:
+        :param str project_id:
+        :param str limit:
+        :return: V1ListArchivedSandboxesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['organization_id', 'project_id', 'limit']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_list_archived_sandboxes" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/archived', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListArchivedSandboxesResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

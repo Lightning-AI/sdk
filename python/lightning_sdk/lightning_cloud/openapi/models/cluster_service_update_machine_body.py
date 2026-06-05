@@ -41,32 +41,46 @@ class ClusterServiceUpdateMachineBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'machine_mode': 'str',
         'name': 'str',
         'ordering_index': 'int',
         'org_id': 'str',
         'purpose': 'str',
+        'reboot': 'bool',
+        'requires_maintenance': 'bool',
+        'reset_hugepages': 'bool',
         'schedulable_affinity': 'V1SchedulableAffinity',
         'unschedulable': 'bool'
     }
 
     attribute_map = {
+        'machine_mode': 'machineMode',
         'name': 'name',
         'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
         'purpose': 'purpose',
+        'reboot': 'reboot',
+        'requires_maintenance': 'requiresMaintenance',
+        'reset_hugepages': 'resetHugepages',
         'schedulable_affinity': 'schedulableAffinity',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
+        self._machine_mode = None
         self._name = None
         self._ordering_index = None
         self._org_id = None
         self._purpose = None
+        self._reboot = None
+        self._requires_maintenance = None
+        self._reset_hugepages = None
         self._schedulable_affinity = None
         self._unschedulable = None
         self.discriminator = None
+        if machine_mode is not None:
+            self.machine_mode = machine_mode
         if name is not None:
             self.name = name
         if ordering_index is not None:
@@ -75,10 +89,37 @@ class ClusterServiceUpdateMachineBody(object):
             self.org_id = org_id
         if purpose is not None:
             self.purpose = purpose
+        if reboot is not None:
+            self.reboot = reboot
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
+        if reset_hugepages is not None:
+            self.reset_hugepages = reset_hugepages
         if schedulable_affinity is not None:
             self.schedulable_affinity = schedulable_affinity
         if unschedulable is not None:
             self.unschedulable = unschedulable
+
+    @property
+    def machine_mode(self) -> 'str':
+        """Gets the machine_mode of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The machine_mode of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_mode
+
+    @machine_mode.setter
+    def machine_mode(self, machine_mode: 'str'):
+        """Sets the machine_mode of this ClusterServiceUpdateMachineBody.
+
+
+        :param machine_mode: The machine_mode of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_mode = machine_mode
 
     @property
     def name(self) -> 'str':
@@ -169,6 +210,69 @@ class ClusterServiceUpdateMachineBody(object):
         """
 
         self._purpose = purpose
+
+    @property
+    def reboot(self) -> 'bool':
+        """Gets the reboot of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The reboot of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reboot
+
+    @reboot.setter
+    def reboot(self, reboot: 'bool'):
+        """Sets the reboot of this ClusterServiceUpdateMachineBody.
+
+
+        :param reboot: The reboot of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._reboot = reboot
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The requires_maintenance of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this ClusterServiceUpdateMachineBody.
+
+
+        :param requires_maintenance: The requires_maintenance of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
+
+    @property
+    def reset_hugepages(self) -> 'bool':
+        """Gets the reset_hugepages of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The reset_hugepages of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._reset_hugepages
+
+    @reset_hugepages.setter
+    def reset_hugepages(self, reset_hugepages: 'bool'):
+        """Sets the reset_hugepages of this ClusterServiceUpdateMachineBody.
+
+
+        :param reset_hugepages: The reset_hugepages of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._reset_hugepages = reset_hugepages
 
     @property
     def schedulable_affinity(self) -> 'V1SchedulableAffinity':

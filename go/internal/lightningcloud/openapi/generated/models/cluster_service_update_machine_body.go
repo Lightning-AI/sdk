@@ -19,6 +19,9 @@ import (
 // swagger:model ClusterServiceUpdateMachineBody
 type ClusterServiceUpdateMachineBody struct {
 
+	// Machine mode configuration to allow switching between VM and baremetal modes
+	MachineMode string `json:"machineMode,omitempty"`
+
 	// Updatable fields. Each is wrapped so callers can leave a field unset
 	// and have the server preserve the existing value; sending the wrapper
 	// with an empty inner value clears that field.
@@ -38,6 +41,15 @@ type ClusterServiceUpdateMachineBody struct {
 	// values returned by storage.KnownMachinePurposes() — today: "" or
 	// "sandbox". Server returns InvalidArgument otherwise.
 	Purpose string `json:"purpose,omitempty"`
+
+	// reboot
+	Reboot bool `json:"reboot,omitempty"`
+
+	// Whether the machine on which the server is running requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
+	// reset hugepages
+	ResetHugepages bool `json:"resetHugepages,omitempty"`
 
 	// schedulable affinity
 	SchedulableAffinity *V1SchedulableAffinity `json:"schedulableAffinity,omitempty"`

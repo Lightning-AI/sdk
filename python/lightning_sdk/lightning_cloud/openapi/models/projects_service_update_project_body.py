@@ -55,6 +55,7 @@ class ProjectsServiceUpdateProjectBody(object):
         'auto_replenish_threshold': 'float',
         'auto_switch_machine': 'bool',
         'budgeting_enabled': 'bool',
+        'custom_tags': 'list[V1ProjectResourceTag]',
         'default_machine_type': 'str',
         'description': 'str',
         'display_name': 'str',
@@ -86,6 +87,7 @@ class ProjectsServiceUpdateProjectBody(object):
         'auto_replenish_threshold': 'autoReplenishThreshold',
         'auto_switch_machine': 'autoSwitchMachine',
         'budgeting_enabled': 'budgetingEnabled',
+        'custom_tags': 'customTags',
         'default_machine_type': 'defaultMachineType',
         'description': 'description',
         'display_name': 'displayName',
@@ -102,7 +104,7 @@ class ProjectsServiceUpdateProjectBody(object):
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle'
     }
 
-    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
+    def __init__(self, allow_aws_saas: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_dgx_saas: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_gcp_saas: 'bool' =None, allow_lambda_saas: 'bool' =None, allow_lightning_saas: 'bool' =None, allow_nebius_saas: 'bool' =None, allow_voltage_park_saas: 'bool' =None, allow_vultr_saas: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, budgeting_enabled: 'bool' =None, custom_tags: 'list[V1ProjectResourceTag]' =None, default_machine_type: 'str' =None, description: 'str' =None, display_name: 'str' =None, layout_config: 'list[V1ProjectTab]' =None, name: 'str' =None, owner_id: 'str' =None, owner_type: 'V1OwnerType' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, quotas: 'V1Quotas' =None, same_compute_on_resume: 'bool' =None, start_studio_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None):  # noqa: E501
         """ProjectsServiceUpdateProjectBody - a model defined in Swagger"""  # noqa: E501
         self._allow_aws_saas = None
         self._allow_credits_auto_replenish = None
@@ -118,6 +120,7 @@ class ProjectsServiceUpdateProjectBody(object):
         self._auto_replenish_threshold = None
         self._auto_switch_machine = None
         self._budgeting_enabled = None
+        self._custom_tags = None
         self._default_machine_type = None
         self._description = None
         self._display_name = None
@@ -161,6 +164,8 @@ class ProjectsServiceUpdateProjectBody(object):
             self.auto_switch_machine = auto_switch_machine
         if budgeting_enabled is not None:
             self.budgeting_enabled = budgeting_enabled
+        if custom_tags is not None:
+            self.custom_tags = custom_tags
         if default_machine_type is not None:
             self.default_machine_type = default_machine_type
         if description is not None:
@@ -483,6 +488,29 @@ class ProjectsServiceUpdateProjectBody(object):
         """
 
         self._budgeting_enabled = budgeting_enabled
+
+    @property
+    def custom_tags(self) -> 'list[V1ProjectResourceTag]':
+        """Gets the custom_tags of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+
+        User-defined tags applied to all of the teamspace's compute resources.  # noqa: E501
+
+        :return: The custom_tags of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :rtype: list[V1ProjectResourceTag]
+        """
+        return self._custom_tags
+
+    @custom_tags.setter
+    def custom_tags(self, custom_tags: 'list[V1ProjectResourceTag]'):
+        """Sets the custom_tags of this ProjectsServiceUpdateProjectBody.
+
+        User-defined tags applied to all of the teamspace's compute resources.  # noqa: E501
+
+        :param custom_tags: The custom_tags of this ProjectsServiceUpdateProjectBody.  # noqa: E501
+        :type: list[V1ProjectResourceTag]
+        """
+
+        self._custom_tags = custom_tags
 
     @property
     def default_machine_type(self) -> 'str':

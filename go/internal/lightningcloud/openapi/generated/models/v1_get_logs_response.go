@@ -7,7 +7,10 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,17 +20,100 @@ import (
 // swagger:model v1GetLogsResponse
 type V1GetLogsResponse struct {
 
+	// entries
+	Entries []*V1JobLogEntry `json:"entries"`
+
 	// follow Url
 	FollowURL string `json:"followUrl,omitempty"`
+
+	// next page token
+	NextPageToken string `json:"nextPageToken,omitempty"`
 }
 
 // Validate validates this v1 get logs response
 func (m *V1GetLogsResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEntries(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this v1 get logs response based on context it is used
+func (m *V1GetLogsResponse) validateEntries(formats strfmt.Registry) error {
+	if swag.IsZero(m.Entries) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Entries); i++ {
+		if swag.IsZero(m.Entries[i]) { // not required
+			continue
+		}
+
+		if m.Entries[i] != nil {
+			if err := m.Entries[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("entries" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("entries" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this v1 get logs response based on the context it is used
 func (m *V1GetLogsResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEntries(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1GetLogsResponse) contextValidateEntries(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Entries); i++ {
+
+		if m.Entries[i] != nil {
+
+			if swag.IsZero(m.Entries[i]) { // not required
+				return nil
+			}
+
+			if err := m.Entries[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("entries" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("entries" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

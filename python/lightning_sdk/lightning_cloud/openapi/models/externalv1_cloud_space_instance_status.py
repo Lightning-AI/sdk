@@ -62,6 +62,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'price': 'float',
         'private_ip_address': 'str',
         'public_ip_address': 'str',
+        'requires_maintenance': 'bool',
+        'requires_maintenance_started_at': 'datetime',
         'ssh_host': 'str',
         'ssh_port': 'int',
         'ssh_username': 'str',
@@ -100,6 +102,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'price': 'price',
         'private_ip_address': 'privateIpAddress',
         'public_ip_address': 'publicIpAddress',
+        'requires_maintenance': 'requiresMaintenance',
+        'requires_maintenance_started_at': 'requiresMaintenanceStartedAt',
         'ssh_host': 'sshHost',
         'ssh_port': 'sshPort',
         'ssh_username': 'sshUsername',
@@ -116,7 +120,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, capacity_reservation_id: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, capacity_reservation_id: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._alerts = None
         self._app_url = None
@@ -139,6 +143,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._price = None
         self._private_ip_address = None
         self._public_ip_address = None
+        self._requires_maintenance = None
+        self._requires_maintenance_started_at = None
         self._ssh_host = None
         self._ssh_port = None
         self._ssh_username = None
@@ -196,6 +202,10 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.private_ip_address = private_ip_address
         if public_ip_address is not None:
             self.public_ip_address = public_ip_address
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
+        if requires_maintenance_started_at is not None:
+            self.requires_maintenance_started_at = requires_maintenance_started_at
         if ssh_host is not None:
             self.ssh_host = ssh_host
         if ssh_port is not None:
@@ -665,6 +675,50 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._public_ip_address = public_ip_address
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param requires_maintenance: The requires_maintenance of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
+
+    @property
+    def requires_maintenance_started_at(self) -> 'datetime':
+        """Gets the requires_maintenance_started_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+        Timestamp when the machine was first marked as requiring maintenance.  # noqa: E501
+
+        :return: The requires_maintenance_started_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._requires_maintenance_started_at
+
+    @requires_maintenance_started_at.setter
+    def requires_maintenance_started_at(self, requires_maintenance_started_at: 'datetime'):
+        """Sets the requires_maintenance_started_at of this Externalv1CloudSpaceInstanceStatus.
+
+        Timestamp when the machine was first marked as requiring maintenance.  # noqa: E501
+
+        :param requires_maintenance_started_at: The requires_maintenance_started_at of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: datetime
+        """
+
+        self._requires_maintenance_started_at = requires_maintenance_started_at
 
     @property
     def ssh_host(self) -> 'str':

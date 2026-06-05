@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewJobsServiceGetLogsParams creates a new JobsServiceGetLogsParams object,
@@ -64,11 +65,19 @@ type JobsServiceGetLogsParams struct {
 	// DeploymentID.
 	DeploymentID *string
 
-	// JobID.
-	JobID *string
+	// JobIds.
+	JobIds []string
 
 	// MmtID.
 	MmtID *string
+
+	// PageSize.
+	//
+	// Format: uint64
+	PageSize *string
+
+	// PageToken.
+	PageToken *string
 
 	// ProjectID.
 	ProjectID string
@@ -146,15 +155,15 @@ func (o *JobsServiceGetLogsParams) SetDeploymentID(deploymentID *string) {
 	o.DeploymentID = deploymentID
 }
 
-// WithJobID adds the jobID to the jobs service get logs params
-func (o *JobsServiceGetLogsParams) WithJobID(jobID *string) *JobsServiceGetLogsParams {
-	o.SetJobID(jobID)
+// WithJobIds adds the jobIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithJobIds(jobIds []string) *JobsServiceGetLogsParams {
+	o.SetJobIds(jobIds)
 	return o
 }
 
-// SetJobID adds the jobId to the jobs service get logs params
-func (o *JobsServiceGetLogsParams) SetJobID(jobID *string) {
-	o.JobID = jobID
+// SetJobIds adds the jobIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetJobIds(jobIds []string) {
+	o.JobIds = jobIds
 }
 
 // WithMmtID adds the mmtID to the jobs service get logs params
@@ -166,6 +175,28 @@ func (o *JobsServiceGetLogsParams) WithMmtID(mmtID *string) *JobsServiceGetLogsP
 // SetMmtID adds the mmtId to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) SetMmtID(mmtID *string) {
 	o.MmtID = mmtID
+}
+
+// WithPageSize adds the pageSize to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithPageSize(pageSize *string) *JobsServiceGetLogsParams {
+	o.SetPageSize(pageSize)
+	return o
+}
+
+// SetPageSize adds the pageSize to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetPageSize(pageSize *string) {
+	o.PageSize = pageSize
+}
+
+// WithPageToken adds the pageToken to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithPageToken(pageToken *string) *JobsServiceGetLogsParams {
+	o.SetPageToken(pageToken)
+	return o
+}
+
+// SetPageToken adds the pageToken to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetPageToken(pageToken *string) {
+	o.PageToken = pageToken
 }
 
 // WithProjectID adds the projectID to the jobs service get logs params
@@ -237,20 +268,14 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
-	if o.JobID != nil {
+	if o.JobIds != nil {
 
-		// query param jobId
-		var qrJobID string
+		// binding items for jobIds
+		joinedJobIds := o.bindParamJobIds(reg)
 
-		if o.JobID != nil {
-			qrJobID = *o.JobID
-		}
-		qJobID := qrJobID
-		if qJobID != "" {
-
-			if err := r.SetQueryParam("jobId", qJobID); err != nil {
-				return err
-			}
+		// query array param jobIds
+		if err := r.SetQueryParam("jobIds", joinedJobIds...); err != nil {
+			return err
 		}
 	}
 
@@ -266,6 +291,40 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qMmtID != "" {
 
 			if err := r.SetQueryParam("mmtId", qMmtID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PageSize != nil {
+
+		// query param pageSize
+		var qrPageSize string
+
+		if o.PageSize != nil {
+			qrPageSize = *o.PageSize
+		}
+		qPageSize := qrPageSize
+		if qPageSize != "" {
+
+			if err := r.SetQueryParam("pageSize", qPageSize); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PageToken != nil {
+
+		// query param pageToken
+		var qrPageToken string
+
+		if o.PageToken != nil {
+			qrPageToken = *o.PageToken
+		}
+		qPageToken := qrPageToken
+		if qPageToken != "" {
+
+			if err := r.SetQueryParam("pageToken", qPageToken); err != nil {
 				return err
 			}
 		}
@@ -331,4 +390,21 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamJobsServiceGetLogs binds the parameter jobIds
+func (o *JobsServiceGetLogsParams) bindParamJobIds(formats strfmt.Registry) []string {
+	jobIdsIR := o.JobIds
+
+	var jobIdsIC []string
+	for _, jobIdsIIR := range jobIdsIR { // explode []string
+
+		jobIdsIIV := jobIdsIIR // string as string
+		jobIdsIC = append(jobIdsIC, jobIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	jobIdsIS := swag.JoinByFormat(jobIdsIC, "multi")
+
+	return jobIdsIS
 }

@@ -54,6 +54,9 @@ type V1ServerStatus struct {
 	// Format: date-time
 	LogsUploadedAt strfmt.DateTime `json:"logsUploadedAt,omitempty"`
 
+	// Whether the machine on which the server is running requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
 	// retried at
 	// Format: date-time
 	RetriedAt strfmt.DateTime `json:"retriedAt,omitempty"`

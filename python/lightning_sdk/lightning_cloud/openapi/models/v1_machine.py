@@ -53,6 +53,7 @@ class V1Machine(object):
         'id': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
+        'mode': 'str',
         'name': 'str',
         'ordering_index': 'int',
         'org_id': 'str',
@@ -65,6 +66,7 @@ class V1Machine(object):
         'provisioning_method': 'str',
         'purpose': 'str',
         'ready_at': 'datetime',
+        'requires_maintenance': 'bool',
         'resource_id': 'str',
         'resource_type': 'str',
         'resources': 'V1Resources',
@@ -89,6 +91,7 @@ class V1Machine(object):
         'id': 'id',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
+        'mode': 'mode',
         'name': 'name',
         'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
@@ -101,6 +104,7 @@ class V1Machine(object):
         'provisioning_method': 'provisioningMethod',
         'purpose': 'purpose',
         'ready_at': 'readyAt',
+        'requires_maintenance': 'requiresMaintenance',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'resources': 'resources',
@@ -112,7 +116,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -126,6 +130,7 @@ class V1Machine(object):
         self._id = None
         self._instance_type = None
         self._management_api_url = None
+        self._mode = None
         self._name = None
         self._ordering_index = None
         self._org_id = None
@@ -138,6 +143,7 @@ class V1Machine(object):
         self._provisioning_method = None
         self._purpose = None
         self._ready_at = None
+        self._requires_maintenance = None
         self._resource_id = None
         self._resource_type = None
         self._resources = None
@@ -172,6 +178,8 @@ class V1Machine(object):
             self.instance_type = instance_type
         if management_api_url is not None:
             self.management_api_url = management_api_url
+        if mode is not None:
+            self.mode = mode
         if name is not None:
             self.name = name
         if ordering_index is not None:
@@ -196,6 +204,8 @@ class V1Machine(object):
             self.purpose = purpose
         if ready_at is not None:
             self.ready_at = ready_at
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -468,6 +478,27 @@ class V1Machine(object):
         self._management_api_url = management_api_url
 
     @property
+    def mode(self) -> 'str':
+        """Gets the mode of this V1Machine.  # noqa: E501
+
+
+        :return: The mode of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode: 'str'):
+        """Sets the mode of this V1Machine.
+
+
+        :param mode: The mode of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._mode = mode
+
+    @property
     def name(self) -> 'str':
         """Gets the name of this V1Machine.  # noqa: E501
 
@@ -720,6 +751,27 @@ class V1Machine(object):
         """
 
         self._ready_at = ready_at
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1Machine.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1Machine.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1Machine.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1Machine.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
 
     @property
     def resource_id(self) -> 'str':

@@ -23,6 +23,9 @@ type ProjectsServiceCreateProjectMembershipBody struct {
 	// email
 	Email string `json:"email,omitempty"`
 
+	// inviter Id
+	InviterID string `json:"inviterId,omitempty"`
+
 	// role ids
 	RoleIds []string `json:"roleIds"`
 

@@ -80,6 +80,9 @@ type V1MachineSystemInfo struct {
 	// load average
 	LoadAverage *V1LoadAverage `json:"loadAverage,omitempty"`
 
+	// machine mode
+	MachineMode string `json:"machineMode,omitempty"`
+
 	// Live utilization (refreshed every sweep).
 	Memory *V1MemoryUsage `json:"memory,omitempty"`
 

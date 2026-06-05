@@ -30,6 +30,9 @@ type V1ServerSpec struct {
 	// affinity identifier
 	AffinityIdentifier string `json:"affinityIdentifier,omitempty"`
 
+	// The version of the agent that created the server
+	AgentVersion string `json:"agentVersion,omitempty"`
+
 	// apparent provider
 	ApparentProvider string `json:"apparentProvider,omitempty"`
 

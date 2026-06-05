@@ -51,6 +51,7 @@ class V1ServerStatus(object):
         'interruption_notice_received_at': 'datetime',
         'last_seen_at': 'datetime',
         'logs_uploaded_at': 'datetime',
+        'requires_maintenance': 'bool',
         'retried_at': 'datetime',
         'retries': 'str',
         'started_at': 'datetime',
@@ -75,6 +76,7 @@ class V1ServerStatus(object):
         'interruption_notice_received_at': 'interruptionNoticeReceivedAt',
         'last_seen_at': 'lastSeenAt',
         'logs_uploaded_at': 'logsUploadedAt',
+        'requires_maintenance': 'requiresMaintenance',
         'retried_at': 'retriedAt',
         'retries': 'retries',
         'started_at': 'startedAt',
@@ -88,7 +90,7 @@ class V1ServerStatus(object):
         'workload_taken_at': 'workloadTakenAt'
     }
 
-    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, retried_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, requires_maintenance: 'bool' =None, retried_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
         """V1ServerStatus - a model defined in Swagger"""  # noqa: E501
         self._alert = None
         self._allocate_duration_seconds = None
@@ -100,6 +102,7 @@ class V1ServerStatus(object):
         self._interruption_notice_received_at = None
         self._last_seen_at = None
         self._logs_uploaded_at = None
+        self._requires_maintenance = None
         self._retried_at = None
         self._retries = None
         self._started_at = None
@@ -132,6 +135,8 @@ class V1ServerStatus(object):
             self.last_seen_at = last_seen_at
         if logs_uploaded_at is not None:
             self.logs_uploaded_at = logs_uploaded_at
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
         if retried_at is not None:
             self.retried_at = retried_at
         if retries is not None:
@@ -366,6 +371,27 @@ class V1ServerStatus(object):
         """
 
         self._logs_uploaded_at = logs_uploaded_at
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1ServerStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1ServerStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1ServerStatus.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1ServerStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
 
     @property
     def retried_at(self) -> 'datetime':

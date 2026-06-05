@@ -41,14 +41,20 @@ class V1MemoryUsage(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'app_used_bytes': 'str',
         'available_bytes': 'str',
         'buffers_bytes': 'str',
         'cached_bytes': 'str',
+        'effective_total_bytes': 'str',
         'free_bytes': 'str',
+        'hugepage_pools': 'list[V1HugepagePool]',
         'hugepage_ready': 'bool',
         'hugepage_size_bytes': 'str',
         'hugepages_free': 'str',
+        'hugepages_in_use_bytes': 'str',
+        'hugepages_reserved_bytes': 'str',
         'hugepages_total': 'str',
+        'hugetlb_total_bytes': 'str',
         'swap_free_bytes': 'str',
         'swap_total_bytes': 'str',
         'total_bytes': 'str',
@@ -56,51 +62,75 @@ class V1MemoryUsage(object):
     }
 
     attribute_map = {
+        'app_used_bytes': 'appUsedBytes',
         'available_bytes': 'availableBytes',
         'buffers_bytes': 'buffersBytes',
         'cached_bytes': 'cachedBytes',
+        'effective_total_bytes': 'effectiveTotalBytes',
         'free_bytes': 'freeBytes',
+        'hugepage_pools': 'hugepagePools',
         'hugepage_ready': 'hugepageReady',
         'hugepage_size_bytes': 'hugepageSizeBytes',
         'hugepages_free': 'hugepagesFree',
+        'hugepages_in_use_bytes': 'hugepagesInUseBytes',
+        'hugepages_reserved_bytes': 'hugepagesReservedBytes',
         'hugepages_total': 'hugepagesTotal',
+        'hugetlb_total_bytes': 'hugetlbTotalBytes',
         'swap_free_bytes': 'swapFreeBytes',
         'swap_total_bytes': 'swapTotalBytes',
         'total_bytes': 'totalBytes',
         'used_bytes': 'usedBytes'
     }
 
-    def __init__(self, available_bytes: 'str' =None, buffers_bytes: 'str' =None, cached_bytes: 'str' =None, free_bytes: 'str' =None, hugepage_ready: 'bool' =None, hugepage_size_bytes: 'str' =None, hugepages_free: 'str' =None, hugepages_total: 'str' =None, swap_free_bytes: 'str' =None, swap_total_bytes: 'str' =None, total_bytes: 'str' =None, used_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, app_used_bytes: 'str' =None, available_bytes: 'str' =None, buffers_bytes: 'str' =None, cached_bytes: 'str' =None, effective_total_bytes: 'str' =None, free_bytes: 'str' =None, hugepage_pools: 'list[V1HugepagePool]' =None, hugepage_ready: 'bool' =None, hugepage_size_bytes: 'str' =None, hugepages_free: 'str' =None, hugepages_in_use_bytes: 'str' =None, hugepages_reserved_bytes: 'str' =None, hugepages_total: 'str' =None, hugetlb_total_bytes: 'str' =None, swap_free_bytes: 'str' =None, swap_total_bytes: 'str' =None, total_bytes: 'str' =None, used_bytes: 'str' =None):  # noqa: E501
         """V1MemoryUsage - a model defined in Swagger"""  # noqa: E501
+        self._app_used_bytes = None
         self._available_bytes = None
         self._buffers_bytes = None
         self._cached_bytes = None
+        self._effective_total_bytes = None
         self._free_bytes = None
+        self._hugepage_pools = None
         self._hugepage_ready = None
         self._hugepage_size_bytes = None
         self._hugepages_free = None
+        self._hugepages_in_use_bytes = None
+        self._hugepages_reserved_bytes = None
         self._hugepages_total = None
+        self._hugetlb_total_bytes = None
         self._swap_free_bytes = None
         self._swap_total_bytes = None
         self._total_bytes = None
         self._used_bytes = None
         self.discriminator = None
+        if app_used_bytes is not None:
+            self.app_used_bytes = app_used_bytes
         if available_bytes is not None:
             self.available_bytes = available_bytes
         if buffers_bytes is not None:
             self.buffers_bytes = buffers_bytes
         if cached_bytes is not None:
             self.cached_bytes = cached_bytes
+        if effective_total_bytes is not None:
+            self.effective_total_bytes = effective_total_bytes
         if free_bytes is not None:
             self.free_bytes = free_bytes
+        if hugepage_pools is not None:
+            self.hugepage_pools = hugepage_pools
         if hugepage_ready is not None:
             self.hugepage_ready = hugepage_ready
         if hugepage_size_bytes is not None:
             self.hugepage_size_bytes = hugepage_size_bytes
         if hugepages_free is not None:
             self.hugepages_free = hugepages_free
+        if hugepages_in_use_bytes is not None:
+            self.hugepages_in_use_bytes = hugepages_in_use_bytes
+        if hugepages_reserved_bytes is not None:
+            self.hugepages_reserved_bytes = hugepages_reserved_bytes
         if hugepages_total is not None:
             self.hugepages_total = hugepages_total
+        if hugetlb_total_bytes is not None:
+            self.hugetlb_total_bytes = hugetlb_total_bytes
         if swap_free_bytes is not None:
             self.swap_free_bytes = swap_free_bytes
         if swap_total_bytes is not None:
@@ -109,6 +139,27 @@ class V1MemoryUsage(object):
             self.total_bytes = total_bytes
         if used_bytes is not None:
             self.used_bytes = used_bytes
+
+    @property
+    def app_used_bytes(self) -> 'str':
+        """Gets the app_used_bytes of this V1MemoryUsage.  # noqa: E501
+
+
+        :return: The app_used_bytes of this V1MemoryUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._app_used_bytes
+
+    @app_used_bytes.setter
+    def app_used_bytes(self, app_used_bytes: 'str'):
+        """Sets the app_used_bytes of this V1MemoryUsage.
+
+
+        :param app_used_bytes: The app_used_bytes of this V1MemoryUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._app_used_bytes = app_used_bytes
 
     @property
     def available_bytes(self) -> 'str':
@@ -174,6 +225,29 @@ class V1MemoryUsage(object):
         self._cached_bytes = cached_bytes
 
     @property
+    def effective_total_bytes(self) -> 'str':
+        """Gets the effective_total_bytes of this V1MemoryUsage.  # noqa: E501
+
+        --- Effective (non-hugepage) accounting ------------------------------ MemTotal counts reserved hugepages as \"used\", which makes a host that has merely pre-reserved hugepages for VMs look ~88% utilized while idle. These express utilization against memory available to non-hugepage work.  total_bytes - hugepages_reserved_bytes  # noqa: E501
+
+        :return: The effective_total_bytes of this V1MemoryUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._effective_total_bytes
+
+    @effective_total_bytes.setter
+    def effective_total_bytes(self, effective_total_bytes: 'str'):
+        """Sets the effective_total_bytes of this V1MemoryUsage.
+
+        --- Effective (non-hugepage) accounting ------------------------------ MemTotal counts reserved hugepages as \"used\", which makes a host that has merely pre-reserved hugepages for VMs look ~88% utilized while idle. These express utilization against memory available to non-hugepage work.  total_bytes - hugepages_reserved_bytes  # noqa: E501
+
+        :param effective_total_bytes: The effective_total_bytes of this V1MemoryUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._effective_total_bytes = effective_total_bytes
+
+    @property
     def free_bytes(self) -> 'str':
         """Gets the free_bytes of this V1MemoryUsage.  # noqa: E501
 
@@ -193,6 +267,29 @@ class V1MemoryUsage(object):
         """
 
         self._free_bytes = free_bytes
+
+    @property
+    def hugepage_pools(self) -> 'list[V1HugepagePool]':
+        """Gets the hugepage_pools of this V1MemoryUsage.  # noqa: E501
+
+        --- Authoritative hugepage data from sysfs --------------------------- Sourced from /sys/kernel/mm/hugepages/hugepages-<size>kB/ plus the per-NUMA breakdown under /sys/devices/system/node/node.../hugepages/.  # noqa: E501
+
+        :return: The hugepage_pools of this V1MemoryUsage.  # noqa: E501
+        :rtype: list[V1HugepagePool]
+        """
+        return self._hugepage_pools
+
+    @hugepage_pools.setter
+    def hugepage_pools(self, hugepage_pools: 'list[V1HugepagePool]'):
+        """Sets the hugepage_pools of this V1MemoryUsage.
+
+        --- Authoritative hugepage data from sysfs --------------------------- Sourced from /sys/kernel/mm/hugepages/hugepages-<size>kB/ plus the per-NUMA breakdown under /sys/devices/system/node/node.../hugepages/.  # noqa: E501
+
+        :param hugepage_pools: The hugepage_pools of this V1MemoryUsage.  # noqa: E501
+        :type: list[V1HugepagePool]
+        """
+
+        self._hugepage_pools = hugepage_pools
 
     @property
     def hugepage_ready(self) -> 'bool':
@@ -258,10 +355,52 @@ class V1MemoryUsage(object):
         self._hugepages_free = hugepages_free
 
     @property
+    def hugepages_in_use_bytes(self) -> 'str':
+        """Gets the hugepages_in_use_bytes of this V1MemoryUsage.  # noqa: E501
+
+
+        :return: The hugepages_in_use_bytes of this V1MemoryUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._hugepages_in_use_bytes
+
+    @hugepages_in_use_bytes.setter
+    def hugepages_in_use_bytes(self, hugepages_in_use_bytes: 'str'):
+        """Sets the hugepages_in_use_bytes of this V1MemoryUsage.
+
+
+        :param hugepages_in_use_bytes: The hugepages_in_use_bytes of this V1MemoryUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._hugepages_in_use_bytes = hugepages_in_use_bytes
+
+    @property
+    def hugepages_reserved_bytes(self) -> 'str':
+        """Gets the hugepages_reserved_bytes of this V1MemoryUsage.  # noqa: E501
+
+
+        :return: The hugepages_reserved_bytes of this V1MemoryUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._hugepages_reserved_bytes
+
+    @hugepages_reserved_bytes.setter
+    def hugepages_reserved_bytes(self, hugepages_reserved_bytes: 'str'):
+        """Sets the hugepages_reserved_bytes of this V1MemoryUsage.
+
+
+        :param hugepages_reserved_bytes: The hugepages_reserved_bytes of this V1MemoryUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._hugepages_reserved_bytes = hugepages_reserved_bytes
+
+    @property
     def hugepages_total(self) -> 'str':
         """Gets the hugepages_total of this V1MemoryUsage.  # noqa: E501
 
-        Hugepages — important for VM workloads.  count, not bytes  # noqa: E501
+        --- Legacy single-pool hugepage fields (back-compat) ----------------- These mirror the dominant pool from hugepage_pools. They originate from /proc/meminfo's HugePages_* / Hugepagesize, which only ever describe the *default-size* pool — so on a host booted with default_hugepagesz=1G that has switched to per-NUMA 2MB pages for VM mode, meminfo reports HugePages_Total: 0 while hundreds of GiB are actually reserved. The agent now populates these from the authoritative sysfs pool instead. Prefer hugepage_pools for new consumers.  count, not bytes (active pool)  # noqa: E501
 
         :return: The hugepages_total of this V1MemoryUsage.  # noqa: E501
         :rtype: str
@@ -272,13 +411,34 @@ class V1MemoryUsage(object):
     def hugepages_total(self, hugepages_total: 'str'):
         """Sets the hugepages_total of this V1MemoryUsage.
 
-        Hugepages — important for VM workloads.  count, not bytes  # noqa: E501
+        --- Legacy single-pool hugepage fields (back-compat) ----------------- These mirror the dominant pool from hugepage_pools. They originate from /proc/meminfo's HugePages_* / Hugepagesize, which only ever describe the *default-size* pool — so on a host booted with default_hugepagesz=1G that has switched to per-NUMA 2MB pages for VM mode, meminfo reports HugePages_Total: 0 while hundreds of GiB are actually reserved. The agent now populates these from the authoritative sysfs pool instead. Prefer hugepage_pools for new consumers.  count, not bytes (active pool)  # noqa: E501
 
         :param hugepages_total: The hugepages_total of this V1MemoryUsage.  # noqa: E501
         :type: str
         """
 
         self._hugepages_total = hugepages_total
+
+    @property
+    def hugetlb_total_bytes(self) -> 'str':
+        """Gets the hugetlb_total_bytes of this V1MemoryUsage.  # noqa: E501
+
+
+        :return: The hugetlb_total_bytes of this V1MemoryUsage.  # noqa: E501
+        :rtype: str
+        """
+        return self._hugetlb_total_bytes
+
+    @hugetlb_total_bytes.setter
+    def hugetlb_total_bytes(self, hugetlb_total_bytes: 'str'):
+        """Sets the hugetlb_total_bytes of this V1MemoryUsage.
+
+
+        :param hugetlb_total_bytes: The hugetlb_total_bytes of this V1MemoryUsage.  # noqa: E501
+        :type: str
+        """
+
+        self._hugetlb_total_bytes = hugetlb_total_bytes
 
     @property
     def swap_free_bytes(self) -> 'str':

@@ -7,7 +7,10 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -60,6 +63,10 @@ type V1ProjectSettings struct {
 	// Whether or not to charge the project account
 	BudgetingEnabled bool `json:"budgetingEnabled,omitempty"`
 
+	// User-defined tags applied to all of the teamspace's compute resources.
+	// Overrides cluster-level custom tags on key collisions.
+	CustomTags []*V1ProjectResourceTag `json:"customTags"`
+
 	// default machine image version
 	DefaultMachineImageVersion string `json:"defaultMachineImageVersion,omitempty"`
 
@@ -87,11 +94,88 @@ type V1ProjectSettings struct {
 
 // Validate validates this v1 project settings
 func (m *V1ProjectSettings) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCustomTags(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this v1 project settings based on context it is used
+func (m *V1ProjectSettings) validateCustomTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.CustomTags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CustomTags); i++ {
+		if swag.IsZero(m.CustomTags[i]) { // not required
+			continue
+		}
+
+		if m.CustomTags[i] != nil {
+			if err := m.CustomTags[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this v1 project settings based on the context it is used
 func (m *V1ProjectSettings) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCustomTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1ProjectSettings) contextValidateCustomTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CustomTags); i++ {
+
+		if m.CustomTags[i] != nil {
+
+			if swag.IsZero(m.CustomTags[i]) { // not required
+				return nil
+			}
+
+			if err := m.CustomTags[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

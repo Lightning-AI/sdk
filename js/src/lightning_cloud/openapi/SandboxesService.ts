@@ -22,6 +22,7 @@ import {
   SandboxesServiceStopSandboxBody,
   SandboxesServiceUpdateSandboxBody,
   SandboxesServiceWriteSandboxFileBody,
+  V1ArchivedSandbox,
   V1CreateSandboxDirectoryResponse,
   V1CreateSandboxRequest,
   V1DeleteSandboxResponse,
@@ -30,9 +31,11 @@ import {
   V1GetSandboxCommandLogsResponse,
   V1GetSandboxCommandResponse,
   V1GetSandboxFileResponse,
+  V1GetSandboxLogsResponse,
   V1GetSandboxSnapshotBlobDownloadUrlsResponse,
   V1GetSandboxSnapshotBlobUploadUrlsResponse,
   V1KillSandboxCommandResponse,
+  V1ListArchivedSandboxesResponse,
   V1ListSandboxSnapshotsResponse,
   V1ListSandboxesResponse,
   V1RunSandboxCommandResponse,
@@ -94,6 +97,55 @@ export class SandboxesService<
       method: "POST",
       body: body,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceListArchivedSandboxes
+ * @summary ListArchivedSandboxes lists terminated (soft-deleted) sandboxes for the
+archive surface. Gated on Feature.sandboxLogs.
+ * @request GET:/v1/core/sandboxes/archived
+ */
+  sandboxesServiceListArchivedSandboxes = (
+    query?: {
+      organizationId?: string;
+      projectId?: string;
+      /** @format int64 */
+      limit?: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<V1ListArchivedSandboxesResponse, RpcStatus>({
+      path: `/v1/core/sandboxes/archived`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceGetArchivedSandbox
+ * @summary GetArchivedSandbox returns full post-mortem detail for one archived
+sandbox (the table row plus the termination payload). Gated on
+Feature.sandboxLogs.
+ * @request GET:/v1/core/sandboxes/archived/{id}
+ */
+  sandboxesServiceGetArchivedSandbox = (
+    id: string,
+    query?: {
+      organizationId?: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<V1ArchivedSandbox, RpcStatus>({
+      path: `/v1/core/sandboxes/archived/${id}`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });
@@ -471,6 +523,38 @@ https://vercel.com/docs/rest-api/sandboxes-v2-beta/update-a-sandbox.
       method: "POST",
       body: body,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceGetSandboxLogs
+ * @summary GetSandboxLogs returns log lines for a sandbox (live or archived) from
+object storage via the controlplane logs Reader. Paginated; for live
+tailing the UI polls with the returned next_page_token. Gated on
+Feature.sandboxLogs.
+ * @request GET:/v1/core/sandboxes/{id}/logs
+ */
+  sandboxesServiceGetSandboxLogs = (
+    id: string,
+    query?: {
+      organizationId?: string;
+      /** @format date-time */
+      start?: string;
+      /** @format date-time */
+      end?: string;
+      /** @format int64 */
+      pageSize?: string;
+      pageToken?: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<V1GetSandboxLogsResponse, RpcStatus>({
+      path: `/v1/core/sandboxes/${id}/logs`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

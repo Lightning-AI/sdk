@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewJobsServiceDownloadJobLogsParams creates a new JobsServiceDownloadJobLogsParams object,
@@ -72,6 +73,11 @@ type JobsServiceDownloadJobLogsParams struct {
 
 	// ProjectID.
 	ProjectID string
+
+	// Rank.
+	//
+	// Format: int64
+	Rank *int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -170,6 +176,17 @@ func (o *JobsServiceDownloadJobLogsParams) SetProjectID(projectID string) {
 	o.ProjectID = projectID
 }
 
+// WithRank adds the rank to the jobs service download job logs params
+func (o *JobsServiceDownloadJobLogsParams) WithRank(rank *int64) *JobsServiceDownloadJobLogsParams {
+	o.SetRank(rank)
+	return o
+}
+
+// SetRank adds the rank to the jobs service download job logs params
+func (o *JobsServiceDownloadJobLogsParams) SetRank(rank *int64) {
+	o.Rank = rank
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *JobsServiceDownloadJobLogsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -220,6 +237,23 @@ func (o *JobsServiceDownloadJobLogsParams) WriteToRequest(r runtime.ClientReques
 	// path param projectId
 	if err := r.SetPathParam("projectId", o.ProjectID); err != nil {
 		return err
+	}
+
+	if o.Rank != nil {
+
+		// query param rank
+		var qrRank int64
+
+		if o.Rank != nil {
+			qrRank = *o.Rank
+		}
+		qRank := swag.FormatInt64(qrRank)
+		if qRank != "" {
+
+			if err := r.SetQueryParam("rank", qRank); err != nil {
+				return err
+			}
+		}
 	}
 
 	if len(res) > 0 {

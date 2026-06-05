@@ -267,6 +267,44 @@ export interface RpcStatus {
   details?: ProtobufAny[];
 }
 
+/**
+ * A terminated sandbox surfaced by the archive UI. List returns the row
+ * fields (1-22); GetArchivedSandbox additionally fills the detail-only
+ * fields (23-25) from the termination payload.
+ */
+export interface V1ArchivedSandbox {
+  id?: string;
+  name?: string;
+  organizationId?: string;
+  projectId?: string;
+  ownerId?: string;
+  ownerName?: string;
+  clusterId?: string;
+  machineId?: string;
+  instanceType?: string;
+  image?: string;
+  runtime?: string;
+  ports?: string[];
+  persistent?: boolean;
+  spot?: boolean;
+  autoSnapshotId?: string;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  startedAt?: string;
+  /** @format date-time */
+  terminatedAt?: string;
+  lastKnownState?: string;
+  /** Stable token: timeout|user_delete|agent_error|oom|scheduler_kill|unknown. */
+  terminationReason?: string;
+  /** @format int32 */
+  exitCode?: number;
+  oomKilled?: boolean;
+  envHash?: string;
+  phaseDurations?: V1SandboxPhaseDuration[];
+  networkConnections?: V1SandboxNetworkConnection[];
+}
+
 export type V1CreateSandboxDirectoryResponse = object;
 
 export interface V1CreateSandboxRequest {
@@ -345,6 +383,16 @@ export interface V1GetSandboxFileResponse {
   content?: string;
 }
 
+export interface V1GetSandboxLogsResponse {
+  entries?: V1SandboxLogEntry[];
+  nextPageToken?: string;
+  /**
+   * True when the sandbox has no retained logs (died before ingestion or
+   * predates log capture) — drives the UI's "logs not retained" state.
+   */
+  logsNotRetained?: boolean;
+}
+
 export interface V1GetSandboxSnapshotBlobDownloadUrlsResponse {
   downloadUrls?: V1SandboxSnapshotBlobDownloadUrl[];
 }
@@ -360,6 +408,10 @@ export interface V1GetSandboxSnapshotBlobUploadUrlsResponse {
 }
 
 export type V1KillSandboxCommandResponse = object;
+
+export interface V1ListArchivedSandboxesResponse {
+  archivedSandboxes?: V1ArchivedSandbox[];
+}
 
 export interface V1ListSandboxSnapshotsResponse {
   snapshots?: V1SandboxSnapshot[];
@@ -461,6 +513,49 @@ export interface V1Sandbox {
   projectId?: string;
 }
 
+/**
+ * One log line. Mirrors logs.LogEntry (sidecar) plus the optional
+ * level/phase the UI renders when a structured emitter populates them.
+ */
+export interface V1SandboxLogEntry {
+  /**
+   * Stable absolute line index across the sandbox's full log stream.
+   * @format uint64
+   */
+  line?: string;
+  /** @format date-time */
+  timestamp?: string;
+  /** stdout | stderr | system */
+  stream?: string;
+  /** info | warn | error | debug (optional). */
+  level?: string;
+  /** Phase tag, e.g. "litvisor.create" (optional). */
+  phase?: string;
+  message?: string;
+}
+
+/** A single observed network connection (5-tuple) during the sandbox's life. */
+export interface V1SandboxNetworkConnection {
+  protocol?: string;
+  localAddr?: string;
+  /** @format int32 */
+  localPort?: number;
+  remoteAddr?: string;
+  /** @format int32 */
+  remotePort?: number;
+  /** @format int64 */
+  bytesSent?: string;
+  /** @format int64 */
+  bytesRecv?: string;
+}
+
+/** Per-phase wall-clock duration captured by the litvisor controller. */
+export interface V1SandboxPhaseDuration {
+  phase?: string;
+  /** @format int64 */
+  durationMs?: string;
+}
+
 export interface V1SandboxSnapshot {
   id?: string;
   organizationId?: string;
@@ -520,6 +615,14 @@ export interface V1SandboxSnapshot {
    * snapshots captured before this field landed.
    */
   sourceSandboxName?: string;
+  /**
+   * Outbound network policy captured from the source sandbox at snapshot
+   * time. Replayed by UpdateSandbox(resume=true) so a paused persistent
+   * sandbox keeps the same egress restrictions after resume. Best-effort:
+   * unset for snapshots captured before this field landed; the resume
+   * path then treats missing policy as allow-all.
+   */
+  sourceSandboxNetworkPolicy?: V1NetworkPolicy;
 }
 
 /**

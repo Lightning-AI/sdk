@@ -41,19 +41,50 @@ class V1GetLogsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'follow_url': 'str'
+        'entries': 'list[V1JobLogEntry]',
+        'follow_url': 'str',
+        'next_page_token': 'str'
     }
 
     attribute_map = {
-        'follow_url': 'followUrl'
+        'entries': 'entries',
+        'follow_url': 'followUrl',
+        'next_page_token': 'nextPageToken'
     }
 
-    def __init__(self, follow_url: 'str' =None):  # noqa: E501
+    def __init__(self, entries: 'list[V1JobLogEntry]' =None, follow_url: 'str' =None, next_page_token: 'str' =None):  # noqa: E501
         """V1GetLogsResponse - a model defined in Swagger"""  # noqa: E501
+        self._entries = None
         self._follow_url = None
+        self._next_page_token = None
         self.discriminator = None
+        if entries is not None:
+            self.entries = entries
         if follow_url is not None:
             self.follow_url = follow_url
+        if next_page_token is not None:
+            self.next_page_token = next_page_token
+
+    @property
+    def entries(self) -> 'list[V1JobLogEntry]':
+        """Gets the entries of this V1GetLogsResponse.  # noqa: E501
+
+
+        :return: The entries of this V1GetLogsResponse.  # noqa: E501
+        :rtype: list[V1JobLogEntry]
+        """
+        return self._entries
+
+    @entries.setter
+    def entries(self, entries: 'list[V1JobLogEntry]'):
+        """Sets the entries of this V1GetLogsResponse.
+
+
+        :param entries: The entries of this V1GetLogsResponse.  # noqa: E501
+        :type: list[V1JobLogEntry]
+        """
+
+        self._entries = entries
 
     @property
     def follow_url(self) -> 'str':
@@ -75,6 +106,27 @@ class V1GetLogsResponse(object):
         """
 
         self._follow_url = follow_url
+
+    @property
+    def next_page_token(self) -> 'str':
+        """Gets the next_page_token of this V1GetLogsResponse.  # noqa: E501
+
+
+        :return: The next_page_token of this V1GetLogsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._next_page_token
+
+    @next_page_token.setter
+    def next_page_token(self, next_page_token: 'str'):
+        """Sets the next_page_token of this V1GetLogsResponse.
+
+
+        :param next_page_token: The next_page_token of this V1GetLogsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._next_page_token = next_page_token
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

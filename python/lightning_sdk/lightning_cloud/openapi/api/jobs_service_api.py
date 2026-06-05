@@ -1134,6 +1134,7 @@ class JobsServiceApi(object):
         :param str id: (required)
         :param str cloudspace_id:
         :param str deployment_id:
+        :param int rank:
         :return: V1DownloadJobLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1158,12 +1159,13 @@ class JobsServiceApi(object):
         :param str id: (required)
         :param str cloudspace_id:
         :param str deployment_id:
+        :param int rank:
         :return: V1DownloadJobLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'cloudspace_id', 'deployment_id']  # noqa: E501
+        all_params = ['project_id', 'id', 'cloudspace_id', 'deployment_id', 'rank']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1200,6 +1202,8 @@ class JobsServiceApi(object):
             query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
         if 'deployment_id' in params:
             query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
+        if 'rank' in params:
+            query_params.append(('rank', params['rank']))  # noqa: E501
 
         header_params = {}
 
@@ -3228,10 +3232,12 @@ class JobsServiceApi(object):
         :param str project_id: (required)
         :param str deployment_id:
         :param str mmt_id:
-        :param str job_id:
         :param str since:
         :param str until:
         :param str query:
+        :param list[str] job_ids:
+        :param str page_size:
+        :param str page_token:
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3255,16 +3261,18 @@ class JobsServiceApi(object):
         :param str project_id: (required)
         :param str deployment_id:
         :param str mmt_id:
-        :param str job_id:
         :param str since:
         :param str until:
         :param str query:
+        :param list[str] job_ids:
+        :param str page_size:
+        :param str page_token:
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'deployment_id', 'mmt_id', 'job_id', 'since', 'until', 'query']  # noqa: E501
+        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3295,14 +3303,19 @@ class JobsServiceApi(object):
             query_params.append(('deploymentId', params['deployment_id']))  # noqa: E501
         if 'mmt_id' in params:
             query_params.append(('mmtId', params['mmt_id']))  # noqa: E501
-        if 'job_id' in params:
-            query_params.append(('jobId', params['job_id']))  # noqa: E501
         if 'since' in params:
             query_params.append(('since', params['since']))  # noqa: E501
         if 'until' in params:
             query_params.append(('until', params['until']))  # noqa: E501
         if 'query' in params:
             query_params.append(('query', params['query']))  # noqa: E501
+        if 'job_ids' in params:
+            query_params.append(('jobIds', params['job_ids']))  # noqa: E501
+            collection_formats['jobIds'] = 'multi'  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
 
         header_params = {}
 

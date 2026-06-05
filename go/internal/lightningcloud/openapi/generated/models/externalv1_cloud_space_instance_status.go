@@ -85,6 +85,13 @@ type Externalv1CloudSpaceInstanceStatus struct {
 	// Public IP address of the instance, if applicable
 	PublicIPAddress string `json:"publicIpAddress,omitempty"`
 
+	// Whether the machine on which the server is running requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
+	// Timestamp when the machine was first marked as requiring maintenance.
+	// Format: date-time
+	RequiresMaintenanceStartedAt strfmt.DateTime `json:"requiresMaintenanceStartedAt,omitempty"`
+
 	// Domain to use for SSH (i.e. ssh.lightning.ai)
 	SSHHost string `json:"sshHost,omitempty"`
 
@@ -155,6 +162,10 @@ func (m *Externalv1CloudSpaceInstanceStatus) Validate(formats strfmt.Registry) e
 	}
 
 	if err := m.validatePhase(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRequiresMaintenanceStartedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -301,6 +312,18 @@ func (m *Externalv1CloudSpaceInstanceStatus) validatePhase(formats strfmt.Regist
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Externalv1CloudSpaceInstanceStatus) validateRequiresMaintenanceStartedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiresMaintenanceStartedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("requiresMaintenanceStartedAt", "body", "date-time", m.RequiresMaintenanceStartedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

@@ -60,6 +60,7 @@ class V1Job(object):
         'public_ip_address': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
+        'requires_maintenance': 'bool',
         'restart_count': 'int',
         'restart_timings': 'list[V1RestartTiming]',
         'server_error': 'str',
@@ -97,6 +98,7 @@ class V1Job(object):
         'public_ip_address': 'publicIpAddress',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
+        'requires_maintenance': 'requiresMaintenance',
         'restart_count': 'restartCount',
         'restart_timings': 'restartTimings',
         'server_error': 'serverError',
@@ -114,7 +116,7 @@ class V1Job(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, requires_maintenance: 'bool' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_id = None
         self._created_at = None
@@ -135,6 +137,7 @@ class V1Job(object):
         self._public_ip_address = None
         self._ready_at = None
         self._release_id = None
+        self._requires_maintenance = None
         self._restart_count = None
         self._restart_timings = None
         self._server_error = None
@@ -189,6 +192,8 @@ class V1Job(object):
             self.ready_at = ready_at
         if release_id is not None:
             self.release_id = release_id
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
         if restart_count is not None:
             self.restart_count = restart_count
         if restart_timings is not None:
@@ -620,6 +625,27 @@ class V1Job(object):
         """
 
         self._release_id = release_id
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1Job.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1Job.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
 
     @property
     def restart_count(self) -> 'int':

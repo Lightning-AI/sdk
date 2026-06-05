@@ -84,6 +84,9 @@ type V1Job struct {
 	// Read only
 	ReleaseID string `json:"releaseId,omitempty"`
 
+	// Whether the machine on which the server is running requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
 	// How many times the job has restarted
 	RestartCount int32 `json:"restartCount,omitempty"`
 

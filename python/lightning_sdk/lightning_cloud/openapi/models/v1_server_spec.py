@@ -44,6 +44,7 @@ class V1ServerSpec(object):
         'accelerator_type': 'V1AcceleratorType',
         'address': 'str',
         'affinity_identifier': 'str',
+        'agent_version': 'str',
         'apparent_provider': 'str',
         'availability_zone': 'str',
         'batch_id': 'str',
@@ -107,6 +108,7 @@ class V1ServerSpec(object):
         'accelerator_type': 'acceleratorType',
         'address': 'address',
         'affinity_identifier': 'affinityIdentifier',
+        'agent_version': 'agentVersion',
         'apparent_provider': 'apparentProvider',
         'availability_zone': 'availabilityZone',
         'batch_id': 'batchId',
@@ -166,11 +168,12 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
         self._affinity_identifier = None
+        self._agent_version = None
         self._apparent_provider = None
         self._availability_zone = None
         self._batch_id = None
@@ -235,6 +238,8 @@ class V1ServerSpec(object):
             self.address = address
         if affinity_identifier is not None:
             self.affinity_identifier = affinity_identifier
+        if agent_version is not None:
+            self.agent_version = agent_version
         if apparent_provider is not None:
             self.apparent_provider = apparent_provider
         if availability_zone is not None:
@@ -412,6 +417,27 @@ class V1ServerSpec(object):
         """
 
         self._affinity_identifier = affinity_identifier
+
+    @property
+    def agent_version(self) -> 'str':
+        """Gets the agent_version of this V1ServerSpec.  # noqa: E501
+
+
+        :return: The agent_version of this V1ServerSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._agent_version
+
+    @agent_version.setter
+    def agent_version(self, agent_version: 'str'):
+        """Sets the agent_version of this V1ServerSpec.
+
+
+        :param agent_version: The agent_version of this V1ServerSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._agent_version = agent_version
 
     @property
     def apparent_provider(self) -> 'str':

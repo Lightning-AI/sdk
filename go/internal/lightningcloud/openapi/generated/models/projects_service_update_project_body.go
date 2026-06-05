@@ -62,6 +62,9 @@ type ProjectsServiceUpdateProjectBody struct {
 	// Whether or not to charge the project account
 	BudgetingEnabled bool `json:"budgetingEnabled,omitempty"`
 
+	// User-defined tags applied to all of the teamspace's compute resources.
+	CustomTags []*V1ProjectResourceTag `json:"customTags"`
+
 	// default machine type for Studios in the teamspace
 	DefaultMachineType string `json:"defaultMachineType,omitempty"`
 
@@ -109,6 +112,10 @@ type ProjectsServiceUpdateProjectBody struct {
 func (m *ProjectsServiceUpdateProjectBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCustomTags(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateLayoutConfig(formats); err != nil {
 		res = append(res, err)
 	}
@@ -124,6 +131,36 @@ func (m *ProjectsServiceUpdateProjectBody) Validate(formats strfmt.Registry) err
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ProjectsServiceUpdateProjectBody) validateCustomTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.CustomTags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CustomTags); i++ {
+		if swag.IsZero(m.CustomTags[i]) { // not required
+			continue
+		}
+
+		if m.CustomTags[i] != nil {
+			if err := m.CustomTags[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -207,6 +244,10 @@ func (m *ProjectsServiceUpdateProjectBody) validateQuotas(formats strfmt.Registr
 func (m *ProjectsServiceUpdateProjectBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateCustomTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateLayoutConfig(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -222,6 +263,35 @@ func (m *ProjectsServiceUpdateProjectBody) ContextValidate(ctx context.Context, 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ProjectsServiceUpdateProjectBody) contextValidateCustomTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CustomTags); i++ {
+
+		if m.CustomTags[i] != nil {
+
+			if swag.IsZero(m.CustomTags[i]) { // not required
+				return nil
+			}
+
+			if err := m.CustomTags[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customTags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

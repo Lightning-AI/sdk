@@ -43,6 +43,7 @@ class ProjectsServiceCreateProjectMembershipBody(object):
     swagger_types = {
         'add_to_org': 'bool',
         'email': 'str',
+        'inviter_id': 'str',
         'role_ids': 'list[str]',
         'user_id': 'str'
     }
@@ -50,14 +51,16 @@ class ProjectsServiceCreateProjectMembershipBody(object):
     attribute_map = {
         'add_to_org': 'addToOrg',
         'email': 'email',
+        'inviter_id': 'inviterId',
         'role_ids': 'roleIds',
         'user_id': 'userId'
     }
 
-    def __init__(self, add_to_org: 'bool' =None, email: 'str' =None, role_ids: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, add_to_org: 'bool' =None, email: 'str' =None, inviter_id: 'str' =None, role_ids: 'list[str]' =None, user_id: 'str' =None):  # noqa: E501
         """ProjectsServiceCreateProjectMembershipBody - a model defined in Swagger"""  # noqa: E501
         self._add_to_org = None
         self._email = None
+        self._inviter_id = None
         self._role_ids = None
         self._user_id = None
         self.discriminator = None
@@ -65,6 +68,8 @@ class ProjectsServiceCreateProjectMembershipBody(object):
             self.add_to_org = add_to_org
         if email is not None:
             self.email = email
+        if inviter_id is not None:
+            self.inviter_id = inviter_id
         if role_ids is not None:
             self.role_ids = role_ids
         if user_id is not None:
@@ -111,6 +116,27 @@ class ProjectsServiceCreateProjectMembershipBody(object):
         """
 
         self._email = email
+
+    @property
+    def inviter_id(self) -> 'str':
+        """Gets the inviter_id of this ProjectsServiceCreateProjectMembershipBody.  # noqa: E501
+
+
+        :return: The inviter_id of this ProjectsServiceCreateProjectMembershipBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._inviter_id
+
+    @inviter_id.setter
+    def inviter_id(self, inviter_id: 'str'):
+        """Sets the inviter_id of this ProjectsServiceCreateProjectMembershipBody.
+
+
+        :param inviter_id: The inviter_id of this ProjectsServiceCreateProjectMembershipBody.  # noqa: E501
+        :type: str
+        """
+
+        self._inviter_id = inviter_id
 
     @property
     def role_ids(self) -> 'list[str]':

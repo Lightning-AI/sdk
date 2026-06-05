@@ -58,6 +58,7 @@ class V1MachineSystemInfo(object):
         'kernel_version': 'str',
         'libvirt_version': 'str',
         'load_average': 'V1LoadAverage',
+        'machine_mode': 'str',
         'memory': 'V1MemoryUsage',
         'nvidia': 'V1NvidiaInfo',
         'os_id': 'str',
@@ -84,6 +85,7 @@ class V1MachineSystemInfo(object):
         'kernel_version': 'kernelVersion',
         'libvirt_version': 'libvirtVersion',
         'load_average': 'loadAverage',
+        'machine_mode': 'machineMode',
         'memory': 'memory',
         'nvidia': 'nvidia',
         'os_id': 'osId',
@@ -92,7 +94,7 @@ class V1MachineSystemInfo(object):
         'qemu_version': 'qemuVersion'
     }
 
-    def __init__(self, agent_boot_time: 'datetime' =None, agent_version: 'str' =None, architecture: 'str' =None, boot_time: 'datetime' =None, cloud_hypervisor_version: 'str' =None, collected_at: 'datetime' =None, cpu_cores_per_socket: 'int' =None, cpu_count: 'int' =None, cpu_model: 'str' =None, cpu_sockets: 'int' =None, filesystems: 'list[V1FilesystemUsage]' =None, hostname: 'str' =None, kernel_boot_flags: 'V1KernelBootFlags' =None, kernel_cmdline: 'str' =None, kernel_version: 'str' =None, libvirt_version: 'str' =None, load_average: 'V1LoadAverage' =None, memory: 'V1MemoryUsage' =None, nvidia: 'V1NvidiaInfo' =None, os_id: 'str' =None, os_pretty_name: 'str' =None, os_version_id: 'str' =None, qemu_version: 'str' =None):  # noqa: E501
+    def __init__(self, agent_boot_time: 'datetime' =None, agent_version: 'str' =None, architecture: 'str' =None, boot_time: 'datetime' =None, cloud_hypervisor_version: 'str' =None, collected_at: 'datetime' =None, cpu_cores_per_socket: 'int' =None, cpu_count: 'int' =None, cpu_model: 'str' =None, cpu_sockets: 'int' =None, filesystems: 'list[V1FilesystemUsage]' =None, hostname: 'str' =None, kernel_boot_flags: 'V1KernelBootFlags' =None, kernel_cmdline: 'str' =None, kernel_version: 'str' =None, libvirt_version: 'str' =None, load_average: 'V1LoadAverage' =None, machine_mode: 'str' =None, memory: 'V1MemoryUsage' =None, nvidia: 'V1NvidiaInfo' =None, os_id: 'str' =None, os_pretty_name: 'str' =None, os_version_id: 'str' =None, qemu_version: 'str' =None):  # noqa: E501
         """V1MachineSystemInfo - a model defined in Swagger"""  # noqa: E501
         self._agent_boot_time = None
         self._agent_version = None
@@ -111,6 +113,7 @@ class V1MachineSystemInfo(object):
         self._kernel_version = None
         self._libvirt_version = None
         self._load_average = None
+        self._machine_mode = None
         self._memory = None
         self._nvidia = None
         self._os_id = None
@@ -152,6 +155,8 @@ class V1MachineSystemInfo(object):
             self.libvirt_version = libvirt_version
         if load_average is not None:
             self.load_average = load_average
+        if machine_mode is not None:
+            self.machine_mode = machine_mode
         if memory is not None:
             self.memory = memory
         if nvidia is not None:
@@ -525,6 +530,27 @@ class V1MachineSystemInfo(object):
         """
 
         self._load_average = load_average
+
+    @property
+    def machine_mode(self) -> 'str':
+        """Gets the machine_mode of this V1MachineSystemInfo.  # noqa: E501
+
+
+        :return: The machine_mode of this V1MachineSystemInfo.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_mode
+
+    @machine_mode.setter
+    def machine_mode(self, machine_mode: 'str'):
+        """Sets the machine_mode of this V1MachineSystemInfo.
+
+
+        :param machine_mode: The machine_mode of this V1MachineSystemInfo.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_mode = machine_mode
 
     @property
     def memory(self) -> 'V1MemoryUsage':
