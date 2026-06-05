@@ -6,9 +6,8 @@ from lightning_sdk.api.sandbox_api import SandboxApi
 from lightning_sdk.sandbox.base import (
     ListSandboxesResult,
     SandboxInstance,
+    SnapshotInfo,
     _configure_globals,
-    _get_sandbox,
-    _list_sandboxes,
     create_sandbox,
 )
 from lightning_sdk.sandbox.config import SandboxConfig
@@ -70,9 +69,10 @@ class Sandbox:
     """Entry point for the Sandbox API.
 
     Construct with :class:`~lightning_sdk.sandbox.config.SandboxConfig` (or rely on env vars),
-    then call :meth:`create`, :meth:`get`, or :meth:`list`. The returned
-    :class:`~lightning_sdk.sandbox.base.SandboxInstance` is a handle for commands, files,
-    and lifecycle on that sandbox.
+    then call :meth:`create`, :meth:`get`, :meth:`list`, or the snapshot helpers
+    :meth:`get_snapshot`, :meth:`list_snapshots`, and :meth:`delete_snapshot`.
+    The returned :class:`~lightning_sdk.sandbox.base.SandboxInstance` is a handle for
+    commands, files, and lifecycle on that sandbox.
 
     Class methods :meth:`create` and :meth:`configure` are also available without
     constructing a client first (mirrors other Lightning SDKs).
@@ -110,7 +110,8 @@ class Sandbox:
         )
 
     def get(self, sandbox_id: str) -> SandboxInstance:
-        return _get_sandbox(sandbox_id, sandbox_api=self._api)
+        v1 = self._api.get_sandbox(sandbox_id)
+        return SandboxInstance._from_v1(v1, sandbox_api=self._api)
 
     def list(
         self,
@@ -118,8 +119,41 @@ class Sandbox:
         page_token: str | None = None,
         limit: int | None = None,
     ) -> ListSandboxesResult:
-        return _list_sandboxes(
-            sandbox_api=self._api,
+        data = self._api.list_sandboxes(page_token=page_token, limit=limit)
+        sandboxes = [SandboxInstance._from_v1(s, sandbox_api=self._api) for s in (data.sandboxes or [])]
+        ts = data.total_size
+        try:
+            total = int(ts) if ts is not None else 0
+        except (TypeError, ValueError):
+            total = 0
+        return ListSandboxesResult(
+            sandboxes=sandboxes,
+            next_page_token=data.next_page_token or "",
+            previous_page_token=data.previous_page_token or "",
+            total_size=total,
+        )
+
+    def get_snapshot(self, snapshot_id: str) -> SnapshotInfo:
+        """Fetch snapshot metadata by id."""
+        return SnapshotInfo._from_v1(self._api.get_snapshot(snapshot_id))
+
+    def list_snapshots(
+        self,
+        *,
+        project_id: str | None = None,
+        name: str | None = None,
+        page_token: str | None = None,
+        limit: int | None = None,
+    ) -> list[SnapshotInfo]:
+        """List snapshots visible to this client's org / API key."""
+        data = self._api.list_snapshots(
+            project_id=project_id,
+            name=name,
             page_token=page_token,
             limit=limit,
         )
+        return [SnapshotInfo._from_v1(s) for s in (data.snapshots or [])]
+
+    def delete_snapshot(self, snapshot_id: str) -> None:
+        """Delete a snapshot by id."""
+        self._api.delete_snapshot(snapshot_id)

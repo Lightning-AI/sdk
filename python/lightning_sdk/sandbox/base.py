@@ -89,7 +89,6 @@ _configure_globals = configure
 
 def _wait_until_sandbox_running(api: SandboxApi, v1: V1Sandbox) -> V1Sandbox:
     """Poll until status is ``running`` (SDK orchestration; OpenAPI calls only via ``api``)."""
-    sb = api.sandboxes()
     start = time.monotonic()
     deadline = start + 300.0
     org = v1.organization_id
@@ -100,10 +99,7 @@ def _wait_until_sandbox_running(api: SandboxApi, v1: V1Sandbox) -> V1Sandbox:
             raise RuntimeError(f"Sandbox did not become ready (current status: {v1.status})")
         elapsed = time.monotonic() - start
         time.sleep(0.1 if elapsed < 5.0 else 1.0)
-        if org:
-            v1 = sb.sandboxes_service_get_sandbox(v1.id, organization_id=org)
-        else:
-            v1 = sb.sandboxes_service_get_sandbox(v1.id)
+        v1 = api.get_sandbox(v1.id, organization_id=org or None)
     return v1
 
 
@@ -179,14 +175,10 @@ def _wait_for_snapshot_ready(
     captures + uploads on a background goroutine then flips it to ``ready``.
     Poll fast early, then back off (250ms → 2s cap).
     """
-    sb = api.sandboxes()
     deadline = time.monotonic() + timeout
     delay = 0.25
     while True:
-        if organization_id:
-            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id, organization_id=organization_id)
-        else:
-            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id)
+        snap = api.get_snapshot(snapshot_id, organization_id=organization_id)
         if snap.status == "ready":
             return snap
         if snap.status == "failed":
@@ -244,46 +236,6 @@ class SnapshotInfo:
             size_bytes=size,
             project_id=v1.project_id or "",
         )
-
-
-def _get_sandbox(sandbox_id: str, *, sandbox_api: SandboxApi) -> SandboxInstance:
-    sb: SandboxesServiceApi = sandbox_api.sandboxes()
-    org_id = _resolve_org_id(api=sandbox_api)
-    if org_id:
-        v1 = sb.sandboxes_service_get_sandbox(sandbox_id, organization_id=org_id)
-    else:
-        v1 = sb.sandboxes_service_get_sandbox(sandbox_id)
-    return SandboxInstance._from_v1(v1, sandbox_api=sandbox_api)
-
-
-def _list_sandboxes(
-    *,
-    sandbox_api: SandboxApi,
-    page_token: str | None = None,
-    limit: int | None = None,
-) -> ListSandboxesResult:
-    sb: SandboxesServiceApi = sandbox_api.sandboxes()
-    org_id = _resolve_org_id(api=sandbox_api)
-    kwargs: dict[str, Any] = {}
-    if org_id:
-        kwargs["organization_id"] = org_id
-    if page_token:
-        kwargs["page_token"] = page_token
-    if limit is not None:
-        kwargs["limit"] = limit
-    data = sb.sandboxes_service_list_sandboxes(**kwargs)
-    sandboxes = [SandboxInstance._from_v1(s, sandbox_api=sandbox_api) for s in (data.sandboxes or [])]
-    ts = data.total_size
-    try:
-        total = int(ts) if ts is not None else 0
-    except (TypeError, ValueError):
-        total = 0
-    return ListSandboxesResult(
-        sandboxes=sandboxes,
-        next_page_token=data.next_page_token or "",
-        previous_page_token=data.previous_page_token or "",
-        total_size=total,
-    )
 
 
 class SandboxInstance(metaclass=TrackCallsMeta):
@@ -433,67 +385,6 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         :class:`SandboxProcess` module, which keeps the two modules decoupled.
         """
         return self.run_command(RunCommandOpts(cmd=cmd, args=args or []))
-
-    @classmethod
-    def get_snapshot(
-        cls,
-        snapshot_id: str,
-        organization_id: str | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> SnapshotInfo:
-        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-        sb: SandboxesServiceApi = api.sandboxes()
-        org_id = _resolve_org_id(organization_id, api=api)
-        if org_id:
-            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id, organization_id=org_id)
-        else:
-            snap = sb.sandboxes_service_get_sandbox_snapshot(snapshot_id)
-        return SnapshotInfo._from_v1(snap)
-
-    @classmethod
-    def list_snapshots(
-        cls,
-        organization_id: str | None = None,
-        project_id: str | None = None,
-        name: str | None = None,
-        page_token: str | None = None,
-        limit: int | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> list[SnapshotInfo]:
-        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-        sb: SandboxesServiceApi = api.sandboxes()
-        org_id = _resolve_org_id(organization_id, api=api)
-        kwargs: dict[str, Any] = {}
-        if org_id:
-            kwargs["organization_id"] = org_id
-        if project_id:
-            kwargs["project_id"] = project_id
-        if name:
-            kwargs["name"] = name
-        if page_token:
-            kwargs["page_token"] = page_token
-        if limit is not None:
-            kwargs["limit"] = str(limit)
-        data = sb.sandboxes_service_list_sandbox_snapshots(**kwargs)
-        return [SnapshotInfo._from_v1(s) for s in (data.snapshots or [])]
-
-    @classmethod
-    def delete_snapshot(
-        cls,
-        snapshot_id: str,
-        organization_id: str | None = None,
-        config: SandboxConfig | None = None,
-        sandbox_api: SandboxApi | None = None,
-    ) -> None:
-        api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
-        sb: SandboxesServiceApi = api.sandboxes()
-        org_id = _resolve_org_id(organization_id, api=api)
-        if org_id:
-            sb.sandboxes_service_delete_sandbox_snapshot(snapshot_id, organization_id=org_id)
-        else:
-            sb.sandboxes_service_delete_sandbox_snapshot(snapshot_id)
 
     def delete(self) -> None:
         """Destroy the sandbox, dropping any auto-snapshot.

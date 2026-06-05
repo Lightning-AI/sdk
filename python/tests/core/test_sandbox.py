@@ -62,6 +62,65 @@ def test_create_sandbox_raises_on_terminal_status():
             create_sandbox(name="n", sandbox_api=api)
 
 
+def test_sandbox_instance_snapshot_sends_project_id_when_provided():
+    from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
+
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
+    sb_svc = mock.MagicMock()
+    snap = V1SandboxSnapshot(id="snap-1", project_id="proj-1", status="ready")
+    sb_svc.sandboxes_service_create_sandbox_snapshot.return_value = snap
+
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    with mock.patch.object(api, "sandboxes", return_value=sb_svc):
+        info = sb.snapshot(project_id="proj-1", wait=False)
+
+    body = sb_svc.sandboxes_service_create_sandbox_snapshot.call_args[0][0]
+    assert body.project_id == "proj-1"
+    assert info.id == "snap-1"
+
+
+def test_sandbox_instance_stop_sends_project_id_when_provided():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
+    sb_svc = mock.MagicMock()
+    stop_resp = mock.MagicMock(auto_snapshot_id="snap-auto")
+    sb_svc.sandboxes_service_stop_sandbox.return_value = stop_resp
+
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    with mock.patch.object(api, "sandboxes", return_value=sb_svc):
+        assert sb.stop(project_id="proj-on-sandbox") == "snap-auto"
+
+    body = sb_svc.sandboxes_service_stop_sandbox.call_args[0][0]
+    assert body.project_id == "proj-on-sandbox"
+
+
+def test_sandbox_client_snapshot_helpers():
+    from lightning_sdk.lightning_cloud.openapi import V1ListSandboxSnapshotsResponse, V1SandboxSnapshot
+
+    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test", organization_id="org-1"))
+    sb_svc = mock.MagicMock()
+    snap = V1SandboxSnapshot(id="snap-1", status="ready")
+    sb_svc.sandboxes_service_get_sandbox_snapshot.return_value = snap
+    sb_svc.sandboxes_service_list_sandbox_snapshots.return_value = V1ListSandboxSnapshotsResponse(snapshots=[snap])
+
+    with mock.patch.object(sdk.api, "sandboxes", return_value=sb_svc):
+        assert sdk.get_snapshot("snap-1").id == "snap-1"
+        assert sdk.list_snapshots(project_id="proj-1")[0].id == "snap-1"
+        sdk.delete_snapshot("snap-1")
+
+    sb_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with(
+        "snap-1",
+        organization_id="org-1",
+    )
+    sb_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
+        organization_id="org-1",
+        project_id="proj-1",
+    )
+    sb_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with(
+        "snap-1",
+        organization_id="org-1",
+    )
+
+
 def test_sandbox_instance_run_command_string_and_args():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
@@ -231,10 +290,8 @@ def test_sandbox_instance_stop_swallows_404():
 
 
 def test_sandbox_instance_list_builds_result():
-    mock_api = mock.MagicMock()
-    mock_api.config_get.return_value = "org-z"
+    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test", organization_id="org-z"))
     sb_svc = mock.MagicMock()
-    mock_api.sandboxes.return_value = sb_svc
 
     s1 = _v1(id="a", name="n1", status="running")
     s2 = _v1(id="b", name="n2", status="stopped")
@@ -245,9 +302,8 @@ def test_sandbox_instance_list_builds_result():
         total_size="2",
     )
 
-    from lightning_sdk.sandbox.base import _list_sandboxes
-
-    result = _list_sandboxes(page_token="pt", limit=10, sandbox_api=mock_api)
+    with mock.patch.object(sdk.api, "sandboxes", return_value=sb_svc):
+        result = sdk.list(page_token="pt", limit=10)
 
     assert result.total_size == 2
     assert result.next_page_token == "npt"
@@ -258,15 +314,12 @@ def test_sandbox_instance_list_builds_result():
 
 
 def test_list_sandboxes_omits_organization_id_when_not_configured():
-    mock_api = mock.MagicMock()
-    mock_api.config_get.return_value = None
+    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test"))
     sb_svc = mock.MagicMock()
-    mock_api.sandboxes.return_value = sb_svc
     sb_svc.sandboxes_service_list_sandboxes.return_value = V1ListSandboxesResponse(sandboxes=[])
 
-    from lightning_sdk.sandbox.base import _list_sandboxes
-
-    _list_sandboxes(sandbox_api=mock_api)
+    with mock.patch.object(sdk.api, "sandboxes", return_value=sb_svc):
+        sdk.list()
 
     sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with()
 
@@ -317,16 +370,21 @@ def test_sandbox_create_classmethod_forwards():
 
 
 def test_sandbox_entry_get_and_list_use_sdk_api():
+    sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
     with (
-        mock.patch("lightning_sdk.sandbox.sandbox._get_sandbox") as m_get,
-        mock.patch("lightning_sdk.sandbox.sandbox._list_sandboxes") as m_list,
+        mock.patch.object(sdk.api, "get_sandbox", return_value=_v1(id="sb-x")) as m_get,
+        mock.patch.object(
+            sdk.api,
+            "list_sandboxes",
+            return_value=V1ListSandboxesResponse(sandboxes=[]),
+        ) as m_list,
     ):
-        sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
-        sdk.get("sb-x")
+        out = sdk.get("sb-x")
         sdk.list(limit=3)
 
-    m_get.assert_called_once_with("sb-x", sandbox_api=sdk.api)
-    m_list.assert_called_once_with(page_token=None, limit=3, sandbox_api=sdk.api)
+    assert out.sandbox_id == "sb-x"
+    m_get.assert_called_once_with("sb-x")
+    m_list.assert_called_once_with(page_token=None, limit=3)
 
 
 def test_configure_updates_globals_and_resets_client():

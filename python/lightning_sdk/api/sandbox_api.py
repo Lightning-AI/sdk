@@ -9,6 +9,10 @@ from lightning_sdk.lightning_cloud.openapi import SandboxesServiceApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     SandboxesServiceCreateSandboxDirectoryBody,
     SandboxesServiceRunSandboxCommandBody,
+    V1ListSandboxesResponse,
+    V1ListSandboxSnapshotsResponse,
+    V1Sandbox,
+    V1SandboxSnapshot,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -143,6 +147,18 @@ class SandboxApi:
     def config_get(self, key: str) -> Any:
         return self._config.get(key)
 
+    def _organization_id(self) -> str | None:
+        org_id = self._config.get("organization_id")
+        return str(org_id) if org_id else None
+
+    def _org_query_kwargs(self, organization_id: str | None = None) -> dict[str, str]:
+        if organization_id is not None:
+            return {"organization_id": organization_id}
+        org_id = self._organization_id()
+        if org_id:
+            return {"organization_id": org_id}
+        return {}
+
     def reset(self) -> None:
         """Recreate the Lightning client and re-apply ``configure()`` / env (call after config changes)."""
         self._client = LightningClient(max_tries=7)
@@ -173,6 +189,61 @@ class SandboxApi:
 
     def sandboxes(self) -> SandboxesServiceApi:
         return SandboxesServiceApi(self._client.api_client)
+
+    def get_sandbox(self, sandbox_id: str, *, organization_id: str | None = None) -> V1Sandbox:
+        """Fetch one sandbox row via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox`."""
+        return self.sandboxes().sandboxes_service_get_sandbox(
+            sandbox_id,
+            **self._org_query_kwargs(organization_id),
+        )
+
+    def list_sandboxes(
+        self,
+        *,
+        page_token: str | None = None,
+        limit: int | None = None,
+    ) -> V1ListSandboxesResponse:
+        """List sandboxes via :meth:`SandboxesServiceApi.sandboxes_service_list_sandboxes`."""
+        kwargs = self._org_query_kwargs()
+        if page_token:
+            kwargs["page_token"] = page_token
+        if limit is not None:
+            kwargs["limit"] = limit
+        return self.sandboxes().sandboxes_service_list_sandboxes(**kwargs)
+
+    def get_snapshot(self, snapshot_id: str, *, organization_id: str | None = None) -> V1SandboxSnapshot:
+        """Fetch snapshot metadata via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_snapshot`."""
+        return self.sandboxes().sandboxes_service_get_sandbox_snapshot(
+            snapshot_id,
+            **self._org_query_kwargs(organization_id),
+        )
+
+    def list_snapshots(
+        self,
+        *,
+        project_id: str | None = None,
+        name: str | None = None,
+        page_token: str | None = None,
+        limit: int | None = None,
+    ) -> V1ListSandboxSnapshotsResponse:
+        """List snapshots via :meth:`SandboxesServiceApi.sandboxes_service_list_sandbox_snapshots`."""
+        kwargs = self._org_query_kwargs()
+        if project_id:
+            kwargs["project_id"] = project_id
+        if name:
+            kwargs["name"] = name
+        if page_token:
+            kwargs["page_token"] = page_token
+        if limit is not None:
+            kwargs["limit"] = str(limit)
+        return self.sandboxes().sandboxes_service_list_sandbox_snapshots(**kwargs)
+
+    def delete_snapshot(self, snapshot_id: str, *, organization_id: str | None = None) -> None:
+        """Delete a snapshot via :meth:`SandboxesServiceApi.sandboxes_service_delete_sandbox_snapshot`."""
+        self.sandboxes().sandboxes_service_delete_sandbox_snapshot(
+            snapshot_id,
+            **self._org_query_kwargs(organization_id),
+        )
 
     def run_command(
         self,

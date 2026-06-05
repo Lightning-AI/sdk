@@ -157,3 +157,72 @@ def test_reset_recreates_client(patched_sandbox_api):
     api.reset()
 
     assert api.client is not client_before
+
+
+def test_get_sandbox_passes_organization_id_from_config(patched_sandbox_api):
+    api, mock_svc = patched_sandbox_api
+    api._config["organization_id"] = "org-1"
+    mock_svc.sandboxes_service_get_sandbox.return_value = mock.MagicMock()
+
+    api.get_sandbox("sb-1")
+
+    mock_svc.sandboxes_service_get_sandbox.assert_called_once_with("sb-1", organization_id="org-1")
+
+
+def test_get_sandbox_prefers_explicit_organization_id(patched_sandbox_api):
+    api, mock_svc = patched_sandbox_api
+    api._config["organization_id"] = "org-config"
+    mock_svc.sandboxes_service_get_sandbox.return_value = mock.MagicMock()
+
+    api.get_sandbox("sb-1", organization_id="org-explicit")
+
+    mock_svc.sandboxes_service_get_sandbox.assert_called_once_with("sb-1", organization_id="org-explicit")
+
+
+def test_list_sandboxes_forwards_pagination(patched_sandbox_api):
+    api, mock_svc = patched_sandbox_api
+    api._config["organization_id"] = "org-1"
+    mock_svc.sandboxes_service_list_sandboxes.return_value = mock.MagicMock()
+
+    api.list_sandboxes(page_token="pt", limit=5)
+
+    mock_svc.sandboxes_service_list_sandboxes.assert_called_once_with(
+        organization_id="org-1",
+        page_token="pt",
+        limit=5,
+    )
+
+
+def test_list_snapshots_forwards_filters(patched_sandbox_api):
+    from lightning_sdk.lightning_cloud.openapi import V1ListSandboxSnapshotsResponse
+
+    api, mock_svc = patched_sandbox_api
+    api._config["organization_id"] = "org-1"
+    mock_svc.sandboxes_service_list_sandbox_snapshots.return_value = V1ListSandboxSnapshotsResponse(snapshots=[])
+
+    api.list_snapshots(project_id="proj-1", name="golden", limit=3)
+
+    mock_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
+        organization_id="org-1",
+        project_id="proj-1",
+        name="golden",
+        limit="3",
+    )
+
+
+def test_get_snapshot_and_delete_snapshot_use_org_scope(patched_sandbox_api):
+    api, mock_svc = patched_sandbox_api
+    api._config["organization_id"] = "org-1"
+    mock_svc.sandboxes_service_get_sandbox_snapshot.return_value = mock.MagicMock()
+
+    api.get_snapshot("snap-1")
+    api.delete_snapshot("snap-2")
+
+    mock_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with(
+        "snap-1",
+        organization_id="org-1",
+    )
+    mock_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with(
+        "snap-2",
+        organization_id="org-1",
+    )
