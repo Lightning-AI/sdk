@@ -1,10 +1,14 @@
-from typing import Optional
+from typing import Optional, Union
 
 from lightning_sdk.base_studio import BaseStudio
+from lightning_sdk.teamspace import Teamspace
 
 
-def get_base_studio_id(studio_type: Optional[str]) -> Optional[str]:
-    base_studios = BaseStudio()
+def get_base_studio_id(
+    studio_type: Optional[str],
+    teamspace: Optional[Union[str, Teamspace]] = None,
+) -> Optional[str]:
+    base_studios = BaseStudio(teamspace=teamspace)
     base_studios = base_studios.list()
     template_id = None
 

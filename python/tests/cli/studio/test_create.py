@@ -68,7 +68,7 @@ def test_create_studio_with_studio_type(monkeypatch):
             if result.exception:
                 raise result.exception
 
-        mock_get_base_studio_id.assert_called_once_with("python-template")
+        mock_get_base_studio_id.assert_called_once_with("python-template", teamspace="owner/teamspace")
 
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
@@ -102,7 +102,7 @@ def test_create_studio_without_studio_type(monkeypatch):
     ):
         runner.invoke(create_studio, ["--name", "test-studio"])
 
-        mock_get_base_studio_id.assert_called_once_with(None)
+        mock_get_base_studio_id.assert_called_once_with(None, teamspace="owner/teamspace")
 
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
@@ -216,16 +216,19 @@ def test_create_studio_with_all_options():
     from lightning_sdk.machine import CloudProvider
 
     mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "owner/teamspace"
+    mock_resolved_teamspace = MagicMock()
+    mock_teamspace_menu.return_value = mock_resolved_teamspace
 
     mock_studio_instance = MagicMock()
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
     mock_studio_class.__qualname__ = "Studio"
 
+    mock_get_base_studio_id = MagicMock(return_value="ml-template")
+
     with patch("lightning_sdk.cli.studio.create.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="ml-template"), patch(
+    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id), patch(
         "lightning_sdk.cli.studio.create.Studio", mock_studio_class
     ):
         create_impl(
@@ -237,11 +240,13 @@ def test_create_studio_with_all_options():
             studio_type="machine-learning",
         )
 
+        mock_get_base_studio_id.assert_called_once_with("machine-learning", teamspace=mock_resolved_teamspace)
+
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
 
         assert call_kwargs["name"] == "my-studio"
-        assert call_kwargs["teamspace"] == "owner/teamspace"
+        assert call_kwargs["teamspace"] == mock_resolved_teamspace
         assert call_kwargs["create_ok"] is True
         assert call_kwargs["cloud_provider"] == CloudProvider.AWS
         assert call_kwargs["cloud_account"] == "my-cloud-account"

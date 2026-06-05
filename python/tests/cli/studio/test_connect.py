@@ -252,11 +252,14 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
     from lightning_sdk.cli.studio.connect import _parse_args_or_get_from_current_studio
 
     mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "resolved-owner/resolved-teamspace"
+    mock_resolved_teamspace = MagicMock()
+    mock_teamspace_menu.return_value = mock_resolved_teamspace
+
+    mock_get_base_studio_id = MagicMock(return_value="template-123")
 
     with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
         "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
+    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", mock_get_base_studio_id), patch(
         "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
         teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
@@ -269,7 +272,9 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
             name="my-studio",
         )
 
-        assert teamspace == "resolved-owner/resolved-teamspace"
+        mock_get_base_studio_id.assert_called_once_with("python-template", teamspace=mock_resolved_teamspace)
+
+        assert teamspace == mock_resolved_teamspace
         assert cloud_account == "account-123"
         assert template_id == "template-123"
         assert machine == "L4"

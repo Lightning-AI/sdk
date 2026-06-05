@@ -88,3 +88,20 @@ def test_get_base_studio_id_no_match_uses_first(monkeypatch):
 
     result = get_base_studio_id("nonexistent-template")
     assert result == "template-id-1"
+
+
+def test_get_base_studio_id_passes_teamspace(monkeypatch):
+    """Resolved teamspace from CLI must be used instead of config/env defaults."""
+    from unittest.mock import MagicMock
+
+    mock_teamspace = MagicMock()
+    mock_base_studio = MagicMock()
+    mock_base_studio.list.return_value = []
+
+    mock_base_studio_class = MagicMock(return_value=mock_base_studio)
+    monkeypatch.setattr("lightning_sdk.cli.utils.get_base_studio.BaseStudio", mock_base_studio_class)
+
+    result = get_base_studio_id(None, teamspace=mock_teamspace)
+
+    assert result is None
+    mock_base_studio_class.assert_called_once_with(teamspace=mock_teamspace)

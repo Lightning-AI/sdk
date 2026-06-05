@@ -33,7 +33,7 @@ def _parse_args_or_get_from_current_studio(
     resolved_teamspace = menu(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
-    template_id = get_base_studio_id(studio_type)
+    template_id = get_base_studio_id(studio_type, teamspace=resolved_teamspace)
 
     if cloud_provider is not None:
         cloud_provider = CloudProvider(cloud_provider)

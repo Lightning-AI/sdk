@@ -76,7 +76,7 @@ def create_impl(
     cls_name = create_cls.__qualname__
 
     # check for available base studios
-    template_id = get_base_studio_id(studio_type)
+    template_id = get_base_studio_id(studio_type, teamspace=resolved_teamspace)
 
     try:
         create_cls = VM if vm else Studio
