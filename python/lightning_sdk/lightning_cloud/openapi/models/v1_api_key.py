@@ -47,6 +47,7 @@ class V1APIKey(object):
         'id': 'str',
         'last_used': 'datetime',
         'name': 'str',
+        'project_id': 'str',
         'raw_key': 'str',
         'role': 'str'
     }
@@ -58,11 +59,12 @@ class V1APIKey(object):
         'id': 'id',
         'last_used': 'lastUsed',
         'name': 'name',
+        'project_id': 'projectId',
         'raw_key': 'rawKey',
         'role': 'role'
     }
 
-    def __init__(self, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, raw_key: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, project_id: 'str' =None, raw_key: 'str' =None, role: 'str' =None):  # noqa: E501
         """V1APIKey - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._creator_id = None
@@ -70,6 +72,7 @@ class V1APIKey(object):
         self._id = None
         self._last_used = None
         self._name = None
+        self._project_id = None
         self._raw_key = None
         self._role = None
         self.discriminator = None
@@ -85,6 +88,8 @@ class V1APIKey(object):
             self.last_used = last_used
         if name is not None:
             self.name = name
+        if project_id is not None:
+            self.project_id = project_id
         if raw_key is not None:
             self.raw_key = raw_key
         if role is not None:
@@ -215,6 +220,29 @@ class V1APIKey(object):
         """
 
         self._name = name
+
+    @property
+    def project_id(self) -> 'str':
+        """Gets the project_id of this V1APIKey.  # noqa: E501
+
+        Teamspace the key is scoped to. Empty when org-wide.  # noqa: E501
+
+        :return: The project_id of this V1APIKey.  # noqa: E501
+        :rtype: str
+        """
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, project_id: 'str'):
+        """Sets the project_id of this V1APIKey.
+
+        Teamspace the key is scoped to. Empty when org-wide.  # noqa: E501
+
+        :param project_id: The project_id of this V1APIKey.  # noqa: E501
+        :type: str
+        """
+
+        self._project_id = project_id
 
     @property
     def raw_key(self) -> 'str':

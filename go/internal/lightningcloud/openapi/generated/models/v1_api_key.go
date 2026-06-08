@@ -39,6 +39,9 @@ type V1APIKey struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// Teamspace the key is scoped to. Empty when org-wide.
+	ProjectID string `json:"projectId,omitempty"`
+
 	// raw key
 	RawKey string `json:"rawKey,omitempty"`
 
