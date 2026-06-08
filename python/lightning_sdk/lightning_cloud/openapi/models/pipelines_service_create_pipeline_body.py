@@ -43,6 +43,7 @@ class PipelinesServiceCreatePipelineBody(object):
     swagger_types = {
         'cluster_id': 'str',
         'continue_on_step_failure': 'bool',
+        'interruption_retry_limit': 'int',
         'name': 'str',
         'parameters': 'list[V1PipelineParameter]',
         'parent_pipeline_id': 'str',
@@ -53,6 +54,7 @@ class PipelinesServiceCreatePipelineBody(object):
     attribute_map = {
         'cluster_id': 'clusterId',
         'continue_on_step_failure': 'continueOnStepFailure',
+        'interruption_retry_limit': 'interruptionRetryLimit',
         'name': 'name',
         'parameters': 'parameters',
         'parent_pipeline_id': 'parentPipelineId',
@@ -60,10 +62,11 @@ class PipelinesServiceCreatePipelineBody(object):
         'steps': 'steps'
     }
 
-    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, interruption_retry_limit: 'int' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, steps: 'list[V1PipelineStep]' =None):  # noqa: E501
         """PipelinesServiceCreatePipelineBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._continue_on_step_failure = None
+        self._interruption_retry_limit = None
         self._name = None
         self._parameters = None
         self._parent_pipeline_id = None
@@ -74,6 +77,8 @@ class PipelinesServiceCreatePipelineBody(object):
             self.cluster_id = cluster_id
         if continue_on_step_failure is not None:
             self.continue_on_step_failure = continue_on_step_failure
+        if interruption_retry_limit is not None:
+            self.interruption_retry_limit = interruption_retry_limit
         if name is not None:
             self.name = name
         if parameters is not None:
@@ -128,6 +133,29 @@ class PipelinesServiceCreatePipelineBody(object):
         """
 
         self._continue_on_step_failure = continue_on_step_failure
+
+    @property
+    def interruption_retry_limit(self) -> 'int':
+        """Gets the interruption_retry_limit of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+
+        Number of times to retry a step if it fails due to an interruption (e.g. spot instance preemption). Only applies if continue_on_step_failure is true.  # noqa: E501
+
+        :return: The interruption_retry_limit of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._interruption_retry_limit
+
+    @interruption_retry_limit.setter
+    def interruption_retry_limit(self, interruption_retry_limit: 'int'):
+        """Sets the interruption_retry_limit of this PipelinesServiceCreatePipelineBody.
+
+        Number of times to retry a step if it fails due to an interruption (e.g. spot instance preemption). Only applies if continue_on_step_failure is true.  # noqa: E501
+
+        :param interruption_retry_limit: The interruption_retry_limit of this PipelinesServiceCreatePipelineBody.  # noqa: E501
+        :type: int
+        """
+
+        self._interruption_retry_limit = interruption_retry_limit
 
     @property
     def name(self) -> 'str':

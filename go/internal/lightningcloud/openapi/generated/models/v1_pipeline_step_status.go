@@ -23,6 +23,9 @@ type V1PipelineStepStatus struct {
 	// error
 	Error string `json:"error,omitempty"`
 
+	// How many times this step has been retried after an interruption
+	InterruptionRetryCount int32 `json:"interruptionRetryCount,omitempty"`
+
 	// message
 	Message string `json:"message,omitempty"`
 

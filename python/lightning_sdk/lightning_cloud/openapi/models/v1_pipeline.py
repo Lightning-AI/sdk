@@ -48,6 +48,7 @@ class V1Pipeline(object):
         'display_name': 'str',
         'error': 'str',
         'id': 'str',
+        'interruption_retry_limit': 'int',
         'is_published': 'bool',
         'message': 'str',
         'name': 'str',
@@ -71,6 +72,7 @@ class V1Pipeline(object):
         'display_name': 'displayName',
         'error': 'error',
         'id': 'id',
+        'interruption_retry_limit': 'interruptionRetryLimit',
         'is_published': 'isPublished',
         'message': 'message',
         'name': 'name',
@@ -86,7 +88,7 @@ class V1Pipeline(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, created_at: 'datetime' =None, created_from_ui: 'bool' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, continue_on_step_failure: 'bool' =None, created_at: 'datetime' =None, created_from_ui: 'bool' =None, display_name: 'str' =None, error: 'str' =None, id: 'str' =None, interruption_retry_limit: 'int' =None, is_published: 'bool' =None, message: 'str' =None, name: 'str' =None, parameters: 'list[V1PipelineParameter]' =None, parent_pipeline_id: 'str' =None, project_id: 'str' =None, schedule_id: 'str' =None, shared_filesystem: 'V1SharedFilesystem' =None, state: 'V1PipelineState' =None, statuses: 'list[V1PipelineStepStatus]' =None, steps: 'list[V1PipelineStep]' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Pipeline - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._continue_on_step_failure = None
@@ -95,6 +97,7 @@ class V1Pipeline(object):
         self._display_name = None
         self._error = None
         self._id = None
+        self._interruption_retry_limit = None
         self._is_published = None
         self._message = None
         self._name = None
@@ -123,6 +126,8 @@ class V1Pipeline(object):
             self.error = error
         if id is not None:
             self.id = id
+        if interruption_retry_limit is not None:
+            self.interruption_retry_limit = interruption_retry_limit
         if is_published is not None:
             self.is_published = is_published
         if message is not None:
@@ -298,6 +303,29 @@ class V1Pipeline(object):
         """
 
         self._id = id
+
+    @property
+    def interruption_retry_limit(self) -> 'int':
+        """Gets the interruption_retry_limit of this V1Pipeline.  # noqa: E501
+
+        Number of times to retry a step if it fails due to an interruption (e.g. spot instance preemption). Only applies if continue_on_step_failure is true.  # noqa: E501
+
+        :return: The interruption_retry_limit of this V1Pipeline.  # noqa: E501
+        :rtype: int
+        """
+        return self._interruption_retry_limit
+
+    @interruption_retry_limit.setter
+    def interruption_retry_limit(self, interruption_retry_limit: 'int'):
+        """Sets the interruption_retry_limit of this V1Pipeline.
+
+        Number of times to retry a step if it fails due to an interruption (e.g. spot instance preemption). Only applies if continue_on_step_failure is true.  # noqa: E501
+
+        :param interruption_retry_limit: The interruption_retry_limit of this V1Pipeline.  # noqa: E501
+        :type: int
+        """
+
+        self._interruption_retry_limit = interruption_retry_limit
 
     @property
     def is_published(self) -> 'bool':

@@ -42,6 +42,7 @@ class V1PipelineStepStatus(object):
     """
     swagger_types = {
         'error': 'str',
+        'interruption_retry_count': 'int',
         'message': 'str',
         'name': 'str',
         'resource_id': 'str',
@@ -54,6 +55,7 @@ class V1PipelineStepStatus(object):
 
     attribute_map = {
         'error': 'error',
+        'interruption_retry_count': 'interruptionRetryCount',
         'message': 'message',
         'name': 'name',
         'resource_id': 'resourceId',
@@ -64,9 +66,10 @@ class V1PipelineStepStatus(object):
         'type': 'type'
     }
 
-    def __init__(self, error: 'str' =None, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, resource_name: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
+    def __init__(self, error: 'str' =None, interruption_retry_count: 'int' =None, message: 'str' =None, name: 'str' =None, resource_id: 'str' =None, resource_name: 'str' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, type: 'V1PipelineStepType' =None):  # noqa: E501
         """V1PipelineStepStatus - a model defined in Swagger"""  # noqa: E501
         self._error = None
+        self._interruption_retry_count = None
         self._message = None
         self._name = None
         self._resource_id = None
@@ -78,6 +81,8 @@ class V1PipelineStepStatus(object):
         self.discriminator = None
         if error is not None:
             self.error = error
+        if interruption_retry_count is not None:
+            self.interruption_retry_count = interruption_retry_count
         if message is not None:
             self.message = message
         if name is not None:
@@ -115,6 +120,27 @@ class V1PipelineStepStatus(object):
         """
 
         self._error = error
+
+    @property
+    def interruption_retry_count(self) -> 'int':
+        """Gets the interruption_retry_count of this V1PipelineStepStatus.  # noqa: E501
+
+
+        :return: The interruption_retry_count of this V1PipelineStepStatus.  # noqa: E501
+        :rtype: int
+        """
+        return self._interruption_retry_count
+
+    @interruption_retry_count.setter
+    def interruption_retry_count(self, interruption_retry_count: 'int'):
+        """Sets the interruption_retry_count of this V1PipelineStepStatus.
+
+
+        :param interruption_retry_count: The interruption_retry_count of this V1PipelineStepStatus.  # noqa: E501
+        :type: int
+        """
+
+        self._interruption_retry_count = interruption_retry_count
 
     @property
     def message(self) -> 'str':

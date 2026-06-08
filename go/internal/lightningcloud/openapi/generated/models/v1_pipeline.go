@@ -43,6 +43,9 @@ type V1Pipeline struct {
 	// Read only
 	ID string `json:"id,omitempty"`
 
+	// Number of times to retry a step if it fails due to an interruption (e.g. spot instance preemption). Only applies if continue_on_step_failure is true.
+	InterruptionRetryLimit int32 `json:"interruptionRetryLimit,omitempty"`
+
 	// Whether the pipeline was published
 	IsPublished bool `json:"isPublished,omitempty"`
 
