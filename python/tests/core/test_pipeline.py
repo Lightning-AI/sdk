@@ -123,9 +123,11 @@ def test_pipeline_run(monkeypatch):
     args = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args
 
     assert "get_pipeline_by_id().name" in str(args[0])
-    # args: name, teamspace, steps, shared_filesystem, schedules, parent_pipeline_id, stop_on_failure
-    assert args[-2] is None
-    assert args[-1] is True
+    # args: name, teamspace, steps, shared_filesystem, schedules, parent_pipeline_id,
+    #       stop_on_failure, interruption_retries
+    assert args[-3] is None
+    assert args[-2] is True
+    assert args[-1] == 0
 
     generated = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args[2]
 
@@ -160,6 +162,50 @@ def test_pipeline_run(monkeypatch):
     assert step_2.job.spec.entrypoint == "sh -c"
     assert step_2.job.spec.image == "ubuntu:latest"
     assert step_2.job.spec.instance_name == "cpu-8"
+
+
+@pytest.mark.parametrize("interruption_retries", [0, 3])
+def test_pipeline_run_interruption_retries(monkeypatch, interruption_retries):
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+    pipeline_api_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
+    resolve_teamspace_mock = MagicMock()
+    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
+
+    pipeline = Pipeline(name="first-pipeline", interruption_retries=interruption_retries)
+    assert pipeline._interruption_retries == interruption_retries
+
+    cloud_account_mock = MagicMock()
+    cloud_account_mock.cluster_id = ""
+    pipeline._cloud_account = cloud_account_mock
+    pipeline._pipeline = None
+
+    pipeline.run(
+        steps=[
+            JobStep(
+                name="job-0",
+                machine=Machine.CPU,
+                command="echo 'Hello, World!'",
+                image="ubuntu:latest",
+            ),
+        ]
+    )
+
+    args = pipeline_api_mock().create_pipeline._mock_mock_calls[0].args
+    # args: name, teamspace, steps, shared_filesystem, schedules, parent_pipeline_id,
+    #       stop_on_failure, interruption_retries
+    assert args[-1] == interruption_retries
+
+
+def test_pipeline_interruption_retries_default(monkeypatch):
+    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
+    monkeypatch.setattr(pipeline_module, "PipelineApi", MagicMock())
+    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", MagicMock())
+
+    pipeline = Pipeline(name="first-pipeline")
+    assert pipeline._interruption_retries == 0
 
 
 def test_job_parameters_stay_in_sync():
@@ -328,12 +374,13 @@ def test_shared_filesystem(monkeypatch):
 
     mock_calls = pipeline_api_mock().create_pipeline._mock_mock_calls
     assert len(mock_calls[0].args)
-    # args: ..., shared_filesystem, schedules, parent_pipeline_id, stop_on_failure
-    assert mock_calls[0].args[-4] is True
-    assert isinstance(mock_calls[0].args[-3], list)
-    assert len(mock_calls[0].args[-3]) == 0
-    assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-2])
-    assert mock_calls[0].args[-1] is True
+    # args: ..., shared_filesystem, schedules, parent_pipeline_id, stop_on_failure, interruption_retries
+    assert mock_calls[0].args[-5] is True
+    assert isinstance(mock_calls[0].args[-4], list)
+    assert len(mock_calls[0].args[-4]) == 0
+    assert "get_pipeline_by_id().id" in str(mock_calls[0].args[-3])
+    assert mock_calls[0].args[-2] is True
+    assert mock_calls[0].args[-1] == 0
 
     pipeline._shared_filesystem = True
 

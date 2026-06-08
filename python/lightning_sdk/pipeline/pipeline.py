@@ -30,6 +30,7 @@ class Pipeline:
         shared_filesystem: Optional[bool] = None,
         studio: Optional[Union[Studio, str]] = None,
         stop_on_failure: bool = True,
+        interruption_retries: int = 0,
     ) -> None:
         """The Lightning Pipeline can be used to create complex DAG.
 
@@ -44,9 +45,13 @@ class Pipeline:
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
+            interruption_retries: Number of times to retry a step if it is interrupted
+                before marking the pipeline as failed. Defaults to 0.
+
         """
         self._name = name
         self._stop_on_failure = stop_on_failure
+        self._interruption_retries = interruption_retries
 
         self._teamspace = _resolve_teamspace(
             teamspace=teamspace,
@@ -153,6 +158,7 @@ class Pipeline:
             schedules,
             parent_pipeline_id,
             self._stop_on_failure,
+            self._interruption_retries,
         )
 
         printer = PipelinePrinter(

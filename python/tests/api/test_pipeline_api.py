@@ -168,6 +168,52 @@ class TestCreatePipeline:
         body = mock_lightning_client.pipelines_service_create_pipeline.call_args[0][0]
         assert body.continue_on_step_failure is expected_continue_on_step_failure
 
+    def test_create_default_interruption_retries(self, pipeline_api, mock_lightning_client):
+        """Test that interruption_retry_limit defaults to 0 on the body."""
+        mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)
+        mock_lightning_client.pipelines_service_create_pipeline.return_value = mock_created_pipeline
+
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+
+        teamspace = MagicMock()
+        teamspace.id = PROJECT_ID
+
+        pipeline_api.create_pipeline(
+            name=PIPELINE_NAME,
+            teamspace=teamspace,
+            steps=[],
+            shared_filesystem=True,
+            schedules=[],
+            parent_pipeline_id=None,
+        )
+
+        body = mock_lightning_client.pipelines_service_create_pipeline.call_args[0][0]
+        assert body.interruption_retry_limit == 0
+
+    @pytest.mark.parametrize("interruption_retries", [0, 1, 5])
+    def test_create_interruption_retries(self, pipeline_api, mock_lightning_client, interruption_retries):
+        """Test that interruption_retries is mapped to interruption_retry_limit on the body."""
+        mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)
+        mock_lightning_client.pipelines_service_create_pipeline.return_value = mock_created_pipeline
+
+        pipeline_api._prepare_shared_filesystem = MagicMock(return_value=V1SharedFilesystem(enabled=True))
+
+        teamspace = MagicMock()
+        teamspace.id = PROJECT_ID
+
+        pipeline_api.create_pipeline(
+            name=PIPELINE_NAME,
+            teamspace=teamspace,
+            steps=[],
+            shared_filesystem=True,
+            schedules=[],
+            parent_pipeline_id=None,
+            interruption_retries=interruption_retries,
+        )
+
+        body = mock_lightning_client.pipelines_service_create_pipeline.call_args[0][0]
+        assert body.interruption_retry_limit == interruption_retries
+
     def test_create_with_schedules(self, pipeline_api, mock_lightning_client):
         """Test creating a pipeline with new schedules."""
         mock_created_pipeline = V1Pipeline(id=PIPELINE_ID, name=PIPELINE_NAME)

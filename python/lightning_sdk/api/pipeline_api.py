@@ -64,6 +64,7 @@ class PipelineApi:
         schedules: List["Schedule"],
         parent_pipeline_id: Optional[str],
         stop_on_failure: bool = True,
+        interruption_retries: int = 0,
     ) -> V1Pipeline:
         """Create a pipeline with the given steps and schedules, replacing the parent pipeline's schedules if provided.
 
@@ -75,6 +76,8 @@ class PipelineApi:
             schedules: List of schedules to attach to the pipeline.
             parent_pipeline_id: ID of an existing pipeline whose schedules should be replaced.
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
+            interruption_retries: Number of times to retry a step if it is interrupted
+                before marking the pipeline as failed. Defaults to 0.
 
         Returns:
             V1Pipeline: The created pipeline record.
@@ -85,6 +88,7 @@ class PipelineApi:
             shared_filesystem=self._prepare_shared_filesystem(shared_filesystem, steps, teamspace),
             parent_pipeline_id=parent_pipeline_id or "",
             continue_on_step_failure=not stop_on_failure,
+            interruption_retry_limit=interruption_retries,
         )
 
         pipeline = self._client.pipelines_service_create_pipeline(body, teamspace.id)
