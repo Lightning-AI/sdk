@@ -1,3 +1,3 @@
 """Version information for lightning_sdk."""
 
-__version__ = "2026.06.05"
+__version__ = "2026.06.08"
