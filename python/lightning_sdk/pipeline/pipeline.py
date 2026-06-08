@@ -14,13 +14,14 @@ from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_teamspace, _warn_deprecated_cloud_selection
 
 
 class Pipeline:
     def __init__(
         self,
         name: str,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
@@ -34,10 +35,12 @@ class Pipeline:
 
         Arguments:
             name: The desired name of the pipeline.
+            cloud: Cloud provider or cloud account to use for the entire pipeline.
             teamspace: The teamspace where the pipeline will be created.
             org: The organization where the pipeline will be created.
             user: The creator of the pipeline.
-            cloud_account: The cloud account to use for the entire pipeline.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to use for the entire pipeline.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
@@ -57,11 +60,16 @@ class Pipeline:
 
         self._pipeline_api = PipelineApi()
         self._cloud_account_api = CloudAccountApi()
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account, cloud_provider=cloud_provider)
         self._cloud_account = self._cloud_account_api.resolve_cloud_account(
-            self._teamspace.id, cloud_account, cloud_provider, self._teamspace.default_cloud_account
+            self._teamspace.id,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+            cloud=cloud,
         )
         self._default_cluster = _get_cluster(
-            client=self._pipeline_api._client, project_id=self._teamspace.id, cluster_id=cloud_account
+            client=self._pipeline_api._client, project_id=self._teamspace.id, cluster_id=self._cloud_account
         )
         self._shared_filesystem = shared_filesystem if shared_filesystem is not None else True
         self._studio = _get_studio(studio)

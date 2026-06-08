@@ -11,6 +11,7 @@ def test_start_vm():
     assert "--create" in result_text
     assert "--machine" in result_text
     assert "--interruptible" in result_text
+    assert "--cloud TEXT" in result_text
     assert "--cloud-provider" in result_text
     assert "--cloud-account TEXT" in result_text
 

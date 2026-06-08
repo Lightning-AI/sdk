@@ -23,10 +23,11 @@ from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.names import random_unique_name
 from lightning_sdk.utils.resolve import (
     _get_org_id,
-    _resolve_deprecated_cluster,
-    _resolve_deprecated_provider,
+    _resolve_default_cloud_account,
+    _resolve_default_cloud_provider,
     _resolve_teamspace,
     _setup_logger,
+    _warn_deprecated_cloud_selection,
 )
 
 if TYPE_CHECKING:
@@ -48,13 +49,13 @@ class Studio(metaclass=TrackCallsMeta):
         teamspace: the name of the teamspace the studio is contained by
         org: the name of the organization owning the the teamspace in case it is owned by an org
         user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
-        cloud_account: the name of the cloud account, the studio should be created on.
+        cloud: Cloud provider or cloud account to create the studio on.
+        cloud_account: Deprecated. Use ``cloud`` instead. The name of the cloud account the studio should be created on.
             Doesn't matter when the studio already exists.
-        cloud_account_provider: The provider to select the cloud-account from.
+        cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
             If set, must be in agreement with the provider from the cloud_account (if specified).
             If not specified, falls back to the teamspace default cloud account.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
-        provider: the provider of the machine, the studio should be created on.
         studio_type: Type of studio to create. Only effective during initial creation;
             ignored for existing studios.
 
@@ -77,13 +78,12 @@ class Studio(metaclass=TrackCallsMeta):
         teamspace: Optional[Union[str, Teamspace]] = None,
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         cloud_account: Optional[str] = None,
         cloud_provider: Optional[Union[CloudProvider, str]] = None,
         create_ok: bool = True,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         source: Optional[str] = None,
         disable_secrets: bool = False,
-        provider: Optional[Union[CloudProvider, str]] = None,  # deprecated in favor of cloud_provider
         studio_type: Optional[str] = None,  # for base studio templates
     ) -> None:
         self._studio_api = StudioApi()
@@ -115,11 +115,15 @@ class Studio(metaclass=TrackCallsMeta):
             )
 
         # These are only used for studio creation, but validate them early if present.
-        if cloud_account or not cloud_provider:
-            cloud_account = _resolve_deprecated_cluster(
-                cloud_account, cluster, current_studio.cluster_id if current_studio else None
-            )
-        cloud_provider = _resolve_deprecated_provider(cloud_provider, provider)
+        explicit_cloud_account = cloud_account
+        explicit_cloud_provider = cloud_provider
+        if cloud is None:
+            if cloud_account or not cloud_provider:
+                cloud_account = _resolve_default_cloud_account(
+                    cloud_account, current_studio.cluster_id if current_studio else None
+                )
+            cloud_provider = _resolve_default_cloud_provider(cloud_provider)
+        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
 
         # If no name is provided, but we're running on a studio in the same teamspace,
         # return the current studio.
@@ -162,6 +166,7 @@ class Studio(metaclass=TrackCallsMeta):
 
         _cloud_account = self._cloud_account_api.resolve_cloud_account(
             self._teamspace.id,
+            cloud=cloud,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
             default_cloud_account=self._teamspace.default_cloud_account,
@@ -1144,16 +1149,16 @@ class VM(Studio):
 
     Args:
         name: the name of the vm
+        cloud: Cloud provider or cloud account to create the vm on.
         teamspace: the name of the teamspace the vm is contained by
         org: the name of the organization owning the the teamspace in case it is owned by an org
         user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
-        cloud_account: the name of the cloud account, the vm should be created on.
+        cloud_account: Deprecated. Use ``cloud`` instead. The name of the cloud account the vm should be created on.
             Doesn't matter when the vm already exists.
-        cloud_account_provider: The provider to select the cloud-account from.
+        cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
             If set, must be in agreement with the provider from the cloud_account (if specified).
             If not specified, falls backto the teamspace default cloud account.
         create_ok: whether the vm will be created if it does not yet exist. Defaults to True
-        provider: the provider of the machine, the vm should be created on.
 
     Note:
         Since a teamspace can either be owned by an org or by a user directly,

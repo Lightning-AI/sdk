@@ -10,6 +10,7 @@ from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
+from lightning_sdk.utils.resolve import _warn_deprecated_cloud_selection
 
 
 @dataclass
@@ -25,13 +26,15 @@ class _Sandbox:
 
     Args:
         name: The name of the sandbox.
+        cloud: Cloud provider or cloud account to use for the sandbox.
         machine: The machine to use for the sandbox.
         interruptible: Whether the sandbox is interruptible.
         teamspace: The teamspace to use for the sandbox.
         org: The organization to use for the sandbox.
         user: The user to use for the sandbox.
-        cloud_account: The cloud account to use for the sandbox.
-        cloud_provider: Selects the cloud account based on the available cloud accounts and the specified provider.
+        cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to use for the sandbox.
+        cloud_provider: Deprecated. Use ``cloud`` instead. Selects the cloud account based on the available cloud
+            accounts and the specified provider.
         disable_secrets: If true, user secrets such as LIGHTNING_API_KEY are not stored in the sandbox.
 
     Example:
@@ -43,6 +46,7 @@ class _Sandbox:
     def __init__(
         self,
         name: Optional[str] = None,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         machine: Optional[str] = None,
         interruptible: Optional[bool] = None,
         teamspace: Optional[Union[str, Teamspace]] = None,
@@ -56,6 +60,7 @@ class _Sandbox:
             timestr = datetime.now().strftime("%b-%d-%H_%M")
             name = f"sandbox-{timestr}"
 
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account, cloud_provider=cloud_provider)
         self._machine = machine or Machine.CPU
         self._interruptible = interruptible
         self._studio = Studio(
@@ -63,6 +68,7 @@ class _Sandbox:
             teamspace=teamspace,
             org=org,
             user=user,
+            cloud=cloud,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
             disable_secrets=disable_secrets,

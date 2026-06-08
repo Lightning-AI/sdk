@@ -47,13 +47,13 @@ class _JobV1(_BaseJob):
         machine: Union["Machine", str],
         command: str,
         studio: "Studio",
+        cloud: Optional[Union["CloudProvider", str]] = None,
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
         cloud_account: Optional[str] = None,
         cloud_provider: Optional[str] = None,
         interruptible: bool = False,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_BaseJob":
@@ -64,10 +64,12 @@ class _JobV1(_BaseJob):
             machine: the machine to run the workload on
             command: the command to execute
             studio: the studio the job belongs to
+            cloud: Cloud provider or cloud account to run the workload on.
             teamspace: the teamspace the job is part of
             org: the organization owning the teamspace (if applicable)
             user: the user owning the teamspace (if applicable)
-            cloud_account: the cloud account to run the workload on
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the workload on.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             interruptible: whether the workload can be interrupted
 
         Returns:
@@ -82,13 +84,13 @@ class _JobV1(_BaseJob):
             teamspace=teamspace,
             org=org,
             user=user,
+            cloud=cloud,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
             env=None,
             interruptible=interruptible,
             image_credentials=None,
             cloud_account_auth=False,
-            cluster=cluster,
             path_mappings=None,
             max_runtime=None,
             reuse_snapshot=reuse_snapshot,
@@ -97,6 +99,7 @@ class _JobV1(_BaseJob):
     def _submit(
         self,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -123,7 +126,9 @@ class _JobV1(_BaseJob):
             image: The image to use for the job (not supported).
             env: The environment variables for the job (not supported).
             interruptible: Whether the job can be interrupted.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             image_credentials: The image credentials for the job (not supported).
             cloud_account_auth: Whether to use cloud account authentication for the job (not supported).
             entrypoint: The entrypoint of your docker container (not supported).

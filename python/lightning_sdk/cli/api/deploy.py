@@ -5,12 +5,19 @@ from typing import Any
 import click
 
 from lightning_sdk.cli.legacy.deploy.serve import api_impl
+from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 
 
 @click.command("deploy")
 @click.argument("script_path")
 @click.option("--easy", is_flag=True, default=False, help="Generate a client for the model")
-@click.option("--cloud", is_flag=True, default=False, help="Run the model on cloud")
+@click.option(
+    "--cloud",
+    is_flag=False,
+    flag_value="",
+    type=str,
+    help="Run the model on cloud, optionally selecting a cloud provider or cloud account.",
+)
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
     "--non-interactive", "--non_interactive", is_flag=True, default=False, help="Do not prompt for confirmation"
@@ -53,4 +60,8 @@ from lightning_sdk.cli.legacy.deploy.serve import api_impl
 )
 def deploy_api(**kwargs: Any) -> None:
     """Deploy a LitServe model script."""
+    warn_deprecated_cloud_options(
+        cloud_account=kwargs.get("cloud_account"), cloud_provider=kwargs.get("cloud_provider")
+    )
+    kwargs["include_credentials"] = not kwargs.pop("no_credentials")
     api_impl(**kwargs)

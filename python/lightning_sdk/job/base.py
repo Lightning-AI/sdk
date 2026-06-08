@@ -5,7 +5,13 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.utils.logging import TrackCallsABCMeta
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_teamspace, in_studio, skip_studio_setup
+from lightning_sdk.utils.resolve import (
+    _resolve_default_cloud_account,
+    _resolve_teamspace,
+    _warn_deprecated_cloud_selection,
+    in_studio,
+    skip_studio_setup,
+)
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider, Machine
@@ -77,6 +83,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         cls,
         name: str,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
@@ -94,7 +101,6 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "_BaseJob":
@@ -110,13 +116,13 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
             org: The organization owning the teamspace (if any). Defaults to the current organization.
             user: The user owning the teamspace (if any). Defaults to the current user.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-                will fall back to the teamspaces default cloud account.
-            cloud_account_provider: The provider to select the cloud-account from.
+                Falls back to the teamspace default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
                 If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls backto the teamspace default cloud account.
+                If not specified, falls back to the teamspace default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
@@ -154,7 +160,12 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
 
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        explicit_cloud_account = cloud_account
+        explicit_cloud_provider = cloud_provider
+        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
+        if cloud is not None and (explicit_cloud_account is not None or explicit_cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
+        cloud_account = _resolve_default_cloud_account(cloud_account)
 
         if not name:
             raise ValueError("A job needs to have a name!")
@@ -167,6 +178,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                         teamspace=teamspace,
                         org=org,
                         user=user,
+                        cloud=cloud,
                         cloud_account=cloud_account,
                         create_ok=False,
                     )
@@ -212,7 +224,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
                 raise RuntimeError(
                     "image and studio are mutually exclusive as both define the environment to run the job in"
                 )
-            if cloud_account is None and cloud_provider is None and in_studio():
+            if cloud_account is None and cloud_provider is None and cloud is None and in_studio():
                 try:
                     with skip_studio_setup():
                         resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
@@ -245,10 +257,12 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             # all other cases, the entrypoint has been specifically set, so use it as is
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
+        submit_cloud = cloud if cloud_account is None else None
         return inst._submit(
             machine=machine,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
+            cloud=submit_cloud,
             command=command,
             studio=studio,
             image=image,
@@ -269,6 +283,7 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
     def _submit(
         self,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -296,13 +311,13 @@ class _BaseJob(ABC, metaclass=TrackCallsABCMeta):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-                will fall back to the teamspaces default cloud account.
-            cloud_account_provider: The provider to select the cloud-account from.
+                Falls back to the teamspace default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
                 If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls backto the teamspace default cloud account.
+                If not specified, falls back to the teamspace default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.

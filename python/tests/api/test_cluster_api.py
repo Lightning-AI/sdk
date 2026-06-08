@@ -123,13 +123,21 @@ def make_cluster(id_, driver=None, **kwargs):
 
 
 @pytest.fixture()
-def api():
+def api(mocker):
+    mocker.patch("lightning_sdk.api.cloud_account_api.LightningClient")
     return CloudAccountApi()
 
 
 def test_returns_cloud_account_if_given(api):
     result = api.resolve_cloud_account(
         teamspace_id="ts", cloud_account="acc-1", cloud_provider=None, default_cloud_account=None
+    )
+    assert result == "acc-1"
+
+
+def test_returns_cloud_account_if_cloud_is_custom_account(api):
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud="acc-1", cloud_account=None, cloud_provider=None, default_cloud_account=None
     )
     assert result == "acc-1"
 
@@ -167,6 +175,41 @@ def test_returns_mapped_account_if_only_provider_given(api):
     assert result == "acc-gcp"
 
 
+@pytest.mark.parametrize("cloud", ["gcp", "GCP", CloudProvider.GCP])
+def test_returns_mapped_account_if_cloud_is_provider(api, cloud):
+    api.get_cloud_account_provider_mapping = MagicMock(
+        return_value={CloudProvider.GCP: V1ExternalCluster(id="acc-gcp")}
+    )
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud=cloud, cloud_account=None, cloud_provider=None, default_cloud_account=None
+    )
+    assert result == "acc-gcp"
+
+
+@pytest.mark.parametrize("cloud", ["lightning", CloudProvider.LIGHTNING])
+def test_returns_global_lightning_account_if_cloud_is_lightning(api, cloud):
+    api.get_cloud_account_provider_mapping = MagicMock(
+        return_value={CloudProvider.LIGHTNING: V1ExternalCluster(id="acc-lightning")}
+    )
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud=cloud, cloud_account=None, cloud_provider=None, default_cloud_account=None
+    )
+    assert result == "acc-lightning"
+
+
+def test_raises_if_cloud_is_combined_with_legacy_args(api):
+    with pytest.raises(ValueError, match="Cannot use 'cloud'"):
+        api.resolve_cloud_account(
+            teamspace_id="ts",
+            cloud="gcp",
+            cloud_account="acc-1",
+            cloud_provider=None,
+            default_cloud_account=None,
+        )
+
+
 def test_returns_default_if_no_account_and_no_matching_provider(api):
     api.get_cloud_account_provider_mapping = MagicMock(return_value={})
     result = api.resolve_cloud_account(
@@ -181,6 +224,97 @@ def test_returns_none_if_nothing_matches(api):
         teamspace_id="ts", cloud_account=None, cloud_provider=None, default_cloud_account=None
     )
     assert result is None
+
+
+def _byoc_aws() -> V1ExternalCluster:
+    return V1ExternalCluster(
+        id="acc-byoc-aws",
+        spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()),
+    )
+
+
+def _global_aws() -> V1ExternalCluster:
+    return V1ExternalCluster(
+        id="acc-global-aws",
+        spec=V1ExternalClusterSpec(
+            driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+        ),
+    )
+
+
+def test_provider_mapping_global_only_excludes_byoc(api):
+    # BYOC accounts surface via the project listing, globals via the global listing.
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[_byoc_aws()]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[_global_aws()])
+
+    assert api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)[CloudProvider.AWS].id == (
+        "acc-global-aws"
+    )
+
+
+def test_provider_mapping_includes_byoc_when_not_global_only(api):
+    # Default (all-clusters) mapping is used by legacy `cloud_provider` and by data connections,
+    # which must still be able to bind to a private/BYOC account of the right provider.
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[_byoc_aws()]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+
+    assert api.get_cloud_account_provider_mapping(teamspace_id="ts")[CloudProvider.AWS].id == "acc-byoc-aws"
+
+
+def test_legacy_cloud_provider_still_matches_byoc_account(api):
+    """The deprecated `cloud_provider` arg keeps matching any account of that provider (incl. BYOC)."""
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[_byoc_aws()]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud_provider=CloudProvider.AWS, cloud_account=None, default_cloud_account="acc-default"
+    )
+    assert result == "acc-byoc-aws"
+
+
+@pytest.mark.parametrize("cloud", ["aws", "AWS", CloudProvider.AWS])
+def test_cloud_aws_resolves_to_global_account_over_byoc(api, cloud):
+    """--cloud aws must select the GLOBAL AWS account even when a BYOC AWS account also exists."""
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[_byoc_aws()]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[_global_aws()])
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud=cloud, cloud_account=None, cloud_provider=None, default_cloud_account="acc-default"
+    )
+    assert result == "acc-global-aws"
+
+
+def test_cloud_aws_falls_back_to_default_when_only_byoc_account(api):
+    """A BYOC-only AWS teamspace must not be matched by --cloud aws; fall through to the default."""
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[_byoc_aws()]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud="aws", cloud_account=None, cloud_provider=None, default_cloud_account="acc-default"
+    )
+    assert result == "acc-default"
+
+
+def test_provider_mapping_empty_when_teamspace_has_no_accounts(api):
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+
+    assert api.get_cloud_account_provider_mapping(teamspace_id="ts") == {}
+
+    result = api.resolve_cloud_account(
+        teamspace_id="ts", cloud="aws", cloud_account=None, cloud_provider=None, default_cloud_account="acc-default"
+    )
+    assert result == "acc-default"
 
 
 @pytest.mark.parametrize(

@@ -42,7 +42,13 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.logging import TrackCallsMeta
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, _resolve_org, _resolve_teamspace, _resolve_user
+from lightning_sdk.utils.resolve import (
+    _resolve_default_cloud_account,
+    _resolve_org,
+    _resolve_teamspace,
+    _resolve_user,
+    _warn_deprecated_cloud_selection,
+)
 
 
 class Deployment(metaclass=TrackCallsMeta):
@@ -119,6 +125,7 @@ class Deployment(metaclass=TrackCallsMeta):
     def start(
         self,
         studio: Optional[Union[str, Studio]] = None,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         machine: Optional[Machine] = None,
         image: Optional[str] = None,
         autoscale: Optional[AutoScaleConfig] = None,
@@ -134,7 +141,6 @@ class Deployment(metaclass=TrackCallsMeta):
         auth: Optional[Union[BasicAuth, TokenAuth, ApiKeyAuth]] = None,
         cloud_account: Optional[str] = None,
         custom_domain: Optional[str] = None,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         cloudspace_id: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
@@ -161,6 +167,7 @@ class Deployment(metaclass=TrackCallsMeta):
 
         Args:
             name: The name of the deployment.
+            cloud: Cloud provider or cloud account to run replicas on.
             machine: The machine used by the deployment replicas.
             autoscale: The list of the metrics to autoscale on.
             ports: The ports to reach your replica services.
@@ -173,8 +180,9 @@ class Deployment(metaclass=TrackCallsMeta):
             replicas: The number of replicas to deploy with.
             health_check: The health check config to know whether your service is ready to receive traffic.
             auth: The auth config to protect your services. Only Basic and Token supported.
-            cloud_account: The name of the cloud account, the studio should be created on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The name of the cloud account to run replicas on.
                 Doesn't matter when the studio already exists.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
             custom_domain: Whether your service would be referenced under a custom domain.
             cloudspace_id: Connect deployment to a Studio.
             quantity: The number of machines per replica to deploy.
@@ -198,6 +206,8 @@ class Deployment(metaclass=TrackCallsMeta):
             raise RuntimeError("This deployment has already been started.")
 
         machine_image_version = None
+        explicit_cloud_account = cloud_account
+        explicit_cloud_provider = cloud_provider
 
         if isinstance(studio, Studio):
             cloudspace_id = studio._studio.id
@@ -210,15 +220,20 @@ class Deployment(metaclass=TrackCallsMeta):
             cloud_account = studio._studio.cluster_id
             machine_image_version = studio._studio.machine_image_version
 
+        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
+        if cloud is not None and (explicit_cloud_account is not None or explicit_cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
         if cloud_account is None:
-            cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+            cloud_account = _resolve_default_cloud_account(cloud_account)
 
         if cloud_account is None and self._cloud_account is not None and cloud_provider is None:
             print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
 
+        resolve_cloud = cloud if cloud_account is None else None
         _cloud_account = self._cloud_account_api.resolve_cloud_account(
             self.teamspace.id,
+            cloud=resolve_cloud,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
             default_cloud_account=self._teamspace.default_cloud_account,
@@ -300,6 +315,7 @@ class Deployment(metaclass=TrackCallsMeta):
         self,
         # Changing those arguments create a new release
         machine: Optional[Machine] = None,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         image: Optional[str] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
@@ -317,7 +333,6 @@ class Deployment(metaclass=TrackCallsMeta):
         replicas: Optional[int] = None,
         auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         custom_domain: Optional[str] = None,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
         max_runtime: Optional[int] = None,
@@ -331,6 +346,7 @@ class Deployment(metaclass=TrackCallsMeta):
 
         Args:
             machine: New machine type for the replicas.
+            cloud: Cloud provider or cloud account to run replicas on.
             image: New docker image for the replicas.
             entrypoint: New container entrypoint.
             command: New container command string.
@@ -338,7 +354,7 @@ class Deployment(metaclass=TrackCallsMeta):
                 with ``command``.
             env: Environment variables or secrets to inject into replicas.
             spot: Whether to use spot/interruptible instances.
-            cloud_account: Cloud account to run replicas on.
+            cloud_account: Deprecated. Use ``cloud`` instead. Cloud account to run replicas on.
             health_check: Readiness probe configuration.
             min_replicas: New minimum replica count for autoscaling.
             max_replicas: New maximum replica count for autoscaling.
@@ -348,14 +364,24 @@ class Deployment(metaclass=TrackCallsMeta):
             replicas: Fixed number of replicas (overrides autoscaling).
             auth: Authentication configuration for the deployment endpoint.
             custom_domain: Custom domain to attach to the deployment.
-            cluster: Deprecated — use ``cloud_account`` instead.
             quantity: Number of machines per replica.
             include_credentials: Whether to inject SDK authentication env vars.
             max_runtime: Maximum machine allocation duration in seconds.
             path_mappings: Container-path → data-connection-path mappings for docker jobs.
         """
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account)
+        if cloud is not None and cloud_account is not None:
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
+        cloud_account = _resolve_default_cloud_account(cloud_account)
+        if cloud is not None:
+            cloud_account = self._cloud_account_api.resolve_cloud_account(
+                self.teamspace.id,
+                cloud=cloud,
+                cloud_account=cloud_account,
+                cloud_provider=None,
+                default_cloud_account=self._teamspace.default_cloud_account,
+            )
 
         if command is None and commands is not None:
             command = compose_commands(commands)

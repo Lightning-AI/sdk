@@ -8,6 +8,7 @@ def test_create_vm():
     assert "Create a new VM." in result_text
     assert "--name TEXT" in result_text
     assert "--teamspace TEXT" in result_text
+    assert "--cloud TEXT" in result_text
     assert "--cloud-provider" in result_text
     assert "--cloud-account TEXT" in result_text
 

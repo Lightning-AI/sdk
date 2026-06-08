@@ -173,9 +173,7 @@ def test_job_parameters_stay_in_sync():
     job_type_keys = job_type_signature.parameters.keys()
 
     # ignore the depreceated parameters
-    job_keys = [
-        key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cluster", "cloud_provider"]
-    ]
+    job_keys = [key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cloud_provider"]]
     job_type_keys = [
         key for key in job_type_keys if key not in ["wait_for", "self", "cloud_provider", "machine_image_version"]
     ]

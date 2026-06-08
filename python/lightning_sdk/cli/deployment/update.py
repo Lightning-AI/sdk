@@ -14,6 +14,7 @@ from lightning_sdk.cli.deployment.common import (
     resolve_machine,
     resolve_teamspace,
 )
+from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.deployment import Deployment
 
 
@@ -29,7 +30,10 @@ from lightning_sdk.deployment import Deployment
 @click.option("--min-replicas", type=int, help="New minimum autoscaling replicas.")
 @click.option("--max-replicas", type=int, help="New maximum autoscaling replicas.")
 @click.option("--port", "ports", multiple=True, type=float, help="Replacement exposed port. Can be repeated.")
-@click.option("--cloud-account", "--cloud_account", help="New cloud account to run replicas on.")
+@click.option("--cloud", help="New cloud provider or cloud account to run replicas on.")
+@click.option(
+    "--cloud-account", "--cloud_account", help="Deprecated. Use --cloud. New cloud account to run replicas on."
+)
 @click.option("--env", "-e", multiple=True, default=[""], help="Replacement env var in KEY=VALUE or JSON format.")
 @click.option("--secret", multiple=True, help="Replacement secret name to expose as an environment variable.")
 @click.option("--interruptible/--no-interruptible", default=None, help="Whether to use interruptible instances.")
@@ -62,6 +66,7 @@ def update_deployment(
     min_replicas: Optional[int] = None,
     max_replicas: Optional[int] = None,
     ports: Sequence[float] = (),
+    cloud: Optional[str] = None,
     cloud_account: Optional[str] = None,
     env: Sequence[str] = (),
     secret: Sequence[str] = (),
@@ -80,6 +85,7 @@ def update_deployment(
 ) -> None:
     """Update a deployment."""
     resolved_teamspace = resolve_teamspace(teamspace)
+    warn_deprecated_cloud_options(cloud_account=cloud_account)
     env_vars = parse_env(env, secret)
     path_mappings_dict = parse_path_mappings(path_mapping, path_mappings)
     machine_obj = resolve_machine(machine)
@@ -93,6 +99,7 @@ def update_deployment(
         replicas,
         min_replicas,
         max_replicas,
+        cloud,
         cloud_account,
         env_vars,
         interruptible,
@@ -113,6 +120,7 @@ def update_deployment(
             machine,
             command,
             entrypoint,
+            cloud,
             cloud_account,
             env_vars,
             interruptible,
@@ -133,6 +141,7 @@ def update_deployment(
         command=command,
         env=env_vars,
         spot=interruptible,
+        cloud=cloud,
         cloud_account=cloud_account,
         min_replicas=min_replicas,
         max_replicas=max_replicas,

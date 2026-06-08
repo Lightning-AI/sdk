@@ -16,6 +16,7 @@ def test_start_studio():
     assert "--create" in result_text
     assert "--machine" in result_text
     assert "--interruptible" in result_text
+    assert "--cloud TEXT" in result_text
     assert "--cloud-provider" in result_text
     assert "--cloud-account TEXT" in result_text
     assert "--gpus TEXT" in result_text

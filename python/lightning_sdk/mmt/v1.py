@@ -44,6 +44,7 @@ class _MMTV1(_BaseMMT):
         self,
         num_machines: int,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -71,9 +72,11 @@ class _MMTV1(_BaseMMT):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
                 If not provided will fall back to the teamspaces default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.

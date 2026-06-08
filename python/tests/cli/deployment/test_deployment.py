@@ -131,6 +131,24 @@ def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
     assert kwargs["replicas"] == 2
 
 
+def test_create_deployment_with_cloud(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.name = "api"
+    deployment_cls = MagicMock(return_value=deployment)
+
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", deployment_cls)
+
+    result = CliRunner().invoke(
+        create_deployment,
+        ["api", "--teamspace", "ecorp/test", "--image", "nginx", "--port", "8000", "--cloud", "aws"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert deployment.start.call_args.kwargs["cloud"] == "aws"
+
+
 def test_create_deployment_requires_name(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 

@@ -7,8 +7,10 @@ from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
 import rich
+from click.testing import CliRunner
 
 from lightning_sdk import Machine
+from lightning_sdk.cli.api.deploy import deploy_api
 from lightning_sdk.cli.legacy.deploy._auth import (
     _AuthLitServe,
     _AuthMode,
@@ -40,6 +42,42 @@ def test_api_deploy_help():
     assert_help_contains(
         "lightning api deploy --help", "Usage: lightning api deploy", "Deploy a LitServe model script."
     )
+
+
+def test_api_deploy_cloud_option_accepts_optional_selection(monkeypatch, tmp_path):
+    script = tmp_path / "server.py"
+    script.write_text("print('ok')")
+    handle_cloud = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.legacy.deploy.serve._handle_cloud", handle_cloud)
+
+    result = CliRunner().invoke(deploy_api, [str(script), "--cloud", "aws"])
+
+    assert result.exit_code == 0, result.output
+    assert handle_cloud.call_args.kwargs["cloud"] == "aws"
+
+
+def test_api_deploy_cloud_option_without_value_deploys_to_cloud(monkeypatch, tmp_path):
+    script = tmp_path / "server.py"
+    script.write_text("print('ok')")
+    handle_cloud = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.legacy.deploy.serve._handle_cloud", handle_cloud)
+
+    result = CliRunner().invoke(deploy_api, [str(script), "--cloud"])
+
+    assert result.exit_code == 0, result.output
+    assert handle_cloud.called
+    assert handle_cloud.call_args.kwargs["cloud"] is None
+
+
+def test_api_deploy_legacy_cloud_options_warn(monkeypatch):
+    api_impl = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.api.deploy.api_impl", api_impl)
+
+    result = CliRunner().invoke(deploy_api, ["server.py", "--cloud", "--cloud-account", "acc-1"])
+
+    assert result.exit_code == 0, result.output
+    assert "Warning: --cloud-account is deprecated. Use --cloud instead." in result.output
+    assert api_impl.call_args.kwargs["cloud_account"] == "acc-1"
 
 
 def test_apis_deploy_help():
@@ -442,6 +480,7 @@ def test_handle_cloud_with_cloud_account(
         image=image,
         metric=None,
         cloud_provider=None,
+        cloud=None,
     )
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 

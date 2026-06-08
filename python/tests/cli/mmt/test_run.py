@@ -32,6 +32,26 @@ def test_run_mmt_legacy_help() -> None:
     )
 
 
+def test_run_mmt_with_cloud(monkeypatch):
+    from unittest.mock import MagicMock
+
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.mmt.run import run_mmt
+
+    mock_mmt = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.MMT", mock_mmt)
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.Teamspace", MagicMock(return_value="teamspace"))
+
+    result = CliRunner().invoke(
+        run_mmt,
+        ["--name", "test-mmt", "--image", "ubuntu", "--command", "echo hi", "--cloud", "aws"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert mock_mmt.run.call_args.kwargs["cloud"] == "aws"
+
+
 @pytest.mark.parametrize(
     ("extra_args", "expected_entrypoint"),
     [

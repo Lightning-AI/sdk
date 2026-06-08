@@ -10,7 +10,7 @@ from lightning_sdk.api.utils import _FileUploader
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.services.utilities import _get_cluster, _get_project, _get_service_url
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster
+from lightning_sdk.utils.resolve import _resolve_default_cloud_account
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -26,7 +26,6 @@ class Client:
         name: str,
         teamspace: Optional[str],
         cloud_account: Optional[str] = None,
-        cluster_id: Optional[str] = None,  # deprecated in favor of cloud_account
     ) -> None:
         """Constructor of the Client.
 
@@ -36,7 +35,7 @@ class Client:
             cloud_account: The name of the cloud account on which to upload the data.
 
         """
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster_id)
+        cloud_account = _resolve_default_cloud_account(cloud_account)
 
         self._auth = Auth()
 

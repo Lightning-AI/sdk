@@ -24,6 +24,7 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
+from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple(
@@ -66,10 +67,10 @@ def deploy() -> None:
 )
 @click.option(
     "--cloud",
-    is_flag=True,
-    default=False,
-    flag_value=True,
-    help="Run the model on cloud",
+    is_flag=False,
+    flag_value="",
+    type=str,
+    help="Run the model on cloud, optionally selecting a cloud provider or cloud account.",
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
@@ -143,7 +144,7 @@ def deploy() -> None:
 def api(
     script_path: str,
     easy: bool,
-    cloud: bool,
+    cloud: Optional[str],
     name: Optional[str],
     non_interactive: bool,
     machine: Optional[str],
@@ -161,6 +162,7 @@ def api(
     cloud_provider: Optional[str],
 ) -> None:
     """Deploy a LitServe model script."""
+    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
     return api_impl(
         script_path=script_path,
         easy=easy,
@@ -183,10 +185,30 @@ def api(
     )
 
 
+def _normalize_cloud_option(cloud: Union[bool, str, None]) -> tuple[bool, Optional[str]]:
+    if isinstance(cloud, bool):
+        return cloud, None
+    if cloud is None:
+        return False, None
+    return True, cloud or None
+
+
+def _is_cloud_provider(cloud: Union[CloudProvider, str, None]) -> bool:
+    if isinstance(cloud, CloudProvider):
+        return True
+    if cloud is None:
+        return False
+    try:
+        CloudProvider.from_str(cloud)
+    except ValueError:
+        return False
+    return True
+
+
 def api_impl(
     script_path: Union[str, Path],
     easy: bool = False,
-    cloud: bool = False,
+    cloud: Union[bool, str, None] = False,
     name: Optional[str] = None,
     tag: Optional[str] = None,
     non_interactive: bool = False,
@@ -205,6 +227,7 @@ def api_impl(
     cloud_provider: Optional[str] = None,
 ) -> None:
     """Deploy a LitServe model script."""
+    deploy_to_cloud, selected_cloud = _normalize_cloud_option(cloud)
     console = Console()
     script_path = Path(script_path)
     if not script_path.exists():
@@ -218,7 +241,7 @@ def api_impl(
         timestr = datetime.now().strftime("%b-%d-%H_%M")
         name = f"litserve-{timestr}".lower()
 
-    if not cloud and not devbox:
+    if not deploy_to_cloud and not devbox:
         try:
             subprocess.run(
                 ["python", str(script_path)],
@@ -254,6 +277,7 @@ def api_impl(
         replicas=replicas,
         include_credentials=include_credentials,
         cloud_provider=cloud_provider,
+        cloud=selected_cloud,
     )
 
 
@@ -316,6 +340,7 @@ def _handle_cloud(
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
     cloud_provider: Optional[CloudProvider] = None,
+    cloud: Optional[Union[CloudProvider, str]] = None,
 ) -> None:
     if not is_connected():
         console.print("❌ Internet connection required to deploy to the cloud.", style="red")
@@ -391,7 +416,9 @@ def _handle_cloud(
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
     lightning_containers_cloud_account = cloud_account
-    if not cloud_account and not cloud_provider:
+    if lightning_containers_cloud_account is None and cloud is not None and not _is_cloud_provider(cloud):
+        lightning_containers_cloud_account = str(cloud)
+    if not lightning_containers_cloud_account and not cloud_provider and not cloud:
         clusters_menu = _ClustersMenu()
         lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
         cloud_account = resolved_teamspace.default_cloud_account
@@ -427,6 +454,7 @@ def _handle_cloud(
                 "cloudspace_id": cloudspace_id,
                 "from_onboarding": from_onboarding,
                 "cloud_provider": cloud_provider,
+                "cloud": cloud,
             },
         )
         thread.start()
@@ -460,6 +488,7 @@ def _handle_cloud(
         cloudspace_id=cloudspace_id,
         from_onboarding=from_onboarding,
         cloud_provider=cloud_provider,
+        cloud=cloud,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
     if user_status["onboarded"]:

@@ -54,22 +54,12 @@ def create() -> None:
     type=click.Choice(_PROVIDER_VALUES),
     help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
 )
-@click.option(
-    "--provider",
-    default=None,
-    type=click.Choice(_PROVIDER_VALUES),
-    help=(
-        "Deprecated. Use --cloud-provider instead. The provider to create the studio on. "
-        "If --cloud-account is specified, this option is prioritized."
-    ),
-)
 def studio(
     name: str,
     teamspace: Optional[str] = None,
     start: Optional[str] = None,
     cloud_account: Optional[str] = None,
     cloud_provider: Optional[str] = None,
-    provider: Optional[str] = None,
 ) -> None:
     """Create a new studio on the Lightning AI platform.
 
@@ -103,7 +93,6 @@ def studio(
         cloud_account=cloud_account,
         create_ok=True,
         cloud_provider=cloud_provider,
-        provider=provider,
     )
 
     console.print(f"Created Studio {studio.name}.")

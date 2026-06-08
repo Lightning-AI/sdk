@@ -71,38 +71,17 @@ def _resolve_deprecated_cloud_compute(machine: Machine, cloud_compute: Optional[
     return machine
 
 
-def _resolve_deprecated_provider(
-    cloud_provider: Optional[Union[CloudProvider, str]], provider: Optional[Union[CloudProvider, str]]
+def _resolve_default_cloud_provider(
+    cloud_provider: Optional[Union[CloudProvider, str]],
 ) -> Optional[Union[CloudProvider, str]]:
-    """Resolve the active cloud provider, handling the deprecated ``provider`` argument.
-
-    Falls back to the configured default from :class:`~lightning_sdk.utils.config.Config`
-    when neither argument is set.
+    """Resolve the active cloud provider, falling back to the configured default when unset.
 
     Args:
         cloud_provider: The ``cloud_provider`` argument passed by the caller.
-        provider: The deprecated ``provider`` argument (use ``cloud_provider`` instead).
 
     Returns:
         Optional[Union[CloudProvider, str]]: The resolved cloud provider, or ``None``.
-
-    Raises:
-        ValueError: If both ``cloud_provider`` and ``provider`` are explicitly set.
     """
-    if provider is not None:
-        if cloud_provider is not None:
-            raise ValueError(
-                "Cannot use both 'provider' and 'cloud_provider' at the same time."
-                "Please don't set the 'provider' as it will be deprecated!"
-            )
-
-        warnings.warn(
-            "The 'provider' argument will be deprecated in the future! "
-            "Please consider using the 'cloud_provider' argument instead!",
-            DeprecationWarning,
-        )
-        return provider
-
     if cloud_provider is None:
         from lightning_sdk.utils.config import Config, DefaultConfigKeys
 
@@ -112,39 +91,36 @@ def _resolve_deprecated_provider(
     return cloud_provider
 
 
-def _resolve_deprecated_cluster(
-    cloud_account: Optional[str], cluster: Optional[str], current_cloud_account: Optional[str] = None
-) -> Optional[str]:
-    """Resolve the active cloud account, handling the deprecated ``cluster`` argument.
+def _warn_deprecated_cloud_selection(
+    cloud_account: Optional[str] = None, cloud_provider: Optional[Union[CloudProvider, str]] = None
+) -> None:
+    """Warn when callers use legacy cloud selection arguments."""
+    if cloud_account is not None:
+        warnings.warn(
+            "'cloud_account' is deprecated. Use the 'cloud' argument instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+    if cloud_provider is not None:
+        warnings.warn(
+            "'cloud_provider' is deprecated. Use the 'cloud' argument instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
 
-    Falls back to the configured default from :class:`~lightning_sdk.utils.config.Config`
-    and then ``current_cloud_account`` when neither argument is set.
+
+def _resolve_default_cloud_account(
+    cloud_account: Optional[str], current_cloud_account: Optional[str] = None
+) -> Optional[str]:
+    """Resolve the active cloud account, falling back to config defaults then ``current_cloud_account``.
 
     Args:
         cloud_account: The ``cloud_account`` argument passed by the caller.
-        cluster: The deprecated ``cluster`` argument (use ``cloud_account`` instead).
         current_cloud_account: Optional fallback account ID when nothing else resolves.
 
     Returns:
         Optional[str]: The resolved cloud account ID, or ``None``.
-
-    Raises:
-        ValueError: If both ``cloud_account`` and ``cluster`` are explicitly set.
     """
-    if cluster is not None:
-        if cloud_account is not None:
-            raise ValueError(
-                "Cannot use both 'cluster' and 'cloud_account' at the same time."
-                "Please don't set the 'cluster' as it will be deprecated!"
-            )
-
-        warnings.warn(
-            "The 'cluster' argument will be deprecated in the future! "
-            "Please consider using the 'cloud_account' argument instead!",
-            DeprecationWarning,
-        )
-        return cluster
-
     if cloud_account is None:
         from lightning_sdk.utils.config import Config, DefaultConfigKeys
 

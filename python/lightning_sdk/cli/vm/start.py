@@ -24,13 +24,20 @@ from lightning_sdk.machine import CloudProvider, Machine
 )
 @click.option("--interruptible", is_flag=True, help="Start the VM on an interruptible instance.")
 @click.option(
+    "--cloud",
+    help=(
+        "Cloud provider or cloud account to start the VM on. Defaults to teamspace default. "
+        "Only used if --create is specified."
+    ),
+)
+@click.option(
     "--cloud-provider",
-    help=("The cloud provider to start the VM on. Defaults to teamspace default. Only used if --create is specified."),
+    help="Deprecated. Use --cloud. The cloud provider to start the VM on. Only used if --create is specified.",
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
 @click.option(
     "--cloud-account",
-    help="The cloud account to start the VM on. Defaults to teamspace default. Only used if --create is specified.",
+    help="Deprecated. Use --cloud. The cloud account to start the VM on. Only used if --create is specified.",
     type=click.STRING,
 )
 def start_vm(
@@ -39,6 +46,7 @@ def start_vm(
     create: bool = False,
     machine: str = "CPU",
     interruptible: bool = False,
+    cloud: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
 ) -> None:
@@ -53,7 +61,9 @@ def start_vm(
         teamspace=teamspace,
         create=create,
         machine=machine,
+        gpus=None,
         interruptible=interruptible,
+        cloud=cloud,
         cloud_provider=cloud_provider,
         cloud_account=cloud_account,
         vm=True,

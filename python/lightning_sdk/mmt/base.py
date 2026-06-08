@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 from lightning_sdk.job.base import _BaseJob
-from lightning_sdk.utils.resolve import _resolve_deprecated_cluster, in_studio
+from lightning_sdk.utils.resolve import _resolve_default_cloud_account, _warn_deprecated_cloud_selection, in_studio
 
 
 class MMTMachine(Protocol):
@@ -81,6 +81,7 @@ class _BaseMMT(_BaseJob):
         name: str,
         machine: Union["Machine", str],
         num_machines: int,
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Optional[str] = None,
@@ -98,7 +99,6 @@ class _BaseMMT(_BaseJob):
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,  # deprecated in favor of path_mappings
         artifacts_remote: Optional[str] = None,  # deprecated in favor of path_mappings
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
     ) -> "_BaseMMT":
         """Run async workloads using a docker image across multiple machines.
@@ -114,13 +114,13 @@ class _BaseMMT(_BaseJob):
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
             org: The organization owning the teamspace (if any). Defaults to the current organization.
             user: The user owning the teamspace (if any). Defaults to the current user.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-                will fall back to the teamspaces default cloud account.
-            cloud_account_provider: The provider to select the cloud-account from.
+                Falls back to the teamspace default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
                 If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls backto the teamspace default cloud account.
+                If not specified, falls back to the teamspace default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
@@ -159,7 +159,12 @@ class _BaseMMT(_BaseJob):
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
 
-        cloud_account = _resolve_deprecated_cluster(cloud_account, cluster)
+        explicit_cloud_account = cloud_account
+        explicit_cloud_provider = cloud_provider
+        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
+        if cloud is not None and (explicit_cloud_account is not None or explicit_cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
+        cloud_account = _resolve_default_cloud_account(cloud_account)
 
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
@@ -170,7 +175,13 @@ class _BaseMMT(_BaseJob):
         if image is None:
             if not isinstance(studio, Studio):
                 studio = Studio(
-                    name=studio, teamspace=teamspace, org=org, user=user, cloud_account=cloud_account, create_ok=False
+                    name=studio,
+                    teamspace=teamspace,
+                    org=org,
+                    user=user,
+                    cloud=cloud,
+                    cloud_account=cloud_account,
+                    create_ok=False,
                 )
 
             # studio is a Studio instance at this point
@@ -215,7 +226,7 @@ class _BaseMMT(_BaseJob):
                     "image and studio are mutually exclusive as both define the environment to run the job in"
                 )
 
-            if cloud_account is None and in_studio():
+            if cloud_account is None and cloud is None and in_studio():
                 try:
                     resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
                     cloud_account = resolve_studio.cloud_account
@@ -247,11 +258,13 @@ class _BaseMMT(_BaseJob):
             # all other cases, the entrypoint has been specifically set, so use it as is
 
         inst = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
+        submit_cloud = cloud if cloud_account is None else None
         inst._submit(
             num_machines=num_machines,
             machine=machine,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
+            cloud=submit_cloud,
             command=command,
             studio=studio,
             image=image,
@@ -273,6 +286,7 @@ class _BaseMMT(_BaseJob):
         self,
         num_machines: int,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -300,9 +314,11 @@ class _BaseMMT(_BaseJob):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
                 If not provided will fall back to the teamspaces default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
@@ -419,7 +435,7 @@ class _BaseMMT(_BaseJob):
         return self.machines[0].logs
 
     def dict(
-        self
+        self,
     ) -> Dict[
         str,
         Union[

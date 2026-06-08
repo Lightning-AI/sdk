@@ -26,6 +26,7 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.mmt.v2 import MMTApiV2
 from lightning_sdk.pipeline.utils import DEFAULT, _get_studio, _to_wait_for, _validate_cloud_account
 from lightning_sdk.studio import CloudAccountApi, Studio
+from lightning_sdk.utils.resolve import _warn_deprecated_cloud_selection
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
@@ -39,6 +40,7 @@ class DeploymentStep:
     def __init__(
         self,
         name: Optional[str] = None,
+        cloud: Optional[Union["CloudProvider", str]] = None,
         studio: Optional[Union[str, Studio]] = None,
         machine: Optional["Machine"] = None,
         image: Optional[str] = None,
@@ -79,19 +81,23 @@ class DeploymentStep:
             replicas: Number of initial replicas. Defaults to 1.
             health_check: Health check configuration for the deployment.
             auth: Authentication configuration for the deployment endpoint.
-            cloud_account: Cloud account to run the deployment on.
+            cloud: Cloud provider or cloud account to run the deployment on.
+            cloud_account: Deprecated. Use ``cloud`` instead. Cloud account to run the deployment on.
             custom_domain: Custom domain for the deployment endpoint.
             quantity: Number of GPUs per replica (for multi-GPU setups).
             include_credentials: Whether to pass user credentials to the deployment.
             max_runtime: Maximum runtime in seconds.
             wait_for: Names of steps that must complete before this step starts.
-            cloud_provider: Cloud provider to select the cloud account from.
+            cloud_provider: Deprecated. Use ``cloud`` instead. Cloud provider to select the cloud account from.
 
         Raises:
             ValueError: If cloud_account and studio are both specified with mismatched accounts.
         """
         self.name = name
         self.studio = _get_studio(studio)
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account, cloud_provider=cloud_provider)
+        if cloud is not None and (cloud_account is not None or cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
         if cloud_account and studio and cloud_account != studio.cloud_account != cloud_account:
             raise ValueError(
                 f"The provided cloud account `{cloud_account}` doesn't match"
@@ -124,6 +130,7 @@ class DeploymentStep:
         self.health_check = health_check
         self.auth = auth
         self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
+        self.cloud = cloud
         self.custom_domain = custom_domain
         self.quantity = quantity
         self.include_credentials = include_credentials or True
@@ -146,7 +153,11 @@ class DeploymentStep:
                 raise ValueError("The provided cloud account doesn't match the studio")
 
         resolved_cloud_account = CloudAccountApi().resolve_cloud_account(
-            teamspace.id, self.cloud_account, self.cloud_provider, teamspace.default_cloud_account
+            teamspace.id,
+            cloud_account=self.cloud_account,
+            cloud_provider=self.cloud_provider,
+            default_cloud_account=teamspace.default_cloud_account,
+            cloud=self.cloud if not self.cloud_account else None,
         )
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
@@ -162,7 +173,7 @@ class DeploymentStep:
                 project_id=teamspace.id,
                 replicas=self.replicas,
                 spec=to_spec(
-                    cloud_account=self.cloud_account or cloud_account,
+                    cloud_account=resolved_cloud_account or cloud_account,
                     command=self.command,
                     entrypoint=self.entrypoint,
                     env=self.env,
@@ -187,6 +198,7 @@ class JobStep:
     def __init__(
         self,
         machine: Optional[Union["Machine", str]] = None,
+        cloud: Optional[Union["CloudProvider", str]] = None,
         name: Optional[str] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
@@ -218,8 +230,9 @@ class JobStep:
             teamspace: Teamspace the job belongs to.
             org: Organization owning the teamspace.
             user: User owning the teamspace.
-            cloud_account: Cloud account to run the job on.
-            cloud_provider: Cloud provider to select the cloud account from.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. Cloud account to run the job on.
+            cloud_provider: Deprecated. Use ``cloud`` instead. Cloud provider to select the cloud account from.
             env: Environment variables to inject into the job.
             interruptible: Whether to use interruptible instances. Defaults to False.
             image_credentials: Name of the secret with credentials for pulling a private image.
@@ -238,6 +251,9 @@ class JobStep:
         self.machine = machine or Machine.CPU
         self.command = command
         self.studio = _get_studio(studio)
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account, cloud_provider=cloud_provider)
+        if cloud is not None and (cloud_account is not None or cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
 
         if cloud_account and self.studio and cloud_account != self.studio.cloud_account != cloud_account:
             raise ValueError(
@@ -251,6 +267,7 @@ class JobStep:
         self.user = user
         self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
         self.cloud_provider = cloud_provider
+        self.cloud = cloud
         self.env = env
         self.interruptible = interruptible
         self.image_credentials = image_credentials
@@ -277,7 +294,11 @@ class JobStep:
                 raise ValueError("The provided cloud account doesn't match the studio")
 
         resolved_cloud_account = CloudAccountApi().resolve_cloud_account(
-            teamspace.id, self.cloud_account, self.cloud_provider, teamspace.default_cloud_account
+            teamspace.id,
+            cloud_account=self.cloud_account,
+            cloud_provider=self.cloud_provider,
+            default_cloud_account=teamspace.default_cloud_account,
+            cloud=self.cloud if not self.cloud_account else None,
         )
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
@@ -318,6 +339,7 @@ class MMTStep:
         self,
         name: str,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         num_machines: Optional[int] = 2,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
@@ -348,7 +370,8 @@ class MMTStep:
             teamspace: Teamspace the job belongs to.
             org: Organization owning the teamspace.
             user: User owning the teamspace.
-            cloud_account: Cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. Cloud account to run the job on.
             env: Environment variables to inject into the job.
             interruptible: Whether to use interruptible instances. Defaults to False.
             image_credentials: Name of the secret with credentials for pulling a private image.
@@ -367,6 +390,9 @@ class MMTStep:
         self.name = name
         self.command = command
         self.studio = _get_studio(studio)
+        _warn_deprecated_cloud_selection(cloud_account=cloud_account)
+        if cloud is not None and cloud_account is not None:
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
 
         if cloud_account and self.studio and cloud_account != self.studio.cloud_account != cloud_account:
             raise ValueError(
@@ -378,6 +404,7 @@ class MMTStep:
         self.org = org
         self.user = user
         self.cloud_account = cloud_account or "" if self.studio is None else self.studio.cloud_account
+        self.cloud = cloud
         self.env = env
         self.interruptible = interruptible
         self.image_credentials = image_credentials
@@ -402,13 +429,20 @@ class MMTStep:
             elif studio.cloud_account != self.cloud_account:
                 raise ValueError("The provided cloud account doesn't match the studio")
 
-        _validate_cloud_account(cloud_account, self.cloud_account, shared_filesystem)
+        resolved_cloud_account = CloudAccountApi().resolve_cloud_account(
+            teamspace.id,
+            cloud_account=self.cloud_account,
+            default_cloud_account=teamspace.default_cloud_account,
+            cloud=self.cloud if not self.cloud_account else None,
+        )
+
+        _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
 
         body = MMTApiV2._create_mmt_body(
             name=self.name,
             num_machines=self.num_machines,
             command=self.command,
-            cloud_account=self.cloud_account or cloud_account,
+            cloud_account=resolved_cloud_account or cloud_account,
             studio_id=studio._studio.id if isinstance(studio, Studio) else None,
             image=self.image,
             machine=self.machine,
@@ -457,4 +491,4 @@ class DeploymentReleaseStep(DeploymentStep):
         return proto
 
 
-__all__ = ["JobStep", "MMTStep", "DeploymentStep", "DeploymentReleaseStep"]
+__all__ = ["DeploymentReleaseStep", "DeploymentStep", "JobStep", "MMTStep"]

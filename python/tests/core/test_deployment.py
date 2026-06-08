@@ -467,6 +467,7 @@ def test_deployment_start_with_cloud_provider(monkeypatch):
 
     mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
         teamspace_mock.id,
+        cloud=None,
         cloud_account=None,
         cloud_provider=CloudProvider.GCP,
         default_cloud_account=teamspace_mock.default_cloud_account,
@@ -530,6 +531,7 @@ def test_deployment_start_with_both_cloud_account_and_provider(monkeypatch):
     # Verify resolve_cloud_account was called with both parameters
     mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
         teamspace_mock.id,
+        cloud=None,
         cloud_account="aws-public",
         cloud_provider=CloudProvider.GCP,
         default_cloud_account=None,

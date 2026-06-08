@@ -92,6 +92,7 @@ class MMT(_BaseMMT):
         name: str,
         num_machines: int,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
         image: Union[str, None] = None,
@@ -109,7 +110,6 @@ class MMT(_BaseMMT):
         max_runtime: Optional[int] = None,
         artifacts_local: Optional[str] = None,
         artifacts_remote: Optional[str] = None,
-        cluster: Optional[str] = None,  # deprecated in favor of cloud_account
         reuse_snapshot: bool = True,
     ) -> "MMT":
         """Run async workloads using a docker image across multiple machines.
@@ -125,13 +125,13 @@ class MMT(_BaseMMT):
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
             org: The organization owning the teamspace (if any). Defaults to the current organization.
             user: The user owning the teamspace (if any). Defaults to the current user.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-                will fall back to the teamspaces default cloud account.
-            cloud_account_provider: The provider to select the cloud-account from.
+                Falls back to the teamspace default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
                 If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls backto the teamspace default cloud account.
+                If not specified, falls back to the teamspace default cloud account.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             image_credentials: The credentials used to pull the image. Required if the image is private.
@@ -177,9 +177,9 @@ class MMT(_BaseMMT):
             path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
-            cluster=cluster,  # deprecated in favor of cloud_account
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            cloud=cloud,
         )
         # required for typing with "MMT"
         assert isinstance(ret_val, cls)
@@ -193,6 +193,7 @@ class MMT(_BaseMMT):
         self,
         num_machines: int,
         machine: Union["Machine", str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Optional["Studio"] = None,
         image: Optional[str] = None,
@@ -220,13 +221,13 @@ class MMT(_BaseMMT):
             image: The docker image to run the job with. Mutually exclusive with studio.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cloud_account: The cloud account to run the job on.
+            cloud: Cloud provider or cloud account to run the job on.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
                 Defaults to the studio cloud account if running with studio compute env.
-                If not provided and `cloud_account_provider` is set, will resolve cluster from this, else
-                will fall back to the teamspaces default cloud account.
-            cloud_account_provider: The provider to select the cloud-account from.
+                Falls back to the teamspace default cloud account.
+            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
                 If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls backto the teamspace default cloud account.
+                If not specified, falls back to the teamspace default cloud account.
             image_credentials: The credentials used to pull the image. Required if the image is private.
                 This should be the name of the respective credentials secret created on the Lightning AI platform.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
@@ -268,6 +269,7 @@ class MMT(_BaseMMT):
             artifacts_remote=artifacts_remote,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            cloud=cloud,
         )
         return self
 

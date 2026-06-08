@@ -43,21 +43,11 @@ def start() -> None:
     type=click.Choice(_PROVIDER_VALUES),
     help=("The provider to create the studio on. If --cloud-account is specified, this option is prioritized."),
 )
-@click.option(
-    "--provider",
-    default=None,
-    type=click.Choice(_PROVIDER_VALUES),
-    help=(
-        "Deprecated. Use --cloud-provider instead. The provider to create the studio on. "
-        "If --cloud-account is specified, this option is prioritized."
-    ),
-)
 def studio(
     name: str,
     teamspace: Optional[str] = None,
     machine: str = "CPU",
     cloud_provider: Optional[str] = None,
-    provider: Optional[str] = None,
 ) -> None:
     """Start a studio on a given machine.
 
@@ -82,7 +72,6 @@ def studio(
             user=None,
             create_ok=False,
             cloud_provider=cloud_provider,
-            provider=provider,
         )
     except (RuntimeError, ValueError, ApiException) as first_error:
         try:
@@ -93,7 +82,6 @@ def studio(
                 user=owner,
                 create_ok=False,
                 cloud_provider=cloud_provider,
-                provider=provider,
             )
         except (RuntimeError, ValueError, ApiException) as second_error:
             raise first_error from second_error

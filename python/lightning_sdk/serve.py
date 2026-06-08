@@ -264,6 +264,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         max_replica: Optional[int] = 1,
         spot: Optional[bool] = None,
         replicas: Optional[int] = 1,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         cloud_account: Optional[str] = None,
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
@@ -281,7 +282,8 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             max_replica: Maximum number of replicas for autoscaling.
             spot: Whether to use spot/interruptible instances.
             replicas: Fixed replica count.
-            cloud_account: Cloud account for the replicas.
+            cloud: Cloud provider or cloud account for the replicas.
+            cloud_account: Deprecated. Use ``cloud`` instead. Cloud account for the replicas.
             port: Port to expose on the replicas.
             include_credentials: Whether to inject SDK auth env vars.
         """
@@ -296,6 +298,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             replicas=replicas,
             spot=spot,
             cloud_account=cloud_account,
+            cloud=cloud,
             ports=[port],
             include_credentials=include_credentials,
         )
@@ -311,6 +314,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         max_replica: Optional[int] = 1,
         spot: Optional[bool] = None,
         replicas: Optional[int] = 1,
+        cloud: Optional[Union[CloudProvider, str]] = None,
         cloud_account: Optional[str] = None,
         port: Optional[int] = 8000,
         include_credentials: Optional[bool] = True,
@@ -330,7 +334,8 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             max_replica: The maximum number of replicas to run. Defaults to 1.
             spot: Whether to run the deployment on spot instances. Defaults to None.
             replicas: The number of replicas to run. Defaults to 1.
-            cloud_account: The cloud account to run the deployment on. Defaults to None.
+            cloud: Cloud provider or cloud account to run the deployment on. Defaults to None.
+            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the deployment on.
             port: The port to run the deployment on. Defaults to 8000.
             include_credentials: Whether to include credentials in the deployment. Defaults to True.
             cloudspace_id: Connect to a Studio.
@@ -354,6 +359,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
                 spot=spot,
                 replicas=replicas,
                 cloud_account=cloud_account,
+                cloud=cloud,
                 port=port,
                 include_credentials=include_credentials,
             )
@@ -366,6 +372,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             spot=spot,
             replicas=replicas,
             cloud_account=cloud_account,
+            cloud=cloud,
             ports=[port],
             include_credentials=include_credentials,
             cloudspace_id=cloudspace_id,

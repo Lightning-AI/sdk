@@ -5,6 +5,7 @@ from typing import Dict, Mapping, Optional, Sequence, Union
 
 import click
 
+from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.teamspace import Teamspace
@@ -47,11 +48,18 @@ _MACHINE_VALUES = tuple(
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
 @click.option(
+    "--cloud",
+    default=None,
+    help=(
+        "Cloud provider or cloud account to run the job on. Defaults to the studio cloud account or teamspace default."
+    ),
+)
+@click.option(
     "--cloud-account",
     "--cloud_account",
     default=None,
     help=(
-        "The cloud account to run the job on. "
+        "Deprecated. Use --cloud. The cloud account to run the job on. "
         "Defaults to the studio cloud account if running with studio compute env. "
         "If not provided will fall back to the teamspaces default cloud account."
     ),
@@ -136,6 +144,7 @@ def run_job(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
+    cloud: Optional[str] = None,
     cloud_account: Optional[str] = None,
     env: Sequence[str] = (),
     interruptible: bool = False,
@@ -161,6 +170,7 @@ def run_job(
         machine_enum = machine
 
     resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
+    warn_deprecated_cloud_options(cloud_account=cloud_account)
 
     path_mappings_dict = _resolve_path_mapping(path_mappings=path_mappings)
     for mapping in path_mapping:
@@ -179,6 +189,7 @@ def run_job(
         teamspace=resolved_teamspace,
         org=org,
         user=user,
+        cloud=cloud,
         cloud_account=cloud_account,
         env=env_dict,
         interruptible=interruptible,

@@ -170,16 +170,31 @@ class CloudAccountApi:
         )
         return list(filtered_cloud_accounts)
 
-    def get_cloud_account_provider_mapping(self, teamspace_id: str) -> Dict["CloudProvider", V1ExternalCluster]:
+    def get_cloud_account_provider_mapping(
+        self, teamspace_id: str, global_only: bool = False
+    ) -> Dict["CloudProvider", V1ExternalCluster]:
         """Return a mapping from cloud provider to the corresponding cloud account.
 
         Args:
             teamspace_id: The teamspace whose cloud accounts to map.
+            global_only: When ``True``, only ``GLOBAL`` cloud accounts are considered, so selecting a
+                provider (e.g. ``--cloud aws``) resolves to that provider's global account rather than a
+                BYOC/custom account that happens to use the same provider. When ``False`` (default), all
+                of the teamspace's cloud accounts are considered (e.g. so data connections can bind to a
+                private cloud account of the right provider).
 
         Returns:
-            Dict[CloudProvider, V1ExternalCluster]: Provider → cloud account mapping.
+            Dict[CloudProvider, V1ExternalCluster]: Provider → cloud account mapping. Empty if the
+            teamspace has no matching cloud accounts.
         """
-        res = self.list_cloud_accounts(teamspace_id=teamspace_id)
+        if global_only:
+            try:
+                res = self.list_global_cloud_accounts(teamspace_id=teamspace_id)
+            except ValueError:
+                return {}
+        else:
+            res = self.list_cloud_accounts(teamspace_id=teamspace_id)
+
         cloud_accounts = {cloud_account.id: cloud_account for cloud_account in res}
         providers = {cloud_account.id: self._get_cloud_account_provider(cloud_account) for cloud_account in res}
 
@@ -229,30 +244,54 @@ class CloudAccountApi:
     def resolve_cloud_account(
         self,
         teamspace_id: str,
-        cloud_account: Optional[str],
-        cloud_provider: Optional[Union["CloudProvider", str]],
-        default_cloud_account: Optional[str],
+        cloud: Optional[Union["CloudProvider", str]] = None,
+        cloud_account: Optional[str] = None,
+        cloud_provider: Optional[Union["CloudProvider", str]] = None,
+        default_cloud_account: Optional[str] = None,
     ) -> Optional[str]:
-        """Resolve the best cloud account ID from the combination of explicit account, provider, and default.
+        """Resolve the best cloud account ID from the combination of cloud, legacy args, and default.
 
-        Priority: explicit ``cloud_account`` > provider mapping > ``default_cloud_account`` > None.
+        Priority: explicit ``cloud``/``cloud_account`` > provider mapping > ``default_cloud_account`` > None.
 
         Args:
             teamspace_id: The teamspace to resolve cloud accounts within.
-            cloud_account: An explicit cloud account ID, if provided.
-            cloud_provider: A preferred provider; used to find the matching account when no explicit ID is given.
+            cloud: A preferred global provider (``"aws"``, ``CloudProvider.AWS``, etc.) or cloud account ID.
+            cloud_account: Deprecated. Use ``cloud`` instead. An explicit cloud account ID, if provided.
+            cloud_provider: Deprecated. Use ``cloud`` instead. A preferred provider; used to find the matching account
+                when no explicit ID is given.
             default_cloud_account: Fallback account ID when neither explicit account nor provider resolves.
 
         Returns:
             str | None: The resolved cloud account ID, or None if none can be determined.
 
         Raises:
+            ValueError: If ``cloud`` is combined with deprecated cloud selection arguments.
             RuntimeError: If both ``cloud_account`` and ``cloud_provider`` are given but do not agree.
         """
         from lightning_sdk.machine import CloudProvider
 
+        # When a provider is selected via `cloud` (the `--cloud <provider>` path), resolve to that
+        # provider's GLOBAL account. The deprecated `cloud_provider` arg keeps its broader behavior
+        # of matching any (incl. BYOC) account of that provider.
+        prefer_global_account = False
+        if cloud is not None:
+            if cloud_account is not None or cloud_provider is not None:
+                raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
+
+            if isinstance(cloud, CloudProvider):
+                cloud_provider = cloud
+                prefer_global_account = True
+            elif isinstance(cloud, str):
+                try:
+                    cloud_provider = CloudProvider.from_str(cloud)
+                    prefer_global_account = True
+                except ValueError:
+                    cloud_account = cloud
+            else:
+                raise TypeError("cloud must be a string, CloudProvider, or None")
+
         if cloud_provider and not isinstance(cloud_provider, CloudProvider):
-            cloud_provider = CloudProvider(cloud_provider)
+            cloud_provider = CloudProvider.from_str(cloud_provider)
 
         if cloud_account:
             if cloud_provider:
@@ -267,8 +306,10 @@ class CloudAccountApi:
             return cloud_account
 
         if cloud_provider:
-            cloud_account_mapping = self.get_cloud_account_provider_mapping(teamspace_id=teamspace_id)
-            if cloud_provider and cloud_provider in cloud_account_mapping:
+            cloud_account_mapping = self.get_cloud_account_provider_mapping(
+                teamspace_id=teamspace_id, global_only=prefer_global_account
+            )
+            if cloud_provider in cloud_account_mapping:
                 return cloud_account_mapping[cloud_provider].id
 
         if default_cloud_account:

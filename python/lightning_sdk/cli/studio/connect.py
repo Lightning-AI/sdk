@@ -7,6 +7,7 @@ from typing import Optional
 
 import click
 
+from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.richt_print import studio_name_link
@@ -20,14 +21,15 @@ from lightning_sdk.utils.names import random_unique_name
 
 
 def _parse_args_or_get_from_current_studio(
-    teamspace: Optional[str],
-    cloud_account: Optional[str],
-    studio_type: Optional[str],
-    machine: Optional[str],
-    gpus: Optional[str],
-    cloud_provider: Optional[str],
-    name: Optional[str],
-) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
+    teamspace: Optional[str] = None,
+    cloud_account: Optional[str] = None,
+    studio_type: Optional[str] = None,
+    machine: Optional[str] = None,
+    gpus: Optional[str] = None,
+    cloud_provider: Optional[str] = None,
+    name: Optional[str] = None,
+    cloud: Optional[str] = None,
+) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
     # Parse args provided by user
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace)
@@ -37,6 +39,7 @@ def _parse_args_or_get_from_current_studio(
 
     if cloud_provider is not None:
         cloud_provider = CloudProvider(cloud_provider)
+    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
 
     name = name or random_unique_name()
 
@@ -59,14 +62,15 @@ def _parse_args_or_get_from_current_studio(
 @click.command("connect")
 @click.argument("name", required=False)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
+@click.option("--cloud", help="Cloud provider or cloud account to create the studio on. Defaults to teamspace default.")
 @click.option(
     "--cloud-provider",
-    help="The cloud provider to start the studio on. Defaults to teamspace default.",
+    help="Deprecated. Use --cloud. The cloud provider to start the studio on.",
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
 @click.option(
     "--cloud-account",
-    help="The cloud account to create the studio on. Defaults to teamspace default.",
+    help="Deprecated. Use --cloud. The cloud account to create the studio on.",
     type=click.STRING,
 )
 @click.option(
@@ -91,6 +95,7 @@ def _parse_args_or_get_from_current_studio(
 def connect_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
+    cloud: Optional[str] = None,
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
     machine: Optional[str] = None,
@@ -104,7 +109,14 @@ def connect_studio(
         lightning studio connect
     """
     teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
-        teamspace, cloud_account, studio_type, machine, gpus, cloud_provider, name
+        teamspace=teamspace,
+        cloud_account=cloud_account,
+        studio_type=studio_type,
+        machine=machine,
+        gpus=gpus,
+        cloud_provider=cloud_provider,
+        name=name,
+        cloud=cloud,
     )
 
     try:
@@ -112,6 +124,7 @@ def connect_studio(
             name=name,
             teamspace=teamspace,
             create_ok=True,
+            cloud=cloud,
             cloud_provider=cloud_provider,
             cloud_account=cloud_account,
             studio_type=template_id,

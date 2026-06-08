@@ -44,6 +44,7 @@ def test_run_on_cloud(mock_deployment, mock_autoscale, deployer):
         replicas=1,
         spot=None,
         cloud_account=None,
+        cloud=None,
         include_credentials=True,
         cloudspace_id=None,
         from_litserve=True,

@@ -44,6 +44,26 @@ def test_run_job_legacy_help() -> None:
     )
 
 
+def test_run_job_with_cloud(monkeypatch):
+    from unittest.mock import MagicMock
+
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.job.run import run_job
+
+    mock_job = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.job.run.Job", mock_job)
+    monkeypatch.setattr("lightning_sdk.cli.job.run.Teamspace", MagicMock(return_value="teamspace"))
+
+    result = CliRunner().invoke(
+        run_job,
+        ["--name", "test-job", "--image", "ubuntu", "--command", "echo hi", "--cloud", "aws"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert mock_job.run.call_args.kwargs["cloud"] == "aws"
+
+
 @pytest.mark.parametrize(
     ("input_mappings", "expected"),
     [

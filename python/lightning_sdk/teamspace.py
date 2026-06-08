@@ -207,7 +207,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
             for s in _studios:
                 with skip_studio_init():
-                    studio = target_cls(name=s.name, teamspace=self, cluster=cl.cluster_name, create_ok=False)
+                    studio = target_cls(name=s.name, teamspace=self, create_ok=False)
                     studio._studio = s
                     studio._teamspace = self
                     studios.append(studio)
@@ -889,7 +889,10 @@ class Teamspace(metaclass=TrackCallsMeta):
             raise ValueError("Region must be specified")
 
         cloud_account = self._cloud_account_api.resolve_cloud_account(
-            self.id, cloud_account, provider_for_connection, None
+            self.id,
+            cloud_account=cloud_account,
+            cloud_provider=provider_for_connection,
+            default_cloud_account=None,
         )
 
         cloud_accounts = self._cloud_account_api.list_cloud_accounts(self.id)
