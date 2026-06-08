@@ -140,14 +140,12 @@ class Sandbox:
     def list_snapshots(
         self,
         *,
-        project_id: str | None = None,
         name: str | None = None,
         page_token: str | None = None,
         limit: int | None = None,
     ) -> list[SnapshotInfo]:
         """List snapshots visible to this client's org / API key."""
         data = self._api.list_snapshots(
-            project_id=project_id,
             name=name,
             page_token=page_token,
             limit=limit,

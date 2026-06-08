@@ -39,7 +39,7 @@ def test_create_sandbox_waits_until_running():
     mock_sb = mock.MagicMock()
     with mock.patch.object(api, "sandboxes", return_value=mock_sb):
         pending = _v1(id="sb-1", name="n", status="pending")
-        running = _v1(id="sb-1", name="n", status="running")
+        running = _v1(id="sb-1", name="n", status="running", project_id="proj-1")
         mock_sb.sandboxes_service_create_sandbox.return_value = pending
         mock_sb.sandboxes_service_get_sandbox.return_value = running
 
@@ -62,7 +62,67 @@ def test_create_sandbox_raises_on_terminal_status():
             create_sandbox(name="n", sandbox_api=api)
 
 
-def test_sandbox_instance_snapshot_sends_project_id_when_provided():
+def test_create_sandbox_omits_project_id_without_api_response():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with (
+        mock.patch.object(api, "sandboxes", return_value=mock_sb),
+        mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_PROJECT_ID": "proj-env"}, clear=False),
+    ):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(name="n", sandbox_api=api)
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.project_id is None
+
+
+def test_create_sandbox_restore_omits_project_id_prefetch():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        with mock.patch.object(api, "get_snapshot") as m_get_snap:
+            create_sandbox(name="n", sandbox_api=api, snapshot_id="snap-1")
+
+    m_get_snap.assert_not_called()
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.project_id is None
+    assert body.snapshot_id == "snap-1"
+
+
+def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
+    from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
+
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    sb_svc = mock.MagicMock()
+    sb_svc.sandboxes_service_create_sandbox_snapshot.return_value = V1SandboxSnapshot(id="snap-1", status="ready")
+
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    with mock.patch.object(api, "sandboxes", return_value=sb_svc):
+        sb.snapshot(wait=False)
+
+    body = sb_svc.sandboxes_service_create_sandbox_snapshot.call_args[0][0]
+    assert body.project_id is None
+
+
+def test_sandbox_instance_snapshot_maps_project_id_required_error():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
+    sb_svc = mock.MagicMock()
+    exc = ApiException(status=400)
+    exc.body = b'{"code":3, "message":"project id is required", "details":[]}'
+    sb_svc.sandboxes_service_create_sandbox_snapshot.side_effect = exc
+
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    with (
+        mock.patch.object(api, "sandboxes", return_value=sb_svc),
+        pytest.raises(RuntimeError, match="project-scoped API key"),
+    ):
+        sb.snapshot(wait=False)
+
+
+def test_sandbox_instance_snapshot_sends_project_id_from_sandbox_row():
     from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
 
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
@@ -70,24 +130,24 @@ def test_sandbox_instance_snapshot_sends_project_id_when_provided():
     snap = V1SandboxSnapshot(id="snap-1", project_id="proj-1", status="ready")
     sb_svc.sandboxes_service_create_sandbox_snapshot.return_value = snap
 
-    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1", project_id="proj-1"), sandbox_api=api)
     with mock.patch.object(api, "sandboxes", return_value=sb_svc):
-        info = sb.snapshot(project_id="proj-1", wait=False)
+        info = sb.snapshot(wait=False)
 
     body = sb_svc.sandboxes_service_create_sandbox_snapshot.call_args[0][0]
     assert body.project_id == "proj-1"
     assert info.id == "snap-1"
 
 
-def test_sandbox_instance_stop_sends_project_id_when_provided():
+def test_sandbox_instance_stop_sends_project_id_from_sandbox_row():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
     sb_svc = mock.MagicMock()
     stop_resp = mock.MagicMock(auto_snapshot_id="snap-auto")
     sb_svc.sandboxes_service_stop_sandbox.return_value = stop_resp
 
-    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
+    sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1", project_id="proj-on-sandbox"), sandbox_api=api)
     with mock.patch.object(api, "sandboxes", return_value=sb_svc):
-        assert sb.stop(project_id="proj-on-sandbox") == "snap-auto"
+        assert sb.stop() == "snap-auto"
 
     body = sb_svc.sandboxes_service_stop_sandbox.call_args[0][0]
     assert body.project_id == "proj-on-sandbox"
@@ -104,7 +164,7 @@ def test_sandbox_client_snapshot_helpers():
 
     with mock.patch.object(sdk.api, "sandboxes", return_value=sb_svc):
         assert sdk.get_snapshot("snap-1").id == "snap-1"
-        assert sdk.list_snapshots(project_id="proj-1")[0].id == "snap-1"
+        assert sdk.list_snapshots()[0].id == "snap-1"
         sdk.delete_snapshot("snap-1")
 
     sb_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with(
@@ -113,7 +173,6 @@ def test_sandbox_client_snapshot_helpers():
     )
     sb_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
         organization_id="org-1",
-        project_id="proj-1",
     )
     sb_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with(
         "snap-1",

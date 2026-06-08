@@ -60,6 +60,26 @@ def _api_exception_text(exc: ApiException) -> str:
     return str(exc.reason or exc)
 
 
+_PROJECT_SCOPED_KEY_HINT = (
+    "This operation requires a project-scoped API key. Create one in your Lightning "
+    "teamspace (Members → API keys) and pass it via SandboxConfig(api_key=...) or "
+    "LIGHTNING_SANDBOX_API_KEY. Org-scoped keys cannot snapshot or stop persistent "
+    "sandboxes without a teamspace context."
+)
+
+
+def _is_project_id_required_error(exc: ApiException) -> bool:
+    text = _api_exception_text(exc).lower().replace("_", " ")
+    return "project" in text and "id" in text and "required" in text
+
+
+def raise_sandbox_api_error(exc: ApiException) -> None:
+    """Map sandbox API failures to user-facing :class:`RuntimeError` messages."""
+    if _is_project_id_required_error(exc):
+        raise RuntimeError(_PROJECT_SCOPED_KEY_HINT) from exc
+    raise RuntimeError(f"Lightning API error {exc.status}: {_api_exception_text(exc)}") from exc
+
+
 def _parse_run_command_response(resp: Any) -> CommandResult:
     if resp is None:
         return CommandResult(cmd_id="", output="", exit_code=0)
@@ -192,10 +212,15 @@ class SandboxApi:
 
     def get_sandbox(self, sandbox_id: str, *, organization_id: str | None = None) -> V1Sandbox:
         """Fetch one sandbox row via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox`."""
-        return self.sandboxes().sandboxes_service_get_sandbox(
-            sandbox_id,
-            **self._org_query_kwargs(organization_id),
-        )
+        api = self.sandboxes()
+        try:
+            v1 = api.sandboxes_service_get_sandbox(
+                sandbox_id,
+                **self._org_query_kwargs(organization_id),
+            )
+        except ApiException as e:
+            raise_sandbox_api_error(e)
+        return v1
 
     def list_sandboxes(
         self,
@@ -209,41 +234,55 @@ class SandboxApi:
             kwargs["page_token"] = page_token
         if limit is not None:
             kwargs["limit"] = limit
-        return self.sandboxes().sandboxes_service_list_sandboxes(**kwargs)
+        api = self.sandboxes()
+        try:
+            return api.sandboxes_service_list_sandboxes(**kwargs)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
 
     def get_snapshot(self, snapshot_id: str, *, organization_id: str | None = None) -> V1SandboxSnapshot:
         """Fetch snapshot metadata via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_snapshot`."""
-        return self.sandboxes().sandboxes_service_get_sandbox_snapshot(
-            snapshot_id,
-            **self._org_query_kwargs(organization_id),
-        )
+        api = self.sandboxes()
+        try:
+            snap = api.sandboxes_service_get_sandbox_snapshot(
+                snapshot_id,
+                **self._org_query_kwargs(organization_id),
+            )
+        except ApiException as e:
+            raise_sandbox_api_error(e)
+        return snap
 
     def list_snapshots(
         self,
         *,
-        project_id: str | None = None,
         name: str | None = None,
         page_token: str | None = None,
         limit: int | None = None,
     ) -> V1ListSandboxSnapshotsResponse:
         """List snapshots via :meth:`SandboxesServiceApi.sandboxes_service_list_sandbox_snapshots`."""
         kwargs = self._org_query_kwargs()
-        if project_id:
-            kwargs["project_id"] = project_id
         if name:
             kwargs["name"] = name
         if page_token:
             kwargs["page_token"] = page_token
         if limit is not None:
             kwargs["limit"] = str(limit)
-        return self.sandboxes().sandboxes_service_list_sandbox_snapshots(**kwargs)
+        api = self.sandboxes()
+        try:
+            return api.sandboxes_service_list_sandbox_snapshots(**kwargs)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
 
     def delete_snapshot(self, snapshot_id: str, *, organization_id: str | None = None) -> None:
         """Delete a snapshot via :meth:`SandboxesServiceApi.sandboxes_service_delete_sandbox_snapshot`."""
-        self.sandboxes().sandboxes_service_delete_sandbox_snapshot(
-            snapshot_id,
-            **self._org_query_kwargs(organization_id),
-        )
+        api = self.sandboxes()
+        try:
+            api.sandboxes_service_delete_sandbox_snapshot(
+                snapshot_id,
+                **self._org_query_kwargs(organization_id),
+            )
+        except ApiException as e:
+            raise_sandbox_api_error(e)
 
     def run_command(
         self,
@@ -276,7 +315,7 @@ class SandboxApi:
         try:
             resp = api.sandboxes_service_run_sandbox_command(body, sandbox_id)
         except ApiException as e:
-            raise RuntimeError(f"Lightning API error {e.status}: {_api_exception_text(e)}") from e
+            raise_sandbox_api_error(e)
         return _parse_run_command_response(resp)
 
     def get_command_logs(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> Any:
@@ -289,7 +328,7 @@ class SandboxApi:
                 **({"organization_id": organization_id} if organization_id else {}),
             )
         except ApiException as e:
-            raise RuntimeError(f"Lightning API error {e.status}: {_api_exception_text(e)}") from e
+            raise_sandbox_api_error(e)
         return _parse_command_logs_response(resp)
 
     def kill_command(self, sandbox_id: str, cmd_id: str, organization_id: str | None) -> None:
@@ -302,7 +341,7 @@ class SandboxApi:
                 **({"organization_id": organization_id} if organization_id else {}),
             )
         except ApiException as e:
-            raise RuntimeError(f"Lightning API error {e.status}: {_api_exception_text(e)}") from e
+            raise_sandbox_api_error(e)
 
     def get_command(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> dict[str, Any]:
         """Fetch command status via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_command`."""
@@ -314,7 +353,7 @@ class SandboxApi:
                 **({"organization_id": organization_id} if organization_id else {}),
             )
         except ApiException as e:
-            raise RuntimeError(f"Lightning API error {e.status}: {_api_exception_text(e)}") from e
+            raise_sandbox_api_error(e)
         return _parse_get_command_response(resp)
 
     def create_directory(self, sandbox_id: str, path: str, organization_id: str | None) -> None:
@@ -324,4 +363,4 @@ class SandboxApi:
         try:
             api.sandboxes_service_create_sandbox_directory(body, sandbox_id)
         except ApiException as e:
-            raise RuntimeError(f"Lightning API error {e.status}: {_api_exception_text(e)}") from e
+            raise_sandbox_api_error(e)

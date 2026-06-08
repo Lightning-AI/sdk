@@ -64,6 +64,34 @@ def test_api_exception_text_prefers_decoded_body():
     assert "bad" in sandbox_api_mod._api_exception_text(exc)
 
 
+def test_is_project_id_required_error_detects_message():
+    exc = ApiException(status=400)
+    exc.body = b'{"message":"project_id is required"}'
+    assert sandbox_api_mod._is_project_id_required_error(exc) is True
+
+    api_exc = ApiException(status=400)
+    api_exc.body = b'{"code":3, "message":"project id is required", "details":[]}'
+    assert sandbox_api_mod._is_project_id_required_error(api_exc) is True
+
+
+def test_raise_sandbox_api_error_maps_project_id_required_to_hint():
+    exc = ApiException(status=400)
+    exc.body = b"project_id is required: snapshots are project-scoped"
+
+    with pytest.raises(RuntimeError, match="project-scoped API key") as err:
+        sandbox_api_mod.raise_sandbox_api_error(exc)
+
+    assert "without a teamspace context" in str(err.value)
+    assert err.value.__cause__ is exc
+
+
+def test_raise_sandbox_api_error_preserves_generic_errors():
+    exc = ApiException(status=503, reason="unavailable")
+
+    with pytest.raises(RuntimeError, match="Lightning API error 503"):
+        sandbox_api_mod.raise_sandbox_api_error(exc)
+
+
 def test_run_command_returns_command_result(patched_sandbox_api):
     api, mock_svc = patched_sandbox_api
     resp = mock.MagicMock()
@@ -200,11 +228,10 @@ def test_list_snapshots_forwards_filters(patched_sandbox_api):
     api._config["organization_id"] = "org-1"
     mock_svc.sandboxes_service_list_sandbox_snapshots.return_value = V1ListSandboxSnapshotsResponse(snapshots=[])
 
-    api.list_snapshots(project_id="proj-1", name="golden", limit=3)
+    api.list_snapshots(name="golden", limit=3)
 
     mock_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
         organization_id="org-1",
-        project_id="proj-1",
         name="golden",
         limit="3",
     )

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus, SandboxApi
+from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus, SandboxApi, raise_sandbox_api_error
 from lightning_sdk.lightning_cloud.openapi import (
     SandboxesServiceApi,
     SandboxesServiceCreateSandboxSnapshotBody,
@@ -158,7 +158,10 @@ def create_sandbox(
         body.persistent = persistent
 
     sb: SandboxesServiceApi = sandbox_api.sandboxes()
-    v1 = sb.sandboxes_service_create_sandbox(body)
+    try:
+        v1 = sb.sandboxes_service_create_sandbox(body)
+    except ApiException as e:
+        raise_sandbox_api_error(e)
     v1 = _wait_until_sandbox_running(sandbox_api, v1)
     return SandboxInstance._from_v1(v1, runtime=runtime, sandbox_api=sandbox_api)
 
@@ -286,6 +289,11 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         return self._v1.organization_id or ""
 
     @property
+    def project_id(self) -> str:
+        """Teamspace this sandbox belongs to (set by the control plane / API key scope)."""
+        return self._v1.project_id or ""
+
+    @property
     def cluster_id(self) -> str:
         return self._v1.cluster_id or ""
 
@@ -393,8 +401,8 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         :meth:`resume` later.
         """
         org = self._v1.organization_id
+        sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
         try:
-            sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
             if org:
                 sb.sandboxes_service_delete_sandbox(self._v1.id, organization_id=org)
             else:
@@ -402,9 +410,9 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         except ApiException as e:
             if e.status == 404:
                 return
-            raise
+            raise_sandbox_api_error(e)
 
-    def stop(self, *, project_id: str | None = None) -> str:
+    def stop(self) -> str:
         """Stop the sandbox.
 
         For a ``persistent=True`` sandbox the control plane synchronously
@@ -417,10 +425,13 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         body = SandboxesServiceStopSandboxBody()
         if org:
             body.organization_id = org
-        if project_id:
-            body.project_id = project_id
+        if self._v1.project_id:
+            body.project_id = self._v1.project_id
         sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
-        resp = sb.sandboxes_service_stop_sandbox(body, self._v1.id)
+        try:
+            resp = sb.sandboxes_service_stop_sandbox(body, self._v1.id)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
         return resp.auto_snapshot_id or ""
 
     def resume(self) -> SandboxInstance:
@@ -434,14 +445,16 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         if org:
             body.organization_id = org
         sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
-        v1 = sb.sandboxes_service_update_sandbox(body, self._v1.id)
+        try:
+            v1 = sb.sandboxes_service_update_sandbox(body, self._v1.id)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
         self._v1 = _wait_until_sandbox_running(self._sandbox_api, v1)
         return self
 
     def snapshot(
         self,
         *,
-        project_id: str | None = None,
         expiration: str | None = None,
         excludes: list[str] | None = None,
         wait: bool = True,
@@ -460,14 +473,17 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         body = SandboxesServiceCreateSandboxSnapshotBody()
         if org:
             body.organization_id = org
-        if project_id:
-            body.project_id = project_id
+        if self._v1.project_id:
+            body.project_id = self._v1.project_id
         if expiration is not None:
             body.expiration = expiration
         if excludes:
             body.excludes = excludes
         sb: SandboxesServiceApi = self._sandbox_api.sandboxes()
-        snap = sb.sandboxes_service_create_sandbox_snapshot(body, self.sandbox_id)
+        try:
+            snap = sb.sandboxes_service_create_sandbox_snapshot(body, self.sandbox_id)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
         if wait:
             snap = _wait_for_snapshot_ready(self._sandbox_api, snap.id, org, wait_timeout)
         return SnapshotInfo._from_v1(snap)
