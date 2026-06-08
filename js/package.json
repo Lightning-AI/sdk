@@ -1,6 +1,6 @@
 {
     "name": "@lightningai/sdk",
-    "version": "2026.06.08",
+    "version": "2026.06.08.1",
     "description": "Lightning AI Sandbox SDK — create and manage sandboxes, run commands, read/write files",
     "type": "module",
     "license": "Apache-2.0",
