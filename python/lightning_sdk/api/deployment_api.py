@@ -15,6 +15,7 @@ from lightning_sdk.api import lightning_storage_upload as lightning_storage_uplo
 from lightning_sdk.api.utils import _FileUploader, _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateDeploymentBody,
+    JobsServiceReloadDeploymentWeightsBody,
     V1AutoscalingSpec,
     V1AutoscalingTargetMetric,
     V1BYOMSpec,
@@ -29,6 +30,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobHealthCheckConfig,
     V1JobLogsResponse,
     V1JobSpec,
+    V1ReloadDeploymentWeightsResponse,
     V1RollingUpdateStrategy,
     V1WeightSource,
 )
@@ -526,6 +528,21 @@ class DeploymentApi:
             deployment: The deployment to delete.
         """
         self._client.jobs_service_delete_deployment(project_id=deployment.project_id, id=deployment.id)
+
+    def reload_weights(self, deployment: V1Deployment) -> V1ReloadDeploymentWeightsResponse:
+        """Trigger an in-place weight reload on a running BYOM deployment.
+
+        Args:
+            deployment: The deployment whose weights to reload.
+
+        Returns:
+            V1ReloadDeploymentWeightsResponse: The new weight version and reload type.
+        """
+        return self._client.jobs_service_reload_deployment_weights(
+            body=JobsServiceReloadDeploymentWeightsBody(),
+            project_id=deployment.project_id,
+            deployment_id=deployment.id,
+        )
 
     def list_deployment_jobs(
         self,
