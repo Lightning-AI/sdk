@@ -8,6 +8,7 @@ from lightning_sdk.sandbox.base import (
 )
 from lightning_sdk.sandbox.command import Command
 from lightning_sdk.sandbox.config import SandboxConfig
+from lightning_sdk.sandbox.network_policy import NetworkPolicy
 from lightning_sdk.sandbox.process import (
     PtyConnectOpts,
     PtyCreateOpts,
@@ -27,6 +28,7 @@ __all__ = [
     "CommandLog",
     "CommandStatus",
     "ListSandboxesResult",
+    "NetworkPolicy",
     "PtyConnectOpts",
     "PtyCreateOpts",
     "PtyHandle",

@@ -11,6 +11,7 @@ from lightning_sdk.sandbox.base import (
     create_sandbox,
 )
 from lightning_sdk.sandbox.config import SandboxConfig
+from lightning_sdk.sandbox.network_policy import NetworkPolicyInput
 
 
 def _sandbox_create_impl(
@@ -26,6 +27,7 @@ def _sandbox_create_impl(
     cloudspace_id: str | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
+    network_policy: NetworkPolicyInput | None = None,
 ) -> SandboxInstance:
     if sandbox_api is not None and config is not None:
         raise ValueError("Pass only one of 'config' and sandbox_api (internal)")
@@ -41,6 +43,7 @@ def _sandbox_create_impl(
         cloudspace_id=cloudspace_id,
         snapshot_id=snapshot_id,
         persistent=persistent,
+        network_policy=network_policy,
     )
 
 

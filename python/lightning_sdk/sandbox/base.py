@@ -21,6 +21,7 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.sandbox.command import Command
 from lightning_sdk.sandbox.config import SandboxConfig
+from lightning_sdk.sandbox.network_policy import NetworkPolicyInput, to_v1_network_policy
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 if TYPE_CHECKING:
@@ -115,6 +116,7 @@ def create_sandbox(
     cloudspace_id: str | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
+    network_policy: NetworkPolicyInput | None = None,
 ) -> SandboxInstance:
     """Create a sandbox and block until its status is ``running``.
 
@@ -126,6 +128,10 @@ def create_sandbox(
     (see :meth:`SandboxInstance.snapshot`) for a fast, pre-warmed start. Pass
     ``persistent=True`` so the sandbox's state survives :meth:`SandboxInstance.stop`
     (via an auto-snapshot) and can be brought back with :meth:`SandboxInstance.resume`.
+
+    ``network_policy`` is create-time only: omit for open egress (``allow-all``),
+    pass ``"deny-all"``, or a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`
+    CIDR allowlist. Restored snapshots inherit the source policy unless overridden.
     """
     org_id = sandbox_api.config_get("organization_id")
     if org_id is not None:
@@ -156,6 +162,9 @@ def create_sandbox(
         body.snapshot_id = snapshot_id
     if persistent is not None:
         body.persistent = persistent
+    v1_policy = to_v1_network_policy(network_policy)
+    if v1_policy is not None:
+        body.network_policy = v1_policy
 
     sb: SandboxesServiceApi = sandbox_api.sandboxes()
     try:
