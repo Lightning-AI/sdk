@@ -17,13 +17,15 @@ _ENV_ORG_ID = "LIGHTNING_ORG_ID"
 class SandboxConfig:
     """Explicit sandbox API settings.
 
-    ``api_key`` is required. ``organization_id`` is optional — set via
-    ``LIGHTNING_ORG_ID`` or :attr:`organization_id`; when omitted, requests rely
-    on org scope implied by the API key alone.
+    ``api_key`` is optional. When omitted, the sandbox client falls back to the
+    credentials from ``lightning login`` / standard Lightning auth env vars.
+    ``organization_id`` is optional — set via ``LIGHTNING_ORG_ID`` or
+    :attr:`organization_id`; when omitted, requests rely on org scope implied by
+    the API key or auth context.
 
     Maps to environment variables used by :meth:`from_env`:
 
-    - ``LIGHTNING_SANDBOX_API_KEY`` → ``api_key`` (required)
+    - ``LIGHTNING_SANDBOX_API_KEY`` → ``api_key``
     - ``LIGHTNING_CLOUD_URL`` → ``base_url``
     - ``LIGHTNING_ORG_ID`` → ``organization_id`` (optional)
     """
@@ -51,10 +53,6 @@ class SandboxConfig:
 
     def api(self) -> SandboxApi:
         """Build an isolated :class:`~lightning_sdk.api.sandbox_api.SandboxApi` for this config."""
-        if not self.api_key:
-            raise ValueError(
-                "api_key is required. Set LIGHTNING_SANDBOX_API_KEY or pass api_key in SandboxConfig.",
-            )
         from lightning_sdk.api.sandbox_api import SandboxApi
 
         return SandboxApi(self.to_api_dict())

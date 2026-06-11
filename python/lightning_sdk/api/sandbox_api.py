@@ -161,7 +161,8 @@ class SandboxApi:
 
     def __init__(self, config: dict[str, Any]) -> None:
         self._config = config
-        self._client = LightningClient(max_tries=7)
+        self._client = LightningClient(max_tries=7, with_auth=False)
+        self._auth_configured = False
         self._apply_auth_and_host()
 
     def config_get(self, key: str) -> Any:
@@ -181,7 +182,8 @@ class SandboxApi:
 
     def reset(self) -> None:
         """Recreate the Lightning client and re-apply ``configure()`` / env (call after config changes)."""
-        self._client = LightningClient(max_tries=7)
+        self._client = LightningClient(max_tries=7, with_auth=False)
+        self._auth_configured = False
         self._apply_auth_and_host()
 
     invalidate = reset
@@ -191,13 +193,18 @@ class SandboxApi:
         self._client.api_client.configuration.host = host
         if self._config.get("api_key"):
             self._client.api_client.set_default_header("Authorization", f"Bearer {self._config['api_key']}")
+            self._auth_configured = True
         else:
-            auth_header = Auth().authenticate()
-            if not auth_header:
-                raise RuntimeError(
-                    "Missing credentials: set api_key via configure() or use lightning login / env vars."
-                )
-            self._client.api_client.set_default_header("Authorization", auth_header)
+            self._auth_configured = False
+
+    def _ensure_auth(self) -> None:
+        if self._auth_configured:
+            return
+        auth_header = Auth().authenticate()
+        if not auth_header:
+            raise RuntimeError("Missing credentials: set api_key via configure() or use lightning login / env vars.")
+        self._client.api_client.set_default_header("Authorization", auth_header)
+        self._auth_configured = True
 
     @property
     def client(self) -> LightningClient:
@@ -207,7 +214,15 @@ class SandboxApi:
     def host(self) -> str:
         return str(self._client.api_client.configuration.host).rstrip("/")
 
+    def auth_header(self) -> str:
+        """Return the configured Authorization header, authenticating lazily when needed."""
+        self._ensure_auth()
+        headers = getattr(self._client.api_client, "default_headers", {})
+        auth = headers.get("Authorization", "") if isinstance(headers, dict) else ""
+        return str(auth or "")
+
     def sandboxes(self) -> SandboxesServiceApi:
+        self._ensure_auth()
         return SandboxesServiceApi(self._client.api_client)
 
     def get_sandbox(self, sandbox_id: str, *, organization_id: str | None = None) -> V1Sandbox:
@@ -227,6 +242,7 @@ class SandboxApi:
         *,
         page_token: str | None = None,
         limit: int | None = None,
+        project_id: str | None = None,
     ) -> V1ListSandboxesResponse:
         """List sandboxes via :meth:`SandboxesServiceApi.sandboxes_service_list_sandboxes`."""
         kwargs = self._org_query_kwargs()
@@ -234,6 +250,8 @@ class SandboxApi:
             kwargs["page_token"] = page_token
         if limit is not None:
             kwargs["limit"] = limit
+        if project_id:
+            kwargs["project_id"] = project_id
         api = self.sandboxes()
         try:
             return api.sandboxes_service_list_sandboxes(**kwargs)

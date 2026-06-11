@@ -15,6 +15,7 @@ from rich.text import Text
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.cli.utils import rich_to_str
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi.models.v1_create_sdk_command_history_request import (
     V1CreateSDKCommandHistoryRequest,
 )
@@ -23,9 +24,25 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type im
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
+def _auth_header_without_browser() -> Optional[str]:
+    auth = Auth()
+    if not (auth.api_key or auth.auth_token):
+        try:
+            if not auth.load():
+                return None
+        except Exception:
+            return None
+    try:
+        return auth.auth_header
+    except Exception:
+        return None
+
+
 def _log_command(message: str = "", duration: int = 0, error: Optional[str] = None) -> None:
     original_command = " ".join(shlex.quote(arg) for arg in sys.argv)
-    client = LightningClient(retry=False, max_tries=0)
+    auth_header = _auth_header_without_browser()
+    if not auth_header:
+        return
 
     body = V1CreateSDKCommandHistoryRequest(
         command=original_command,
@@ -45,6 +62,8 @@ def _log_command(message: str = "", duration: int = 0, error: Optional[str] = No
     body.message = body.message[:1000]
 
     with suppress(Exception):
+        client = LightningClient(retry=False, max_tries=0, with_auth=False)
+        client.api_client.set_default_header("Authorization", auth_header)
         client.s_dk_command_history_service_create_sdk_command_history(body=body)
 
 

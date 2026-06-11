@@ -9,6 +9,7 @@ from lightning_sdk.lightning_cloud.openapi import V1ListSandboxesResponse, V1San
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.sandbox import Command, RunCommandOpts, Sandbox, SandboxConfig, WriteFileParams
 from lightning_sdk.sandbox.base import SandboxInstance, _resolve_sandbox_api, create_sandbox
+from lightning_sdk.sandbox.sandbox import _resolve_teamspace_id
 
 
 def _v1(**kwargs) -> V1Sandbox:
@@ -66,9 +67,10 @@ def test_create_sandbox_omits_project_id_without_api_response():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
     running = _v1(id="sb-1", name="n", status="running")
-    with (
-        mock.patch.object(api, "sandboxes", return_value=mock_sb),
-        mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_PROJECT_ID": "proj-env"}, clear=False),
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb), mock.patch.dict(
+        "os.environ",
+        {"LIGHTNING_CLOUD_PROJECT_ID": "proj-env"},
+        clear=False,
     ):
         mock_sb.sandboxes_service_create_sandbox.return_value = running
         create_sandbox(name="n", sandbox_api=api)
@@ -90,6 +92,18 @@ def test_create_sandbox_restore_omits_project_id_prefetch():
     body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
     assert body.project_id is None
     assert body.snapshot_id == "snap-1"
+
+
+def test_create_sandbox_sends_explicit_project_id():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running", project_id="proj-1")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(name="n", sandbox_api=api, project_id="proj-1")
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.project_id == "proj-1"
 
 
 def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
@@ -115,9 +129,9 @@ def test_sandbox_instance_snapshot_maps_project_id_required_error():
     sb_svc.sandboxes_service_create_sandbox_snapshot.side_effect = exc
 
     sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
-    with (
-        mock.patch.object(api, "sandboxes", return_value=sb_svc),
-        pytest.raises(RuntimeError, match="project-scoped API key"),
+    with mock.patch.object(api, "sandboxes", return_value=sb_svc), pytest.raises(
+        RuntimeError,
+        match="project-scoped API key",
     ):
         sb.snapshot(wait=False)
 
@@ -319,11 +333,10 @@ def test_sandbox_instance_wait_for_command_times_out():
 
     monotonic_values = iter([0.0, 0.0, 10.0])
 
-    with (
-        mock.patch("lightning_sdk.sandbox.base.time.sleep"),
-        mock.patch("lightning_sdk.sandbox.base.time.monotonic", side_effect=lambda: next(monotonic_values)),
-        pytest.raises(TimeoutError, match="Timed out"),
-    ):
+    with mock.patch("lightning_sdk.sandbox.base.time.sleep"), mock.patch(
+        "lightning_sdk.sandbox.base.time.monotonic",
+        side_effect=lambda: next(monotonic_values),
+    ), pytest.raises(TimeoutError, match="Timed out"):
         sb.wait_for_command("c-1", timeout=1.0, poll_interval=0.0)
 
 
@@ -428,22 +441,55 @@ def test_sandbox_create_classmethod_forwards():
     assert received.config_get("base_url") == "https://unit.test"
 
 
+def test_sandbox_create_resolves_teamspace_to_project_id():
+    mock_inst = mock.MagicMock()
+    cfg = SandboxConfig(api_key="k", base_url="https://unit.test")
+    with mock.patch("lightning_sdk.sandbox.sandbox.create_sandbox", return_value=mock_inst) as m_create, mock.patch(
+        "lightning_sdk.sandbox.sandbox._resolve_teamspace_id",
+        return_value="proj-1",
+    ) as m_resolve:
+        out = Sandbox.create(config=cfg, name="from-class", teamspace="owner/teamspace")
+
+    assert out is mock_inst
+    m_resolve.assert_called_once_with("owner/teamspace")
+    assert m_create.call_args.kwargs["project_id"] == "proj-1"
+
+
+def test_resolve_teamspace_id_accepts_owner_teamspace_name():
+    resolved = mock.MagicMock()
+    resolved.id = "proj-1"
+    with mock.patch("lightning_sdk.utils.resolve._resolve_teamspace", return_value=resolved) as m_resolve:
+        assert _resolve_teamspace_id("owner/teamspace") == "proj-1"
+
+    m_resolve.assert_called_once_with("teamspace", org="owner", user=None)
+
+
 def test_sandbox_entry_get_and_list_use_sdk_api():
     sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
-    with (
-        mock.patch.object(sdk.api, "get_sandbox", return_value=_v1(id="sb-x")) as m_get,
-        mock.patch.object(
-            sdk.api,
-            "list_sandboxes",
-            return_value=V1ListSandboxesResponse(sandboxes=[]),
-        ) as m_list,
-    ):
+    with mock.patch.object(sdk.api, "get_sandbox", return_value=_v1(id="sb-x")) as m_get, mock.patch.object(
+        sdk.api,
+        "list_sandboxes",
+        return_value=V1ListSandboxesResponse(sandboxes=[]),
+    ) as m_list:
         out = sdk.get("sb-x")
         sdk.list(limit=3)
 
     assert out.sandbox_id == "sb-x"
     m_get.assert_called_once_with("sb-x")
-    m_list.assert_called_once_with(page_token=None, limit=3)
+    m_list.assert_called_once_with(page_token=None, limit=3, project_id=None)
+
+
+def test_sandbox_list_resolves_teamspace_to_project_id():
+    sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
+    with mock.patch.object(
+        sdk.api,
+        "list_sandboxes",
+        return_value=V1ListSandboxesResponse(sandboxes=[]),
+    ) as m_list, mock.patch("lightning_sdk.sandbox.sandbox._resolve_teamspace_id", return_value="proj-1") as m_resolve:
+        sdk.list(limit=3, teamspace="owner/teamspace")
+
+    m_resolve.assert_called_once_with("owner/teamspace")
+    m_list.assert_called_once_with(page_token=None, limit=3, project_id="proj-1")
 
 
 def test_configure_updates_globals_and_resets_client():

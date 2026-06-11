@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from lightning_sdk.api.sandbox_api import SandboxApi
 from lightning_sdk.sandbox.base import (
@@ -12,6 +12,30 @@ from lightning_sdk.sandbox.base import (
 )
 from lightning_sdk.sandbox.config import SandboxConfig
 from lightning_sdk.sandbox.network_policy import NetworkPolicyInput
+
+if TYPE_CHECKING:
+    from lightning_sdk.teamspace import Teamspace
+
+
+def _resolve_teamspace_id(teamspace: str | Teamspace | None) -> str | None:
+    """Resolve a public teamspace value into the backend project id."""
+    if teamspace is None:
+        return None
+
+    from lightning_sdk.utils.resolve import _resolve_teamspace
+
+    if isinstance(teamspace, str) and "/" in teamspace:
+        owner, teamspace_name = teamspace.split("/", 1)
+        try:
+            resolved = _resolve_teamspace(teamspace_name, org=owner, user=None)
+        except Exception:
+            resolved = _resolve_teamspace(teamspace_name, org=None, user=owner)
+    else:
+        resolved = _resolve_teamspace(teamspace=teamspace, org=None, user=None)
+
+    if resolved is None:
+        raise ValueError(f"Could not resolve Teamspace {teamspace!r}.")
+    return resolved.id
 
 
 def _sandbox_create_impl(
@@ -25,6 +49,7 @@ def _sandbox_create_impl(
     ports: list[int | str] | None = None,
     cluster_id: str | None = None,
     cloudspace_id: str | None = None,
+    teamspace: str | Teamspace | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
     network_policy: NetworkPolicyInput | None = None,
@@ -41,6 +66,7 @@ def _sandbox_create_impl(
         ports=ports,
         cluster_id=cluster_id,
         cloudspace_id=cloudspace_id,
+        project_id=_resolve_teamspace_id(teamspace),
         snapshot_id=snapshot_id,
         persistent=persistent,
         network_policy=network_policy,
@@ -121,8 +147,13 @@ class Sandbox:
         *,
         page_token: str | None = None,
         limit: int | None = None,
+        teamspace: str | Teamspace | None = None,
     ) -> ListSandboxesResult:
-        data = self._api.list_sandboxes(page_token=page_token, limit=limit)
+        data = self._api.list_sandboxes(
+            page_token=page_token,
+            limit=limit,
+            project_id=_resolve_teamspace_id(teamspace),
+        )
         sandboxes = [SandboxInstance._from_v1(s, sandbox_api=self._api) for s in (data.sandboxes or [])]
         ts = data.total_size
         try:

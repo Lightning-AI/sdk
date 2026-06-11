@@ -29,6 +29,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_severit
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
 
 
+@mock.patch.dict("os.environ", {"LIGHTNING_USER_ID": "user-1", "LIGHTNING_API_KEY": "key-1"})
 class TestLogCommand:
     """Tests for the _log_command function."""
 
@@ -41,7 +42,8 @@ class TestLogCommand:
 
         _log_command(message="Test message", duration=100)
 
-        mock_client_class.assert_called_once_with(retry=False, max_tries=0)
+        mock_client_class.assert_called_once_with(retry=False, max_tries=0, with_auth=False)
+        mock_client.api_client.set_default_header.assert_called_once()
         mock_client.s_dk_command_history_service_create_sdk_command_history.assert_called_once()
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
@@ -115,6 +117,19 @@ class TestLogCommand:
 
         assert body.message == ""
         assert body.duration == 0
+
+    @mock.patch.dict("os.environ", {}, clear=True)
+    @mock.patch("lightning_sdk.cli.utils.logging.Auth")
+    @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
+    def test_log_command_skips_without_credentials(self, mock_client_class, mock_auth_class):
+        """Test command logging does not trigger authentication when no credentials exist."""
+        auth = mock.Mock(api_key=None, auth_token=None)
+        auth.load.return_value = False
+        mock_auth_class.return_value = auth
+
+        _log_command(message="Test message", duration=100)
+
+        mock_client_class.assert_not_called()
 
 
 class TestNotifyException:

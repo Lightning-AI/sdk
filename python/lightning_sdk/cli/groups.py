@@ -17,6 +17,7 @@ from lightning_sdk.cli.license import register_commands as register_license_comm
 from lightning_sdk.cli.machine import register_commands as register_machine_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
 from lightning_sdk.cli.model import register_commands as register_model_commands
+from lightning_sdk.cli.sandbox import register_commands as register_sandbox_commands
 from lightning_sdk.cli.ssh import register_commands as register_ssh_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
 from lightning_sdk.cli.vm import register_commands as register_vm_commands
@@ -74,6 +75,51 @@ def deployment() -> None:
 @click.group(name="vm")
 def vm() -> None:
     """Manage Lightning AI VMs."""
+
+
+@click.group(name="sandbox")
+def sandbox() -> None:
+    """Manage Lightning AI Sandboxes.
+
+    The sandbox API uses https://lightning.ai by default. To override the host
+    for development, set LIGHTNING_CLOUD_URL. Set LIGHTNING_SANDBOX_API_KEY and,
+    when needed, LIGHTNING_ORG_ID for non-interactive authentication.
+
+    \b
+    Examples:
+      $ sandbox list --teamspace owner/teamspace --limit 2
+      ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+      ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃
+      ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
+      │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │
+      └────────┴────────┴─────────┴───────────────┴────────────┘
+
+    \b
+      $ sandbox create --name devbox --teamspace owner/teamspace --persistent
+      ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
+      ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
+      ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩
+      │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
+      └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
+
+    \b
+      $ sandbox run sbx-42 -- python -c "print('hello')"
+      hello
+
+    \b
+      $ sandbox run sbx-42 --detached -- bash -lc "echo start; sleep 1; echo done"
+      cmd-abc123
+
+    \b
+      $ sandbox logs sbx-42 cmd-abc123 --no-timestamps
+      start
+      done
+
+    \b
+      $ sandbox stop sbx-42
+      Stopped sandbox sbx-42
+      Auto snapshot: snap-abc123
+    """
 
 
 @click.group(name="container")
@@ -150,6 +196,7 @@ register_config_commands(config)
 register_api_commands(api)
 register_deployment_commands(deployment)
 register_vm_commands(vm)
+register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)
 register_api_key_commands(api_key)

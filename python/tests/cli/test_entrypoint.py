@@ -24,6 +24,7 @@ def test_help():
         "  machine      Manage Lightning AI machine types.",
         "  mmt          Manage Lightning AI Multi-Machine Training (MMT).",
         "  model        Manage Lightning AI Models.",
+        "  sandbox      Manage Lightning AI Sandboxes.",
         "  ssh          Manage SSH configuration.",
         "  studio       Manage Lightning AI Studios.",
         "  vm           Manage Lightning AI VMs.",
@@ -51,6 +52,7 @@ def test_help_uvx():
         assert "  license      Manage Lightning AI Product Licenses." in result_text
         assert "  machine      Manage Lightning AI machine types." in result_text
         assert "  mmt          Manage Lightning AI Multi-Machine Training (MMT)." in result_text
+        assert "  sandbox      Manage Lightning AI Sandboxes." in result_text
         assert "  ssh          Manage SSH configuration." in result_text
         assert "  studio       Manage Lightning AI Studios." in result_text
         return

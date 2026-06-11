@@ -59,6 +59,7 @@ docs = [
 lightning = "lightning_sdk.cli.entrypoint:main_cli"
 # same as lightning, enables use with uvx lightning_sdk@latest
 lightning-sdk = "lightning_sdk.cli.entrypoint:main_cli"
+sandbox = "lightning_sdk.cli.groups:sandbox"
 
 [tool.setuptools.dynamic]
 version = {attr = "lightning_sdk.__version__.__version__"}

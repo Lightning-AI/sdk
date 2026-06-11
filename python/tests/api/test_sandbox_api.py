@@ -212,12 +212,13 @@ def test_list_sandboxes_forwards_pagination(patched_sandbox_api):
     api._config["organization_id"] = "org-1"
     mock_svc.sandboxes_service_list_sandboxes.return_value = mock.MagicMock()
 
-    api.list_sandboxes(page_token="pt", limit=5)
+    api.list_sandboxes(page_token="pt", limit=5, project_id="proj-1")
 
     mock_svc.sandboxes_service_list_sandboxes.assert_called_once_with(
         organization_id="org-1",
         page_token="pt",
         limit=5,
+        project_id="proj-1",
     )
 
 

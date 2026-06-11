@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import pytest
+from unittest import mock
 
 from lightning_sdk.sandbox.config import SandboxConfig
 
@@ -20,9 +20,16 @@ def test_sandbox_config_to_api_dict_omits_organization_id_when_unset():
     assert "organization_id" not in cfg.to_api_dict()
 
 
-def test_sandbox_config_api_requires_api_key():
-    with pytest.raises(ValueError, match="api_key is required"):
-        SandboxConfig(base_url="https://x").api()
+def test_sandbox_config_api_without_api_key_uses_lightning_auth():
+    with mock.patch("lightning_sdk.api.sandbox_api.Auth") as auth_cls:
+        auth_cls.return_value.authenticate.return_value = "Basic auth"
+        api = SandboxConfig(base_url="https://x").api()
+        auth_cls.return_value.authenticate.assert_not_called()
+        api.sandboxes()
+
+    assert api.config_get("api_key") is None
+    assert api.config_get("base_url") == "https://x"
+    auth_cls.return_value.authenticate.assert_called_once()
 
 
 def test_sandbox_config_api_passes_through_config():

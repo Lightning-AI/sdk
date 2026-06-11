@@ -7,6 +7,7 @@ import click
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
+from lightning_sdk.cli import groups as cli_groups
 
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
@@ -20,10 +21,10 @@ from lightning_sdk.cli.groups import (
     file,
     folder,
     job,
-    license,
     machine,
     mmt,
     model,
+    sandbox,
     ssh,
     studio,
     vm,
@@ -99,8 +100,9 @@ main_cli.add_command(folder)
 main_cli.add_command(ssh)
 main_cli.add_command(studio)
 main_cli.add_command(vm)
+main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
-main_cli.add_command(license)
+main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 
 # hidden plural aliases for noun-first groups
@@ -115,6 +117,7 @@ main_cli.add_command(build_hidden_alias_group("files", file))
 main_cli.add_command(build_hidden_alias_group("folders", folder))
 main_cli.add_command(build_hidden_alias_group("studios", studio))
 main_cli.add_command(build_hidden_alias_group("vms", vm))
+main_cli.add_command(build_hidden_alias_group("sandboxes", sandbox))
 main_cli.add_command(build_hidden_alias_group("base-studios", base_studio))
 
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":

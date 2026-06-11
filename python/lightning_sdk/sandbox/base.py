@@ -114,6 +114,7 @@ def create_sandbox(
     ports: list[int | str] | None = None,
     cluster_id: str | None = None,
     cloudspace_id: str | None = None,
+    project_id: str | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
     network_policy: NetworkPolicyInput | None = None,
@@ -156,6 +157,8 @@ def create_sandbox(
         body.cluster_id = cluster_id
     if cloudspace_id:
         body.cloudspace_id = cloudspace_id
+    if project_id:
+        body.project_id = project_id
     if runtime:
         body.runtime = runtime
     if snapshot_id:
@@ -386,8 +389,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         :meth:`~lightning_sdk.sandbox.sandbox.Sandbox.configure` calls made after the sandbox object
         was created are still honored.
         """
-        headers = getattr(self._sandbox_api.client.api_client, "default_headers", {})
-        auth = headers.get("Authorization", "") if isinstance(headers, dict) else ""
+        auth = self._sandbox_api.auth_header()
         if isinstance(auth, str) and auth.startswith("Bearer "):
             return auth[len("Bearer ") :]
         return auth or ""
