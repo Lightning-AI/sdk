@@ -78,7 +78,7 @@ def test_raise_sandbox_api_error_maps_project_id_required_to_hint():
     exc = ApiException(status=400)
     exc.body = b"project_id is required: snapshots are project-scoped"
 
-    with pytest.raises(RuntimeError, match="project-scoped API key") as err:
+    with pytest.raises(RuntimeError, match="teamspace-scoped API key") as err:
         sandbox_api_mod.raise_sandbox_api_error(exc)
 
     assert "without a teamspace context" in str(err.value)
@@ -187,17 +187,27 @@ def test_reset_recreates_client(patched_sandbox_api):
     assert api.client is not client_before
 
 
-def test_get_sandbox_passes_organization_id_from_config(patched_sandbox_api):
+def test_raise_sandbox_api_error_maps_org_id_required_to_hint():
+    exc = ApiException(status=400)
+    exc.body = b"organization_id is required"
+
+    with pytest.raises(RuntimeError, match="teamspace- or org-scoped API key") as err:
+        sandbox_api_mod.raise_sandbox_api_error(exc)
+
+    assert err.value.__cause__ is exc
+
+
+def test_get_sandbox_omits_organization_id_from_config(patched_sandbox_api):
     api, mock_svc = patched_sandbox_api
     api._config["organization_id"] = "org-1"
     mock_svc.sandboxes_service_get_sandbox.return_value = mock.MagicMock()
 
     api.get_sandbox("sb-1")
 
-    mock_svc.sandboxes_service_get_sandbox.assert_called_once_with("sb-1", organization_id="org-1")
+    mock_svc.sandboxes_service_get_sandbox.assert_called_once_with("sb-1")
 
 
-def test_get_sandbox_prefers_explicit_organization_id(patched_sandbox_api):
+def test_get_sandbox_passes_explicit_organization_id(patched_sandbox_api):
     api, mock_svc = patched_sandbox_api
     api._config["organization_id"] = "org-config"
     mock_svc.sandboxes_service_get_sandbox.return_value = mock.MagicMock()
@@ -215,7 +225,6 @@ def test_list_sandboxes_forwards_pagination(patched_sandbox_api):
     api.list_sandboxes(page_token="pt", limit=5, project_id="proj-1")
 
     mock_svc.sandboxes_service_list_sandboxes.assert_called_once_with(
-        organization_id="org-1",
         page_token="pt",
         limit=5,
         project_id="proj-1",
@@ -232,7 +241,6 @@ def test_list_snapshots_forwards_filters(patched_sandbox_api):
     api.list_snapshots(name="golden", limit=3)
 
     mock_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
-        organization_id="org-1",
         name="golden",
         limit="3",
     )
@@ -246,11 +254,5 @@ def test_get_snapshot_and_delete_snapshot_use_org_scope(patched_sandbox_api):
     api.get_snapshot("snap-1")
     api.delete_snapshot("snap-2")
 
-    mock_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with(
-        "snap-1",
-        organization_id="org-1",
-    )
-    mock_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with(
-        "snap-2",
-        organization_id="org-1",
-    )
+    mock_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with("snap-1")
+    mock_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with("snap-2")

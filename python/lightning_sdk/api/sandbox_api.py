@@ -61,11 +61,22 @@ def _api_exception_text(exc: ApiException) -> str:
 
 
 _PROJECT_SCOPED_KEY_HINT = (
-    "This operation requires a project-scoped API key. Create one in your Lightning "
+    "This operation requires a teamspace-scoped API key. Create one in your Lightning "
     "teamspace (Members → API keys) and pass it via SandboxConfig(api_key=...) or "
     "LIGHTNING_SANDBOX_API_KEY. Org-scoped keys cannot snapshot or stop persistent "
     "sandboxes without a teamspace context."
 )
+
+
+_ORG_SCOPED_KEY_HINT = (
+    "Use a teamspace- or org-scoped API key (Members → API keys), not your personal login key. "
+    "Set LIGHTNING_SANDBOX_API_KEY or SandboxConfig(api_key=...)."
+)
+
+
+def _is_org_id_required_error(exc: ApiException) -> bool:
+    text = _api_exception_text(exc).lower().replace("_", " ")
+    return "organization" in text and "id" in text and "required" in text
 
 
 def _is_project_id_required_error(exc: ApiException) -> bool:
@@ -77,6 +88,8 @@ def raise_sandbox_api_error(exc: ApiException) -> None:
     """Map sandbox API failures to user-facing :class:`RuntimeError` messages."""
     if _is_project_id_required_error(exc):
         raise RuntimeError(_PROJECT_SCOPED_KEY_HINT) from exc
+    if _is_org_id_required_error(exc):
+        raise RuntimeError(_ORG_SCOPED_KEY_HINT) from exc
     raise RuntimeError(f"Lightning API error {exc.status}: {_api_exception_text(exc)}") from exc
 
 
@@ -168,16 +181,9 @@ class SandboxApi:
     def config_get(self, key: str) -> Any:
         return self._config.get(key)
 
-    def _organization_id(self) -> str | None:
-        org_id = self._config.get("organization_id")
-        return str(org_id) if org_id else None
-
     def _org_query_kwargs(self, organization_id: str | None = None) -> dict[str, str]:
         if organization_id is not None:
             return {"organization_id": organization_id}
-        org_id = self._organization_id()
-        if org_id:
-            return {"organization_id": org_id}
         return {}
 
     def reset(self) -> None:

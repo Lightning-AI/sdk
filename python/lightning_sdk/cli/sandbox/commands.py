@@ -18,19 +18,17 @@ def _sandbox_config(
     *,
     api_key: str | None = None,
     base_url: str | None = None,
-    organization_id: str | None = None,
 ) -> SandboxConfig:
     env_config = SandboxConfig.from_env()
-    return env_config.merge(SandboxConfig(api_key=api_key, base_url=base_url, organization_id=organization_id))
+    return env_config.merge(SandboxConfig(api_key=api_key, base_url=base_url))
 
 
 def _sandbox_client(
     *,
     api_key: str | None = None,
     base_url: str | None = None,
-    organization_id: str | None = None,
 ) -> Sandbox:
-    return Sandbox(_sandbox_config(api_key=api_key, base_url=base_url, organization_id=organization_id))
+    return Sandbox(_sandbox_config(api_key=api_key, base_url=base_url))
 
 
 def _json_default(value: object) -> str:
@@ -100,7 +98,6 @@ def _parse_ports(ports: Sequence[str]) -> list[int | str]:
 
 COMMON_OPTIONS = [
     click.option("--api-key", envvar="LIGHTNING_SANDBOX_API_KEY", help="Sandbox API key."),
-    click.option("--org-id", envvar="LIGHTNING_ORG_ID", help="Organization ID for sandbox requests."),
 ]
 
 
@@ -283,14 +280,13 @@ Example:
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def list_sandboxes(
     api_key: str | None,
-    org_id: str | None,
     page_token: str | None,
     limit: int | None,
     teamspace: str | None,
     as_json: bool,
 ) -> None:
     """List sandboxes."""
-    result = _sandbox_client(api_key=api_key, organization_id=org_id).list(
+    result = _sandbox_client(api_key=api_key).list(
         page_token=page_token,
         limit=limit,
         teamspace=teamspace,
@@ -343,7 +339,6 @@ def list_sandboxes(
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def create_sandbox(
     api_key: str | None,
-    org_id: str | None,
     name: str | None,
     instance_type: str | None,
     runtime: str | None,
@@ -357,7 +352,7 @@ def create_sandbox(
     as_json: bool,
 ) -> None:
     """Create a sandbox and wait until it is running."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).create(
+    sandbox = _sandbox_client(api_key=api_key).create(
         name=name,
         instance_type=instance_type,
         runtime=runtime,
@@ -378,9 +373,9 @@ def create_sandbox(
 @click.command("delete", help=_DELETE_SANDBOX_HELP)
 @_with_common_options
 @click.argument("sandbox_id")
-def delete_sandbox(api_key: str | None, org_id: str | None, sandbox_id: str) -> None:
+def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
     """Delete a sandbox."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id)
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     sandbox.delete()
     click.echo(f"Deleted sandbox {sandbox_id}")
 
@@ -391,12 +386,11 @@ def delete_sandbox(api_key: str | None, org_id: str | None, sandbox_id: str) -> 
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def stop_sandbox(
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     as_json: bool,
 ) -> None:
     """Stop a sandbox."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id)
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     auto_snapshot_id = sandbox.stop()
     payload = {"id": sandbox_id, "auto_snapshot_id": auto_snapshot_id}
     if as_json:
@@ -413,12 +407,11 @@ def stop_sandbox(
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def start_sandbox(
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     as_json: bool,
 ) -> None:
     """Start a stopped persistent sandbox."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id).resume()
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id).resume()
     if as_json:
         _echo_json(_sandbox_to_dict(sandbox))
         return
@@ -432,7 +425,6 @@ def start_sandbox(
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def update_sandbox(
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     resume: bool,
     as_json: bool,
@@ -440,7 +432,7 @@ def update_sandbox(
     """Update a sandbox."""
     if not resume:
         raise click.UsageError("No update requested. Use --resume to resume a stopped persistent sandbox.")
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id).resume()
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id).resume()
     if as_json:
         _echo_json(_sandbox_to_dict(sandbox))
         return
@@ -466,7 +458,6 @@ def update_sandbox(
 def run_sandbox_command(
     ctx: click.Context,
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     cwd: str | None,
     env: Sequence[str],
@@ -484,7 +475,7 @@ def run_sandbox_command(
     if not command_parts:
         raise click.UsageError("Missing command to run.")
 
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id)
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     command = sandbox.run_command(
         RunCommandOpts(
             cmd=command_parts[0],
@@ -527,14 +518,13 @@ def run_sandbox_command(
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def logs_sandbox_command(
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     command_id: str,
     no_timestamps: bool,
     as_json: bool,
 ) -> None:
     """Show logs for a sandbox command."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id)
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     logs = sandbox.get_command_logs(command_id)
     payload = [{"timestamp": log.timestamp, "message": log.message} for log in logs]
     if as_json:
@@ -554,13 +544,12 @@ def logs_sandbox_command(
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def command_status(
     api_key: str | None,
-    org_id: str | None,
     sandbox_id: str,
     command_id: str,
     as_json: bool,
 ) -> None:
     """Show sandbox command status."""
-    sandbox = _sandbox_client(api_key=api_key, organization_id=org_id).get(sandbox_id)
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     status = sandbox.get_command(command_id)
     payload = {
         "sandbox_id": sandbox_id,

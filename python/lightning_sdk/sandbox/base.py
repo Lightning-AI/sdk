@@ -47,26 +47,11 @@ def _resolve_sandbox_api(
     return _api
 
 
-def _org_id_from_api(api: SandboxApi) -> str | None:
-    """Organization UUID from client config only (env / SandboxConfig), if set."""
-    org_id = api.config_get("organization_id")
-    return str(org_id) if org_id else None
-
-
-def _resolve_org_id(override: str | None = None, *, api: SandboxApi | None = None) -> str | None:
-    if override is not None:
-        return override
-    if api is not None:
-        return _org_id_from_api(api)
-    return _org_id_from_api(_api)
-
-
 def configure(
     config: SandboxConfig | None = None,
     *,
     api_key: str | None = None,
     base_url: str | None = None,
-    organization_id: str | None = None,
 ) -> None:
     """Set global defaults for sandbox API calls.
 
@@ -80,8 +65,6 @@ def configure(
         _sandbox_config["api_key"] = api_key
     if base_url is not None:
         _sandbox_config["base_url"] = base_url
-    if organization_id is not None:
-        _sandbox_config["organization_id"] = organization_id
     _api.reset()
 
 
@@ -123,7 +106,7 @@ def create_sandbox(
 
     Internal: called from :class:`~lightning_sdk.sandbox.sandbox.Sandbox` with a
     client built via :meth:`~lightning_sdk.sandbox.config.SandboxConfig.api`.
-    ``organization_id`` on the client is optional (``LIGHTNING_ORG_ID`` or config).
+    Organization scope is implied by the API key.
 
     Pass ``snapshot_id`` to restore the sandbox's filesystem from a snapshot
     (see :meth:`SandboxInstance.snapshot`) for a fast, pre-warmed start. Pass
@@ -134,9 +117,6 @@ def create_sandbox(
     pass ``"deny-all"``, or a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`
     CIDR allowlist. Restored snapshots inherit the source policy unless overridden.
     """
-    org_id = sandbox_api.config_get("organization_id")
-    if org_id is not None:
-        org_id = str(org_id)
     if name is None:
         name = f"sandbox-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
     if instance_type is not None:
@@ -151,8 +131,6 @@ def create_sandbox(
         spot=spot,
         ports=[str(p) for p in (ports or [])],
     )
-    if org_id:
-        body.organization_id = org_id
     if cluster_id:
         body.cluster_id = cluster_id
     if cloudspace_id:

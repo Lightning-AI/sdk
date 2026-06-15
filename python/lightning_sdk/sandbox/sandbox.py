@@ -128,14 +128,12 @@ class Sandbox:
         *,
         api_key: str | None = None,
         base_url: str | None = None,
-        organization_id: str | None = None,
     ) -> None:
         """Set process-wide defaults for ``Sandbox.create()`` when no ``config`` is passed."""
         _configure_globals(
             config=config,
             api_key=api_key,
             base_url=base_url,
-            organization_id=organization_id,
         )
 
     def get(self, sandbox_id: str) -> SandboxInstance:

@@ -49,6 +49,8 @@ def test_create_sandbox_waits_until_running():
 
     assert inst.sandbox_id == "sb-1"
     assert inst.status == "running"
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.organization_id is None
     mock_sb.sandboxes_service_get_sandbox.assert_called_once()
 
 
@@ -131,7 +133,7 @@ def test_sandbox_instance_snapshot_maps_project_id_required_error():
     sb = SandboxInstance(_v1(id="sb-1", organization_id="org-1"), sandbox_api=api)
     with mock.patch.object(api, "sandboxes", return_value=sb_svc), pytest.raises(
         RuntimeError,
-        match="project-scoped API key",
+        match="teamspace-scoped API key",
     ):
         sb.snapshot(wait=False)
 
@@ -170,7 +172,7 @@ def test_sandbox_instance_stop_sends_project_id_from_sandbox_row():
 def test_sandbox_client_snapshot_helpers():
     from lightning_sdk.lightning_cloud.openapi import V1ListSandboxSnapshotsResponse, V1SandboxSnapshot
 
-    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test", organization_id="org-1"))
+    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test"))
     sb_svc = mock.MagicMock()
     snap = V1SandboxSnapshot(id="snap-1", status="ready")
     sb_svc.sandboxes_service_get_sandbox_snapshot.return_value = snap
@@ -181,17 +183,9 @@ def test_sandbox_client_snapshot_helpers():
         assert sdk.list_snapshots()[0].id == "snap-1"
         sdk.delete_snapshot("snap-1")
 
-    sb_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with(
-        "snap-1",
-        organization_id="org-1",
-    )
-    sb_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
-        organization_id="org-1",
-    )
-    sb_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with(
-        "snap-1",
-        organization_id="org-1",
-    )
+    sb_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with("snap-1")
+    sb_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with()
+    sb_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with("snap-1")
 
 
 def test_sandbox_instance_run_command_string_and_args():
@@ -362,7 +356,7 @@ def test_sandbox_instance_stop_swallows_404():
 
 
 def test_sandbox_instance_list_builds_result():
-    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test", organization_id="org-z"))
+    sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test"))
     sb_svc = mock.MagicMock()
 
     s1 = _v1(id="a", name="n1", status="running")
@@ -382,7 +376,7 @@ def test_sandbox_instance_list_builds_result():
     assert result.previous_page_token == "ppt"
     assert len(result.sandboxes) == 2
     assert {x.sandbox_id for x in result.sandboxes} == {"a", "b"}
-    sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with(organization_id="org-z", page_token="pt", limit=10)
+    sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with(page_token="pt", limit=10)
 
 
 def test_list_sandboxes_omits_organization_id_when_not_configured():
@@ -498,10 +492,9 @@ def test_configure_updates_globals_and_resets_client():
     snapshot = dict(base._sandbox_config)
     try:
         with mock.patch.object(base, "_api") as mock_api:
-            base.configure(api_key="unit-config-key", base_url="https://cfg.unit", organization_id="org-uuid")
+            base.configure(api_key="unit-config-key", base_url="https://cfg.unit")
             assert base._sandbox_config.get("api_key") == "unit-config-key"
             assert base._sandbox_config.get("base_url") == "https://cfg.unit"
-            assert base._sandbox_config.get("organization_id") == "org-uuid"
             mock_api.reset.assert_called_once()
     finally:
         base._sandbox_config.clear()
