@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import requests
 
-from lightning_sdk.api import CloudAccountApi, UserApi
+from lightning_sdk.api import CloudAccountApi
 from lightning_sdk.api.deployment_api import (
     ApiKeyAuth,
     Auth,
@@ -79,21 +79,17 @@ class Deployment(metaclass=TrackCallsMeta):
         self._request_session = None
         self._cloud_account_api = CloudAccountApi()
 
+        # Auth is applied automatically on every API request, so there is no need to
+        # authenticate (or resolve the authenticated user) here. The deployment owner is
+        # taken from the explicitly provided teamspace/org/user (or the matching env vars
+        # / config) below - org/teamspace-scoped API keys have no associated user.
         self._auth = login.Auth()
-        self._user = None
-
-        try:
-            self._auth.authenticate()
-            if user is None:
-                self._user = User(name=UserApi()._get_user_by_id(self._auth.user_id).username)
-        except ConnectionError as e:
-            raise e
 
         if name is None:
             name = "dep_" + datetime.now().strftime("%m-%d_%H:%M:%S")
 
         self._name = name
-        self._user = _resolve_user(self._user or user)
+        self._user = _resolve_user(user)
         self._org = _resolve_org(org)
 
         self._teamspace = _resolve_teamspace(
@@ -102,7 +98,11 @@ class Deployment(metaclass=TrackCallsMeta):
             user=user,
         )
         if self._teamspace is None:
-            raise ValueError("You need to pass a teamspace or an org for your deployment.")
+            raise ValueError(
+                "Could not determine the teamspace for your deployment. Pass a teamspace as "
+                "'owner/teamspace', set one of LIGHTNING_TEAMSPACE / LIGHTNING_ORG (or LIGHTNING_USERNAME), "
+                "or configure a default with 'lightning config set teamspace'."
+            )
 
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
 

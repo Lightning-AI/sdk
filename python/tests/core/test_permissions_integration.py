@@ -1,4 +1,5 @@
 """Integration tests for permission checks across all SDK resources."""
+
 from unittest import mock
 
 import pytest
@@ -323,14 +324,13 @@ def test_pipeline_init_raises_error_when_pipelines_disabled(mock_teamspace_api, 
 
 # Deployment class permission tests
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth")
-@mock.patch("lightning_sdk.deployment.deployment.UserApi")
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.deployment.deployment._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.deployment.deployment._get_cluster")
 @pytest.mark.project_permission_test()
 def test_deployment_init_raises_error_when_deployments_disabled(
-    mock_get_cluster, mock_teamspace_api, mock_resolve_teamspace, mock_user_api, mock_deployment_user_api, mock_auth
+    mock_get_cluster, mock_teamspace_api, mock_resolve_teamspace, mock_user_api, mock_auth
 ):
     """Test that Deployment.__init__ raises PermissionError when Deployments permission is disabled."""
     from lightning_sdk.deployment import Deployment
@@ -349,7 +349,6 @@ def test_deployment_init_raises_error_when_deployments_disabled(
     mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
     mock_teamspace_api.return_value._get_authed_user_id.return_value = "test-user-id"
     mock_user_api().get_user.return_value = V1SearchUser(username="test-user")
-    mock_deployment_user_api()._get_user_by_id.return_value = V1SearchUser(username="test-user")
 
     # Mock Auth to prevent authentication calls
     mock_auth_instance = mock_auth.return_value

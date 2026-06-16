@@ -79,6 +79,17 @@ class TeamspacesMenu:
         if resolved_teamspace is not None:
             return resolved_teamspace
 
+        # When an explicit "owner/teamspace" was supplied the owner is unambiguous, so
+        # honour it directly instead of falling back to interactive owner/teamspace menus.
+        # The interactive path also resolves the authenticated user, which is unavailable
+        # for org/teamspace-scoped API keys - so falling through would break those keys.
+        if teamspace is not None and "/" in teamspace:
+            raise ValueError(
+                f"Could not resolve teamspace '{teamspace}'. Expected the format 'owner/teamspace' where "
+                "'owner' is an organization or username you have access to. Please verify the name and that "
+                "your API key has access to it."
+            )
+
         if self._owner is None:
             # resolve owner if required
             from lightning_sdk.cli.utils.owner_selection import OwnerMenu

@@ -45,6 +45,74 @@ def test_deployment_resolve_teamspace(monkeypatch):
     assert isinstance(deployment._user, user.User)
 
 
+def _mock_deployment_dependencies(monkeypatch, auth_instance):
+    """Patch out everything the Deployment constructor touches except the auth flow under test."""
+    monkeypatch.setattr(deployment_module.login, "Auth", MagicMock(return_value=auth_instance))
+    monkeypatch.setattr(deployment_module, "CloudAccountApi", MagicMock())
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=None))
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+    monkeypatch.setattr(deployment_module, "raise_access_error_if_not_allowed", MagicMock())
+    monkeypatch.setattr(deployment_module, "_get_cluster", MagicMock())
+
+    deployment_api = MagicMock()
+    deployment_api.get_deployment_by_name.return_value = None
+    monkeypatch.setattr(deployment_module, "DeploymentApi", MagicMock(return_value=deployment_api))
+    return teamspace_mock
+
+
+def test_deployment_does_not_authenticate_or_look_up_user_eagerly(monkeypatch):
+    """The constructor must not eagerly authenticate or resolve the authenticated user.
+
+    Auth is applied automatically on API requests, and the previous authed-user lookup
+    failed with 'User None does not exist.' for org/teamspace-scoped API keys (which
+    authenticate without a user id).
+    """
+    auth_instance = MagicMock()
+    auth_instance.user_id = None  # scoped API key -> no associated user id
+
+    teamspace_mock = _mock_deployment_dependencies(monkeypatch, auth_instance)
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock(return_value=None))
+
+    deployment = deployment_module.Deployment(name="my-deploy", teamspace="lightning-ai/agents-teamspace")
+
+    auth_instance.authenticate.assert_not_called()
+    assert deployment._user is None
+    assert deployment._teamspace is teamspace_mock
+
+
+def test_deployment_uses_explicit_owner(monkeypatch):
+    """The deployment owner comes from the explicitly provided user/org, not the auth token."""
+    auth_instance = MagicMock()
+    auth_instance.user_id = None
+
+    _mock_deployment_dependencies(monkeypatch, auth_instance)
+    org = MagicMock()
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=org))
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock(return_value=None))
+
+    deployment = deployment_module.Deployment(name="my-deploy", teamspace="org/teamspace", org="org")
+
+    auth_instance.authenticate.assert_not_called()
+    assert deployment._org is org
+    assert deployment._user is None
+
+
+def test_deployment_raises_when_teamspace_cannot_be_resolved(monkeypatch):
+    """If neither a teamspace nor an owner can be resolved, fail with an actionable error."""
+    auth_instance = MagicMock()
+    auth_instance.user_id = None
+
+    _mock_deployment_dependencies(monkeypatch, auth_instance)
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock(return_value=None))
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=None))
+
+    with pytest.raises(ValueError, match="Could not determine the teamspace for your deployment"):
+        deployment_module.Deployment(name="my-deploy")
+
+
 def test_deployment_export_request_captures_wrapper(tmp_path):
     result = object()
     export_mock = MagicMock(return_value=result)
@@ -301,7 +369,6 @@ def test_to_endpoint():
 
 def test_deployment_start_first_time(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()
@@ -383,7 +450,6 @@ def test_deployment_start_first_time(monkeypatch):
 
 def test_deployment_start_with_cloud_provider(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
@@ -477,7 +543,6 @@ def test_deployment_start_with_cloud_provider(monkeypatch):
 def test_deployment_start_with_both_cloud_account_and_provider(monkeypatch):
     """Test that passing both cloud_account and cloud_provider raises an error."""
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     # Create mock objects for the cluster-related API methods
@@ -540,7 +605,6 @@ def test_deployment_start_with_both_cloud_account_and_provider(monkeypatch):
 
 def test_deployment_start_already_exist(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -559,7 +623,6 @@ def test_deployment_start_already_exist(monkeypatch):
 
 def test_deployment_update(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -628,7 +691,6 @@ def test_deployment_update(monkeypatch):
 
 def test_deployment_update_name(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -653,7 +715,6 @@ def test_deployment_update_name(monkeypatch):
 
 def test_deployment_update_replicas(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -680,7 +741,6 @@ def test_deployment_update_replicas(monkeypatch):
 
 def test_deployment_update_strategy(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -707,7 +767,6 @@ def test_deployment_update_strategy(monkeypatch):
 
 def test_deployment_stop(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -760,7 +819,6 @@ def test_deployment_stop(monkeypatch):
 
 def test_deployment_get(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -796,7 +854,6 @@ def test_deployment_get(monkeypatch):
 
 def test_deployment_post(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -832,7 +889,6 @@ def test_deployment_post(monkeypatch):
 
 def test_deployment_put(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -867,7 +923,6 @@ def test_deployment_put(monkeypatch):
 
 def test_deployment_delete(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -954,7 +1009,6 @@ def test_apply_change():
 
 def test_deployment_start_with_path_mappings(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()
@@ -995,7 +1049,6 @@ def test_deployment_start_with_path_mappings(monkeypatch):
 
 def test_deployment_update_with_path_mappings(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -1032,7 +1085,6 @@ def test_deployment_update_with_path_mappings(monkeypatch):
 
 def test_deployment_start_byom_builds_spec(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "UserApi", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()
