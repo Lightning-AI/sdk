@@ -34,7 +34,7 @@ from lightning_sdk.api.deployment_api import (
 )
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud import login
-from lightning_sdk.lightning_cloud.openapi import V1Deployment
+from lightning_sdk.lightning_cloud.openapi import V1Deployment, V1DeploymentState
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.services.utilities import _get_cluster
@@ -163,7 +163,7 @@ class Deployment(metaclass=TrackCallsMeta):
         """The Lightning AI Deployment.
 
         This method creates the first release of the deployment.
-        If a release already exists, it would raise a RuntimeError.
+        If the deployment already exists, it sets the deployment to the running state.
 
         Args:
             name: The name of the deployment.
@@ -203,7 +203,43 @@ class Deployment(metaclass=TrackCallsMeta):
         """
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
         if self._is_created:
-            raise RuntimeError("This deployment has already been started.")
+            # When restarting a stopped deployment, apply the same defaults as 'Start' button in UI
+            # and first-time deployment creation to ensure non-zero replica count
+            if replicas is None and autoscale is None:
+                replicas = 1
+            if autoscale is None:
+                autoscale = AutoScaleConfig(
+                    min_replicas=0,
+                    max_replicas=1,
+                    metric="CPU",
+                    threshold=90,
+                )
+
+            self._deployment.desired_state = V1DeploymentState.RUNNING
+            self.update(
+                machine=machine,
+                cloud=cloud,
+                image=image,
+                entrypoint=entrypoint,
+                command=command,
+                commands=commands,
+                env=env,
+                spot=spot,
+                cloud_account=cloud_account,
+                health_check=health_check,
+                release_strategy=release_strategy,
+                replicas=replicas,
+                min_replicas=autoscale.min_replicas if autoscale else None,
+                max_replicas=autoscale.max_replicas if autoscale else None,
+                ports=ports if isinstance(ports, list) else ([ports] if ports else None),
+                auth=auth,
+                custom_domain=custom_domain,
+                quantity=quantity,
+                include_credentials=include_credentials,
+                max_runtime=max_runtime,
+                path_mappings=path_mappings,
+            )
+            return
 
         machine_image_version = None
         explicit_cloud_account = cloud_account

@@ -428,8 +428,12 @@ def test_deployment_start_first_time(monkeypatch):
     assert spec.cluster_id == "cluster_id"
     assert spec.command == "cd / && ls"
 
-    with pytest.raises(RuntimeError, match="This deployment has already been started."):
-        deployment.start()
+    client.jobs_service_update_deployment = MagicMock()
+    deployment.start()
+
+    client.jobs_service_update_deployment.assert_called_once()
+    call_args = client.jobs_service_update_deployment.call_args
+    assert call_args.kwargs["body"].desired_state == deployment_module.V1DeploymentState.RUNNING
 
     _deployment_api_mock = MagicMock()
     deployment._deployment_api = _deployment_api_mock
@@ -512,8 +516,12 @@ def test_deployment_start_with_cloud_provider(monkeypatch):
     assert spec.cluster_id == "gcp-public"
     assert spec.command == "cd / && ls"
 
-    with pytest.raises(RuntimeError, match="This deployment has already been started."):
-        deployment.start()
+    client.jobs_service_update_deployment = MagicMock()
+    deployment.start()
+
+    client.jobs_service_update_deployment.assert_called_once()
+    call_args = client.jobs_service_update_deployment.call_args
+    assert call_args.kwargs["body"].desired_state == deployment_module.V1DeploymentState.RUNNING
 
     _deployment_api_mock = MagicMock()
     deployment._deployment_api = _deployment_api_mock
@@ -613,12 +621,21 @@ def test_deployment_start_already_exist(monkeypatch):
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
 
     client = MagicMock()
-    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(name="ollama")
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        autoscaling=V1AutoscalingSpec(),
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(),
+    )
     monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
-    with pytest.raises(RuntimeError, match="This deployment has already been started."):
-        deployment.start()
+    client.jobs_service_update_deployment = MagicMock()
+    deployment.start()
+
+    client.jobs_service_update_deployment.assert_called_once()
+    call_args = client.jobs_service_update_deployment.call_args
+    assert call_args.kwargs["body"].desired_state == deployment_module.V1DeploymentState.RUNNING
 
 
 def test_deployment_update(monkeypatch):
