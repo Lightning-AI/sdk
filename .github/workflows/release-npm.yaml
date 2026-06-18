@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       # Overwrites js/package.json + package-lock.json "version" fields only (no git tag).
       # Uses --allow-same-version so jobs stay green when the repo is already in sync.
@@ -31,7 +31,7 @@ jobs:
           VER=$(grep -E '^__version__ = ' python/lightning_sdk/__version__.py | sed -E 's/^__version__ = "([^"]+)".*/\1/')
           (cd js && npm version "$VER" --no-git-tag-version --allow-same-version)
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
           cache: npm
@@ -44,7 +44,7 @@ jobs:
           npm run build
           rm -rf node_modules
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: npm-packages-${{ github.sha }}
           path: js
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: npm-packages-${{ github.sha }}
           path: package
@@ -67,7 +67,7 @@ jobs:
         run: npm pack
 
       - name: Upload to release
-        uses: AButler/upload-release-assets@v3.0
+        uses: AButler/upload-release-assets@3d6774fae0ed91407dc5ae29d576b166536d1777 # v3.0
         with:
           files: "package/*.tgz"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -81,14 +81,14 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: npm-packages-${{ github.sha }}
           path: package
 
       - run: ls -lh package/
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
           registry-url: https://registry.npmjs.org
