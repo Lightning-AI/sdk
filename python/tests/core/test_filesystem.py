@@ -152,6 +152,29 @@ def test_rm_raises():
         sb.fs.rm("/ro")
 
 
+def test_mkdir_and_mkdir_recursive():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="", output="", exit_code=0)
+    sb = SandboxInstance(_v1(), sandbox_api=mock_api)
+
+    sb.fs.mkdir("/d")
+    sb.fs.mkdir("/a/b/c", recursive=True)
+
+    calls = mock_api.run_command.call_args_list
+    assert calls[0].kwargs["command"] == "mkdir"
+    assert calls[0].kwargs["args"] == ["/d"]
+    assert calls[1].kwargs["args"] == ["-p", "/a/b/c"]
+
+
+def test_mkdir_raises():
+    mock_api = mock.MagicMock()
+    mock_api.run_command.return_value = CommandResult(cmd_id="", output="exists\n", exit_code=1)
+    sb = SandboxInstance(_v1(), sandbox_api=mock_api)
+
+    with pytest.raises(RuntimeError, match=r"mkdir /d failed \(exit 1\)"):
+        sb.fs.mkdir("/d")
+
+
 def test_rename_copy_symlink():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="", output="", exit_code=0)

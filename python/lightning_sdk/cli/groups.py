@@ -81,9 +81,9 @@ def vm() -> None:
 def sandbox() -> None:
     """Manage Lightning AI Sandboxes.
 
-    The sandbox API uses https://lightning.ai by default. To override the host
-    for development, set LIGHTNING_CLOUD_URL. Set LIGHTNING_SANDBOX_API_KEY and,
-    when needed, LIGHTNING_SANDBOX_API_KEY for non-interactive authentication.
+    Set LIGHTNING_SANDBOX_API_KEY for non-interactive authentication. The sandbox
+    API uses https://lightning.ai by default; set LIGHTNING_CLOUD_URL to override
+    the host.
 
     \b
     Examples:

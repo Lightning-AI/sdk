@@ -435,6 +435,56 @@ def test_sandbox_create_classmethod_forwards():
     assert received.config_get("base_url") == "https://unit.test"
 
 
+def test_sandbox_create_without_config_uses_configured_globals():
+    """Sandbox.configure() defaults must reach Sandbox.create() when no config= is passed."""
+    import lightning_sdk.sandbox.base as base
+
+    mock_inst = mock.MagicMock()
+    snapshot = dict(base._sandbox_config)
+    try:
+        Sandbox.configure(api_key="configured-key", base_url="https://configured.unit")
+        with mock.patch("lightning_sdk.sandbox.sandbox.create_sandbox", return_value=mock_inst) as m_create:
+            Sandbox.create(name="from-defaults", instance_type="cpu-1")
+
+        received = m_create.call_args.kwargs["sandbox_api"]
+        assert received is base._api
+        assert received.config_get("api_key") == "configured-key"
+        assert received.config_get("base_url") == "https://configured.unit"
+    finally:
+        base._sandbox_config.clear()
+        base._sandbox_config.update(snapshot)
+        base._api.reset()
+
+
+def test_sandbox_client_without_config_uses_configured_globals():
+    """Sandbox() (the client) must honor Sandbox.configure() defaults, like Sandbox.create()."""
+    import lightning_sdk.sandbox.base as base
+
+    snapshot = dict(base._sandbox_config)
+    try:
+        Sandbox.configure(api_key="configured-key", base_url="https://configured.unit")
+        client = Sandbox()
+
+        assert client.api is base._api
+        assert client.api.config_get("api_key") == "configured-key"
+        assert client.api.config_get("base_url") == "https://configured.unit"
+        assert client.config.api_key == "configured-key"
+        assert client.config.base_url == "https://configured.unit"
+    finally:
+        base._sandbox_config.clear()
+        base._sandbox_config.update(snapshot)
+        base._api.reset()
+
+
+def test_sandbox_client_with_config_uses_isolated_client():
+    """An explicit config gets its own client, not the shared global one."""
+    import lightning_sdk.sandbox.base as base
+
+    client = Sandbox(SandboxConfig(api_key="explicit-key", base_url="https://explicit.unit"))
+    assert client.api is not base._api
+    assert client.api.config_get("api_key") == "explicit-key"
+
+
 def test_sandbox_create_resolves_teamspace_to_project_id():
     mock_inst = mock.MagicMock()
     cfg = SandboxConfig(api_key="k", base_url="https://unit.test")

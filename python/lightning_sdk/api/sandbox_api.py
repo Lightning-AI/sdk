@@ -74,6 +74,19 @@ _ORG_SCOPED_KEY_HINT = (
 )
 
 
+def _teamspace_key_project_mismatch_hint(teamspace: str | None = None) -> str:
+    hint = (
+        "Your teamspace-scoped API key is not authorized for the project requested via "
+        "teamspace=. Each teamspace-scoped key is bound to one teamspace (project). "
+        "Omit teamspace= to use the key's teamspace, or pass teamspace='owner/teamspace' "
+        "that matches the key you created in Lightning (Members → API keys). "
+        "To work in a different teamspace, switch to that teamspace's API key."
+    )
+    if teamspace:
+        return f"{hint} You passed teamspace={teamspace!r}."
+    return hint
+
+
 def _is_org_id_required_error(exc: ApiException) -> bool:
     text = _api_exception_text(exc).lower().replace("_", " ")
     return "organization" in text and "id" in text and "required" in text
@@ -84,8 +97,17 @@ def _is_project_id_required_error(exc: ApiException) -> bool:
     return "project" in text and "id" in text and "required" in text
 
 
-def raise_sandbox_api_error(exc: ApiException) -> None:
+def _is_api_key_not_authorized_for_project_error(exc: ApiException) -> bool:
+    if exc.status != 403:
+        return False
+    text = _api_exception_text(exc).lower()
+    return "api key" in text and "not authorized" in text and "project" in text
+
+
+def raise_sandbox_api_error(exc: ApiException, *, teamspace: str | None = None) -> None:
     """Map sandbox API failures to user-facing :class:`RuntimeError` messages."""
+    if _is_api_key_not_authorized_for_project_error(exc):
+        raise RuntimeError(_teamspace_key_project_mismatch_hint(teamspace)) from exc
     if _is_project_id_required_error(exc):
         raise RuntimeError(_PROJECT_SCOPED_KEY_HINT) from exc
     if _is_org_id_required_error(exc):

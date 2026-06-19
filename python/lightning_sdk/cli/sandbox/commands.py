@@ -555,7 +555,8 @@ def command_status(
         "sandbox_id": sandbox_id,
         "cmd_id": command_id,
         "output": status.output,
-        "exit_code": status.exit_code,
+        # Only report an exit code once the command has exited (matches `run`).
+        "exit_code": None if status.running else status.exit_code,
         "running": status.running,
     }
     if as_json:
@@ -566,7 +567,10 @@ def command_status(
     table.add_column("Command ID", no_wrap=True)
     table.add_column("Running", no_wrap=True)
     table.add_column("Exit code", no_wrap=True)
-    table.add_row(command_id, "yes" if status.running else "no", str(status.exit_code))
+    # The exit code is only meaningful once the command has exited; show "-"
+    # while it is still running so a default 0 does not read as "succeeded".
+    exit_code_display = "-" if status.running else str(status.exit_code)
+    table.add_row(command_id, "yes" if status.running else "no", exit_code_display)
     click.echo(rich_to_str(table), color=True)
     if status.output:
         click.echo(status.output, nl=not status.output.endswith("\n"))

@@ -85,6 +85,27 @@ def test_raise_sandbox_api_error_maps_project_id_required_to_hint():
     assert err.value.__cause__ is exc
 
 
+def test_raise_sandbox_api_error_maps_api_key_project_mismatch_to_hint():
+    exc = ApiException(status=403)
+    exc.body = b'{"code":7,"message":"API key is not authorized for this project","details":[]}'
+
+    with pytest.raises(RuntimeError, match="teamspace-scoped API key") as err:
+        sandbox_api_mod.raise_sandbox_api_error(exc, teamspace="my-org/wrong-project")
+
+    assert "You passed teamspace='my-org/wrong-project'" in str(err.value)
+    assert err.value.__cause__ is exc
+
+
+def test_raise_sandbox_api_error_maps_api_key_project_mismatch_without_teamspace_label():
+    exc = ApiException(status=403)
+    exc.body = b"API key is not authorized for this project"
+
+    with pytest.raises(RuntimeError, match="Omit teamspace=") as err:
+        sandbox_api_mod.raise_sandbox_api_error(exc)
+
+    assert "You passed teamspace=" not in str(err.value)
+
+
 def test_raise_sandbox_api_error_preserves_generic_errors():
     exc = ApiException(status=503, reason="unavailable")
 

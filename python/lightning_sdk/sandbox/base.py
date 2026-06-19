@@ -47,6 +47,20 @@ def _resolve_sandbox_api(
     return _api
 
 
+def _global_config() -> SandboxConfig:
+    """Return the current process-wide config (env defaults + ``configure()`` overrides).
+
+    Mirrors the values held in the shared client returned by
+    :func:`_resolve_sandbox_api`, so a :class:`~lightning_sdk.sandbox.sandbox.Sandbox`
+    built without an explicit ``config`` exposes a ``config`` that matches the
+    client it actually uses.
+    """
+    return SandboxConfig(
+        api_key=_sandbox_config.get("api_key"),
+        base_url=_sandbox_config.get("base_url"),
+    )
+
+
 def configure(
     config: SandboxConfig | None = None,
     *,
@@ -444,7 +458,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     def snapshot(
         self,
         *,
-        expiration: str | None = None,
+        expiration: int | str | None = None,
         excludes: list[str] | None = None,
         wait: bool = True,
         wait_timeout: float = 600.0,
@@ -457,6 +471,12 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         snapshot is ``ready`` so the returned object is safe to immediately
         restore from via ``Sandbox.create(snapshot_id=...)``; pass ``wait=False``
         to return the ``saving`` row without polling.
+
+        ``expiration`` is a TTL in **milliseconds** (integer): the snapshot is
+        eligible for cleanup that long after creation. Pass ``0`` to request no
+        expiration, or omit it to use the platform default. A non-numeric value
+        (e.g. ``"24h"``) is rejected by the control plane. ``excludes`` is a list
+        of paths to omit from the tarball.
         """
         org = self.organization_id or None
         body = SandboxesServiceCreateSandboxSnapshotBody()
@@ -465,7 +485,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         if self._v1.project_id:
             body.project_id = self._v1.project_id
         if expiration is not None:
-            body.expiration = expiration
+            body.expiration = str(expiration)
         if excludes:
             body.excludes = excludes
         sb: SandboxesServiceApi = self._sandbox_api.sandboxes()

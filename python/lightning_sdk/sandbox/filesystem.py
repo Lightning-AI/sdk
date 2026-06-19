@@ -77,6 +77,11 @@ class FileSystem:
         r = self._sandbox.run_command("rm", args)
         _assert_command_ok(r, f"rm {path}")
 
+    def mkdir(self, path: str, *, recursive: bool = False) -> None:
+        args = ["-p", path] if recursive else [path]
+        r = self._sandbox.run_command("mkdir", args)
+        _assert_command_ok(r, f"mkdir {path}")
+
     def rename(self, old_path: str, new_path: str) -> None:
         r = self._sandbox.run_command("mv", [old_path, new_path])
         _assert_command_ok(r, f"rename {old_path} -> {new_path}")

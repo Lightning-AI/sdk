@@ -8,6 +8,8 @@ from lightning_sdk.sandbox.base import (
     SandboxInstance,
     SnapshotInfo,
     _configure_globals,
+    _global_config,
+    _resolve_sandbox_api,
     create_sandbox,
 )
 from lightning_sdk.sandbox.config import SandboxConfig
@@ -56,7 +58,10 @@ def _sandbox_create_impl(
 ) -> SandboxInstance:
     if sandbox_api is not None and config is not None:
         raise ValueError("Pass only one of 'config' and sandbox_api (internal)")
-    api = sandbox_api if sandbox_api is not None else (config if config is not None else SandboxConfig.from_env()).api()
+    # When neither is given, fall back to the process-wide client so that
+    # Sandbox.configure(api_key=..., base_url=...) defaults are actually honored
+    # (the global client is seeded from env vars at import and updated by configure()).
+    api = _resolve_sandbox_api(sandbox_api=sandbox_api, config=config)
     return create_sandbox(
         sandbox_api=api,
         name=name,
@@ -110,8 +115,18 @@ class Sandbox:
     create = _SandboxCreate()
 
     def __init__(self, config: SandboxConfig | None = None) -> None:
-        self._config = config if config is not None else SandboxConfig.from_env()
-        self._api = self._config.api()
+        if config is not None:
+            # Explicit config gets its own isolated client.
+            self._config = config
+            self._api = config.api()
+        else:
+            # No explicit config: share the process-wide client so that
+            # Sandbox.configure(api_key=..., base_url=...) defaults are honored on
+            # this instance too (get/list/snapshot calls), matching Sandbox.create().
+            # The shared client is seeded from env vars at import and updated by
+            # configure(); _global_config() mirrors those values.
+            self._config = _global_config()
+            self._api = _resolve_sandbox_api()
 
     @property
     def config(self) -> SandboxConfig:
