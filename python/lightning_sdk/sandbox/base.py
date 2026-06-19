@@ -6,7 +6,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus, SandboxApi, raise_sandbox_api_error
+from lightning_sdk.api.sandbox_api import (
+    CommandLog,
+    CommandStatus,
+    SandboxApi,
+    raise_sandbox_api_error,
+)
 from lightning_sdk.lightning_cloud.openapi import (
     SandboxesServiceApi,
     SandboxesServiceCreateSandboxSnapshotBody,
@@ -211,7 +216,6 @@ class RunCommandOpts:
     args: list[str] | None = None
     cwd: str | None = None
     env: dict[str, str] | None = None
-    sudo: bool | None = None
     detached: bool | None = None
 
 
@@ -571,6 +575,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
                     parts = command_or_opts.split()
                 command_or_opts = parts[0]
                 args = parts[1:]
+            cmd_str = command_or_opts
             api_result = self._sandbox_api.run_command(
                 self.sandbox_id,
                 command=command_or_opts,
@@ -580,6 +585,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         else:
             o = command_or_opts
             detached = bool(o.detached)
+            cmd_str = o.cmd
             api_result = self._sandbox_api.run_command(
                 self.sandbox_id,
                 command=o.cmd,
@@ -587,13 +593,13 @@ class SandboxInstance(metaclass=TrackCallsMeta):
                 organization_id=org,
                 cwd=o.cwd,
                 env=o.env,
-                sudo=o.sudo,
                 detached=o.detached,
             )
 
         return Command(
             self,
             cmd_id=api_result.cmd_id,
+            command=cmd_str,
             output=api_result.output,
             exit_code=None if detached else api_result.exit_code,
         )
@@ -604,8 +610,37 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     def kill_command(self, cmd_id: str) -> None:
         self._sandbox_api.kill_command(self.sandbox_id, cmd_id, self.organization_id or None)
 
-    def get_command(self, cmd_id: str) -> CommandStatus:
+    def _get_command_status(self, cmd_id: str) -> CommandStatus:
+        """Raw status poll (``output``/``exit_code``/``running``) used by ``wait`` loops."""
         return self._sandbox_api.get_command(self.sandbox_id, cmd_id, self.organization_id or None)
+
+    def get_command(self, cmd_id: str) -> Command:
+        """Fetch a command by id and return a :class:`~lightning_sdk.sandbox.command.Command` handle.
+
+        The handle exposes ``id``, ``exit_code``, ``output``/``stdout()``/``stderr()``,
+        ``running``, plus ``logs()``, ``wait()``, and ``kill()``.
+
+        ``started_at``/``updated_at`` are ``None`` here: the single-command status
+        endpoint does not return them, and we deliberately avoid an extra
+        list-commands round trip just to populate them. Use :meth:`list_commands`
+        if you need command timestamps.
+        """
+        status = self._get_command_status(cmd_id)
+        return Command(
+            self,
+            cmd_id=cmd_id,
+            output=status.output,
+            exit_code=None if status.running else status.exit_code,
+        )
+
+    def list_commands(self) -> list[Command]:
+        """List this sandbox's commands as :class:`~lightning_sdk.sandbox.command.Command` handles.
+
+        Each handle carries ``id``, ``command``, ``started_at``, ``updated_at``,
+        ``exit_code``, ``output``, and ``running``.
+        """
+        rows = self._sandbox_api.list_commands(self.sandbox_id, self.organization_id or None)
+        return [Command._from_v1(self, v1) for v1 in rows]
 
     def wait_for_command(
         self,
@@ -614,14 +649,13 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         timeout: float | None = None,
         poll_interval: float = 0.5,
     ) -> CommandStatus:
-        """Poll :meth:`get_command` until the command exits and return its final status.
+        """Poll the command's status until it exits and return its final :class:`CommandStatus`.
 
         Useful after launching a background command with ``detached=True``::
 
-            r = sandbox.run_command(RunCommandOpts(cmd="long-task", detached=True))
-            status = sandbox.get_command(r.cmd_id)
-            if status.running:
-                final = sandbox.wait_for_command(r.cmd_id)
+            cmd = sandbox.run_command(RunCommandOpts(cmd="long-task", detached=True))
+            if cmd.running:
+                final = sandbox.wait_for_command(cmd.cmd_id)
                 print(final.exit_code)
 
         Args:
@@ -634,7 +668,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         """
         deadline = (time.monotonic() + timeout) if timeout is not None else None
         while True:
-            status = self.get_command(cmd_id)
+            status = self._get_command_status(cmd_id)
             if not status.running:
                 return status
             if deadline is not None and time.monotonic() >= deadline:

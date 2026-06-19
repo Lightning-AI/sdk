@@ -22,7 +22,8 @@ class Output:
 class _Sandbox:
     """Sandbox runs AI generated code safely and discards the machine after use.
 
-    Users can run any arbitrary code in a sandbox with sudo permissions.
+    Commands run as ``root`` inside the sandbox, so users have full
+    administrative access without needing ``sudo``.
 
     Args:
         name: The name of the sandbox.

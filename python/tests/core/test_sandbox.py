@@ -240,7 +240,6 @@ def test_sandbox_instance_run_command_run_command_opts():
         organization_id="o",
         cwd="/tmp",
         env={"A": "b"},
-        sudo=None,
         detached=True,
     )
 

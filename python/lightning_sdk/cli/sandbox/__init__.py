@@ -9,6 +9,7 @@ def register_commands(group: click.Group) -> None:
         command_status,
         create_sandbox,
         delete_sandbox,
+        list_sandbox_commands,
         list_sandboxes,
         logs_sandbox_command,
         run_sandbox_command,
@@ -26,3 +27,4 @@ def register_commands(group: click.Group) -> None:
     group.add_command(run_sandbox_command, name="run")
     group.add_command(logs_sandbox_command, name="logs")
     group.add_command(command_status, name="command")
+    group.add_command(list_sandbox_commands, name="commands")

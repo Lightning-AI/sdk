@@ -272,6 +272,19 @@ Example:
 """
 
 
+_LIST_COMMANDS_HELP = """List a sandbox's command history.
+
+\b
+Example:
+  $ sandbox commands sbx-42
+  ┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓
+  ┃ Command ID ┃ Running ┃ Exit code ┃ Command ┃ Started at           ┃
+  ┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩
+  │ cmd-abc123 │ no      │ 0         │ echo    │ 2026-06-19T18:00:47Z │
+  └────────────┴─────────┴───────────┴─────────┴──────────────────────┘
+"""
+
+
 @click.command("list", help=_LIST_SANDBOXES_HELP)
 @_with_common_options
 @click.option("--page-token", help="Pagination token returned by a previous list call.")
@@ -442,7 +455,6 @@ def update_sandbox(
 @click.argument("sandbox_id")
 @click.option("--cwd", help="Working directory inside the sandbox.")
 @click.option("--env", "env", multiple=True, default=[""], help="Environment variable in KEY=VALUE or JSON format.")
-@click.option("--sudo", is_flag=True, help="Run the command with sudo.")
 @click.option("--detached", is_flag=True, help="Start the command and return immediately.")
 @click.option("--timeout", type=float, help="Seconds to wait for a detached command.")
 @click.option("--poll-interval", type=float, default=0.5, show_default=True, help="Detached command poll interval.")
@@ -455,7 +467,6 @@ def run_sandbox_command(
     sandbox_id: str,
     cwd: str | None,
     env: Sequence[str],
-    sudo: bool,
     detached: bool,
     timeout: float | None,
     poll_interval: float,
@@ -476,7 +487,6 @@ def run_sandbox_command(
             args=command_parts[1:],
             cwd=cwd,
             env=_parse_env(env),
-            sudo=sudo or None,
             detached=detached,
         )
     )
@@ -564,7 +574,56 @@ def command_status(
     # The exit code is only meaningful once the command has exited; show "-"
     # while it is still running so a default 0 does not read as "succeeded".
     exit_code_display = "-" if status.running else str(status.exit_code)
-    table.add_row(command_id, "yes" if status.running else "no", exit_code_display)
+    table.add_row(
+        command_id,
+        "yes" if status.running else "no",
+        exit_code_display,
+    )
     click.echo(rich_to_str(table), color=True)
     if status.output:
         click.echo(status.output, nl=not status.output.endswith("\n"))
+
+
+@click.command("commands", help=_LIST_COMMANDS_HELP)
+@_with_common_options
+@click.argument("sandbox_id")
+@click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
+def list_sandbox_commands(
+    api_key: str | None,
+    sandbox_id: str,
+    as_json: bool,
+) -> None:
+    """List a sandbox's command history."""
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
+    cmds = sandbox.list_commands()
+    if as_json:
+        _echo_json(
+            [
+                {
+                    "cmd_id": c.id,
+                    "command": c.command,
+                    # Exit code is only meaningful once the command has exited.
+                    "exit_code": None if c.running else c.exit_code,
+                    "running": c.running,
+                    "started_at": c.started_at.isoformat() if c.started_at else None,
+                }
+                for c in cmds
+            ]
+        )
+        return
+
+    table = Table(pad_edge=True)
+    table.add_column("Command ID", no_wrap=True)
+    table.add_column("Running", no_wrap=True)
+    table.add_column("Exit code", no_wrap=True)
+    table.add_column("Command")
+    table.add_column("Started at", no_wrap=True)
+    for c in cmds:
+        table.add_row(
+            c.id,
+            "yes" if c.running else "no",
+            "-" if c.running else str(c.exit_code),
+            c.command or "-",
+            c.started_at.isoformat() if c.started_at else "-",
+        )
+    click.echo(rich_to_str(table), color=True)

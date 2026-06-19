@@ -12,6 +12,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1ListSandboxesResponse,
     V1ListSandboxSnapshotsResponse,
     V1Sandbox,
+    V1SandboxCommand,
     V1SandboxSnapshot,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -163,7 +164,6 @@ class SandboxApi:
         organization_id: str | None = None,
         cwd: str | None = None,
         env: dict[str, str] | None = None,
-        sudo: bool | None = None,
         detached: bool | None = None,
     ) -> SandboxesServiceRunSandboxCommandBody:
         """Build the request body for :meth:`run_command`."""
@@ -176,8 +176,6 @@ class SandboxApi:
             body.cwd = cwd
         if env is not None:
             body.env = env
-        if sudo is not None:
-            body.sudo = sudo
         if detached is not None:
             body.detached = detached
         return body
@@ -339,7 +337,6 @@ class SandboxApi:
         organization_id: str | None = None,
         cwd: str | None = None,
         env: dict[str, str] | None = None,
-        sudo: bool | None = None,
         detached: bool | None = None,
     ) -> dict[str, Any]:
         """Run a command in the sandbox via :meth:`SandboxesServiceApi.sandboxes_service_run_sandbox_command`.
@@ -354,7 +351,6 @@ class SandboxApi:
             organization_id=organization_id,
             cwd=cwd,
             env=env,
-            sudo=sudo,
             detached=detached,
         )
         api = self.sandboxes()
@@ -363,6 +359,24 @@ class SandboxApi:
         except ApiException as e:
             raise_sandbox_api_error(e)
         return _parse_run_command_response(resp)
+
+    def list_commands(self, sandbox_id: str, organization_id: str | None = None) -> list[V1SandboxCommand]:
+        """List a sandbox's commands via :meth:`SandboxesServiceApi.sandboxes_service_list_sandbox_commands`.
+
+        Returns the raw ``V1SandboxCommand`` rows (``id``, ``command``, ``exit_code``,
+        ``output``, ``running``, ``created_at``, ``updated_at``); the sandbox layer
+        wraps them in :class:`~lightning_sdk.sandbox.command.Command` via
+        :meth:`Command._from_v1`.
+        """
+        api = self.sandboxes()
+        try:
+            resp = api.sandboxes_service_list_sandbox_commands(
+                sandbox_id,
+                **({"organization_id": organization_id} if organization_id else {}),
+            )
+        except ApiException as e:
+            raise_sandbox_api_error(e)
+        return list(resp.commands or [])
 
     def get_command_logs(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> Any:
         """Fetch command logs via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_command_logs`."""
