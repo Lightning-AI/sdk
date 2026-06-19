@@ -41,6 +41,8 @@ class IncidentsServiceUpdateIncidentBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'exclude_from_sla': 'bool',
+        'exclude_reason': 'str',
         'message': 'str',
         'resolution_notes': 'str',
         'resource': 'str',
@@ -51,6 +53,8 @@ class IncidentsServiceUpdateIncidentBody(object):
     }
 
     attribute_map = {
+        'exclude_from_sla': 'excludeFromSla',
+        'exclude_reason': 'excludeReason',
         'message': 'message',
         'resolution_notes': 'resolutionNotes',
         'resource': 'resource',
@@ -60,8 +64,10 @@ class IncidentsServiceUpdateIncidentBody(object):
         'type': 'type'
     }
 
-    def __init__(self, message: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None):  # noqa: E501
+    def __init__(self, exclude_from_sla: 'bool' =None, exclude_reason: 'str' =None, message: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, severity: 'V1IncidentSeverity' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None):  # noqa: E501
         """IncidentsServiceUpdateIncidentBody - a model defined in Swagger"""  # noqa: E501
+        self._exclude_from_sla = None
+        self._exclude_reason = None
         self._message = None
         self._resolution_notes = None
         self._resource = None
@@ -70,6 +76,10 @@ class IncidentsServiceUpdateIncidentBody(object):
         self._title = None
         self._type = None
         self.discriminator = None
+        if exclude_from_sla is not None:
+            self.exclude_from_sla = exclude_from_sla
+        if exclude_reason is not None:
+            self.exclude_reason = exclude_reason
         if message is not None:
             self.message = message
         if resolution_notes is not None:
@@ -84,6 +94,48 @@ class IncidentsServiceUpdateIncidentBody(object):
             self.title = title
         if type is not None:
             self.type = type
+
+    @property
+    def exclude_from_sla(self) -> 'bool':
+        """Gets the exclude_from_sla of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+
+
+        :return: The exclude_from_sla of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._exclude_from_sla
+
+    @exclude_from_sla.setter
+    def exclude_from_sla(self, exclude_from_sla: 'bool'):
+        """Sets the exclude_from_sla of this IncidentsServiceUpdateIncidentBody.
+
+
+        :param exclude_from_sla: The exclude_from_sla of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._exclude_from_sla = exclude_from_sla
+
+    @property
+    def exclude_reason(self) -> 'str':
+        """Gets the exclude_reason of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+
+
+        :return: The exclude_reason of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._exclude_reason
+
+    @exclude_reason.setter
+    def exclude_reason(self, exclude_reason: 'str'):
+        """Sets the exclude_reason of this IncidentsServiceUpdateIncidentBody.
+
+
+        :param exclude_reason: The exclude_reason of this IncidentsServiceUpdateIncidentBody.  # noqa: E501
+        :type: str
+        """
+
+        self._exclude_reason = exclude_reason
 
     @property
     def message(self) -> 'str':

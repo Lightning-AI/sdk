@@ -42,23 +42,33 @@ class LitLoggerServiceUpdateLitLoggerMediaBody(object):
     """
     swagger_types = {
         'caption': 'str',
-        'upload_complete': 'bool'
+        'metadata': 'object',
+        'upload_complete': 'bool',
+        'walltime': 'datetime'
     }
 
     attribute_map = {
         'caption': 'caption',
-        'upload_complete': 'uploadComplete'
+        'metadata': 'metadata',
+        'upload_complete': 'uploadComplete',
+        'walltime': 'walltime'
     }
 
-    def __init__(self, caption: 'str' =None, upload_complete: 'bool' =None):  # noqa: E501
+    def __init__(self, caption: 'str' =None, metadata: 'object' =None, upload_complete: 'bool' =None, walltime: 'datetime' =None):  # noqa: E501
         """LitLoggerServiceUpdateLitLoggerMediaBody - a model defined in Swagger"""  # noqa: E501
         self._caption = None
+        self._metadata = None
         self._upload_complete = None
+        self._walltime = None
         self.discriminator = None
         if caption is not None:
             self.caption = caption
+        if metadata is not None:
+            self.metadata = metadata
         if upload_complete is not None:
             self.upload_complete = upload_complete
+        if walltime is not None:
+            self.walltime = walltime
 
     @property
     def caption(self) -> 'str':
@@ -82,6 +92,27 @@ class LitLoggerServiceUpdateLitLoggerMediaBody(object):
         self._caption = caption
 
     @property
+    def metadata(self) -> 'object':
+        """Gets the metadata of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+
+
+        :return: The metadata of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+        :rtype: object
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'object'):
+        """Sets the metadata of this LitLoggerServiceUpdateLitLoggerMediaBody.
+
+
+        :param metadata: The metadata of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+        :type: object
+        """
+
+        self._metadata = metadata
+
+    @property
     def upload_complete(self) -> 'bool':
         """Gets the upload_complete of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
 
@@ -101,6 +132,27 @@ class LitLoggerServiceUpdateLitLoggerMediaBody(object):
         """
 
         self._upload_complete = upload_complete
+
+    @property
+    def walltime(self) -> 'datetime':
+        """Gets the walltime of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+
+
+        :return: The walltime of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._walltime
+
+    @walltime.setter
+    def walltime(self, walltime: 'datetime'):
+        """Sets the walltime of this LitLoggerServiceUpdateLitLoggerMediaBody.
+
+
+        :param walltime: The walltime of this LitLoggerServiceUpdateLitLoggerMediaBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._walltime = walltime
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

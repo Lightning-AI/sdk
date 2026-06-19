@@ -3238,6 +3238,7 @@ class JobsServiceApi(object):
         :param list[str] job_ids:
         :param str page_size:
         :param str page_token:
+        :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3267,12 +3268,13 @@ class JobsServiceApi(object):
         :param list[str] job_ids:
         :param str page_size:
         :param str page_token:
+        :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token']  # noqa: E501
+        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token', 'severity']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3316,6 +3318,8 @@ class JobsServiceApi(object):
             query_params.append(('pageSize', params['page_size']))  # noqa: E501
         if 'page_token' in params:
             query_params.append(('pageToken', params['page_token']))  # noqa: E501
+        if 'severity' in params:
+            query_params.append(('severity', params['severity']))  # noqa: E501
 
         header_params = {}
 

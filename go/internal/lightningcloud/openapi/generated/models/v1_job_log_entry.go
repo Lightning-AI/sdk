@@ -25,6 +25,13 @@ type V1JobLogEntry struct {
 	// message
 	Message string `json:"message,omitempty"`
 
+	// Resource (replica) the line came from — the job id. Lets a merged multi-replica view label
+	// each line's source.
+	ResourceID string `json:"resourceId,omitempty"`
+
+	// Inferred severity: "error" | "warning" | "info" | "debug", or "" if undetermined.
+	Severity string `json:"severity,omitempty"`
+
 	// timestamp
 	// Format: date-time
 	Timestamp strfmt.DateTime `json:"timestamp,omitempty"`

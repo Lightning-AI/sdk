@@ -48,6 +48,7 @@ class ClusterServiceUpdateMachineBody(object):
         'purpose': 'str',
         'reboot': 'bool',
         'requires_maintenance': 'bool',
+        'requires_maintenance_reason': 'str',
         'reset_hugepages': 'bool',
         'schedulable_affinity': 'V1SchedulableAffinity',
         'unschedulable': 'bool'
@@ -61,12 +62,13 @@ class ClusterServiceUpdateMachineBody(object):
         'purpose': 'purpose',
         'reboot': 'reboot',
         'requires_maintenance': 'requiresMaintenance',
+        'requires_maintenance_reason': 'requiresMaintenanceReason',
         'reset_hugepages': 'resetHugepages',
         'schedulable_affinity': 'schedulableAffinity',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._machine_mode = None
         self._name = None
@@ -75,6 +77,7 @@ class ClusterServiceUpdateMachineBody(object):
         self._purpose = None
         self._reboot = None
         self._requires_maintenance = None
+        self._requires_maintenance_reason = None
         self._reset_hugepages = None
         self._schedulable_affinity = None
         self._unschedulable = None
@@ -93,6 +96,8 @@ class ClusterServiceUpdateMachineBody(object):
             self.reboot = reboot
         if requires_maintenance is not None:
             self.requires_maintenance = requires_maintenance
+        if requires_maintenance_reason is not None:
+            self.requires_maintenance_reason = requires_maintenance_reason
         if reset_hugepages is not None:
             self.reset_hugepages = reset_hugepages
         if schedulable_affinity is not None:
@@ -252,6 +257,27 @@ class ClusterServiceUpdateMachineBody(object):
         """
 
         self._requires_maintenance = requires_maintenance
+
+    @property
+    def requires_maintenance_reason(self) -> 'str':
+        """Gets the requires_maintenance_reason of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The requires_maintenance_reason of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._requires_maintenance_reason
+
+    @requires_maintenance_reason.setter
+    def requires_maintenance_reason(self, requires_maintenance_reason: 'str'):
+        """Sets the requires_maintenance_reason of this ClusterServiceUpdateMachineBody.
+
+
+        :param requires_maintenance_reason: The requires_maintenance_reason of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._requires_maintenance_reason = requires_maintenance_reason
 
     @property
     def reset_hugepages(self) -> 'bool':

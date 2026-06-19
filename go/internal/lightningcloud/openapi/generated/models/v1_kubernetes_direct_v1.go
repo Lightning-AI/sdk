@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1KubernetesDirectV1 KubernetesDirectV1 provides direct access to Kubernetes cluster, we
@@ -80,6 +81,10 @@ type V1KubernetesDirectV1 struct {
 	// The number of nodes that can be cordoned at once
 	NodeCordonedBudget int32 `json:"nodeCordonedBudget,omitempty"`
 
+	// Timestamp of the last node downtime sync.
+	// Format: date-time
+	NodeDowntimeSyncedTo strfmt.DateTime `json:"nodeDowntimeSyncedTo,omitempty"`
+
 	// prometheus Url
 	PrometheusURL string `json:"prometheusUrl,omitempty"`
 
@@ -126,6 +131,10 @@ func (m *V1KubernetesDirectV1) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateKubevirtConfig(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNodeDowntimeSyncedTo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -346,6 +355,18 @@ func (m *V1KubernetesDirectV1) validateKubevirtConfig(formats strfmt.Registry) e
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1KubernetesDirectV1) validateNodeDowntimeSyncedTo(formats strfmt.Registry) error {
+	if swag.IsZero(m.NodeDowntimeSyncedTo) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("nodeDowntimeSyncedTo", "body", "date-time", m.NodeDowntimeSyncedTo.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

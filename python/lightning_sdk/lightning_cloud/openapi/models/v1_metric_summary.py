@@ -45,9 +45,11 @@ class V1MetricSummary(object):
         'last_value': 'float',
         'max_step': 'str',
         'max_value': 'float',
+        'max_walltime': 'datetime',
         'mean_value': 'float',
         'min_step': 'str',
         'min_value': 'float',
+        'min_walltime': 'datetime',
         'num_values': 'str',
         'variance': 'float'
     }
@@ -57,22 +59,26 @@ class V1MetricSummary(object):
         'last_value': 'lastValue',
         'max_step': 'maxStep',
         'max_value': 'maxValue',
+        'max_walltime': 'maxWalltime',
         'mean_value': 'meanValue',
         'min_step': 'minStep',
         'min_value': 'minValue',
+        'min_walltime': 'minWalltime',
         'num_values': 'numValues',
         'variance': 'variance'
     }
 
-    def __init__(self, last_step: 'str' =None, last_value: 'float' =None, max_step: 'str' =None, max_value: 'float' =None, mean_value: 'float' =None, min_step: 'str' =None, min_value: 'float' =None, num_values: 'str' =None, variance: 'float' =None):  # noqa: E501
+    def __init__(self, last_step: 'str' =None, last_value: 'float' =None, max_step: 'str' =None, max_value: 'float' =None, max_walltime: 'datetime' =None, mean_value: 'float' =None, min_step: 'str' =None, min_value: 'float' =None, min_walltime: 'datetime' =None, num_values: 'str' =None, variance: 'float' =None):  # noqa: E501
         """V1MetricSummary - a model defined in Swagger"""  # noqa: E501
         self._last_step = None
         self._last_value = None
         self._max_step = None
         self._max_value = None
+        self._max_walltime = None
         self._mean_value = None
         self._min_step = None
         self._min_value = None
+        self._min_walltime = None
         self._num_values = None
         self._variance = None
         self.discriminator = None
@@ -84,12 +90,16 @@ class V1MetricSummary(object):
             self.max_step = max_step
         if max_value is not None:
             self.max_value = max_value
+        if max_walltime is not None:
+            self.max_walltime = max_walltime
         if mean_value is not None:
             self.mean_value = mean_value
         if min_step is not None:
             self.min_step = min_step
         if min_value is not None:
             self.min_value = min_value
+        if min_walltime is not None:
+            self.min_walltime = min_walltime
         if num_values is not None:
             self.num_values = num_values
         if variance is not None:
@@ -180,6 +190,27 @@ class V1MetricSummary(object):
         self._max_value = max_value
 
     @property
+    def max_walltime(self) -> 'datetime':
+        """Gets the max_walltime of this V1MetricSummary.  # noqa: E501
+
+
+        :return: The max_walltime of this V1MetricSummary.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._max_walltime
+
+    @max_walltime.setter
+    def max_walltime(self, max_walltime: 'datetime'):
+        """Sets the max_walltime of this V1MetricSummary.
+
+
+        :param max_walltime: The max_walltime of this V1MetricSummary.  # noqa: E501
+        :type: datetime
+        """
+
+        self._max_walltime = max_walltime
+
+    @property
     def mean_value(self) -> 'float':
         """Gets the mean_value of this V1MetricSummary.  # noqa: E501
 
@@ -241,6 +272,27 @@ class V1MetricSummary(object):
         """
 
         self._min_value = min_value
+
+    @property
+    def min_walltime(self) -> 'datetime':
+        """Gets the min_walltime of this V1MetricSummary.  # noqa: E501
+
+
+        :return: The min_walltime of this V1MetricSummary.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._min_walltime
+
+    @min_walltime.setter
+    def min_walltime(self, min_walltime: 'datetime'):
+        """Sets the min_walltime of this V1MetricSummary.
+
+
+        :param min_walltime: The min_walltime of this V1MetricSummary.  # noqa: E501
+        :type: datetime
+        """
+
+        self._min_walltime = min_walltime
 
     @property
     def num_values(self) -> 'str':

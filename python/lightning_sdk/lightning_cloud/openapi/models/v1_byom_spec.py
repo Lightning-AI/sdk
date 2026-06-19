@@ -43,6 +43,7 @@ class V1BYOMSpec(object):
     swagger_types = {
         'base_image_variant': 'str',
         'dtype': 'str',
+        'enable_weight_reload': 'bool',
         'extra_vllm_args': 'list[str]',
         'gpu_memory_utilization': 'float',
         'hf_token_secret_name': 'str',
@@ -57,6 +58,7 @@ class V1BYOMSpec(object):
     attribute_map = {
         'base_image_variant': 'baseImageVariant',
         'dtype': 'dtype',
+        'enable_weight_reload': 'enableWeightReload',
         'extra_vllm_args': 'extraVllmArgs',
         'gpu_memory_utilization': 'gpuMemoryUtilization',
         'hf_token_secret_name': 'hfTokenSecretName',
@@ -68,10 +70,11 @@ class V1BYOMSpec(object):
         'weight_source': 'weightSource'
     }
 
-    def __init__(self, base_image_variant: 'str' =None, dtype: 'str' =None, extra_vllm_args: 'list[str]' =None, gpu_memory_utilization: 'float' =None, hf_token_secret_name: 'str' =None, max_model_len: 'int' =None, quantization: 'str' =None, resolved_image: 'str' =None, served_model_name: 'str' =None, tensor_parallel_size: 'int' =None, weight_source: 'V1WeightSource' =None):  # noqa: E501
+    def __init__(self, base_image_variant: 'str' =None, dtype: 'str' =None, enable_weight_reload: 'bool' =None, extra_vllm_args: 'list[str]' =None, gpu_memory_utilization: 'float' =None, hf_token_secret_name: 'str' =None, max_model_len: 'int' =None, quantization: 'str' =None, resolved_image: 'str' =None, served_model_name: 'str' =None, tensor_parallel_size: 'int' =None, weight_source: 'V1WeightSource' =None):  # noqa: E501
         """V1BYOMSpec - a model defined in Swagger"""  # noqa: E501
         self._base_image_variant = None
         self._dtype = None
+        self._enable_weight_reload = None
         self._extra_vllm_args = None
         self._gpu_memory_utilization = None
         self._hf_token_secret_name = None
@@ -86,6 +89,8 @@ class V1BYOMSpec(object):
             self.base_image_variant = base_image_variant
         if dtype is not None:
             self.dtype = dtype
+        if enable_weight_reload is not None:
+            self.enable_weight_reload = enable_weight_reload
         if extra_vllm_args is not None:
             self.extra_vllm_args = extra_vllm_args
         if gpu_memory_utilization is not None:
@@ -146,6 +151,29 @@ class V1BYOMSpec(object):
         """
 
         self._dtype = dtype
+
+    @property
+    def enable_weight_reload(self) -> 'bool':
+        """Gets the enable_weight_reload of this V1BYOMSpec.  # noqa: E501
+
+        Opt-in: when true, the weight-watcher sidecar runs for this deployment, enabling hot weight reload (HuggingFace auto-detect + user-triggered). Defaults to false.  # noqa: E501
+
+        :return: The enable_weight_reload of this V1BYOMSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enable_weight_reload
+
+    @enable_weight_reload.setter
+    def enable_weight_reload(self, enable_weight_reload: 'bool'):
+        """Sets the enable_weight_reload of this V1BYOMSpec.
+
+        Opt-in: when true, the weight-watcher sidecar runs for this deployment, enabling hot weight reload (HuggingFace auto-detect + user-triggered). Defaults to false.  # noqa: E501
+
+        :param enable_weight_reload: The enable_weight_reload of this V1BYOMSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._enable_weight_reload = enable_weight_reload
 
     @property
     def extra_vllm_args(self) -> 'list[str]':

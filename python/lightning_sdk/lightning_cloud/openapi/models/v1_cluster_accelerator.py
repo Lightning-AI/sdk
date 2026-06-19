@@ -74,10 +74,13 @@ class V1ClusterAccelerator(object):
         'max_available_quota': 'str',
         'non_ondemand': 'bool',
         'non_spot': 'bool',
+        'original_cost': 'float',
+        'original_spot_price': 'float',
         'out_of_capacity': 'bool',
         'partition_only': 'bool',
         'partitionable_parents': 'list[str]',
         'persistent_disk_supported': 'bool',
+        'promo': 'V1PromoOverlay',
         'provider': 'V1CloudProvider',
         'quota_checked_at': 'datetime',
         'quota_code': 'str',
@@ -135,10 +138,13 @@ class V1ClusterAccelerator(object):
         'max_available_quota': 'maxAvailableQuota',
         'non_ondemand': 'nonOndemand',
         'non_spot': 'nonSpot',
+        'original_cost': 'originalCost',
+        'original_spot_price': 'originalSpotPrice',
         'out_of_capacity': 'outOfCapacity',
         'partition_only': 'partitionOnly',
         'partitionable_parents': 'partitionableParents',
         'persistent_disk_supported': 'persistentDiskSupported',
+        'promo': 'promo',
         'provider': 'provider',
         'quota_checked_at': 'quotaCheckedAt',
         'quota_code': 'quotaCode',
@@ -162,7 +168,7 @@ class V1ClusterAccelerator(object):
         'spot_quota_page_url': 'spotQuotaPageUrl'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, availability_strategy: 'str' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_cost: 'float' =None, dws_only: 'bool' =None, dws_supported: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, full: 'bool' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, lightning_interruptible: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, non_ondemand: 'bool' =None, non_spot: 'bool' =None, out_of_capacity: 'bool' =None, partition_only: 'bool' =None, partitionable_parents: 'list[str]' =None, persistent_disk_supported: 'bool' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, secondary_instance_id: 'str' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, availability_strategy: 'str' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_cost: 'float' =None, dws_only: 'bool' =None, dws_supported: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, full: 'bool' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, lightning_interruptible: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, non_ondemand: 'bool' =None, non_spot: 'bool' =None, original_cost: 'float' =None, original_spot_price: 'float' =None, out_of_capacity: 'bool' =None, partition_only: 'bool' =None, partitionable_parents: 'list[str]' =None, persistent_disk_supported: 'bool' =None, promo: 'V1PromoOverlay' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, secondary_instance_id: 'str' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -197,10 +203,13 @@ class V1ClusterAccelerator(object):
         self._max_available_quota = None
         self._non_ondemand = None
         self._non_spot = None
+        self._original_cost = None
+        self._original_spot_price = None
         self._out_of_capacity = None
         self._partition_only = None
         self._partitionable_parents = None
         self._persistent_disk_supported = None
+        self._promo = None
         self._provider = None
         self._quota_checked_at = None
         self._quota_code = None
@@ -289,6 +298,10 @@ class V1ClusterAccelerator(object):
             self.non_ondemand = non_ondemand
         if non_spot is not None:
             self.non_spot = non_spot
+        if original_cost is not None:
+            self.original_cost = original_cost
+        if original_spot_price is not None:
+            self.original_spot_price = original_spot_price
         if out_of_capacity is not None:
             self.out_of_capacity = out_of_capacity
         if partition_only is not None:
@@ -297,6 +310,8 @@ class V1ClusterAccelerator(object):
             self.partitionable_parents = partitionable_parents
         if persistent_disk_supported is not None:
             self.persistent_disk_supported = persistent_disk_supported
+        if promo is not None:
+            self.promo = promo
         if provider is not None:
             self.provider = provider
         if quota_checked_at is not None:
@@ -1034,6 +1049,50 @@ class V1ClusterAccelerator(object):
         self._non_spot = non_spot
 
     @property
+    def original_cost(self) -> 'float':
+        """Gets the original_cost of this V1ClusterAccelerator.  # noqa: E501
+
+        Promo pricing display fields. Populated only when an active GPU promo campaign matches this SKU (provider/region/machine_type). `cost`, `spot_price`, etc. already reflect the EFFECTIVE (promo) rate; these fields surface the original catalog rate and campaign metadata so the UI can render strikethrough + badge.  Catalog on-demand credits/hour (for strikethrough)  # noqa: E501
+
+        :return: The original_cost of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: float
+        """
+        return self._original_cost
+
+    @original_cost.setter
+    def original_cost(self, original_cost: 'float'):
+        """Sets the original_cost of this V1ClusterAccelerator.
+
+        Promo pricing display fields. Populated only when an active GPU promo campaign matches this SKU (provider/region/machine_type). `cost`, `spot_price`, etc. already reflect the EFFECTIVE (promo) rate; these fields surface the original catalog rate and campaign metadata so the UI can render strikethrough + badge.  Catalog on-demand credits/hour (for strikethrough)  # noqa: E501
+
+        :param original_cost: The original_cost of this V1ClusterAccelerator.  # noqa: E501
+        :type: float
+        """
+
+        self._original_cost = original_cost
+
+    @property
+    def original_spot_price(self) -> 'float':
+        """Gets the original_spot_price of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The original_spot_price of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: float
+        """
+        return self._original_spot_price
+
+    @original_spot_price.setter
+    def original_spot_price(self, original_spot_price: 'float'):
+        """Sets the original_spot_price of this V1ClusterAccelerator.
+
+
+        :param original_spot_price: The original_spot_price of this V1ClusterAccelerator.  # noqa: E501
+        :type: float
+        """
+
+        self._original_spot_price = original_spot_price
+
+    @property
     def out_of_capacity(self) -> 'bool':
         """Gets the out_of_capacity of this V1ClusterAccelerator.  # noqa: E501
 
@@ -1116,6 +1175,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._persistent_disk_supported = persistent_disk_supported
+
+    @property
+    def promo(self) -> 'V1PromoOverlay':
+        """Gets the promo of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The promo of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: V1PromoOverlay
+        """
+        return self._promo
+
+    @promo.setter
+    def promo(self, promo: 'V1PromoOverlay'):
+        """Sets the promo of this V1ClusterAccelerator.
+
+
+        :param promo: The promo of this V1ClusterAccelerator.  # noqa: E501
+        :type: V1PromoOverlay
+        """
+
+        self._promo = promo
 
     @property
     def provider(self) -> 'V1CloudProvider':

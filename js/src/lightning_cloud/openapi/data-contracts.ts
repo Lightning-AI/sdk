@@ -267,44 +267,6 @@ export interface RpcStatus {
   details?: ProtobufAny[];
 }
 
-/**
- * A terminated sandbox surfaced by the archive UI. List returns the row
- * fields (1-22); GetArchivedSandbox additionally fills the detail-only
- * fields (23-25) from the termination payload.
- */
-export interface V1ArchivedSandbox {
-  id?: string;
-  name?: string;
-  organizationId?: string;
-  projectId?: string;
-  ownerId?: string;
-  ownerName?: string;
-  clusterId?: string;
-  machineId?: string;
-  instanceType?: string;
-  image?: string;
-  runtime?: string;
-  ports?: string[];
-  persistent?: boolean;
-  spot?: boolean;
-  autoSnapshotId?: string;
-  /** @format date-time */
-  createdAt?: string;
-  /** @format date-time */
-  startedAt?: string;
-  /** @format date-time */
-  terminatedAt?: string;
-  lastKnownState?: string;
-  /** Stable token: timeout|user_delete|agent_error|oom|scheduler_kill|unknown. */
-  terminationReason?: string;
-  /** @format int32 */
-  exitCode?: number;
-  oomKilled?: boolean;
-  envHash?: string;
-  phaseDurations?: V1SandboxPhaseDuration[];
-  networkConnections?: V1SandboxNetworkConnection[];
-}
-
 export type V1CreateSandboxDirectoryResponse = object;
 
 export interface V1CreateSandboxRequest {
@@ -359,6 +321,22 @@ export interface V1CreateSandboxRequest {
    * non-persistent sandboxes (no auto-snapshot is taken).
    */
   projectId?: string;
+  /**
+   * OCI image reference for the sandbox rootfs, e.g.
+   * "docker.io/library/python:3.13" or
+   * "ghcr.io/org/img@sha256:...". When set, the controlplane uses this
+   * image instead of the curated sandbox-<runtime> flavour. Mutually
+   * exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed
+   * (GPU / InfiniBand) requests reject this field.
+   */
+  image?: string;
+  /**
+   * Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY
+   * the controlplane resolves to pull credentials for `image`. Same
+   * mechanism as JobSpec.image_secret_ref. Only valid when `image` is
+   * set; empty + `image` set = anonymous public-registry pull.
+   */
+  imageSecretRef?: string;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -383,16 +361,6 @@ export interface V1GetSandboxFileResponse {
   content?: string;
 }
 
-export interface V1GetSandboxLogsResponse {
-  entries?: V1SandboxLogEntry[];
-  nextPageToken?: string;
-  /**
-   * True when the sandbox has no retained logs (died before ingestion or
-   * predates log capture) — drives the UI's "logs not retained" state.
-   */
-  logsNotRetained?: boolean;
-}
-
 export interface V1GetSandboxSnapshotBlobDownloadUrlsResponse {
   downloadUrls?: V1SandboxSnapshotBlobDownloadUrl[];
 }
@@ -409,8 +377,8 @@ export interface V1GetSandboxSnapshotBlobUploadUrlsResponse {
 
 export type V1KillSandboxCommandResponse = object;
 
-export interface V1ListArchivedSandboxesResponse {
-  archivedSandboxes?: V1ArchivedSandbox[];
+export interface V1ListSandboxCommandsResponse {
+  commands?: V1SandboxCommand[];
 }
 
 export interface V1ListSandboxSnapshotsResponse {
@@ -477,25 +445,33 @@ export interface V1Sandbox {
   clusterId?: string;
   instanceType?: string;
   spot?: boolean;
-  /**
-   * Lifecycle status of the sandbox. In addition to the underlying
-   * server states (running, stopping, stopped, error, ...) the
-   * controlplane surfaces:
-   *   - "paused":  the sandbox is a persistent sandbox whose server
-   *                row no longer exists, but whose auto-snapshot does.
-   *                ListSandboxes and GetSandbox synthesise a Sandbox
-   *                from the most recent auto-snapshot so the sandbox
-   *                id keeps appearing in user-facing surfaces while it
-   *                is hibernated. Resume via UpdateSandbox(resume=true).
-   */
-  status?: string;
   cloudspaceId?: string;
   ports?: string[];
   runtime?: string;
-  /** @format date-time */
-  createdAt?: string;
-  /** @format date-time */
-  updatedAt?: string;
+  /**
+   * Optional override for the sandbox's writable disk size, in GB. When
+   * unset (0) the sandbox inherits the instance-type default from the
+   * `cpu-sandbox-*` accelerator (10 / 40 / 60 / 80 GB for cpu-2/4/8/16).
+   * Only applies to CPU sandboxes — GPU / VM paths ignore this field.
+   * @format uint64
+   */
+  storageGb?: string;
+  /**
+   * Maximum duration in milliseconds that the sandbox can run before being automatically stopped.
+   * @format uint64
+   */
+  timeout?: string;
+  /**
+   * Network access policy for the sandbox. Controls which external hosts the
+   * sandbox can communicate with. When unset, the sandbox inherits the default
+   * network policy.
+   */
+  networkPolicy?: V1NetworkPolicy;
+  /**
+   * Source snapshot used to create this sandbox, when it was restored from
+   * a snapshot. Mirrors CreateSandboxRequest.snapshot_id.
+   */
+  snapshotId?: string;
   /**
    * Mirrors CreateSandboxRequest.persistent. Reflects the durability
    * setting the sandbox was created with. See
@@ -511,42 +487,66 @@ export interface V1Sandbox {
    * create request omitted project_id.
    */
   projectId?: string;
-}
-
-/**
- * One log line. Mirrors logs.LogEntry (sidecar) plus the optional
- * level/phase the UI renders when a structured emitter populates them.
- */
-export interface V1SandboxLogEntry {
   /**
-   * Stable absolute line index across the sandbox's full log stream.
-   * @format uint64
+   * OCI image reference for the sandbox rootfs, e.g.
+   * "docker.io/library/python:3.13" or
+   * "ghcr.io/org/img@sha256:...". When set, the controlplane uses this
+   * image instead of the curated sandbox-<runtime> flavour. Mutually
+   * exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed
+   * (GPU / InfiniBand) requests reject this field.
    */
-  line?: string;
+  image?: string;
+  /**
+   * Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY
+   * the controlplane resolves to pull credentials for `image`. Same
+   * mechanism as JobSpec.image_secret_ref. Only valid when `image` is
+   * set; empty + `image` set = anonymous public-registry pull.
+   */
+  imageSecretRef?: string;
+  /**
+   * Lifecycle status of the sandbox. In addition to the underlying
+   * server states (running, stopping, stopped, error, ...) the
+   * controlplane surfaces:
+   *   - "paused":  the sandbox is a persistent sandbox whose server
+   *                row no longer exists, but whose auto-snapshot does.
+   *                ListSandboxes and GetSandbox synthesise a Sandbox
+   *                from the most recent auto-snapshot so the sandbox
+   *                id keeps appearing in user-facing surfaces while it
+   *                is hibernated. Resume via UpdateSandbox(resume=true).
+   */
+  status?: string;
   /** @format date-time */
-  timestamp?: string;
-  /** stdout | stderr | system */
-  stream?: string;
-  /** info | warn | error | debug (optional). */
-  level?: string;
-  /** Phase tag, e.g. "litvisor.create" (optional). */
-  phase?: string;
-  message?: string;
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
+  /**
+   * Per-phase wall-clock breakdown of the create flow, combining the
+   * controlplane's own stopwatch (`cp.*` phases) with the agent's
+   * litvisor-side breakdown (`agent.*` phases). Populated only on the
+   * CreateSandbox response and only when the requesting user is
+   * internal (`user.details.internal=true`); always empty otherwise
+   * and always empty on List/Get. Used to answer "where did the time
+   * go" without scraping Prometheus or correlating logs across hops.
+   */
+  phaseDurations?: V1SandboxPhaseDuration[];
+  /**
+   * User who created the sandbox. Mirrors Server.Spec.UserId stamped at
+   * create time. Empty for sandboxes created before this field landed.
+   */
+  userId?: string;
 }
 
-/** A single observed network connection (5-tuple) during the sandbox's life. */
-export interface V1SandboxNetworkConnection {
-  protocol?: string;
-  localAddr?: string;
+export interface V1SandboxCommand {
+  id?: string;
+  command?: string;
+  output?: string;
   /** @format int32 */
-  localPort?: number;
-  remoteAddr?: string;
-  /** @format int32 */
-  remotePort?: number;
-  /** @format int64 */
-  bytesSent?: string;
-  /** @format int64 */
-  bytesRecv?: string;
+  exitCode?: number;
+  running?: boolean;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
 }
 
 /** Per-phase wall-clock duration captured by the litvisor controller. */

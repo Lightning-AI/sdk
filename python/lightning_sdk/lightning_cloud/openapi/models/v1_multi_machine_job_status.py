@@ -46,6 +46,8 @@ class V1MultiMachineJobStatus(object):
         'message': 'str',
         'pending_machines': 'str',
         'ready_machines': 'str',
+        'requires_maintenance': 'bool',
+        'requires_maintenance_started_at': 'datetime',
         'retries': 'str',
         'started_at': 'datetime',
         'stopped_at': 'datetime'
@@ -57,18 +59,22 @@ class V1MultiMachineJobStatus(object):
         'message': 'message',
         'pending_machines': 'pendingMachines',
         'ready_machines': 'readyMachines',
+        'requires_maintenance': 'requiresMaintenance',
+        'requires_maintenance_started_at': 'requiresMaintenanceStartedAt',
         'retries': 'retries',
         'started_at': 'startedAt',
         'stopped_at': 'stoppedAt'
     }
 
-    def __init__(self, deleting_machines: 'str' =None, failing_machines: 'str' =None, message: 'str' =None, pending_machines: 'str' =None, ready_machines: 'str' =None, retries: 'str' =None, started_at: 'datetime' =None, stopped_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, deleting_machines: 'str' =None, failing_machines: 'str' =None, message: 'str' =None, pending_machines: 'str' =None, ready_machines: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stopped_at: 'datetime' =None):  # noqa: E501
         """V1MultiMachineJobStatus - a model defined in Swagger"""  # noqa: E501
         self._deleting_machines = None
         self._failing_machines = None
         self._message = None
         self._pending_machines = None
         self._ready_machines = None
+        self._requires_maintenance = None
+        self._requires_maintenance_started_at = None
         self._retries = None
         self._started_at = None
         self._stopped_at = None
@@ -83,6 +89,10 @@ class V1MultiMachineJobStatus(object):
             self.pending_machines = pending_machines
         if ready_machines is not None:
             self.ready_machines = ready_machines
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
+        if requires_maintenance_started_at is not None:
+            self.requires_maintenance_started_at = requires_maintenance_started_at
         if retries is not None:
             self.retries = retries
         if started_at is not None:
@@ -194,6 +204,48 @@ class V1MultiMachineJobStatus(object):
         """
 
         self._ready_machines = ready_machines
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1MultiMachineJobStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1MultiMachineJobStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1MultiMachineJobStatus.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1MultiMachineJobStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
+
+    @property
+    def requires_maintenance_started_at(self) -> 'datetime':
+        """Gets the requires_maintenance_started_at of this V1MultiMachineJobStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance_started_at of this V1MultiMachineJobStatus.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._requires_maintenance_started_at
+
+    @requires_maintenance_started_at.setter
+    def requires_maintenance_started_at(self, requires_maintenance_started_at: 'datetime'):
+        """Sets the requires_maintenance_started_at of this V1MultiMachineJobStatus.
+
+
+        :param requires_maintenance_started_at: The requires_maintenance_started_at of this V1MultiMachineJobStatus.  # noqa: E501
+        :type: datetime
+        """
+
+        self._requires_maintenance_started_at = requires_maintenance_started_at
 
     @property
     def retries(self) -> 'str':

@@ -34,6 +34,13 @@ type V1MultiMachineJobStatus struct {
 	// ready machines
 	ReadyMachines string `json:"readyMachines,omitempty"`
 
+	// requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
+	// requires maintenance started at
+	// Format: date-time
+	RequiresMaintenanceStartedAt strfmt.DateTime `json:"requiresMaintenanceStartedAt,omitempty"`
+
 	// Number of retries
 	Retries string `json:"retries,omitempty"`
 
@@ -50,6 +57,10 @@ type V1MultiMachineJobStatus struct {
 func (m *V1MultiMachineJobStatus) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateRequiresMaintenanceStartedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStartedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -61,6 +72,18 @@ func (m *V1MultiMachineJobStatus) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1MultiMachineJobStatus) validateRequiresMaintenanceStartedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiresMaintenanceStartedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("requiresMaintenanceStartedAt", "body", "date-time", m.RequiresMaintenanceStartedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

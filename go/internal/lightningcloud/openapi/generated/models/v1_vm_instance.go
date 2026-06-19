@@ -35,6 +35,9 @@ type V1VMInstance struct {
 	// gpus
 	Gpus int32 `json:"gpus,omitempty"`
 
+	// id
+	ID string `json:"id,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
@@ -49,6 +52,9 @@ type V1VMInstance struct {
 
 	// resource type
 	ResourceType string `json:"resourceType,omitempty"`
+
+	// server Id
+	ServerID string `json:"serverId,omitempty"`
 
 	// ssh authorized keys
 	SSHAuthorizedKeys string `json:"sshAuthorizedKeys,omitempty"`

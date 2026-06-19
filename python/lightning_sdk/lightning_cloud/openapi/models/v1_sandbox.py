@@ -45,16 +45,24 @@ class V1Sandbox(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'image': 'str',
+        'image_secret_ref': 'str',
         'instance_type': 'str',
         'name': 'str',
+        'network_policy': 'V1NetworkPolicy',
         'organization_id': 'str',
         'persistent': 'bool',
+        'phase_durations': 'list[V1SandboxPhaseDuration]',
         'ports': 'list[str]',
         'project_id': 'str',
         'runtime': 'str',
+        'snapshot_id': 'str',
         'spot': 'bool',
         'status': 'str',
-        'updated_at': 'datetime'
+        'storage_gb': 'str',
+        'timeout': 'str',
+        'updated_at': 'datetime',
+        'user_id': 'str'
     }
 
     attribute_map = {
@@ -62,34 +70,50 @@ class V1Sandbox(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'id': 'id',
+        'image': 'image',
+        'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
         'name': 'name',
+        'network_policy': 'networkPolicy',
         'organization_id': 'organizationId',
         'persistent': 'persistent',
+        'phase_durations': 'phaseDurations',
         'ports': 'ports',
         'project_id': 'projectId',
         'runtime': 'runtime',
+        'snapshot_id': 'snapshotId',
         'spot': 'spot',
         'status': 'status',
-        'updated_at': 'updatedAt'
+        'storage_gb': 'storageGb',
+        'timeout': 'timeout',
+        'updated_at': 'updatedAt',
+        'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, spot: 'bool' =None, status: 'str' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
         self._id = None
+        self._image = None
+        self._image_secret_ref = None
         self._instance_type = None
         self._name = None
+        self._network_policy = None
         self._organization_id = None
         self._persistent = None
+        self._phase_durations = None
         self._ports = None
         self._project_id = None
         self._runtime = None
+        self._snapshot_id = None
         self._spot = None
         self._status = None
+        self._storage_gb = None
+        self._timeout = None
         self._updated_at = None
+        self._user_id = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -99,26 +123,42 @@ class V1Sandbox(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if image is not None:
+            self.image = image
+        if image_secret_ref is not None:
+            self.image_secret_ref = image_secret_ref
         if instance_type is not None:
             self.instance_type = instance_type
         if name is not None:
             self.name = name
+        if network_policy is not None:
+            self.network_policy = network_policy
         if organization_id is not None:
             self.organization_id = organization_id
         if persistent is not None:
             self.persistent = persistent
+        if phase_durations is not None:
+            self.phase_durations = phase_durations
         if ports is not None:
             self.ports = ports
         if project_id is not None:
             self.project_id = project_id
         if runtime is not None:
             self.runtime = runtime
+        if snapshot_id is not None:
+            self.snapshot_id = snapshot_id
         if spot is not None:
             self.spot = spot
         if status is not None:
             self.status = status
+        if storage_gb is not None:
+            self.storage_gb = storage_gb
+        if timeout is not None:
+            self.timeout = timeout
         if updated_at is not None:
             self.updated_at = updated_at
+        if user_id is not None:
+            self.user_id = user_id
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -205,6 +245,52 @@ class V1Sandbox(object):
         self._id = id
 
     @property
+    def image(self) -> 'str':
+        """Gets the image of this V1Sandbox.  # noqa: E501
+
+        OCI image reference for the sandbox rootfs, e.g. \"docker.io/library/python:3.13\" or \"ghcr.io/org/img@sha256:...\". When set, the controlplane uses this image instead of the curated sandbox-<runtime> flavour. Mutually exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed (GPU / InfiniBand) requests reject this field.  # noqa: E501
+
+        :return: The image of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this V1Sandbox.
+
+        OCI image reference for the sandbox rootfs, e.g. \"docker.io/library/python:3.13\" or \"ghcr.io/org/img@sha256:...\". When set, the controlplane uses this image instead of the curated sandbox-<runtime> flavour. Mutually exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed (GPU / InfiniBand) requests reject this field.  # noqa: E501
+
+        :param image: The image of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
+
+    @property
+    def image_secret_ref(self) -> 'str':
+        """Gets the image_secret_ref of this V1Sandbox.  # noqa: E501
+
+        Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY the controlplane resolves to pull credentials for `image`. Same mechanism as JobSpec.image_secret_ref. Only valid when `image` is set; empty + `image` set = anonymous public-registry pull.  # noqa: E501
+
+        :return: The image_secret_ref of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_secret_ref
+
+    @image_secret_ref.setter
+    def image_secret_ref(self, image_secret_ref: 'str'):
+        """Sets the image_secret_ref of this V1Sandbox.
+
+        Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY the controlplane resolves to pull credentials for `image`. Same mechanism as JobSpec.image_secret_ref. Only valid when `image` is set; empty + `image` set = anonymous public-registry pull.  # noqa: E501
+
+        :param image_secret_ref: The image_secret_ref of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._image_secret_ref = image_secret_ref
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this V1Sandbox.  # noqa: E501
 
@@ -245,6 +331,27 @@ class V1Sandbox(object):
         """
 
         self._name = name
+
+    @property
+    def network_policy(self) -> 'V1NetworkPolicy':
+        """Gets the network_policy of this V1Sandbox.  # noqa: E501
+
+
+        :return: The network_policy of this V1Sandbox.  # noqa: E501
+        :rtype: V1NetworkPolicy
+        """
+        return self._network_policy
+
+    @network_policy.setter
+    def network_policy(self, network_policy: 'V1NetworkPolicy'):
+        """Sets the network_policy of this V1Sandbox.
+
+
+        :param network_policy: The network_policy of this V1Sandbox.  # noqa: E501
+        :type: V1NetworkPolicy
+        """
+
+        self._network_policy = network_policy
 
     @property
     def organization_id(self) -> 'str':
@@ -289,6 +396,29 @@ class V1Sandbox(object):
         """
 
         self._persistent = persistent
+
+    @property
+    def phase_durations(self) -> 'list[V1SandboxPhaseDuration]':
+        """Gets the phase_durations of this V1Sandbox.  # noqa: E501
+
+        Per-phase wall-clock breakdown of the create flow, combining the controlplane's own stopwatch (`cp.*` phases) with the agent's litvisor-side breakdown (`agent.*` phases). Populated only on the CreateSandbox response and only when the requesting user is internal (`user.details.internal=true`); always empty otherwise and always empty on List/Get. Used to answer \"where did the time go\" without scraping Prometheus or correlating logs across hops.  # noqa: E501
+
+        :return: The phase_durations of this V1Sandbox.  # noqa: E501
+        :rtype: list[V1SandboxPhaseDuration]
+        """
+        return self._phase_durations
+
+    @phase_durations.setter
+    def phase_durations(self, phase_durations: 'list[V1SandboxPhaseDuration]'):
+        """Sets the phase_durations of this V1Sandbox.
+
+        Per-phase wall-clock breakdown of the create flow, combining the controlplane's own stopwatch (`cp.*` phases) with the agent's litvisor-side breakdown (`agent.*` phases). Populated only on the CreateSandbox response and only when the requesting user is internal (`user.details.internal=true`); always empty otherwise and always empty on List/Get. Used to answer \"where did the time go\" without scraping Prometheus or correlating logs across hops.  # noqa: E501
+
+        :param phase_durations: The phase_durations of this V1Sandbox.  # noqa: E501
+        :type: list[V1SandboxPhaseDuration]
+        """
+
+        self._phase_durations = phase_durations
 
     @property
     def ports(self) -> 'list[str]':
@@ -356,6 +486,29 @@ class V1Sandbox(object):
         self._runtime = runtime
 
     @property
+    def snapshot_id(self) -> 'str':
+        """Gets the snapshot_id of this V1Sandbox.  # noqa: E501
+
+        Source snapshot used to create this sandbox, when it was restored from a snapshot. Mirrors CreateSandboxRequest.snapshot_id.  # noqa: E501
+
+        :return: The snapshot_id of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._snapshot_id
+
+    @snapshot_id.setter
+    def snapshot_id(self, snapshot_id: 'str'):
+        """Sets the snapshot_id of this V1Sandbox.
+
+        Source snapshot used to create this sandbox, when it was restored from a snapshot. Mirrors CreateSandboxRequest.snapshot_id.  # noqa: E501
+
+        :param snapshot_id: The snapshot_id of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._snapshot_id = snapshot_id
+
+    @property
     def spot(self) -> 'bool':
         """Gets the spot of this V1Sandbox.  # noqa: E501
 
@@ -400,6 +553,52 @@ class V1Sandbox(object):
         self._status = status
 
     @property
+    def storage_gb(self) -> 'str':
+        """Gets the storage_gb of this V1Sandbox.  # noqa: E501
+
+        Optional override for the sandbox's writable disk size, in GB. When unset (0) the sandbox inherits the instance-type default from the `cpu-sandbox-*` accelerator (10 / 40 / 60 / 80 GB for cpu-2/4/8/16). Only applies to CPU sandboxes — GPU / VM paths ignore this field.  # noqa: E501
+
+        :return: The storage_gb of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._storage_gb
+
+    @storage_gb.setter
+    def storage_gb(self, storage_gb: 'str'):
+        """Sets the storage_gb of this V1Sandbox.
+
+        Optional override for the sandbox's writable disk size, in GB. When unset (0) the sandbox inherits the instance-type default from the `cpu-sandbox-*` accelerator (10 / 40 / 60 / 80 GB for cpu-2/4/8/16). Only applies to CPU sandboxes — GPU / VM paths ignore this field.  # noqa: E501
+
+        :param storage_gb: The storage_gb of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._storage_gb = storage_gb
+
+    @property
+    def timeout(self) -> 'str':
+        """Gets the timeout of this V1Sandbox.  # noqa: E501
+
+        Maximum duration in milliseconds that the sandbox can run before being automatically stopped.  # noqa: E501
+
+        :return: The timeout of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, timeout: 'str'):
+        """Sets the timeout of this V1Sandbox.
+
+        Maximum duration in milliseconds that the sandbox can run before being automatically stopped.  # noqa: E501
+
+        :param timeout: The timeout of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._timeout = timeout
+
+    @property
     def updated_at(self) -> 'datetime':
         """Gets the updated_at of this V1Sandbox.  # noqa: E501
 
@@ -419,6 +618,29 @@ class V1Sandbox(object):
         """
 
         self._updated_at = updated_at
+
+    @property
+    def user_id(self) -> 'str':
+        """Gets the user_id of this V1Sandbox.  # noqa: E501
+
+        User who created the sandbox. Mirrors Server.Spec.UserId stamped at create time. Empty for sandboxes created before this field landed.  # noqa: E501
+
+        :return: The user_id of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id: 'str'):
+        """Sets the user_id of this V1Sandbox.
+
+        User who created the sandbox. Mirrors Server.Spec.UserId stamped at create time. Empty for sandboxes created before this field landed.  # noqa: E501
+
+        :param user_id: The user_id of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._user_id = user_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

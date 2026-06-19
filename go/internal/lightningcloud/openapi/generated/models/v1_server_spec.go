@@ -110,6 +110,9 @@ type V1ServerSpec struct {
 	// Version of the images, ubuntu20.04, etc..
 	MachineImageVersion string `json:"machineImageVersion,omitempty"`
 
+	// memory zones
+	MemoryZones []*V1MemoryZone `json:"memoryZones"`
+
 	// Set if it's part of a multi machine job
 	MultiMachineJobID string `json:"multiMachineJobId,omitempty"`
 
@@ -227,6 +230,10 @@ func (m *V1ServerSpec) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateMemoryZones(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateNetworkInterfaces(formats); err != nil {
 		res = append(res, err)
 	}
@@ -303,6 +310,36 @@ func (m *V1ServerSpec) validateGuestAccelerators(formats strfmt.Registry) error 
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("guestAccelerators" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) validateMemoryZones(formats strfmt.Registry) error {
+	if swag.IsZero(m.MemoryZones) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.MemoryZones); i++ {
+		if swag.IsZero(m.MemoryZones[i]) { // not required
+			continue
+		}
+
+		if m.MemoryZones[i] != nil {
+			if err := m.MemoryZones[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("memoryZones" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("memoryZones" + "." + strconv.Itoa(i))
 				}
 
 				return err
@@ -497,6 +534,10 @@ func (m *V1ServerSpec) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateMemoryZones(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateNetworkInterfaces(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -570,6 +611,35 @@ func (m *V1ServerSpec) contextValidateGuestAccelerators(ctx context.Context, for
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("guestAccelerators" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) contextValidateMemoryZones(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MemoryZones); i++ {
+
+		if m.MemoryZones[i] != nil {
+
+			if swag.IsZero(m.MemoryZones[i]) { // not required
+				return nil
+			}
+
+			if err := m.MemoryZones[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("memoryZones" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("memoryZones" + "." + strconv.Itoa(i))
 				}
 
 				return err

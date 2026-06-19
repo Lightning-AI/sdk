@@ -62,6 +62,7 @@ class V1AggregatedPodMetrics(object):
         'per_gpu_sm_active': 'dict(str, float)',
         'per_gpu_sm_occupancy': 'dict(str, float)',
         'per_gpu_temperature_c': 'dict(str, int)',
+        'per_gpu_tflops_per_second': 'dict(str, float)',
         'per_gpu_util': 'dict(str, float)',
         'phase': 'str',
         'pod_id': 'str',
@@ -92,6 +93,7 @@ class V1AggregatedPodMetrics(object):
         'per_gpu_sm_active': 'perGpuSmActive',
         'per_gpu_sm_occupancy': 'perGpuSmOccupancy',
         'per_gpu_temperature_c': 'perGpuTemperatureC',
+        'per_gpu_tflops_per_second': 'perGpuTflopsPerSecond',
         'per_gpu_util': 'perGpuUtil',
         'phase': 'phase',
         'pod_id': 'podId',
@@ -100,7 +102,7 @@ class V1AggregatedPodMetrics(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, max_gpu_temp_recorded: 'int' =None, max_power_per_gpu: 'int' =None, max_timestamp: 'datetime' =None, mem_usage: 'float' =None, min_timestamp: 'datetime' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'int' =None, num_cpus_request: 'int' =None, num_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_util: 'dict(str, float)' =None, phase: 'str' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cpu_usage: 'float' =None, labels: 'dict(str, str)' =None, max_gpu_temp_recorded: 'int' =None, max_power_per_gpu: 'int' =None, max_timestamp: 'datetime' =None, mem_usage: 'float' =None, min_timestamp: 'datetime' =None, namespace: 'str' =None, node_name: 'str' =None, num_cpus_limit: 'int' =None, num_cpus_request: 'int' =None, num_gpus: 'int' =None, nvlink_rx_gib: 'dict(str, float)' =None, nvlink_tx_gib: 'dict(str, float)' =None, pcie_rx_gib: 'dict(str, float)' =None, pcie_tx_gib: 'dict(str, float)' =None, per_gpu_mem_used: 'dict(str, int)' =None, per_gpu_power_usage_watts: 'dict(str, int)' =None, per_gpu_sm_active: 'dict(str, float)' =None, per_gpu_sm_occupancy: 'dict(str, float)' =None, per_gpu_temperature_c: 'dict(str, int)' =None, per_gpu_tflops_per_second: 'dict(str, float)' =None, per_gpu_util: 'dict(str, float)' =None, phase: 'str' =None, pod_id: 'str' =None, pod_name: 'str' =None, timestamp: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1AggregatedPodMetrics - a model defined in Swagger"""  # noqa: E501
         self._cpu_usage = None
         self._labels = None
@@ -123,6 +125,7 @@ class V1AggregatedPodMetrics(object):
         self._per_gpu_sm_active = None
         self._per_gpu_sm_occupancy = None
         self._per_gpu_temperature_c = None
+        self._per_gpu_tflops_per_second = None
         self._per_gpu_util = None
         self._phase = None
         self._pod_id = None
@@ -172,6 +175,8 @@ class V1AggregatedPodMetrics(object):
             self.per_gpu_sm_occupancy = per_gpu_sm_occupancy
         if per_gpu_temperature_c is not None:
             self.per_gpu_temperature_c = per_gpu_temperature_c
+        if per_gpu_tflops_per_second is not None:
+            self.per_gpu_tflops_per_second = per_gpu_tflops_per_second
         if per_gpu_util is not None:
             self.per_gpu_util = per_gpu_util
         if phase is not None:
@@ -625,6 +630,27 @@ class V1AggregatedPodMetrics(object):
         """
 
         self._per_gpu_temperature_c = per_gpu_temperature_c
+
+    @property
+    def per_gpu_tflops_per_second(self) -> 'dict(str, float)':
+        """Gets the per_gpu_tflops_per_second of this V1AggregatedPodMetrics.  # noqa: E501
+
+
+        :return: The per_gpu_tflops_per_second of this V1AggregatedPodMetrics.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._per_gpu_tflops_per_second
+
+    @per_gpu_tflops_per_second.setter
+    def per_gpu_tflops_per_second(self, per_gpu_tflops_per_second: 'dict(str, float)'):
+        """Sets the per_gpu_tflops_per_second of this V1AggregatedPodMetrics.
+
+
+        :param per_gpu_tflops_per_second: The per_gpu_tflops_per_second of this V1AggregatedPodMetrics.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._per_gpu_tflops_per_second = per_gpu_tflops_per_second
 
     @property
     def per_gpu_util(self) -> 'dict(str, float)':

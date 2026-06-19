@@ -45,10 +45,12 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
         'content_hash': 'str',
         'epoch': 'str',
         'media_type': 'V1MediaType',
+        'metadata': 'object',
         'mime_type': 'str',
         'name': 'str',
         'size_bytes': 'str',
-        'step': 'str'
+        'step': 'str',
+        'walltime': 'datetime'
     }
 
     attribute_map = {
@@ -56,22 +58,26 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
         'content_hash': 'contentHash',
         'epoch': 'epoch',
         'media_type': 'mediaType',
+        'metadata': 'metadata',
         'mime_type': 'mimeType',
         'name': 'name',
         'size_bytes': 'sizeBytes',
-        'step': 'step'
+        'step': 'step',
+        'walltime': 'walltime'
     }
 
-    def __init__(self, caption: 'str' =None, content_hash: 'str' =None, epoch: 'str' =None, media_type: 'V1MediaType' =None, mime_type: 'str' =None, name: 'str' =None, size_bytes: 'str' =None, step: 'str' =None):  # noqa: E501
+    def __init__(self, caption: 'str' =None, content_hash: 'str' =None, epoch: 'str' =None, media_type: 'V1MediaType' =None, metadata: 'object' =None, mime_type: 'str' =None, name: 'str' =None, size_bytes: 'str' =None, step: 'str' =None, walltime: 'datetime' =None):  # noqa: E501
         """LitLoggerServiceCreateLitLoggerMediaBody - a model defined in Swagger"""  # noqa: E501
         self._caption = None
         self._content_hash = None
         self._epoch = None
         self._media_type = None
+        self._metadata = None
         self._mime_type = None
         self._name = None
         self._size_bytes = None
         self._step = None
+        self._walltime = None
         self.discriminator = None
         if caption is not None:
             self.caption = caption
@@ -81,6 +87,8 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
             self.epoch = epoch
         if media_type is not None:
             self.media_type = media_type
+        if metadata is not None:
+            self.metadata = metadata
         if mime_type is not None:
             self.mime_type = mime_type
         if name is not None:
@@ -89,6 +97,8 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
             self.size_bytes = size_bytes
         if step is not None:
             self.step = step
+        if walltime is not None:
+            self.walltime = walltime
 
     @property
     def caption(self) -> 'str':
@@ -175,6 +185,27 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
         self._media_type = media_type
 
     @property
+    def metadata(self) -> 'object':
+        """Gets the metadata of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+
+
+        :return: The metadata of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+        :rtype: object
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'object'):
+        """Sets the metadata of this LitLoggerServiceCreateLitLoggerMediaBody.
+
+
+        :param metadata: The metadata of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+        :type: object
+        """
+
+        self._metadata = metadata
+
+    @property
     def mime_type(self) -> 'str':
         """Gets the mime_type of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
 
@@ -257,6 +288,27 @@ class LitLoggerServiceCreateLitLoggerMediaBody(object):
         """
 
         self._step = step
+
+    @property
+    def walltime(self) -> 'datetime':
+        """Gets the walltime of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+
+
+        :return: The walltime of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._walltime
+
+    @walltime.setter
+    def walltime(self, walltime: 'datetime'):
+        """Sets the walltime of this LitLoggerServiceCreateLitLoggerMediaBody.
+
+
+        :param walltime: The walltime of this LitLoggerServiceCreateLitLoggerMediaBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._walltime = walltime
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

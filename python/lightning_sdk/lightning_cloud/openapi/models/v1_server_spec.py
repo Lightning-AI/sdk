@@ -70,6 +70,7 @@ class V1ServerSpec(object):
         'machine_id': 'str',
         'machine_image': 'str',
         'machine_image_version': 'str',
+        'memory_zones': 'list[V1MemoryZone]',
         'multi_machine_job_id': 'str',
         'network_interfaces': 'list[V1NetworkInterface]',
         'parent_resource_id': 'str',
@@ -134,6 +135,7 @@ class V1ServerSpec(object):
         'machine_id': 'machineId',
         'machine_image': 'machineImage',
         'machine_image_version': 'machineImageVersion',
+        'memory_zones': 'memoryZones',
         'multi_machine_job_id': 'multiMachineJobId',
         'network_interfaces': 'networkInterfaces',
         'parent_resource_id': 'parentResourceId',
@@ -168,7 +170,7 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
@@ -199,6 +201,7 @@ class V1ServerSpec(object):
         self._machine_id = None
         self._machine_image = None
         self._machine_image_version = None
+        self._memory_zones = None
         self._multi_machine_job_id = None
         self._network_interfaces = None
         self._parent_resource_id = None
@@ -290,6 +293,8 @@ class V1ServerSpec(object):
             self.machine_image = machine_image
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
+        if memory_zones is not None:
+            self.memory_zones = memory_zones
         if multi_machine_job_id is not None:
             self.multi_machine_job_id = multi_machine_job_id
         if network_interfaces is not None:
@@ -965,6 +970,27 @@ class V1ServerSpec(object):
         """
 
         self._machine_image_version = machine_image_version
+
+    @property
+    def memory_zones(self) -> 'list[V1MemoryZone]':
+        """Gets the memory_zones of this V1ServerSpec.  # noqa: E501
+
+
+        :return: The memory_zones of this V1ServerSpec.  # noqa: E501
+        :rtype: list[V1MemoryZone]
+        """
+        return self._memory_zones
+
+    @memory_zones.setter
+    def memory_zones(self, memory_zones: 'list[V1MemoryZone]'):
+        """Sets the memory_zones of this V1ServerSpec.
+
+
+        :param memory_zones: The memory_zones of this V1ServerSpec.  # noqa: E501
+        :type: list[V1MemoryZone]
+        """
+
+        self._memory_zones = memory_zones
 
     @property
     def multi_machine_job_id(self) -> 'str':

@@ -41,29 +41,81 @@ class V1ReportInferenceUsageRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cache_creation_tokens': 'str',
+        'cache_read_tokens': 'str',
         'completion_tokens': 'str',
         'model': 'str',
         'prompt_tokens': 'str'
     }
 
     attribute_map = {
+        'cache_creation_tokens': 'cacheCreationTokens',
+        'cache_read_tokens': 'cacheReadTokens',
         'completion_tokens': 'completionTokens',
         'model': 'model',
         'prompt_tokens': 'promptTokens'
     }
 
-    def __init__(self, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
         """V1ReportInferenceUsageRequest - a model defined in Swagger"""  # noqa: E501
+        self._cache_creation_tokens = None
+        self._cache_read_tokens = None
         self._completion_tokens = None
         self._model = None
         self._prompt_tokens = None
         self.discriminator = None
+        if cache_creation_tokens is not None:
+            self.cache_creation_tokens = cache_creation_tokens
+        if cache_read_tokens is not None:
+            self.cache_read_tokens = cache_read_tokens
         if completion_tokens is not None:
             self.completion_tokens = completion_tokens
         if model is not None:
             self.model = model
         if prompt_tokens is not None:
             self.prompt_tokens = prompt_tokens
+
+    @property
+    def cache_creation_tokens(self) -> 'str':
+        """Gets the cache_creation_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+
+
+        :return: The cache_creation_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_creation_tokens
+
+    @cache_creation_tokens.setter
+    def cache_creation_tokens(self, cache_creation_tokens: 'str'):
+        """Sets the cache_creation_tokens of this V1ReportInferenceUsageRequest.
+
+
+        :param cache_creation_tokens: The cache_creation_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_creation_tokens = cache_creation_tokens
+
+    @property
+    def cache_read_tokens(self) -> 'str':
+        """Gets the cache_read_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+
+
+        :return: The cache_read_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_read_tokens
+
+    @cache_read_tokens.setter
+    def cache_read_tokens(self, cache_read_tokens: 'str'):
+        """Sets the cache_read_tokens of this V1ReportInferenceUsageRequest.
+
+
+        :param cache_read_tokens: The cache_read_tokens of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_read_tokens = cache_read_tokens
 
     @property
     def completion_tokens(self) -> 'str':

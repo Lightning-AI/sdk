@@ -45,6 +45,8 @@ class V1Message(object):
         'account_owner_type': 'V1AccountType',
         'assistant_id': 'str',
         'author': 'V1MessageAuthor',
+        'cache_creation_tokens': 'str',
+        'cache_read_tokens': 'str',
         'completion_tokens': 'str',
         'content': 'list[V1MessageContent]',
         'conversation_id': 'str',
@@ -66,6 +68,8 @@ class V1Message(object):
         'account_owner_type': 'accountOwnerType',
         'assistant_id': 'assistantId',
         'author': 'author',
+        'cache_creation_tokens': 'cacheCreationTokens',
+        'cache_read_tokens': 'cacheReadTokens',
         'completion_tokens': 'completionTokens',
         'content': 'content',
         'conversation_id': 'conversationId',
@@ -82,12 +86,14 @@ class V1Message(object):
         'throughput': 'throughput'
     }
 
-    def __init__(self, account_id: 'str' =None, account_owner_type: 'V1AccountType' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, account_owner_type: 'V1AccountType' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._account_owner_type = None
         self._assistant_id = None
         self._author = None
+        self._cache_creation_tokens = None
+        self._cache_read_tokens = None
         self._completion_tokens = None
         self._content = None
         self._conversation_id = None
@@ -111,6 +117,10 @@ class V1Message(object):
             self.assistant_id = assistant_id
         if author is not None:
             self.author = author
+        if cache_creation_tokens is not None:
+            self.cache_creation_tokens = cache_creation_tokens
+        if cache_read_tokens is not None:
+            self.cache_read_tokens = cache_read_tokens
         if completion_tokens is not None:
             self.completion_tokens = completion_tokens
         if content is not None:
@@ -223,6 +233,48 @@ class V1Message(object):
         """
 
         self._author = author
+
+    @property
+    def cache_creation_tokens(self) -> 'str':
+        """Gets the cache_creation_tokens of this V1Message.  # noqa: E501
+
+
+        :return: The cache_creation_tokens of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_creation_tokens
+
+    @cache_creation_tokens.setter
+    def cache_creation_tokens(self, cache_creation_tokens: 'str'):
+        """Sets the cache_creation_tokens of this V1Message.
+
+
+        :param cache_creation_tokens: The cache_creation_tokens of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_creation_tokens = cache_creation_tokens
+
+    @property
+    def cache_read_tokens(self) -> 'str':
+        """Gets the cache_read_tokens of this V1Message.  # noqa: E501
+
+
+        :return: The cache_read_tokens of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_read_tokens
+
+    @cache_read_tokens.setter
+    def cache_read_tokens(self, cache_read_tokens: 'str'):
+        """Sets the cache_read_tokens of this V1Message.
+
+
+        :param cache_read_tokens: The cache_read_tokens of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_read_tokens = cache_read_tokens
 
     @property
     def completion_tokens(self) -> 'str':

@@ -67,12 +67,16 @@ class V1Machine(object):
         'purpose': 'str',
         'ready_at': 'datetime',
         'requires_maintenance': 'bool',
+        'requires_maintenance_reason': 'str',
+        'requires_maintenance_started_at': 'datetime',
+        'requires_maintenance_user_id': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
         'resources': 'V1Resources',
         'schedulable_affinity': 'V1SchedulableAffinity',
         'ssh_username': 'str',
         'status': 'str',
+        'switch_ip': 'str',
         'unschedulable': 'bool',
         'updated_at': 'datetime',
         'warning_message': 'str'
@@ -105,18 +109,22 @@ class V1Machine(object):
         'purpose': 'purpose',
         'ready_at': 'readyAt',
         'requires_maintenance': 'requiresMaintenance',
+        'requires_maintenance_reason': 'requiresMaintenanceReason',
+        'requires_maintenance_started_at': 'requiresMaintenanceStartedAt',
+        'requires_maintenance_user_id': 'requiresMaintenanceUserId',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
         'resources': 'resources',
         'schedulable_affinity': 'schedulableAffinity',
         'ssh_username': 'sshUsername',
         'status': 'status',
+        'switch_ip': 'switchIp',
         'unschedulable': 'unschedulable',
         'updated_at': 'updatedAt',
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -144,12 +152,16 @@ class V1Machine(object):
         self._purpose = None
         self._ready_at = None
         self._requires_maintenance = None
+        self._requires_maintenance_reason = None
+        self._requires_maintenance_started_at = None
+        self._requires_maintenance_user_id = None
         self._resource_id = None
         self._resource_type = None
         self._resources = None
         self._schedulable_affinity = None
         self._ssh_username = None
         self._status = None
+        self._switch_ip = None
         self._unschedulable = None
         self._updated_at = None
         self._warning_message = None
@@ -206,6 +218,12 @@ class V1Machine(object):
             self.ready_at = ready_at
         if requires_maintenance is not None:
             self.requires_maintenance = requires_maintenance
+        if requires_maintenance_reason is not None:
+            self.requires_maintenance_reason = requires_maintenance_reason
+        if requires_maintenance_started_at is not None:
+            self.requires_maintenance_started_at = requires_maintenance_started_at
+        if requires_maintenance_user_id is not None:
+            self.requires_maintenance_user_id = requires_maintenance_user_id
         if resource_id is not None:
             self.resource_id = resource_id
         if resource_type is not None:
@@ -218,6 +236,8 @@ class V1Machine(object):
             self.ssh_username = ssh_username
         if status is not None:
             self.status = status
+        if switch_ip is not None:
+            self.switch_ip = switch_ip
         if unschedulable is not None:
             self.unschedulable = unschedulable
         if updated_at is not None:
@@ -774,6 +794,69 @@ class V1Machine(object):
         self._requires_maintenance = requires_maintenance
 
     @property
+    def requires_maintenance_reason(self) -> 'str':
+        """Gets the requires_maintenance_reason of this V1Machine.  # noqa: E501
+
+
+        :return: The requires_maintenance_reason of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._requires_maintenance_reason
+
+    @requires_maintenance_reason.setter
+    def requires_maintenance_reason(self, requires_maintenance_reason: 'str'):
+        """Sets the requires_maintenance_reason of this V1Machine.
+
+
+        :param requires_maintenance_reason: The requires_maintenance_reason of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._requires_maintenance_reason = requires_maintenance_reason
+
+    @property
+    def requires_maintenance_started_at(self) -> 'datetime':
+        """Gets the requires_maintenance_started_at of this V1Machine.  # noqa: E501
+
+
+        :return: The requires_maintenance_started_at of this V1Machine.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._requires_maintenance_started_at
+
+    @requires_maintenance_started_at.setter
+    def requires_maintenance_started_at(self, requires_maintenance_started_at: 'datetime'):
+        """Sets the requires_maintenance_started_at of this V1Machine.
+
+
+        :param requires_maintenance_started_at: The requires_maintenance_started_at of this V1Machine.  # noqa: E501
+        :type: datetime
+        """
+
+        self._requires_maintenance_started_at = requires_maintenance_started_at
+
+    @property
+    def requires_maintenance_user_id(self) -> 'str':
+        """Gets the requires_maintenance_user_id of this V1Machine.  # noqa: E501
+
+
+        :return: The requires_maintenance_user_id of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._requires_maintenance_user_id
+
+    @requires_maintenance_user_id.setter
+    def requires_maintenance_user_id(self, requires_maintenance_user_id: 'str'):
+        """Sets the requires_maintenance_user_id of this V1Machine.
+
+
+        :param requires_maintenance_user_id: The requires_maintenance_user_id of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._requires_maintenance_user_id = requires_maintenance_user_id
+
+    @property
     def resource_id(self) -> 'str':
         """Gets the resource_id of this V1Machine.  # noqa: E501
 
@@ -898,6 +981,27 @@ class V1Machine(object):
         """
 
         self._status = status
+
+    @property
+    def switch_ip(self) -> 'str':
+        """Gets the switch_ip of this V1Machine.  # noqa: E501
+
+
+        :return: The switch_ip of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._switch_ip
+
+    @switch_ip.setter
+    def switch_ip(self, switch_ip: 'str'):
+        """Sets the switch_ip of this V1Machine.
+
+
+        :param switch_ip: The switch_ip of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._switch_ip = switch_ip
 
     @property
     def unschedulable(self) -> 'bool':

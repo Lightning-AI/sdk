@@ -47,11 +47,13 @@ class V1VMInstance(object):
         'enable_infiniband': 'bool',
         'extra_run_cmds': 'list[str]',
         'gpus': 'int',
+        'id': 'str',
         'image': 'str',
         'memory_gb': 'int',
         'name': 'str',
         'ports': 'list[int]',
         'resource_type': 'str',
+        'server_id': 'str',
         'ssh_authorized_keys': 'str',
         'user': 'str',
         'user_data': 'str'
@@ -64,17 +66,19 @@ class V1VMInstance(object):
         'enable_infiniband': 'enableInfiniband',
         'extra_run_cmds': 'extraRunCmds',
         'gpus': 'gpus',
+        'id': 'id',
         'image': 'image',
         'memory_gb': 'memoryGb',
         'name': 'name',
         'ports': 'ports',
         'resource_type': 'resourceType',
+        'server_id': 'serverId',
         'ssh_authorized_keys': 'sshAuthorizedKeys',
         'user': 'user',
         'user_data': 'userData'
     }
 
-    def __init__(self, cpus: 'int' =None, debug: 'bool' =None, disk_gb: 'int' =None, enable_infiniband: 'bool' =None, extra_run_cmds: 'list[str]' =None, gpus: 'int' =None, image: 'str' =None, memory_gb: 'int' =None, name: 'str' =None, ports: 'list[int]' =None, resource_type: 'str' =None, ssh_authorized_keys: 'str' =None, user: 'str' =None, user_data: 'str' =None):  # noqa: E501
+    def __init__(self, cpus: 'int' =None, debug: 'bool' =None, disk_gb: 'int' =None, enable_infiniband: 'bool' =None, extra_run_cmds: 'list[str]' =None, gpus: 'int' =None, id: 'str' =None, image: 'str' =None, memory_gb: 'int' =None, name: 'str' =None, ports: 'list[int]' =None, resource_type: 'str' =None, server_id: 'str' =None, ssh_authorized_keys: 'str' =None, user: 'str' =None, user_data: 'str' =None):  # noqa: E501
         """V1VMInstance - a model defined in Swagger"""  # noqa: E501
         self._cpus = None
         self._debug = None
@@ -82,11 +86,13 @@ class V1VMInstance(object):
         self._enable_infiniband = None
         self._extra_run_cmds = None
         self._gpus = None
+        self._id = None
         self._image = None
         self._memory_gb = None
         self._name = None
         self._ports = None
         self._resource_type = None
+        self._server_id = None
         self._ssh_authorized_keys = None
         self._user = None
         self._user_data = None
@@ -103,6 +109,8 @@ class V1VMInstance(object):
             self.extra_run_cmds = extra_run_cmds
         if gpus is not None:
             self.gpus = gpus
+        if id is not None:
+            self.id = id
         if image is not None:
             self.image = image
         if memory_gb is not None:
@@ -113,6 +121,8 @@ class V1VMInstance(object):
             self.ports = ports
         if resource_type is not None:
             self.resource_type = resource_type
+        if server_id is not None:
+            self.server_id = server_id
         if ssh_authorized_keys is not None:
             self.ssh_authorized_keys = ssh_authorized_keys
         if user is not None:
@@ -247,6 +257,27 @@ class V1VMInstance(object):
         self._gpus = gpus
 
     @property
+    def id(self) -> 'str':
+        """Gets the id of this V1VMInstance.  # noqa: E501
+
+
+        :return: The id of this V1VMInstance.  # noqa: E501
+        :rtype: str
+        """
+        return self._id
+
+    @id.setter
+    def id(self, id: 'str'):
+        """Sets the id of this V1VMInstance.
+
+
+        :param id: The id of this V1VMInstance.  # noqa: E501
+        :type: str
+        """
+
+        self._id = id
+
+    @property
     def image(self) -> 'str':
         """Gets the image of this V1VMInstance.  # noqa: E501
 
@@ -350,6 +381,27 @@ class V1VMInstance(object):
         """
 
         self._resource_type = resource_type
+
+    @property
+    def server_id(self) -> 'str':
+        """Gets the server_id of this V1VMInstance.  # noqa: E501
+
+
+        :return: The server_id of this V1VMInstance.  # noqa: E501
+        :rtype: str
+        """
+        return self._server_id
+
+    @server_id.setter
+    def server_id(self, server_id: 'str'):
+        """Sets the server_id of this V1VMInstance.
+
+
+        :param server_id: The server_id of this V1VMInstance.  # noqa: E501
+        :type: str
+        """
+
+        self._server_id = server_id
 
     @property
     def ssh_authorized_keys(self) -> 'str':

@@ -48,6 +48,7 @@ class V1LitLoggerMedia(object):
         'epoch': 'str',
         'id': 'str',
         'media_type': 'V1MediaType',
+        'metadata': 'object',
         'metrics_stream_id': 'str',
         'mime_type': 'str',
         'name': 'str',
@@ -56,7 +57,8 @@ class V1LitLoggerMedia(object):
         'step': 'str',
         'storage_path': 'str',
         'updated_at': 'datetime',
-        'upload_complete': 'bool'
+        'upload_complete': 'bool',
+        'walltime': 'datetime'
     }
 
     attribute_map = {
@@ -67,6 +69,7 @@ class V1LitLoggerMedia(object):
         'epoch': 'epoch',
         'id': 'id',
         'media_type': 'mediaType',
+        'metadata': 'metadata',
         'metrics_stream_id': 'metricsStreamId',
         'mime_type': 'mimeType',
         'name': 'name',
@@ -75,10 +78,11 @@ class V1LitLoggerMedia(object):
         'step': 'step',
         'storage_path': 'storagePath',
         'updated_at': 'updatedAt',
-        'upload_complete': 'uploadComplete'
+        'upload_complete': 'uploadComplete',
+        'walltime': 'walltime'
     }
 
-    def __init__(self, caption: 'str' =None, cluster_id: 'str' =None, content_hash: 'str' =None, created_at: 'datetime' =None, epoch: 'str' =None, id: 'str' =None, media_type: 'V1MediaType' =None, metrics_stream_id: 'str' =None, mime_type: 'str' =None, name: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, step: 'str' =None, storage_path: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None):  # noqa: E501
+    def __init__(self, caption: 'str' =None, cluster_id: 'str' =None, content_hash: 'str' =None, created_at: 'datetime' =None, epoch: 'str' =None, id: 'str' =None, media_type: 'V1MediaType' =None, metadata: 'object' =None, metrics_stream_id: 'str' =None, mime_type: 'str' =None, name: 'str' =None, project_id: 'str' =None, size_bytes: 'str' =None, step: 'str' =None, storage_path: 'str' =None, updated_at: 'datetime' =None, upload_complete: 'bool' =None, walltime: 'datetime' =None):  # noqa: E501
         """V1LitLoggerMedia - a model defined in Swagger"""  # noqa: E501
         self._caption = None
         self._cluster_id = None
@@ -87,6 +91,7 @@ class V1LitLoggerMedia(object):
         self._epoch = None
         self._id = None
         self._media_type = None
+        self._metadata = None
         self._metrics_stream_id = None
         self._mime_type = None
         self._name = None
@@ -96,6 +101,7 @@ class V1LitLoggerMedia(object):
         self._storage_path = None
         self._updated_at = None
         self._upload_complete = None
+        self._walltime = None
         self.discriminator = None
         if caption is not None:
             self.caption = caption
@@ -111,6 +117,8 @@ class V1LitLoggerMedia(object):
             self.id = id
         if media_type is not None:
             self.media_type = media_type
+        if metadata is not None:
+            self.metadata = metadata
         if metrics_stream_id is not None:
             self.metrics_stream_id = metrics_stream_id
         if mime_type is not None:
@@ -129,6 +137,8 @@ class V1LitLoggerMedia(object):
             self.updated_at = updated_at
         if upload_complete is not None:
             self.upload_complete = upload_complete
+        if walltime is not None:
+            self.walltime = walltime
 
     @property
     def caption(self) -> 'str':
@@ -276,6 +286,27 @@ class V1LitLoggerMedia(object):
         """
 
         self._media_type = media_type
+
+    @property
+    def metadata(self) -> 'object':
+        """Gets the metadata of this V1LitLoggerMedia.  # noqa: E501
+
+
+        :return: The metadata of this V1LitLoggerMedia.  # noqa: E501
+        :rtype: object
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, metadata: 'object'):
+        """Sets the metadata of this V1LitLoggerMedia.
+
+
+        :param metadata: The metadata of this V1LitLoggerMedia.  # noqa: E501
+        :type: object
+        """
+
+        self._metadata = metadata
 
     @property
     def metrics_stream_id(self) -> 'str':
@@ -465,6 +496,27 @@ class V1LitLoggerMedia(object):
         """
 
         self._upload_complete = upload_complete
+
+    @property
+    def walltime(self) -> 'datetime':
+        """Gets the walltime of this V1LitLoggerMedia.  # noqa: E501
+
+
+        :return: The walltime of this V1LitLoggerMedia.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._walltime
+
+    @walltime.setter
+    def walltime(self, walltime: 'datetime'):
+        """Sets the walltime of this V1LitLoggerMedia.
+
+
+        :param walltime: The walltime of this V1LitLoggerMedia.  # noqa: E501
+        :type: datetime
+        """
+
+        self._walltime = walltime
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -738,7 +738,7 @@ class IncidentsServiceApi(object):
         :param str project_id:
         :param str cluster_id:
         :param str status: optional filter
-        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user
+        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user  - INCIDENT_TYPE_K8S_NODE_CONDITION: dmesg/journald-derived Kubernetes NodeConditions & node Events (e.g. GPU/PCIe/kernel problems surfaced by node-problem-detector)  - INCIDENT_TYPE_K8S_NODE_DOWNTIME: Node offline (num_gpus = 0)
         :param str severity: optional filter
         :param int page_size:
         :param str page_token:
@@ -765,7 +765,7 @@ class IncidentsServiceApi(object):
         :param str project_id:
         :param str cluster_id:
         :param str status: optional filter
-        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user
+        :param str type: optional filter   - INCIDENT_TYPE_USER_REPORTED: Manually reported by a user  - INCIDENT_TYPE_K8S_NODE_CONDITION: dmesg/journald-derived Kubernetes NodeConditions & node Events (e.g. GPU/PCIe/kernel problems surfaced by node-problem-detector)  - INCIDENT_TYPE_K8S_NODE_DOWNTIME: Node offline (num_gpus = 0)
         :param str severity: optional filter
         :param int page_size:
         :param str page_token:

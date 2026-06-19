@@ -48,6 +48,9 @@ type ClusterServiceUpdateMachineBody struct {
 	// Whether the machine on which the server is running requires maintenance
 	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
 
+	// requires maintenance reason
+	RequiresMaintenanceReason string `json:"requiresMaintenanceReason,omitempty"`
+
 	// reset hugepages
 	ResetHugepages bool `json:"resetHugepages,omitempty"`
 

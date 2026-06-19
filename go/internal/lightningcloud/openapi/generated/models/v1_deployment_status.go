@@ -8,8 +8,10 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1DeploymentStatus v1 deployment status
@@ -38,12 +40,40 @@ type V1DeploymentStatus struct {
 	// ready replicas
 	ReadyReplicas int64 `json:"readyReplicas,omitempty"`
 
+	// requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
+	// requires maintenance started at
+	// Format: date-time
+	RequiresMaintenanceStartedAt strfmt.DateTime `json:"requiresMaintenanceStartedAt,omitempty"`
+
 	// URLs to access the deployment
 	Urls []string `json:"urls"`
 }
 
 // Validate validates this v1 deployment status
 func (m *V1DeploymentStatus) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateRequiresMaintenanceStartedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1DeploymentStatus) validateRequiresMaintenanceStartedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiresMaintenanceStartedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("requiresMaintenanceStartedAt", "body", "date-time", m.RequiresMaintenanceStartedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

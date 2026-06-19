@@ -25,6 +25,11 @@ type V1BYOMSpec struct {
 	// dtype
 	Dtype string `json:"dtype,omitempty"`
 
+	// Opt-in: when true, the weight-watcher sidecar runs for this deployment,
+	// enabling hot weight reload (HuggingFace auto-detect + user-triggered).
+	// Defaults to false.
+	EnableWeightReload bool `json:"enableWeightReload,omitempty"`
+
 	// extra vllm args
 	ExtraVllmArgs []string `json:"extraVllmArgs"`
 

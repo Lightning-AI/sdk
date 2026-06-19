@@ -148,6 +148,111 @@ class VirtualMachineServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def virtual_machine_service_configure_cluster_idle_vm_management(self, body: 'VirtualMachineServiceConfigureClusterIdleVmManagementBody', cluster_id: 'str', **kwargs) -> 'V1ConfigureClusterIdleVmManagementResponse':  # noqa: E501
+        """Enables or disables idle VM management for a convertible cluster. When enabled, a background job periodically terminates idle VMs; enabling does not reap anything immediately.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.virtual_machine_service_configure_cluster_idle_vm_management(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VirtualMachineServiceConfigureClusterIdleVmManagementBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1ConfigureClusterIdleVmManagementResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.virtual_machine_service_configure_cluster_idle_vm_management_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.virtual_machine_service_configure_cluster_idle_vm_management_with_http_info(body, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def virtual_machine_service_configure_cluster_idle_vm_management_with_http_info(self, body: 'VirtualMachineServiceConfigureClusterIdleVmManagementBody', cluster_id: 'str', **kwargs) -> 'V1ConfigureClusterIdleVmManagementResponse':  # noqa: E501
+        """Enables or disables idle VM management for a convertible cluster. When enabled, a background job periodically terminates idle VMs; enabling does not reap anything immediately.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.virtual_machine_service_configure_cluster_idle_vm_management_with_http_info(body, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param VirtualMachineServiceConfigureClusterIdleVmManagementBody body: (required)
+        :param str cluster_id: (required)
+        :return: V1ConfigureClusterIdleVmManagementResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method virtual_machine_service_configure_cluster_idle_vm_management" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_configure_cluster_idle_vm_management`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_configure_cluster_idle_vm_management`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/clusters/{clusterId}/idle-vm-management', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ConfigureClusterIdleVmManagementResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def virtual_machine_service_create_virtual_machine(self, body: 'VirtualMachineServiceCreateVirtualMachineBody', cluster_id: 'str', **kwargs) -> 'V1VirtualMachine':  # noqa: E501
         """virtual_machine_service_create_virtual_machine  # noqa: E501
 
@@ -354,12 +459,12 @@ class VirtualMachineServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def virtual_machine_service_disable_node_vms(self, body: 'VirtualMachineServiceDisableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DisableNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_disable_node_vms  # noqa: E501
+    def virtual_machine_service_disable_node_v_ms(self, body: 'VirtualMachineServiceDisableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DisableNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_disable_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_disable_node_vms(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_disable_node_v_ms(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -372,17 +477,17 @@ class VirtualMachineServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.virtual_machine_service_disable_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            return self.virtual_machine_service_disable_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
         else:
-            (data) = self.virtual_machine_service_disable_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            (data) = self.virtual_machine_service_disable_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
             return data
 
-    def virtual_machine_service_disable_node_vms_with_http_info(self, body: 'VirtualMachineServiceDisableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DisableNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_disable_node_vms  # noqa: E501
+    def virtual_machine_service_disable_node_v_ms_with_http_info(self, body: 'VirtualMachineServiceDisableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DisableNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_disable_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_disable_node_vms_with_http_info(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_disable_node_v_ms_with_http_info(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -405,22 +510,22 @@ class VirtualMachineServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method virtual_machine_service_disable_node_vms" % key
+                    " to method virtual_machine_service_disable_node_v_ms" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_disable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_disable_node_v_ms`")  # noqa: E501
         # verify the required parameter 'cluster_id' is set
         if ('cluster_id' not in params or
                 params['cluster_id'] is None):
-            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_disable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_disable_node_v_ms`")  # noqa: E501
         # verify the required parameter 'node_name' is set
         if ('node_name' not in params or
                 params['node_name'] is None):
-            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_disable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_disable_node_v_ms`")  # noqa: E501
 
         collection_formats = {}
 
@@ -467,12 +572,12 @@ class VirtualMachineServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def virtual_machine_service_drain_node_vms(self, body: 'VirtualMachineServiceDrainNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DrainNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_drain_node_vms  # noqa: E501
+    def virtual_machine_service_drain_node_v_ms(self, body: 'VirtualMachineServiceDrainNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DrainNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_drain_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_drain_node_vms(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_drain_node_v_ms(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -485,17 +590,17 @@ class VirtualMachineServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.virtual_machine_service_drain_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            return self.virtual_machine_service_drain_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
         else:
-            (data) = self.virtual_machine_service_drain_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            (data) = self.virtual_machine_service_drain_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
             return data
 
-    def virtual_machine_service_drain_node_vms_with_http_info(self, body: 'VirtualMachineServiceDrainNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DrainNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_drain_node_vms  # noqa: E501
+    def virtual_machine_service_drain_node_v_ms_with_http_info(self, body: 'VirtualMachineServiceDrainNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1DrainNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_drain_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_drain_node_vms_with_http_info(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_drain_node_v_ms_with_http_info(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -518,22 +623,22 @@ class VirtualMachineServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method virtual_machine_service_drain_node_vms" % key
+                    " to method virtual_machine_service_drain_node_v_ms" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_drain_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_drain_node_v_ms`")  # noqa: E501
         # verify the required parameter 'cluster_id' is set
         if ('cluster_id' not in params or
                 params['cluster_id'] is None):
-            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_drain_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_drain_node_v_ms`")  # noqa: E501
         # verify the required parameter 'node_name' is set
         if ('node_name' not in params or
                 params['node_name'] is None):
-            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_drain_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_drain_node_v_ms`")  # noqa: E501
 
         collection_formats = {}
 
@@ -580,12 +685,12 @@ class VirtualMachineServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def virtual_machine_service_enable_node_vms(self, body: 'VirtualMachineServiceEnableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1EnableNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_enable_node_vms  # noqa: E501
+    def virtual_machine_service_enable_node_v_ms(self, body: 'VirtualMachineServiceEnableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1EnableNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_enable_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_enable_node_vms(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_enable_node_v_ms(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -598,17 +703,17 @@ class VirtualMachineServiceApi(object):
         """
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
-            return self.virtual_machine_service_enable_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            return self.virtual_machine_service_enable_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
         else:
-            (data) = self.virtual_machine_service_enable_node_vms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
+            (data) = self.virtual_machine_service_enable_node_v_ms_with_http_info(body, cluster_id, node_name, **kwargs)  # noqa: E501
             return data
 
-    def virtual_machine_service_enable_node_vms_with_http_info(self, body: 'VirtualMachineServiceEnableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1EnableNodeVMsResponse':  # noqa: E501
-        """virtual_machine_service_enable_node_vms  # noqa: E501
+    def virtual_machine_service_enable_node_v_ms_with_http_info(self, body: 'VirtualMachineServiceEnableNodeVMsBody', cluster_id: 'str', node_name: 'str', **kwargs) -> 'V1EnableNodeVMsResponse':  # noqa: E501
+        """virtual_machine_service_enable_node_v_ms  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
-        >>> thread = api.virtual_machine_service_enable_node_vms_with_http_info(body, cluster_id, node_name, async_req=True)
+        >>> thread = api.virtual_machine_service_enable_node_v_ms_with_http_info(body, cluster_id, node_name, async_req=True)
         >>> result = thread.get()
 
         :param async_req bool
@@ -631,22 +736,22 @@ class VirtualMachineServiceApi(object):
             if key not in all_params:
                 raise TypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method virtual_machine_service_enable_node_vms" % key
+                    " to method virtual_machine_service_enable_node_v_ms" % key
                 )
             params[key] = val
         del params['kwargs']
         # verify the required parameter 'body' is set
         if ('body' not in params or
                 params['body'] is None):
-            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_enable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `body` when calling `virtual_machine_service_enable_node_v_ms`")  # noqa: E501
         # verify the required parameter 'cluster_id' is set
         if ('cluster_id' not in params or
                 params['cluster_id'] is None):
-            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_enable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_enable_node_v_ms`")  # noqa: E501
         # verify the required parameter 'node_name' is set
         if ('node_name' not in params or
                 params['node_name'] is None):
-            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_enable_node_vms`")  # noqa: E501
+            raise ValueError("Missing the required parameter `node_name` when calling `virtual_machine_service_enable_node_v_ms`")  # noqa: E501
 
         collection_formats = {}
 
@@ -779,6 +884,99 @@ class VirtualMachineServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetClusterAutoscalingResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def virtual_machine_service_get_cluster_idle_vm_management(self, cluster_id: 'str', **kwargs) -> 'V1GetClusterIdleVmManagementResponse':  # noqa: E501
+        """Returns whether idle VM management is enabled for the cluster, along with the VMs Jellyfish currently considers idle.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.virtual_machine_service_get_cluster_idle_vm_management(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1GetClusterIdleVmManagementResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.virtual_machine_service_get_cluster_idle_vm_management_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.virtual_machine_service_get_cluster_idle_vm_management_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def virtual_machine_service_get_cluster_idle_vm_management_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1GetClusterIdleVmManagementResponse':  # noqa: E501
+        """Returns whether idle VM management is enabled for the cluster, along with the VMs Jellyfish currently considers idle.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.virtual_machine_service_get_cluster_idle_vm_management_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :return: V1GetClusterIdleVmManagementResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method virtual_machine_service_get_cluster_idle_vm_management" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `virtual_machine_service_get_cluster_idle_vm_management`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/clusters/{clusterId}/idle-vm-management', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetClusterIdleVmManagementResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

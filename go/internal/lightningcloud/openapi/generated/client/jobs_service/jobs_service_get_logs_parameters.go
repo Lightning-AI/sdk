@@ -85,6 +85,14 @@ type JobsServiceGetLogsParams struct {
 	// Query.
 	Query *string
 
+	/* Severity.
+
+	     Minimum severity to include: returns only lines equal to or more severe than this
+	(error > warning > info > debug). Empty returns all. Lines with no inferred severity
+	rank as debug, so any threshold above debug excludes them.
+	*/
+	Severity *string
+
 	// Since.
 	Since *string
 
@@ -221,6 +229,17 @@ func (o *JobsServiceGetLogsParams) SetQuery(query *string) {
 	o.Query = query
 }
 
+// WithSeverity adds the severity to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSeverity(severity *string) *JobsServiceGetLogsParams {
+	o.SetSeverity(severity)
+	return o
+}
+
+// SetSeverity adds the severity to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSeverity(severity *string) {
+	o.Severity = severity
+}
+
 // WithSince adds the since to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) WithSince(since *string) *JobsServiceGetLogsParams {
 	o.SetSince(since)
@@ -347,6 +366,23 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qQuery != "" {
 
 			if err := r.SetQueryParam("query", qQuery); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Severity != nil {
+
+		// query param severity
+		var qrSeverity string
+
+		if o.Severity != nil {
+			qrSeverity = *o.Severity
+		}
+		qSeverity := qrSeverity
+		if qSeverity != "" {
+
+			if err := r.SetQueryParam("severity", qSeverity); err != nil {
 				return err
 			}
 		}

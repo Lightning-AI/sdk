@@ -56,6 +56,8 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	VirtualMachineServiceConfigureClusterAutoscaling(params *VirtualMachineServiceConfigureClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceConfigureClusterAutoscalingOK, error)
 
+	VirtualMachineServiceConfigureClusterIdleVMManagement(params *VirtualMachineServiceConfigureClusterIdleVMManagementParams, opts ...ClientOption) (*VirtualMachineServiceConfigureClusterIdleVMManagementOK, error)
+
 	VirtualMachineServiceCreateVirtualMachine(params *VirtualMachineServiceCreateVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceCreateVirtualMachineOK, error)
 
 	VirtualMachineServiceDeleteVirtualMachine(params *VirtualMachineServiceDeleteVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceDeleteVirtualMachineOK, error)
@@ -67,6 +69,8 @@ type ClientService interface {
 	VirtualMachineServiceEnableNodeVMs(params *VirtualMachineServiceEnableNodeVMsParams, opts ...ClientOption) (*VirtualMachineServiceEnableNodeVMsOK, error)
 
 	VirtualMachineServiceGetClusterAutoscaling(params *VirtualMachineServiceGetClusterAutoscalingParams, opts ...ClientOption) (*VirtualMachineServiceGetClusterAutoscalingOK, error)
+
+	VirtualMachineServiceGetClusterIdleVMManagement(params *VirtualMachineServiceGetClusterIdleVMManagementParams, opts ...ClientOption) (*VirtualMachineServiceGetClusterIdleVMManagementOK, error)
 
 	VirtualMachineServiceGetVirtualMachine(params *VirtualMachineServiceGetVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceGetVirtualMachineOK, error)
 
@@ -121,6 +125,48 @@ func (a *Client) VirtualMachineServiceConfigureClusterAutoscaling(params *Virtua
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*VirtualMachineServiceConfigureClusterAutoscalingDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+VirtualMachineServiceConfigureClusterIdleVMManagement enables or disables idle VM management for a convertible cluster when enabled a background job periodically terminates idle v ms enabling does not reap anything immediately
+*/
+func (a *Client) VirtualMachineServiceConfigureClusterIdleVMManagement(params *VirtualMachineServiceConfigureClusterIdleVMManagementParams, opts ...ClientOption) (*VirtualMachineServiceConfigureClusterIdleVMManagementOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewVirtualMachineServiceConfigureClusterIdleVMManagementParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "VirtualMachineService_ConfigureClusterIdleVmManagement",
+		Method:             "PUT",
+		PathPattern:        "/v1/clusters/{clusterId}/idle-vm-management",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VirtualMachineServiceConfigureClusterIdleVMManagementReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*VirtualMachineServiceConfigureClusterIdleVMManagementOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*VirtualMachineServiceConfigureClusterIdleVMManagementDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -373,6 +419,48 @@ func (a *Client) VirtualMachineServiceGetClusterAutoscaling(params *VirtualMachi
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*VirtualMachineServiceGetClusterAutoscalingDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+VirtualMachineServiceGetClusterIdleVMManagement returns whether idle VM management is enabled for the cluster along with the v ms jellyfish currently considers idle
+*/
+func (a *Client) VirtualMachineServiceGetClusterIdleVMManagement(params *VirtualMachineServiceGetClusterIdleVMManagementParams, opts ...ClientOption) (*VirtualMachineServiceGetClusterIdleVMManagementOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewVirtualMachineServiceGetClusterIdleVMManagementParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "VirtualMachineService_GetClusterIdleVmManagement",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/{clusterId}/idle-vm-management",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VirtualMachineServiceGetClusterIdleVMManagementReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*VirtualMachineServiceGetClusterIdleVMManagementOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*VirtualMachineServiceGetClusterIdleVMManagementDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

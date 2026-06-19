@@ -107,6 +107,16 @@ type V1Machine struct {
 	// Whether the machine on which the server is running requires maintenance
 	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
 
+	// requires maintenance reason
+	RequiresMaintenanceReason string `json:"requiresMaintenanceReason,omitempty"`
+
+	// requires maintenance started at
+	// Format: date-time
+	RequiresMaintenanceStartedAt strfmt.DateTime `json:"requiresMaintenanceStartedAt,omitempty"`
+
+	// requires maintenance user Id
+	RequiresMaintenanceUserID string `json:"requiresMaintenanceUserId,omitempty"`
+
 	// If higher level resource is set, this is the ID of the resource
 	ResourceID string `json:"resourceId,omitempty"`
 
@@ -124,6 +134,9 @@ type V1Machine struct {
 
 	// status
 	Status string `json:"status,omitempty"`
+
+	// IB leaf switch this node is connected to (within provider_fabric_group)
+	SwitchIP string `json:"switchIp,omitempty"`
 
 	// unschedulable
 	Unschedulable bool `json:"unschedulable,omitempty"`
@@ -153,6 +166,10 @@ func (m *V1Machine) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateReadyAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRequiresMaintenanceStartedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -245,6 +262,18 @@ func (m *V1Machine) validateReadyAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("readyAt", "body", "date-time", m.ReadyAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V1Machine) validateRequiresMaintenanceStartedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.RequiresMaintenanceStartedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("requiresMaintenanceStartedAt", "body", "date-time", m.RequiresMaintenanceStartedAt.String(), formats); err != nil {
 		return err
 	}
 

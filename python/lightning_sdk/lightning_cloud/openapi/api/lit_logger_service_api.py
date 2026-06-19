@@ -1123,6 +1123,8 @@ class LitLoggerServiceApi(object):
         :param int samples:
         :param str min_step:
         :param str max_step:
+        :param datetime min_walltime:
+        :param datetime max_walltime:
         :return: V1GetLoggerMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1148,12 +1150,14 @@ class LitLoggerServiceApi(object):
         :param int samples:
         :param str min_step:
         :param str max_step:
+        :param datetime min_walltime:
+        :param datetime max_walltime:
         :return: V1GetLoggerMetricsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'ids', 'samples', 'min_step', 'max_step']  # noqa: E501
+        all_params = ['project_id', 'ids', 'samples', 'min_step', 'max_step', 'min_walltime', 'max_walltime']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1189,6 +1193,10 @@ class LitLoggerServiceApi(object):
             query_params.append(('minStep', params['min_step']))  # noqa: E501
         if 'max_step' in params:
             query_params.append(('maxStep', params['max_step']))  # noqa: E501
+        if 'min_walltime' in params:
+            query_params.append(('minWalltime', params['min_walltime']))  # noqa: E501
+        if 'max_walltime' in params:
+            query_params.append(('maxWalltime', params['max_walltime']))  # noqa: E501
 
         header_params = {}
 

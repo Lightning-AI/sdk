@@ -45,6 +45,9 @@ class V1Incident(object):
         'created_at': 'datetime',
         'details': 'list[V1IncidentDetail]',
         'ended_at': 'datetime',
+        'exclude_from_sla': 'bool',
+        'exclude_reason': 'str',
+        'gpus_affected': 'int',
         'id': 'str',
         'message': 'str',
         'notified': 'bool',
@@ -66,6 +69,9 @@ class V1Incident(object):
         'created_at': 'createdAt',
         'details': 'details',
         'ended_at': 'endedAt',
+        'exclude_from_sla': 'excludeFromSla',
+        'exclude_reason': 'excludeReason',
+        'gpus_affected': 'gpusAffected',
         'id': 'id',
         'message': 'message',
         'notified': 'notified',
@@ -82,12 +88,15 @@ class V1Incident(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, details: 'list[V1IncidentDetail]' =None, ended_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, notified: 'bool' =None, project_id: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, resource_id: 'str' =None, severity: 'V1IncidentSeverity' =None, started_at: 'datetime' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, created_at: 'datetime' =None, details: 'list[V1IncidentDetail]' =None, ended_at: 'datetime' =None, exclude_from_sla: 'bool' =None, exclude_reason: 'str' =None, gpus_affected: 'int' =None, id: 'str' =None, message: 'str' =None, notified: 'bool' =None, project_id: 'str' =None, resolution_notes: 'str' =None, resource: 'str' =None, resource_id: 'str' =None, severity: 'V1IncidentSeverity' =None, started_at: 'datetime' =None, status: 'str' =None, title: 'str' =None, type: 'V1IncidentType' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Incident - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._created_at = None
         self._details = None
         self._ended_at = None
+        self._exclude_from_sla = None
+        self._exclude_reason = None
+        self._gpus_affected = None
         self._id = None
         self._message = None
         self._notified = None
@@ -111,6 +120,12 @@ class V1Incident(object):
             self.details = details
         if ended_at is not None:
             self.ended_at = ended_at
+        if exclude_from_sla is not None:
+            self.exclude_from_sla = exclude_from_sla
+        if exclude_reason is not None:
+            self.exclude_reason = exclude_reason
+        if gpus_affected is not None:
+            self.gpus_affected = gpus_affected
         if id is not None:
             self.id = id
         if message is not None:
@@ -225,6 +240,69 @@ class V1Incident(object):
         """
 
         self._ended_at = ended_at
+
+    @property
+    def exclude_from_sla(self) -> 'bool':
+        """Gets the exclude_from_sla of this V1Incident.  # noqa: E501
+
+
+        :return: The exclude_from_sla of this V1Incident.  # noqa: E501
+        :rtype: bool
+        """
+        return self._exclude_from_sla
+
+    @exclude_from_sla.setter
+    def exclude_from_sla(self, exclude_from_sla: 'bool'):
+        """Sets the exclude_from_sla of this V1Incident.
+
+
+        :param exclude_from_sla: The exclude_from_sla of this V1Incident.  # noqa: E501
+        :type: bool
+        """
+
+        self._exclude_from_sla = exclude_from_sla
+
+    @property
+    def exclude_reason(self) -> 'str':
+        """Gets the exclude_reason of this V1Incident.  # noqa: E501
+
+
+        :return: The exclude_reason of this V1Incident.  # noqa: E501
+        :rtype: str
+        """
+        return self._exclude_reason
+
+    @exclude_reason.setter
+    def exclude_reason(self, exclude_reason: 'str'):
+        """Sets the exclude_reason of this V1Incident.
+
+
+        :param exclude_reason: The exclude_reason of this V1Incident.  # noqa: E501
+        :type: str
+        """
+
+        self._exclude_reason = exclude_reason
+
+    @property
+    def gpus_affected(self) -> 'int':
+        """Gets the gpus_affected of this V1Incident.  # noqa: E501
+
+
+        :return: The gpus_affected of this V1Incident.  # noqa: E501
+        :rtype: int
+        """
+        return self._gpus_affected
+
+    @gpus_affected.setter
+    def gpus_affected(self, gpus_affected: 'int'):
+        """Sets the gpus_affected of this V1Incident.
+
+
+        :param gpus_affected: The gpus_affected of this V1Incident.  # noqa: E501
+        :type: int
+        """
+
+        self._gpus_affected = gpus_affected
 
     @property
     def id(self) -> 'str':

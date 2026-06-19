@@ -43,6 +43,8 @@ class V1CreateSandboxRequest(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'cluster_id': 'str',
+        'image': 'str',
+        'image_secret_ref': 'str',
         'instance_type': 'str',
         'name': 'str',
         'network_policy': 'V1NetworkPolicy',
@@ -60,6 +62,8 @@ class V1CreateSandboxRequest(object):
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
+        'image': 'image',
+        'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
         'name': 'name',
         'network_policy': 'networkPolicy',
@@ -74,10 +78,12 @@ class V1CreateSandboxRequest(object):
         'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
+        self._image = None
+        self._image_secret_ref = None
         self._instance_type = None
         self._name = None
         self._network_policy = None
@@ -95,6 +101,10 @@ class V1CreateSandboxRequest(object):
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if image is not None:
+            self.image = image
+        if image_secret_ref is not None:
+            self.image_secret_ref = image_secret_ref
         if instance_type is not None:
             self.instance_type = instance_type
         if name is not None:
@@ -161,6 +171,52 @@ class V1CreateSandboxRequest(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def image(self) -> 'str':
+        """Gets the image of this V1CreateSandboxRequest.  # noqa: E501
+
+        OCI image reference for the sandbox rootfs, e.g. \"docker.io/library/python:3.13\" or \"ghcr.io/org/img@sha256:...\". When set, the controlplane uses this image instead of the curated sandbox-<runtime> flavour. Mutually exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed (GPU / InfiniBand) requests reject this field.  # noqa: E501
+
+        :return: The image of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._image
+
+    @image.setter
+    def image(self, image: 'str'):
+        """Sets the image of this V1CreateSandboxRequest.
+
+        OCI image reference for the sandbox rootfs, e.g. \"docker.io/library/python:3.13\" or \"ghcr.io/org/img@sha256:...\". When set, the controlplane uses this image instead of the curated sandbox-<runtime> flavour. Mutually exclusive with `runtime`. gVisor (CPU) sandboxes only — VM-backed (GPU / InfiniBand) requests reject this field.  # noqa: E501
+
+        :param image: The image of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._image = image
+
+    @property
+    def image_secret_ref(self) -> 'str':
+        """Gets the image_secret_ref of this V1CreateSandboxRequest.  # noqa: E501
+
+        Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY the controlplane resolves to pull credentials for `image`. Same mechanism as JobSpec.image_secret_ref. Only valid when `image` is set; empty + `image` set = anonymous public-registry pull.  # noqa: E501
+
+        :return: The image_secret_ref of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._image_secret_ref
+
+    @image_secret_ref.setter
+    def image_secret_ref(self, image_secret_ref: 'str'):
+        """Sets the image_secret_ref of this V1CreateSandboxRequest.
+
+        Name of a project-scoped Secret of type SECRET_TYPE_DOCKER_REGISTRY the controlplane resolves to pull credentials for `image`. Same mechanism as JobSpec.image_secret_ref. Only valid when `image` is set; empty + `image` set = anonymous public-registry pull.  # noqa: E501
+
+        :param image_secret_ref: The image_secret_ref of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._image_secret_ref = image_secret_ref
 
     @property
     def instance_type(self) -> 'str':

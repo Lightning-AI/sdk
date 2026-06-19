@@ -43,25 +43,35 @@ class V1JobLogEntry(object):
     swagger_types = {
         'line': 'str',
         'message': 'str',
+        'resource_id': 'str',
+        'severity': 'str',
         'timestamp': 'datetime'
     }
 
     attribute_map = {
         'line': 'line',
         'message': 'message',
+        'resource_id': 'resourceId',
+        'severity': 'severity',
         'timestamp': 'timestamp'
     }
 
-    def __init__(self, line: 'str' =None, message: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
+    def __init__(self, line: 'str' =None, message: 'str' =None, resource_id: 'str' =None, severity: 'str' =None, timestamp: 'datetime' =None):  # noqa: E501
         """V1JobLogEntry - a model defined in Swagger"""  # noqa: E501
         self._line = None
         self._message = None
+        self._resource_id = None
+        self._severity = None
         self._timestamp = None
         self.discriminator = None
         if line is not None:
             self.line = line
         if message is not None:
             self.message = message
+        if resource_id is not None:
+            self.resource_id = resource_id
+        if severity is not None:
+            self.severity = severity
         if timestamp is not None:
             self.timestamp = timestamp
 
@@ -106,6 +116,52 @@ class V1JobLogEntry(object):
         """
 
         self._message = message
+
+    @property
+    def resource_id(self) -> 'str':
+        """Gets the resource_id of this V1JobLogEntry.  # noqa: E501
+
+        Resource (replica) the line came from — the job id. Lets a merged multi-replica view label each line's source.  # noqa: E501
+
+        :return: The resource_id of this V1JobLogEntry.  # noqa: E501
+        :rtype: str
+        """
+        return self._resource_id
+
+    @resource_id.setter
+    def resource_id(self, resource_id: 'str'):
+        """Sets the resource_id of this V1JobLogEntry.
+
+        Resource (replica) the line came from — the job id. Lets a merged multi-replica view label each line's source.  # noqa: E501
+
+        :param resource_id: The resource_id of this V1JobLogEntry.  # noqa: E501
+        :type: str
+        """
+
+        self._resource_id = resource_id
+
+    @property
+    def severity(self) -> 'str':
+        """Gets the severity of this V1JobLogEntry.  # noqa: E501
+
+        Inferred severity: \"error\" | \"warning\" | \"info\" | \"debug\", or \"\" if undetermined.  # noqa: E501
+
+        :return: The severity of this V1JobLogEntry.  # noqa: E501
+        :rtype: str
+        """
+        return self._severity
+
+    @severity.setter
+    def severity(self, severity: 'str'):
+        """Sets the severity of this V1JobLogEntry.
+
+        Inferred severity: \"error\" | \"warning\" | \"info\" | \"debug\", or \"\" if undetermined.  # noqa: E501
+
+        :param severity: The severity of this V1JobLogEntry.  # noqa: E501
+        :type: str
+        """
+
+        self._severity = severity
 
     @property
     def timestamp(self) -> 'datetime':

@@ -43,6 +43,8 @@ class V1ManagedModel(object):
     swagger_types = {
         'abilities': 'V1ManagedModelAbilities',
         'assistant_id': 'str',
+        'cache_creation_token_price': 'float',
+        'cache_read_token_price': 'float',
         'completion_token_price': 'float',
         'completion_token_price_above_threshold': 'float',
         'context_length': 'str',
@@ -68,6 +70,8 @@ class V1ManagedModel(object):
     attribute_map = {
         'abilities': 'abilities',
         'assistant_id': 'assistantId',
+        'cache_creation_token_price': 'cacheCreationTokenPrice',
+        'cache_read_token_price': 'cacheReadTokenPrice',
         'completion_token_price': 'completionTokenPrice',
         'completion_token_price_above_threshold': 'completionTokenPriceAboveThreshold',
         'context_length': 'contextLength',
@@ -90,10 +94,12 @@ class V1ManagedModel(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, assistant_id: 'str' =None, cache_creation_token_price: 'float' =None, cache_read_token_price: 'float' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._assistant_id = None
+        self._cache_creation_token_price = None
+        self._cache_read_token_price = None
         self._completion_token_price = None
         self._completion_token_price_above_threshold = None
         self._context_length = None
@@ -119,6 +125,10 @@ class V1ManagedModel(object):
             self.abilities = abilities
         if assistant_id is not None:
             self.assistant_id = assistant_id
+        if cache_creation_token_price is not None:
+            self.cache_creation_token_price = cache_creation_token_price
+        if cache_read_token_price is not None:
+            self.cache_read_token_price = cache_read_token_price
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
         if completion_token_price_above_threshold is not None:
@@ -201,6 +211,48 @@ class V1ManagedModel(object):
         """
 
         self._assistant_id = assistant_id
+
+    @property
+    def cache_creation_token_price(self) -> 'float':
+        """Gets the cache_creation_token_price of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The cache_creation_token_price of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._cache_creation_token_price
+
+    @cache_creation_token_price.setter
+    def cache_creation_token_price(self, cache_creation_token_price: 'float'):
+        """Sets the cache_creation_token_price of this V1ManagedModel.
+
+
+        :param cache_creation_token_price: The cache_creation_token_price of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._cache_creation_token_price = cache_creation_token_price
+
+    @property
+    def cache_read_token_price(self) -> 'float':
+        """Gets the cache_read_token_price of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The cache_read_token_price of this V1ManagedModel.  # noqa: E501
+        :rtype: float
+        """
+        return self._cache_read_token_price
+
+    @cache_read_token_price.setter
+    def cache_read_token_price(self, cache_read_token_price: 'float'):
+        """Sets the cache_read_token_price of this V1ManagedModel.
+
+
+        :param cache_read_token_price: The cache_read_token_price of this V1ManagedModel.  # noqa: E501
+        :type: float
+        """
+
+        self._cache_read_token_price = cache_read_token_price
 
     @property
     def completion_token_price(self) -> 'float':

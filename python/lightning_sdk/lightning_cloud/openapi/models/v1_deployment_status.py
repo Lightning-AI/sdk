@@ -48,6 +48,8 @@ class V1DeploymentStatus(object):
         'pending_replicas': 'int',
         'queued_replicas': 'int',
         'ready_replicas': 'int',
+        'requires_maintenance': 'bool',
+        'requires_maintenance_started_at': 'datetime',
         'urls': 'list[str]'
     }
 
@@ -59,10 +61,12 @@ class V1DeploymentStatus(object):
         'pending_replicas': 'pendingReplicas',
         'queued_replicas': 'queuedReplicas',
         'ready_replicas': 'readyReplicas',
+        'requires_maintenance': 'requiresMaintenance',
+        'requires_maintenance_started_at': 'requiresMaintenanceStartedAt',
         'urls': 'urls'
     }
 
-    def __init__(self, deleting_replicas: 'int' =None, failing_replicas: 'int' =None, first_job_state_current_release: 'str' =None, message: 'str' =None, pending_replicas: 'int' =None, queued_replicas: 'int' =None, ready_replicas: 'int' =None, urls: 'list[str]' =None):  # noqa: E501
+    def __init__(self, deleting_replicas: 'int' =None, failing_replicas: 'int' =None, first_job_state_current_release: 'str' =None, message: 'str' =None, pending_replicas: 'int' =None, queued_replicas: 'int' =None, ready_replicas: 'int' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, urls: 'list[str]' =None):  # noqa: E501
         """V1DeploymentStatus - a model defined in Swagger"""  # noqa: E501
         self._deleting_replicas = None
         self._failing_replicas = None
@@ -71,6 +75,8 @@ class V1DeploymentStatus(object):
         self._pending_replicas = None
         self._queued_replicas = None
         self._ready_replicas = None
+        self._requires_maintenance = None
+        self._requires_maintenance_started_at = None
         self._urls = None
         self.discriminator = None
         if deleting_replicas is not None:
@@ -87,6 +93,10 @@ class V1DeploymentStatus(object):
             self.queued_replicas = queued_replicas
         if ready_replicas is not None:
             self.ready_replicas = ready_replicas
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
+        if requires_maintenance_started_at is not None:
+            self.requires_maintenance_started_at = requires_maintenance_started_at
         if urls is not None:
             self.urls = urls
 
@@ -236,6 +246,48 @@ class V1DeploymentStatus(object):
         """
 
         self._ready_replicas = ready_replicas
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1DeploymentStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1DeploymentStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1DeploymentStatus.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1DeploymentStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
+
+    @property
+    def requires_maintenance_started_at(self) -> 'datetime':
+        """Gets the requires_maintenance_started_at of this V1DeploymentStatus.  # noqa: E501
+
+
+        :return: The requires_maintenance_started_at of this V1DeploymentStatus.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._requires_maintenance_started_at
+
+    @requires_maintenance_started_at.setter
+    def requires_maintenance_started_at(self, requires_maintenance_started_at: 'datetime'):
+        """Sets the requires_maintenance_started_at of this V1DeploymentStatus.
+
+
+        :param requires_maintenance_started_at: The requires_maintenance_started_at of this V1DeploymentStatus.  # noqa: E501
+        :type: datetime
+        """
+
+        self._requires_maintenance_started_at = requires_maintenance_started_at
 
     @property
     def urls(self) -> 'list[str]':

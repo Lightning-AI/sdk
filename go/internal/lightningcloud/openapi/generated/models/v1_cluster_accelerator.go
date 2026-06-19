@@ -120,6 +120,17 @@ type V1ClusterAccelerator struct {
 	// Prevents users from requesting instance as spot instance
 	NonSpot bool `json:"nonSpot,omitempty"`
 
+	// Promo pricing display fields. Populated only when an active GPU promo campaign
+	// matches this SKU (provider/region/machine_type). `cost`, `spot_price`, etc.
+	// already reflect the EFFECTIVE (promo) rate; these fields surface the original
+	// catalog rate and campaign metadata so the UI can render strikethrough + badge.
+	//
+	// Catalog on-demand credits/hour (for strikethrough)
+	OriginalCost float32 `json:"originalCost,omitempty"`
+
+	// Catalog spot credits/hour (for strikethrough)
+	OriginalSpotPrice float32 `json:"originalSpotPrice,omitempty"`
+
 	// Whether this instance type is out of capacity on the cluster
 	OutOfCapacity bool `json:"outOfCapacity,omitempty"`
 
@@ -131,6 +142,9 @@ type V1ClusterAccelerator struct {
 
 	// Whether this instance type supports persistent disks
 	PersistentDiskSupported bool `json:"persistentDiskSupported,omitempty"`
+
+	// Campaign label / end time; nil when no promo applies
+	Promo *V1PromoOverlay `json:"promo,omitempty"`
 
 	// Cloud provider name as string, e.g. 'aws', 'gcp', 'vultr' - this avoids us matching on the FE
 	Provider *V1CloudProvider `json:"provider,omitempty"`
@@ -206,6 +220,10 @@ func (m *V1ClusterAccelerator) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDetailedQuotasInfo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePromo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -287,6 +305,29 @@ func (m *V1ClusterAccelerator) validateDetailedQuotasInfo(formats strfmt.Registr
 	return nil
 }
 
+func (m *V1ClusterAccelerator) validatePromo(formats strfmt.Registry) error {
+	if swag.IsZero(m.Promo) { // not required
+		return nil
+	}
+
+	if m.Promo != nil {
+		if err := m.Promo.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("promo")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("promo")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1ClusterAccelerator) validateProvider(formats strfmt.Registry) error {
 	if swag.IsZero(m.Provider) { // not required
 		return nil
@@ -357,6 +398,10 @@ func (m *V1ClusterAccelerator) ContextValidate(ctx context.Context, formats strf
 		res = append(res, err)
 	}
 
+	if err := m.contextValidatePromo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateProvider(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -424,6 +469,31 @@ func (m *V1ClusterAccelerator) contextValidateDetailedQuotasInfo(ctx context.Con
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1ClusterAccelerator) contextValidatePromo(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Promo != nil {
+
+		if swag.IsZero(m.Promo) { // not required
+			return nil
+		}
+
+		if err := m.Promo.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("promo")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("promo")
+			}
+
+			return err
+		}
 	}
 
 	return nil

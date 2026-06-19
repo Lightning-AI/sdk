@@ -43,20 +43,23 @@ class V1MetricValue(object):
     swagger_types = {
         'created_at': 'datetime',
         'step': 'str',
-        'value': 'float'
+        'value': 'float',
+        'walltime': 'datetime'
     }
 
     attribute_map = {
         'created_at': 'createdAt',
         'step': 'step',
-        'value': 'value'
+        'value': 'value',
+        'walltime': 'walltime'
     }
 
-    def __init__(self, created_at: 'datetime' =None, step: 'str' =None, value: 'float' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, step: 'str' =None, value: 'float' =None, walltime: 'datetime' =None):  # noqa: E501
         """V1MetricValue - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._step = None
         self._value = None
+        self._walltime = None
         self.discriminator = None
         if created_at is not None:
             self.created_at = created_at
@@ -64,11 +67,14 @@ class V1MetricValue(object):
             self.step = step
         if value is not None:
             self.value = value
+        if walltime is not None:
+            self.walltime = walltime
 
     @property
     def created_at(self) -> 'datetime':
         """Gets the created_at of this V1MetricValue.  # noqa: E501
 
+        TODO: Deprecate this compatibility field after clients consume walltime.  # noqa: E501
 
         :return: The created_at of this V1MetricValue.  # noqa: E501
         :rtype: datetime
@@ -79,6 +85,7 @@ class V1MetricValue(object):
     def created_at(self, created_at: 'datetime'):
         """Sets the created_at of this V1MetricValue.
 
+        TODO: Deprecate this compatibility field after clients consume walltime.  # noqa: E501
 
         :param created_at: The created_at of this V1MetricValue.  # noqa: E501
         :type: datetime
@@ -127,6 +134,27 @@ class V1MetricValue(object):
         """
 
         self._value = value
+
+    @property
+    def walltime(self) -> 'datetime':
+        """Gets the walltime of this V1MetricValue.  # noqa: E501
+
+
+        :return: The walltime of this V1MetricValue.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._walltime
+
+    @walltime.setter
+    def walltime(self, walltime: 'datetime'):
+        """Sets the walltime of this V1MetricValue.
+
+
+        :param walltime: The walltime of this V1MetricValue.  # noqa: E501
+        :type: datetime
+        """
+
+        self._walltime = walltime
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

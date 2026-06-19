@@ -44,6 +44,7 @@ class V1SecretType(object):
     R2_CREDENTIALS = "SECRET_TYPE_R2_CREDENTIALS"
     ACCESS_CREDENTIALS = "SECRET_TYPE_ACCESS_CREDENTIALS"
     SSH_PRIVATE_KEY = "SECRET_TYPE_SSH_PRIVATE_KEY"
+    HF_TOKEN = "SECRET_TYPE_HF_TOKEN"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

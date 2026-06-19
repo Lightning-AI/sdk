@@ -60,6 +60,7 @@ class V1KubernetesDirectV1(object):
         'kubeconfig_elevated': 'str',
         'kubevirt_config': 'V1KubevirtConfig',
         'node_cordoned_budget': 'int',
+        'node_downtime_synced_to': 'datetime',
         'prometheus_url': 'str',
         'settings': 'V1KubernetesDirectSettingsV1',
         'skip_user_label_injection': 'bool',
@@ -86,13 +87,14 @@ class V1KubernetesDirectV1(object):
         'kubeconfig_elevated': 'kubeconfigElevated',
         'kubevirt_config': 'kubevirtConfig',
         'node_cordoned_budget': 'nodeCordonedBudget',
+        'node_downtime_synced_to': 'nodeDowntimeSyncedTo',
         'prometheus_url': 'prometheusUrl',
         'settings': 'settings',
         'skip_user_label_injection': 'skipUserLabelInjection',
         'supported_nvidia_driver_versions': 'supportedNvidiaDriverVersions'
     }
 
-    def __init__(self, alerts_config: 'Gridv1ClusterAlertsConfig' =None, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_operator_config: 'V1GpuOperatorConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, node_cordoned_budget: 'int' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'Gridv1ClusterAlertsConfig' =None, automate_agent_installation: 'bool' =None, aws: 'V1KubernetesAWSConfig' =None, gpu_operator_config: 'V1GpuOperatorConfig' =None, gpu_sla_terms: 'list[V1GpuSlaTerm]' =None, grafana_dashboard_url: 'str' =None, grafana_namespace: 'str' =None, grafana_service_name: 'str' =None, grafana_service_port: 'str' =None, incident_alert_notifications: 'list[V1K8sIncidentSetting]' =None, incident_auto_cordon: 'list[V1K8sIncidentSetting]' =None, incident_historical_scan_complete: 'bool' =None, incident_notification_namespaces: 'list[str]' =None, incident_slack_notifiers: 'list[V1SlackNotifier]' =None, kubeconfig: 'str' =None, kubeconfig_agent: 'str' =None, kubeconfig_elevated: 'str' =None, kubevirt_config: 'V1KubevirtConfig' =None, node_cordoned_budget: 'int' =None, node_downtime_synced_to: 'datetime' =None, prometheus_url: 'str' =None, settings: 'V1KubernetesDirectSettingsV1' =None, skip_user_label_injection: 'bool' =None, supported_nvidia_driver_versions: 'list[str]' =None):  # noqa: E501
         """V1KubernetesDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._automate_agent_installation = None
@@ -113,6 +115,7 @@ class V1KubernetesDirectV1(object):
         self._kubeconfig_elevated = None
         self._kubevirt_config = None
         self._node_cordoned_budget = None
+        self._node_downtime_synced_to = None
         self._prometheus_url = None
         self._settings = None
         self._skip_user_label_injection = None
@@ -156,6 +159,8 @@ class V1KubernetesDirectV1(object):
             self.kubevirt_config = kubevirt_config
         if node_cordoned_budget is not None:
             self.node_cordoned_budget = node_cordoned_budget
+        if node_downtime_synced_to is not None:
+            self.node_downtime_synced_to = node_downtime_synced_to
         if prometheus_url is not None:
             self.prometheus_url = prometheus_url
         if settings is not None:
@@ -563,6 +568,29 @@ class V1KubernetesDirectV1(object):
         """
 
         self._node_cordoned_budget = node_cordoned_budget
+
+    @property
+    def node_downtime_synced_to(self) -> 'datetime':
+        """Gets the node_downtime_synced_to of this V1KubernetesDirectV1.  # noqa: E501
+
+        Timestamp of the last node downtime sync.  # noqa: E501
+
+        :return: The node_downtime_synced_to of this V1KubernetesDirectV1.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._node_downtime_synced_to
+
+    @node_downtime_synced_to.setter
+    def node_downtime_synced_to(self, node_downtime_synced_to: 'datetime'):
+        """Sets the node_downtime_synced_to of this V1KubernetesDirectV1.
+
+        Timestamp of the last node downtime sync.  # noqa: E501
+
+        :param node_downtime_synced_to: The node_downtime_synced_to of this V1KubernetesDirectV1.  # noqa: E501
+        :type: datetime
+        """
+
+        self._node_downtime_synced_to = node_downtime_synced_to
 
     @property
     def prometheus_url(self) -> 'str':
