@@ -331,8 +331,6 @@ def list_sandboxes(
 @click.option("--runtime", help="Runtime image or runtime identifier.")
 @click.option("--spot/--no-spot", default=False, help="Create the sandbox on spot capacity.")
 @click.option("--port", "ports", multiple=True, help="Port to expose. Can be passed multiple times.")
-@click.option("--cluster-id", help="Cluster ID to place the sandbox on.")
-@click.option("--cloudspace-id", help="Cloudspace ID to associate with the sandbox.")
 @click.option("--teamspace", help="Teamspace to own persistent sandbox state (format: owner/teamspace).")
 @click.option("--snapshot-id", help="Snapshot ID to restore from.")
 @click.option("--persistent/--ephemeral", "persistent", default=None, help="Persist state across stops.")
@@ -344,8 +342,6 @@ def create_sandbox(
     runtime: str | None,
     spot: bool,
     ports: Sequence[str],
-    cluster_id: str | None,
-    cloudspace_id: str | None,
     teamspace: str | None,
     snapshot_id: str | None,
     persistent: bool | None,
@@ -358,8 +354,6 @@ def create_sandbox(
         runtime=runtime,
         spot=spot,
         ports=_parse_ports(ports),
-        cluster_id=cluster_id,
-        cloudspace_id=cloudspace_id,
         teamspace=teamspace,
         snapshot_id=snapshot_id,
         persistent=persistent,

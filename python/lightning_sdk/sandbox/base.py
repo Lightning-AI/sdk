@@ -21,7 +21,12 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.sandbox.command import Command
 from lightning_sdk.sandbox.config import SandboxConfig
-from lightning_sdk.sandbox.network_policy import NetworkPolicyInput, to_v1_network_policy
+from lightning_sdk.sandbox.network_policy import (
+    NetworkPolicy,
+    NetworkPolicyInput,
+    from_v1_network_policy,
+    to_v1_network_policy,
+)
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 if TYPE_CHECKING:
@@ -109,12 +114,12 @@ def create_sandbox(
     runtime: str | None = None,
     spot: bool = False,
     ports: list[int | str] | None = None,
-    cluster_id: str | None = None,
-    cloudspace_id: str | None = None,
     project_id: str | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
     network_policy: NetworkPolicyInput | None = None,
+    storage_gb: int | None = None,
+    timeout: int | None = None,
 ) -> SandboxInstance:
     """Create a sandbox and block until its status is ``running``.
 
@@ -130,6 +135,10 @@ def create_sandbox(
     ``network_policy`` is create-time only: omit for open egress (``allow-all``),
     pass ``"deny-all"``, or a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`
     CIDR allowlist. Restored snapshots inherit the source policy unless overridden.
+
+    ``storage_gb`` overrides the writable disk size (CPU sandboxes only; GPU/VM
+    paths ignore it). ``timeout`` is the maximum wall-clock lifetime **in
+    milliseconds** after which the control plane auto-stops the sandbox.
     """
     if name is None:
         name = f"sandbox-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
@@ -145,10 +154,6 @@ def create_sandbox(
         spot=spot,
         ports=[str(p) for p in (ports or [])],
     )
-    if cluster_id:
-        body.cluster_id = cluster_id
-    if cloudspace_id:
-        body.cloudspace_id = cloudspace_id
     if project_id:
         body.project_id = project_id
     if runtime:
@@ -157,6 +162,10 @@ def create_sandbox(
         body.snapshot_id = snapshot_id
     if persistent is not None:
         body.persistent = persistent
+    if storage_gb is not None:
+        body.storage_gb = str(storage_gb)
+    if timeout is not None:
+        body.timeout = str(int(timeout))
     v1_policy = to_v1_network_policy(network_policy)
     if v1_policy is not None:
         body.network_policy = v1_policy
@@ -321,6 +330,52 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     @property
     def cloudspace_id(self) -> str:
         return self._v1.cloudspace_id or ""
+
+    @property
+    def image(self) -> str:
+        """Custom OCI image backing the sandbox rootfs, when created with one (else empty)."""
+        return getattr(self._v1, "image", "") or ""
+
+    @property
+    def image_secret_ref(self) -> str:
+        """Name of the project Secret used to pull :attr:`image` (empty for public/curated images)."""
+        return getattr(self._v1, "image_secret_ref", "") or ""
+
+    @property
+    def snapshot_id(self) -> str:
+        """Source snapshot this sandbox was restored from, when applicable (else empty)."""
+        return getattr(self._v1, "snapshot_id", "") or ""
+
+    @property
+    def user_id(self) -> str:
+        """User who created the sandbox (empty for sandboxes created before this was tracked)."""
+        return getattr(self._v1, "user_id", "") or ""
+
+    @property
+    def storage_gb(self) -> int:
+        """Writable disk size in GB (0 when inheriting the instance-type default)."""
+        try:
+            return int(getattr(self._v1, "storage_gb", 0) or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    @property
+    def timeout(self) -> int:
+        """Maximum sandbox lifetime in milliseconds (0 when no timeout is set)."""
+        try:
+            return int(getattr(self._v1, "timeout", 0) or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    @property
+    def network_policy(self) -> NetworkPolicy:
+        """The sandbox's egress firewall policy as a :class:`NetworkPolicy`.
+
+        Always returns a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`:
+        open egress normalizes to ``NetworkPolicy("allow-all")``, matching the
+        create-time default. Inspect ``.mode`` and ``.allow_cidrs``.
+        """
+        return from_v1_network_policy(getattr(self._v1, "network_policy", None))
 
     @property
     def ports(self) -> list[str]:

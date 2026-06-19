@@ -423,13 +423,13 @@ def test_sandbox_create_classmethod_forwards():
     mock_inst = mock.MagicMock()
     cfg = SandboxConfig(api_key="k", base_url="https://unit.test")
     with mock.patch("lightning_sdk.sandbox.sandbox.create_sandbox", return_value=mock_inst) as m_create:
-        out = Sandbox.create(config=cfg, name="from-class", cloudspace_id="space-1")
+        out = Sandbox.create(config=cfg, name="from-class", spot=True)
 
     assert out is mock_inst
     m_create.assert_called_once()
     kw = m_create.call_args.kwargs
     assert kw["name"] == "from-class"
-    assert kw["cloudspace_id"] == "space-1"
+    assert kw["spot"] is True
     received = kw["sandbox_api"]
     assert received.config_get("api_key") == "k"
     assert received.config_get("base_url") == "https://unit.test"

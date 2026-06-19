@@ -49,12 +49,12 @@ def _sandbox_create_impl(
     runtime: str | None = None,
     spot: bool = False,
     ports: list[int | str] | None = None,
-    cluster_id: str | None = None,
-    cloudspace_id: str | None = None,
     teamspace: str | Teamspace | None = None,
     snapshot_id: str | None = None,
     persistent: bool | None = None,
     network_policy: NetworkPolicyInput | None = None,
+    storage_gb: int | None = None,
+    timeout: int | None = None,
 ) -> SandboxInstance:
     if sandbox_api is not None and config is not None:
         raise ValueError("Pass only one of 'config' and sandbox_api (internal)")
@@ -69,12 +69,12 @@ def _sandbox_create_impl(
         runtime=runtime,
         spot=spot,
         ports=ports,
-        cluster_id=cluster_id,
-        cloudspace_id=cloudspace_id,
         project_id=_resolve_teamspace_id(teamspace),
         snapshot_id=snapshot_id,
         persistent=persistent,
         network_policy=network_policy,
+        storage_gb=storage_gb,
+        timeout=timeout,
     )
 
 
