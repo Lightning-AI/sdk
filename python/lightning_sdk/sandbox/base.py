@@ -117,6 +117,8 @@ def create_sandbox(
     name: str | None = None,
     instance_type: str | None = None,
     runtime: str | None = None,
+    image: str | None = None,
+    image_secret_ref: str | None = None,
     spot: bool = False,
     ports: list[int | str] | None = None,
     project_id: str | None = None,
@@ -137,6 +139,13 @@ def create_sandbox(
     ``persistent=True`` so the sandbox's state survives :meth:`SandboxInstance.stop`
     (via an auto-snapshot) and can be brought back with :meth:`SandboxInstance.resume`.
 
+    ``image`` is a custom OCI image reference (e.g.
+    ``"ghcr.io/myorg/myimage:latest"``) used for the sandbox rootfs instead of a
+    curated runtime. It is mutually exclusive with ``runtime`` and is only
+    supported on CPU (gVisor) sandboxes. For images in a private registry, pass
+    ``image_secret_ref`` — the name of a project-scoped Docker-registry Secret the
+    control plane resolves to pull credentials; leave it unset for public images.
+
     ``network_policy`` is create-time only: omit for open egress (``allow-all``),
     pass ``"deny-all"``, or a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`
     CIDR allowlist. Restored snapshots inherit the source policy unless overridden.
@@ -145,6 +154,10 @@ def create_sandbox(
     paths ignore it). ``timeout`` is the maximum wall-clock lifetime **in
     milliseconds** after which the control plane auto-stops the sandbox.
     """
+    if runtime and image:
+        raise ValueError("Pass only one of 'runtime' and 'image' (they are mutually exclusive).")
+    if image_secret_ref and not image:
+        raise ValueError("'image_secret_ref' is only valid together with 'image'.")
     if name is None:
         name = f"sandbox-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
     if instance_type is not None:
@@ -163,6 +176,10 @@ def create_sandbox(
         body.project_id = project_id
     if runtime:
         body.runtime = runtime
+    if image:
+        body.image = image
+    if image_secret_ref:
+        body.image_secret_ref = image_secret_ref
     if snapshot_id:
         body.snapshot_id = snapshot_id
     if persistent is not None:

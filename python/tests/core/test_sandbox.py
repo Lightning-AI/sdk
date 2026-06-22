@@ -108,6 +108,37 @@ def test_create_sandbox_sends_explicit_project_id():
     assert body.project_id == "proj-1"
 
 
+def test_create_sandbox_sends_image_and_secret_ref():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(
+            name="n",
+            sandbox_api=api,
+            image="ghcr.io/myorg/myimage:latest",
+            image_secret_ref="my-docker-registry-secret",
+        )
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.image == "ghcr.io/myorg/myimage:latest"
+    assert body.image_secret_ref == "my-docker-registry-secret"
+    assert body.runtime is None
+
+
+def test_create_sandbox_rejects_image_with_runtime():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        create_sandbox(name="n", sandbox_api=api, runtime="python", image="ghcr.io/org/img:latest")
+
+
+def test_create_sandbox_rejects_secret_ref_without_image():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    with pytest.raises(ValueError, match="only valid together with 'image'"):
+        create_sandbox(name="n", sandbox_api=api, image_secret_ref="my-secret")
+
+
 def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
     from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
 

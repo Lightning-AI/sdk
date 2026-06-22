@@ -46,6 +46,8 @@ def _sandbox_to_dict(sandbox: SandboxInstance) -> dict[str, Any]:
         "spot": sandbox.spot,
         "persistent": sandbox.persistent,
         "runtime": sandbox.runtime or "",
+        "image": sandbox.image,
+        "image_secret_ref": sandbox.image_secret_ref,
         "organization_id": sandbox.organization_id,
         "project_id": sandbox.project_id,
         "ports": sandbox.ports,
@@ -393,6 +395,11 @@ def list_sandboxes(
 @click.option("--name", help="Sandbox name. Defaults to a generated name.")
 @click.option("--instance-type", help="Sandbox instance type. Defaults to cpu-small.")
 @click.option("--runtime", help="Runtime image or runtime identifier.")
+@click.option("--image", help="Custom OCI image for the sandbox rootfs (mutually exclusive with --runtime).")
+@click.option(
+    "--image-secret-ref",
+    help="Name of a project Docker-registry Secret used to pull a private --image.",
+)
 @click.option("--spot/--no-spot", default=False, help="Create the sandbox on spot capacity.")
 @click.option("--port", "ports", multiple=True, help="Port to expose. Can be passed multiple times.")
 @click.option("--teamspace", help="Teamspace to own persistent sandbox state (format: owner/teamspace).")
@@ -404,6 +411,8 @@ def create_sandbox(
     name: str | None,
     instance_type: str | None,
     runtime: str | None,
+    image: str | None,
+    image_secret_ref: str | None,
     spot: bool,
     ports: Sequence[str],
     teamspace: str | None,
@@ -416,6 +425,8 @@ def create_sandbox(
         name=name,
         instance_type=instance_type,
         runtime=runtime,
+        image=image,
+        image_secret_ref=image_secret_ref,
         spot=spot,
         ports=_parse_ports(ports),
         teamspace=teamspace,

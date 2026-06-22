@@ -269,6 +269,8 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
         "name": "cli-sandbox",
         "instance_type": "cpu-small",
         "runtime": "python",
+        "image": None,
+        "image_secret_ref": None,
         "spot": True,
         "ports": [8888, "http"],
         "teamspace": "owner/teamspace",
