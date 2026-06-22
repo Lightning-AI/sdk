@@ -42,24 +42,29 @@ class V1RunSandboxCommandResponse(object):
     """
     swagger_types = {
         'cmd_id': 'str',
+        'created_at': 'datetime',
         'exit_code': 'int',
         'output': 'str'
     }
 
     attribute_map = {
         'cmd_id': 'cmdId',
+        'created_at': 'createdAt',
         'exit_code': 'exitCode',
         'output': 'output'
     }
 
-    def __init__(self, cmd_id: 'str' =None, exit_code: 'int' =None, output: 'str' =None):  # noqa: E501
+    def __init__(self, cmd_id: 'str' =None, created_at: 'datetime' =None, exit_code: 'int' =None, output: 'str' =None):  # noqa: E501
         """V1RunSandboxCommandResponse - a model defined in Swagger"""  # noqa: E501
         self._cmd_id = None
+        self._created_at = None
         self._exit_code = None
         self._output = None
         self.discriminator = None
         if cmd_id is not None:
             self.cmd_id = cmd_id
+        if created_at is not None:
+            self.created_at = created_at
         if exit_code is not None:
             self.exit_code = exit_code
         if output is not None:
@@ -85,6 +90,27 @@ class V1RunSandboxCommandResponse(object):
         """
 
         self._cmd_id = cmd_id
+
+    @property
+    def created_at(self) -> 'datetime':
+        """Gets the created_at of this V1RunSandboxCommandResponse.  # noqa: E501
+
+
+        :return: The created_at of this V1RunSandboxCommandResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._created_at
+
+    @created_at.setter
+    def created_at(self, created_at: 'datetime'):
+        """Sets the created_at of this V1RunSandboxCommandResponse.
+
+
+        :param created_at: The created_at of this V1RunSandboxCommandResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._created_at = created_at
 
     @property
     def exit_code(self) -> 'int':

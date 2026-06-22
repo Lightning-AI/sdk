@@ -48,6 +48,7 @@ class V1Sandbox(object):
         'image': 'str',
         'image_secret_ref': 'str',
         'instance_type': 'str',
+        'machine_id': 'str',
         'name': 'str',
         'network_policy': 'V1NetworkPolicy',
         'organization_id': 'str',
@@ -73,6 +74,7 @@ class V1Sandbox(object):
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
+        'machine_id': 'machineId',
         'name': 'name',
         'network_policy': 'networkPolicy',
         'organization_id': 'organizationId',
@@ -90,7 +92,7 @@ class V1Sandbox(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -99,6 +101,7 @@ class V1Sandbox(object):
         self._image = None
         self._image_secret_ref = None
         self._instance_type = None
+        self._machine_id = None
         self._name = None
         self._network_policy = None
         self._organization_id = None
@@ -129,6 +132,8 @@ class V1Sandbox(object):
             self.image_secret_ref = image_secret_ref
         if instance_type is not None:
             self.instance_type = instance_type
+        if machine_id is not None:
+            self.machine_id = machine_id
         if name is not None:
             self.name = name
         if network_policy is not None:
@@ -310,6 +315,29 @@ class V1Sandbox(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def machine_id(self) -> 'str':
+        """Gets the machine_id of this V1Sandbox.  # noqa: E501
+
+        Cluster machine the sandbox is (or was last) placed on. Returned on create/get/list, but — like phase_durations — only to internal Lightning users (`user.details.internal=true`); always empty for external callers and for sandboxes created before this field landed. Used to attribute sandbox performance to specific hosts.  # noqa: E501
+
+        :return: The machine_id of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._machine_id
+
+    @machine_id.setter
+    def machine_id(self, machine_id: 'str'):
+        """Sets the machine_id of this V1Sandbox.
+
+        Cluster machine the sandbox is (or was last) placed on. Returned on create/get/list, but — like phase_durations — only to internal Lightning users (`user.details.internal=true`); always empty for external callers and for sandboxes created before this field landed. Used to attribute sandbox performance to specific hosts.  # noqa: E501
+
+        :param machine_id: The machine_id of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._machine_id = machine_id
 
     @property
     def name(self) -> 'str':

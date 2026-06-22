@@ -487,6 +487,8 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_create_support_ticket_reque
 from lightning_sdk.lightning_cloud.openapi.models.v1_create_support_ticket_response import V1CreateSupportTicketResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_create_user_secret_request import V1CreateUserSecretRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_cudo_direct_v1 import V1CudoDirectV1
+from lightning_sdk.lightning_cloud.openapi.models.v1_dma_entry_limit import V1DMAEntryLimit
+from lightning_sdk.lightning_cloud.openapi.models.v1_dmi_info import V1DMIInfo
 from lightning_sdk.lightning_cloud.openapi.models.v1_daily_model_metrics import V1DailyModelMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_daily_usage import V1DailyUsage
 from lightning_sdk.lightning_cloud.openapi.models.v1_data_connection import V1DataConnection
@@ -754,6 +756,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_git_provider_type import V1
 from lightning_sdk.lightning_cloud.openapi.models.v1_global_search_response import V1GlobalSearchResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_google_cloud_direct_v1 import V1GoogleCloudDirectV1
 from lightning_sdk.lightning_cloud.openapi.models.v1_google_cloud_direct_v1_status import V1GoogleCloudDirectV1Status
+from lightning_sdk.lightning_cloud.openapi.models.v1_gpu_fitness import V1GpuFitness
 from lightning_sdk.lightning_cloud.openapi.models.v1_gpu_operator_config import V1GpuOperatorConfig
 from lightning_sdk.lightning_cloud.openapi.models.v1_gpu_sla_term import V1GpuSlaTerm
 from lightning_sdk.lightning_cloud.openapi.models.v1_gpu_telemetry_attribution import V1GpuTelemetryAttribution
@@ -1074,6 +1077,8 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_fault_tol
 from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_fault_tolerance_strategy import V1MultiMachineJobFaultToleranceStrategy
 from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_state import V1MultiMachineJobState
 from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_status import V1MultiMachineJobStatus
+from lightning_sdk.lightning_cloud.openapi.models.v1_nic_firmware import V1NICFirmware
+from lightning_sdk.lightning_cloud.openapi.models.v1_nic_fitness import V1NICFitness
 from lightning_sdk.lightning_cloud.openapi.models.v1_numa_hugepages import V1NUMAHugepages
 from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_info import V1NVLinkInfo
 from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_status import V1NVLinkStatus
@@ -1085,6 +1090,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_network_config import V1Net
 from lightning_sdk.lightning_cloud.openapi.models.v1_network_interface import V1NetworkInterface
 from lightning_sdk.lightning_cloud.openapi.models.v1_network_policy import V1NetworkPolicy
 from lightning_sdk.lightning_cloud.openapi.models.v1_new_feature import V1NewFeature
+from lightning_sdk.lightning_cloud.openapi.models.v1_node_fitness import V1NodeFitness
 from lightning_sdk.lightning_cloud.openapi.models.v1_node_metrics import V1NodeMetrics
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preference import V1NotificationPreference
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preferences_request import V1NotificationPreferencesRequest
@@ -1109,6 +1115,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_parameterization_spec impor
 from lightning_sdk.lightning_cloud.openapi.models.v1_path_mapping import V1PathMapping
 from lightning_sdk.lightning_cloud.openapi.models.v1_path_telemetry import V1PathTelemetry
 from lightning_sdk.lightning_cloud.openapi.models.v1_pause_storage_transfer_response import V1PauseStorageTransferResponse
+from lightning_sdk.lightning_cloud.openapi.models.v1_pcie_port_fitness import V1PciePortFitness
 from lightning_sdk.lightning_cloud.openapi.models.v1_phase_type import V1PhaseType
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline import V1Pipeline
 from lightning_sdk.lightning_cloud.openapi.models.v1_pipeline_parameter import V1PipelineParameter

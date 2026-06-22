@@ -436,6 +436,8 @@ export interface V1RunSandboxCommandResponse {
   output?: string;
   /** @format int32 */
   exitCode?: number;
+  /** @format date-time */
+  createdAt?: string;
 }
 
 export interface V1Sandbox {
@@ -445,9 +447,55 @@ export interface V1Sandbox {
   clusterId?: string;
   instanceType?: string;
   spot?: boolean;
+  /**
+   * Lifecycle status of the sandbox. In addition to the underlying
+   * server states (running, stopping, stopped, error, ...) the
+   * controlplane surfaces:
+   *   - "paused":  the sandbox is a persistent sandbox whose server
+   *                row no longer exists, but whose auto-snapshot does.
+   *                ListSandboxes and GetSandbox synthesise a Sandbox
+   *                from the most recent auto-snapshot so the sandbox
+   *                id keeps appearing in user-facing surfaces while it
+   *                is hibernated. Resume via UpdateSandbox(resume=true).
+   */
+  status?: string;
   cloudspaceId?: string;
   ports?: string[];
   runtime?: string;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
+  /**
+   * Mirrors CreateSandboxRequest.persistent. Reflects the durability
+   * setting the sandbox was created with. See
+   * sandbox_fuse_snapshot_restore.md for the lifecycle.
+   */
+  persistent?: boolean;
+  /**
+   * Project the sandbox belongs to. Mirrors CreateSandboxRequest.project_id
+   * captured onto Server.Metadata.ProjectId at create time, surfaced here
+   * so list/get callers (UI, SDK) can group sandboxes per teamspace
+   * without joining against the underlying server row. Empty for
+   * sandboxes created before this field landed and for sandboxes whose
+   * create request omitted project_id.
+   */
+  projectId?: string;
+  /**
+   * Per-phase wall-clock breakdown of the create flow, combining the
+   * controlplane's own stopwatch (`cp.*` phases) with the agent's
+   * litvisor-side breakdown (`agent.*` phases). Populated only on the
+   * CreateSandbox response and only when the requesting user is
+   * internal (`user.details.internal=true`); always empty otherwise
+   * and always empty on List/Get. Used to answer "where did the time
+   * go" without scraping Prometheus or correlating logs across hops.
+   */
+  phaseDurations?: V1SandboxPhaseDuration[];
+  /**
+   * User who created the sandbox. Mirrors Server.Spec.UserId stamped at
+   * create time. Empty for sandboxes created before this field landed.
+   */
+  userId?: string;
   /**
    * Optional override for the sandbox's writable disk size, in GB. When
    * unset (0) the sandbox inherits the instance-type default from the
@@ -473,21 +521,6 @@ export interface V1Sandbox {
    */
   snapshotId?: string;
   /**
-   * Mirrors CreateSandboxRequest.persistent. Reflects the durability
-   * setting the sandbox was created with. See
-   * sandbox_fuse_snapshot_restore.md for the lifecycle.
-   */
-  persistent?: boolean;
-  /**
-   * Project the sandbox belongs to. Mirrors CreateSandboxRequest.project_id
-   * captured onto Server.Metadata.ProjectId at create time, surfaced here
-   * so list/get callers (UI, SDK) can group sandboxes per teamspace
-   * without joining against the underlying server row. Empty for
-   * sandboxes created before this field landed and for sandboxes whose
-   * create request omitted project_id.
-   */
-  projectId?: string;
-  /**
    * OCI image reference for the sandbox rootfs, e.g.
    * "docker.io/library/python:3.13" or
    * "ghcr.io/org/img@sha256:...". When set, the controlplane uses this
@@ -504,36 +537,13 @@ export interface V1Sandbox {
    */
   imageSecretRef?: string;
   /**
-   * Lifecycle status of the sandbox. In addition to the underlying
-   * server states (running, stopping, stopped, error, ...) the
-   * controlplane surfaces:
-   *   - "paused":  the sandbox is a persistent sandbox whose server
-   *                row no longer exists, but whose auto-snapshot does.
-   *                ListSandboxes and GetSandbox synthesise a Sandbox
-   *                from the most recent auto-snapshot so the sandbox
-   *                id keeps appearing in user-facing surfaces while it
-   *                is hibernated. Resume via UpdateSandbox(resume=true).
+   * Cluster machine the sandbox is (or was last) placed on. Returned on
+   * create/get/list, but — like phase_durations — only to internal
+   * Lightning users (`user.details.internal=true`); always empty for
+   * external callers and for sandboxes created before this field landed.
+   * Used to attribute sandbox performance to specific hosts.
    */
-  status?: string;
-  /** @format date-time */
-  createdAt?: string;
-  /** @format date-time */
-  updatedAt?: string;
-  /**
-   * Per-phase wall-clock breakdown of the create flow, combining the
-   * controlplane's own stopwatch (`cp.*` phases) with the agent's
-   * litvisor-side breakdown (`agent.*` phases). Populated only on the
-   * CreateSandbox response and only when the requesting user is
-   * internal (`user.details.internal=true`); always empty otherwise
-   * and always empty on List/Get. Used to answer "where did the time
-   * go" without scraping Prometheus or correlating logs across hops.
-   */
-  phaseDurations?: V1SandboxPhaseDuration[];
-  /**
-   * User who created the sandbox. Mirrors Server.Spec.UserId stamped at
-   * create time. Empty for sandboxes created before this field landed.
-   */
-  userId?: string;
+  machineId?: string;
 }
 
 export interface V1SandboxCommand {

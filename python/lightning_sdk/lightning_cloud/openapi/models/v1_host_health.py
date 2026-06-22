@@ -43,6 +43,7 @@ class V1HostHealth(object):
     swagger_types = {
         'aer_counters': 'list[V1AERCounter]',
         'fabric_manager': 'V1FabricManagerHealth',
+        'node_fitness': 'V1NodeFitness',
         'recent_dmesg_errors': 'list[str]',
         'storage': 'V1HostStorage',
         'system': 'V1MachineSystemInfo'
@@ -51,15 +52,17 @@ class V1HostHealth(object):
     attribute_map = {
         'aer_counters': 'aerCounters',
         'fabric_manager': 'fabricManager',
+        'node_fitness': 'nodeFitness',
         'recent_dmesg_errors': 'recentDmesgErrors',
         'storage': 'storage',
         'system': 'system'
     }
 
-    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
+    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
         """V1HostHealth - a model defined in Swagger"""  # noqa: E501
         self._aer_counters = None
         self._fabric_manager = None
+        self._node_fitness = None
         self._recent_dmesg_errors = None
         self._storage = None
         self._system = None
@@ -68,6 +71,8 @@ class V1HostHealth(object):
             self.aer_counters = aer_counters
         if fabric_manager is not None:
             self.fabric_manager = fabric_manager
+        if node_fitness is not None:
+            self.node_fitness = node_fitness
         if recent_dmesg_errors is not None:
             self.recent_dmesg_errors = recent_dmesg_errors
         if storage is not None:
@@ -116,6 +121,27 @@ class V1HostHealth(object):
         """
 
         self._fabric_manager = fabric_manager
+
+    @property
+    def node_fitness(self) -> 'V1NodeFitness':
+        """Gets the node_fitness of this V1HostHealth.  # noqa: E501
+
+
+        :return: The node_fitness of this V1HostHealth.  # noqa: E501
+        :rtype: V1NodeFitness
+        """
+        return self._node_fitness
+
+    @node_fitness.setter
+    def node_fitness(self, node_fitness: 'V1NodeFitness'):
+        """Sets the node_fitness of this V1HostHealth.
+
+
+        :param node_fitness: The node_fitness of this V1HostHealth.  # noqa: E501
+        :type: V1NodeFitness
+        """
+
+        self._node_fitness = node_fitness
 
     @property
     def recent_dmesg_errors(self) -> 'list[str]':

@@ -26,6 +26,9 @@ type V1HostHealth struct {
 	// fabric manager
 	FabricManager *V1FabricManagerHealth `json:"fabricManager,omitempty"`
 
+	// node fitness
+	NodeFitness *V1NodeFitness `json:"nodeFitness,omitempty"`
+
 	// recent dmesg errors
 	RecentDmesgErrors []string `json:"recentDmesgErrors"`
 
@@ -45,6 +48,10 @@ func (m *V1HostHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateFabricManager(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNodeFitness(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -115,6 +122,29 @@ func (m *V1HostHealth) validateFabricManager(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1HostHealth) validateNodeFitness(formats strfmt.Registry) error {
+	if swag.IsZero(m.NodeFitness) { // not required
+		return nil
+	}
+
+	if m.NodeFitness != nil {
+		if err := m.NodeFitness.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nodeFitness")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nodeFitness")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1HostHealth) validateStorage(formats strfmt.Registry) error {
 	if swag.IsZero(m.Storage) { // not required
 		return nil
@@ -170,6 +200,10 @@ func (m *V1HostHealth) ContextValidate(ctx context.Context, formats strfmt.Regis
 	}
 
 	if err := m.contextValidateFabricManager(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNodeFitness(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -232,6 +266,31 @@ func (m *V1HostHealth) contextValidateFabricManager(ctx context.Context, formats
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("fabricManager")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateNodeFitness(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NodeFitness != nil {
+
+		if swag.IsZero(m.NodeFitness) { // not required
+			return nil
+		}
+
+		if err := m.NodeFitness.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nodeFitness")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nodeFitness")
 			}
 
 			return err
