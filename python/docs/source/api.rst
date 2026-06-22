@@ -54,6 +54,15 @@ Teamspace
    :undoc-members:
    :show-inheritance:
 
+.. currentmodule:: lightning_sdk.api.teamspace_api
+
+.. autoclass:: SecretType
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. currentmodule:: lightning_sdk
+
 Plugins
 =======
 

@@ -5,7 +5,7 @@ from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.k8s_api import K8sClusterApi
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.studio_api import StudioApi
-from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.api.teamspace_api import SecretType, TeamspaceApi
 from lightning_sdk.api.user_api import UserApi
 
 __all__ = [
@@ -15,6 +15,7 @@ __all__ = [
     "CloudAccountApi",
     "K8sClusterApi",
     "OrgApi",
+    "SecretType",
     "StudioApi",
     "TeamspaceApi",
     "UserApi",

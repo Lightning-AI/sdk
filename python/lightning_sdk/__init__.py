@@ -1,6 +1,7 @@
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.agents import Agent
 from lightning_sdk.ai_hub import AIHub
+from lightning_sdk.api.teamspace_api import SecretType
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.deployment import Deployment
 from lightning_sdk.helpers import VersionChecker, set_tqdm_envvars_noninteractive
@@ -20,17 +21,18 @@ __all__ = [
     "VM",
     "AIHub",
     "Agent",
-    "K8sCluster",
     "CloudProvider",
     "ConnectionType",
     "Deployment",
     "FolderLocation",
     "Job",
     "JobsPlugin",
+    "K8sCluster",
     "Machine",
     "MultiMachineTrainingPlugin",
     "Organization",
     "Plugin",
+    "SecretType",
     "SlurmJobsPlugin",
     "Status",
     "Studio",

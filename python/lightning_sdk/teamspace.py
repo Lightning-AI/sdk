@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 
 import lightning_sdk
 from lightning_sdk.agents import Agent
-from lightning_sdk.api import CloudAccountApi, TeamspaceApi
+from lightning_sdk.api import CloudAccountApi, SecretType, TeamspaceApi
 from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
@@ -350,23 +350,29 @@ class Teamspace(metaclass=TrackCallsMeta):
         """
         return self._teamspace_api.get_secrets(self.id)
 
-    def set_secret(self, key: str, value: str) -> None:
+    def set_secret(self, key: str, value: str, secret_type: Union[str, SecretType] = SecretType.GENERIC) -> None:
         """Set an encrypted secret for the teamspace.
 
         Args:
             key: Secret name. Must start with a letter or underscore and contain only
                 alphanumeric characters and underscores.
             value: The secret value to store.
+            secret_type: The type of secret, either a ``SecretType`` member or its string
+                value. Defaults to ``SecretType.GENERIC``. Use ``SecretType.HF_TOKEN``
+                (or ``"hf_token"``) to tag the secret as a HuggingFace access token so it
+                can be referenced via ``Deployment.start(hf_token_secret=...)``. The type
+                is only applied when the secret is created; updating an existing secret
+                leaves its type unchanged.
 
         Raises:
-            ValueError: If ``key`` contains invalid characters.
+            ValueError: If ``key`` contains invalid characters or ``secret_type`` is invalid.
         """
         if not self._teamspace_api.verify_secret_name(key):
             raise ValueError(
                 "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
             )
 
-        self._teamspace_api.set_secret(self.id, key, value)
+        self._teamspace_api.set_secret(self.id, key, value, secret_type=secret_type)
 
     def list_machines(self, cloud_account: Optional[str] = None, machine: Optional[str] = None) -> List[Machine]:
         """List available machines across cloud accounts.

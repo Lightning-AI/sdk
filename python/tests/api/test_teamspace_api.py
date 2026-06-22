@@ -7,7 +7,7 @@ from unittest import mock
 import pytest
 
 from lightning_sdk import Machine
-from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.api.teamspace_api import SecretType, TeamspaceApi
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateModelBody,
     ModelsStoreCreateModelVersionBody,
@@ -848,7 +848,30 @@ def test_set_secret_create_new():
     ) as mock_create:
         teamspace_api.set_secret("ts-abc", "NEW_SECRET", "secret_value")
 
-        mock_create.assert_called_once_with("ts-abc", "NEW_SECRET", "secret_value")
+        mock_create.assert_called_once_with(
+            "ts-abc", "NEW_SECRET", "secret_value", secret_type=V1SecretType.UNSPECIFIED
+        )
+
+
+@pytest.mark.parametrize("secret_type", [SecretType.HF_TOKEN, "hf_token"])
+def test_set_secret_create_new_with_type(secret_type):
+    teamspace_api = TeamspaceApi()
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=[]), mock.patch.object(
+        teamspace_api, "_create_secret"
+    ) as mock_create:
+        teamspace_api.set_secret("ts-abc", "HF_TOKEN", "hf_xxx", secret_type=secret_type)
+
+        mock_create.assert_called_once_with("ts-abc", "HF_TOKEN", "hf_xxx", secret_type=V1SecretType.HF_TOKEN)
+
+
+def test_set_secret_invalid_type_raises():
+    teamspace_api = TeamspaceApi()
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=[]), pytest.raises(
+        ValueError, match="Invalid secret_type"
+    ):
+        teamspace_api.set_secret("ts-abc", "NAME", "value", secret_type="not_a_type")
 
 
 def test_set_secret_update_existing():
@@ -893,6 +916,16 @@ def test_create_secret_api_call(mock_client):
     assert call_args[1]["body"].name == "NEW_SECRET"
     assert call_args[1]["body"].value == "secret_value"
     assert call_args[1]["body"].type == V1SecretType.UNSPECIFIED
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+def test_create_secret_api_call_with_type(mock_client):
+    teamspace_api = TeamspaceApi()
+
+    teamspace_api._create_secret("ts-abc", "HF_TOKEN", "hf_xxx", secret_type=V1SecretType.HF_TOKEN)
+
+    call_args = mock_client().secret_service_create_secret.call_args
+    assert call_args[1]["body"].type == V1SecretType.HF_TOKEN
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")

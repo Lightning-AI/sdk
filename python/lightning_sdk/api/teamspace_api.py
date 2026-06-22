@@ -3,8 +3,9 @@ import os
 import re
 import warnings
 from concurrent.futures import ThreadPoolExecutor
+from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -53,7 +54,50 @@ from lightning_sdk.lightning_cloud.openapi import (
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
-__all__ = ["TeamspaceApi"]
+__all__ = ["SecretType", "TeamspaceApi"]
+
+
+class SecretType(Enum):
+    """Type of an encrypted secret.
+
+    ``GENERIC`` secrets are exposed as environment variables. ``HF_TOKEN`` tags a
+    secret as a HuggingFace access token so it can be referenced when deploying
+    gated or private HuggingFace models (``Deployment.start(hf_token_secret=...)``).
+    """
+
+    GENERIC = "generic"
+    HF_TOKEN = "hf_token"
+
+    def __str__(self) -> str:
+        """Converts the SecretType to a str.
+
+        Returns:
+            str: The string value of the enum member (e.g. ``"hf_token"``).
+        """
+        return self.value
+
+
+_SECRET_TYPE_TO_API = {
+    SecretType.GENERIC: V1SecretType.UNSPECIFIED,
+    SecretType.HF_TOKEN: V1SecretType.HF_TOKEN,
+}
+
+
+def _resolve_secret_type(secret_type: Union[str, SecretType]) -> V1SecretType:
+    """Resolve a user-provided secret type (enum or string) to a ``V1SecretType``.
+
+    Args:
+        secret_type: A ``SecretType`` member or its string value (e.g. ``"hf_token"``).
+
+    Raises:
+        ValueError: If ``secret_type`` is not a valid secret type.
+    """
+    try:
+        resolved = SecretType(secret_type)
+    except ValueError:
+        valid = ", ".join(repr(member.value) for member in SecretType)
+        raise ValueError(f"Invalid secret_type {secret_type!r}. Must be one of: {valid}.") from None
+    return _SECRET_TYPE_TO_API[resolved]
 
 
 class TeamspaceApi:
@@ -921,7 +965,13 @@ class TeamspaceApi:
         # not a security issue to replace in the client as we get the encrypted values from the server.
         return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
 
-    def set_secret(self, teamspace_id: str, key: str, value: str) -> None:
+    def set_secret(
+        self,
+        teamspace_id: str,
+        key: str,
+        value: str,
+        secret_type: Union[str, SecretType] = SecretType.GENERIC,
+    ) -> None:
         """Set a secret for a teamspace.
 
         This will replace the existing secret if it exists and create a new one if it doesn't.
@@ -930,12 +980,16 @@ class TeamspaceApi:
             teamspace_id: ID of the teamspace to set the secret in.
             key: Name of the secret to create or update.
             value: Value to store for the secret.
+            secret_type: Type to tag the secret with when creating it, either a
+                ``SecretType`` member or its string value (e.g. ``"hf_token"``). The
+                update path does not change an existing secret's type.
         """
+        resolved_type = _resolve_secret_type(secret_type)
         secrets = self._get_secrets(teamspace_id)
         for secret in secrets:
             if secret.name == key:
                 return self._update_secret(teamspace_id, secret.id, value)
-        return self._create_secret(teamspace_id, key, value)
+        return self._create_secret(teamspace_id, key, value, secret_type=resolved_type)
 
     def _get_secrets(self, teamspace_id: str) -> List[V1Secret]:
         """Fetch all raw secret objects for the teamspace.
@@ -967,6 +1021,7 @@ class TeamspaceApi:
         teamspace_id: str,
         key: str,
         value: str,
+        secret_type: V1SecretType = V1SecretType.UNSPECIFIED,
     ) -> None:
         """Create a new encrypted secret for the teamspace.
 
@@ -974,9 +1029,10 @@ class TeamspaceApi:
             teamspace_id: ID of the teamspace to create the secret in.
             key: Name of the new secret.
             value: Value to store for the secret.
+            secret_type: Type to tag the secret with.
         """
         self._client.secret_service_create_secret(
-            body=SecretServiceCreateSecretBody(name=key, value=value, type=V1SecretType.UNSPECIFIED),
+            body=SecretServiceCreateSecretBody(name=key, value=value, type=secret_type),
             project_id=teamspace_id,
         )
 

@@ -6,6 +6,7 @@ from unittest import mock
 import pytest
 
 import lightning_sdk
+from lightning_sdk.api.teamspace_api import SecretType
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
     DataConnectionServiceCreateDataConnectionBody,
@@ -715,7 +716,21 @@ def test_teamspace_set_secret(
     with mock.patch.object(ts._teamspace_api, "set_secret") as mock_set:
         ts.set_secret("NEW_SECRET", "secret_value")
 
-    mock_set.assert_called_once_with("ts-abc002", "NEW_SECRET", "secret_value")
+    mock_set.assert_called_once_with("ts-abc002", "NEW_SECRET", "secret_value", secret_type=SecretType.GENERIC)
+
+
+@pytest.mark.parametrize("secret_type", [SecretType.HF_TOKEN, "hf_token"])
+def test_teamspace_set_secret_hf_token(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    secret_type,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "set_secret") as mock_set:
+        ts.set_secret("HF_TOKEN", "hf_xxx", secret_type=secret_type)
+
+    mock_set.assert_called_once_with("ts-abc002", "HF_TOKEN", "hf_xxx", secret_type=secret_type)
 
 
 def test_teamspace_set_secret_invalid_name(
