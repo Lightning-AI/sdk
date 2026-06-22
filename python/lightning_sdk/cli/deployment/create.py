@@ -80,6 +80,12 @@ from lightning_sdk.deployment import Deployment
     multiple=True,
     help="Extra raw vLLM arg, repeatable (e.g. --vllm-arg --enable-chunked-prefill).",
 )
+@click.option(
+    "--enable-weight-reload/--no-enable-weight-reload",
+    "enable_weight_reload",
+    default=None,
+    help="Enable hot weight reload (HuggingFace auto-detect + user-triggered) without redeploying.",
+)
 @click.option("--ack", "acks", multiple=True, help="Acknowledge a model validation warning by code (repeatable).")
 @click.option(
     "--force", is_flag=True, default=False, help="Acknowledge all model validation warnings and deploy anyway."
@@ -128,6 +134,7 @@ def create_deployment(
     quantization: Optional[str] = None,
     dtype: Optional[str] = None,
     extra_vllm_args: Sequence[str] = (),
+    enable_weight_reload: Optional[bool] = None,
     acks: Sequence[str] = (),
     force: bool = False,
     dry_run: bool = False,
@@ -165,6 +172,7 @@ def create_deployment(
             quantization=quantization,
             dtype=dtype,
             extra_vllm_args=vllm_args,
+            enable_weight_reload=enable_weight_reload,
         )
         click.echo("Dry run — model configuration that would be deployed:")
         click.echo(json.dumps({k: v for k, v in spec.to_dict().items() if v is not None}, indent=2, sort_keys=True))
@@ -208,6 +216,7 @@ def create_deployment(
             quantization=quantization,
             dtype=dtype,
             extra_vllm_args=vllm_args,
+            enable_weight_reload=enable_weight_reload,
             acknowledged_warnings=acknowledged or None,
         )
         return deployment

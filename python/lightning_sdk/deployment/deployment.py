@@ -158,6 +158,7 @@ class Deployment(metaclass=TrackCallsMeta):
         quantization: Optional[str] = None,
         dtype: Optional[str] = None,
         extra_vllm_args: Optional[List[str]] = None,
+        enable_weight_reload: Optional[bool] = None,
         acknowledged_warnings: Optional[List[str]] = None,
     ) -> None:
         """The Lightning AI Deployment.
@@ -336,6 +337,7 @@ class Deployment(metaclass=TrackCallsMeta):
                     quantization=quantization,
                     dtype=dtype,
                     extra_vllm_args=extra_vllm_args,
+                    enable_weight_reload=enable_weight_reload,
                 ),
                 acknowledged_warnings=acknowledged_warnings,
             ),

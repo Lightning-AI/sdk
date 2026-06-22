@@ -2,6 +2,7 @@ import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.deployment.create import create_deployment
@@ -230,6 +231,48 @@ def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> Non
     assert kwargs["quantization"] == "fp8"
     assert kwargs["extra_vllm_args"] == ["--enable-chunked-prefill"]
     assert kwargs["ports"] == [8000]  # vLLM default, no --port given
+
+
+@pytest.mark.parametrize(
+    ("flag", "expected"),
+    [
+        ("--enable-weight-reload", True),
+        ("--no-enable-weight-reload", False),
+        (None, None),
+    ],
+)
+def test_create_deployment_enable_weight_reload_delegates(monkeypatch, flag, expected) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = MagicMock()
+    deployment.name = "llama"
+
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", MagicMock(return_value=deployment))
+
+    args = ["llama", "--model", "meta-llama/Llama-3-8B", "--machine", "L4"]
+    if flag is not None:
+        args.append(flag)
+
+    result = CliRunner().invoke(create_deployment, args)
+
+    assert result.exit_code == 0, result.output
+    _, kwargs = deployment.start.call_args
+    assert kwargs["enable_weight_reload"] is expected
+
+
+def test_create_deployment_enable_weight_reload_in_dry_run(monkeypatch) -> None:
+    deployment_cls = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.Deployment", deployment_cls)
+
+    result = CliRunner().invoke(
+        create_deployment,
+        ["llm", "--model", "meta-llama/x", "--machine", "L4", "--enable-weight-reload", "--dry-run"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert '"enable_weight_reload": true' in result.output
+    deployment_cls.assert_not_called()
 
 
 def test_create_model_force_acks_and_retries(monkeypatch) -> None:

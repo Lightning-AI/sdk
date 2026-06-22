@@ -1602,6 +1602,7 @@ def to_byom_spec(
     quantization: Optional[str] = None,
     dtype: Optional[str] = None,
     extra_vllm_args: Optional[Sequence[str]] = None,
+    enable_weight_reload: Optional[bool] = None,
 ) -> Optional[V1BYOMSpec]:
     if not model:
         return None
@@ -1616,6 +1617,7 @@ def to_byom_spec(
         quantization=quantization,
         dtype=dtype,
         extra_vllm_args=list(extra_vllm_args) if extra_vllm_args else None,
+        enable_weight_reload=enable_weight_reload,
     )
 
 
