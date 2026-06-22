@@ -71,6 +71,35 @@ class FakeSandboxInstance:
     def get_command(self, command_id: str):
         return SimpleNamespace(output=f"{command_id}: output\n", exit_code=0, running=False)
 
+    def snapshot(self, **kwargs):
+        self.snapshot_kwargs = kwargs
+        return FakeSnapshot()
+
+
+@dataclass
+class FakeSnapshot:
+    id: str = "snap-1"
+    status: str = "ready"
+    runtime: str = "python"
+    runtime_image: str = "python:3.11"
+    size_bytes: int = 12_900_000
+    project_id: str = "proj-1"
+    organization_id: str = "org-1"
+    source_sandbox_id: str = "sbx-1"
+    source_sandbox_name: str = "unit-sandbox"
+    source_sandbox_instance_type: str = "cpu-small"
+    auto: bool = False
+    excludes: list[str] | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    expires_at: datetime | None = None
+
+    def __post_init__(self) -> None:
+        if self.created_at is None:
+            self.created_at = datetime(2026, 1, 1, 12, 0, 0)
+        if self.updated_at is None:
+            self.updated_at = datetime(2026, 1, 1, 12, 1, 0)
+
 
 class FakeSandboxClient:
     def __init__(self, instance: FakeSandboxInstance | None = None) -> None:
@@ -78,6 +107,9 @@ class FakeSandboxClient:
         self.create_kwargs = None
         self.list_kwargs = None
         self.get_ids: list[str] = []
+        self.list_snapshots_kwargs = None
+        self.get_snapshot_ids: list[str] = []
+        self.deleted_snapshot_ids: list[str] = []
 
     def list(self, **kwargs):
         self.list_kwargs = kwargs
@@ -95,6 +127,22 @@ class FakeSandboxClient:
     def get(self, sandbox_id: str):
         self.get_ids.append(sandbox_id)
         return self.instance
+
+    def list_snapshots(self, **kwargs):
+        self.list_snapshots_kwargs = kwargs
+        return SimpleNamespace(
+            snapshots=[FakeSnapshot()],
+            next_page_token="next-snap",
+            previous_page_token="prev-snap",
+            total_size=1,
+        )
+
+    def get_snapshot(self, snapshot_id: str):
+        self.get_snapshot_ids.append(snapshot_id)
+        return FakeSnapshot(id=snapshot_id)
+
+    def delete_snapshot(self, snapshot_id: str) -> None:
+        self.deleted_snapshot_ids.append(snapshot_id)
 
 
 def _invoke(args: list[str]) -> SimpleNamespace:
@@ -319,3 +367,86 @@ def test_sandbox_logs_and_command_status(monkeypatch) -> None:
     assert status.exit_code == 0
     assert "cmd-1" in status.output
     assert "cmd-1: output" in status.output
+
+
+def test_sandbox_snapshot_help() -> None:
+    assert_help_contains(
+        "lightning sandbox snapshot --help",
+        "Usage: lightning sandbox snapshot",
+        "Manage Lightning AI Sandbox snapshots.",
+        "create",
+        "delete",
+        "get",
+        "list",
+    )
+
+
+def test_sandbox_snapshot_list(monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(
+        ["sandbox", "snapshot", "list", "--teamspace", "owner/teamspace", "--sort-order", "desc", "--limit", "5"]
+    )
+
+    assert result.exit_code == 0
+    assert "snap-1" in result.output
+    assert "Next page token: next-snap" in result.output
+    assert client.list_snapshots_kwargs == {
+        "name": None,
+        "page_token": None,
+        "limit": 5,
+        "teamspace": "owner/teamspace",
+        "sort_order": "desc",
+    }
+
+
+def test_sandbox_snapshot_list_json(monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "snapshot", "list", "--json"])
+
+    assert result.exit_code == 0
+    assert '"id": "snap-1"' in result.output
+    assert '"total_size": 1' in result.output
+
+
+def test_sandbox_snapshot_get(monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "snapshot", "get", "snap-9"])
+
+    assert result.exit_code == 0
+    assert "snap-9" in result.output
+    assert client.get_snapshot_ids == ["snap-9"]
+
+
+def test_sandbox_snapshot_create(monkeypatch) -> None:
+    instance = FakeSandboxInstance()
+    client = FakeSandboxClient(instance)
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "snapshot", "create", "sbx-1", "--expiration", "0", "--exclude", "/tmp", "--no-wait"])
+
+    assert result.exit_code == 0
+    assert "snap-1" in result.output
+    assert client.get_ids == ["sbx-1"]
+    assert instance.snapshot_kwargs == {
+        "expiration": 0,
+        "excludes": ["/tmp"],
+        "wait": False,
+        "wait_timeout": 600.0,
+    }
+
+
+def test_sandbox_snapshot_delete(monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "snapshot", "delete", "snap-9"])
+
+    assert result.exit_code == 0
+    assert "Deleted snapshot snap-9" in result.output
+    assert client.deleted_snapshot_ids == ["snap-9"]

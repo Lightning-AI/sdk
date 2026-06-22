@@ -234,17 +234,36 @@ class ListSandboxesResult:
 
 
 @dataclass
-class SnapshotInfo:
-    """A sandbox filesystem snapshot (immutable, reusable base image)."""
+class Snapshot:
+    """A sandbox filesystem snapshot (immutable, reusable base image).
+
+    Restore from one via ``Sandbox.create(snapshot_id=...)``. ``status`` is one of
+    ``"saving"`` (capture/upload in progress), ``"ready"`` (restorable), or
+    ``"failed"``. ``auto`` is ``True`` for snapshots the control plane captured
+    automatically when a ``persistent`` sandbox was stopped (see
+    :meth:`SandboxInstance.stop`); user-initiated snapshots created via
+    :meth:`SandboxInstance.snapshot` are ``False``.
+    """
 
     id: str
     status: str
     runtime: str
     size_bytes: int
     project_id: str
+    organization_id: str = ""
+    runtime_image: str = ""
+    rootfs_digest: str = ""
+    source_sandbox_id: str = ""
+    source_sandbox_name: str = ""
+    source_sandbox_instance_type: str = ""
+    auto: bool = False
+    excludes: list[str] | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    expires_at: datetime | None = None
 
     @classmethod
-    def _from_v1(cls, v1: V1SandboxSnapshot) -> SnapshotInfo:
+    def _from_v1(cls, v1: V1SandboxSnapshot) -> Snapshot:
         try:
             size = int(v1.size_bytes) if v1.size_bytes is not None else 0
         except (TypeError, ValueError):
@@ -255,7 +274,30 @@ class SnapshotInfo:
             runtime=v1.runtime or "",
             size_bytes=size,
             project_id=v1.project_id or "",
+            organization_id=v1.organization_id or "",
+            runtime_image=v1.runtime_image or "",
+            rootfs_digest=v1.rootfs_digest or "",
+            source_sandbox_id=v1.source_sandbox_id or "",
+            source_sandbox_name=v1.source_sandbox_name or "",
+            source_sandbox_instance_type=v1.source_sandbox_instance_type or "",
+            auto=bool(v1.source_sandbox_persistent),
+            excludes=list(v1.tar_excludes) if v1.tar_excludes else None,
+            created_at=v1.created_at,
+            updated_at=v1.updated_at,
+            expires_at=v1.expires_at,
         )
+
+
+#: Deprecated alias for :class:`Snapshot`. Kept for backwards compatibility.
+SnapshotInfo = Snapshot
+
+
+@dataclass
+class ListSnapshotsResult:
+    snapshots: list[Snapshot]
+    next_page_token: str
+    previous_page_token: str
+    total_size: int
 
 
 class SandboxInstance(metaclass=TrackCallsMeta):
@@ -521,8 +563,8 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         excludes: list[str] | None = None,
         wait: bool = True,
         wait_timeout: float = 600.0,
-    ) -> SnapshotInfo:
-        """Snapshot this sandbox's filesystem and return the :class:`SnapshotInfo`.
+    ) -> Snapshot:
+        """Snapshot this sandbox's filesystem and return the :class:`Snapshot`.
 
         The control plane pauses the sandbox, tarballs its overlay upperdir,
         resumes it, then uploads the tarball. Only filesystem state is captured —
@@ -554,7 +596,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             raise_sandbox_api_error(e)
         if wait:
             snap = _wait_for_snapshot_ready(self._sandbox_api, snap.id, org, wait_timeout)
-        return SnapshotInfo._from_v1(snap)
+        return Snapshot._from_v1(snap)
 
     def run_command(self, command_or_opts: str | RunCommandOpts, args: list[str] | None = None) -> Command:
         """Run a command inside the sandbox.

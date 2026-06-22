@@ -302,6 +302,8 @@ class SandboxApi:
         name: str | None = None,
         page_token: str | None = None,
         limit: int | None = None,
+        project_id: str | None = None,
+        sort_order: str | None = None,
     ) -> V1ListSandboxSnapshotsResponse:
         """List snapshots via :meth:`SandboxesServiceApi.sandboxes_service_list_sandbox_snapshots`."""
         kwargs = self._org_query_kwargs()
@@ -311,6 +313,10 @@ class SandboxApi:
             kwargs["page_token"] = page_token
         if limit is not None:
             kwargs["limit"] = str(limit)
+        if project_id:
+            kwargs["project_id"] = project_id
+        if sort_order:
+            kwargs["sort_order"] = sort_order
         api = self.sandboxes()
         try:
             return api.sandboxes_service_list_sandbox_snapshots(**kwargs)

@@ -5,8 +5,9 @@ from typing import TYPE_CHECKING, Any, Callable
 from lightning_sdk.api.sandbox_api import SandboxApi
 from lightning_sdk.sandbox.base import (
     ListSandboxesResult,
+    ListSnapshotsResult,
     SandboxInstance,
-    SnapshotInfo,
+    Snapshot,
     _configure_globals,
     _global_config,
     _resolve_sandbox_api,
@@ -180,9 +181,9 @@ class Sandbox:
             total_size=total,
         )
 
-    def get_snapshot(self, snapshot_id: str) -> SnapshotInfo:
+    def get_snapshot(self, snapshot_id: str) -> Snapshot:
         """Fetch snapshot metadata by id."""
-        return SnapshotInfo._from_v1(self._api.get_snapshot(snapshot_id))
+        return Snapshot._from_v1(self._api.get_snapshot(snapshot_id))
 
     def list_snapshots(
         self,
@@ -190,14 +191,35 @@ class Sandbox:
         name: str | None = None,
         page_token: str | None = None,
         limit: int | None = None,
-    ) -> list[SnapshotInfo]:
-        """List snapshots visible to this client's org / API key."""
+        teamspace: str | Teamspace | None = None,
+        sort_order: str | None = None,
+    ) -> ListSnapshotsResult:
+        """List snapshots visible to this client's org / API key.
+
+        Pass ``name`` to filter by source sandbox name, ``teamspace`` (format
+        ``owner/teamspace``) to scope to a project, and ``sort_order``
+        (``"asc"`` / ``"desc"``) to order by creation time. Use ``page_token``
+        (from a previous result's ``next_page_token``) and ``limit`` to paginate.
+        """
         data = self._api.list_snapshots(
             name=name,
             page_token=page_token,
             limit=limit,
+            project_id=_resolve_teamspace_id(teamspace),
+            sort_order=sort_order,
         )
-        return [SnapshotInfo._from_v1(s) for s in (data.snapshots or [])]
+        snapshots = [Snapshot._from_v1(s) for s in (data.snapshots or [])]
+        ts = data.total_size
+        try:
+            total = int(ts) if ts is not None else 0
+        except (TypeError, ValueError):
+            total = 0
+        return ListSnapshotsResult(
+            snapshots=snapshots,
+            next_page_token=data.next_page_token or "",
+            previous_page_token=data.previous_page_token or "",
+            total_size=total,
+        )
 
     def delete_snapshot(self, snapshot_id: str) -> None:
         """Delete a snapshot by id."""

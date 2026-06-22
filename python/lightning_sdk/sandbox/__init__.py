@@ -1,8 +1,10 @@
 from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus
 from lightning_sdk.sandbox.base import (
     ListSandboxesResult,
+    ListSnapshotsResult,
     RunCommandOpts,
     SandboxInstance,
+    Snapshot,
     SnapshotInfo,
     WriteFileParams,
 )
@@ -28,6 +30,7 @@ __all__ = [
     "CommandLog",
     "CommandStatus",
     "ListSandboxesResult",
+    "ListSnapshotsResult",
     "NetworkPolicy",
     "PtyConnectOpts",
     "PtyCreateOpts",
@@ -40,6 +43,7 @@ __all__ = [
     "SandboxConfig",
     "SandboxInstance",
     "SandboxProcess",
+    "Snapshot",
     "SnapshotInfo",
     "WriteFileParams",
     "write_to_stdout",

@@ -11,7 +11,7 @@ from rich.table import Table
 
 from lightning_sdk.cli.job.run import _resolve_envs
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.sandbox import RunCommandOpts, Sandbox, SandboxConfig, SandboxInstance
+from lightning_sdk.sandbox import RunCommandOpts, Sandbox, SandboxConfig, SandboxInstance, Snapshot
 
 
 def _sandbox_config(
@@ -48,8 +48,6 @@ def _sandbox_to_dict(sandbox: SandboxInstance) -> dict[str, Any]:
         "runtime": sandbox.runtime or "",
         "organization_id": sandbox.organization_id,
         "project_id": sandbox.project_id,
-        "cluster_id": sandbox.cluster_id,
-        "cloudspace_id": sandbox.cloudspace_id,
         "ports": sandbox.ports,
         "created_at": sandbox.created_at,
         "updated_at": sandbox.updated_at,
@@ -77,6 +75,59 @@ def _echo_sandbox_summary(sandbox: SandboxInstance) -> None:
         sandbox.cluster_id,
     )
     click.echo(rich_to_str(table), color=True)
+
+
+def _snapshot_to_dict(snapshot: Snapshot) -> dict[str, Any]:
+    return {
+        "id": snapshot.id,
+        "status": snapshot.status,
+        "runtime": snapshot.runtime,
+        "runtime_image": snapshot.runtime_image,
+        "size_bytes": snapshot.size_bytes,
+        "project_id": snapshot.project_id,
+        "organization_id": snapshot.organization_id,
+        "source_sandbox_id": snapshot.source_sandbox_id,
+        "source_sandbox_name": snapshot.source_sandbox_name,
+        "source_sandbox_instance_type": snapshot.source_sandbox_instance_type,
+        "auto": snapshot.auto,
+        "excludes": snapshot.excludes or [],
+        "created_at": snapshot.created_at,
+        "updated_at": snapshot.updated_at,
+        "expires_at": snapshot.expires_at,
+    }
+
+
+def _format_size(size_bytes: int) -> str:
+    size = float(size_bytes)
+    for unit in ("B", "KiB", "MiB", "GiB", "TiB"):
+        if size < 1024 or unit == "TiB":
+            return f"{size:.0f} {unit}" if unit == "B" else f"{size:.1f} {unit}"
+        size /= 1024
+    return f"{size_bytes} B"
+
+
+def _snapshot_table(snapshots: Sequence[Snapshot]) -> Table:
+    table = Table(pad_edge=True)
+    table.add_column("ID", no_wrap=True)
+    table.add_column("Status", no_wrap=True)
+    table.add_column("Source sandbox", no_wrap=True)
+    table.add_column("Runtime", no_wrap=True)
+    table.add_column("Size", no_wrap=True)
+    table.add_column("Auto", no_wrap=True)
+    for snapshot in snapshots:
+        table.add_row(
+            snapshot.id,
+            snapshot.status,
+            snapshot.source_sandbox_name or snapshot.source_sandbox_id,
+            snapshot.runtime,
+            _format_size(snapshot.size_bytes),
+            "yes" if snapshot.auto else "no",
+        )
+    return table
+
+
+def _echo_snapshot_summary(snapshot: Snapshot) -> None:
+    click.echo(rich_to_str(_snapshot_table([snapshot])), color=True)
 
 
 def _parse_env(env: Sequence[str]) -> dict[str, str]:
@@ -582,6 +633,162 @@ def command_status(
     click.echo(rich_to_str(table), color=True)
     if status.output:
         click.echo(status.output, nl=not status.output.endswith("\n"))
+
+
+_LIST_SNAPSHOTS_HELP = """List sandbox snapshots.
+
+\b
+Example:
+  $ sandbox snapshot list --teamspace owner/teamspace --limit 2
+  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+
+\b
+  $ sandbox snapshot list --teamspace owner/teamspace --json
+  {
+    "snapshots": [
+      {
+        "id": "snap-42",
+        "status": "ready"
+      }
+    ],
+    "total_size": 1
+  }
+"""
+
+
+_GET_SNAPSHOT_HELP = """Show a sandbox snapshot.
+
+\b
+Example:
+  $ sandbox snapshot get snap-42
+  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+"""
+
+
+_CREATE_SNAPSHOT_HELP = """Snapshot a sandbox's filesystem.
+
+Captures filesystem state only (not running processes). Waits until the snapshot
+is ready by default; pass --no-wait to return the saving row immediately.
+
+\b
+Example:
+  $ sandbox snapshot create sbx-42
+  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+"""
+
+
+_DELETE_SNAPSHOT_HELP = """Delete a sandbox snapshot.
+
+\b
+Example:
+  $ sandbox snapshot delete snap-42
+  Deleted snapshot snap-42
+"""
+
+
+@click.command("list", help=_LIST_SNAPSHOTS_HELP)
+@_with_common_options
+@click.option("--name", help="Filter by source sandbox name.")
+@click.option("--page-token", help="Pagination token returned by a previous list call.")
+@click.option("--limit", type=int, help="Maximum number of snapshots to return.")
+@click.option("--teamspace", help="Only list snapshots in this teamspace (format: owner/teamspace).")
+@click.option("--sort-order", type=click.Choice(["asc", "desc"]), help="Sort by creation time.")
+@click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
+def list_snapshots(
+    api_key: str | None,
+    name: str | None,
+    page_token: str | None,
+    limit: int | None,
+    teamspace: str | None,
+    sort_order: str | None,
+    as_json: bool,
+) -> None:
+    """List sandbox snapshots."""
+    result = _sandbox_client(api_key=api_key).list_snapshots(
+        name=name,
+        page_token=page_token,
+        limit=limit,
+        teamspace=teamspace,
+        sort_order=sort_order,
+    )
+    if as_json:
+        _echo_json(
+            {
+                "snapshots": [_snapshot_to_dict(snapshot) for snapshot in result.snapshots],
+                "next_page_token": result.next_page_token,
+                "previous_page_token": result.previous_page_token,
+                "total_size": result.total_size,
+            }
+        )
+        return
+    click.echo(rich_to_str(_snapshot_table(result.snapshots)), color=True)
+    if result.next_page_token:
+        click.echo(f"Next page token: {result.next_page_token}")
+
+
+@click.command("get", help=_GET_SNAPSHOT_HELP)
+@_with_common_options
+@click.argument("snapshot_id")
+@click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
+def get_snapshot(api_key: str | None, snapshot_id: str, as_json: bool) -> None:
+    """Show a sandbox snapshot."""
+    snapshot = _sandbox_client(api_key=api_key).get_snapshot(snapshot_id)
+    if as_json:
+        _echo_json(_snapshot_to_dict(snapshot))
+        return
+    _echo_snapshot_summary(snapshot)
+
+
+@click.command("create", help=_CREATE_SNAPSHOT_HELP)
+@_with_common_options
+@click.argument("sandbox_id")
+@click.option("--expiration", type=int, help="TTL in milliseconds (0 = never). Defaults to the platform default.")
+@click.option("--exclude", "excludes", multiple=True, help="Path to exclude from the snapshot. Repeatable.")
+@click.option("--wait/--no-wait", default=True, show_default=True, help="Wait until the snapshot is ready.")
+@click.option("--wait-timeout", type=float, default=600.0, show_default=True, help="Seconds to wait for readiness.")
+@click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
+def create_snapshot(
+    api_key: str | None,
+    sandbox_id: str,
+    expiration: int | None,
+    excludes: Sequence[str],
+    wait: bool,
+    wait_timeout: float,
+    as_json: bool,
+) -> None:
+    """Snapshot a sandbox's filesystem."""
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
+    snapshot = sandbox.snapshot(
+        expiration=expiration,
+        excludes=list(excludes) or None,
+        wait=wait,
+        wait_timeout=wait_timeout,
+    )
+    if as_json:
+        _echo_json(_snapshot_to_dict(snapshot))
+        return
+    _echo_snapshot_summary(snapshot)
+
+
+@click.command("delete", help=_DELETE_SNAPSHOT_HELP)
+@_with_common_options
+@click.argument("snapshot_id")
+def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
+    """Delete a sandbox snapshot."""
+    _sandbox_client(api_key=api_key).delete_snapshot(snapshot_id)
+    click.echo(f"Deleted snapshot {snapshot_id}")
 
 
 @click.command("commands", help=_LIST_COMMANDS_HELP)

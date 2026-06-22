@@ -180,7 +180,7 @@ def test_sandbox_client_snapshot_helpers():
 
     with mock.patch.object(sdk.api, "sandboxes", return_value=sb_svc):
         assert sdk.get_snapshot("snap-1").id == "snap-1"
-        assert sdk.list_snapshots()[0].id == "snap-1"
+        assert sdk.list_snapshots().snapshots[0].id == "snap-1"
         sdk.delete_snapshot("snap-1")
 
     sb_svc.sandboxes_service_get_sandbox_snapshot.assert_called_once_with("snap-1")

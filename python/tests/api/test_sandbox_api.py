@@ -267,6 +267,20 @@ def test_list_snapshots_forwards_filters(patched_sandbox_api):
     )
 
 
+def test_list_snapshots_forwards_project_and_sort_order(patched_sandbox_api):
+    from lightning_sdk.lightning_cloud.openapi import V1ListSandboxSnapshotsResponse
+
+    api, mock_svc = patched_sandbox_api
+    mock_svc.sandboxes_service_list_sandbox_snapshots.return_value = V1ListSandboxSnapshotsResponse(snapshots=[])
+
+    api.list_snapshots(project_id="proj-1", sort_order="desc")
+
+    mock_svc.sandboxes_service_list_sandbox_snapshots.assert_called_once_with(
+        project_id="proj-1",
+        sort_order="desc",
+    )
+
+
 def test_get_snapshot_and_delete_snapshot_use_org_scope(patched_sandbox_api):
     api, mock_svc = patched_sandbox_api
     api._config["organization_id"] = "org-1"
