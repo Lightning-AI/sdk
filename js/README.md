@@ -140,6 +140,50 @@ await sandbox.process.resizePtySession("build", 150, 40);
 
 > **Note on cross-process persistence.** Within a single SDK process, every PTY method works against an in-process registry. Reattaching from a *different* process to a session that's still running on the sandbox requires the runtime image to ship `screen` (or similar) and the in-sandbox SSH login shell to honor `LAI_TERM_SESSION_NAME` / `LAI_TERM_RESTORE` — both of which are tracked as a follow-up to this initial parity work. The API surface above does not change either way.
 
+## Persistence & snapshots
+
+Sandboxes can persist their filesystem across stops and idle eviction. Create a sandbox with `persistent: true` and its **id becomes a durable handle** — the controlplane auto-snapshots on idle/stop and transparently restores it the next time the id is accessed.
+
+```ts
+const sandbox = await Sandbox.create({
+  name: "durable-job",
+  instanceType: "cpu-1",
+  persistent: true,
+  projectId: "proj-123", // recommended for persistent sandboxes
+});
+
+// ... do work, write files ...
+
+// Pause: captures an auto-snapshot keyed to the sandbox id and stops the server.
+const { autoSnapshotId } = await sandbox.stop();
+
+// Later — resume by id, preserving filesystem state. Blocks until running.
+const resumed = await Sandbox.resume({ sandboxId: sandbox.sandboxId });
+// (or `await sandbox.resume()`)
+```
+
+`Sandbox.get` / `Sandbox.list` surface a paused persistent sandbox with `status: "paused"`.
+
+### Named snapshots
+
+Capture an explicit, named snapshot you can boot new sandboxes from:
+
+```ts
+const snap = await sandbox.createSnapshot({ excludes: ["node_modules"] });
+// snap.status starts as "saving"; poll until "ready":
+const ready = await Sandbox.getSnapshot(snap.id);
+
+// Boot a fresh sandbox from the snapshot:
+const clone = await Sandbox.create({
+  name: "from-snapshot",
+  instanceType: "cpu-1",
+  snapshotId: snap.id,
+});
+
+const { snapshots } = await Sandbox.listSnapshots({ projectId: "proj-123" });
+await Sandbox.deleteSnapshot(snap.id);
+```
+
 ## License
 
 Apache-2.0

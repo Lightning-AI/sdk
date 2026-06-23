@@ -25,6 +25,13 @@ export interface SandboxData {
   runtime: string;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Whether the sandbox persists its filesystem across stops/idle via
+   * automatic snapshots. See {@link CreateSandboxParams.persistent}.
+   */
+  persistent: boolean;
+  /** Project the sandbox belongs to (empty when not scoped to a project). */
+  projectId: string;
 }
 
 export interface CreateSandboxParams {
@@ -36,6 +43,90 @@ export interface CreateSandboxParams {
   clusterId?: string;
   cloudspaceId?: string;
   runtime?: string;
+  /**
+   * Whether the sandbox persists its state across restarts via automatic
+   * snapshots. Defaults to the platform default (currently `true`) when
+   * omitted.
+   *
+   * When `true`, the controlplane automatically snapshots the sandbox on
+   * idle, sleep, or eviction and transparently restores it the next time the
+   * sandbox id is accessed — making the sandbox id a durable handle. Pair
+   * with {@link Sandbox.stop} to pause (capturing an auto-snapshot) and
+   * {@link Sandbox.resume} to bring it back by id.
+   *
+   * When `false`, the sandbox is best-effort ephemeral: state is lost on
+   * stop, idle reclaim, or host reschedule.
+   */
+  persistent?: boolean;
+  /**
+   * Create the sandbox from an existing snapshot id (see
+   * {@link Sandbox.createSnapshot}). The new sandbox boots with the snapshot's
+   * filesystem.
+   */
+  snapshotId?: string;
+  /**
+   * Project the sandbox is owned by. Recommended for persistent sandboxes —
+   * the controlplane scopes the auto-snapshot bucket prefix to it.
+   */
+  projectId?: string;
+  /** Maximum duration in milliseconds before the sandbox is auto-stopped. */
+  timeout?: number;
+}
+
+/** Parameters for resuming a stopped/paused persistent sandbox by id. */
+export interface ResumeSandboxParams {
+  sandboxId: string;
+  organizationId?: string;
+}
+
+/** Options for {@link Sandbox.stop}. */
+export interface StopSandboxOptions {
+  /**
+   * Project the auto-snapshot is written under for persistent sandboxes.
+   * Defaults to the sandbox's original project when unset.
+   */
+  projectId?: string;
+}
+
+/** Options for {@link Sandbox.createSnapshot}. */
+export interface CreateSnapshotParams {
+  /**
+   * Project the snapshot is stored under. Required by the platform —
+   * snapshots are stored in the cluster bucket under the project's prefix
+   * and authorization is project-scoped. Falls back to the sandbox's own
+   * `projectId` when omitted.
+   */
+  projectId?: string;
+  /** Tar exclude override for this snapshot. Platform default applies when unset. */
+  excludes?: string[];
+  /**
+   * Expiration in milliseconds. Platform default applies when unset; pass `0`
+   * to request no expiration.
+   */
+  expiration?: number;
+}
+
+/** A point-in-time snapshot of a sandbox's filesystem. */
+export interface SnapshotData {
+  id: string;
+  organizationId: string;
+  projectId: string;
+  sourceSandboxId: string;
+  /** `saving` | `ready` | `failed`. Only `ready` snapshots are restorable. */
+  status: string;
+  sizeBytes: number;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string;
+  runtime: string;
+}
+
+export interface ListSnapshotsParams {
+  organizationId?: string;
+  projectId?: string;
+  name?: string;
+  pageToken?: string;
+  limit?: number;
 }
 
 export interface GetSandboxParams {

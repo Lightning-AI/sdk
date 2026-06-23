@@ -12,20 +12,31 @@ import type {
   WriteFileParams,
   ReadFileParams,
   CreateDirectoryParams,
+  ResumeSandboxParams,
+  StopSandboxOptions,
+  CreateSnapshotParams,
+  SnapshotData,
+  ListSnapshotsParams,
 } from "./types.js";
 import { Command } from "./command.js";
 import type {
   SandboxesServiceCreateSandboxDirectoryBody,
+  SandboxesServiceCreateSandboxSnapshotBody,
   SandboxesServiceRunSandboxCommandBody,
+  SandboxesServiceStopSandboxBody,
+  SandboxesServiceUpdateSandboxBody,
   SandboxesServiceWriteSandboxFileBody,
   V1CreateSandboxRequest,
   V1GetSandboxCommandLogsResponse,
   V1GetSandboxCommandResponse,
   V1GetSandboxFileResponse,
   V1ListSandboxesResponse,
+  V1ListSandboxSnapshotsResponse,
   V1LogMessage,
   V1RunSandboxCommandResponse,
   V1Sandbox,
+  V1SandboxSnapshot,
+  V1StopSandboxResponse,
 } from "./lightning_cloud/openapi/data-contracts.js";
 import { getApiKey, getBaseUrl, mergeSandboxConfig, resolveOrgId } from "./config.js";
 import { FileSystem } from "./filesystem.js";
@@ -58,7 +69,6 @@ async function request<T>(
   }
 
   const resp = await fetch(url, init);
-  console.log(url)
   if (!resp.ok) {
     const text = await resp.text();
     throw new Error(`Lightning API error ${resp.status}: ${text}`);
@@ -85,6 +95,23 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     runtime: v.runtime ?? "",
     createdAt: v.createdAt ?? "",
     updatedAt: v.updatedAt ?? "",
+    persistent: v.persistent ?? false,
+    projectId: v.projectId ?? "",
+  };
+}
+
+function toSnapshotData(v: V1SandboxSnapshot): SnapshotData {
+  return {
+    id: v.id ?? "",
+    organizationId: v.organizationId ?? "",
+    projectId: v.projectId ?? "",
+    sourceSandboxId: v.sourceSandboxId ?? "",
+    status: v.status ?? "",
+    sizeBytes: v.sizeBytes !== undefined && v.sizeBytes !== "" ? Number(v.sizeBytes) : 0,
+    createdAt: v.createdAt ?? "",
+    updatedAt: v.updatedAt ?? "",
+    expiresAt: v.expiresAt ?? "",
+    runtime: v.runtime ?? "",
   };
 }
 
@@ -126,6 +153,8 @@ export class Sandbox {
   readonly cloudspaceId: string;
   readonly ports: string[];
   readonly runtime: string;
+  readonly persistent: boolean;
+  readonly projectId: string;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 
@@ -146,6 +175,8 @@ export class Sandbox {
     this.cloudspaceId = data.cloudspaceId;
     this.ports = data.ports ?? [];
     this.runtime = data.runtime ?? "";
+    this.persistent = data.persistent ?? false;
+    this.projectId = data.projectId ?? "";
     this.createdAt = new Date(data.createdAt);
     this.updatedAt = new Date(data.updatedAt);
     this.fs = new FileSystem(this);
@@ -208,10 +239,22 @@ export class Sandbox {
     if (params.clusterId) body.clusterId = params.clusterId;
     if (params.cloudspaceId) body.cloudspaceId = params.cloudspaceId;
     if (params.runtime) body.runtime = params.runtime;
+    if (params.persistent !== undefined) body.persistent = params.persistent;
+    if (params.snapshotId) body.snapshotId = params.snapshotId;
+    if (params.projectId) body.projectId = params.projectId;
+    if (params.timeout !== undefined) body.timeout = String(params.timeout);
 
     const data = await request<V1Sandbox>("POST", "/v1/core/sandboxes", body);
-    let sandbox = new Sandbox(toSandboxData(data));
+    return Sandbox.waitForRunning(new Sandbox(toSandboxData(data)));
+  }
 
+  /**
+   * Poll {@link Sandbox.get} until the sandbox reports `running`, throwing if
+   * it enters a terminal state or the readiness deadline elapses. Shared by
+   * {@link Sandbox.create} and {@link Sandbox.resume}.
+   */
+  private static async waitForRunning(initial: Sandbox): Promise<Sandbox> {
+    let sandbox = initial;
     const start = Date.now();
     const deadline = start + 300_000;
     while (sandbox.status !== "running") {
@@ -233,7 +276,6 @@ export class Sandbox {
         organizationId: sandbox.organizationId || undefined,
       });
     }
-
     return sandbox;
   }
 
@@ -279,6 +321,81 @@ export class Sandbox {
     };
   }
 
+  /**
+   * Resume a previously stopped/paused persistent sandbox from its most
+   * recent auto-snapshot, preserving the sandbox id. Blocks until the sandbox
+   * is `running` again. A no-op (returns the running sandbox) when it is
+   * already running; errors when the sandbox is not persistent or has no
+   * resumable auto-snapshot.
+   */
+  static async resume(params: ResumeSandboxParams): Promise<Sandbox> {
+    const orgId = resolveOrgId(params.organizationId);
+    const body: SandboxesServiceUpdateSandboxBody = { resume: true };
+    if (orgId) body.organizationId = orgId;
+    const data = await request<V1Sandbox>(
+      "PATCH",
+      `/v1/core/sandboxes/${encodeURIComponent(params.sandboxId)}`,
+      body,
+    );
+    return Sandbox.waitForRunning(new Sandbox(toSandboxData(data)));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Static methods — snapshots
+  // ---------------------------------------------------------------------------
+
+  static async listSnapshots(
+    params: ListSnapshotsParams = {},
+  ): Promise<{
+    snapshots: SnapshotData[];
+    nextPageToken: string;
+    previousPageToken: string;
+    totalSize: number;
+  }> {
+    const orgId = resolveOrgId(params.organizationId);
+    const qs = buildQuery({
+      organizationId: orgId,
+      projectId: params.projectId,
+      name: params.name,
+      pageToken: params.pageToken,
+      limit: params.limit !== undefined ? String(params.limit) : undefined,
+    });
+    const data = await request<V1ListSandboxSnapshotsResponse>(
+      "GET",
+      `/v1/core/sandboxes/snapshots${qs}`,
+    );
+    return {
+      snapshots: (data.snapshots ?? []).map(toSnapshotData),
+      nextPageToken: data.nextPageToken ?? "",
+      previousPageToken: data.previousPageToken ?? "",
+      totalSize:
+        data.totalSize !== undefined && data.totalSize !== "" ? Number(data.totalSize) : 0,
+    };
+  }
+
+  static async getSnapshot(
+    snapshotId: string,
+    organizationId?: string,
+  ): Promise<SnapshotData> {
+    const qs = buildQuery({ organizationId: resolveOrgId(organizationId) });
+    const data = await request<V1SandboxSnapshot>(
+      "GET",
+      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}${qs}`,
+    );
+    return toSnapshotData(data);
+  }
+
+  static async deleteSnapshot(
+    snapshotId: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = buildQuery({ organizationId: resolveOrgId(organizationId) });
+    await request<unknown>(
+      "DELETE",
+      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}${qs}`,
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Instance methods — lifecycle
   // ---------------------------------------------------------------------------
@@ -291,6 +408,62 @@ export class Sandbox {
       "DELETE",
       `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}${qs}`,
     );
+  }
+
+  /**
+   * Stop the sandbox. For persistent sandboxes the controlplane first
+   * captures an auto-snapshot keyed to the sandbox id (returned as
+   * `autoSnapshotId`) so it can later be brought back via {@link Sandbox.resume}
+   * without losing filesystem state. For non-persistent sandboxes the server
+   * is simply stopped and no snapshot is taken.
+   */
+  async stop(opts: StopSandboxOptions = {}): Promise<{ autoSnapshotId: string }> {
+    const body: SandboxesServiceStopSandboxBody = {
+      organizationId: this.organizationId || undefined,
+    };
+    if (opts.projectId ?? this.projectId) {
+      body.projectId = opts.projectId ?? this.projectId;
+    }
+    const data = await request<V1StopSandboxResponse>(
+      "POST",
+      `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/stop`,
+      body,
+    );
+    return { autoSnapshotId: data.autoSnapshotId ?? "" };
+  }
+
+  /**
+   * Resume this sandbox by id (see {@link Sandbox.resume}). Returns a fresh
+   * running {@link Sandbox} instance; the original handle is left unchanged.
+   */
+  async resume(): Promise<Sandbox> {
+    return Sandbox.resume({
+      sandboxId: this.sandboxId,
+      organizationId: this.organizationId || undefined,
+    });
+  }
+
+  /**
+   * Capture a user-initiated snapshot of this sandbox's filesystem. The
+   * returned snapshot starts in `saving` and flips to `ready` once the
+   * in-sandbox agent finishes uploading; use {@link Sandbox.getSnapshot} to
+   * poll for `ready`, and {@link CreateSandboxParams.snapshotId} to boot a new
+   * sandbox from it.
+   */
+  async createSnapshot(params: CreateSnapshotParams = {}): Promise<SnapshotData> {
+    const body: SandboxesServiceCreateSandboxSnapshotBody = {
+      organizationId: this.organizationId || undefined,
+    };
+    const projectId = params.projectId ?? this.projectId;
+    if (projectId) body.projectId = projectId;
+    if (params.excludes) body.excludes = params.excludes;
+    if (params.expiration !== undefined) body.expiration = String(params.expiration);
+    const data = await request<V1SandboxSnapshot>(
+      "POST",
+      `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/snapshot`,
+      body,
+    );
+    return toSnapshotData(data);
   }
 
   // ---------------------------------------------------------------------------
