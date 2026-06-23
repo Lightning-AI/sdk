@@ -57,9 +57,10 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     console.print(Panel(Group(*renderables), title="⚡ Lightning CLI Error", border_style="red"))
 
 
-@click.group(name="lightning", help="Command line interface (CLI) to interact with/manage Lightning AI Studios.")
+@click.group(name="lightning")
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
+    """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
     sys.excepthook = _notify_exception
 
 

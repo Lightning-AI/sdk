@@ -2,222 +2,93 @@
 API Reference
 #############
 
-This reference documents the public Lightning SDK surface.
+The Lightning SDK is the Python interface for managing Lightning AI resources
+from scripts, notebooks, services, and CI jobs. Use it when you need the same
+resource control exposed by the CLI, but want it inside Python code with typed
+objects, method references, and reusable application logic.
 
-Studio
-======
+Install
+*******
 
-.. currentmodule:: lightning_sdk
+Install or upgrade the package:
 
-.. autoclass:: Studio
-   :members:
-   :show-inheritance:
+.. code-block:: bash
 
-.. autoclass:: VM
-   :members:
-   :show-inheritance:
+   pip install lightning-sdk -U
 
-Job
-===
+Authenticate
+************
 
-.. autoclass:: Job
-   :members:
-   :show-inheritance:
+For local development, authenticate once with the CLI:
 
-Machine
-=======
+.. code-block:: bash
 
-.. autoclass:: Machine
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   lightning login
 
-.. autoclass:: CloudProvider
-   :members:
-   :undoc-members:
-   :show-inheritance:
+For automation, configure credentials with environment variables:
 
-Teamspace
-=========
+.. code-block:: bash
 
-.. autoclass:: Teamspace
-   :members:
-   :show-inheritance:
+   export LIGHTNING_USER_ID=your-user-id
+   export LIGHTNING_API_KEY=your-api-key
 
-.. autoclass:: ConnectionType
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Core Resources
+**************
 
-.. autoclass:: FolderLocation
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Studios are persistent development environments. Start with
+:class:`~lightning_sdk.Studio` when you need to create or control an
+interactive workspace, and use :class:`~lightning_sdk.VM` or
+:class:`~lightning_sdk.Machine` when selecting compute.
 
-.. currentmodule:: lightning_sdk.api.teamspace_api
+Jobs run code in managed cloud compute. Use :class:`~lightning_sdk.Job` for
+single-node work and :class:`~lightning_sdk.MMT` for multi-machine training.
+The plugin classes in :doc:`api/plugins` expose the same surfaces when you are
+building reusable Studio workflows.
 
-.. autoclass:: SecretType
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Deployments turn model servers and applications into managed services. Use
+:class:`~lightning_sdk.Deployment` with the deployment helper classes in
+:doc:`api/deployment` for environment variables, secrets, authentication,
+health checks, and rollout behavior.
 
-.. currentmodule:: lightning_sdk
+Teamspaces, organizations, and users define the account context for SDK calls.
+Use :class:`~lightning_sdk.Teamspace`, :class:`~lightning_sdk.Organization`,
+and :class:`~lightning_sdk.User` when you need to resolve or switch the scope
+of an operation.
 
-Plugins
-=======
+Quick Example
+*************
 
-.. autoclass:: Plugin
-   :members:
-   :show-inheritance:
+.. code-block:: python
 
-.. autoclass:: JobsPlugin
-   :members:
-   :show-inheritance:
+   from lightning_sdk import Machine, Studio
 
-.. autoclass:: MultiMachineTrainingPlugin
-   :members:
-   :show-inheritance:
+   studio = Studio("my-studio")
+   studio.start()
 
-.. autoclass:: SlurmJobsPlugin
-   :members:
-   :show-inheritance:
+   job = studio.run("python train.py", machine=Machine.A10G)
+   job.wait()
 
-Multi-Machine Training
-======================
+   studio.stop()
 
-.. autoclass:: MMT
-   :members:
-   :show-inheritance:
+Reference Pages
+***************
 
-.. currentmodule:: lightning_sdk.mmt.base
+.. toctree::
+   :maxdepth: 1
 
-.. autoclass:: MMTMachine
-   :members:
-   :show-inheritance:
-
-Deployment
-==========
-
-.. currentmodule:: lightning_sdk
-
-.. autoclass:: Deployment
-   :members:
-   :show-inheritance:
-
-.. currentmodule:: lightning_sdk.api.deployment_api
-
-.. autoclass:: Env
-   :members:
-
-.. autoclass:: Secret
-   :members:
-
-.. autoclass:: BasicAuth
-   :members:
-
-.. autoclass:: TokenAuth
-   :members:
-
-.. autoclass:: ApiKeyAuth
-   :members:
-
-.. autoclass:: ReleaseStrategy
-   :members:
-
-.. autoclass:: RollingUpdateReleaseStrategy
-   :members:
-
-.. autoclass:: HealthCheck
-   :members:
-
-.. autoclass:: ExecHealthCheck
-   :members:
-
-.. autoclass:: HttpHealthCheck
-   :members:
-
-.. autoclass:: AutoScalingMetric
-   :members:
-
-.. autoclass:: AutoScaleConfig
-   :members:
-
-.. autoclass:: RequestCaptureExportResult
-   :members:
-
-AI Hub
-======
-
-.. currentmodule:: lightning_sdk
-
-.. autoclass:: AIHub
-   :members:
-   :show-inheritance:
-
-Agent
-=====
-
-.. autoclass:: Agent
-   :members:
-   :show-inheritance:
-
-K8s Cluster
-===========
-
-.. currentmodule:: lightning_sdk.k8s_cluster
-
-.. autoclass:: K8sCluster
-   :members:
-   :show-inheritance:
-
-.. autoclass:: K8sUsageResponse
-   :members:
-
-.. autoclass:: HourlyUsage
-   :members:
-
-Owner
-=====
-
-.. currentmodule:: lightning_sdk.owner
-
-.. autoclass:: Owner
-   :members:
-   :show-inheritance:
-
-Organization
-============
-
-.. currentmodule:: lightning_sdk
-
-.. autoclass:: Organization
-   :members:
-   :show-inheritance:
-
-User
-====
-
-.. autoclass:: User
-   :members:
-   :show-inheritance:
-
-Status
-======
-
-.. autoclass:: Status
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Models
-======
-
-.. currentmodule:: lightning_sdk.models
-
-.. autoclass:: UploadedModelInfo
-   :members:
-
-.. currentmodule:: lightning_sdk.api.utils
-
-.. autoclass:: Experiment
-   :members:
+   api/studio
+   api/job
+   api/machine
+   api/teamspace
+   api/plugins
+   api/mmt
+   api/deployment
+   api/aihub
+   api/agent
+   api/k8s-cluster
+   api/owner
+   api/organization
+   api/user
+   api/status
+   api/models
+   api/experiment

@@ -1,5 +1,7 @@
 """Sandbox command implementations."""
 
+# ruff: noqa: D301
+
 from __future__ import annotations
 
 import json
@@ -160,185 +162,7 @@ def _with_common_options(command: click.Command) -> click.Command:
     return command
 
 
-_LIST_SANDBOXES_HELP = """List sandboxes.
-
-\b
-Example:
-  $ sandbox list --teamspace owner/teamspace --limit 2
-  ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-  ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃
-  ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-  │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │
-  └────────┴────────┴─────────┴───────────────┴────────────┘
-  Next page token: next-page-token
-
-\b
-  $ sandbox list --teamspace owner/teamspace --json
-  {
-    "sandboxes": [
-      {
-        "id": "sbx-42",
-        "name": "devbox",
-        "status": "running"
-      }
-    ],
-    "total_size": 1
-  }
-"""
-
-
-_CREATE_SANDBOX_HELP = """Create a sandbox and wait until it is running.
-
-\b
-Example:
-  $ sandbox create --name devbox --teamspace owner/teamspace --persistent
-  ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
-  ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
-  ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩
-  │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
-  └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
-
-\b
-  $ sandbox create --name devbox --teamspace owner/teamspace --json
-  {
-    "id": "sbx-42",
-    "name": "devbox",
-    "status": "running",
-    "persistent": true
-  }
-"""
-
-
-_DELETE_SANDBOX_HELP = """Delete a sandbox.
-
-\b
-Example:
-  $ sandbox delete sbx-42
-  Deleted sandbox sbx-42
-"""
-
-
-_STOP_SANDBOX_HELP = """Stop a sandbox.
-
-Persistent sandboxes may return an automatic snapshot that can be used for
-later resume or restore workflows.
-
-\b
-Example:
-  $ sandbox stop sbx-42
-  Stopped sandbox sbx-42
-  Auto snapshot: snap-abc123
-
-\b
-  $ sandbox stop sbx-42 --json
-  {
-    "auto_snapshot_id": "snap-abc123",
-    "id": "sbx-42"
-  }
-"""
-
-
-_START_SANDBOX_HELP = """Start a stopped persistent sandbox.
-
-\b
-Example:
-  $ sandbox start sbx-42
-  ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
-  ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
-  ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩
-  │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
-  └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
-"""
-
-
-_UPDATE_SANDBOX_HELP = """Update a sandbox.
-
-The backend update route currently supports resuming stopped persistent
-sandboxes. Use `sandbox start` as the shorter lifecycle command.
-
-\b
-Example:
-  $ sandbox update sbx-42 --resume
-  ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
-  ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
-  ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩
-  │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
-  └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
-"""
-
-
-_RUN_SANDBOX_COMMAND_HELP = """Run a command in a sandbox.
-
-Use `--` before the sandbox command when that command has its own flags.
-
-\b
-Examples:
-  $ sandbox run sbx-42 -- python -c "print('hello')"
-  hello
-
-\b
-  $ sandbox run sbx-42 --cwd /workspace --env MODE=test -- python app.py
-  app started
-
-\b
-  $ sandbox run sbx-42 --detached -- bash -lc "echo start; sleep 1; echo done"
-  cmd-abc123
-
-\b
-  $ sandbox run sbx-42 --json -- python -c "print('hello')"
-  {
-    "cmd_id": "cmd-abc123",
-    "exit_code": 0,
-    "output": "hello\\n",
-    "running": false,
-    "sandbox_id": "sbx-42"
-  }
-"""
-
-
-_LOGS_SANDBOX_COMMAND_HELP = """Show logs for a sandbox command.
-
-\b
-Example:
-  $ sandbox logs sbx-42 cmd-abc123
-  2026-01-01T12:00:00Z start
-  2026-01-01T12:00:01Z done
-
-\b
-  $ sandbox logs sbx-42 cmd-abc123 --no-timestamps
-  start
-  done
-"""
-
-
-_COMMAND_STATUS_HELP = """Show sandbox command status.
-
-\b
-Example:
-  $ sandbox command sbx-42 cmd-abc123
-  ┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
-  ┃ Command ID ┃ Running ┃ Exit code ┃
-  ┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
-  │ cmd-abc123 │ no      │ 0         │
-  └────────────┴─────────┴───────────┘
-  done
-"""
-
-
-_LIST_COMMANDS_HELP = """List a sandbox's command history.
-
-\b
-Example:
-  $ sandbox commands sbx-42
-  ┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓
-  ┃ Command ID ┃ Running ┃ Exit code ┃ Command ┃ Started at           ┃
-  ┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩
-  │ cmd-abc123 │ no      │ 0         │ echo    │ 2026-06-19T18:00:47Z │
-  └────────────┴─────────┴───────────┴─────────┴──────────────────────┘
-"""
-
-
-@click.command("list", help=_LIST_SANDBOXES_HELP)
+@click.command("list")
 @_with_common_options
 @click.option("--page-token", help="Pagination token returned by a previous list call.")
 @click.option("--limit", type=int, help="Maximum number of sandboxes to return.")
@@ -351,7 +175,19 @@ def list_sandboxes(
     teamspace: str | None,
     as_json: bool,
 ) -> None:
-    """List sandboxes."""
+    """List sandboxes.
+
+    Example:
+      $ sandbox list --teamspace owner/teamspace --limit 2
+
+      Next page token: next-page-token
+
+      $ sandbox list --teamspace owner/teamspace --json
+
+      {
+        "total_size": 1
+      }
+    """
     result = _sandbox_client(api_key=api_key).list(
         page_token=page_token,
         limit=limit,
@@ -390,7 +226,7 @@ def list_sandboxes(
         click.echo(f"Next page token: {result.next_page_token}")
 
 
-@click.command("create", help=_CREATE_SANDBOX_HELP)
+@click.command("create")
 @_with_common_options
 @click.option("--name", help="Sandbox name. Defaults to a generated name.")
 @click.option("--instance-type", help="Sandbox instance type. Defaults to cpu-small.")
@@ -420,7 +256,23 @@ def create_sandbox(
     persistent: bool | None,
     as_json: bool,
 ) -> None:
-    """Create a sandbox and wait until it is running."""
+    """Create a sandbox and wait until it is running.
+
+    Example:
+      $ sandbox create --name devbox
+
+      devbox
+
+      $ sandbox create --name devbox --teamspace owner/teamspace --persistent
+
+      devbox
+
+      $ sandbox create --name devbox --teamspace owner/teamspace --json
+
+      {
+        "persistent": true
+      }
+    """
     sandbox = _sandbox_client(api_key=api_key).create(
         name=name,
         instance_type=instance_type,
@@ -439,17 +291,23 @@ def create_sandbox(
     _echo_sandbox_summary(sandbox)
 
 
-@click.command("delete", help=_DELETE_SANDBOX_HELP)
+@click.command("delete")
 @_with_common_options
 @click.argument("sandbox_id")
 def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
-    """Delete a sandbox."""
+    """Delete a sandbox.
+
+    Example:
+      $ sandbox delete sbx-42
+
+      Deleted sandbox sbx-42
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     sandbox.delete()
     click.echo(f"Deleted sandbox {sandbox_id}")
 
 
-@click.command("stop", help=_STOP_SANDBOX_HELP)
+@click.command("stop")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -458,7 +316,25 @@ def stop_sandbox(
     sandbox_id: str,
     as_json: bool,
 ) -> None:
-    """Stop a sandbox."""
+    """Stop a sandbox.
+
+    Persistent sandboxes may return an automatic snapshot that can be used for
+    later resume or restore workflows.
+
+    Example:
+      $ sandbox stop sbx-42
+
+      Stopped sandbox sbx-42
+
+      Auto snapshot: snap-abc123
+
+      $ sandbox stop sbx-42 --json
+
+      {
+        "auto_snapshot_id": "snap-abc123",
+        "id": "sbx-42"
+      }
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     auto_snapshot_id = sandbox.stop()
     payload = {"id": sandbox_id, "auto_snapshot_id": auto_snapshot_id}
@@ -470,7 +346,7 @@ def stop_sandbox(
         click.echo(f"Auto snapshot: {auto_snapshot_id}")
 
 
-@click.command("start", help=_START_SANDBOX_HELP)
+@click.command("start")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -479,7 +355,13 @@ def start_sandbox(
     sandbox_id: str,
     as_json: bool,
 ) -> None:
-    """Start a stopped persistent sandbox."""
+    """Start a stopped persistent sandbox.
+
+    Example:
+      $ sandbox start sbx-42
+
+      devbox
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id).resume()
     if as_json:
         _echo_json(_sandbox_to_dict(sandbox))
@@ -487,7 +369,7 @@ def start_sandbox(
     _echo_sandbox_summary(sandbox)
 
 
-@click.command("update", help=_UPDATE_SANDBOX_HELP)
+@click.command("update")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--resume", is_flag=True, help="Resume a stopped persistent sandbox.")
@@ -498,7 +380,16 @@ def update_sandbox(
     resume: bool,
     as_json: bool,
 ) -> None:
-    """Update a sandbox."""
+    """Update a sandbox.
+
+    The backend update route currently supports resuming stopped persistent
+    sandboxes. Use `sandbox start` as the shorter lifecycle command.
+
+    Example:
+      $ sandbox update sbx-42 --resume
+
+      devbox
+    """
     if not resume:
         raise click.UsageError("No update requested. Use --resume to resume a stopped persistent sandbox.")
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id).resume()
@@ -510,7 +401,6 @@ def update_sandbox(
 
 @click.command(
     "run",
-    help=_RUN_SANDBOX_COMMAND_HELP,
     context_settings={"ignore_unknown_options": True, "allow_extra_args": True},
 )
 @_with_common_options
@@ -522,9 +412,7 @@ def update_sandbox(
 @click.option("--poll-interval", type=float, default=0.5, show_default=True, help="Detached command poll interval.")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 @click.argument("command_args", nargs=-1, required=True)
-@click.pass_context
 def run_sandbox_command(
-    ctx: click.Context,
     api_key: str | None,
     sandbox_id: str,
     cwd: str | None,
@@ -535,7 +423,30 @@ def run_sandbox_command(
     as_json: bool,
     command_args: Sequence[str],
 ) -> None:
-    """Run a command in a sandbox."""
+    """Run a command in a sandbox.
+
+    Use `--` before the sandbox command when that command has its own flags.
+
+    Examples:
+      $ sandbox run sbx-42 -- python -c "print('hello')"
+
+      hello
+
+      $ sandbox run sbx-42 --cwd /workspace --env MODE=test -- python app.py
+
+      app started
+
+      $ sandbox run sbx-42 --detached -- bash -lc "echo start; sleep 1; echo done"
+
+      cmd-abc123
+
+      $ sandbox run sbx-42 --json -- python -c "print('hello')"
+
+      {
+        "cmd_id": "cmd-abc123",
+        "output": "hello\\n"
+      }
+    """
     command_parts = list(command_args)
     if command_parts and command_parts[0] == "--":
         command_parts = command_parts[1:]
@@ -573,10 +484,10 @@ def run_sandbox_command(
             click.echo(f"Command ID: {command.cmd_id}")
 
     if command.exit_code not in (None, 0):
-        ctx.exit(command.exit_code)
+        click.get_current_context().exit(command.exit_code)
 
 
-@click.command("logs", help=_LOGS_SANDBOX_COMMAND_HELP)
+@click.command("logs")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.argument("command_id")
@@ -589,7 +500,21 @@ def logs_sandbox_command(
     no_timestamps: bool,
     as_json: bool,
 ) -> None:
-    """Show logs for a sandbox command."""
+    """Show logs for a sandbox command.
+
+    Example:
+      $ sandbox logs sbx-42 cmd-abc123
+
+      2026-01-01T12:00:00Z start
+
+      2026-01-01T12:00:01Z done
+
+      $ sandbox logs sbx-42 cmd-abc123 --no-timestamps
+
+      start
+
+      done
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     logs = sandbox.get_command_logs(command_id)
     payload = [{"timestamp": log.timestamp, "message": log.message} for log in logs]
@@ -603,7 +528,7 @@ def logs_sandbox_command(
             click.echo(f"{log.timestamp} {log.message}".strip())
 
 
-@click.command("command", help=_COMMAND_STATUS_HELP)
+@click.command("command")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.argument("command_id")
@@ -614,7 +539,17 @@ def command_status(
     command_id: str,
     as_json: bool,
 ) -> None:
-    """Show sandbox command status."""
+    """Show sandbox command status.
+
+    Example:
+      $ sandbox command sbx-42 cmd-abc123
+
+      Command ID: cmd-abc123
+
+      Exit code: 0
+
+      done
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     status = sandbox.get_command(command_id)
     payload = {
@@ -646,70 +581,7 @@ def command_status(
         click.echo(status.output, nl=not status.output.endswith("\n"))
 
 
-_LIST_SNAPSHOTS_HELP = """List sandbox snapshots.
-
-\b
-Example:
-  $ sandbox snapshot list --teamspace owner/teamspace --limit 2
-  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
-  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
-  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
-  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
-  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
-
-\b
-  $ sandbox snapshot list --teamspace owner/teamspace --json
-  {
-    "snapshots": [
-      {
-        "id": "snap-42",
-        "status": "ready"
-      }
-    ],
-    "total_size": 1
-  }
-"""
-
-
-_GET_SNAPSHOT_HELP = """Show a sandbox snapshot.
-
-\b
-Example:
-  $ sandbox snapshot get snap-42
-  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
-  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
-  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
-  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
-  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
-"""
-
-
-_CREATE_SNAPSHOT_HELP = """Snapshot a sandbox's filesystem.
-
-Captures filesystem state only (not running processes). Waits until the snapshot
-is ready by default; pass --no-wait to return the saving row immediately.
-
-\b
-Example:
-  $ sandbox snapshot create sbx-42
-  ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
-  ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
-  ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
-  │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
-  └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
-"""
-
-
-_DELETE_SNAPSHOT_HELP = """Delete a sandbox snapshot.
-
-\b
-Example:
-  $ sandbox snapshot delete snap-42
-  Deleted snapshot snap-42
-"""
-
-
-@click.command("list", help=_LIST_SNAPSHOTS_HELP)
+@click.command("list")
 @_with_common_options
 @click.option("--name", help="Filter by source sandbox name.")
 @click.option("--page-token", help="Pagination token returned by a previous list call.")
@@ -726,7 +598,27 @@ def list_snapshots(
     sort_order: str | None,
     as_json: bool,
 ) -> None:
-    """List sandbox snapshots."""
+    """List sandbox snapshots.
+
+    Example:
+      $ sandbox snapshot list --teamspace owner/teamspace --limit 2
+      ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+      ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+      ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+      │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+      └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+
+      $ sandbox snapshot list --teamspace owner/teamspace --json
+      {
+        "snapshots": [
+          {
+            "id": "snap-42",
+            "status": "ready"
+          }
+        ],
+        "total_size": 1
+      }
+    """
     result = _sandbox_client(api_key=api_key).list_snapshots(
         name=name,
         page_token=page_token,
@@ -749,12 +641,21 @@ def list_snapshots(
         click.echo(f"Next page token: {result.next_page_token}")
 
 
-@click.command("get", help=_GET_SNAPSHOT_HELP)
+@click.command("get")
 @_with_common_options
 @click.argument("snapshot_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def get_snapshot(api_key: str | None, snapshot_id: str, as_json: bool) -> None:
-    """Show a sandbox snapshot."""
+    """Show a sandbox snapshot.
+
+    Example:
+      $ sandbox snapshot get snap-42
+      ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+      ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+      ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+      │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+      └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+    """
     snapshot = _sandbox_client(api_key=api_key).get_snapshot(snapshot_id)
     if as_json:
         _echo_json(_snapshot_to_dict(snapshot))
@@ -762,7 +663,7 @@ def get_snapshot(api_key: str | None, snapshot_id: str, as_json: bool) -> None:
     _echo_snapshot_summary(snapshot)
 
 
-@click.command("create", help=_CREATE_SNAPSHOT_HELP)
+@click.command("create")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--expiration", type=int, help="TTL in milliseconds (0 = never). Defaults to the platform default.")
@@ -779,7 +680,19 @@ def create_snapshot(
     wait_timeout: float,
     as_json: bool,
 ) -> None:
-    """Snapshot a sandbox's filesystem."""
+    """Snapshot a sandbox's filesystem.
+
+    Captures filesystem state only (not running processes). Waits until the snapshot
+    is ready by default; pass --no-wait to return the saving row immediately.
+
+    Example:
+      $ sandbox snapshot create sbx-42
+      ┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┓
+      ┃ ID      ┃ Status ┃ Source sandbox ┃ Runtime ┃ Size     ┃ Auto ┃
+      ┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━┩
+      │ snap-42 │ ready  │ devbox         │ python  │ 12.3 MiB │ no   │
+      └─────────┴────────┴────────────────┴─────────┴──────────┴──────┘
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     snapshot = sandbox.snapshot(
         expiration=expiration,
@@ -793,16 +706,21 @@ def create_snapshot(
     _echo_snapshot_summary(snapshot)
 
 
-@click.command("delete", help=_DELETE_SNAPSHOT_HELP)
+@click.command("delete")
 @_with_common_options
 @click.argument("snapshot_id")
 def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
-    """Delete a sandbox snapshot."""
+    """Delete a sandbox snapshot.
+
+    Example:
+      $ sandbox snapshot delete snap-42
+      Deleted snapshot snap-42
+    """
     _sandbox_client(api_key=api_key).delete_snapshot(snapshot_id)
     click.echo(f"Deleted snapshot {snapshot_id}")
 
 
-@click.command("commands", help=_LIST_COMMANDS_HELP)
+@click.command("commands")
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -811,7 +729,16 @@ def list_sandbox_commands(
     sandbox_id: str,
     as_json: bool,
 ) -> None:
-    """List a sandbox's command history."""
+    """List a sandbox's command history.
+
+    Example:
+      $ sandbox commands sbx-42
+      ┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓
+      ┃ Command ID ┃ Running ┃ Exit code ┃ Command ┃ Started at           ┃
+      ┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩
+      │ cmd-abc123 │ no      │ 0         │ echo    │ 2026-06-19T18:00:47Z │
+      └────────────┴─────────┴───────────┴─────────┴──────────────────────┘
+    """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
     cmds = sandbox.list_commands()
     if as_json:

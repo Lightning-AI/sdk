@@ -85,7 +85,6 @@ def sandbox() -> None:
     API uses https://lightning.ai by default; set LIGHTNING_CLOUD_URL to override
     the host.
 
-    \b
     Examples:
       $ sandbox list --teamspace owner/teamspace --limit 2
       ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
@@ -94,7 +93,6 @@ def sandbox() -> None:
       │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │
       └────────┴────────┴─────────┴───────────────┴────────────┘
 
-    \b
       $ sandbox create --name devbox --teamspace owner/teamspace --persistent
       ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
       ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
@@ -102,20 +100,16 @@ def sandbox() -> None:
       │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
       └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
 
-    \b
       $ sandbox run sbx-42 -- python -c "print('hello')"
       hello
 
-    \b
       $ sandbox run sbx-42 --detached -- bash -lc "echo start; sleep 1; echo done"
       cmd-abc123
 
-    \b
       $ sandbox logs sbx-42 cmd-abc123 --no-timestamps
       start
       done
 
-    \b
       $ sandbox stop sbx-42
       Stopped sandbox sbx-42
       Auto snapshot: snap-abc123
@@ -175,12 +169,10 @@ def license() -> None:  # noqa: A001
 def cp() -> None:
     """Copy files between local filesystem, Studios, and teamspace drives.
 
-    \b
     URL formats:
       Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>
       Teamspace drives: lit://<owner>/<teamspace>/uploads/<path>
 
-    \b
     Examples:
       lightning cp source.txt lit://<owner>/<my-teamspace>/studios/<my-studio>/destination.txt
       lightning cp -r source_folder/ lit://<owner>/<my-teamspace>/studios/<my-studio>/destination_folder/

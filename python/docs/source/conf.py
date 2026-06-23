@@ -2,11 +2,142 @@ import os
 import socket
 import sys
 
+import click
+from click.formatting import HelpFormatter
+
 _PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 _PATH_ROOT = os.path.realpath(os.path.join(_PATH_HERE, "..", ".."))
 sys.path.insert(0, _PATH_ROOT)
 
 import lightning_sdk  # noqa: E402
+from lightning_sdk.cli.entrypoint import main_cli as _main_cli  # noqa: E402
+
+_main_cli.context_class.formatter_class = HelpFormatter
+
+_CLI_ARGUMENT_HELP = {
+    ("lightning config set user", "user_name"): "User name to make active in the local Lightning CLI config.",
+    ("lightning config set org", "org_name"): "Organization name to make active in the local Lightning CLI config.",
+    ("lightning config set studio", "studio_name"): "Studio name to make active in the local Lightning CLI config.",
+    ("lightning config set teamspace", "teamspace_name"): (
+        "Teamspace name to make active in the local Lightning CLI config."
+    ),
+    ("lightning config set cloud-account", "cloud_account_name"): (
+        "Cloud account name to make active in the local Lightning CLI config."
+    ),
+    ("lightning config set cloud-provider", "cloud_provider_name"): (
+        "Cloud provider name to make active in the local Lightning CLI config."
+    ),
+    ("lightning job inspect", "name"): "Job name to inspect.",
+    ("lightning job stop", "name"): "Job name to stop.",
+    ("lightning job delete", "name"): "Job name to delete.",
+    ("lightning mmt stop", "name"): "Multi-machine training run name to stop.",
+    ("lightning mmt delete", "name"): "Multi-machine training run name to delete.",
+    ("lightning api deploy", "script_path"): "Path to the LitServe server script to deploy.",
+    ("lightning api dockerize", "server_filename"): "Path to the LitServe server file to package as an image.",
+    ("lightning api __request", "path"): "API route path to request.",
+    ("lightning deployment create", "name"): "Optional deployment name. Lightning generates one if omitted.",
+    ("lightning deployment inspect", "name"): "Deployment name to inspect.",
+    ("lightning deployment update", "name"): "Deployment name to update.",
+    ("lightning deployment delete", "name"): "Deployment name to delete.",
+    ("lightning deployment logs", "name"): "Deployment name whose logs should be shown.",
+    ("lightning deployment reload-weights", "name"): "Deployment name whose weights should be reloaded.",
+    ("lightning container upload", "container"): "Container name to upload.",
+    ("lightning container download", "container"): "Container name to download.",
+    ("lightning container delete", "name"): "Container name to delete.",
+    ("lightning model upload", "name"): "Model name to upload.",
+    ("lightning model download", "name"): "Model name to download.",
+    ("lightning api-key delete", "key_id"): "API key ID to delete.",
+    ("lightning file upload", "path"): "Local file path to upload.",
+    ("lightning file download", "path"): "Remote file path to download.",
+    ("lightning folder upload", "path"): "Local folder path to upload.",
+    ("lightning folder download", "path"): "Remote folder path to download.",
+    ("lightning studio connect", "name"): "Optional Studio name to connect to.",
+    ("lightning studio cp", "source"): "Source path in the Studio filesystem.",
+    ("lightning studio cp", "destination"): "Destination path in the Studio filesystem.",
+    ("lightning studio ls", "path"): "Studio filesystem path to list.",
+    ("lightning studio rm", "path"): "Studio filesystem path to remove.",
+    ("lightning studio open", "path"): "Local path to open in Lightning Studio.",
+    ("lightning sandbox update", "sandbox_id"): "Sandbox ID to update.",
+    ("lightning sandbox delete", "sandbox_id"): "Sandbox ID to delete.",
+    ("lightning sandbox stop", "sandbox_id"): "Sandbox ID to stop.",
+    ("lightning sandbox start", "sandbox_id"): "Sandbox ID to start.",
+    ("lightning sandbox run", "sandbox_id"): "Sandbox ID where the command should run.",
+    ("lightning sandbox run", "command_args"): "Command and arguments to run in the sandbox.",
+    ("lightning sandbox logs", "sandbox_id"): "Sandbox ID that owns the command.",
+    ("lightning sandbox logs", "command_id"): "Sandbox command ID whose logs should be shown.",
+    ("lightning sandbox command", "sandbox_id"): "Sandbox ID that owns the command.",
+    ("lightning sandbox command", "command_id"): "Sandbox command ID to inspect.",
+    ("lightning sandbox snapshot get", "snapshot_id"): "Snapshot ID to inspect.",
+    ("lightning sandbox snapshot create", "sandbox_id"): "Sandbox ID to snapshot.",
+    ("lightning sandbox snapshot delete", "snapshot_id"): "Snapshot ID to delete.",
+    ("lightning sandbox commands", "sandbox_id"): "Sandbox ID whose command history should be listed.",
+    ("lightning license get", "product_name"): "Product name whose license should be shown.",
+    ("lightning license set", "product_name"): "Product name for the license.",
+    ("lightning license set", "license_key"): "License key value to store.",
+    ("lightning license download", "name"): "License name to download.",
+    ("lightning cp", "source"): "Source path to copy.",
+    ("lightning cp", "destination"): "Optional destination path.",
+    ("lightning aihub api-info", "api_id"): "AI Hub API template ID to inspect.",
+    ("lightning aihub deploy", "api_id"): "AI Hub API template ID to deploy.",
+    ("lightning open", "path"): "Local path to open in Lightning Studio.",
+}
+
+
+def _apply_cli_argument_help(command: click.Command, command_path: str) -> None:
+    for param in command.params:
+        if isinstance(param, click.Argument):
+            help_text = _CLI_ARGUMENT_HELP.get((command_path, param.name))
+            if help_text:
+                param.help = help_text
+
+    if isinstance(command, click.Group):
+        for name, subcommand in command.commands.items():
+            _apply_cli_argument_help(subcommand, f"{command_path} {name}")
+
+
+_apply_cli_argument_help(_main_cli, "lightning")
+
+
+def _strip_click_bar(line: str) -> str:
+    return line[2:] if line.startswith("| ") else line
+
+
+def _is_cli_example_heading(line: str) -> bool:
+    return _strip_click_bar(line).strip() in {"Example:", "Examples:"}
+
+
+def _is_cli_example_line(line: str) -> bool:
+    line = _strip_click_bar(line)
+    return line == "" or line.startswith(" ")
+
+
+def _format_cli_examples_as_code_blocks(app, ctx, lines: list[str]) -> None:  # noqa: ANN001, ARG001
+    formatted: list[str] = []
+    index = 0
+
+    while index < len(lines):
+        line = lines[index]
+        if not _is_cli_example_heading(line):
+            formatted.append(line)
+            index += 1
+            continue
+
+        formatted.extend([_strip_click_bar(line).strip(), "", ".. code-block:: console", ""])
+        index += 1
+
+        example_lines: list[str] = []
+        while index < len(lines) and _is_cli_example_line(lines[index]):
+            example_lines.append(_strip_click_bar(lines[index]))
+            index += 1
+
+        while example_lines and example_lines[-1] == "":
+            example_lines.pop()
+
+        formatted.extend(f"    {example_line.lstrip()}" if example_line else "" for example_line in example_lines)
+        formatted.append("")
+
+    lines[:] = formatted
+
 
 project = "Lightning SDK"
 copyright = "Lightning AI"  # noqa: A001
@@ -26,6 +157,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.todo",
     "sphinx_autodoc_typehints",
+    "sphinx_click",
     "sphinx_copybutton",
     "sphinx_paramlinks",
     "sphinx_togglebutton",
@@ -79,6 +211,7 @@ nitpick_ignore = [
     ("py:data", "typing.Optional"),
     ("py:data", "typing.Union"),
     ("py:class", "pathlib.Path"),
+    ("py:class", "pathlib._local.Path"),
     ("py:class", "enum.Enum"),
     # base / internal types not worth documenting separately
     ("py:class", "Auth"),
@@ -110,6 +243,7 @@ autodoc_default_options = {
 }
 
 autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 1
 
 autodoc_mock_imports = [
     "lightning_cloud",
@@ -118,11 +252,11 @@ autodoc_mock_imports = [
     "fastapi",
     "uvicorn",
     "simple_term_menu",
-    "click",
     "rich",
     "tqdm",
     "backoff",
 ]
+sphinx_click_mock_imports = autodoc_mock_imports
 
 copybutton_prompt_text = ">>> "
 copybutton_prompt_text1 = "... "
@@ -138,3 +272,4 @@ linkcheck_ignore = [
 
 def setup(app) -> None:  # noqa: ANN001
     app.add_css_file("main.css")
+    app.connect("sphinx-click-process-description", _format_cli_examples_as_code_blocks)

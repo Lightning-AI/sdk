@@ -5,13 +5,12 @@ import click
 
 @click.group(name="snapshot")
 def snapshot() -> None:
-    r"""Manage Lightning AI Sandbox snapshots.
+    """Manage Lightning AI Sandbox snapshots.
 
     A snapshot is an immutable, restorable capture of a sandbox's filesystem.
     Create one from a running sandbox, then restore it via
     `sandbox create --snapshot-id <id>`.
 
-    \b
     Examples:
       $ sandbox snapshot create sbx-42
       $ sandbox snapshot list --teamspace owner/teamspace

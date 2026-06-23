@@ -42,11 +42,11 @@ from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 @click.group(
     name="lightning",
-    help="Command line interface (CLI) to interact with/manage Lightning AI Studios.",
     cls=CommandLoggingGroup,
 )
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
+    """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
     sys.excepthook = logging_excepthook
 
 
