@@ -8,7 +8,15 @@ from click.testing import CliRunner
 from lightning_sdk.cli.deployment.create import create_deployment
 from lightning_sdk.cli.deployment.list import list_deployments
 from lightning_sdk.cli.deployment.logs import _follow_url, _print_page_text, _resolve_jobs, _websocket_url
-from lightning_sdk.lightning_cloud.openapi import V1BYOMSpec, V1Deployment, V1DeploymentStatus, V1Job, V1JobSpec
+from lightning_sdk.cli.deployment.reload_weights import reload_weights
+from lightning_sdk.lightning_cloud.openapi import (
+    V1BYOMSpec,
+    V1Deployment,
+    V1DeploymentStatus,
+    V1Job,
+    V1JobSpec,
+    V1ReloadDeploymentWeightsResponse,
+)
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from tests.cli.help import assert_help_contains
 
@@ -387,6 +395,27 @@ def test_print_page_text_renders_json_log_entries(capsys) -> None:
     assert rendered == 2
     assert empty == 0
     assert capsys.readouterr().out == "ready\nserving\n"
+
+
+def test_reload_weights_calls_api_and_prints_version(monkeypatch) -> None:
+    teamspace = SimpleNamespace(id="project-id")
+    deployment = V1Deployment(name="my-llama-deployment", id="dep-id", project_id="project-id")
+    api = MagicMock()
+    api.get_deployment_by_name.return_value = deployment
+    api.reload_weights.return_value = V1ReloadDeploymentWeightsResponse(weight_version="3", reload_type="in_place")
+
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment.reload_weights.resolve_teamspace",
+        MagicMock(return_value=teamspace),
+    )
+    monkeypatch.setattr("lightning_sdk.cli.deployment.reload_weights.DeploymentApi", MagicMock(return_value=api))
+
+    result = CliRunner().invoke(reload_weights, ["my-llama-deployment", "--teamspace", "ecorp/test"])
+
+    assert result.exit_code == 0, result.output
+    assert "Weights reloaded (version 3)" in result.output
+    api.get_deployment_by_name.assert_called_once_with("my-llama-deployment", "project-id")
+    api.reload_weights.assert_called_once_with(deployment)
 
 
 def test_resolve_jobs_filters_specific_job_id() -> None:
