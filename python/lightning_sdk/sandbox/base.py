@@ -471,7 +471,6 @@ class SandboxInstance(metaclass=TrackCallsMeta):
 
             pty = sandbox.process.create_pty(PtyCreateOpts(
                 session_name="shell",
-                cluster_id=sandbox.cluster_id,
                 on_data=lambda chunk: sys.stdout.buffer.write(chunk),
             ))
             pty.send_input("ls -la\n")
@@ -483,6 +482,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
                 SandboxProcessContext(
                     sandbox_id=self.sandbox_id,
                     organization_id=self.organization_id,
+                    cluster_id=self.cluster_id,
                     get_api_key=self._get_api_key,
                     get_base_url=self._get_base_url,
                     run_command=self._run_command_for_process,

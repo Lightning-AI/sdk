@@ -36,7 +36,6 @@ class PtyCreateOpts:
     """Parameters for :meth:`SandboxProcess.create_pty`."""
 
     session_name: str
-    cluster_id: str
     cwd: str | None = None
     envs: dict[str, str] | None = None
     cols: int | None = None
@@ -64,6 +63,7 @@ class SandboxProcessContext:
 
     sandbox_id: str
     organization_id: str
+    cluster_id: str
     get_api_key: Callable[[], str]
     get_base_url: Callable[[], str]
     run_command: Callable[..., Command]
@@ -208,7 +208,6 @@ class SandboxProcess:
 
             pty = sandbox.process.create_pty(PtyCreateOpts(
                 session_name="build",
-                cluster_id=sandbox.cluster_id,
                 cols=120,
                 rows=30,
                 on_data=lambda chunk: sys.stdout.buffer.write(chunk),
@@ -219,7 +218,7 @@ class SandboxProcess:
         """
         return self._open_pty(
             session_name=opts.session_name,
-            cluster_id=opts.cluster_id,
+            cluster_id=self._ctx.cluster_id,
             cwd=opts.cwd,
             envs=opts.envs,
             cols=opts.cols,
@@ -231,7 +230,6 @@ class SandboxProcess:
     def connect_pty(
         self,
         session_name: str,
-        cluster_id: str,
         opts: PtyConnectOpts | None = None,
     ) -> PtyHandle:
         """Reattach to a PTY session that was previously created by :meth:`create_pty`.
@@ -239,13 +237,13 @@ class SandboxProcess:
         ::
 
             pty = sandbox.process.connect_pty(
-                "build", sandbox.cluster_id,
+                "build",
                 PtyConnectOpts(on_data=lambda c: sys.stdout.buffer.write(c)),
             )
         """
         return self._open_pty(
             session_name=session_name,
-            cluster_id=cluster_id,
+            cluster_id=self._ctx.cluster_id,
             cwd=None,
             envs=None,
             cols=None,

@@ -92,6 +92,7 @@ def _ctx(
     *,
     sandbox_id: str = "sb-abc",
     organization_id: str = "org-1",
+    cluster_id: str = "cluster-1",
     api_key: str = "test-key",
     base_url: str = "https://lightning.test",
     run_command: Any = None,
@@ -99,6 +100,7 @@ def _ctx(
     return SandboxProcessContext(
         sandbox_id=sandbox_id,
         organization_id=organization_id,
+        cluster_id=cluster_id,
         get_api_key=lambda: api_key,
         get_base_url=lambda: base_url,
         run_command=run_command or (lambda **_: CommandResult(cmd_id="x", output="", exit_code=0)),
@@ -114,7 +116,7 @@ def test_create_pty_builds_the_websocket_url_the_controlplane_expects() -> None:
     factory = FakeWsFactory()
     proc = SandboxProcess(_ctx(), ws_factory=factory)
 
-    pty = proc.create_pty(PtyCreateOpts(session_name="shell", cluster_id="cluster-1", cols=100, rows=40))
+    pty = proc.create_pty(PtyCreateOpts(session_name="shell", cols=100, rows=40))
     assert len(factory.instances) == 1
     ws = factory.instances[0]
 
@@ -140,6 +142,34 @@ def test_create_pty_builds_the_websocket_url_the_controlplane_expects() -> None:
     pty.wait()
 
 
+def test_create_pty_defaults_cluster_id_to_the_sandboxs_own_cluster() -> None:
+    factory = FakeWsFactory()
+    proc = SandboxProcess(_ctx(cluster_id="cluster-default"), ws_factory=factory)
+
+    pty = proc.create_pty(PtyCreateOpts(session_name="shell"))
+    ws = factory.instances[0]
+
+    from urllib.parse import urlparse
+
+    assert urlparse(ws.url).path == "/v1/clusters/cluster-default/machines/sb-abc/attach"
+
+    ws.fire_open()
+    ws.fire_close(1000)
+    pty.wait()
+
+
+def test_connect_pty_defaults_cluster_id_to_the_sandboxs_own_cluster() -> None:
+    factory = FakeWsFactory()
+    proc = SandboxProcess(_ctx(cluster_id="cluster-default"), ws_factory=factory)
+
+    proc.connect_pty("shell")
+    ws = factory.instances[0]
+
+    from urllib.parse import urlparse
+
+    assert urlparse(ws.url).path == "/v1/clusters/cluster-default/machines/sb-abc/attach"
+
+
 def test_connect_pty_sets_restore_true_so_the_server_reattaches() -> None:
     factory = FakeWsFactory()
     proc = SandboxProcess(
@@ -147,7 +177,7 @@ def test_connect_pty_sets_restore_true_so_the_server_reattaches() -> None:
         ws_factory=factory,
     )
 
-    pty = proc.connect_pty("shell", "cluster-1")
+    pty = proc.connect_pty("shell")
     ws = factory.instances[0]
 
     from urllib.parse import parse_qs, urlparse
@@ -212,7 +242,7 @@ def test_kill_pty_session_runs_screen_x_and_removes_local_handle() -> None:
         ws_factory=factory,
     )
 
-    pty = proc.create_pty(PtyCreateOpts(session_name="doomed", cluster_id="cluster-1"))
+    pty = proc.create_pty(PtyCreateOpts(session_name="doomed"))
     ws = factory.instances[0]
     ws.fire_open()
 
@@ -244,7 +274,6 @@ def test_create_pty_and_connect_pty_pass_on_data_into_the_handle() -> None:
     pty = proc.create_pty(
         PtyCreateOpts(
             session_name="x",
-            cluster_id="c",
             on_data=received.append,
         )
     )
@@ -258,7 +287,7 @@ def test_create_pty_and_connect_pty_pass_on_data_into_the_handle() -> None:
 
     factory.instances.clear()
     received2: list[bytes] = []
-    proc.connect_pty("y", "c", PtyConnectOpts(on_data=received2.append))
+    proc.connect_pty("y", PtyConnectOpts(on_data=received2.append))
     ws2 = factory.instances[0]
     ws2.fire_open()
     ws2.fire_message(b"bytes-too\n")
