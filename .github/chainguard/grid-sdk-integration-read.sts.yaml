@@ -4,6 +4,7 @@ audience: octo-sts.gridai.dev
 claim_pattern:
   workflow_ref: "gridai/grid/\\.github/workflows/(\
     test-sdk-integration\\.yml|\
+    _test-sdk-integrations\\.yml|\
     test-with-tired-proxy\\.yml|\
     test-baremetal-agent\\.yml|\
     vendor_cloud_with_sdk\\.yml\
