@@ -12,6 +12,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Protocol, Tupl
 
 import backoff
 import requests
+from requests.exceptions import HTTPError
 from tqdm.auto import tqdm
 
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
@@ -157,6 +158,13 @@ class _SinglePartFileUploader:
                 r = requests.put(self.url, data=f, params=self.query_params, timeout=30, headers=self.headers)
 
         if r.status_code != 200:
+            # Transient server errors / throttling should be retried. The backoff
+            # decorator only retries HTTPError/RequestException, so raise an HTTPError
+            # for these to trigger a retry instead of failing immediately.
+            if r.status_code >= 500 or r.status_code == 429:
+                raise HTTPError(
+                    f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
+                )
             raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
 
     @backoff.on_exception(
