@@ -90,14 +90,14 @@ def sandbox() -> None:
       ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
       ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃
       ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-      │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │
+      │ sbx-42 │ devbox │ running │ cpu-1         │ yes        │
       └────────┴────────┴─────────┴───────────────┴────────────┘
 
       $ sandbox create --name devbox --teamspace owner/teamspace --persistent
       ┏━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓
       ┃ ID     ┃ Name   ┃ Status  ┃ Instance type ┃ Persistent ┃ Cluster   ┃
       ┡━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩
-      │ sbx-42 │ devbox │ running │ cpu-small     │ yes        │ aws-use1  │
+      │ sbx-42 │ devbox │ running │ cpu-1         │ yes        │ aws-use1  │
       └────────┴────────┴─────────┴───────────────┴────────────┴───────────┘
 
       $ sandbox run sbx-42 -- python -c "print('hello')"

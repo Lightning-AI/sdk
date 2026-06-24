@@ -229,7 +229,7 @@ def list_sandboxes(
 @click.command("create")
 @_with_common_options
 @click.option("--name", help="Sandbox name. Defaults to a generated name.")
-@click.option("--instance-type", help="Sandbox instance type. Defaults to cpu-small.")
+@click.option("--instance-type", help="Sandbox instance type. Defaults to cpu-1.")
 @click.option("--runtime", help="Runtime image or runtime identifier.")
 @click.option("--image", help="Custom OCI image for the sandbox rootfs (mutually exclusive with --runtime).")
 @click.option(

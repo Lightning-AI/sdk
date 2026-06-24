@@ -23,7 +23,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SandboxSnapshot,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.machine import Machine
 from lightning_sdk.sandbox.command import Command
 from lightning_sdk.sandbox.config import SandboxConfig
 from lightning_sdk.sandbox.network_policy import (
@@ -164,7 +163,7 @@ def create_sandbox(
         it = instance_type
     else:
         _ = runtime  # reserved for richer runtime, machine maps later
-        it = Machine.CPU_SMALL.slug
+        it = "cpu-1"
 
     body = V1CreateSandboxRequest(
         name=name,
@@ -350,7 +349,9 @@ class SandboxInstance(metaclass=TrackCallsMeta):
 
     @property
     def runtime(self) -> str | None:
-        return self._runtime
+        if self._runtime is not None:
+            return self._runtime
+        return getattr(self._v1, "runtime", None) or None
 
     @property
     def sandbox_id(self) -> str:

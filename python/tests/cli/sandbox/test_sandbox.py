@@ -17,7 +17,7 @@ class FakeSandboxInstance:
     sandbox_id: str = "sbx-1"
     name: str = "unit-sandbox"
     status: str = "running"
-    instance_type: str = "cpu-small"
+    instance_type: str = "cpu-1"
     spot: bool = False
     persistent: bool = True
     runtime: str = "python"
@@ -87,7 +87,7 @@ class FakeSnapshot:
     organization_id: str = "org-1"
     source_sandbox_id: str = "sbx-1"
     source_sandbox_name: str = "unit-sandbox"
-    source_sandbox_instance_type: str = "cpu-small"
+    source_sandbox_instance_type: str = "cpu-1"
     auto: bool = False
     excludes: list[str] | None = None
     created_at: datetime | None = None
@@ -248,7 +248,7 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
             "--name",
             "cli-sandbox",
             "--instance-type",
-            "cpu-small",
+            "cpu-1",
             "--runtime",
             "python",
             "--spot",
@@ -267,7 +267,7 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
     assert result.exit_code == 0
     assert client.create_kwargs == {
         "name": "cli-sandbox",
-        "instance_type": "cpu-small",
+        "instance_type": "cpu-1",
         "runtime": "python",
         "image": None,
         "image_secret_ref": None,
