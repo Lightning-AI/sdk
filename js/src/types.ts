@@ -1,28 +1,37 @@
 /**
  * Types for the Sandbox SDK public API and configuration.
  */
+import type { V1NetworkPolicy } from "./lightning_cloud/openapi/data-contracts.js";
+import type { NetworkPolicy, NetworkPolicyInput } from "./network-policy.js";
 
 export interface SandboxConfig {
-  /** API key (falls back to `LIGHTNING_API_KEY`). */
+  /** API key (falls back to `LIGHTNING_SANDBOX_API_KEY`, then `LIGHTNING_API_KEY`). */
   apiKey?: string;
   /** Lightning Cloud base URL (falls back to `LIGHTNING_CLOUD_URL`, then production). */
   baseUrl?: string;
-  /** Default organization ID for requests when not passed per call. */
-  organizationId?: string;
 }
 
 /** Raw sandbox record returned by the Lightning API (camelCase JSON). */
 export interface SandboxData {
   id: string;
   name: string;
+  /** Organization the sandbox belongs to (derived from the API key; read-back only). */
   organizationId: string;
+  /** Cluster placement. Internal plumbing for PTY attach; not a user-facing field. */
   clusterId: string;
   instanceType: string;
   spot: boolean;
   status: string;
-  cloudspaceId: string;
   ports: string[];
   runtime: string;
+  /** Custom OCI image the sandbox was created with (`""` for a curated runtime). */
+  image: string;
+  /** Project Docker-registry Secret used to pull `image` (`""` when unused). */
+  imageSecretRef: string;
+  /** Source snapshot this sandbox was restored from (`""` otherwise). */
+  snapshotId: string;
+  /** User who created the sandbox (`""` if not tracked). */
+  userId: string;
   createdAt: string;
   updatedAt: string;
   /**
@@ -32,6 +41,12 @@ export interface SandboxData {
   persistent: boolean;
   /** Project the sandbox belongs to (empty when not scoped to a project). */
   projectId: string;
+  /** Writable disk size in GB (0 when inheriting the instance-type default). */
+  storageGb: number;
+  /** Maximum lifetime in milliseconds (0 = no timeout). */
+  timeout: number;
+  /** Raw egress policy as returned by the API (undefined = open egress). */
+  networkPolicy?: V1NetworkPolicy;
 }
 
 export interface CreateSandboxParams {
@@ -39,10 +54,24 @@ export interface CreateSandboxParams {
   instanceType: string;
   spot?: boolean;
   ports?: number[];
-  organizationId?: string;
-  clusterId?: string;
-  cloudspaceId?: string;
   runtime?: string;
+  /**
+   * Custom OCI image reference for the rootfs (e.g.
+   * `"ghcr.io/myorg/img:latest"`). Mutually exclusive with `runtime`; CPU
+   * sandboxes only.
+   */
+  image?: string;
+  /**
+   * Name of a project-scoped Docker-registry Secret used to pull a private
+   * `image`. Only valid together with `image`.
+   */
+  imageSecretRef?: string;
+  /**
+   * Egress firewall policy, applied at create time only. Omit for open egress
+   * (`"allow-all"`), pass `"deny-all"`, or a {@link NetworkPolicy} CIDR
+   * allowlist.
+   */
+  networkPolicy?: NetworkPolicyInput;
   /**
    * Whether the sandbox persists its state across restarts via automatic
    * snapshots. Defaults to the platform default (currently `true`) when
@@ -64,39 +93,23 @@ export interface CreateSandboxParams {
    * filesystem.
    */
   snapshotId?: string;
-  /**
-   * Project the sandbox is owned by. Recommended for persistent sandboxes —
-   * the controlplane scopes the auto-snapshot bucket prefix to it.
-   */
-  projectId?: string;
   /** Maximum duration in milliseconds before the sandbox is auto-stopped. */
   timeout?: number;
+  /**
+   * Override for the sandbox's writable disk size, in GB. CPU sandboxes only.
+   * When omitted the sandbox inherits the instance-type default (≈5 GB for
+   * `cpu-1`; 10 / 40 / 60 / 80 GB for `cpu-2` / `cpu-4` / `cpu-8` / `cpu-16`).
+   */
+  storageGb?: number;
 }
 
 /** Parameters for resuming a stopped/paused persistent sandbox by id. */
 export interface ResumeSandboxParams {
   sandboxId: string;
-  organizationId?: string;
-}
-
-/** Options for {@link Sandbox.stop}. */
-export interface StopSandboxOptions {
-  /**
-   * Project the auto-snapshot is written under for persistent sandboxes.
-   * Defaults to the sandbox's original project when unset.
-   */
-  projectId?: string;
 }
 
 /** Options for {@link Sandbox.createSnapshot}. */
 export interface CreateSnapshotParams {
-  /**
-   * Project the snapshot is stored under. Required by the platform —
-   * snapshots are stored in the cluster bucket under the project's prefix
-   * and authorization is project-scoped. Falls back to the sandbox's own
-   * `projectId` when omitted.
-   */
-  projectId?: string;
   /** Tar exclude override for this snapshot. Platform default applies when unset. */
   excludes?: string[];
   /**
@@ -104,6 +117,13 @@ export interface CreateSnapshotParams {
    * to request no expiration.
    */
   expiration?: number;
+  /**
+   * Poll until the snapshot reaches `ready` before resolving. Defaults to
+   * `true`; pass `false` to return the `saving` row immediately.
+   */
+  wait?: boolean;
+  /** Max time in ms to wait for `ready` when `wait` is true. Defaults to 600000. */
+  waitTimeoutMs?: number;
 }
 
 /** A point-in-time snapshot of a sandbox's filesystem. */
@@ -112,30 +132,43 @@ export interface SnapshotData {
   organizationId: string;
   projectId: string;
   sourceSandboxId: string;
+  /** Source sandbox's name at capture time (`""` if not recorded). */
+  sourceSandboxName: string;
+  /** Source sandbox's instance type at capture time (`""` if not recorded). */
+  sourceSandboxInstanceType: string;
   /** `saving` | `ready` | `failed`. Only `ready` snapshots are restorable. */
   status: string;
   sizeBytes: number;
-  createdAt: string;
-  updatedAt: string;
-  expiresAt: string;
+  /** Snapshot creation time (parsed to a `Date`, matching {@link SandboxData}). */
+  createdAt: Date;
+  /** Snapshot last-update time (parsed to a `Date`). */
+  updatedAt: Date;
+  /** Expiry time as a `Date`, or `null` when the snapshot never expires. */
+  expiresAt: Date | null;
   runtime: string;
+  /** Resolved runtime image reference (`""` if not recorded). */
+  runtimeImage: string;
+  /** Content digest of the snapshot rootfs (`""` if not recorded). */
+  rootfsDigest: string;
+  /** Paths excluded from the snapshot tarball. */
+  excludes: string[];
+  /** `true` for control-plane auto-snapshots (persistent stop); `false` for user snapshots. */
+  auto: boolean;
 }
 
 export interface ListSnapshotsParams {
-  organizationId?: string;
-  projectId?: string;
   name?: string;
   pageToken?: string;
   limit?: number;
+  /** Order by creation time: `"asc"` (oldest first) or `"desc"` (newest first). */
+  sortOrder?: "asc" | "desc";
 }
 
 export interface GetSandboxParams {
   sandboxId: string;
-  organizationId?: string;
 }
 
 export interface ListSandboxesParams {
-  organizationId?: string;
   pageToken?: string;
   limit?: number;
 }
@@ -152,7 +185,6 @@ export interface RunCommandOpts {
   args?: string[];
   cwd?: string;
   env?: Record<string, string>;
-  sudo?: boolean;
   detached?: boolean;
 }
 
@@ -222,12 +254,6 @@ export interface PtyCreateOpts {
    * SDK process (cross-process persistence requires a server follow-up).
    */
   sessionName: string;
-  /**
-   * Cluster the sandbox is running on. Required because the controlplane
-   * attach endpoint is keyed on `(clusterId, sandboxId)`.
-   */
-  clusterId: string;
-
   /** Working directory the session starts in. Sent as `cd ... && clear`. */
   cwd?: string;
   /** Environment variables exported in the session before any user input. */

@@ -18,6 +18,8 @@ import type {
 export interface SandboxProcessContext {
   sandboxId: string;
   organizationId: string;
+  /** Cluster the sandbox is placed on; the attach endpoint is keyed on it. */
+  clusterId: string;
   /**
    * Returns the resolved API key. Mirrors the lazy lookup used by the
    * REST request helpers so that `Sandbox.configure` calls made after
@@ -70,7 +72,6 @@ export class SandboxProcess {
    * ```ts
    * const pty = await sandbox.process.createPty({
    *   sessionName: "build",
-   *   clusterId: sandbox.clusterId,
    *   cols: 120,
    *   rows: 30,
    *   onData: (chunk) => process.stdout.write(chunk),
@@ -88,19 +89,17 @@ export class SandboxProcess {
    * Reattach to a PTY session that was previously created by `createPty`.
    *
    * ```ts
-   * const pty = await sandbox.process.connectPty("build", sandbox.clusterId, {
+   * const pty = await sandbox.process.connectPty("build", {
    *   onData: (chunk) => process.stdout.write(chunk),
    * });
    * ```
    */
   async connectPty(
     sessionName: string,
-    clusterId: string,
     opts?: PtyConnectOpts,
   ): Promise<PtyHandle> {
     return this.openPty({
       sessionName,
-      clusterId,
       onData: opts?.onData,
       restore: true,
     });
@@ -206,7 +205,6 @@ export class SandboxProcess {
   /** Internal: builds the WebSocket URL and opens the connection. */
   private async openPty(args: {
     sessionName: string;
-    clusterId: string;
 
     cwd?: string;
     envs?: Record<string, string>;
@@ -219,7 +217,7 @@ export class SandboxProcess {
     const rows = args.rows ?? 24;
 
     const url = new URL(
-      `${this.ctx.getBaseUrl()}/v1/clusters/${encodeURIComponent(args.clusterId)}/machines/${encodeURIComponent(this.ctx.sandboxId)}/attach`,
+      `${this.ctx.getBaseUrl()}/v1/clusters/${encodeURIComponent(this.ctx.clusterId)}/machines/${encodeURIComponent(this.ctx.sandboxId)}/attach`,
     );
     // Switch http(s) -> ws(s).
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";

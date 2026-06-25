@@ -19,13 +19,14 @@ export function resetSandboxConfig(): void {
 }
 
 export function getApiKey(override?: string): string {
-  const key =
-    override ??
-    globalConfig.apiKey ??
-    (typeof process !== "undefined" ? process.env.LIGHTNING_API_KEY : undefined);
+  const env =
+    typeof process !== "undefined"
+      ? (process.env.LIGHTNING_SANDBOX_API_KEY ?? process.env.LIGHTNING_API_KEY)
+      : undefined;
+  const key = override ?? globalConfig.apiKey ?? env;
   if (!key) {
     throw new Error(
-      "Missing API key. Pass apiKey to Sandbox.configure(), provide it in create/get options, or set the LIGHTNING_API_KEY environment variable.",
+      "Missing API key. Pass apiKey to Sandbox.configure(), provide it in create/get options, or set the LIGHTNING_SANDBOX_API_KEY environment variable.",
     );
   }
   return key;
@@ -37,9 +38,4 @@ export function getBaseUrl(): string {
     (typeof process !== "undefined" ? process.env.LIGHTNING_CLOUD_URL : undefined) ??
     DEFAULT_LIGHTNING_BASE_URL
   );
-}
-
-/** Org ID from call-site override or global config; undefined is valid for org-scoped API keys. */
-export function resolveOrgId(override?: string): string | undefined {
-  return override ?? globalConfig.organizationId;
 }

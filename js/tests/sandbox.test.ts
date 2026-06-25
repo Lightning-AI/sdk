@@ -76,15 +76,14 @@ describe("Sandbox", () => {
       assert.equal(sb.status, "running");
     });
 
-    it("includes organizationId query when configured", async () => {
-      Sandbox.configure({ organizationId: "org-q" });
+    it("does not send an organizationId query (org implied by key)", async () => {
       let seenUrl = "";
       globalThis.fetch = ((input) => {
         seenUrl = String(input);
         return Promise.resolve(jsonResponse(sampleV1()));
       }) as typeof fetch;
       await Sandbox.get({ sandboxId: "x" });
-      assert.match(seenUrl, /organizationId=org-q/);
+      assert.doesNotMatch(seenUrl, /organizationId=/);
     });
   });
 

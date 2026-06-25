@@ -29,6 +29,12 @@ export function writeToStdout(chunk: Uint8Array): void {
  * is not intended to be constructed directly.
  */
 export class PtyHandle {
+  /**
+   * No-op `onData` sink used to opt out of the default {@link writeToStdout}
+   * behavior. Pass `onData: PtyHandle.discard` to suppress live output.
+   */
+  static discard(_chunk: Uint8Array): void {}
+
   /** Caller-supplied session id (passed as `sessionName` query param). */
   readonly id: string;
 

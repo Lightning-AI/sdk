@@ -26,6 +26,12 @@ export class FileSystem {
     return r.exitCode === 0;
   }
 
+  async mkdir(path: string, opts?: { recursive?: boolean }): Promise<void> {
+    const args = opts?.recursive ? ["-p", path] : [path];
+    const r = await this.sandbox.runCommand("mkdir", args);
+    assertCommandOk(r, `mkdir ${path}`);
+  }
+
   async stat(path: string): Promise<FileStat> {
     const r = await this.sandbox.runCommand("stat", ["--format=%F|%s|%Y|%a", path]);
     assertCommandOk(r, `stat ${path}`);

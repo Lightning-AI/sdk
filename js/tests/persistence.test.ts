@@ -63,7 +63,7 @@ describe("Sandbox persistence & snapshots", () => {
     return Sandbox.create({ name: "x", instanceType: "cpu-1" });
   }
 
-  it("create forwards persistent / snapshotId / projectId / timeout", async () => {
+  it("create forwards persistent / snapshotId / timeout", async () => {
     let body: Record<string, unknown> = {};
     globalThis.fetch = ((_input, init) => {
       if (init?.body) body = JSON.parse(String(init.body));
@@ -74,15 +74,13 @@ describe("Sandbox persistence & snapshots", () => {
       instanceType: "cpu-1",
       persistent: true,
       snapshotId: "snap-1",
-      projectId: "proj-1",
       timeout: 60_000,
     });
     assert.equal(body.persistent, true);
     assert.equal(body.snapshotId, "snap-1");
-    assert.equal(body.projectId, "proj-1");
     assert.equal(body.timeout, "60000");
     assert.equal(sb.persistent, true);
-    assert.equal(sb.projectId, "proj-1");
+    assert.equal(sb.projectId, "proj-1"); // read back from the response
   });
 
   it("create omits persistent when not specified (server default applies)", async () => {
@@ -137,7 +135,7 @@ describe("Sandbox persistence & snapshots", () => {
       if (init?.body) body = JSON.parse(String(init.body));
       return Promise.resolve(jsonResponse(sampleSnapshot({ status: "saving" })));
     }) as typeof fetch;
-    const snap = await sb.createSnapshot({ excludes: ["node_modules"] });
+    const snap = await sb.createSnapshot({ excludes: ["node_modules"], wait: false });
     assert.match(url, /\/v1\/core\/sandboxes\/sb-test\/snapshot/);
     assert.deepEqual(body.excludes, ["node_modules"]);
     assert.equal(body.projectId, "proj-1"); // falls back to sandbox projectId
@@ -154,7 +152,7 @@ describe("Sandbox persistence & snapshots", () => {
           totalSize: "2",
         }),
       )) as typeof fetch;
-    const out = await Sandbox.listSnapshots({ projectId: "proj-1" });
+    const out = await Sandbox.listSnapshots({ limit: 10 });
     assert.equal(out.snapshots.length, 2);
     assert.equal(out.snapshots[0].id, "a");
     assert.equal(out.nextPageToken, "npt");

@@ -100,6 +100,7 @@ test("createPty builds the WebSocket URL the controlplane expects", async () => 
     const proc = new SandboxProcess({
       sandboxId: "sb-abc",
       organizationId: "org-1",
+      clusterId: "cluster-1",
       getApiKey: () => "test-key",
       getBaseUrl: () => "https://lightning.test",
       runCommand: async () => ({ cmdId: "x", output: "", exitCode: 0 }),
@@ -107,7 +108,6 @@ test("createPty builds the WebSocket URL the controlplane expects", async () => 
 
     const pty = await proc.createPty({
       sessionName: "shell",
-      clusterId: "cluster-1",
       cols: 100,
       rows: 40,
     });
@@ -142,12 +142,13 @@ test("connectPty sets restore=true so the server reattaches to the screen sessio
     const proc = new SandboxProcess({
       sandboxId: "sb-abc",
       organizationId: "",
+      clusterId: "cluster-1",
       getApiKey: () => "k",
       getBaseUrl: () => "http://localhost:9800",
       runCommand: async () => ({ cmdId: "x", output: "", exitCode: 0 }),
     });
 
-    const pty = await proc.connectPty("shell", "cluster-1");
+    const pty = await proc.connectPty("shell");
     const ws = FakeWebSocket.instances[0];
     const url = new URL(ws.url);
 
@@ -179,6 +180,7 @@ test("listPtySessions parses screen -ls output", async () => {
     const proc = new SandboxProcess({
       sandboxId: "sb-abc",
       organizationId: "",
+      clusterId: "cluster-1",
       getApiKey: () => "k",
       getBaseUrl: () => "http://localhost:9800",
       runCommand: async (opts) => {
@@ -211,6 +213,7 @@ test("killPtySession runs `screen -X -S {sessionName} quit` and removes the loca
     const proc = new SandboxProcess({
       sandboxId: "sb-abc",
       organizationId: "",
+      clusterId: "cluster-1",
       getApiKey: () => "k",
       getBaseUrl: () => "http://localhost:9800",
       runCommand: async (opts) => {
@@ -221,7 +224,6 @@ test("killPtySession runs `screen -X -S {sessionName} quit` and removes the loca
 
     const pty = await proc.createPty({
       sessionName: "doomed",
-      clusterId: "cluster-1",
     });
     const ws = FakeWebSocket.instances[0];
     ws.fireOpen();

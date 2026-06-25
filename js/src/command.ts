@@ -1,5 +1,5 @@
 import type { Sandbox } from "./sandbox.js";
-import type { CommandStatus, WaitForCommandOptions } from "./types.js";
+import type { CommandLog, CommandStatus, WaitForCommandOptions } from "./types.js";
 
 /**
  * Handle for a command running (or finished) inside a sandbox.
@@ -29,17 +29,42 @@ export class Command {
   output: string;
   /** Exit code; `null` while the command is still running. */
   exitCode: number | null;
+  /**
+   * The command line as recorded by the server. Only populated on handles
+   * returned by {@link Sandbox.listCommands}; `""` otherwise.
+   */
+  readonly command: string;
+  /**
+   * Server-side creation timestamp. Only populated on handles returned by
+   * {@link Sandbox.listCommands}; `null` on handles from `runCommand`.
+   */
+  readonly startedAt: string | null;
+  /**
+   * Server-side update timestamp. Only populated on handles returned by
+   * {@link Sandbox.listCommands}; `null` on handles from `runCommand`.
+   */
+  readonly updatedAt: string | null;
 
   protected readonly sandbox: Sandbox;
 
   constructor(
     sandbox: Sandbox,
-    data: { cmdId: string; output: string; exitCode: number | null },
+    data: {
+      cmdId: string;
+      output: string;
+      exitCode: number | null;
+      command?: string;
+      startedAt?: string | null;
+      updatedAt?: string | null;
+    },
   ) {
     this.sandbox = sandbox;
     this.cmdId = data.cmdId;
     this.output = data.output;
     this.exitCode = data.exitCode;
+    this.command = data.command ?? "";
+    this.startedAt = data.startedAt ?? null;
+    this.updatedAt = data.updatedAt ?? null;
   }
 
   /** `true` while the command is still executing (i.e. {@link exitCode} is `null`). */
@@ -55,6 +80,18 @@ export class Command {
   /** Alias for {@link stdout}; the API exposes a single combined output stream. */
   stderr(): string {
     return this.output;
+  }
+
+  /**
+   * Fetch this command's log lines from the server.
+   *
+   * Returns the timestamped log messages via {@link Sandbox.getCommandLogs}.
+   * Unlike {@link stdout} (a single combined buffer), this returns discrete
+   * `{ timestamp, message }` entries.
+   */
+  async logs(): Promise<CommandLog[]> {
+    const { logs } = await this.sandbox.getCommandLogs(this.cmdId);
+    return logs;
   }
 
   /**

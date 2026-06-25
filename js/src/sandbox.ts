@@ -13,7 +13,6 @@ import type {
   ReadFileParams,
   CreateDirectoryParams,
   ResumeSandboxParams,
-  StopSandboxOptions,
   CreateSnapshotParams,
   SnapshotData,
   ListSnapshotsParams,
@@ -30,17 +29,20 @@ import type {
   V1GetSandboxCommandLogsResponse,
   V1GetSandboxCommandResponse,
   V1GetSandboxFileResponse,
+  V1ListSandboxCommandsResponse,
   V1ListSandboxesResponse,
   V1ListSandboxSnapshotsResponse,
   V1LogMessage,
   V1RunSandboxCommandResponse,
   V1Sandbox,
+  V1SandboxCommand,
   V1SandboxSnapshot,
   V1StopSandboxResponse,
 } from "./lightning_cloud/openapi/data-contracts.js";
-import { getApiKey, getBaseUrl, mergeSandboxConfig, resolveOrgId } from "./config.js";
+import { getApiKey, getBaseUrl, mergeSandboxConfig } from "./config.js";
 import { FileSystem } from "./filesystem.js";
 import { SandboxProcess } from "./process.js";
+import { NetworkPolicy, fromV1NetworkPolicy, toV1NetworkPolicy } from "./network-policy.js";
 
 function buildQuery(params: Record<string, string | undefined>): string {
   const qs = new URLSearchParams();
@@ -90,13 +92,19 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     instanceType: v.instanceType ?? "",
     spot: v.spot ?? false,
     status: v.status ?? "",
-    cloudspaceId: v.cloudspaceId ?? "",
     ports: v.ports ?? [],
     runtime: v.runtime ?? "",
+    image: v.image ?? "",
+    imageSecretRef: v.imageSecretRef ?? "",
+    snapshotId: v.snapshotId ?? "",
+    userId: v.userId ?? "",
     createdAt: v.createdAt ?? "",
     updatedAt: v.updatedAt ?? "",
     persistent: v.persistent ?? false,
     projectId: v.projectId ?? "",
+    storageGb: v.storageGb !== undefined && v.storageGb !== "" ? Number(v.storageGb) : 0,
+    timeout: v.timeout !== undefined && v.timeout !== "" ? Number(v.timeout) : 0,
+    networkPolicy: v.networkPolicy,
   };
 }
 
@@ -106,12 +114,18 @@ function toSnapshotData(v: V1SandboxSnapshot): SnapshotData {
     organizationId: v.organizationId ?? "",
     projectId: v.projectId ?? "",
     sourceSandboxId: v.sourceSandboxId ?? "",
+    sourceSandboxName: v.sourceSandboxName ?? "",
+    sourceSandboxInstanceType: v.sourceSandboxInstanceType ?? "",
     status: v.status ?? "",
     sizeBytes: v.sizeBytes !== undefined && v.sizeBytes !== "" ? Number(v.sizeBytes) : 0,
-    createdAt: v.createdAt ?? "",
-    updatedAt: v.updatedAt ?? "",
-    expiresAt: v.expiresAt ?? "",
+    createdAt: new Date(v.createdAt ?? ""),
+    updatedAt: new Date(v.updatedAt ?? ""),
+    expiresAt: v.expiresAt ? new Date(v.expiresAt) : null,
     runtime: v.runtime ?? "",
+    runtimeImage: v.runtimeImage ?? "",
+    rootfsDigest: v.rootfsDigest ?? "",
+    excludes: v.tarExcludes ?? [],
+    auto: Boolean(v.sourceSandboxPersistent),
   };
 }
 
@@ -146,15 +160,29 @@ export class Sandbox {
   readonly sandboxId: string;
   readonly name: string;
   readonly organizationId: string;
-  readonly clusterId: string;
   readonly instanceType: string;
   readonly spot: boolean;
   readonly status: string;
-  readonly cloudspaceId: string;
   readonly ports: string[];
+
+  /** Cluster placement, kept internally for PTY attach. Not exposed publicly. */
+  private readonly _clusterId: string;
   readonly runtime: string;
+  /** Custom OCI image the sandbox was created with (`""` for a curated runtime). */
+  readonly image: string;
+  /** Project Docker-registry Secret used to pull `image` (`""` when unused). */
+  readonly imageSecretRef: string;
+  /** Source snapshot this sandbox was restored from (`""` otherwise). */
+  readonly snapshotId: string;
+  /** User who created the sandbox (`""` if not tracked). */
+  readonly userId: string;
   readonly persistent: boolean;
   readonly projectId: string;
+  readonly storageGb: number;
+  /** Maximum lifetime in milliseconds (0 = no timeout). */
+  readonly timeout: number;
+  /** Egress firewall policy in effect for the sandbox. */
+  readonly networkPolicy: NetworkPolicy;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 
@@ -168,15 +196,21 @@ export class Sandbox {
     this.sandboxId = data.id;
     this.name = data.name;
     this.organizationId = data.organizationId;
-    this.clusterId = data.clusterId;
+    this._clusterId = data.clusterId;
     this.instanceType = data.instanceType;
     this.spot = data.spot;
     this.status = data.status;
-    this.cloudspaceId = data.cloudspaceId;
     this.ports = data.ports ?? [];
     this.runtime = data.runtime ?? "";
+    this.image = data.image ?? "";
+    this.imageSecretRef = data.imageSecretRef ?? "";
+    this.snapshotId = data.snapshotId ?? "";
+    this.userId = data.userId ?? "";
     this.persistent = data.persistent ?? false;
     this.projectId = data.projectId ?? "";
+    this.storageGb = data.storageGb ?? 0;
+    this.timeout = data.timeout ?? 0;
+    this.networkPolicy = fromV1NetworkPolicy(data.networkPolicy);
     this.createdAt = new Date(data.createdAt);
     this.updatedAt = new Date(data.updatedAt);
     this.fs = new FileSystem(this);
@@ -189,7 +223,6 @@ export class Sandbox {
    * ```ts
    * const pty = await sandbox.process.createPty({
    *   sessionName: "shell",
-   *   clusterId: sandbox.clusterId,
    *   onData: (chunk) => process.stdout.write(chunk),
    * });
    * await pty.sendInput("ls -la\n");
@@ -200,6 +233,7 @@ export class Sandbox {
       this._process = new SandboxProcess({
         sandboxId: this.sandboxId,
         organizationId: this.organizationId,
+        clusterId: this._clusterId,
         getApiKey: () => getApiKey(),
         getBaseUrl: () => getBaseUrl(),
         runCommand: (opts) => this.runCommand(opts),
@@ -224,6 +258,13 @@ export class Sandbox {
   // ---------------------------------------------------------------------------
 
   static async create(params: CreateSandboxParams): Promise<Sandbox> {
+    if (params.runtime && params.image) {
+      throw new Error("Pass only one of 'runtime' and 'image' (they are mutually exclusive).");
+    }
+    if (params.imageSecretRef && !params.image) {
+      throw new Error("'imageSecretRef' is only valid together with 'image'.");
+    }
+
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
     const defaultName = `sandbox-${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}-${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`;
@@ -234,15 +275,15 @@ export class Sandbox {
       spot: params.spot ?? false,
       ports: (params.ports ?? []).map(String),
     };
-    const orgId = resolveOrgId(params.organizationId);
-    if (orgId) body.organizationId = orgId;
-    if (params.clusterId) body.clusterId = params.clusterId;
-    if (params.cloudspaceId) body.cloudspaceId = params.cloudspaceId;
     if (params.runtime) body.runtime = params.runtime;
+    if (params.image) body.image = params.image;
+    if (params.imageSecretRef) body.imageSecretRef = params.imageSecretRef;
     if (params.persistent !== undefined) body.persistent = params.persistent;
     if (params.snapshotId) body.snapshotId = params.snapshotId;
-    if (params.projectId) body.projectId = params.projectId;
     if (params.timeout !== undefined) body.timeout = String(params.timeout);
+    if (params.storageGb !== undefined) body.storageGb = String(params.storageGb);
+    const policy = toV1NetworkPolicy(params.networkPolicy);
+    if (policy !== undefined) body.networkPolicy = policy;
 
     const data = await request<V1Sandbox>("POST", "/v1/core/sandboxes", body);
     return Sandbox.waitForRunning(new Sandbox(toSandboxData(data)));
@@ -271,20 +312,15 @@ export class Sandbox {
       const elapsed = Date.now() - start;
       const pollMs = elapsed < 5_000 ? 100 : 1_000;
       await new Promise((r) => setTimeout(r, pollMs));
-      sandbox = await Sandbox.get({
-        sandboxId: sandbox.sandboxId,
-        organizationId: sandbox.organizationId || undefined,
-      });
+      sandbox = await Sandbox.get({ sandboxId: sandbox.sandboxId });
     }
     return sandbox;
   }
 
   static async get(params: GetSandboxParams): Promise<Sandbox> {
-    const orgId = resolveOrgId(params.organizationId);
-    const qs = buildQuery({ organizationId: orgId });
     const data = await request<V1Sandbox>(
       "GET",
-      `/v1/core/sandboxes/${encodeURIComponent(params.sandboxId)}${qs}`,
+      `/v1/core/sandboxes/${encodeURIComponent(params.sandboxId)}`,
     );
     return new Sandbox(toSandboxData(data));
   }
@@ -297,9 +333,7 @@ export class Sandbox {
     previousPageToken: string;
     totalSize: number;
   }> {
-    const orgId = resolveOrgId(params.organizationId);
     const qs = buildQuery({
-      organizationId: orgId,
       pageToken: params.pageToken,
       limit: params.limit !== undefined ? String(params.limit) : undefined,
     });
@@ -329,9 +363,7 @@ export class Sandbox {
    * resumable auto-snapshot.
    */
   static async resume(params: ResumeSandboxParams): Promise<Sandbox> {
-    const orgId = resolveOrgId(params.organizationId);
     const body: SandboxesServiceUpdateSandboxBody = { resume: true };
-    if (orgId) body.organizationId = orgId;
     const data = await request<V1Sandbox>(
       "PATCH",
       `/v1/core/sandboxes/${encodeURIComponent(params.sandboxId)}`,
@@ -352,13 +384,11 @@ export class Sandbox {
     previousPageToken: string;
     totalSize: number;
   }> {
-    const orgId = resolveOrgId(params.organizationId);
     const qs = buildQuery({
-      organizationId: orgId,
-      projectId: params.projectId,
       name: params.name,
       pageToken: params.pageToken,
       limit: params.limit !== undefined ? String(params.limit) : undefined,
+      sortOrder: params.sortOrder,
     });
     const data = await request<V1ListSandboxSnapshotsResponse>(
       "GET",
@@ -373,26 +403,18 @@ export class Sandbox {
     };
   }
 
-  static async getSnapshot(
-    snapshotId: string,
-    organizationId?: string,
-  ): Promise<SnapshotData> {
-    const qs = buildQuery({ organizationId: resolveOrgId(organizationId) });
+  static async getSnapshot(snapshotId: string): Promise<SnapshotData> {
     const data = await request<V1SandboxSnapshot>(
       "GET",
-      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}${qs}`,
+      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}`,
     );
     return toSnapshotData(data);
   }
 
-  static async deleteSnapshot(
-    snapshotId: string,
-    organizationId?: string,
-  ): Promise<void> {
-    const qs = buildQuery({ organizationId: resolveOrgId(organizationId) });
+  static async deleteSnapshot(snapshotId: string): Promise<void> {
     await request<unknown>(
       "DELETE",
-      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}${qs}`,
+      `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}`,
     );
   }
 
@@ -417,12 +439,12 @@ export class Sandbox {
    * without losing filesystem state. For non-persistent sandboxes the server
    * is simply stopped and no snapshot is taken.
    */
-  async stop(opts: StopSandboxOptions = {}): Promise<{ autoSnapshotId: string }> {
+  async stop(): Promise<{ autoSnapshotId: string }> {
     const body: SandboxesServiceStopSandboxBody = {
       organizationId: this.organizationId || undefined,
     };
-    if (opts.projectId ?? this.projectId) {
-      body.projectId = opts.projectId ?? this.projectId;
+    if (this.projectId) {
+      body.projectId = this.projectId;
     }
     const data = await request<V1StopSandboxResponse>(
       "POST",
@@ -437,10 +459,7 @@ export class Sandbox {
    * running {@link Sandbox} instance; the original handle is left unchanged.
    */
   async resume(): Promise<Sandbox> {
-    return Sandbox.resume({
-      sandboxId: this.sandboxId,
-      organizationId: this.organizationId || undefined,
-    });
+    return Sandbox.resume({ sandboxId: this.sandboxId });
   }
 
   /**
@@ -454,8 +473,7 @@ export class Sandbox {
     const body: SandboxesServiceCreateSandboxSnapshotBody = {
       organizationId: this.organizationId || undefined,
     };
-    const projectId = params.projectId ?? this.projectId;
-    if (projectId) body.projectId = projectId;
+    if (this.projectId) body.projectId = this.projectId;
     if (params.excludes) body.excludes = params.excludes;
     if (params.expiration !== undefined) body.expiration = String(params.expiration);
     const data = await request<V1SandboxSnapshot>(
@@ -463,7 +481,24 @@ export class Sandbox {
       `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/snapshot`,
       body,
     );
-    return toSnapshotData(data);
+    let snapshot = toSnapshotData(data);
+    if (params.wait === false || snapshot.status === "ready") {
+      return snapshot;
+    }
+    const deadline = Date.now() + (params.waitTimeoutMs ?? 600_000);
+    while (snapshot.status !== "ready") {
+      if (snapshot.status === "failed") {
+        throw new Error(`Snapshot ${snapshot.id} failed to capture`);
+      }
+      if (Date.now() >= deadline) {
+        throw new Error(
+          `Snapshot ${snapshot.id} did not become ready (current status: ${snapshot.status})`,
+        );
+      }
+      await new Promise((r) => setTimeout(r, 1_000));
+      snapshot = await Sandbox.getSnapshot(snapshot.id);
+    }
+    return snapshot;
   }
 
   // ---------------------------------------------------------------------------
@@ -497,7 +532,6 @@ export class Sandbox {
       body.args = commandOrOpts.args ?? [];
       if (commandOrOpts.cwd) body.cwd = commandOrOpts.cwd;
       if (commandOrOpts.env) body.env = commandOrOpts.env;
-      if (commandOrOpts.sudo !== undefined) body.sudo = commandOrOpts.sudo;
       if (commandOrOpts.detached !== undefined) {
         body.detached = commandOrOpts.detached;
         detached = commandOrOpts.detached;
@@ -555,6 +589,33 @@ export class Sandbox {
       exitCode: data.exitCode ?? 0,
       running: data.running ?? false,
     };
+  }
+
+  /**
+   * List commands the server has recorded for this sandbox. Each returned
+   * {@link Command} handle carries the recorded command line plus `startedAt` /
+   * `updatedAt` timestamps, and supports {@link Command.getStatus},
+   * {@link Command.wait}, {@link Command.kill}, and {@link Command.logs}.
+   */
+  async listCommands(): Promise<Command[]> {
+    const qs = buildQuery({
+      organizationId: this.organizationId || undefined,
+    });
+    const data = await request<V1ListSandboxCommandsResponse>(
+      "GET",
+      `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/commands${qs}`,
+    );
+    return (data.commands ?? []).map((c: V1SandboxCommand) => {
+      const running = c.running ?? false;
+      return new Command(this, {
+        cmdId: c.id ?? "",
+        output: c.output ?? "",
+        exitCode: running ? null : (c.exitCode ?? 0),
+        command: c.command ?? "",
+        startedAt: c.createdAt ?? null,
+        updatedAt: c.updatedAt ?? null,
+      });
+    });
   }
 
   /**
@@ -637,5 +698,14 @@ export class Sandbox {
       `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/directories`,
       body,
     );
+  }
+
+  /**
+   * Create a single directory via the directories API. Convenience alias for
+   * {@link createDirectory} that takes a bare path. For nested creation
+   * (`mkdir -p`), use the shell-based {@link FileSystem.mkdir} via `sandbox.fs`.
+   */
+  async mkdir(path: string): Promise<void> {
+    return this.createDirectory({ path });
   }
 }

@@ -6,7 +6,6 @@ import {
   getBaseUrl,
   mergeSandboxConfig,
   resetSandboxConfig,
-  resolveOrgId,
 } from "../src/config.js";
 
 describe("config", () => {
@@ -54,6 +53,16 @@ describe("config", () => {
       process.env.LIGHTNING_API_KEY = "k-env";
       assert.equal(getApiKey(), "k-env");
     });
+
+    it("prefers LIGHTNING_SANDBOX_API_KEY over LIGHTNING_API_KEY", () => {
+      process.env.LIGHTNING_API_KEY = "k-legacy";
+      process.env.LIGHTNING_SANDBOX_API_KEY = "k-sandbox";
+      try {
+        assert.equal(getApiKey(), "k-sandbox");
+      } finally {
+        delete process.env.LIGHTNING_SANDBOX_API_KEY;
+      }
+    });
   });
 
   describe("getBaseUrl", () => {
@@ -73,29 +82,12 @@ describe("config", () => {
     });
   });
 
-  describe("resolveOrgId", () => {
-    it("returns undefined when unset", () => {
-      assert.equal(resolveOrgId(), undefined);
-    });
-
-    it("prefers explicit override", () => {
-      mergeSandboxConfig({ organizationId: "org-global" });
-      assert.equal(resolveOrgId("org-arg"), "org-arg");
-    });
-
-    it("uses merged organizationId", () => {
-      mergeSandboxConfig({ organizationId: "org-123" });
-      assert.equal(resolveOrgId(), "org-123");
-    });
-  });
-
   describe("mergeSandboxConfig", () => {
     it("merges shallowly with previous patches", () => {
       mergeSandboxConfig({ apiKey: "a", baseUrl: "https://one" });
-      mergeSandboxConfig({ organizationId: "o1" });
+      mergeSandboxConfig({ baseUrl: "https://two" });
       assert.equal(getApiKey(), "a");
-      assert.equal(getBaseUrl(), "https://one");
-      assert.equal(resolveOrgId(), "o1");
+      assert.equal(getBaseUrl(), "https://two");
     });
   });
 });

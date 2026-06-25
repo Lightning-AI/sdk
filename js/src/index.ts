@@ -3,6 +3,16 @@ export { FileSystem } from "./filesystem.js";
 export { Command } from "./command.js";
 export { SandboxProcess } from "./process.js";
 export { PtyHandle, writeToStdout } from "./pty.js";
+export {
+  NetworkPolicy,
+  toV1NetworkPolicy,
+  fromV1NetworkPolicy,
+} from "./network-policy.js";
+export type {
+  NetworkPolicyMode,
+  NetworkPolicyShorthand,
+  NetworkPolicyInput,
+} from "./network-policy.js";
 export type {
   SandboxConfig,
   SandboxData,
@@ -18,7 +28,6 @@ export type {
   ReadFileParams,
   CreateDirectoryParams,
   ResumeSandboxParams,
-  StopSandboxOptions,
   CreateSnapshotParams,
   SnapshotData,
   ListSnapshotsParams,
