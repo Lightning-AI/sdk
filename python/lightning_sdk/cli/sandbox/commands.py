@@ -53,6 +53,7 @@ def _sandbox_to_dict(sandbox: SandboxInstance) -> dict[str, Any]:
         "organization_id": sandbox.organization_id,
         "project_id": sandbox.project_id,
         "ports": sandbox.ports,
+        "timeout": sandbox.timeout,
         "created_at": sandbox.created_at,
         "updated_at": sandbox.updated_at,
     }
@@ -241,6 +242,12 @@ def list_sandboxes(
 @click.option("--teamspace", help="Teamspace to own persistent sandbox state (format: owner/teamspace).")
 @click.option("--snapshot-id", help="Snapshot ID to restore from.")
 @click.option("--persistent/--ephemeral", "persistent", default=None, help="Persist state across stops.")
+@click.option(
+    "--timeout",
+    type=int,
+    help="Maximum sandbox lifetime in milliseconds, after which it is auto-stopped (note: this is ms, "
+    "unlike `run --timeout` which is seconds).",
+)
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def create_sandbox(
     api_key: str | None,
@@ -254,6 +261,7 @@ def create_sandbox(
     teamspace: str | None,
     snapshot_id: str | None,
     persistent: bool | None,
+    timeout: int | None,
     as_json: bool,
 ) -> None:
     """Create a sandbox and wait until it is running.
@@ -284,6 +292,7 @@ def create_sandbox(
         teamspace=teamspace,
         snapshot_id=snapshot_id,
         persistent=persistent,
+        timeout=timeout,
     )
     if as_json:
         _echo_json(_sandbox_to_dict(sandbox))

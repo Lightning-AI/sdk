@@ -21,6 +21,7 @@ import { Command } from "./command.js";
 import type {
   SandboxesServiceCreateSandboxDirectoryBody,
   SandboxesServiceCreateSandboxSnapshotBody,
+  SandboxesServiceExtendSandboxTimeoutBody,
   SandboxesServiceRunSandboxCommandBody,
   SandboxesServiceStopSandboxBody,
   SandboxesServiceUpdateSandboxBody,
@@ -460,6 +461,33 @@ export class Sandbox {
    */
   async resume(): Promise<Sandbox> {
     return Sandbox.resume({ sandboxId: this.sandboxId });
+  }
+
+  /**
+   * Push out this sandbox's auto-stop deadline by `timeoutMs` milliseconds.
+   *
+   * The create-time `timeout` sets the *initial* deadline and is fixed once the
+   * sandbox exists; this is the only way to move it afterward. Call it
+   * repeatedly (e.g. as a heartbeat) to keep a long-running sandbox alive.
+   * `timeoutMs` is the number of milliseconds to **add** to the current
+   * deadline and must be at least 1000 (1 second).
+   *
+   * The control plane returns no payload, so the local `timeout` field is left
+   * unchanged; call {@link Sandbox.get} if you need fresh state.
+   */
+  async extendTimeout(timeoutMs: number): Promise<void> {
+    if (timeoutMs < 1000) {
+      throw new Error("extendTimeout requires timeoutMs >= 1000 (milliseconds).");
+    }
+    const body: SandboxesServiceExtendSandboxTimeoutBody = {
+      timeout: String(timeoutMs),
+      organizationId: this.organizationId || undefined,
+    };
+    await request<unknown>(
+      "POST",
+      `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/extend-timeout`,
+      body,
+    );
   }
 
   /**

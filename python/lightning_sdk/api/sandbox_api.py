@@ -8,6 +8,7 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import SandboxesServiceApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     SandboxesServiceCreateSandboxDirectoryBody,
+    SandboxesServiceExtendSandboxTimeoutBody,
     SandboxesServiceRunSandboxCommandBody,
     V1ListSandboxesResponse,
     V1ListSandboxSnapshotsResponse,
@@ -262,6 +263,24 @@ class SandboxApi:
         except ApiException as e:
             raise_sandbox_api_error(e)
         return v1
+
+    def extend_timeout(self, sandbox_id: str, *, timeout: int, organization_id: str | None = None) -> None:
+        """Extend a sandbox's auto-stop deadline.
+
+        Calls :meth:`SandboxesServiceApi.sandboxes_service_extend_sandbox_timeout`.
+
+        ``timeout`` is the number of milliseconds to **add** to the sandbox's current
+        deadline (the API requires at least 1000ms). Sandbox identity is carried by
+        ``sandbox_id`` in the URL, not in the body.
+        """
+        body = SandboxesServiceExtendSandboxTimeoutBody(timeout=str(int(timeout)))
+        if organization_id is not None:
+            body.organization_id = organization_id
+        api = self.sandboxes()
+        try:
+            api.sandboxes_service_extend_sandbox_timeout(body, sandbox_id)
+        except ApiException as e:
+            raise_sandbox_api_error(e)
 
     def list_sandboxes(
         self,

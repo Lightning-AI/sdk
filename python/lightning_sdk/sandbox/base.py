@@ -574,6 +574,26 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         self._v1 = _wait_until_sandbox_running(self._sandbox_api, v1)
         return self
 
+    def extend_timeout(self, timeout: int) -> None:
+        """Push out this sandbox's auto-stop deadline by ``timeout`` milliseconds.
+
+        The create-time ``timeout`` sets the *initial* deadline and is fixed once the
+        sandbox exists; this is the only way to move it afterward. Call it repeatedly
+        (e.g. as a heartbeat) to keep a long-running sandbox alive. ``timeout`` is the
+        number of milliseconds to **add** to the current deadline and must be at least
+        ``1000`` (1 second).
+
+        The control plane returns no payload, so the locally cached ``timeout``
+        property is left unchanged; re-fetch the sandbox if you need fresh state.
+        """
+        if int(timeout) < 1000:
+            raise ValueError("extend_timeout requires 'timeout' >= 1000 (milliseconds).")
+        self._sandbox_api.extend_timeout(
+            self._v1.id,
+            timeout=int(timeout),
+            organization_id=self._v1.organization_id or None,
+        )
+
     def snapshot(
         self,
         *,

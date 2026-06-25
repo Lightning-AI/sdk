@@ -261,6 +261,8 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
             "--snapshot-id",
             "snap-0",
             "--persistent",
+            "--timeout",
+            "3600000",
         ]
     )
 
@@ -276,6 +278,7 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
         "teamspace": "owner/teamspace",
         "snapshot_id": "snap-0",
         "persistent": True,
+        "timeout": 3600000,
     }
 
 
