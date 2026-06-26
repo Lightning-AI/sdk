@@ -25,27 +25,27 @@ from lightning_sdk.cli.vm import register_commands as register_vm_commands
 
 @click.group(name="studio")
 def studio() -> None:
-    """Manage Lightning AI Studios."""
+    """Persistent GPU dev workspaces."""
 
 
 @click.group(name="job")
 def job() -> None:
-    """Manage Lightning AI Jobs."""
+    """Run batch jobs and sweeps."""
 
 
 @click.group(name="mmt")
 def mmt() -> None:
-    """Manage Lightning AI Multi-Machine Training (MMT)."""
+    """Multi-node distributed training."""
 
 
 @click.group(name="machine")
 def machine() -> None:
-    """Manage Lightning AI machine types."""
+    """Browse GPU and CPU machine types."""
 
 
 @click.group(name="config")
 def config() -> None:
-    """Manage Lightning SDK and CLI configuration."""
+    """Manage SDK and CLI settings."""
 
 
 @click.group(
@@ -69,17 +69,17 @@ def api(ctx: click.Context) -> None:
 
 @click.group(name="deployment")
 def deployment() -> None:
-    """Manage Lightning AI Deployments."""
+    """Deploy autoscaling inference APIs."""
 
 
 @click.group(name="vm")
 def vm() -> None:
-    """Manage Lightning AI VMs."""
+    """Bare VMs with SSH access."""
 
 
 @click.group(name="sandbox")
 def sandbox() -> None:
-    """Manage Lightning AI Sandboxes.
+    """Ephemeral sandboxes for agents.
 
     Set LIGHTNING_SANDBOX_API_KEY for non-interactive authentication. The sandbox
     API uses https://lightning.ai by default; set LIGHTNING_CLOUD_URL to override
@@ -118,17 +118,17 @@ def sandbox() -> None:
 
 @click.group(name="container")
 def container() -> None:
-    """Manage Lightning AI containers."""
+    """Run and manage containers."""
 
 
 @click.group(name="model")
 def model() -> None:
-    """Manage Lightning AI Models."""
+    """Register and version models."""
 
 
 @click.group(name="api-key")
 def api_key() -> None:
-    """Manage API keys for public model endpoints.
+    """Keys for model endpoint access.
 
     Org context is inferred automatically. If you use multiple orgs, set
     LIGHTNING_ORG or `lightning config set organization.name` to match the org
@@ -138,27 +138,27 @@ def api_key() -> None:
 
 @click.group(name="file")
 def file() -> None:
-    """Manage file transfers."""
+    """Upload and download files."""
 
 
 @click.group(name="folder")
 def folder() -> None:
-    """Manage folder transfers."""
+    """Upload and download folders."""
 
 
 @click.group(name="ssh")
 def ssh() -> None:
-    """Manage SSH configuration."""
+    """Configure SSH access to Studios."""
 
 
 @click.group(name="base-studio")
 def base_studio() -> None:
-    """Manage Lightning AI Base Studios."""
+    """Reusable Studio environment images."""
 
 
 @click.group(name="license")
 def license() -> None:  # noqa: A001
-    """Manage Lightning AI Product Licenses."""
+    """View and manage product licenses."""
 
 
 @click.command(name="cp")
@@ -167,7 +167,7 @@ def license() -> None:  # noqa: A001
 @click.option("--recursive", "-r", is_flag=True, help="Copy directories recursively")
 @click.pass_context
 def cp() -> None:
-    """Copy files between local filesystem, Studios, and teamspace drives.
+    """Copy between local, Studios, Drive.
 
     URL formats:
       Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>

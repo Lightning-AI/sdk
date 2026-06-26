@@ -31,7 +31,7 @@ def test_deployment_help() -> None:
     assert_help_contains(
         "lightning deployment --help",
         "Usage: lightning deployment [OPTIONS] COMMAND [ARGS]...",
-        "Manage Lightning AI Deployments.",
+        "Deploy autoscaling inference APIs.",
         "create",
         "delete",
         "inspect",

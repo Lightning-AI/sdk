@@ -156,7 +156,7 @@ def test_sandbox_help() -> None:
     assert_help_contains(
         "lightning sandbox --help",
         "Usage: lightning sandbox",
-        "Manage Lightning AI Sandboxes.",
+        "Ephemeral sandboxes for agents.",
         "https://lightning.ai by default; set LIGHTNING_CLOUD_URL to",
         "$ sandbox create --name devbox --teamspace owner/teamspace --persistent",
         "$ sandbox run sbx-42 -- python -c \"print('hello')\"",
@@ -169,7 +169,7 @@ def test_sandbox_help() -> None:
 
 
 def test_sandboxes_plural_alias_help() -> None:
-    assert_help_contains("lightning sandboxes --help", "Usage: lightning sandboxes", "Manage Lightning AI Sandboxes.")
+    assert_help_contains("lightning sandboxes --help", "Usage: lightning sandboxes", "Ephemeral sandboxes for agents.")
 
 
 def test_sandbox_command_help_examples() -> None:

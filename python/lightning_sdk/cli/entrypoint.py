@@ -3,7 +3,7 @@
 import os
 import sys
 
-import click
+import rich_click as click
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
@@ -34,10 +34,33 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_command,
     build_legacy_forward_group,
 )
-from lightning_sdk.cli.utils import CustomHelpFormatter
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
+
+click.rich_click.COMMAND_GROUPS = {
+    "lightning": [
+        {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
+        {"name": "COMPUTE", "commands": ["studio", "base-studio", "vm", "machine", "container", "sandbox"]},
+        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "aihub"]},
+        {"name": "ACCESS", "commands": ["api-key", "ssh", "license"]},
+        {"name": "DATA & FILES", "commands": ["cp", "file", "folder"]},
+    ]
+}
+click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
+click.rich_click.STYLE_COMMANDS_PANEL_TITLE_STYLE = "bold #5e5e6e"
+click.rich_click.STYLE_COMMANDS_PANEL_BORDER = "#2a2a38"
+click.rich_click.STYLE_COMMAND = "bold #a78bfa"
+click.rich_click.STYLE_USAGE = "#7a7a88"
+click.rich_click.STYLE_USAGE_COMMAND = "bold #a78bfa"
+click.rich_click.STYLE_ARGUMENT = "#6a6a78"
+click.rich_click.USE_RICH_MARKUP = True
+
+
+click.rich_click.HEADER_TEXT = (
+    "[bold #a78bfa]⚡[/bold #a78bfa]  [bold #ededf2]Lightning AI[/bold #ededf2]"
+    "  [#8f8f9c]The training and experimentation cloud.[/#8f8f9c]"
+)
 
 
 @click.group(
@@ -46,16 +69,13 @@ from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 )
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
 def main_cli() -> None:
-    """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
+    """The AI development cloud — build, train, and ship from anywhere."""
     sys.excepthook = logging_excepthook
-
-
-main_cli.context_class.formatter_class = CustomHelpFormatter
 
 
 @main_cli.command
 def login() -> None:
-    """Login to Lightning AI Studios."""
+    """Sign in to Lightning AI."""
     # try to fetch credentials, if successful (e.g. in a Studio or already logged in), no need to relogin
     auth = Auth()
     if (auth.user_id and auth.api_key) or auth.load():
@@ -80,7 +100,7 @@ def login() -> None:
 
 @main_cli.command
 def logout() -> None:
-    """Logout from Lightning AI Studios."""
+    """Sign out of the current session."""
     auth = Auth()
     auth.clear()
 

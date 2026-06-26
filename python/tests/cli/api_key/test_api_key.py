@@ -23,7 +23,7 @@ def test_api_key_help() -> None:
     assert_help_contains(
         "lightning api-key --help",
         "Usage: lightning api-key",
-        "Manage API keys for public model endpoints.",
+        "Keys for model endpoint access.",
     )
 
 

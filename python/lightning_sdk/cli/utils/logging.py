@@ -7,6 +7,7 @@ from types import TracebackType
 from typing import Optional, Type
 
 import click
+import rich_click
 from rich.console import Group
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -104,7 +105,116 @@ def logging_excepthook(exception_type: Type[BaseException], value: BaseException
         _notify_exception(exception_type, value, tb)
 
 
-class CommandLoggingGroup(click.Group):
+def _gradient_rule(width: int) -> "Text":
+    from rich.text import Text
+
+    r0, g0, b0 = 0x22, 0xD3, 0xEE  # #22d3ee  cyan (design start)
+    r1, g1, b1 = 0xA7, 0x8B, 0xFA  # #a78bfa  purple (design end)
+    t = Text(no_wrap=True, overflow="crop")
+    for i in range(width):
+        frac = i / max(width - 1, 1)
+        r = int(r0 + frac * (r1 - r0))
+        g = int(g0 + frac * (g1 - g0))
+        b = int(b0 + frac * (b1 - b0))
+        t.append("─", style=f"#{r:02x}{g:02x}{b:02x}")
+    return t
+
+
+class CommandLoggingGroup(rich_click.RichGroup):
+    def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        from rich.padding import Padding
+        from rich.table import Table
+        from rich.text import Text
+
+        config = formatter.config  # type: ignore[union-attr]
+
+        if config.header_text:
+            left = formatter.rich_text(config.header_text, config.style_header_text)  # type: ignore[union-attr]
+            right = Text.from_markup(f"[bold #a78bfa]v{__version__}[/bold #a78bfa]")
+
+            grid = Table.grid(expand=True)
+            grid.add_column(ratio=1)
+            grid.add_column(justify="right")
+            grid.add_row(left, right)
+
+            formatter.write(  # type: ignore[arg-type]
+                Padding(grid, config.padding_header_text, style=config.style_padding_usage)
+            )
+            formatter.write("")  # type: ignore[arg-type]
+            width = getattr(getattr(formatter, "console", None), "width", 80)
+            formatter.write(_gradient_rule(width))  # type: ignore[arg-type]
+
+        saved_header = config.header_text
+        config.header_text = ""
+        self.format_usage(ctx, formatter)
+        config.header_text = saved_header
+
+        self.format_options(ctx, formatter)
+        self.format_epilog(ctx, formatter)
+
+    def format_epilog(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        from rich.table import Table
+        from rich.text import Text
+
+        left = Text.from_markup(
+            "[#8e8e9c]Get started[/#8e8e9c]  "
+            "[bold #a78bfa]lightning login[/bold #a78bfa] "
+            "[#5e5e6c]→[/#5e5e6c] "
+            "[bold #a78bfa]lightning studio start[/bold #a78bfa]"
+        )
+        right = Text.from_markup(
+            "[#7a7a88]DOCS[/#7a7a88]  "
+            "[link=https://lightning.ai/docs][#5b8cfa]https://lightning.ai/docs[/#5b8cfa][/link]"
+        )
+
+        grid = Table.grid(expand=True)
+        grid.add_column(ratio=1)
+        grid.add_column(justify="right")
+        grid.add_row(left, right)
+
+        formatter.write(grid)  # type: ignore[arg-type]
+
+    def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        pieces = self.collect_usage_pieces(ctx)
+        formatter.write_usage(f"{ctx.command_path}", " ".join(pieces) if pieces else "")
+
+    def format_options(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        import math
+
+        from rich.console import Group as RenderableGroup
+        from rich.table import Table
+        from rich_click.rich_panel import RichCommandPanel, construct_panels
+
+        panels = construct_panels(self, ctx, formatter)  # type: ignore[arg-type]
+
+        option_renderables = []
+        command_renderables = []
+
+        for panel in panels:
+            p = panel.render(self, ctx, formatter)  # type: ignore[arg-type]
+            if isinstance(p.renderable, Table) and len(p.renderable.rows) == 0:
+                continue
+            if isinstance(panel, RichCommandPanel):
+                command_renderables.append(p)
+            else:
+                option_renderables.append(p)
+
+        if not command_renderables:
+            return
+
+        mid = math.floor(len(command_renderables) / 2)
+        left, right = command_renderables[:mid], command_renderables[mid:]
+
+        if right:
+            grid = Table.grid(expand=True)
+            grid.add_column(ratio=1)
+            grid.add_column(ratio=1)
+            grid.add_row(RenderableGroup(*left), RenderableGroup(*right))
+            formatter.write(grid)  # type: ignore[arg-type]
+        else:
+            for p in left:
+                formatter.write(p)  # type: ignore[arg-type]
+
     def _format_ctx(self, ctx: click.Context) -> str:
         parts = []
         for k, v in ctx.params.items():

@@ -23,4 +23,4 @@ def test_studios_help():
     result_text = command_text("lightning studios --help")
 
     assert "Usage: lightning studios [OPTIONS] COMMAND [ARGS]..." in result_text
-    assert "Manage Lightning AI Studios." in result_text
+    assert "Persistent GPU dev workspaces." in result_text

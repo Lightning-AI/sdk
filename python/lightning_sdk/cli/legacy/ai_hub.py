@@ -7,7 +7,7 @@ from lightning_sdk.ai_hub import AIHub
 
 @click.group(name="aihub")
 def aihub() -> None:
-    """Interact with Lightning Studio - AI Hub."""
+    """Browse and launch AI Hub templates."""
 
 
 @aihub.command(name="api-info")

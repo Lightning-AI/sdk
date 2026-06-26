@@ -5,7 +5,7 @@ def test_ai_hub_help() -> None:
     result_text = assert_help_contains(
         "lightning aihub --help",
         "Usage: lightning aihub [OPTIONS] COMMAND [ARGS]...",
-        "Interact with Lightning Studio - AI Hub.",
+        "Browse and launch AI Hub templates.",
         "api-info",
         "deploy",
         "list-apis",
