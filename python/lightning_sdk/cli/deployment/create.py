@@ -4,7 +4,7 @@ import json
 import sys
 from typing import List, Optional, Sequence
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.deployment_api import to_byom_spec
 from lightning_sdk.cli.deployment._byom_ack import create_with_acknowledgement
@@ -19,10 +19,11 @@ from lightning_sdk.cli.deployment.common import (
     resolve_teamspace,
 )
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.deployment import Deployment
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @click.argument("name", required=False)
 @click.option("--name", "name_option", help="The deployment name. Overrides the optional NAME argument.")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")

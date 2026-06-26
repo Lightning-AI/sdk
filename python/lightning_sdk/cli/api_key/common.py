@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.api_key_api import ApiKeyApi
 from lightning_sdk.organization import Organization

@@ -2,10 +2,11 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
@@ -14,7 +15,7 @@ from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import VM, Studio
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @click.option("--name", help="The name of the studio to create. If not provided, a random name will be generated.")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--cloud", help="Cloud provider or cloud account to create the studio on. Defaults to teamspace default.")

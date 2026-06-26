@@ -136,6 +136,7 @@ class TestNotifyException:
     """Tests for the _notify_exception function."""
 
     @mock.patch.dict("os.environ", {}, clear=True)
+    @mock.patch("lightning_sdk.cli.utils.logging._LIGHTNING_DEBUG", False)
     @mock.patch("lightning_sdk.cli.utils.logging.click.echo")
     def test_notify_exception_without_debug(self, mock_echo):
         """Test exception notification without debug mode."""

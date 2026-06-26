@@ -2,10 +2,11 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
@@ -13,44 +14,59 @@ from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import VM, Studio
 
+click.rich_click.OPTION_GROUPS = {
+    "lightning studio start": [
+        {"name": "STUDIO", "options": ["--name", "--teamspace", "--create"]},
+        {"name": "COMPUTE", "options": ["--machine", "--gpus", "--interruptible", "--cloud"]},
+        {"name": "DEPRECATED", "options": ["--cloud-provider", "--cloud-account"]},
+    ],
+}
 
-@click.command("start")
+
+@click.command("start", cls=LightningCommand)
 @click.option(
     "--name",
-    help=(
-        "The name of the studio to start. "
-        "If not provided, will try to infer from environment, "
-        "use the default value from the config or prompt for interactive selection."
-    ),
+    help="Studio to start. Falls back to config/env, else prompts.",
 )
-@click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
-@click.option("--create", is_flag=True, help="Create the studio if it doesn't exist")
+@click.option(
+    "--teamspace",
+    metavar="OWNER/NAME",
+    help="Override the default teamspace.",
+)
+@click.option("--create", is_flag=True, help="Create the Studio if it doesn't exist.")
 @click.option(
     "--machine",
-    help="The machine type to start the studio on. Defaults to CPU-4",
+    metavar="TYPE",
+    help=(
+        "Machine type to start on. Default: [bold #6FB3E8]CPU_4[/bold #6FB3E8].\n\n"
+        "[#6FB3E8]CPU[/#6FB3E8] · [#6FB3E8]T4[/#6FB3E8] · [#6FB3E8]L4[/#6FB3E8] · "
+        "[#6FB3E8]L40S[/#6FB3E8] · [#6FB3E8]RTXP_6000[/#6FB3E8] · [#6FB3E8]A100[/#6FB3E8] · "
+        "[#6FB3E8]H100[/#6FB3E8] · [#6FB3E8]H200[/#6FB3E8] · [#6FB3E8]B200[/#6FB3E8]  x1-8\n"
+        "· full list: [bold #a78bfa]lightning machine list[/bold #a78bfa]"
+    ),
     type=click.Choice(m.name for m in Machine.__dict__.values() if isinstance(m, Machine) and m._include_in_cli),
 )
-@click.option("--interruptible", is_flag=True, help="Start the studio on an interruptible instance.")
+@click.option(
+    "--gpus",
+    metavar="TYPE:COUNT",
+    help="GPUs to attach, e.g. [bold #6FB3E8]L4:4[/bold #6FB3E8].",
+    type=click.STRING,
+)
+@click.option("--interruptible", is_flag=True, help="Use a cheaper interruptible (spot) instance.")
 @click.option(
     "--cloud",
-    help=(
-        "Cloud provider or cloud account to start the studio on. Defaults to teamspace default. "
-        "Only used if --create is specified."
-    ),
+    help="Cloud provider or account. Default: teamspace. (with --create)",
 )
 @click.option(
     "--cloud-provider",
-    help="Deprecated. Use --cloud. The cloud provider to start the studio on. Only used if --create is specified.",
+    metavar="",
+    help="Deprecated — use [bold #a78bfa]--cloud[/bold #a78bfa].",
     type=click.Choice(m.name for m in list(CloudProvider)),
 )
 @click.option(
     "--cloud-account",
-    help="Deprecated. Use --cloud. The cloud account to start the studio on. Only used if --create is specified.",
-    type=click.STRING,
-)
-@click.option(
-    "--gpus",
-    help="The number and type of GPUs to start the studio on (format: TYPE:COUNT, e.g. L4:4)",
+    metavar="",
+    help="Deprecated — use [bold #a78bfa]--cloud[/bold #a78bfa].",
     type=click.STRING,
 )
 def start_studio(
@@ -64,10 +80,10 @@ def start_studio(
     cloud_provider: Optional[str] = None,
     cloud_account: Optional[str] = None,
 ) -> None:
-    """Start a Studio.
+    """Start a Studio — a persistent GPU cloud workspace.
 
     Example:
-        lightning studio start --name my-studio
+        lightning studio start --name my-studio --machine A100 --create
 
     """
     return start_impl(

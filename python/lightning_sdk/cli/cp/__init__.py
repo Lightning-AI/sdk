@@ -2,7 +2,7 @@
 
 from typing import Any, Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.cp.teamspace_uploads import cp_upload as teamspace_uploads_cp_upload
 from lightning_sdk.cli.studio.cp import cp_download as studio_cp_download

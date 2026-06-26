@@ -1,11 +1,12 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.delete import delete_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("delete")
+@click.command("delete", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

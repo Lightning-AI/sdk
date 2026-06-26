@@ -2,7 +2,7 @@
 
 from typing import Any, Callable, List
 
-import click
+import rich_click as click
 
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 

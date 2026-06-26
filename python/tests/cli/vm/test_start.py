@@ -6,14 +6,14 @@ def test_start_vm():
 
     assert "Usage: lightning vm start [OPTIONS]" in result_text
     assert "Start a VM." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name            TEXT" in result_text
+    assert "--teamspace       TEXT" in result_text
     assert "--create" in result_text
     assert "--machine" in result_text
     assert "--interruptible" in result_text
-    assert "--cloud TEXT" in result_text
+    assert "--cloud           TEXT" in result_text
     assert "--cloud-provider" in result_text
-    assert "--cloud-account TEXT" in result_text
+    assert "--cloud-account   TEXT" in result_text
 
 
 def test_vms_start_help() -> None:

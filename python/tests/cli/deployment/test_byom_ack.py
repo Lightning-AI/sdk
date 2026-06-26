@@ -52,12 +52,12 @@ def test_resolve_non_interactive_no_force_returns_empty():
 
 
 def test_resolve_interactive_accept(monkeypatch):
-    monkeypatch.setattr("click.confirm", lambda *_a, **_k: True)
+    monkeypatch.setattr("lightning_sdk.cli.deployment._byom_ack.click.confirm", lambda *_a, **_k: True)
     assert resolve_acknowledgements(["A", "B"], force=False, interactive=True) == ["A", "B"]
 
 
 def test_resolve_interactive_decline(monkeypatch):
-    monkeypatch.setattr("click.confirm", lambda *_a, **_k: False)
+    monkeypatch.setattr("lightning_sdk.cli.deployment._byom_ack.click.confirm", lambda *_a, **_k: False)
     assert resolve_acknowledgements(["A"], force=False, interactive=True) == []
 
 

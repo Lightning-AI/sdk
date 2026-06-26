@@ -6,6 +6,8 @@ from typing import Mapping
 
 import click
 
+from lightning_sdk.cli.utils.logging import LightningGroup
+
 
 def _format_redirect_message(old_command: str, replacement: str) -> str:
     return f"Use `{replacement}` instead of `{old_command}`."
@@ -86,7 +88,7 @@ def build_legacy_forward_command(
     return DeprecatedForwardCommand(name=name, replacement=replacement, target_command=target_command)
 
 
-class HiddenAliasGroup(click.Group):
+class HiddenAliasGroup(LightningGroup):
     """A hidden plural alias that forwards to another noun-first group."""
 
     def __init__(self, *args: object, target_group: click.Group, **kwargs: object) -> None:

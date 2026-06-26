@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("delete")
+@click.command("delete", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--yes", "-y", is_flag=True, default=False, help="Do not prompt for confirmation.")

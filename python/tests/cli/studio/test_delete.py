@@ -6,8 +6,8 @@ def test_delete_studio():
 
     assert "Usage: lightning studio delete [OPTIONS]" in result_text
     assert "Delete a Studio." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name       TEXT" in result_text
+    assert "--teamspace  TEXT" in result_text
 
 
 def test_studios_delete_help() -> None:

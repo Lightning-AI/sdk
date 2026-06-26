@@ -3,16 +3,17 @@
 from pathlib import Path
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.ssh.common import generate_ssh_config
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.ssh_connection import download_file
 from lightning_sdk.lightning_cloud.login import Auth
 
 
-@click.command("configure")
+@click.command("configure", cls=LightningCommand)
 @click.option(
     "--name",
     default=None,

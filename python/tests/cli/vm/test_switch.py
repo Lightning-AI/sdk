@@ -6,8 +6,8 @@ def test_switch_vm():
 
     assert "Usage: lightning vm switch [OPTIONS]" in result_text
     assert "Switch a VM to a different machine type." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name           TEXT" in result_text
+    assert "--teamspace      TEXT" in result_text
     assert "--machine" in result_text
     assert "--interruptible" in result_text
 

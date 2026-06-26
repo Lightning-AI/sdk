@@ -1,9 +1,10 @@
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningGroup
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
 
 
-@click.group("get")
+@click.group("get", cls=LightningGroup)
 def get() -> None:
     """Get configuration values."""
 

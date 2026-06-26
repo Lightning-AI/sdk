@@ -6,8 +6,8 @@ def test_stop_studio():
 
     assert "Usage: lightning studio stop [OPTIONS]" in result_text
     assert "Stop a Studio." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name       TEXT" in result_text
+    assert "--teamspace  TEXT" in result_text
 
 
 def test_studios_stop_help() -> None:

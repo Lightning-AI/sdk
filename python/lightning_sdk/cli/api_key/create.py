@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.api_key_api import ApiKeyApi
 from lightning_sdk.cli.api_key.common import ORG_OPTION_HELP, resolve_org
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @click.option("--org", help=ORG_OPTION_HELP)
 @click.option("--name", default="Default", show_default=True, help="Display name for the key.")
 @click.option(

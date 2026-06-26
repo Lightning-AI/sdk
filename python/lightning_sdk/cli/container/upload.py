@@ -2,12 +2,13 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.upload import upload_container as _upload_container
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("upload")
+@click.command("upload", cls=LightningCommand)
 @click.argument("container")
 @click.option("--tag", default="latest", help="The tag of the container to upload.")
 @click.option(

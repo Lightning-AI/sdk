@@ -1,6 +1,6 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 
 def warn_deprecated_cloud_options(cloud_account: Optional[str] = None, cloud_provider: Optional[str] = None) -> None:

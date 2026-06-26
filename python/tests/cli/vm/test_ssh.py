@@ -6,9 +6,9 @@ def test_ssh_vm():
 
     assert "Usage: lightning vm ssh [OPTIONS]" in result_text
     assert "SSH into a VM." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
-    assert "-o, --option TEXT" in result_text
+    assert "--name           TEXT" in result_text
+    assert "--teamspace      TEXT" in result_text
+    assert "--option     -o  TEXT" in result_text
 
 
 def test_vms_ssh_help() -> None:

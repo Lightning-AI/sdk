@@ -3,9 +3,10 @@
 import json
 from typing import Dict, Mapping, Optional, Sequence, Union
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
 from lightning_sdk.teamspace import Teamspace
@@ -15,7 +16,7 @@ _MACHINE_VALUES = tuple(
 )
 
 
-@click.command("run")
+@click.command("run", cls=LightningCommand)
 @click.option("--name", default=None, help="The name of the job. Needs to be unique within the teamspace.")
 @click.option(
     "--machine",

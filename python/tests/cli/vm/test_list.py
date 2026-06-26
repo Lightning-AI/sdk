@@ -6,7 +6,7 @@ def test_list_vm():
 
     assert "Usage: lightning vm list [OPTIONS]" in result_text
     assert "List VMs in a teamspace." in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--teamspace  TEXT" in result_text
     assert "--all" in result_text
     assert "--sort-by" in result_text
 

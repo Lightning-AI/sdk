@@ -2,15 +2,16 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.table import Table
 
 from lightning_sdk.api.api_key_api import ApiKeyApi
 from lightning_sdk.cli.api_key.common import ORG_OPTION_HELP, resolve_org
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option("--org", help=ORG_OPTION_HELP)
 @click.option(
     "--all-users",

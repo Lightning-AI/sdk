@@ -10,20 +10,20 @@ def test_start_studio():
     result_text = command_text("lightning studio start --help")
 
     assert "Usage: lightning studio start [OPTIONS]" in result_text
-    assert "Start a Studio." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "Start a Studio" in result_text
+    assert "--name       TEXT" in result_text
+    assert "--teamspace  OWNER/NAME" in result_text
     assert "--create" in result_text
-    assert "--machine" in result_text
+    assert "--machine        TYPE" in result_text
     assert "--interruptible" in result_text
-    assert "--cloud TEXT" in result_text
+    assert "--cloud          TEXT" in result_text
     assert "--cloud-provider" in result_text
-    assert "--cloud-account TEXT" in result_text
-    assert "--gpus TEXT" in result_text
+    assert "--cloud-account" in result_text
+    assert "--gpus           TYPE:COUNT" in result_text
 
 
 def test_studios_start_help() -> None:
-    assert_help_contains("lightning studios start --help", "Usage: lightning studios start", "Start a Studio.")
+    assert_help_contains("lightning studios start --help", "Usage: lightning studios start", "Start a Studio")
 
 
 def test_start_help() -> None:

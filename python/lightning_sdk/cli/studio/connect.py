@@ -5,11 +5,12 @@ import sys
 from contextlib import suppress
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
@@ -59,7 +60,7 @@ def _parse_args_or_get_from_current_studio(
     return resolved_teamspace, cloud_account, template_id, machine, cloud_provider, name
 
 
-@click.command("connect")
+@click.command("connect", cls=LightningCommand)
 @click.argument("name", required=False)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--cloud", help="Cloud provider or cloud account to create the studio on. Defaults to teamspace default.")

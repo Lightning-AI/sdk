@@ -4,14 +4,15 @@ import os
 from pathlib import Path
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("cp")
+@click.command("cp", cls=LightningCommand)
 @click.argument("source", nargs=1)
 @click.argument("destination", nargs=1)
 @click.option("-r", "--recursive", is_flag=True, help="Copy directories recursively")

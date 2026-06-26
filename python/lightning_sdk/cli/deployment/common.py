@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.deployment_api import (
     ApiKeyAuth,

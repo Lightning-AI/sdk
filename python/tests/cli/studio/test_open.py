@@ -12,8 +12,8 @@ def test_open_studio():
 
     assert "Usage: lightning studio open [OPTIONS] [PATH]" in result_text
     assert "Open a local file or folder in a Lightning Studio." in result_text
-    assert "--teamspace TEXT" in result_text
-    assert "--cloud-account, --cloud_account TEXT" in result_text
+    assert "--teamspace                      TEXT" in result_text
+    assert "--cloud-account,--cloud_account  TEXT" in result_text
 
 
 def test_studios_open_help() -> None:

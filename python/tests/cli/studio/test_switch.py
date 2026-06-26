@@ -3,11 +3,10 @@ from tests.cli.help import assert_help_contains, command_text
 
 def test_switch_studio():
     result_text = command_text("lightning studio switch --help")
-
     assert "Usage: lightning studio switch [OPTIONS]" in result_text
     assert "Switch a Studio to a different machine type." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name           TEXT" in result_text
+    assert "--teamspace      TEXT" in result_text
     assert "--machine" in result_text
     assert "--interruptible" in result_text
 

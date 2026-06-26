@@ -3,15 +3,16 @@
 import subprocess
 from typing import List, Optional
 
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 
 
-@click.command("ssh")
+@click.command("ssh", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

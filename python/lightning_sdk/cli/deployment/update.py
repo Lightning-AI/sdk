@@ -2,7 +2,7 @@
 
 from typing import Optional, Sequence
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.deployment.common import (
     MACHINE_VALUES,
@@ -15,10 +15,11 @@ from lightning_sdk.cli.deployment.common import (
     resolve_teamspace,
 )
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.deployment import Deployment
 
 
-@click.command("update")
+@click.command("update", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--new-name", help="Rename the deployment.")

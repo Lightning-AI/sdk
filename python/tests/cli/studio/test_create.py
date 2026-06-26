@@ -6,12 +6,12 @@ def test_create_studio():
 
     assert "Usage: lightning studio create [OPTIONS]" in result_text
     assert "Create a new Studio." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
-    assert "--cloud TEXT" in result_text
+    assert "--name            TEXT" in result_text
+    assert "--teamspace       TEXT" in result_text
+    assert "--cloud           TEXT" in result_text
     assert "--cloud-provider" in result_text
-    assert "--cloud-account TEXT" in result_text
-    assert "--studio-type TEXT" in result_text
+    assert "--cloud-account   TEXT" in result_text
+    assert "--studio-type     TEXT" in result_text
 
 
 def test_studios_create_help() -> None:

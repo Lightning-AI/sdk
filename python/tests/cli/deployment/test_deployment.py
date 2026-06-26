@@ -2,6 +2,7 @@ import json
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import click
 import pytest
 from click.testing import CliRunner
 
@@ -176,7 +177,8 @@ def test_create_deployment_image_requires_port(monkeypatch) -> None:
     result = CliRunner().invoke(create_deployment, ["api", "--image", "nginx"])
 
     assert result.exit_code != 0
-    assert "--port is required" in result.output
+    assert "--port" in result.output
+    assert " is required" in result.output
 
 
 def test_create_deployment_model_mutually_exclusive_with_image(monkeypatch) -> None:
@@ -188,7 +190,9 @@ def test_create_deployment_model_mutually_exclusive_with_image(monkeypatch) -> N
     )
 
     assert result.exit_code != 0
-    assert "Exactly one of --image, --studio, or --model" in result.output
+    output = click.unstyle(result.output)
+
+    assert "Exactly one of --image, --studio, or --model is required." in output
 
 
 def test_create_deployment_model_requires_gpu(monkeypatch) -> None:
@@ -333,7 +337,8 @@ def test_create_ack_without_model_errors(monkeypatch) -> None:
     result = CliRunner().invoke(create_deployment, ["api", "--image", "nginx", "--port", "8000", "--ack", "X"])
 
     assert result.exit_code != 0
-    assert "only supported with --model" in result.output
+    output = click.unstyle(result.output)
+    assert "only supported with --model" in output
 
 
 def test_create_serving_image_variant_accepted(monkeypatch) -> None:

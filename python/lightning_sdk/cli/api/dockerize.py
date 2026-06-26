@@ -1,11 +1,12 @@
 """API dockerize command."""
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.docker_cli import _api
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("dockerize")
+@click.command("dockerize", cls=LightningCommand)
 @click.argument("server_filename")
 @click.option("--port", type=int, default=8000, help="Port to expose in the Docker container.")
 @click.option("--gpu", is_flag=True, default=False, flag_value=True, help="Use a GPU-enabled Docker image.")

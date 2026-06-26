@@ -6,13 +6,14 @@ def test_connect_studio():
 
     assert "Usage: lightning studio connect [OPTIONS] [NAME]" in result_text
     assert "Connect to a Studio." in result_text
-    assert "Example:     lightning studio connect" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "Example:" in result_text
+    assert "lightning studio connect" in result_text
+    assert "--teamspace       TEXT" in result_text
     assert "--cloud-provider" in result_text
-    assert "--cloud-account TEXT" in result_text
+    assert "--cloud-account   TEXT" in result_text
     assert "--machine" in result_text
-    assert "--gpus TEXT" in result_text
-    assert "--studio-type TEXT" in result_text
+    assert "--gpus            TEXT" in result_text
+    assert "--studio-type     TEXT" in result_text
     assert "--interruptible" in result_text
 
 

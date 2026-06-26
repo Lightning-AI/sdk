@@ -2,15 +2,16 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 
 
-@click.command("stop")
+@click.command("stop", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

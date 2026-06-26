@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("inspect")
+@click.command("inspect", cls=LightningCommand)
 @click.argument("name", required=False)
 @click.option(
     "--teamspace",

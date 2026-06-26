@@ -6,8 +6,8 @@ def test_delete_vm():
 
     assert "Usage: lightning vm delete [OPTIONS]" in result_text
     assert "Delete a VM." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name       TEXT" in result_text
+    assert "--teamspace  TEXT" in result_text
 
 
 def test_vms_delete_help() -> None:

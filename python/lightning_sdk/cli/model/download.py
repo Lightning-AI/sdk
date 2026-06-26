@@ -1,11 +1,12 @@
 """Model download command."""
 
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.models import download_model
 
 
-@click.command("download")
+@click.command("download", cls=LightningCommand)
 @click.argument("name")
 @click.option(
     "--download-dir", "--download_dir", default=".", help="The directory where the Model should be downloaded."

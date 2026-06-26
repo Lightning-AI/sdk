@@ -2,12 +2,13 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.download import download_container as _download_container
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("download")
+@click.command("download", cls=LightningCommand)
 @click.argument("container")
 @click.option("--teamspace", default=None, help="The name of the teamspace to download the container from")
 @click.option("--tag", default="latest", show_default=True, help="The tag of the container to download.")

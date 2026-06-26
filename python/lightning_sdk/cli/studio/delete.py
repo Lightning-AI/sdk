@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 
 
-@click.command("delete")
+@click.command("delete", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

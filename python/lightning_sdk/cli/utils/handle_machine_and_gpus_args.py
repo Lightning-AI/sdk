@@ -1,6 +1,6 @@
 from typing import Dict, Optional, Set
 
-import click
+import rich_click as click
 
 from lightning_sdk.machine import DEFAULT_MACHINE, Machine
 

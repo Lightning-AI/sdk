@@ -1,5 +1,6 @@
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningGroup
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
@@ -8,7 +9,7 @@ from lightning_sdk.utils.config import Config, DefaultConfigKeys
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_user
 
 
-@click.group("set")
+@click.group("set", cls=LightningGroup)
 def set_value() -> None:
     """Set configuration values."""
 

@@ -1,11 +1,12 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.list import list_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option(
     "--all",

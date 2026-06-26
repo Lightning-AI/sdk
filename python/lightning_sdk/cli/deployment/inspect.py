@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.cli.deployment.common import deployment_to_dict, resolve_deployment, resolve_teamspace, to_json
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("inspect")
+@click.command("inspect", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--jobs", "include_jobs", is_flag=True, default=False, help="Include jobs for this deployment.")

@@ -1,11 +1,12 @@
 """Studio ls command."""
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("ls")
+@click.command("ls", cls=LightningCommand)
 @click.argument("path", nargs=1)
 def ls_studio(path: str) -> None:
     """List contents of a directory in Studio.

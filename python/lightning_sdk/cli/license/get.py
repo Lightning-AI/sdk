@@ -1,9 +1,10 @@
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH, Config, DefaultConfigKeys
 
 
-@click.command("get")
+@click.command("get", cls=LightningCommand)
 @click.argument("product_name")
 @click.option("--config-file", help="Path to the config file")
 def get_license(product_name: str, config_file: str = _DEFAULT_CONFIG_FILE_PATH) -> None:

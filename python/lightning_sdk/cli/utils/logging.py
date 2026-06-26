@@ -6,8 +6,8 @@ from time import time
 from types import TracebackType
 from typing import Optional, Type
 
-import click
 import rich_click
+import rich_click as click
 from rich.console import Group
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -118,6 +118,45 @@ def _gradient_rule(width: int) -> "Text":
         b = int(b0 + frac * (b1 - b0))
         t.append("─", style=f"#{r:02x}{g:02x}{b:02x}")
     return t
+
+
+class _GradientHelpMixin:
+    """Injects the cyan→purple gradient rule after the header on every --help page."""
+
+    def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        from rich.padding import Padding
+
+        config = formatter.config
+
+        if config.header_text:
+            formatter.write(
+                Padding(
+                    formatter.rich_text(config.header_text, config.style_header_text),
+                    config.padding_header_text,
+                    style=config.style_padding_usage,
+                )
+            )
+            formatter.write("")
+            formatter.write(_gradient_rule(formatter.console.width))
+
+        saved_header = config.header_text
+        config.header_text = ""
+        self.format_usage(ctx, formatter)
+        config.header_text = saved_header
+
+        self.format_help_text(ctx, formatter)
+        self.format_options(ctx, formatter)
+        self.format_epilog(ctx, formatter)
+
+
+class LightningCommand(_GradientHelpMixin, rich_click.RichCommand):
+    """RichCommand with the gradient rule after the header."""
+
+
+class LightningGroup(_GradientHelpMixin, rich_click.RichGroup):
+    """RichGroup with the gradient rule after the header."""
+
+    command_class = LightningCommand
 
 
 class CommandLoggingGroup(rich_click.RichGroup):

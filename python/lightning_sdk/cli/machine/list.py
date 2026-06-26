@@ -1,13 +1,14 @@
 """Machine list command."""
 
-import click
+import rich_click as click
 from rich.console import Console
 from rich.table import Table
 
 from lightning_sdk import Machine
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 def list_machines() -> None:
     """Display the list of available machines."""
     table = Table(pad_edge=True)

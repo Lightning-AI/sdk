@@ -6,8 +6,8 @@ def test_stop_vm():
 
     assert "Usage: lightning vm stop [OPTIONS]" in result_text
     assert "Stop a VM." in result_text
-    assert "--name TEXT" in result_text
-    assert "--teamspace TEXT" in result_text
+    assert "--name       TEXT" in result_text
+    assert "--teamspace  TEXT" in result_text
 
 
 def test_vms_stop_help() -> None:

@@ -1,11 +1,12 @@
 from typing import List, Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.ssh import ssh_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("ssh")
+@click.command("ssh", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

@@ -6,7 +6,8 @@ def test_list_base_studios():
 
     assert "Usage: lightning base-studio list [OPTIONS]" in result_text
     assert "List Base Studios in an org." in result_text
-    assert "Example:     lightning base-studio list" in result_text
+    assert "Example:" in result_text
+    assert "lightning base-studio list"
     assert "--include-disabled" in result_text
     assert "Show this message and exit." in result_text
 

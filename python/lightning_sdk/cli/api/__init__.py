@@ -2,7 +2,7 @@
 
 import re
 
-import click
+import rich_click as click
 
 _RAW_API_COMMAND_NAME = "__request"
 _RELATIVE_API_PATH_RE = re.compile(r"^v\d+(?:/|$)")

@@ -2,7 +2,7 @@ import os
 from contextlib import suppress
 from typing import Dict, List, Optional
 
-import click
+import rich_click as click
 from simple_term_menu import TerminalMenu
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError

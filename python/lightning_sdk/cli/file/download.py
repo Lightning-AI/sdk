@@ -2,12 +2,13 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.download import file as _download_file
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("download")
+@click.command("download", cls=LightningCommand)
 @click.argument("path")
 @click.option(
     "--studio",

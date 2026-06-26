@@ -14,7 +14,7 @@ def test_cp_help():
     assert "Usage: lightning studio cp [OPTIONS] SOURCE DESTINATION" in result_text
     assert "Copy a Studio file." in result_text
     assert "lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>" in result_text
-    assert "-r, --recursive" in result_text
+    assert "--recursive  -r" in result_text
 
 
 def test_studios_cp_help() -> None:

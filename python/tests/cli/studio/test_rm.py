@@ -16,8 +16,8 @@ def test_rm_help():
     assert "Usage: lightning studio rm [OPTIONS] PATH" in result_text
     assert "Remove a Studio file or directory." in result_text
     assert "studios/<my-studio>/<filepath>" in result_text
-    assert "-r, --recursive" in result_text
-    assert "-f, --force" in result_text
+    assert "--recursive  -r" in result_text
+    assert "--force      -f" in result_text
 
 
 def test_studios_rm_help() -> None:

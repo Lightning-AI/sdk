@@ -1,9 +1,11 @@
 """Sandbox CLI commands."""
 
-import click
+import rich_click as click
+
+from lightning_sdk.cli.utils.logging import LightningGroup
 
 
-@click.group(name="snapshot")
+@click.group(name="snapshot", cls=LightningGroup)
 def snapshot() -> None:
     """Manage Lightning AI Sandbox snapshots.
 

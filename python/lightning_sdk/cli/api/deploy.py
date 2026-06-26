@@ -2,13 +2,14 @@
 
 from typing import Any
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy.serve import api_impl
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("deploy")
+@click.command("deploy", cls=LightningCommand)
 @click.argument("script_path")
 @click.option("--easy", is_flag=True, default=False, help="Generate a client for the model")
 @click.option(

@@ -39,7 +39,7 @@ def command_text(command: str) -> str:
     text = result.stdout + result.stderr
     text = _ANSI_ESCAPE_RE.sub("", text)
 
-    for marker in ("\n╭─", "\nError in sys.excepthook:", "\nOriginal exception was:"):
+    for marker in ("\nError in sys.excepthook:", "\nOriginal exception was:"):
         if marker in text:
             text = text.split(marker, 1)[0]
 

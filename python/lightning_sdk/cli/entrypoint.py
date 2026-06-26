@@ -50,11 +50,18 @@ click.rich_click.COMMAND_GROUPS = {
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
 click.rich_click.STYLE_COMMANDS_PANEL_TITLE_STYLE = "bold #5e5e6e"
 click.rich_click.STYLE_COMMANDS_PANEL_BORDER = "#2a2a38"
+click.rich_click.STYLE_OPTIONS_PANEL_TITLE_STYLE = "bold #5e5e6e"
+click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "#2a2a38"
 click.rich_click.STYLE_COMMAND = "bold #a78bfa"
 click.rich_click.STYLE_USAGE = "#7a7a88"
 click.rich_click.STYLE_USAGE_COMMAND = "bold #a78bfa"
 click.rich_click.STYLE_ARGUMENT = "#6a6a78"
+click.rich_click.STYLE_METAVAR = "dim #6FB3E8"
+click.rich_click.STYLE_METAVAR_SEPARATOR = "#55555E"
 click.rich_click.USE_RICH_MARKUP = True
+click.rich_click.FOOTER_TEXT = (
+    "DOCS  [link=https://lightning.ai/docs/cli][#5b8cfa]https://lightning.ai/docs/cli[/#5b8cfa][/link]"
+)
 
 
 click.rich_click.HEADER_TEXT = (

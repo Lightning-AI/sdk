@@ -5,17 +5,18 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.upload import _upload_folder
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.resolve import _get_studio_url
 
 
-@click.command("open")
+@click.command("open", cls=LightningCommand)
 @click.argument("path", default=".", type=click.Path(exists=True))
 @click.option(
     "--teamspace",

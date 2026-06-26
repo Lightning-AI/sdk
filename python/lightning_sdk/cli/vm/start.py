@@ -1,12 +1,13 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.start import start_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.machine import CloudProvider, Machine
 
 
-@click.command("start")
+@click.command("start", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

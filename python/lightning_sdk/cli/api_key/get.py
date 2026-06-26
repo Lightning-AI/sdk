@@ -2,13 +2,14 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.api.api_key_api import ApiKeyApi
 from lightning_sdk.cli.api_key.common import ORG_OPTION_HELP
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("get")
+@click.command("get", cls=LightningCommand)
 @click.option("--org", help=ORG_OPTION_HELP)
 def get_api_key(org: Optional[str] = None) -> None:
     """Get a model API key for calling public inference endpoints.

@@ -1,6 +1,6 @@
 """CLI groups for organizing Lightning SDK commands."""
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.api import APIGroup
 from lightning_sdk.cli.api import register_commands as register_api_commands
@@ -20,30 +20,31 @@ from lightning_sdk.cli.model import register_commands as register_model_commands
 from lightning_sdk.cli.sandbox import register_commands as register_sandbox_commands
 from lightning_sdk.cli.ssh import register_commands as register_ssh_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
+from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
 from lightning_sdk.cli.vm import register_commands as register_vm_commands
 
 
-@click.group(name="studio")
+@click.group(name="studio", cls=LightningGroup)
 def studio() -> None:
     """Persistent GPU dev workspaces."""
 
 
-@click.group(name="job")
+@click.group(name="job", cls=LightningGroup)
 def job() -> None:
     """Run batch jobs and sweeps."""
 
 
-@click.group(name="mmt")
+@click.group(name="mmt", cls=LightningGroup)
 def mmt() -> None:
     """Multi-node distributed training."""
 
 
-@click.group(name="machine")
+@click.group(name="machine", cls=LightningGroup)
 def machine() -> None:
     """Browse GPU and CPU machine types."""
 
 
-@click.group(name="config")
+@click.group(name="config", cls=LightningGroup)
 def config() -> None:
     """Manage SDK and CLI settings."""
 
@@ -67,17 +68,17 @@ def api(ctx: click.Context) -> None:
         ctx.exit()
 
 
-@click.group(name="deployment")
+@click.group(name="deployment", cls=LightningGroup)
 def deployment() -> None:
     """Deploy autoscaling inference APIs."""
 
 
-@click.group(name="vm")
+@click.group(name="vm", cls=LightningGroup)
 def vm() -> None:
     """Bare VMs with SSH access."""
 
 
-@click.group(name="sandbox")
+@click.group(name="sandbox", cls=LightningGroup)
 def sandbox() -> None:
     """Ephemeral sandboxes for agents.
 
@@ -116,17 +117,17 @@ def sandbox() -> None:
     """
 
 
-@click.group(name="container")
+@click.group(name="container", cls=LightningGroup)
 def container() -> None:
     """Run and manage containers."""
 
 
-@click.group(name="model")
+@click.group(name="model", cls=LightningGroup)
 def model() -> None:
     """Register and version models."""
 
 
-@click.group(name="api-key")
+@click.group(name="api-key", cls=LightningGroup)
 def api_key() -> None:
     """Keys for model endpoint access.
 
@@ -136,32 +137,32 @@ def api_key() -> None:
     """
 
 
-@click.group(name="file")
+@click.group(name="file", cls=LightningGroup)
 def file() -> None:
     """Upload and download files."""
 
 
-@click.group(name="folder")
+@click.group(name="folder", cls=LightningGroup)
 def folder() -> None:
     """Upload and download folders."""
 
 
-@click.group(name="ssh")
+@click.group(name="ssh", cls=LightningGroup)
 def ssh() -> None:
     """Configure SSH access to Studios."""
 
 
-@click.group(name="base-studio")
+@click.group(name="base-studio", cls=LightningGroup)
 def base_studio() -> None:
     """Reusable Studio environment images."""
 
 
-@click.group(name="license")
+@click.group(name="license", cls=LightningGroup)
 def license() -> None:  # noqa: A001
     """View and manage product licenses."""
 
 
-@click.command(name="cp")
+@click.command(name="cp", cls=LightningCommand)
 @click.argument("source")
 @click.argument("destination", required=False)
 @click.option("--recursive", "-r", is_flag=True, help="Copy directories recursively")

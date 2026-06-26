@@ -2,14 +2,15 @@
 
 from typing import Mapping
 
-import click
+import rich_click as click
 from rich.table import Table
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH, Config, DefaultConfigKeys
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option("--include-key", help="Print the key as well", is_flag=True)
 @click.option("--config-file", help="Path to the config file")
 def list_licenses(include_key: bool, config_file: str = _DEFAULT_CONFIG_FILE_PATH) -> None:

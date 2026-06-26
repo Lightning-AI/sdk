@@ -15,8 +15,8 @@ from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import urlparse
 
-import click
 import requests
+import rich_click as click
 
 from lightning_sdk import __version__
 from lightning_sdk.api.utils import _get_cloud_url

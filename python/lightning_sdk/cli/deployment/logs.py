@@ -7,12 +7,13 @@ from contextlib import suppress
 from typing import Any, Iterable, List, Optional, Sequence
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
-import click
 import requests
+import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1Job
 
@@ -20,7 +21,7 @@ _LIVE_FALLBACK_IDLE_TIMEOUT = 8
 _LIVE_FALLBACK_TAIL = 100
 
 
-@click.command("logs")
+@click.command("logs", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--job-id", "job_ids", multiple=True, help="Specific deployment job ID. Can be repeated.")

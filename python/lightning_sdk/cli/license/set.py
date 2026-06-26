@@ -1,9 +1,10 @@
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH, Config, DefaultConfigKeys
 
 
-@click.command("set")
+@click.command("set", cls=LightningCommand)
 @click.argument("product_name")
 @click.argument("license_key")
 @click.option("--config-file", help="Path to the config file")

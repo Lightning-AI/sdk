@@ -1,13 +1,14 @@
 """Base Studio list command."""
 
-import click
+import rich_click as click
 from rich.table import Table
 
 from lightning_sdk.base_studio import BaseStudio
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option("--include-disabled", help="Include disabled Base Studios in the list.", is_flag=True)
 def list_base_studios(include_disabled: bool) -> None:
     """List Base Studios in an org.

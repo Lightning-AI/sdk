@@ -2,12 +2,13 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.models import upload_model as _upload_model
 
 
-@click.command("upload")
+@click.command("upload", cls=LightningCommand)
 @click.argument("name")
 @click.option(
     "--path",

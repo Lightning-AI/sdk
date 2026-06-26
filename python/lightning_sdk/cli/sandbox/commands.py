@@ -8,10 +8,11 @@ import json
 from collections.abc import Sequence
 from typing import Any
 
-import click
+import rich_click as click
 from rich.table import Table
 
 from lightning_sdk.cli.job.run import _resolve_envs
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.sandbox import RunCommandOpts, Sandbox, SandboxConfig, SandboxInstance, Snapshot
 
@@ -163,7 +164,7 @@ def _with_common_options(command: click.Command) -> click.Command:
     return command
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @_with_common_options
 @click.option("--page-token", help="Pagination token returned by a previous list call.")
 @click.option("--limit", type=int, help="Maximum number of sandboxes to return.")
@@ -227,7 +228,7 @@ def list_sandboxes(
         click.echo(f"Next page token: {result.next_page_token}")
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @_with_common_options
 @click.option("--name", help="Sandbox name. Defaults to a generated name.")
 @click.option("--instance-type", help="Sandbox instance type. Defaults to cpu-1.")
@@ -300,7 +301,7 @@ def create_sandbox(
     _echo_sandbox_summary(sandbox)
 
 
-@click.command("delete")
+@click.command("delete", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
@@ -316,7 +317,7 @@ def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
     click.echo(f"Deleted sandbox {sandbox_id}")
 
 
-@click.command("stop")
+@click.command("stop", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -355,7 +356,7 @@ def stop_sandbox(
         click.echo(f"Auto snapshot: {auto_snapshot_id}")
 
 
-@click.command("start")
+@click.command("start", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -378,7 +379,7 @@ def start_sandbox(
     _echo_sandbox_summary(sandbox)
 
 
-@click.command("update")
+@click.command("update", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--resume", is_flag=True, help="Resume a stopped persistent sandbox.")
@@ -411,6 +412,7 @@ def update_sandbox(
 @click.command(
     "run",
     context_settings={"ignore_unknown_options": True, "allow_extra_args": True},
+    cls=LightningCommand,
 )
 @_with_common_options
 @click.argument("sandbox_id")
@@ -496,7 +498,7 @@ def run_sandbox_command(
         click.get_current_context().exit(command.exit_code)
 
 
-@click.command("logs")
+@click.command("logs", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.argument("command_id")
@@ -537,7 +539,7 @@ def logs_sandbox_command(
             click.echo(f"{log.timestamp} {log.message}".strip())
 
 
-@click.command("command")
+@click.command("command", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.argument("command_id")
@@ -590,7 +592,7 @@ def command_status(
         click.echo(status.output, nl=not status.output.endswith("\n"))
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @_with_common_options
 @click.option("--name", help="Filter by source sandbox name.")
 @click.option("--page-token", help="Pagination token returned by a previous list call.")
@@ -650,7 +652,7 @@ def list_snapshots(
         click.echo(f"Next page token: {result.next_page_token}")
 
 
-@click.command("get")
+@click.command("get", cls=LightningCommand)
 @_with_common_options
 @click.argument("snapshot_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
@@ -672,7 +674,7 @@ def get_snapshot(api_key: str | None, snapshot_id: str, as_json: bool) -> None:
     _echo_snapshot_summary(snapshot)
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--expiration", type=int, help="TTL in milliseconds (0 = never). Defaults to the platform default.")
@@ -715,7 +717,7 @@ def create_snapshot(
     _echo_snapshot_summary(snapshot)
 
 
-@click.command("delete")
+@click.command("delete", cls=LightningCommand)
 @_with_common_options
 @click.argument("snapshot_id")
 def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
@@ -729,7 +731,7 @@ def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
     click.echo(f"Deleted snapshot {snapshot_id}")
 
 
-@click.command("commands")
+@click.command("commands", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")

@@ -1,6 +1,6 @@
 """Job CLI commands."""
 
-import click
+import rich_click as click
 
 
 def register_commands(group: click.Group) -> None:

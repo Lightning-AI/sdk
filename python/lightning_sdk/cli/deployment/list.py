@@ -2,16 +2,17 @@
 
 from typing import Callable, Optional
 
-import click
+import rich_click as click
 from rich.table import Table
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.cli.deployment.common import iter_teamspaces
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option(
     "--all",

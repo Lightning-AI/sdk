@@ -2,12 +2,13 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.legacy.upload import folder as _upload_folder
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("upload")
+@click.command("upload", cls=LightningCommand)
 @click.argument("path", type=click.Path(exists=True))
 @click.option(
     "--studio",

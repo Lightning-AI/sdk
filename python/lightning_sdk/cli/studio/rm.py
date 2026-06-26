@@ -1,13 +1,14 @@
 """Studio rm command."""
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.studio import Studio
 
 
-@click.command("rm")
+@click.command("rm", cls=LightningCommand)
 @click.argument("path", nargs=1)
 @click.option("-r", "--recursive", is_flag=True, help="Remove directories recursively")
 @click.option("-f", "--force", is_flag=True, help="Ignore nonexistent files, never prompt")

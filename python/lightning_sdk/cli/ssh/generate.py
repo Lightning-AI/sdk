@@ -2,14 +2,15 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.ssh.common import generate_ssh_config
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("generate")
+@click.command("generate", cls=LightningCommand)
 @click.option(
     "--name",
     default=None,

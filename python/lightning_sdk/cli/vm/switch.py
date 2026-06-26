@@ -1,12 +1,13 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.switch import switch_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.machine import Machine
 
 
-@click.command("switch")
+@click.command("switch", cls=LightningCommand)
 @click.option(
     "--name",
     help=(

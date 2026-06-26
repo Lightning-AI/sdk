@@ -2,10 +2,12 @@
 
 from typing import Optional
 
-import click
+import rich_click as click
+
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("list")
+@click.command("list", cls=LightningCommand)
 @click.option(
     "--teamspace",
     default=None,

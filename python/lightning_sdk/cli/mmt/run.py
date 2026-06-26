@@ -2,16 +2,17 @@
 
 from typing import Optional, Sequence, Union
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.job.run import _MACHINE_VALUES, _resolve_envs, _resolve_path_mapping
 from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt import MMT
 from lightning_sdk.teamspace import Teamspace
 
 
-@click.command("run")
+@click.command("run", cls=LightningCommand)
 @click.option("--name", default=None, help="The name of the job. Needs to be unique within the teamspace.")
 @click.option(
     "--num-machines", "--num_machines", default=2, show_default=True, help="The number of Machines to run on."

@@ -1,12 +1,13 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.create import create_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.machine import CloudProvider
 
 
-@click.command("create")
+@click.command("create", cls=LightningCommand)
 @click.option("--name", help="The name of the VM to create. If not provided, a random name will be generated.")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--cloud", help="Cloud provider or cloud account to create the VM on. Defaults to teamspace default.")

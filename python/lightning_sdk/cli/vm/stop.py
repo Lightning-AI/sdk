@@ -1,11 +1,12 @@
 from typing import Optional
 
-import click
+import rich_click as click
 
 from lightning_sdk.cli.studio.stop import stop_impl
+from lightning_sdk.cli.utils.logging import LightningCommand
 
 
-@click.command("stop")
+@click.command("stop", cls=LightningCommand)
 @click.option(
     "--name",
     help=(
