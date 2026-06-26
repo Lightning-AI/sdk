@@ -69,11 +69,14 @@ describe("Sandbox", () => {
 
   describe("get", () => {
     it("GETs sandbox JSON and maps fields", async () => {
-      enqueueJson(sampleV1({ id: "sb-abc", name: "my-name" }));
+      enqueueJson(sampleV1({ id: "sb-abc", name: "my-name", machineId: "host-7" }));
       const sb = await Sandbox.get({ sandboxId: "sb-abc" });
       assert.equal(sb.sandboxId, "sb-abc");
       assert.equal(sb.name, "my-name");
       assert.equal(sb.status, "running");
+      // machineId is returned on get (internal users); phaseDurations is not.
+      assert.equal(sb.machineId, "host-7");
+      assert.equal(sb.phaseDurations, undefined);
     });
 
     it("does not send an organizationId query (org implied by key)", async () => {
@@ -140,6 +143,47 @@ describe("Sandbox", () => {
         () => Sandbox.create({ name: "x", instanceType: "cpu-1" }),
         /terminal state: error/,
       );
+    });
+
+    it("maps internal-only machineId and phaseDurations from the create response", async () => {
+      enqueueJson(
+        sampleV1({
+          status: "running",
+          machineId: "gcp-sandbox-production-002",
+          phaseDurations: [
+            { phase: "cp.total", durationMs: "412" },
+            { phase: "agent.runsc.run", durationMs: "287" },
+          ],
+        }),
+      );
+      const sb = await Sandbox.create({ name: "x", instanceType: "cpu-1" });
+      assert.equal(sb.machineId, "gcp-sandbox-production-002");
+      // int64 wire strings are surfaced as numbers.
+      assert.deepEqual(sb.phaseDurations, [
+        { phase: "cp.total", durationMs: 412 },
+        { phase: "agent.runsc.run", durationMs: 287 },
+      ]);
+    });
+
+    it("defaults internal-only fields when the API omits them (external keys)", async () => {
+      enqueueJson(sampleV1({ status: "running" }));
+      const sb = await Sandbox.create({ name: "x", instanceType: "cpu-1" });
+      assert.equal(sb.machineId, "");
+      assert.equal(sb.phaseDurations, undefined);
+    });
+
+    it("preserves create-only phaseDurations across the readiness poll", async () => {
+      // Create response carries phaseDurations; the get() poll does not.
+      enqueueJson(
+        sampleV1({
+          status: "pending",
+          phaseDurations: [{ phase: "cp.total", durationMs: "500" }],
+        }),
+      );
+      enqueueJson(sampleV1({ status: "running" }));
+      const sb = await Sandbox.create({ name: "x", instanceType: "cpu-1" });
+      assert.equal(sb.status, "running");
+      assert.deepEqual(sb.phaseDurations, [{ phase: "cp.total", durationMs: 500 }]);
     });
   });
 

@@ -16,6 +16,7 @@ export type {
 export type {
   SandboxConfig,
   SandboxData,
+  SandboxPhaseDuration,
   CreateSandboxParams,
   GetSandboxParams,
   ListSandboxesParams,

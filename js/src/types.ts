@@ -47,6 +47,36 @@ export interface SandboxData {
   timeout: number;
   /** Raw egress policy as returned by the API (undefined = open egress). */
   networkPolicy?: V1NetworkPolicy;
+  /**
+   * Cluster machine the sandbox is (or was last) placed on. **Internal-only:**
+   * the control plane returns this only to internal Lightning users
+   * (`user.details.internal=true`) on create/get/list — `""` for external API
+   * keys and for sandboxes created before the field landed. Used to attribute
+   * create/TTI performance to specific hosts. See {@link Sandbox.machineId}.
+   */
+  machineId: string;
+  /**
+   * Per-phase wall-clock breakdown of the create flow. **Internal-only and
+   * create-only:** populated solely on the {@link Sandbox.create} response and
+   * solely for internal Lightning users; always `undefined` for external API
+   * keys and on get/list. See {@link Sandbox.phaseDurations}.
+   */
+  phaseDurations?: SandboxPhaseDuration[];
+}
+
+/**
+ * One per-phase wall-clock observation from the sandbox create flow.
+ * Part of the internal-only {@link SandboxData.phaseDurations} breakdown.
+ */
+export interface SandboxPhaseDuration {
+  /**
+   * Namespaced phase id. `cp.*` phases are the control plane's own stopwatch
+   * (e.g. `cp.total`, `cp.db_persist`); `agent.*` phases are the node agent's
+   * litvisor-side breakdown (e.g. `agent.runsc.run`, `agent.image.ensure`).
+   */
+  phase: string;
+  /** Wall-clock duration of the phase, in milliseconds. */
+  durationMs: number;
 }
 
 export interface CreateSandboxParams {

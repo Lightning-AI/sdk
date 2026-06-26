@@ -16,6 +16,7 @@ import type {
   CreateSnapshotParams,
   SnapshotData,
   ListSnapshotsParams,
+  SandboxPhaseDuration,
 } from "./types.js";
 import { Command } from "./command.js";
 import type {
@@ -106,6 +107,14 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     storageGb: v.storageGb !== undefined && v.storageGb !== "" ? Number(v.storageGb) : 0,
     timeout: v.timeout !== undefined && v.timeout !== "" ? Number(v.timeout) : 0,
     networkPolicy: v.networkPolicy,
+    machineId: v.machineId ?? "",
+    // Internal-only, create-only: absent for external keys and on get/list,
+    // so this stays undefined for them. The wire `durationMs` is an int64
+    // string; surface it as a number.
+    phaseDurations: v.phaseDurations?.map((p) => ({
+      phase: p.phase ?? "",
+      durationMs: p.durationMs !== undefined && p.durationMs !== "" ? Number(p.durationMs) : 0,
+    })),
   };
 }
 
@@ -184,6 +193,20 @@ export class Sandbox {
   readonly timeout: number;
   /** Egress firewall policy in effect for the sandbox. */
   readonly networkPolicy: NetworkPolicy;
+  /**
+   * Cluster machine that placed this sandbox. **Internal-only:** `""` unless the
+   * API key belongs to an internal Lightning user, since the control plane only
+   * returns it to internal callers. See {@link SandboxData.machineId}.
+   */
+  readonly machineId: string;
+  /**
+   * Per-phase wall-clock breakdown of the create flow (`cp.*` control-plane +
+   * `agent.*` node-agent phases). **Internal-only and create-only:** present
+   * only on a {@link Sandbox.create} result for internal Lightning users;
+   * `undefined` for external keys and on {@link Sandbox.get}/{@link Sandbox.list}.
+   * See {@link SandboxData.phaseDurations}.
+   */
+  readonly phaseDurations?: SandboxPhaseDuration[];
   readonly createdAt: Date;
   readonly updatedAt: Date;
 
@@ -212,6 +235,8 @@ export class Sandbox {
     this.storageGb = data.storageGb ?? 0;
     this.timeout = data.timeout ?? 0;
     this.networkPolicy = fromV1NetworkPolicy(data.networkPolicy);
+    this.machineId = data.machineId ?? "";
+    this.phaseDurations = data.phaseDurations;
     this.createdAt = new Date(data.createdAt);
     this.updatedAt = new Date(data.updatedAt);
     this.fs = new FileSystem(this);
@@ -296,6 +321,10 @@ export class Sandbox {
    * {@link Sandbox.create} and {@link Sandbox.resume}.
    */
   private static async waitForRunning(initial: Sandbox): Promise<Sandbox> {
+    // phaseDurations come back only on the create response; the poll below
+    // re-fetches via get(), where the control plane omits them. Remember the
+    // create-time breakdown so it survives onto whatever object we return.
+    const createPhaseDurations = initial.phaseDurations;
     let sandbox = initial;
     const start = Date.now();
     const deadline = start + 300_000;
@@ -314,6 +343,10 @@ export class Sandbox {
       const pollMs = elapsed < 5_000 ? 100 : 1_000;
       await new Promise((r) => setTimeout(r, pollMs));
       sandbox = await Sandbox.get({ sandboxId: sandbox.sandboxId });
+    }
+    if (createPhaseDurations?.length && !sandbox.phaseDurations?.length) {
+      (sandbox as { phaseDurations?: SandboxPhaseDuration[] }).phaseDurations =
+        createPhaseDurations;
     }
     return sandbox;
   }
