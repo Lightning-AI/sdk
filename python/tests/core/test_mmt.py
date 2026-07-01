@@ -1,11 +1,10 @@
-import importlib
 from unittest import mock
 
 import pytest
 
 from lightning_sdk.lightning_cloud.openapi import JobsServiceUpdateMultiMachineJobBody, V1JobSpec, V1MultiMachineJob
 from lightning_sdk.machine import Machine
-from lightning_sdk.mmt.v2 import _MMTV2
+from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -22,7 +21,7 @@ def test_submit_mmt_v2_image(
     internal_studio_init_mocker, machine, command, env, interruptible, artifacts_local, artifacts_remote
 ):
     teamspace = Teamspace("ts-abc", org="org-abc")
-    job = _MMTV2("test-job", teamspace, _fetch_job=False)
+    job = MMT("test-job", teamspace, _fetch_job=False)
 
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
@@ -68,7 +67,7 @@ def test_submit_mmt_v2_image(
 def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
     job._submit(
@@ -111,13 +110,13 @@ def test_mmt_run_arg_validation(internal_studio_init_mocker):
         match="Studio teamspace does not match provided teamspace."
         " Can only run jobs with Studio envs in the teamspace of that Studio.",
     ):
-        _MMTV2.run("some name", Machine.CPU, 5, command="some command", studio=studio, teamspace="other teamspace")
+        MMT.run("some name", 5, Machine.CPU, command="some command", studio=studio, teamspace="other teamspace")
 
     with pytest.raises(ValueError, match="A job needs to have a name!"):
-        _MMTV2.run("", Machine.CPU, 5)
+        MMT.run("", 5, Machine.CPU)
 
     with pytest.raises(ValueError, match="A job needs to have a name!"):
-        _MMTV2.run(None, Machine.CPU, 5)
+        MMT.run(None, 5, Machine.CPU)
 
 
 def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
@@ -126,8 +125,8 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that empty string entrypoint is converted to None (use container default)
     submit_mock = mock.MagicMock()
-    with mock.patch.object(_MMTV2, "_submit", submit_mock):
-        _MMTV2.run(
+    with mock.patch.object(MMT, "_submit", submit_mock):
+        MMT.run(
             "test-job",
             num_machines=2,
             machine=Machine.CPU,
@@ -141,8 +140,8 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that when command is provided with default entrypoint, sh -c is used
     submit_mock.reset_mock()
-    with mock.patch.object(_MMTV2, "_submit", submit_mock):
-        _MMTV2.run(
+    with mock.patch.object(MMT, "_submit", submit_mock):
+        MMT.run(
             "test-job",
             num_machines=2,
             machine=Machine.CPU,
@@ -155,8 +154,8 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that no command with empty entrypoint uses container defaults
     submit_mock.reset_mock()
-    with mock.patch.object(_MMTV2, "_submit", submit_mock):
-        _MMTV2.run(
+    with mock.patch.object(MMT, "_submit", submit_mock):
+        MMT.run(
             "test-job",
             num_machines=2,
             machine=Machine.CPU,
@@ -171,7 +170,7 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that studio jobs raise error when entrypoint is specified
     with pytest.raises(ValueError, match="Specifying the entrypoint has no effect for jobs with Studio envs."):
-        _MMTV2.run(
+        MMT.run(
             "test-job",
             num_machines=2,
             machine=Machine.CPU,
@@ -184,7 +183,7 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
 def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
 
     with pytest.raises(
         ValueError, match="image and studio are mutually exclusive as both define the environment to run the job in"
@@ -227,7 +226,7 @@ def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
 
 def test_get_mmt_by_name(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
 
     job._job_api.get_job_by_name = mock.MagicMock()
     job._update_internal_job()
@@ -239,7 +238,7 @@ def test_get_mmt_by_name(internal_studio_init_mocker):
 
 def test_get_mmt_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
 
     # simulate updating internal job
     job._job = V1MultiMachineJob(id="test-job-id")
@@ -254,7 +253,7 @@ def test_get_mmt_by_id(internal_studio_init_mocker):
 
 def test_get_mmt_by_name_first_and_then_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
     job._job_api.get_job_by_name = mock.MagicMock()
 
     job._job_api.get_job = mock.MagicMock()
@@ -271,7 +270,7 @@ def test_get_mmt_by_name_first_and_then_by_id(internal_studio_init_mocker):
 
 def test_get_mmt_by_name_on_init(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _MMTV2("test-job", studio.teamspace)
+    job = MMT("test-job", studio.teamspace)
 
     assert hasattr(job, "_job")
     assert job._job is not None
@@ -293,7 +292,7 @@ def test_get_mmt_by_name_on_init(mmt_api_get_job_by_name_mocker, internal_studio
 def test_mmtv2_status(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2("test-job", studio.teamspace)
+    job = MMT("test-job", studio.teamspace)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1MultiMachineJob(id="test-job-id", state=internal_status)
@@ -322,7 +321,7 @@ def test_mmtv2_machine(
 ):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2("test-job", studio.teamspace, _fetch_job=False)
+    job = MMT("test-job", studio.teamspace, _fetch_job=False)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1MultiMachineJob(
@@ -340,7 +339,7 @@ def test_mmtv2_machine(
 def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2("test-job", studio.teamspace)
+    job = MMT("test-job", studio.teamspace)
 
     i = 0
 
@@ -380,7 +379,7 @@ def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker)
 def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _MMTV2(
+    job = MMT(
         "test-job",
         studio.teamspace,
     )
@@ -391,22 +390,3 @@ def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
     job.delete()
 
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
-
-
-def test_mmt_instantiation_fallback_v2_to_v1(internal_studio_init_mocker, internal_mmt_fallback_mocker):
-    import lightning_sdk
-    from lightning_sdk.mmt.v1 import _MMTV1
-    from lightning_sdk.mmt.v2 import _MMTV2
-
-    importlib.reload(lightning_sdk.mmt.mmt)
-    from lightning_sdk.mmt.mmt import MMT
-
-    # the internal_mmt_fallback_mocker makes sure that attempts to init a _MMTV2
-    # fail with APIExceptions which should trigger a fallback to _MMTV1
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    m = MMT(name="abc", teamspace=studio.teamspace)
-    assert isinstance(m._internal_mmt, _MMTV1)
-
-    # when we're not fetching then job (e.g. on job creation) there's no fallback necessary
-    m = MMT(name="abc", teamspace=studio.teamspace, _fetch_job=False)
-    assert isinstance(m._internal_mmt, _MMTV2)

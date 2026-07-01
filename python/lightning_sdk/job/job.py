@@ -1,27 +1,45 @@
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+import warnings
+from pathlib import PurePath
+from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
 
-from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
-from lightning_sdk.job.base import _BaseJob
-from lightning_sdk.job.v1 import _JobV1
-from lightning_sdk.job.v2 import _JobV2
-from lightning_sdk.utils.resolve import _resolve_teamspace, _setup_logger
-
-_logger = _setup_logger(__name__)
-
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
+from lightning_sdk.status import Status
+from lightning_sdk.utils.logging import TrackCallsMeta
+from lightning_sdk.utils.resolve import (
+    _get_org_id,
+    _resolve_default_cloud_account,
+    _resolve_teamspace,
+    _setup_logger,
+    _warn_deprecated_cloud_selection,
+    in_studio,
+    skip_studio_setup,
+)
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
-    from lightning_sdk.status import Status
     from lightning_sdk.studio import Studio
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
+_logger = _setup_logger(__name__)
 
-class Job(_BaseJob):
-    """Class to submit and manage single-machine jobs on the Lightning AI Platform."""
 
-    _force_v1: bool = False
+class JobDict(TypedDict):
+    name: str
+    command: str
+    teamspace: str
+    studio: Optional[str]
+    image: Optional[str]
+    status: Status
+    machine: Union["Machine", str]
+    total_cost: float
+
+
+class Job(metaclass=TrackCallsMeta):
+    """Submit and manage single-machine jobs on the Lightning AI Platform."""
 
     def __init__(
         self,
@@ -35,54 +53,42 @@ class Job(_BaseJob):
         """Fetch already existing jobs.
 
         Args:
-            name: the name of the job
-            teamspace: the teamspace the job is part of
-            org: the name of the organization owning the :param`teamspace` in case it is owned by an org
-            user: the name of the user owning the :param`teamspace`
-                in case it is owned directly by a user instead of an org.
+            name: the name of the job.
+            teamspace: the teamspace the job is part of.
+            org: the name of the organization owning the ``teamspace`` in case it is owned by an org.
+            user: the name of the user owning the ``teamspace`` in case it is owned directly by a user instead
+                of an org.
 
         Raises:
-            ValueError: If the job is not found in the given teamspace.
+            ValueError: If the teamspace cannot be resolved from the provided arguments, or if the job is not found
+                when ``_fetch_job=True``.
             PermissionError: If the user does not have access to jobs in the given teamspace.
         """
         teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if teamspace is None:
+            raise ValueError(
+                "Cannot resolve the teamspace from provided arguments."
+                f" Got teamspace={teamspace}, org={org}, user={user}."
+            )
 
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, teamspace.id)
 
-        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+        self._teamspace = teamspace
+        self._name = name
+        self._job = None
+        self._prevent_refetch_latest = False
+        self._cloud_account_api = CloudAccountApi()
+        self._job_api = JobApiV2()
 
-        if not self._force_v1:
-            # try with v2 and fall back to v1
+        if _fetch_job:
+            from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+
             try:
-                job = _JobV2(
-                    name=name,
-                    teamspace=teamspace,
-                    org=org,
-                    user=user,
-                    _fetch_job=_fetch_job,
-                )
-            except ApiException as e:
-                try:
-                    job = _JobV1(
-                        name=name,
-                        teamspace=teamspace,
-                        org=org,
-                        user=user,
-                        _fetch_job=_fetch_job,
-                    )
-                except ApiException:
-                    raise e from e
-
-        else:
-            job = _JobV1(
-                name=name,
-                teamspace=teamspace,
-                org=org,
-                user=user,
-                _fetch_job=_fetch_job,
-            )
-
-        self._internal_job = job
+                self._update_internal_job()
+            except ApiException as ex:
+                if ex.status == 404:
+                    raise ValueError(f"Job {name} does not exist in Teamspace {teamspace.name}") from None
+                raise
 
     @classmethod
     def run(
@@ -92,7 +98,7 @@ class Job(_BaseJob):
         cloud: Optional[Union["CloudProvider", str]] = None,
         command: Optional[str] = None,
         studio: Union["Studio", str, None] = None,
-        image: Union[str, None] = None,
+        image: Optional[str] = None,
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
@@ -102,11 +108,11 @@ class Job(_BaseJob):
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
-        artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
-        artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "Job":
@@ -120,18 +126,22 @@ class Job(_BaseJob):
             studio: The studio env to run the job with. Mutually exclusive with image.
             image: The docker image to run the job with. Mutually exclusive with studio.
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
-            org: The organization owning the teamspace (if any). Defaults to the current organization.
-            user: The user owning the teamspace (if any). Defaults to the current user.
+            org: The organization owning the teamspace, if any. Defaults to the current organization.
+            user: The user owning the teamspace, if any. Defaults to the current user.
             cloud: Cloud provider or cloud account to run the job on.
             cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on. Defaults to the
                 studio cloud account if running with studio compute env, otherwise falls back to the teamspace default.
             cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from. If set,
-                must agree with the provider of the cloud_account (if specified).
+                must agree with the provider of the cloud account, if specified.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. Cheaper but can be preempted.
             image_credentials: Credentials secret name used to pull a private image.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
-                Required if the registry is part of a cloud provider (e.g. ECR).
+                Required if the registry is part of a cloud provider, such as ECR.
+            artifacts_local: The path inside the docker container to persist artifacts from.
+                Only supported for jobs with a docker image compute environment.
+            artifacts_remote: The remote storage to persist your artifacts to. Should be of format
+                ``<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>``.
             entrypoint: The entrypoint of your docker container. Defaults to ``sh -c``.
                 Set to an empty string to use the image's pre-defined entrypoint with a command.
                 Only applicable when submitting docker jobs.
@@ -142,27 +152,114 @@ class Job(_BaseJob):
                 Defaults to 3 hours.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
+            scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
 
         Returns:
             Job: The newly submitted Job instance.
 
         Raises:
             ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
-            RuntimeError: If both image and studio are provided.
+            RuntimeError: If image and studio are both provided.
         """
-        ret_val = super().run(
-            name=name,
+        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+        from lightning_sdk.studio import Studio
+
+        explicit_cloud_account = cloud_account
+        explicit_cloud_provider = cloud_provider
+        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
+        if cloud is not None and (explicit_cloud_account is not None or explicit_cloud_provider is not None):
+            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
+        cloud_account = _resolve_default_cloud_account(cloud_account)
+
+        if not name:
+            raise ValueError("A job needs to have a name!")
+
+        if image is None:
+            if not isinstance(studio, Studio):
+                with skip_studio_setup():
+                    studio = Studio(
+                        name=studio,
+                        teamspace=teamspace,
+                        org=org,
+                        user=user,
+                        cloud=cloud,
+                        cloud_account=cloud_account,
+                        create_ok=False,
+                    )
+
+            if teamspace is None:
+                teamspace = studio.teamspace
+            else:
+                teamspace_name = teamspace if isinstance(teamspace, str) else teamspace.name
+                if studio.teamspace.name != teamspace_name:
+                    raise ValueError(
+                        "Studio teamspace does not match provided teamspace. "
+                        "Can only run jobs with Studio envs in the teamspace of that Studio."
+                    )
+
+            if cloud_account is None:
+                cloud_account = studio.cloud_account
+
+            if cloud_account != studio.cloud_account:
+                raise ValueError(
+                    "Studio cloud account does not match provided cloud account. "
+                    "Can only run jobs with Studio envs in the same cloud account."
+                )
+
+            if image_credentials is not None:
+                raise ValueError("image_credentials is only supported when using a custom image")
+
+            if cloud_account_auth:
+                raise ValueError("cloud_account_auth is only supported when using a custom image")
+
+            if artifacts_local is not None or artifacts_remote is not None:
+                raise ValueError(
+                    "Specifying artifacts persistence is supported for docker images only. "
+                    "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
+                )
+
+            if entrypoint is not None:
+                raise ValueError("Specifying the entrypoint has no effect for jobs with Studio envs.")
+
+        else:
+            if studio is not None:
+                raise RuntimeError(
+                    "image and studio are mutually exclusive as both define the environment to run the job in"
+                )
+            if cloud_account is None and cloud_provider is None and cloud is None and in_studio():
+                try:
+                    with skip_studio_setup():
+                        resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
+                    cloud_account = resolve_studio.cloud_account
+                except (ValueError, ApiException):
+                    warnings.warn("Could not infer cloud account from studio. Using teamspace default.")
+
+            if bool(artifacts_local) != bool(artifacts_remote):
+                raise ValueError("Artifact persistence requires both artifacts_local and artifacts_remote to be set")
+
+            if artifacts_remote and len(artifacts_remote.split(":")) != 3:
+                raise ValueError(
+                    "Artifact persistence requires exactly three arguments separated by colon of kind "
+                    f"<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>, got {artifacts_local}"
+                )
+
+            if command is not None and entrypoint is None:
+                entrypoint = "sh -c"
+            elif entrypoint == "" or entrypoint is None:
+                entrypoint = None
+
+        job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
+        submit_cloud = cloud if cloud_account is None else None
+        job._submit(
             machine=machine,
+            cloud=submit_cloud,
             command=command,
             studio=studio,
             image=image,
-            teamspace=teamspace,
-            org=org,
-            user=user,
-            cloud_account=cloud_account,
-            cloud_provider=cloud_provider,
             env=env,
             interruptible=interruptible,
+            cloud_account=cloud_account,
+            cloud_provider=cloud_provider,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
             artifacts_local=artifacts_local,
@@ -172,13 +269,10 @@ class Job(_BaseJob):
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
-            cloud=cloud,
         )
-        # required for typing with "Job"
-        assert isinstance(ret_val, cls)
 
-        _logger.info(f"Job was successfully launched. View it at {ret_val.link}")
-        return ret_val
+        _logger.info(f"Job was successfully launched. View it at {job.link}")
+        return job
 
     def _submit(
         self,
@@ -195,233 +289,264 @@ class Job(_BaseJob):
         cloud_account_auth: bool = False,
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
-        artifacts_local: Optional[str] = None,  # deprecated in terms of path_mappings
-        artifacts_remote: Optional[str] = None,  # deprecated in terms of path_mappings
         max_runtime: Optional[int] = None,
+        artifacts_local: Optional[str] = None,
+        artifacts_remote: Optional[str] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "Job":
-        """Submit a new job to the Lightning AI platform.
+        if studio is not None:
+            studio_id = studio._studio.id
+            if image is not None:
+                raise ValueError(
+                    "image and studio are mutually exclusive as both define the environment to run the job in"
+                )
+            if command is None:
+                raise ValueError("command is required when using a studio")
+        else:
+            studio_id = None
+            if image is None:
+                raise ValueError("either image or studio must be provided")
 
-        Args:
-            machine: The machine type to run the job on. One of {", ".join(_MACHINE_VALUES)}.
-            command: The command to run inside your job. Required if using a studio. Optional if using an image.
-                If not provided for images, will run the container entrypoint and default command.
-            studio: The studio env to run the job with. Mutually exclusive with image.
-            image: The docker image to run the job with. Mutually exclusive with studio.
-            env: Environment variables to set inside the job.
-            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
-            cloud: Cloud provider or cloud account to run the job on.
-            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on.
-                Defaults to the studio cloud account if running with studio compute env.
-                Falls back to the teamspace default cloud account.
-            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud-account from.
-                If set, must be in agreement with the provider from the cloud_account (if specified).
-                If not specified, falls back to the teamspace default cloud account.
-            image_credentials: The credentials used to pull the image. Required if the image is private.
-                This should be the name of the respective credentials secret created on the Lightning AI platform.
-            cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
-                Required if the registry is part of a cloud provider (e.g. ECR).
-            entrypoint: The entrypoint of your docker container. Defaults to `sh -c` which
-                just runs the provided command in a standard shell if a command is provided.
-                If no command is provided, it will run the pre-defined entrypoint of the provided image.
-                To use the pre-defined entrypoint of the provided image with a specified command,
-                set this to an empty string.
-                Only applicable when submitting docker jobs.
-                To use the pre-defined entrypoint of the provided image, set this to an empty string.
-                Only applicable when submitting docker jobs.
-            path_mappings: Dictionary of path mappings. The keys are the path inside the container whereas the value
-                represents the data-connection name and the path inside that connection.
-                Should be of form
-                    {
-                        "<CONTAINER_PATH_1>": "<CONNECTION_NAME_1>:<PATH_WITHIN_CONNECTION_1>",
-                        "<CONTAINER_PATH_2>": "<CONNECTION_NAME_2>"
-                    }
-                If the path inside the connection is omitted it's assumed to be the root path of that connection.
-                Only applicable when submitting docker jobs.
-            max_runtime: the duration (in seconds) for which to allocate the machine.
-                Irrelevant for most machines, required for some of the top-end machines on GCP.
-                If in doubt, set it. Won't have an effect on machines not requiring it.
-                Defaults to 3h
-            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
-                submitted. Turning this off may result in longer job startup times. Defaults to True.
-
-        Returns:
-            Job: This job instance, updated with the submitted job state.
-        """
-        self._job = self._internal_job._submit(
-            machine=machine,
+        cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud=cloud,
             cloud_account=cloud_account,
             cloud_provider=cloud_provider,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
+
+        if scratch_disks:
+            if studio is None:
+                raise ValueError("scratch_disks are only supported within a studio job")
+
+            if len(scratch_disks) > 5:
+                raise ValueError("scratch_disk may only contain up to 5 elements")
+
+            for raw_path, size in scratch_disks.items():
+                if size > 50000:
+                    raise ValueError("scratch_disk size cannot exceed 50TiB")
+
+                path = PurePath(raw_path)
+                if path.is_absolute():
+                    try:
+                        path.relative_to("/teamspace/scratch")
+                    except ValueError:
+                        raise ValueError("scratch_disk paths must be relative to /teamspace/scratch") from None
+
+                if ".." in path.parts:
+                    raise ValueError("scratch_disk path cannot contain '..'")
+
+        submitted = self._job_api.submit_job(
+            name=self.name,
             command=command,
-            studio=studio,
+            cloud_account=cloud_account,
+            teamspace_id=self._teamspace.id,
+            studio_id=studio_id,
             image=image,
-            env=env,
+            machine=machine,
             interruptible=interruptible,
+            env=env,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
-            entrypoint=entrypoint,
-            path_mappings=path_mappings,
             artifacts_local=artifacts_local,
             artifacts_remote=artifacts_remote,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
-            cloud=cloud,
         )
+        self._job = submitted
+        self._name = submitted.name
         return self
 
     def stop(self) -> None:
-        """Stops the job.
+        if self.status in (Status.Stopped, Status.Completed, Status.Failed):
+            return
 
-        This is blocking until the job is stopped.
-        """
-        return self._internal_job.stop()
+        self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
 
     def delete(self) -> None:
-        """Deletes the job.
+        self._job_api.delete_job(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
+        )
 
-        Caution: This also deletes all artifacts and snapshots associated with the job.
-        """
-        return self._internal_job.delete()
+    def wait(self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False) -> None:
+        import time
+
+        start = time.time()
+        while True:
+            if self.status in (Status.Completed, Status.Stopped, Status.Failed):
+                break
+
+            if timeout is not None and time.time() - start > timeout:
+                if stop_on_timeout:
+                    self.stop()
+                raise TimeoutError("Job didn't finish within the provided timeout.")
+
+            time.sleep(interval)
+
+    async def async_wait(
+        self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False
+    ) -> None:
+        import asyncio
+
+        start = asyncio.get_event_loop().time()
+        while True:
+            if self.status in (Status.Completed, Status.Stopped, Status.Failed):
+                break
+
+            if timeout is not None and asyncio.get_event_loop().time() - start > timeout:
+                if stop_on_timeout:
+                    self.stop()
+                raise TimeoutError("Job didn't finish within the provided timeout.")
+
+            await asyncio.sleep(interval)
 
     @property
-    def status(self) -> Optional["Status"]:
-        """The current status of the job.
-
-        Returns:
-            Optional[Status]: The current job status, or None if unavailable.
-        """
-        return self._internal_job.status
+    def status(self) -> Status:
+        try:
+            return self._job_api._job_state_to_external(self._latest_job.state)
+        except Exception:
+            raise RuntimeError(
+                f"Job {self._name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
+            ) from None
 
     @property
     def machine(self) -> Union["Machine", str]:
-        """The machine type the job is running on.
-
-        Returns:
-            Union[Machine, str]: The machine type this job runs on.
-        """
-        return self._internal_job.machine
+        return self._job_api._get_job_machine_from_spec(
+            self._guaranteed_job.spec,
+            self.teamspace.id,
+            _get_org_id(self.teamspace),
+        )
 
     @property
     def public_ip(self) -> Optional[str]:
-        """The public IP address of the machine the job is running on.
-
-        Returns:
-            Optional[str]: The public IP address, or None if not available.
-        """
-        return self._internal_job.public_ip
+        try:
+            return self._job.public_ip_address
+        except AttributeError:
+            return None
 
     @property
     def artifact_path(self) -> Optional[str]:
-        """Path to the artifacts created by the job within the distributed teamspace filesystem.
+        if self._guaranteed_job.spec.image != "":
+            if self._guaranteed_job.spec.artifacts_destination:
+                (
+                    connection_type,
+                    connection_name,
+                    connection_path,
+                ) = self._guaranteed_job.spec.artifacts_destination.split(":")
+                return f"/teamspace/{connection_type}_connections/{connection_name}/{connection_path}"
+            return None
 
-        Returns:
-            Optional[str]: The artifact path, or None if not available.
-        """
-        return self._internal_job.artifact_path
+        return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
 
     @property
     def snapshot_path(self) -> Optional[str]:
-        """Path to the studio snapshot used to create the job within the distributed teamspace filesystem.
-
-        Returns:
-            Optional[str]: The snapshot path, or None if not available.
-        """
-        return self._internal_job.snapshot_path
+        if self._guaranteed_job.spec.image != "":
+            return None
+        return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
-        """Path to the jobs share path.
-
-        Returns:
-            Optional[str]: The share path, or None if not available.
-        """
-        return self._internal_job.share_path
-
-    def _update_internal_job(self) -> None:
-        return self._internal_job._update_internal_job()
-
-    @property
-    def name(self) -> str:
-        """The job's name.
-
-        Returns:
-            str: The job's name.
-        """
-        return self._internal_job.name
-
-    @property
-    def teamspace(self) -> "Teamspace":
-        """The teamspace the job is part of.
-
-        Returns:
-            Teamspace: The teamspace this job belongs to.
-        """
-        return self._internal_job._teamspace
-
-    @property
-    def studio(self) -> Optional["Studio"]:
-        """The studio used to submit the job.
-
-        Returns:
-            Optional[Studio]: The studio used to submit this job, or None if an image was used.
-        """
-        return self._internal_job.studio
-
-    @property
-    def image(self) -> Optional[str]:
-        """The image used to submit the job.
-
-        Returns:
-            Optional[str]: The docker image name, or None if a studio was used.
-        """
-        return self._internal_job.image
-
-    @property
-    def command(self) -> str:
-        """The command the job is running.
-
-        Returns:
-            str: The command being executed by this job.
-        """
-        return self._internal_job.command
+        raise NotImplementedError("Not implemented yet")
 
     @property
     def logs(self) -> str:
-        """The logs of the job.
-
-        Returns:
-            str: The complete logs from the job's execution.
-
-        Raises:
-            RuntimeError: If the job is still pending or running.
-        """
-        from lightning_sdk.status import Status
-
         if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
             raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
-        return self._internal_job.logs
 
-    def __getattr__(self, key: str) -> Any:
-        """Forward the attribute lookup to the internal job implementation.
-
-        Args:
-            key: The attribute name to look up.
-
-        Returns:
-            Any: The attribute value from the internal job implementation.
-        """
-        try:
-            return getattr(super(), key)
-        except AttributeError:
-            return getattr(self._internal_job, key)
+        return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
 
     @property
     def link(self) -> str:
-        """The Lightning AI web URL to view this job.
+        mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
 
-        Returns:
-            str: Direct URL to the job's page on lightning.ai.
-        """
-        return self._internal_job.link
+        if self._job_api.get_image_name(self._guaranteed_job):
+            if mmt_name:
+                return (
+                    f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/"
+                    f"jobs/{mmt_name}?app_id=mmt&machine_name={self.name}"
+                )
+            return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=jobs"
+
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+        if not studio_name:
+            raise RuntimeError("Cannot extract studio name from job")
+        return (
+            f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/studios/"
+            f"{studio_name}/app?app_id=jobs&job_name={self.name}"
+        )
+
+    @property
+    def image(self) -> Optional[str]:
+        return self._job_api.get_image_name(self._guaranteed_job)
+
+    @property
+    def studio(self) -> Optional["Studio"]:
+        from lightning_sdk.studio import Studio
+
+        studio_name = self._job_api.get_studio_name(self._guaranteed_job)
+        if not studio_name:
+            return None
+        return Studio(studio_name, teamspace=self.teamspace)
+
+    @property
+    def command(self) -> str:
+        return self._job_api.get_command(self._guaranteed_job)
+
+    def _update_internal_job(self) -> None:
+        if getattr(self, "_job", None) is None:
+            self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            return
+
+        self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def teamspace(self) -> "Teamspace":
+        return self._teamspace
+
+    def dict(self) -> JobDict:
+        studio = self.studio
+
+        return {
+            "name": self.name,
+            "teamspace": f"{self.teamspace.owner.name}/{self.teamspace.name}",
+            "studio": studio.name if studio else None,
+            "image": self.image,
+            "command": self.command,
+            "status": self.status,
+            "machine": self.machine,
+            "total_cost": self.total_cost,
+        }
+
+    def json(self) -> str:
+        import json
+
+        return json.dumps(self.dict(), indent=4, sort_keys=True, default=str)
+
+    @property
+    def _guaranteed_job(self) -> Any:
+        if getattr(self, "_job", None) is None:
+            self._update_internal_job()
+
+        return self._job
+
+    @property
+    def total_cost(self) -> float:
+        return self._job_api.get_total_cost(self._latest_job)
+
+    @property
+    def _latest_job(self) -> Any:
+        if self._prevent_refetch_latest:
+            return self._guaranteed_job
+
+        self._update_internal_job()
+        return self._job

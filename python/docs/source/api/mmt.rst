@@ -7,7 +7,7 @@ Multi-Machine Training
    :members:
    :show-inheritance:
 
-.. currentmodule:: lightning_sdk.mmt.base
+.. currentmodule:: lightning_sdk.mmt.mmt
 
 .. autoclass:: MMTMachine
    :members:

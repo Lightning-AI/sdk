@@ -1,26 +1,15 @@
-import importlib
 import os
 from unittest import mock
 
 import pytest
 
 from lightning_sdk.job import Job
-from lightning_sdk.job.v1 import _JobV1
-from lightning_sdk.job.v2 import _JobV2
-from lightning_sdk.job.work import Work
 from lightning_sdk.lightning_cloud.openapi import (
-    Externalv1LightningappInstance,
     JobsServiceUpdateJobBody,
-    V1ComputeConfig,
-    V1EnvVar,
     V1Job,
     V1JobSpec,
-    V1LightningappInstanceSpec,
-    V1LightningappInstanceState,
-    V1LightningappInstanceStatus,
 )
 from lightning_sdk.machine import Machine
-from lightning_sdk.plugin import forced_v1
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -30,11 +19,10 @@ from lightning_sdk.teamspace import Teamspace
 def test_job_init(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
-    internal_job_api_mocker_get_job,
+    internal_job_api_mocker_get_job_status_v2,
 ):
-    with forced_v1(Job):
-        job = Job("j-abc", "ts-abc", org="org-abc")
-    assert isinstance(job._job, Externalv1LightningappInstance)
+    job = Job("j-abc", "ts-abc", org="org-abc")
+    assert isinstance(job._job, V1Job)
 
     assert isinstance(job.teamspace, Teamspace)
     assert job.teamspace.name == "ts-abc"
@@ -44,13 +32,11 @@ def test_job_init(
 def test_job_init_error(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
-    internal_job_api_mocker_get_job,
+    internal_job_api_mocker_get_job_status_v2,
 ):
     def init_job_error():
         studio = Studio("st-abc", "ts-abc", org="org-abc")
-
-        with forced_v1(Job):
-            Job("xyz", studio.teamspace)
+        Job("xyz", studio.teamspace)
 
     with pytest.raises(ValueError, match="Job xyz does not exist in Teamspace ts-abc"):
         init_job_error()
@@ -78,7 +64,7 @@ def test_job_status(
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
     job = Job(name, studio.teamspace)
-    job._internal_job._job.name = name
+    job._job.name = name
     status = job.status
     assert isinstance(status, Status)
 
@@ -93,8 +79,7 @@ def test_stop_job(
 ):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
 
-    with forced_v1(Job):
-        job = Job("j-abc", studio.teamspace)
+    job = Job("j-abc", studio.teamspace)
     status = job.status
 
     assert status == Status.Running
@@ -121,24 +106,6 @@ def test_delete_job(
         Job("j-abc", studio.teamspace)
 
 
-@mock.patch.dict(os.environ, clear=True)
-def test_get_work(
-    internal_job_api_mocker_get_work,
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-):
-    studio = Studio("st-abc", "ts-abc", org="org-abc")
-    with forced_v1(Job):
-        job = Job("j-abc", studio.teamspace)
-    assert isinstance(job.work, Work)
-
-    assert job.work.id == "w-abc"
-    assert job.work.name == "w-abc"
-
-    assert job.work.machine == Machine.T4_X_4
-    assert job.machine == Machine.T4_X_4
-
-
 @pytest.mark.parametrize("machine", [Machine.CPU, Machine.T4_X_4])
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
@@ -150,7 +117,7 @@ def test_submit_job_v2_image(
     internal_studio_init_mocker, machine, command, env, interruptible, artifacts_local, artifacts_remote
 ):
     teamspace = Teamspace("ts-abc", org="org-abc")
-    job = _JobV2("test-job", teamspace, _fetch_job=False)
+    job = Job("test-job", teamspace, _fetch_job=False)
 
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
@@ -196,7 +163,7 @@ def test_submit_job_v2_image(
 def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
     submit_mock = mock.MagicMock()
     job._job_api.submit_job = submit_mock
     job._submit(
@@ -238,13 +205,13 @@ def test_jobv2_run_arg_validation(internal_studio_init_mocker):
         match="Studio teamspace does not match provided teamspace."
         " Can only run jobs with Studio envs in the teamspace of that Studio.",
     ):
-        _JobV2.run("some name", Machine.CPU, command="some command", studio=studio, teamspace="other teamspace")
+        Job.run("some name", Machine.CPU, command="some command", studio=studio, teamspace="other teamspace")
 
     with pytest.raises(ValueError, match="A job needs to have a name!"):
-        _JobV2.run("", Machine.CPU)
+        Job.run("", Machine.CPU)
 
     with pytest.raises(ValueError, match="A job needs to have a name!"):
-        _JobV2.run(None, Machine.CPU)
+        Job.run(None, Machine.CPU)
 
 
 def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
@@ -253,8 +220,10 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that empty string entrypoint is converted to None (use container default)
     submit_mock = mock.MagicMock()
-    with mock.patch.object(_JobV2, "_submit", submit_mock):
-        _JobV2.run(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.object(
+        Job, "link", new_callable=mock.PropertyMock, return_value="https://example.com/job"
+    ):
+        Job.run(
             "test-job",
             Machine.CPU,
             command="echo hello",
@@ -267,8 +236,10 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that when command is provided with default entrypoint, sh -c is used
     submit_mock.reset_mock()
-    with mock.patch.object(_JobV2, "_submit", submit_mock):
-        _JobV2.run(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.object(
+        Job, "link", new_callable=mock.PropertyMock, return_value="https://example.com/job"
+    ):
+        Job.run(
             "test-job",
             Machine.CPU,
             command="echo hello",
@@ -280,8 +251,10 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that no command with empty entrypoint uses container defaults
     submit_mock.reset_mock()
-    with mock.patch.object(_JobV2, "_submit", submit_mock):
-        _JobV2.run(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.object(
+        Job, "link", new_callable=mock.PropertyMock, return_value="https://example.com/job"
+    ):
+        Job.run(
             "test-job",
             Machine.CPU,
             command=None,
@@ -295,7 +268,7 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
 
     # Test that studio jobs raise error when entrypoint is specified
     with pytest.raises(ValueError, match="Specifying the entrypoint has no effect for jobs with Studio envs."):
-        _JobV2.run(
+        Job.run(
             "test-job",
             Machine.CPU,
             command="echo hello",
@@ -307,7 +280,7 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
 
     with pytest.raises(
         ValueError, match="image and studio are mutually exclusive as both define the environment to run the job in"
@@ -409,7 +382,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
 
 def test_get_job_by_name(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
 
     job._job_api.get_job_by_name = mock.MagicMock()
     job._update_internal_job()
@@ -421,7 +394,7 @@ def test_get_job_by_name(internal_studio_init_mocker):
 
 def test_get_job_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
 
     # simulate updating internal job
     job._job = V1Job(id="test-job-id")
@@ -436,7 +409,7 @@ def test_get_job_by_id(internal_studio_init_mocker):
 
 def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
     job._job_api.get_job_by_name = mock.MagicMock()
 
     job._job_api.get_job = mock.MagicMock()
@@ -453,7 +426,7 @@ def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
 
 def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     assert hasattr(job, "_job")
     assert job._job is not None
@@ -474,7 +447,7 @@ def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio
 def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1Job(id="test-job-id", state=internal_status)
@@ -503,7 +476,7 @@ def test_jobv2_machine(
 ):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace, _fetch_job=False)
+    job = Job("test-job", studio.teamspace, _fetch_job=False)
 
     get_job_mock = mock.MagicMock()
     get_job_mock.return_value = V1Job(
@@ -521,7 +494,7 @@ def test_jobv2_machine(
 def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     i = 0
 
@@ -551,7 +524,7 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
 def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2(
+    job = Job(
         "test-job",
         studio.teamspace,
     )
@@ -572,10 +545,9 @@ def test_submit_jobv2_studio_resolve(
     job_api_get_job_by_name_mocker,
 ):
     from lightning_sdk.job.job import Job
-    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
-    _JobV2._submit = submit_mock
+    Job._submit = submit_mock
 
     Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -630,10 +602,9 @@ def test_submit_jobv2_studio_path(
     artifacts_destination,
 ):
     from lightning_sdk.job.job import Job
-    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
-    _JobV2._submit = submit_mock
+    Job._submit = submit_mock
 
     job = Job.run(
         "test-job",
@@ -668,7 +639,7 @@ def test_submit_jobv2_studio_path(
         scratch_disks=None,
     )
 
-    job._internal_job._job = V1Job(
+    job._job = V1Job(
         name="test-job",
         spec=V1JobSpec(
             image=image or "", artifacts_source=artifacts_source, artifacts_destination=artifacts_destination
@@ -688,10 +659,9 @@ def test_submit_job_v2_image_from_studio(
 ):
     from lightning_sdk.api.studio_api import StudioApi
     from lightning_sdk.job.job import Job
-    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
-    _JobV2._submit = submit_mock
+    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
@@ -745,10 +715,9 @@ def test_run_job_with_cloud_provider(
     job_api_get_job_by_name_mocker,
 ):
     from lightning_sdk.job.job import Job
-    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
-    _JobV2._submit = submit_mock
+    Job._submit = submit_mock
 
     Job.run(
         "test-job",
@@ -791,23 +760,8 @@ def test_job_logs_v2(
 ):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2(
+    job = Job(
         "test-job",
-        studio.teamspace,
-    )
-
-    assert job.logs == "⚡  ~ echo Hello\nHello\n"
-
-
-def test_job_logs_v1(
-    internal_job_logs_mocker,
-    internal_studio_init_mocker,
-    internal_job_api_mocker_get_work,
-):
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-
-    job = _JobV1(
-        "j-abc",
         studio.teamspace,
     )
 
@@ -829,7 +783,7 @@ def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocke
     get_job_mock.return_value = internal_job
     get_studio_name_mock = mock.MagicMock()
     get_studio_name_mock.return_value = studio.name
-    job = _JobV2("my-job", teamspace=studio.teamspace, _fetch_job=False)
+    job = Job("my-job", teamspace=studio.teamspace, _fetch_job=False)
     job._job = internal_job
     job._update_internal_job = get_job_mock
     job._job_api.get_studio_name = get_studio_name_mock
@@ -852,83 +806,11 @@ def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocke
     )
 
 
-def test_job_v1_dict_json(internal_studio_init_mocker, internal_job_api_mocker_get_work):
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-
-    internal_job = Externalv1LightningappInstance(
-        name="my-job",
-        project_id="ts-abc",
-        spec=V1LightningappInstanceSpec(
-            cloud_space_id="st-abc",
-            compute_config=V1ComputeConfig(instance_type="cpu-4"),
-            env=[
-                V1EnvVar(name="foo", value="bar"),
-                V1EnvVar(name="bar", value="foo"),
-                V1EnvVar(name="COMMAND", value="some command"),
-            ],
-        ),
-        status=V1LightningappInstanceStatus(phase=V1LightningappInstanceState.RUNNING, total_cost=3.51),
-    )
-
-    get_job_mock = mock.MagicMock()
-    get_job_mock.return_value = internal_job
-    get_studio_name_mock = mock.MagicMock()
-    get_studio_name_mock.return_value = studio.name
-    get_status_mock = mock.MagicMock()
-    get_status_mock.return_value = internal_job.status.phase
-
-    job = _JobV1("my-job", teamspace=studio.teamspace, _fetch_job=False)
-    job._job = internal_job
-    job._update_internal_job = get_job_mock
-    job._job_api.get_studio_name = get_studio_name_mock
-    job._job_api.get_job_status = get_status_mock
-    job_dict = job.dict()
-
-    assert job_dict["name"] == "my-job"
-    assert job_dict["teamspace"] == "org-abc/ts-abc"
-    assert job_dict["studio"] == "st-abc"
-    assert job_dict["image"] is None
-    assert job_dict["command"] == "some command"
-    assert job_dict["status"] == Status.Running
-    assert job_dict["machine"] == Machine.T4_X_4  # coming from the work
-    assert job_dict["total_cost"] == 3.51
-
-    assert job.json() == (
-        '{\n    "command": "some command",\n    "image": null,\n    "machine": "T4_X_4",\n    '
-        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
-        '"total_cost": 3.51\n}'
-    )
-
-
-def test_job_instantiation_fallback_v2_to_v1(
-    internal_get_org_api_mocker,
-    internal_teamspace_api_mocker,
-    internal_studio_init_mocker,
-    internal_job_fallback_mocker,
-):
-    import lightning_sdk
-    from lightning_sdk.job.v1 import _JobV1
-    from lightning_sdk.job.v2 import _JobV2
-
-    importlib.reload(lightning_sdk.job.job)
-    from lightning_sdk.job.job import Job
-
-    # the internal_job_fallback_mocker makes sure that attempts to init a _JobV2
-    # fail with APIExceptions which should trigger a fallback to _JobV1
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    j = Job(name="abc", teamspace=studio.teamspace)
-    assert isinstance(j._internal_job, _JobV1)
-
-    # when we're not fetching then job (e.g. on job creation) there's no fallback necessary
-    j = Job(name="abc", teamspace=studio.teamspace, _fetch_job=False)
-    assert isinstance(j._internal_job, _JobV2)
-
-
 @pytest.mark.parametrize("target_state", ["stopped", "completed", "failed"])
 def test_jobv2_wait(job_api_get_job_by_name_mocker, internal_studio_init_mocker, target_state):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     i = 0
 
@@ -958,7 +840,7 @@ def test_jobv2_wait(job_api_get_job_by_name_mocker, internal_studio_init_mocker,
 def test_jobv2_wait_timeout(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     def get_job_side_effect(*args, **kwargs):
         return V1Job(id="test-job-id", state="running", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
@@ -978,7 +860,7 @@ def test_jobv2_wait_timeout(job_api_get_job_by_name_mocker, internal_studio_init
 @pytest.mark.parametrize("target_state", ["stopped", "completed", "failed"])
 async def test_jobv2_wait_async(job_api_get_job_by_name_mocker, internal_studio_init_mocker, target_state):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     i = 0
 
@@ -1007,7 +889,7 @@ async def test_jobv2_wait_async(job_api_get_job_by_name_mocker, internal_studio_
 @pytest.mark.asyncio()
 async def test_jobv2_wait_async_timeout(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = _JobV2("test-job", studio.teamspace)
+    job = Job("test-job", studio.teamspace)
 
     def get_job_side_effect(*args, **kwargs):
         return V1Job(id="test-job-id", state="running", spec=V1JobSpec(cloudspace_id="cloudspace-id"))
@@ -1033,10 +915,9 @@ def test_submit_job_from_running_studio(
 ):
     from lightning_sdk.api.studio_api import StudioApi
     from lightning_sdk.job.job import Job
-    from lightning_sdk.job.v2 import _JobV2
 
     submit_mock = mock.MagicMock()
-    _JobV2._submit = submit_mock
+    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 

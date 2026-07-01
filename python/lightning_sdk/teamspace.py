@@ -281,25 +281,14 @@ class Teamspace(metaclass=TrackCallsMeta):
             PermissionError: If the authenticated user cannot access Jobs in this teamspace.
         """
         from lightning_sdk.job import Job
-        from lightning_sdk.plugin import forced_v1
 
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
 
-        jobsv1, jobsv2 = self._teamspace_api.list_jobs(teamspace_id=self.id)
-
         jobs = []
-
-        for j1 in jobsv1:
-            with forced_v1(Job):
-                # _fetch_job = False to prevent refetching on init since we already got it
-                job = Job(name=j1.name, teamspace=self, _fetch_job=False)
-            job._internal_job._job = j1
-            jobs.append(job)
-
-        for j2 in jobsv2:
+        for j2 in self._teamspace_api.list_jobs(teamspace_id=self.id):
             # _fetch_job = False to prevent refetching on init since we already got it
             job = Job(name=j2.name, teamspace=self, _fetch_job=False)
-            job._internal_job._job = j2
+            job._job = j2
             jobs.append(job)
 
         return tuple(jobs)
@@ -315,25 +304,14 @@ class Teamspace(metaclass=TrackCallsMeta):
             PermissionError: If the authenticated user cannot access Jobs in this teamspace.
         """
         from lightning_sdk.mmt import MMT
-        from lightning_sdk.plugin import forced_v1
 
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
 
-        mmtsv1, mmtsv2 = self._teamspace_api.list_mmts(teamspace_id=self.id)
-
         mmts = []
-
-        for m1 in mmtsv1:
-            with forced_v1(MMT):
-                # _fetch_job = False to prevent refetching on init since we already got it
-                mmt = MMT(name=m1.name, teamspace=self, _fetch_job=False)
-            mmt._internal_mmt._job = m1
-            mmts.append(mmt)
-
-        for m2 in mmtsv2:
+        for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id):
             # _fetch_job = False to prevent refetching on init since we already got it
             mmt = MMT(name=m2.name, teamspace=self, _fetch_job=False)
-            mmt._internal_mmt._job = m2
+            mmt._job = m2
             mmts.append(mmt)
 
         return tuple(mmts)

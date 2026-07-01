@@ -200,15 +200,6 @@ class TestMetaclassIntegration:
     """Integration tests to ensure metaclass doesn't break real SDK classes."""
 
     @mock.patch("lightning_sdk.utils.logging.LightningClient")
-    def test_job_base_class_compatibility(self, mock_client):
-        """Test that _BaseJob works with the metaclass."""
-        from lightning_sdk.job.base import _BaseJob
-
-        # Verify the metaclass is applied
-        assert isinstance(_BaseJob, type)
-        assert hasattr(_BaseJob, "__abstractmethods__")
-
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
     def test_owner_base_class_compatibility(self, mock_client):
         """Test that Owner works with the metaclass."""
         from lightning_sdk.owner import Owner
@@ -216,15 +207,6 @@ class TestMetaclassIntegration:
         # Verify the metaclass is applied
         assert isinstance(Owner, type)
         assert hasattr(Owner, "__abstractmethods__")
-
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
-    def test_plugin_base_class_compatibility(self, mock_client):
-        """Test that _Plugin works with the metaclass."""
-        from lightning_sdk.plugin import _Plugin
-
-        # Verify the metaclass is applied
-        assert isinstance(_Plugin, type)
-        assert hasattr(_Plugin, "__abstractmethods__")
 
     @mock.patch("lightning_sdk.utils.logging.LightningClient")
     def test_studio_class_compatibility(self, mock_client):

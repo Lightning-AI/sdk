@@ -1,4 +1,3 @@
-from lightning_sdk.mmt.base import MMTMachine
-from lightning_sdk.mmt.mmt import MMT
+from lightning_sdk.mmt.mmt import MMT, MMTMachine
 
 __all__ = ["MMT", "MMTMachine"]

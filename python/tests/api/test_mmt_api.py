@@ -3,10 +3,7 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.api.mmt_api import MMTApiV1, MMTApiV2
-from lightning_sdk.lightning_cloud.openapi import (
-    CloudSpaceServiceCreateCloudSpaceAppInstanceBody as AppsIdBody,
-)
+from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateMultiMachineJobBody,
     JobsServiceUpdateMultiMachineJobBody,
@@ -17,76 +14,6 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
-
-
-def test_mmt_v1_submit_job():
-    job_api = MMTApiV1()
-
-    create_job_mock = mock.MagicMock()
-    job_api._client.cloud_space_service_create_cloud_space_app_instance = create_job_mock
-
-    job_api.submit_job(
-        name="test-job",
-        num_machines=5,
-        cloud_account="c-abc",
-        teamspace_id="ts-abc",
-        studio_id="st-abc",
-        machine=Machine.T4_X_4,
-        interruptible=False,
-        command="echo hello",
-        strategy="parallel",
-    )
-
-    body = AppsIdBody(
-        cluster_id="c-abc",
-        plugin_arguments={
-            "distributedArguments": '{"cloud_compute": '
-            '"lit-t4-4", '
-            '"num_instances": 5, "strategy": '
-            '"parallel"}',
-            "entrypoint": "echo hello",
-            "name": "test-job",
-            "spot": "false",
-        },
-        unique_id=mock.ANY,
-    )
-
-    create_job_mock.assert_called_once_with(
-        body=body, project_id="ts-abc", cloudspace_id="st-abc", id="distributed_plugin"
-    )
-
-    create_job_mock = mock.MagicMock()
-    job_api._client.cloud_space_service_create_cloud_space_app_instance = create_job_mock
-
-    job_api.submit_job(
-        name="test-job",
-        num_machines=5,
-        cloud_account="c-abc",
-        teamspace_id="ts-abc",
-        studio_id="st-abc",
-        machine="some-dummy-machine",
-        interruptible=False,
-        command="echo hello",
-        strategy="parallel",
-    )
-
-    body = AppsIdBody(
-        cluster_id="c-abc",
-        plugin_arguments={
-            "distributedArguments": '{"cloud_compute": '
-            '"some-dummy-machine", '
-            '"num_instances": 5, "strategy": '
-            '"parallel"}',
-            "entrypoint": "echo hello",
-            "name": "test-job",
-            "spot": "false",
-        },
-        unique_id=mock.ANY,
-    )
-
-    create_job_mock.assert_called_once_with(
-        body=body, project_id="ts-abc", cloudspace_id="st-abc", id="distributed_plugin"
-    )
 
 
 def test_mmt_v2_submit_job():

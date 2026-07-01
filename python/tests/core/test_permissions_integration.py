@@ -140,7 +140,7 @@ def test_teamspace_jobs_property_succeeds_when_enabled(mock_teamspace_api, mock_
 
     mock_teamspace_api.return_value.get_teamspace.return_value = mock_project
     mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
-    mock_teamspace_api.return_value.list_jobs.return_value = ([], [])
+    mock_teamspace_api.return_value.list_jobs.return_value = []
 
     # Create a teamspace instance
     ts = Teamspace.__new__(Teamspace)
@@ -195,7 +195,7 @@ def test_teamspace_multi_machine_jobs_property_succeeds_when_enabled(mock_teamsp
 
     mock_teamspace_api.return_value.get_teamspace.return_value = mock_project
     mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
-    mock_teamspace_api.return_value.list_mmts.return_value = ([], [])
+    mock_teamspace_api.return_value.list_mmts.return_value = []
 
     # Create a teamspace instance
     ts = Teamspace.__new__(Teamspace)

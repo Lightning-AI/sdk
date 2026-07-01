@@ -2255,7 +2255,9 @@ def internal_job_api_mocker_get_job_status(mocker):
 @pytest.fixture()
 def internal_job_api_mocker_get_job_status_v2(mocker):
     def find_job(self, project_id, name):
-        return V1Job(id=name, spec=V1JobSpec(cloudspace_id="st-abc"), project_id=project_id)
+        if name in ["j-abc", "j-def", "j-ghi", "j-jkl", "j-mno", "j-pqr", "j-stu"]:
+            return V1Job(id=name, spec=V1JobSpec(cloudspace_id="st-abc"), project_id=project_id)
+        raise ApiException(status=404)
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
@@ -2289,40 +2291,36 @@ def internal_job_api_mocker_get_job_status_v2(mocker):
 
 @pytest.fixture()
 def internal_job_api_mocker_stop_job(mocker):
-    status = {"j-abc": V1LightningappInstanceState.RUNNING}
+    status = {"j-abc": "running"}
 
-    def find_instance(self, project_id, name):
-        if name in ["j-abc", "j-def"]:
-            return Externalv1LightningappInstance(
-                name=name, project_id=project_id, id=name, status=V1LightningappInstanceStatus(phase=status[name])
-            )
+    def find_job(self, project_id, name):
+        if name in status:
+            return V1Job(name=name, project_id=project_id, id=name, state=status[name])
         raise ApiException(status=404)
 
-    def get_instance(self, project_id, id):
-        if id in ["j-abc", "j-def"]:
-            return Externalv1LightningappInstance(
-                name=id, project_id=project_id, id=id, status=V1LightningappInstanceStatus(phase=status[id])
-            )
+    def get_job(self, project_id, id):
+        if id in status:
+            return V1Job(name=id, project_id=project_id, id=id, state=status[id])
         raise ApiException(status=404)
 
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_find_lightningapp_instance",
-        side_effect=find_instance,
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_find_job",
+        side_effect=find_job,
         autospec=True,
     )
 
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_get_lightningapp_instance",
-        side_effect=get_instance,
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_job",
+        side_effect=get_job,
         autospec=True,
     )
 
-    def update_state(self, project_id, id, body):
-        status[id] = body.spec.desired_state
+    def update_job(self, project_id, id, body):
+        status[id] = "stopped" if body.state == "stop" else body.state
 
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_update_lightningapp_instance",
-        side_effect=update_state,
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_update_job",
+        side_effect=update_job,
         autospec=True,
     )
 

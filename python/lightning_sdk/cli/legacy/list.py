@@ -133,7 +133,6 @@ def jobs(
     for j in sorted(jobs, key=_sort_jobs_key(sort_by)):
         # we know we just fetched these, so no need to refetch
         j._prevent_refetch_latest = True
-        j._internal_job._prevent_refetch_latest = True
 
         studio = j.studio
         with suppress(RuntimeError):
@@ -205,8 +204,6 @@ def mmts(
     for j in sorted(jobs, key=_sort_mmts_key(sort_by)):
         # we know we just fetched these, so no need to refetch
         j._prevent_refetch_latest = True
-        with suppress(AttributeError):
-            j._internal_job._prevent_refetch_latest = True
 
         studio = j.studio
         with suppress(RuntimeError):

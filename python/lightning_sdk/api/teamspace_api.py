@@ -5,7 +5,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -26,7 +26,6 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     DataConnectionServiceCreateDataConnectionBody,
-    Externalv1LightningappInstance,
     ModelsStoreCreateModelBody,
     ModelsStoreCreateModelVersionBody,
     SecretServiceCreateSecretBody,
@@ -503,36 +502,27 @@ class TeamspaceApi:
             progress_bar=progress_bar,
         )
 
-    def list_jobs(self, teamspace_id: str) -> Tuple[List[Externalv1LightningappInstance], List[V1Job]]:
-        """Return all jobs in the teamspace as a tuple of (v1 app instances, v2 jobs).
+    def list_jobs(self, teamspace_id: str) -> List[V1Job]:
+        """Return all v2 jobs in the teamspace.
 
         Args:
             teamspace_id: ID of the teamspace to list jobs in.
 
         Returns:
-            Tuple of ``(list of Externalv1LightningappInstance, list of V1Job)``.
+            List of ``V1Job`` objects.
         """
-        apps = self._client.lightningapp_instance_service_list_lightningapp_instances(
-            project_id=teamspace_id, source_app="job_run_plugin"
-        ).lightningapps
-        jobs = self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True).jobs
+        return self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True).jobs
 
-        return apps, jobs
-
-    def list_mmts(self, teamspace_id: str) -> Tuple[List[Externalv1LightningappInstance], List[V1MultiMachineJob]]:
-        """Return all multi-machine training jobs as a tuple of (v1 app instances, v2 multi-machine jobs).
+    def list_mmts(self, teamspace_id: str) -> List[V1MultiMachineJob]:
+        """Return all v2 multi-machine training jobs.
 
         Args:
             teamspace_id: ID of the teamspace to list multi-machine jobs in.
 
         Returns:
-            Tuple of ``(list of Externalv1LightningappInstance, list of V1MultiMachineJob)``.
+            List of ``V1MultiMachineJob`` objects.
         """
-        apps = self._client.lightningapp_instance_service_list_lightningapp_instances(
-            project_id=teamspace_id, source_app="distributed_plugin"
-        ).lightningapps
-        jobs = self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
-        return apps, jobs
+        return self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
 
     def list_machines(
         self,

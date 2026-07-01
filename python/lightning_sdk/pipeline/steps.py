@@ -15,7 +15,8 @@ from lightning_sdk.api.deployment_api import (
     to_spec,
     to_strategy,
 )
-from lightning_sdk.job.v2 import JobApiV2
+from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.lightning_cloud.openapi.models import (
     V1CreateDeploymentRequest,
     V1PipelineStep,
@@ -23,7 +24,6 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1SharedFilesystem,
 )
 from lightning_sdk.machine import Machine
-from lightning_sdk.mmt.v2 import MMTApiV2
 from lightning_sdk.pipeline.utils import DEFAULT, _get_studio, _to_wait_for, _validate_cloud_account
 from lightning_sdk.studio import CloudAccountApi, Studio
 from lightning_sdk.utils.resolve import _warn_deprecated_cloud_selection
