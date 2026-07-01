@@ -30,6 +30,7 @@ import {
   V1GetSandboxCommandLogsResponse,
   V1GetSandboxCommandResponse,
   V1GetSandboxFileResponse,
+  V1GetSandboxResourceMetricsResponse,
   V1GetSandboxSnapshotBlobDownloadUrlsResponse,
   V1GetSandboxSnapshotBlobUploadUrlsResponse,
   V1KillSandboxCommandResponse,
@@ -493,6 +494,41 @@ https://vercel.com/docs/rest-api/sandboxes-v2-beta/update-a-sandbox.
       method: "POST",
       body: body,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceGetSandboxResourceMetrics
+ * @summary GetSandboxResourceMetrics returns the per-sandbox CPU/memory
+utilization time-series the baremetal agent reports via
+ClusterService.ReportSandboxResourceMetrics (stored in ClickHouse
+system_metrics with resource_type = "sandbox", keyed by the sandbox
+id). Powers the utilization charts on the sandbox detail page.
+ * @request GET:/v1/core/sandboxes/{id}/resource-metrics
+ */
+  sandboxesServiceGetSandboxResourceMetrics = (
+    id: string,
+    query?: {
+      organizationId?: string;
+      /** @format date-time */
+      startTime?: string;
+      /** @format date-time */
+      endTime?: string;
+      /**
+       * Target number of downsampled buckets. Clamped server-side.
+       * @format int32
+       */
+      numSamples?: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<V1GetSandboxResourceMetricsResponse, RpcStatus>({
+      path: `/v1/core/sandboxes/${id}/resource-metrics`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

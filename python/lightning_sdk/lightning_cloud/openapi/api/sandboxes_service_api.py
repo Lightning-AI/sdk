@@ -1162,6 +1162,115 @@ class SandboxesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def sandboxes_service_get_sandbox_resource_metrics(self, id: 'str', **kwargs) -> 'V1GetSandboxResourceMetricsResponse':  # noqa: E501
+        """GetSandboxResourceMetrics returns the per-sandbox CPU/memory utilization time-series the baremetal agent reports via ClusterService.ReportSandboxResourceMetrics (stored in ClickHouse system_metrics with resource_type = \"sandbox\", keyed by the sandbox id). Powers the utilization charts on the sandbox detail page.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_sandbox_resource_metrics(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: Sandbox id (same value as the underlying server id, which is how the samples are keyed in ClickHouse). (required)
+        :param str organization_id:
+        :param datetime start_time:
+        :param datetime end_time:
+        :param int num_samples: Target number of downsampled buckets. Clamped server-side.
+        :return: V1GetSandboxResourceMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_get_sandbox_resource_metrics_with_http_info(id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_get_sandbox_resource_metrics_with_http_info(id, **kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_get_sandbox_resource_metrics_with_http_info(self, id: 'str', **kwargs) -> 'V1GetSandboxResourceMetricsResponse':  # noqa: E501
+        """GetSandboxResourceMetrics returns the per-sandbox CPU/memory utilization time-series the baremetal agent reports via ClusterService.ReportSandboxResourceMetrics (stored in ClickHouse system_metrics with resource_type = \"sandbox\", keyed by the sandbox id). Powers the utilization charts on the sandbox detail page.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_get_sandbox_resource_metrics_with_http_info(id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: Sandbox id (same value as the underlying server id, which is how the samples are keyed in ClickHouse). (required)
+        :param str organization_id:
+        :param datetime start_time:
+        :param datetime end_time:
+        :param int num_samples: Target number of downsampled buckets. Clamped server-side.
+        :return: V1GetSandboxResourceMetricsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'organization_id', 'start_time', 'end_time', 'num_samples']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_get_sandbox_resource_metrics" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `sandboxes_service_get_sandbox_resource_metrics`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+        if 'start_time' in params:
+            query_params.append(('startTime', params['start_time']))  # noqa: E501
+        if 'end_time' in params:
+            query_params.append(('endTime', params['end_time']))  # noqa: E501
+        if 'num_samples' in params:
+            query_params.append(('numSamples', params['num_samples']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/{id}/resource-metrics', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetSandboxResourceMetricsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def sandboxes_service_get_sandbox_snapshot(self, snapshot_id: 'str', **kwargs) -> 'V1SandboxSnapshot':  # noqa: E501
         """sandboxes_service_get_sandbox_snapshot  # noqa: E501
 

@@ -361,6 +361,10 @@ export interface V1GetSandboxFileResponse {
   content?: string;
 }
 
+export interface V1GetSandboxResourceMetricsResponse {
+  samples?: V1SandboxResourceMetricSample[];
+}
+
 export interface V1GetSandboxSnapshotBlobDownloadUrlsResponse {
   downloadUrls?: V1SandboxSnapshotBlobDownloadUrl[];
 }
@@ -573,6 +577,28 @@ export interface V1SandboxPhaseDuration {
   phase?: string;
   /** @format int64 */
   durationMs?: string;
+}
+
+/** One downsampled CPU/memory sample for a sandbox. */
+export interface V1SandboxResourceMetricSample {
+  /** @format date-time */
+  timestamp?: string;
+  /**
+   * Average CPU utilization across the bucket, 0-100.
+   * @format float
+   */
+  cpuPercentage?: number;
+  /**
+   * Average memory utilization across the bucket, 0-100.
+   * @format float
+   */
+  memoryPercentage?: number;
+  /** @format int64 */
+  numCpus?: number;
+  /** @format uint64 */
+  memoryUsedBytes?: string;
+  /** @format uint64 */
+  memoryLimitBytes?: string;
 }
 
 export interface V1SandboxSnapshot {
