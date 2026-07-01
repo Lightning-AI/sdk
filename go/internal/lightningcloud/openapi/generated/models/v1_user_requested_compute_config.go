@@ -44,6 +44,9 @@ type V1UserRequestedComputeConfig struct {
 	// Can be instance type (t2.medium) or accelerator type 'gpu', 'gpu-fast-single', etc.
 	Name string `json:"name,omitempty"`
 
+	// Placement group to co-locate related servers
+	PlacementGroupID string `json:"placementGroupId,omitempty"`
+
 	// Requested run duration, used to get the machine using dynamic workload scheduler (DWS)
 	RequestedRunDurationSeconds string `json:"requestedRunDurationSeconds,omitempty"`
 

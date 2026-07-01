@@ -45,6 +45,7 @@ class V1UpdateUserRequest(object):
         'allow_credits_auto_replenish': 'bool',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
+        'close_free_credits_end_notification': 'bool',
         'complete_sign_up': 'bool',
         'completed_project_onboarding': 'bool',
         'country': 'str',
@@ -76,6 +77,7 @@ class V1UpdateUserRequest(object):
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
+        'close_free_credits_end_notification': 'closeFreeCreditsEndNotification',
         'complete_sign_up': 'completeSignUp',
         'completed_project_onboarding': 'completedProjectOnboarding',
         'country': 'country',
@@ -102,12 +104,13 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, close_free_credits_end_notification: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
+        self._close_free_credits_end_notification = None
         self._complete_sign_up = None
         self._completed_project_onboarding = None
         self._country = None
@@ -141,6 +144,8 @@ class V1UpdateUserRequest(object):
             self.auto_replenish_amount = auto_replenish_amount
         if auto_replenish_threshold is not None:
             self.auto_replenish_threshold = auto_replenish_threshold
+        if close_free_credits_end_notification is not None:
+            self.close_free_credits_end_notification = close_free_credits_end_notification
         if complete_sign_up is not None:
             self.complete_sign_up = complete_sign_up
         if completed_project_onboarding is not None:
@@ -275,6 +280,27 @@ class V1UpdateUserRequest(object):
         """
 
         self._auto_replenish_threshold = auto_replenish_threshold
+
+    @property
+    def close_free_credits_end_notification(self) -> 'bool':
+        """Gets the close_free_credits_end_notification of this V1UpdateUserRequest.  # noqa: E501
+
+
+        :return: The close_free_credits_end_notification of this V1UpdateUserRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._close_free_credits_end_notification
+
+    @close_free_credits_end_notification.setter
+    def close_free_credits_end_notification(self, close_free_credits_end_notification: 'bool'):
+        """Sets the close_free_credits_end_notification of this V1UpdateUserRequest.
+
+
+        :param close_free_credits_end_notification: The close_free_credits_end_notification of this V1UpdateUserRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._close_free_credits_end_notification = close_free_credits_end_notification
 
     @property
     def complete_sign_up(self) -> 'bool':

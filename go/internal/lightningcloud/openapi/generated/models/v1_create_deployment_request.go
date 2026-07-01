@@ -51,7 +51,7 @@ type V1CreateDeploymentRequest struct {
 	FromOnboarding bool `json:"fromOnboarding,omitempty"`
 
 	// k8s deployment config
-	K8sDeploymentConfig V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
+	K8sDeploymentConfig *V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
 
 	// Required
 	Name string `json:"name,omitempty"`
@@ -107,6 +107,10 @@ func (m *V1CreateDeploymentRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEndpoint(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateK8sDeploymentConfig(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -231,6 +235,29 @@ func (m *V1CreateDeploymentRequest) validateEndpoint(formats strfmt.Registry) er
 	return nil
 }
 
+func (m *V1CreateDeploymentRequest) validateK8sDeploymentConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.K8sDeploymentConfig) { // not required
+		return nil
+	}
+
+	if m.K8sDeploymentConfig != nil {
+		if err := m.K8sDeploymentConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("k8sDeploymentConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("k8sDeploymentConfig")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1CreateDeploymentRequest) validateParameterSpec(formats strfmt.Registry) error {
 	if swag.IsZero(m.ParameterSpec) { // not required
 		return nil
@@ -340,6 +367,10 @@ func (m *V1CreateDeploymentRequest) ContextValidate(ctx context.Context, formats
 	}
 
 	if err := m.contextValidateEndpoint(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateK8sDeploymentConfig(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -460,6 +491,31 @@ func (m *V1CreateDeploymentRequest) contextValidateEndpoint(ctx context.Context,
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("endpoint")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1CreateDeploymentRequest) contextValidateK8sDeploymentConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.K8sDeploymentConfig != nil {
+
+		if swag.IsZero(m.K8sDeploymentConfig) { // not required
+			return nil
+		}
+
+		if err := m.K8sDeploymentConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("k8sDeploymentConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("k8sDeploymentConfig")
 			}
 
 			return err

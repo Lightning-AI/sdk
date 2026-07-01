@@ -83,6 +83,9 @@ type V1ServerSpec struct {
 	// Accelerators that are attached to the server. Only supported in GCP at the moment
 	GuestAccelerators []*V1ServerAccelerator `json:"guestAccelerators"`
 
+	// ib device infos
+	IbDeviceInfos []*V1IBDeviceInfo `json:"ibDeviceInfos"`
+
 	// Managed instance group (MIG) ID used to run the instance (when dynamic workload scheduling is used to run the instance)
 	InstanceManagedGroupID string `json:"instanceManagedGroupId,omitempty"`
 
@@ -127,6 +130,9 @@ type V1ServerSpec struct {
 
 	// ID of the persistent disk used for this server
 	PersistentDiskID string `json:"persistentDiskId,omitempty"`
+
+	// placement group Id
+	PlacementGroupID string `json:"placementGroupId,omitempty"`
 
 	// Port forwards for the server
 	PortForwardingRules []*V1PortForwardRule `json:"portForwardingRules"`
@@ -230,6 +236,10 @@ func (m *V1ServerSpec) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateIbDeviceInfos(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateMemoryZones(formats); err != nil {
 		res = append(res, err)
 	}
@@ -310,6 +320,36 @@ func (m *V1ServerSpec) validateGuestAccelerators(formats strfmt.Registry) error 
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("guestAccelerators" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) validateIbDeviceInfos(formats strfmt.Registry) error {
+	if swag.IsZero(m.IbDeviceInfos) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.IbDeviceInfos); i++ {
+		if swag.IsZero(m.IbDeviceInfos[i]) { // not required
+			continue
+		}
+
+		if m.IbDeviceInfos[i] != nil {
+			if err := m.IbDeviceInfos[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibDeviceInfos" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibDeviceInfos" + "." + strconv.Itoa(i))
 				}
 
 				return err
@@ -534,6 +574,10 @@ func (m *V1ServerSpec) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateIbDeviceInfos(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateMemoryZones(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -611,6 +655,35 @@ func (m *V1ServerSpec) contextValidateGuestAccelerators(ctx context.Context, for
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("guestAccelerators" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) contextValidateIbDeviceInfos(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.IbDeviceInfos); i++ {
+
+		if m.IbDeviceInfos[i] != nil {
+
+			if swag.IsZero(m.IbDeviceInfos[i]) { // not required
+				return nil
+			}
+
+			if err := m.IbDeviceInfos[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibDeviceInfos" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibDeviceInfos" + "." + strconv.Itoa(i))
 				}
 
 				return err

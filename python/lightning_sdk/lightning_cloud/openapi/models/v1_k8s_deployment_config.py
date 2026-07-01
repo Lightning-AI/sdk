@@ -41,14 +41,40 @@ class V1K8sDeploymentConfig(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'kai_scheduler_config': 'V1KaiSchedulerConfig'
     }
 
     attribute_map = {
+        'kai_scheduler_config': 'kaiSchedulerConfig'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, kai_scheduler_config: 'V1KaiSchedulerConfig' =None):  # noqa: E501
         """V1K8sDeploymentConfig - a model defined in Swagger"""  # noqa: E501
+        self._kai_scheduler_config = None
         self.discriminator = None
+        if kai_scheduler_config is not None:
+            self.kai_scheduler_config = kai_scheduler_config
+
+    @property
+    def kai_scheduler_config(self) -> 'V1KaiSchedulerConfig':
+        """Gets the kai_scheduler_config of this V1K8sDeploymentConfig.  # noqa: E501
+
+
+        :return: The kai_scheduler_config of this V1K8sDeploymentConfig.  # noqa: E501
+        :rtype: V1KaiSchedulerConfig
+        """
+        return self._kai_scheduler_config
+
+    @kai_scheduler_config.setter
+    def kai_scheduler_config(self, kai_scheduler_config: 'V1KaiSchedulerConfig'):
+        """Sets the kai_scheduler_config of this V1K8sDeploymentConfig.
+
+
+        :param kai_scheduler_config: The kai_scheduler_config of this V1K8sDeploymentConfig.  # noqa: E501
+        :type: V1KaiSchedulerConfig
+        """
+
+        self._kai_scheduler_config = kai_scheduler_config
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

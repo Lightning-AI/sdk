@@ -61,6 +61,7 @@ class V1JobSpec(object):
         'modified_volume': 'bool',
         'path_mappings': 'list[V1PathMapping]',
         'pipeline_id': 'str',
+        'placement_group_id': 'str',
         'quantity': 'int',
         'rank': 'int',
         'readiness_probe': 'V1JobHealthCheckConfig',
@@ -97,6 +98,7 @@ class V1JobSpec(object):
         'modified_volume': 'modifiedVolume',
         'path_mappings': 'pathMappings',
         'pipeline_id': 'pipelineId',
+        'placement_group_id': 'placementGroupId',
         'quantity': 'quantity',
         'rank': 'rank',
         'readiness_probe': 'readinessProbe',
@@ -112,7 +114,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -134,6 +136,7 @@ class V1JobSpec(object):
         self._modified_volume = None
         self._path_mappings = None
         self._pipeline_id = None
+        self._placement_group_id = None
         self._quantity = None
         self._rank = None
         self._readiness_probe = None
@@ -188,6 +191,8 @@ class V1JobSpec(object):
             self.path_mappings = path_mappings
         if pipeline_id is not None:
             self.pipeline_id = pipeline_id
+        if placement_group_id is not None:
+            self.placement_group_id = placement_group_id
         if quantity is not None:
             self.quantity = quantity
         if rank is not None:
@@ -640,6 +645,27 @@ class V1JobSpec(object):
         """
 
         self._pipeline_id = pipeline_id
+
+    @property
+    def placement_group_id(self) -> 'str':
+        """Gets the placement_group_id of this V1JobSpec.  # noqa: E501
+
+
+        :return: The placement_group_id of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._placement_group_id
+
+    @placement_group_id.setter
+    def placement_group_id(self, placement_group_id: 'str'):
+        """Sets the placement_group_id of this V1JobSpec.
+
+
+        :param placement_group_id: The placement_group_id of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._placement_group_id = placement_group_id
 
     @property
     def quantity(self) -> 'int':

@@ -49,11 +49,13 @@ class V1MachineDirectV1(object):
         'max_storage_gb': 'str',
         'primary_region': 'str',
         'private_networking': 'bool',
+        'refresh_machines_placement': 'bool',
         'regions': 'list[str]',
         'setup_firewall': 'bool',
         'setup_infiniband': 'bool',
         'storage_overcommit_factor': 'float',
         'tailscale_auth_key_secret_id': 'str',
+        'update_agent': 'bool',
         'use_nvme_disks': 'bool'
     }
 
@@ -66,15 +68,17 @@ class V1MachineDirectV1(object):
         'max_storage_gb': 'maxStorageGb',
         'primary_region': 'primaryRegion',
         'private_networking': 'privateNetworking',
+        'refresh_machines_placement': 'refreshMachinesPlacement',
         'regions': 'regions',
         'setup_firewall': 'setupFirewall',
         'setup_infiniband': 'setupInfiniband',
         'storage_overcommit_factor': 'storageOvercommitFactor',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId',
+        'update_agent': 'updateAgent',
         'use_nvme_disks': 'useNvmeDisks'
     }
 
-    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._access_mode = None
         self._cloud_hypervisor_user = None
@@ -84,11 +88,13 @@ class V1MachineDirectV1(object):
         self._max_storage_gb = None
         self._primary_region = None
         self._private_networking = None
+        self._refresh_machines_placement = None
         self._regions = None
         self._setup_firewall = None
         self._setup_infiniband = None
         self._storage_overcommit_factor = None
         self._tailscale_auth_key_secret_id = None
+        self._update_agent = None
         self._use_nvme_disks = None
         self.discriminator = None
         if access_mode is not None:
@@ -107,6 +113,8 @@ class V1MachineDirectV1(object):
             self.primary_region = primary_region
         if private_networking is not None:
             self.private_networking = private_networking
+        if refresh_machines_placement is not None:
+            self.refresh_machines_placement = refresh_machines_placement
         if regions is not None:
             self.regions = regions
         if setup_firewall is not None:
@@ -117,6 +125,8 @@ class V1MachineDirectV1(object):
             self.storage_overcommit_factor = storage_overcommit_factor
         if tailscale_auth_key_secret_id is not None:
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
+        if update_agent is not None:
+            self.update_agent = update_agent
         if use_nvme_disks is not None:
             self.use_nvme_disks = use_nvme_disks
 
@@ -289,6 +299,27 @@ class V1MachineDirectV1(object):
         self._private_networking = private_networking
 
     @property
+    def refresh_machines_placement(self) -> 'bool':
+        """Gets the refresh_machines_placement of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The refresh_machines_placement of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._refresh_machines_placement
+
+    @refresh_machines_placement.setter
+    def refresh_machines_placement(self, refresh_machines_placement: 'bool'):
+        """Sets the refresh_machines_placement of this V1MachineDirectV1.
+
+
+        :param refresh_machines_placement: The refresh_machines_placement of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._refresh_machines_placement = refresh_machines_placement
+
+    @property
     def regions(self) -> 'list[str]':
         """Gets the regions of this V1MachineDirectV1.  # noqa: E501
 
@@ -392,6 +423,27 @@ class V1MachineDirectV1(object):
         """
 
         self._tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
+
+    @property
+    def update_agent(self) -> 'bool':
+        """Gets the update_agent of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The update_agent of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._update_agent
+
+    @update_agent.setter
+    def update_agent(self, update_agent: 'bool'):
+        """Sets the update_agent of this V1MachineDirectV1.
+
+
+        :param update_agent: The update_agent of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._update_agent = update_agent
 
     @property
     def use_nvme_disks(self) -> 'bool':

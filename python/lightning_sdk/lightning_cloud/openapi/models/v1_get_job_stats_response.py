@@ -43,6 +43,7 @@ class V1GetJobStatsResponse(object):
     swagger_types = {
         'queued_deployments': 'int',
         'queued_jobs': 'int',
+        'requires_maintenance': 'int',
         'running_deployments': 'int',
         'running_jobs': 'int',
         'running_pipelines': 'int',
@@ -52,16 +53,18 @@ class V1GetJobStatsResponse(object):
     attribute_map = {
         'queued_deployments': 'queuedDeployments',
         'queued_jobs': 'queuedJobs',
+        'requires_maintenance': 'requiresMaintenance',
         'running_deployments': 'runningDeployments',
         'running_jobs': 'runningJobs',
         'running_pipelines': 'runningPipelines',
         'total_jobs': 'totalJobs'
     }
 
-    def __init__(self, queued_deployments: 'int' =None, queued_jobs: 'int' =None, running_deployments: 'int' =None, running_jobs: 'int' =None, running_pipelines: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
+    def __init__(self, queued_deployments: 'int' =None, queued_jobs: 'int' =None, requires_maintenance: 'int' =None, running_deployments: 'int' =None, running_jobs: 'int' =None, running_pipelines: 'int' =None, total_jobs: 'int' =None):  # noqa: E501
         """V1GetJobStatsResponse - a model defined in Swagger"""  # noqa: E501
         self._queued_deployments = None
         self._queued_jobs = None
+        self._requires_maintenance = None
         self._running_deployments = None
         self._running_jobs = None
         self._running_pipelines = None
@@ -71,6 +74,8 @@ class V1GetJobStatsResponse(object):
             self.queued_deployments = queued_deployments
         if queued_jobs is not None:
             self.queued_jobs = queued_jobs
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
         if running_deployments is not None:
             self.running_deployments = running_deployments
         if running_jobs is not None:
@@ -121,6 +126,27 @@ class V1GetJobStatsResponse(object):
         """
 
         self._queued_jobs = queued_jobs
+
+    @property
+    def requires_maintenance(self) -> 'int':
+        """Gets the requires_maintenance of this V1GetJobStatsResponse.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1GetJobStatsResponse.  # noqa: E501
+        :rtype: int
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'int'):
+        """Sets the requires_maintenance of this V1GetJobStatsResponse.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1GetJobStatsResponse.  # noqa: E501
+        :type: int
+        """
+
+        self._requires_maintenance = requires_maintenance
 
     @property
     def running_deployments(self) -> 'int':

@@ -16,6 +16,7 @@ import (
 
 // V1ServerAlertType - SERVER_ALERT_TYPE_INTERNAL: generic alert type for uncategorized errors
 //   - SERVER_ALERT_TYPE_APT_RESTORE: alert types for specific errors
+//   - SERVER_ALERT_TYPE_OOM: sandbox oom
 //
 // swagger:model v1ServerAlertType
 type V1ServerAlertType string
@@ -51,6 +52,9 @@ const (
 
 	// V1ServerAlertTypeSERVERALERTTYPEPROVIDERCAPACITY captures enum value "SERVER_ALERT_TYPE_PROVIDER_CAPACITY"
 	V1ServerAlertTypeSERVERALERTTYPEPROVIDERCAPACITY V1ServerAlertType = "SERVER_ALERT_TYPE_PROVIDER_CAPACITY"
+
+	// V1ServerAlertTypeSERVERALERTTYPEOOM captures enum value "SERVER_ALERT_TYPE_OOM"
+	V1ServerAlertTypeSERVERALERTTYPEOOM V1ServerAlertType = "SERVER_ALERT_TYPE_OOM"
 )
 
 // for schema
@@ -58,7 +62,7 @@ var v1ServerAlertTypeEnum []any
 
 func init() {
 	var res []V1ServerAlertType
-	if err := json.Unmarshal([]byte(`["SERVER_ALERT_TYPE_INTERNAL","SERVER_ALERT_TYPE_APT_RESTORE","SERVER_ALERT_TYPE_CONDA_RESTORE","SERVER_ALERT_TYPE_SETTINGS_RESTORE","SERVER_ALERT_TYPE_BASE_STUDIO_SETUP","SERVER_ALERT_TYPE_FILESYSTEM","SERVER_ALERT_TYPE_PROVIDER_CAPACITY"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["SERVER_ALERT_TYPE_INTERNAL","SERVER_ALERT_TYPE_APT_RESTORE","SERVER_ALERT_TYPE_CONDA_RESTORE","SERVER_ALERT_TYPE_SETTINGS_RESTORE","SERVER_ALERT_TYPE_BASE_STUDIO_SETUP","SERVER_ALERT_TYPE_FILESYSTEM","SERVER_ALERT_TYPE_PROVIDER_CAPACITY","SERVER_ALERT_TYPE_OOM"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

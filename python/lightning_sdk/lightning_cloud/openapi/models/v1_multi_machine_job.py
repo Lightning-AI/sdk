@@ -51,6 +51,7 @@ class V1MultiMachineJob(object):
         'name': 'str',
         'pipeline_id': 'str',
         'project_id': 'str',
+        'requires_maintenance': 'bool',
         'spec': 'V1JobSpec',
         'state': 'V1MultiMachineJobState',
         'status': 'V1MultiMachineJobStatus',
@@ -70,6 +71,7 @@ class V1MultiMachineJob(object):
         'name': 'name',
         'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
+        'requires_maintenance': 'requiresMaintenance',
         'spec': 'spec',
         'state': 'state',
         'status': 'status',
@@ -78,7 +80,7 @@ class V1MultiMachineJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, requires_maintenance: 'bool' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
@@ -90,6 +92,7 @@ class V1MultiMachineJob(object):
         self._name = None
         self._pipeline_id = None
         self._project_id = None
+        self._requires_maintenance = None
         self._spec = None
         self._state = None
         self._status = None
@@ -117,6 +120,8 @@ class V1MultiMachineJob(object):
             self.pipeline_id = pipeline_id
         if project_id is not None:
             self.project_id = project_id
+        if requires_maintenance is not None:
+            self.requires_maintenance = requires_maintenance
         if spec is not None:
             self.spec = spec
         if state is not None:
@@ -339,6 +344,27 @@ class V1MultiMachineJob(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def requires_maintenance(self) -> 'bool':
+        """Gets the requires_maintenance of this V1MultiMachineJob.  # noqa: E501
+
+
+        :return: The requires_maintenance of this V1MultiMachineJob.  # noqa: E501
+        :rtype: bool
+        """
+        return self._requires_maintenance
+
+    @requires_maintenance.setter
+    def requires_maintenance(self, requires_maintenance: 'bool'):
+        """Sets the requires_maintenance of this V1MultiMachineJob.
+
+
+        :param requires_maintenance: The requires_maintenance of this V1MultiMachineJob.  # noqa: E501
+        :type: bool
+        """
+
+        self._requires_maintenance = requires_maintenance
 
     @property
     def spec(self) -> 'V1JobSpec':

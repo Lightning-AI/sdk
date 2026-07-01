@@ -76,6 +76,8 @@ type ClientService interface {
 
 	VirtualMachineServiceGetVirtualMachineMetrics(params *VirtualMachineServiceGetVirtualMachineMetricsParams, opts ...ClientOption) (*VirtualMachineServiceGetVirtualMachineMetricsOK, error)
 
+	VirtualMachineServiceListVMImages(params *VirtualMachineServiceListVMImagesParams, opts ...ClientOption) (*VirtualMachineServiceListVMImagesOK, error)
+
 	VirtualMachineServiceListVirtualMachines(params *VirtualMachineServiceListVirtualMachinesParams, opts ...ClientOption) (*VirtualMachineServiceListVirtualMachinesOK, error)
 
 	VirtualMachineServiceStartVirtualMachine(params *VirtualMachineServiceStartVirtualMachineParams, opts ...ClientOption) (*VirtualMachineServiceStartVirtualMachineOK, error)
@@ -545,6 +547,48 @@ func (a *Client) VirtualMachineServiceGetVirtualMachineMetrics(params *VirtualMa
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*VirtualMachineServiceGetVirtualMachineMetricsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+VirtualMachineServiceListVMImages virtual machine service list VM images API
+*/
+func (a *Client) VirtualMachineServiceListVMImages(params *VirtualMachineServiceListVMImagesParams, opts ...ClientOption) (*VirtualMachineServiceListVMImagesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewVirtualMachineServiceListVMImagesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "VirtualMachineService_ListVMImages",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/{clusterId}/vm-images",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &VirtualMachineServiceListVMImagesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*VirtualMachineServiceListVMImagesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*VirtualMachineServiceListVMImagesDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

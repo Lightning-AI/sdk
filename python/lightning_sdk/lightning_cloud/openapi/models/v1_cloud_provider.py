@@ -57,6 +57,7 @@ class V1CloudProvider(object):
     THUNDER_CAT = "THUNDER_CAT"
     TENSORDOCK = "TENSORDOCK"
     AZURE = "AZURE"
+    RAFAY = "RAFAY"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

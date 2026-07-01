@@ -61,6 +61,7 @@ class V1ServerSpec(object):
         'gpu_assignments': 'list[int]',
         'gpu_uuids': 'list[str]',
         'guest_accelerators': 'list[V1ServerAccelerator]',
+        'ib_device_infos': 'list[V1IBDeviceInfo]',
         'instance_managed_group_id': 'str',
         'instance_template_id': 'str',
         'instance_type': 'str',
@@ -76,6 +77,7 @@ class V1ServerSpec(object):
         'parent_resource_id': 'str',
         'parent_server_id': 'str',
         'persistent_disk_id': 'str',
+        'placement_group_id': 'str',
         'port_forwarding_rules': 'list[V1PortForwardRule]',
         'port_overrides': 'V1PortOverrides',
         'private_address': 'str',
@@ -126,6 +128,7 @@ class V1ServerSpec(object):
         'gpu_assignments': 'gpuAssignments',
         'gpu_uuids': 'gpuUuids',
         'guest_accelerators': 'guestAccelerators',
+        'ib_device_infos': 'ibDeviceInfos',
         'instance_managed_group_id': 'instanceManagedGroupId',
         'instance_template_id': 'instanceTemplateId',
         'instance_type': 'instanceType',
@@ -141,6 +144,7 @@ class V1ServerSpec(object):
         'parent_resource_id': 'parentResourceId',
         'parent_server_id': 'parentServerId',
         'persistent_disk_id': 'persistentDiskId',
+        'placement_group_id': 'placementGroupId',
         'port_forwarding_rules': 'portForwardingRules',
         'port_overrides': 'portOverrides',
         'private_address': 'privateAddress',
@@ -170,7 +174,7 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
@@ -192,6 +196,7 @@ class V1ServerSpec(object):
         self._gpu_assignments = None
         self._gpu_uuids = None
         self._guest_accelerators = None
+        self._ib_device_infos = None
         self._instance_managed_group_id = None
         self._instance_template_id = None
         self._instance_type = None
@@ -207,6 +212,7 @@ class V1ServerSpec(object):
         self._parent_resource_id = None
         self._parent_server_id = None
         self._persistent_disk_id = None
+        self._placement_group_id = None
         self._port_forwarding_rules = None
         self._port_overrides = None
         self._private_address = None
@@ -275,6 +281,8 @@ class V1ServerSpec(object):
             self.gpu_uuids = gpu_uuids
         if guest_accelerators is not None:
             self.guest_accelerators = guest_accelerators
+        if ib_device_infos is not None:
+            self.ib_device_infos = ib_device_infos
         if instance_managed_group_id is not None:
             self.instance_managed_group_id = instance_managed_group_id
         if instance_template_id is not None:
@@ -305,6 +313,8 @@ class V1ServerSpec(object):
             self.parent_server_id = parent_server_id
         if persistent_disk_id is not None:
             self.persistent_disk_id = persistent_disk_id
+        if placement_group_id is not None:
+            self.placement_group_id = placement_group_id
         if port_forwarding_rules is not None:
             self.port_forwarding_rules = port_forwarding_rules
         if port_overrides is not None:
@@ -781,6 +791,27 @@ class V1ServerSpec(object):
         self._guest_accelerators = guest_accelerators
 
     @property
+    def ib_device_infos(self) -> 'list[V1IBDeviceInfo]':
+        """Gets the ib_device_infos of this V1ServerSpec.  # noqa: E501
+
+
+        :return: The ib_device_infos of this V1ServerSpec.  # noqa: E501
+        :rtype: list[V1IBDeviceInfo]
+        """
+        return self._ib_device_infos
+
+    @ib_device_infos.setter
+    def ib_device_infos(self, ib_device_infos: 'list[V1IBDeviceInfo]'):
+        """Sets the ib_device_infos of this V1ServerSpec.
+
+
+        :param ib_device_infos: The ib_device_infos of this V1ServerSpec.  # noqa: E501
+        :type: list[V1IBDeviceInfo]
+        """
+
+        self._ib_device_infos = ib_device_infos
+
+    @property
     def instance_managed_group_id(self) -> 'str':
         """Gets the instance_managed_group_id of this V1ServerSpec.  # noqa: E501
 
@@ -1096,6 +1127,27 @@ class V1ServerSpec(object):
         """
 
         self._persistent_disk_id = persistent_disk_id
+
+    @property
+    def placement_group_id(self) -> 'str':
+        """Gets the placement_group_id of this V1ServerSpec.  # noqa: E501
+
+
+        :return: The placement_group_id of this V1ServerSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._placement_group_id
+
+    @placement_group_id.setter
+    def placement_group_id(self, placement_group_id: 'str'):
+        """Sets the placement_group_id of this V1ServerSpec.
+
+
+        :param placement_group_id: The placement_group_id of this V1ServerSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._placement_group_id = placement_group_id
 
     @property
     def port_forwarding_rules(self) -> 'list[V1PortForwardRule]':

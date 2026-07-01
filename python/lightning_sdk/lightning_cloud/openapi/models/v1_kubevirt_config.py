@@ -48,6 +48,7 @@ class V1KubevirtConfig(object):
         'node_count': 'int',
         'node_family': 'str',
         'provider': 'str',
+        'public_ip_available': 'bool',
         'show_as_lightning': 'bool',
         'supported': 'bool',
         'uuid': 'str',
@@ -62,13 +63,14 @@ class V1KubevirtConfig(object):
         'node_count': 'nodeCount',
         'node_family': 'nodeFamily',
         'provider': 'provider',
+        'public_ip_available': 'publicIpAvailable',
         'show_as_lightning': 'showAsLightning',
         'supported': 'supported',
         'uuid': 'uuid',
         'vm_node_count': 'vmNodeCount'
     }
 
-    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, default_vm_image: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, show_as_lightning: 'bool' =None, supported: 'bool' =None, uuid: 'str' =None, vm_node_count: 'int' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, default_vm_image: 'str' =None, k8s_node_count: 'int' =None, node_count: 'int' =None, node_family: 'str' =None, provider: 'str' =None, public_ip_available: 'bool' =None, show_as_lightning: 'bool' =None, supported: 'bool' =None, uuid: 'str' =None, vm_node_count: 'int' =None):  # noqa: E501
         """V1KubevirtConfig - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._api_url = None
@@ -77,6 +79,7 @@ class V1KubevirtConfig(object):
         self._node_count = None
         self._node_family = None
         self._provider = None
+        self._public_ip_available = None
         self._show_as_lightning = None
         self._supported = None
         self._uuid = None
@@ -96,6 +99,8 @@ class V1KubevirtConfig(object):
             self.node_family = node_family
         if provider is not None:
             self.provider = provider
+        if public_ip_available is not None:
+            self.public_ip_available = public_ip_available
         if show_as_lightning is not None:
             self.show_as_lightning = show_as_lightning
         if supported is not None:
@@ -251,6 +256,27 @@ class V1KubevirtConfig(object):
         """
 
         self._provider = provider
+
+    @property
+    def public_ip_available(self) -> 'bool':
+        """Gets the public_ip_available of this V1KubevirtConfig.  # noqa: E501
+
+
+        :return: The public_ip_available of this V1KubevirtConfig.  # noqa: E501
+        :rtype: bool
+        """
+        return self._public_ip_available
+
+    @public_ip_available.setter
+    def public_ip_available(self, public_ip_available: 'bool'):
+        """Sets the public_ip_available of this V1KubevirtConfig.
+
+
+        :param public_ip_available: The public_ip_available of this V1KubevirtConfig.  # noqa: E501
+        :type: bool
+        """
+
+        self._public_ip_available = public_ip_available
 
     @property
     def show_as_lightning(self) -> 'bool':

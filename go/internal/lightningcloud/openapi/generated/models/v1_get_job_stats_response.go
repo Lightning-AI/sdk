@@ -23,6 +23,9 @@ type V1GetJobStatsResponse struct {
 	// queued jobs
 	QueuedJobs int64 `json:"queuedJobs,omitempty"`
 
+	// requires maintenance
+	RequiresMaintenance int64 `json:"requiresMaintenance,omitempty"`
+
 	// running deployments
 	RunningDeployments int64 `json:"runningDeployments,omitempty"`
 

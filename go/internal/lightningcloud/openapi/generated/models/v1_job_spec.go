@@ -88,6 +88,9 @@ type V1JobSpec struct {
 	// pipeline Id
 	PipelineID string `json:"pipelineId,omitempty"`
 
+	// placement group Id
+	PlacementGroupID string `json:"placementGroupId,omitempty"`
+
 	// The number of machines to request for the job
 	Quantity int64 `json:"quantity,omitempty"`
 

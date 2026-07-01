@@ -544,6 +544,15 @@ export interface V1Sandbox {
    * Used to attribute sandbox performance to specific hosts.
    */
   machineId?: string;
+  /**
+   * Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the
+   * port number as a string (e.g. "8080" -> "https://8080-<id>-s.cloudspaces.litng.ai").
+   * Each URL routes through the cluster proxy to that port inside the sandbox.
+   * Only the ports the caller requested at create time are included; the
+   * internal sandbox API port is never exposed. Populated on create / get /
+   * list / update responses; empty when the sandbox has no user ports.
+   */
+  portUrls?: Record<string, string>;
 }
 
 export interface V1SandboxCommand {

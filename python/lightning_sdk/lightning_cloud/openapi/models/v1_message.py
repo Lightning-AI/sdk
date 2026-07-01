@@ -46,6 +46,7 @@ class V1Message(object):
         'assistant_id': 'str',
         'author': 'V1MessageAuthor',
         'cache_creation_tokens': 'str',
+        'cache_creation_tokens1h': 'str',
         'cache_read_tokens': 'str',
         'completion_tokens': 'str',
         'content': 'list[V1MessageContent]',
@@ -69,6 +70,7 @@ class V1Message(object):
         'assistant_id': 'assistantId',
         'author': 'author',
         'cache_creation_tokens': 'cacheCreationTokens',
+        'cache_creation_tokens1h': 'cacheCreationTokens1h',
         'cache_read_tokens': 'cacheReadTokens',
         'completion_tokens': 'completionTokens',
         'content': 'content',
@@ -86,13 +88,14 @@ class V1Message(object):
         'throughput': 'throughput'
     }
 
-    def __init__(self, account_id: 'str' =None, account_owner_type: 'V1AccountType' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
+    def __init__(self, account_id: 'str' =None, account_owner_type: 'V1AccountType' =None, assistant_id: 'str' =None, author: 'V1MessageAuthor' =None, cache_creation_tokens: 'str' =None, cache_creation_tokens1h: 'str' =None, cache_read_tokens: 'str' =None, completion_tokens: 'str' =None, content: 'list[V1MessageContent]' =None, conversation_id: 'str' =None, created_at: 'datetime' =None, executable: 'bool' =None, id: 'str' =None, internal_message: 'bool' =None, like: 'V1LikeStatus' =None, metadata: 'dict(str, str)' =None, model: 'str' =None, parent_conversation_id: 'str' =None, parent_message_id: 'str' =None, prompt_tokens: 'str' =None, throughput: 'float' =None):  # noqa: E501
         """V1Message - a model defined in Swagger"""  # noqa: E501
         self._account_id = None
         self._account_owner_type = None
         self._assistant_id = None
         self._author = None
         self._cache_creation_tokens = None
+        self._cache_creation_tokens1h = None
         self._cache_read_tokens = None
         self._completion_tokens = None
         self._content = None
@@ -119,6 +122,8 @@ class V1Message(object):
             self.author = author
         if cache_creation_tokens is not None:
             self.cache_creation_tokens = cache_creation_tokens
+        if cache_creation_tokens1h is not None:
+            self.cache_creation_tokens1h = cache_creation_tokens1h
         if cache_read_tokens is not None:
             self.cache_read_tokens = cache_read_tokens
         if completion_tokens is not None:
@@ -254,6 +259,27 @@ class V1Message(object):
         """
 
         self._cache_creation_tokens = cache_creation_tokens
+
+    @property
+    def cache_creation_tokens1h(self) -> 'str':
+        """Gets the cache_creation_tokens1h of this V1Message.  # noqa: E501
+
+
+        :return: The cache_creation_tokens1h of this V1Message.  # noqa: E501
+        :rtype: str
+        """
+        return self._cache_creation_tokens1h
+
+    @cache_creation_tokens1h.setter
+    def cache_creation_tokens1h(self, cache_creation_tokens1h: 'str'):
+        """Sets the cache_creation_tokens1h of this V1Message.
+
+
+        :param cache_creation_tokens1h: The cache_creation_tokens1h of this V1Message.  # noqa: E501
+        :type: str
+        """
+
+        self._cache_creation_tokens1h = cache_creation_tokens1h
 
     @property
     def cache_read_tokens(self) -> 'str':

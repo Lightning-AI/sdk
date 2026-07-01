@@ -71,7 +71,7 @@ type JobsServiceUpdateDeploymentBody struct {
 	IsPublished bool `json:"isPublished,omitempty"`
 
 	// k8s deployment config
-	K8sDeploymentConfig V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
+	K8sDeploymentConfig *V1K8sDeploymentConfig `json:"k8sDeploymentConfig,omitempty"`
 
 	// Whether the deployment is managed e.g handled by Lightning.AI for a client
 	Managed bool `json:"managed,omitempty"`
@@ -170,6 +170,10 @@ func (m *JobsServiceUpdateDeploymentBody) Validate(formats strfmt.Registry) erro
 	}
 
 	if err := m.validateEndpoint(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateK8sDeploymentConfig(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -364,6 +368,29 @@ func (m *JobsServiceUpdateDeploymentBody) validateEndpoint(formats strfmt.Regist
 	return nil
 }
 
+func (m *JobsServiceUpdateDeploymentBody) validateK8sDeploymentConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.K8sDeploymentConfig) { // not required
+		return nil
+	}
+
+	if m.K8sDeploymentConfig != nil {
+		if err := m.K8sDeploymentConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("k8sDeploymentConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("k8sDeploymentConfig")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *JobsServiceUpdateDeploymentBody) validateParameterSpec(formats strfmt.Registry) error {
 	if swag.IsZero(m.ParameterSpec) { // not required
 		return nil
@@ -542,6 +569,10 @@ func (m *JobsServiceUpdateDeploymentBody) ContextValidate(ctx context.Context, f
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateK8sDeploymentConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateParameterSpec(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -717,6 +748,31 @@ func (m *JobsServiceUpdateDeploymentBody) contextValidateEndpoint(ctx context.Co
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("endpoint")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *JobsServiceUpdateDeploymentBody) contextValidateK8sDeploymentConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.K8sDeploymentConfig != nil {
+
+		if swag.IsZero(m.K8sDeploymentConfig) { // not required
+			return nil
+		}
+
+		if err := m.K8sDeploymentConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("k8sDeploymentConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("k8sDeploymentConfig")
 			}
 
 			return err

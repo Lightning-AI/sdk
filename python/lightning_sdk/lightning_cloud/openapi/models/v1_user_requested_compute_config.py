@@ -49,6 +49,7 @@ class V1UserRequestedComputeConfig(object):
         'gpu_image_override': 'str',
         'id': 'str',
         'name': 'str',
+        'placement_group_id': 'str',
         'requested_run_duration_seconds': 'str',
         'same_compute_on_resume': 'bool',
         'shm_size': 'int',
@@ -64,13 +65,14 @@ class V1UserRequestedComputeConfig(object):
         'gpu_image_override': 'gpuImageOverride',
         'id': 'id',
         'name': 'name',
+        'placement_group_id': 'placementGroupId',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
         'same_compute_on_resume': 'sameComputeOnResume',
         'shm_size': 'shmSize',
         'spot': 'spot'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, cluster_override: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, cluster_override: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, placement_group_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
         self._cluster_override = None
@@ -80,6 +82,7 @@ class V1UserRequestedComputeConfig(object):
         self._gpu_image_override = None
         self._id = None
         self._name = None
+        self._placement_group_id = None
         self._requested_run_duration_seconds = None
         self._same_compute_on_resume = None
         self._shm_size = None
@@ -101,6 +104,8 @@ class V1UserRequestedComputeConfig(object):
             self.id = id
         if name is not None:
             self.name = name
+        if placement_group_id is not None:
+            self.placement_group_id = placement_group_id
         if requested_run_duration_seconds is not None:
             self.requested_run_duration_seconds = requested_run_duration_seconds
         if same_compute_on_resume is not None:
@@ -285,6 +290,27 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._name = name
+
+    @property
+    def placement_group_id(self) -> 'str':
+        """Gets the placement_group_id of this V1UserRequestedComputeConfig.  # noqa: E501
+
+
+        :return: The placement_group_id of this V1UserRequestedComputeConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._placement_group_id
+
+    @placement_group_id.setter
+    def placement_group_id(self, placement_group_id: 'str'):
+        """Sets the placement_group_id of this V1UserRequestedComputeConfig.
+
+
+        :param placement_group_id: The placement_group_id of this V1UserRequestedComputeConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._placement_group_id = placement_group_id
 
     @property
     def requested_run_duration_seconds(self) -> 'str':

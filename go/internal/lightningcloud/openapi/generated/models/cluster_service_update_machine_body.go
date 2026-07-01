@@ -19,6 +19,9 @@ import (
 // swagger:model ClusterServiceUpdateMachineBody
 type ClusterServiceUpdateMachineBody struct {
 
+	// Whether we want to move a node from one cluster to another
+	DesiredClusterID string `json:"desiredClusterId,omitempty"`
+
 	// Machine mode configuration to allow switching between VM and baremetal modes
 	MachineMode string `json:"machineMode,omitempty"`
 

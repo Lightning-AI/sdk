@@ -51,6 +51,9 @@ type V1MultiMachineJob struct {
 	// Required
 	ProjectID string `json:"projectId,omitempty"`
 
+	// Whether one of the node requires maintenance
+	RequiresMaintenance bool `json:"requiresMaintenance,omitempty"`
+
 	// Compute + run configuration
 	Spec *V1JobSpec `json:"spec,omitempty"`
 

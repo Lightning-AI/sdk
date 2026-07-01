@@ -46,7 +46,9 @@ class V1GetUserResponse(object):
         'api_key': 'str',
         'auto_replenish_amount': 'float',
         'auto_replenish_threshold': 'float',
+        'can_see_free_credits_end_notification': 'bool',
         'can_see_project_migration_opt_in': 'bool',
+        'closed_free_credits_end_notification_at': 'datetime',
         'country': 'str',
         'disable_shell_persistence': 'bool',
         'email': 'str',
@@ -100,7 +102,9 @@ class V1GetUserResponse(object):
         'api_key': 'apiKey',
         'auto_replenish_amount': 'autoReplenishAmount',
         'auto_replenish_threshold': 'autoReplenishThreshold',
+        'can_see_free_credits_end_notification': 'canSeeFreeCreditsEndNotification',
         'can_see_project_migration_opt_in': 'canSeeProjectMigrationOptIn',
+        'closed_free_credits_end_notification_at': 'closedFreeCreditsEndNotificationAt',
         'country': 'country',
         'disable_shell_persistence': 'disableShellPersistence',
         'email': 'email',
@@ -148,14 +152,16 @@ class V1GetUserResponse(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, can_see_project_migration_opt_in: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, force_project_migration_at: 'datetime' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_billing_admin: 'bool' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, internal_model_apis_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, personal_project_migration_at: 'datetime' =None, personal_project_migration_error: 'str' =None, personal_project_migration_status: 'str' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, project_migration_opt_in_at: 'datetime' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, can_see_free_credits_end_notification: 'bool' =None, can_see_project_migration_opt_in: 'bool' =None, closed_free_credits_end_notification_at: 'datetime' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, force_project_migration_at: 'datetime' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_billing_admin: 'bool' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, internal_model_apis_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, personal_project_migration_at: 'datetime' =None, personal_project_migration_error: 'str' =None, personal_project_migration_status: 'str' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, project_migration_opt_in_at: 'datetime' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
         self._api_key = None
         self._auto_replenish_amount = None
         self._auto_replenish_threshold = None
+        self._can_see_free_credits_end_notification = None
         self._can_see_project_migration_opt_in = None
+        self._closed_free_credits_end_notification_at = None
         self._country = None
         self._disable_shell_persistence = None
         self._email = None
@@ -212,8 +218,12 @@ class V1GetUserResponse(object):
             self.auto_replenish_amount = auto_replenish_amount
         if auto_replenish_threshold is not None:
             self.auto_replenish_threshold = auto_replenish_threshold
+        if can_see_free_credits_end_notification is not None:
+            self.can_see_free_credits_end_notification = can_see_free_credits_end_notification
         if can_see_project_migration_opt_in is not None:
             self.can_see_project_migration_opt_in = can_see_project_migration_opt_in
+        if closed_free_credits_end_notification_at is not None:
+            self.closed_free_credits_end_notification_at = closed_free_credits_end_notification_at
         if country is not None:
             self.country = country
         if disable_shell_persistence is not None:
@@ -413,6 +423,27 @@ class V1GetUserResponse(object):
         self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
+    def can_see_free_credits_end_notification(self) -> 'bool':
+        """Gets the can_see_free_credits_end_notification of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The can_see_free_credits_end_notification of this V1GetUserResponse.  # noqa: E501
+        :rtype: bool
+        """
+        return self._can_see_free_credits_end_notification
+
+    @can_see_free_credits_end_notification.setter
+    def can_see_free_credits_end_notification(self, can_see_free_credits_end_notification: 'bool'):
+        """Sets the can_see_free_credits_end_notification of this V1GetUserResponse.
+
+
+        :param can_see_free_credits_end_notification: The can_see_free_credits_end_notification of this V1GetUserResponse.  # noqa: E501
+        :type: bool
+        """
+
+        self._can_see_free_credits_end_notification = can_see_free_credits_end_notification
+
+    @property
     def can_see_project_migration_opt_in(self) -> 'bool':
         """Gets the can_see_project_migration_opt_in of this V1GetUserResponse.  # noqa: E501
 
@@ -432,6 +463,27 @@ class V1GetUserResponse(object):
         """
 
         self._can_see_project_migration_opt_in = can_see_project_migration_opt_in
+
+    @property
+    def closed_free_credits_end_notification_at(self) -> 'datetime':
+        """Gets the closed_free_credits_end_notification_at of this V1GetUserResponse.  # noqa: E501
+
+
+        :return: The closed_free_credits_end_notification_at of this V1GetUserResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._closed_free_credits_end_notification_at
+
+    @closed_free_credits_end_notification_at.setter
+    def closed_free_credits_end_notification_at(self, closed_free_credits_end_notification_at: 'datetime'):
+        """Sets the closed_free_credits_end_notification_at of this V1GetUserResponse.
+
+
+        :param closed_free_credits_end_notification_at: The closed_free_credits_end_notification_at of this V1GetUserResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._closed_free_credits_end_notification_at = closed_free_credits_end_notification_at
 
     @property
     def country(self) -> 'str':

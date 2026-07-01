@@ -99,6 +99,9 @@ type V1ExternalClusterSpec struct {
 	// pause automation
 	PauseAutomation bool `json:"pauseAutomation,omitempty"`
 
+	// Rafay Cloud configuration
+	RafayV1 *V1RafayDirectV1 `json:"rafayV1,omitempty"`
+
 	// Track reservation details for reserved capacity clusters
 	ReservationDetails *V1ReservationDetails `json:"reservationDetails,omitempty"`
 
@@ -195,6 +198,10 @@ func (m *V1ExternalClusterSpec) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOverprovisioning(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRafayV1(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -607,6 +614,29 @@ func (m *V1ExternalClusterSpec) validateOverprovisioning(formats strfmt.Registry
 	return nil
 }
 
+func (m *V1ExternalClusterSpec) validateRafayV1(formats strfmt.Registry) error {
+	if swag.IsZero(m.RafayV1) { // not required
+		return nil
+	}
+
+	if m.RafayV1 != nil {
+		if err := m.RafayV1.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("rafayV1")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("rafayV1")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1ExternalClusterSpec) validateReservationDetails(formats strfmt.Registry) error {
 	if swag.IsZero(m.ReservationDetails) { // not required
 		return nil
@@ -833,6 +863,10 @@ func (m *V1ExternalClusterSpec) ContextValidate(ctx context.Context, formats str
 	}
 
 	if err := m.contextValidateOverprovisioning(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRafayV1(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -1269,6 +1303,31 @@ func (m *V1ExternalClusterSpec) contextValidateOverprovisioning(ctx context.Cont
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1ExternalClusterSpec) contextValidateRafayV1(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RafayV1 != nil {
+
+		if swag.IsZero(m.RafayV1) { // not required
+			return nil
+		}
+
+		if err := m.RafayV1.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("rafayV1")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("rafayV1")
+			}
+
+			return err
+		}
 	}
 
 	return nil

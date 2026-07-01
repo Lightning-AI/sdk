@@ -17,10 +17,6 @@ import (
 // V1MachineDirectV1 MachineDirectV1 is used to connect machines directly to the Lightning platform,
 // machines use 'auth_token' from the cluster spec to authenticate and exchange the details
 //
-// TODO:
-//   - Storage
-//   - Firewall configs
-//
 // swagger:model v1MachineDirectV1
 type V1MachineDirectV1 struct {
 
@@ -50,6 +46,9 @@ type V1MachineDirectV1 struct {
 	// If true, the platform will connect to machines using their private IP addresses
 	PrivateNetworking bool `json:"privateNetworking,omitempty"`
 
+	// Whether we auto-refresh machines placement for the cluster
+	RefreshMachinesPlacement bool `json:"refreshMachinesPlacement,omitempty"`
+
 	// All available regions
 	Regions []string `json:"regions"`
 
@@ -64,6 +63,9 @@ type V1MachineDirectV1 struct {
 
 	// Secret ID of the tailscale auth key for the cluster (to connect to machines)
 	TailscaleAuthKeySecretID string `json:"tailscaleAuthKeySecretId,omitempty"`
+
+	// Whether baremetal agent reconciliation is enabled on the cluster's machines
+	UpdateAgent bool `json:"updateAgent,omitempty"`
 
 	// Prepare NVMe disks on host to for VMs
 	UseNvmeDisks bool `json:"useNvmeDisks,omitempty"`

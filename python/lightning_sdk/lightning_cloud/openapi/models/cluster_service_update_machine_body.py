@@ -41,6 +41,7 @@ class ClusterServiceUpdateMachineBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'desired_cluster_id': 'str',
         'machine_mode': 'str',
         'name': 'str',
         'ordering_index': 'int',
@@ -55,6 +56,7 @@ class ClusterServiceUpdateMachineBody(object):
     }
 
     attribute_map = {
+        'desired_cluster_id': 'desiredClusterId',
         'machine_mode': 'machineMode',
         'name': 'name',
         'ordering_index': 'orderingIndex',
@@ -68,8 +70,9 @@ class ClusterServiceUpdateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, desired_cluster_id: 'str' =None, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
+        self._desired_cluster_id = None
         self._machine_mode = None
         self._name = None
         self._ordering_index = None
@@ -82,6 +85,8 @@ class ClusterServiceUpdateMachineBody(object):
         self._schedulable_affinity = None
         self._unschedulable = None
         self.discriminator = None
+        if desired_cluster_id is not None:
+            self.desired_cluster_id = desired_cluster_id
         if machine_mode is not None:
             self.machine_mode = machine_mode
         if name is not None:
@@ -104,6 +109,27 @@ class ClusterServiceUpdateMachineBody(object):
             self.schedulable_affinity = schedulable_affinity
         if unschedulable is not None:
             self.unschedulable = unschedulable
+
+    @property
+    def desired_cluster_id(self) -> 'str':
+        """Gets the desired_cluster_id of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The desired_cluster_id of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._desired_cluster_id
+
+    @desired_cluster_id.setter
+    def desired_cluster_id(self, desired_cluster_id: 'str'):
+        """Sets the desired_cluster_id of this ClusterServiceUpdateMachineBody.
+
+
+        :param desired_cluster_id: The desired_cluster_id of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._desired_cluster_id = desired_cluster_id
 
     @property
     def machine_mode(self) -> 'str':

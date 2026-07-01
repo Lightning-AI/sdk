@@ -20,77 +20,52 @@ import (
 // swagger:model VirtualMachineServiceCreateVirtualMachineBody
 type VirtualMachineServiceCreateVirtualMachineBody struct {
 
-	// can download source code
-	CanDownloadSourceCode bool `json:"canDownloadSourceCode,omitempty"`
+	// Raw cloud-init YAML (#cloud-config) applied to the VM at boot.
+	CloudInitConfig string `json:"cloudInitConfig,omitempty"`
 
-	// The ID of the CloudSpace Environment Template config to use as a base for the CloudSpace
-	CloudSpaceEnvironmentTemplateID string `json:"cloudSpaceEnvironmentTemplateId,omitempty"`
-
-	// cloud space instance Cpu image override
-	CloudSpaceInstanceCPUImageOverride string `json:"cloudSpaceInstanceCpuImageOverride,omitempty"`
-
-	// cloud space instance gpu image override
-	CloudSpaceInstanceGpuImageOverride string `json:"cloudSpaceInstanceGpuImageOverride,omitempty"`
-
-	// compute name
+	// Cluster-accelerator slug that determines CPU/GPU/RAM/storage resources.
+	// Optional when explicit resource fields (cpu, gpu, memory_gb, storage_gb) are provided.
 	ComputeName string `json:"computeName,omitempty"`
 
-	// data connection mounts
-	DataConnectionMounts []*V1DataConnectionMount `json:"dataConnectionMounts"`
+	// Explicit CPU core count (bypasses compute_name accelerator lookup).
+	CPU int64 `json:"cpu,omitempty"`
 
-	// create clean machine without any injected secrets
-	DisableSecrets bool `json:"disableSecrets,omitempty"`
-
-	// disk size
+	// Optional storage override in GB; when 0 the accelerator default is used.
 	DiskSize string `json:"diskSize,omitempty"`
 
-	// display name
-	DisplayName string `json:"displayName,omitempty"`
+	// Explicit GPU count (bypasses compute_name accelerator lookup).
+	Gpu int64 `json:"gpu,omitempty"`
 
-	// use display_name instead
+	// IP connectivity type: "port-fwd" or "public"
+	IPConnectivity string `json:"ipConnectivity,omitempty"`
+
+	// Explicit RAM in GiB (bypasses compute_name accelerator lookup).
+	MemoryGb string `json:"memoryGb,omitempty"`
+
+	// Human-readable VM name; sanitised into a provider-safe identifier.
 	Name string `json:"name,omitempty"`
 
-	// Organization ID, required for VM creation to validate cluster binding
+	// Organization ID; when empty the handler falls back to the cluster's org.
 	OrgID string `json:"orgId,omitempty"`
 
-	// plugins
-	Plugins []string `json:"plugins"`
+	// Port forward rules for port-forwarding connectivity
+	PortForwardRules []*V1PortForwardRule `json:"portForwardRules"`
 
-	// project Id
+	// Project that owns the VM (used for authorization).
 	ProjectID string `json:"projectId,omitempty"`
 
-	// Requested run duration for the Studio, used to get its machine using dynamic workload scheduler (DWS)
-	RequestedRunDurationSeconds string `json:"requestedRunDurationSeconds,omitempty"`
+	// Explicit storage in GiB (bypasses compute_name accelerator lookup).
+	StorageGb string `json:"storageGb,omitempty"`
 
-	// same compute on resume
-	SameComputeOnResume bool `json:"sameComputeOnResume,omitempty"`
-
-	// distinguish sandbox in the UI and trim down regular Studio
-	Sandbox bool `json:"sandbox,omitempty"`
-
-	// seed files
-	SeedFiles []*V1CloudSpaceSeedFile `json:"seedFiles"`
-
-	// cloudspace creation request was sent from source
-	Source *V1CloudSpaceSourceType `json:"source,omitempty"`
-
-	// spot
-	Spot bool `json:"spot,omitempty"`
+	// VM image name override; when empty the cluster default image is used.
+	VMImage string `json:"vmImage,omitempty"`
 }
 
 // Validate validates this virtual machine service create virtual machine body
 func (m *VirtualMachineServiceCreateVirtualMachineBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDataConnectionMounts(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSeedFiles(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSource(formats); err != nil {
+	if err := m.validatePortForwardRules(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,84 +75,31 @@ func (m *VirtualMachineServiceCreateVirtualMachineBody) Validate(formats strfmt.
 	return nil
 }
 
-func (m *VirtualMachineServiceCreateVirtualMachineBody) validateDataConnectionMounts(formats strfmt.Registry) error {
-	if swag.IsZero(m.DataConnectionMounts) { // not required
+func (m *VirtualMachineServiceCreateVirtualMachineBody) validatePortForwardRules(formats strfmt.Registry) error {
+	if swag.IsZero(m.PortForwardRules) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.DataConnectionMounts); i++ {
-		if swag.IsZero(m.DataConnectionMounts[i]) { // not required
+	for i := 0; i < len(m.PortForwardRules); i++ {
+		if swag.IsZero(m.PortForwardRules[i]) { // not required
 			continue
 		}
 
-		if m.DataConnectionMounts[i] != nil {
-			if err := m.DataConnectionMounts[i].Validate(formats); err != nil {
+		if m.PortForwardRules[i] != nil {
+			if err := m.PortForwardRules[i].Validate(formats); err != nil {
 				ve := new(errors.Validation)
 				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dataConnectionMounts" + "." + strconv.Itoa(i))
+					return ve.ValidateName("portForwardRules" + "." + strconv.Itoa(i))
 				}
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dataConnectionMounts" + "." + strconv.Itoa(i))
+					return ce.ValidateName("portForwardRules" + "." + strconv.Itoa(i))
 				}
 
 				return err
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *VirtualMachineServiceCreateVirtualMachineBody) validateSeedFiles(formats strfmt.Registry) error {
-	if swag.IsZero(m.SeedFiles) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.SeedFiles); i++ {
-		if swag.IsZero(m.SeedFiles[i]) { // not required
-			continue
-		}
-
-		if m.SeedFiles[i] != nil {
-			if err := m.SeedFiles[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("seedFiles" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("seedFiles" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *VirtualMachineServiceCreateVirtualMachineBody) validateSource(formats strfmt.Registry) error {
-	if swag.IsZero(m.Source) { // not required
-		return nil
-	}
-
-	if m.Source != nil {
-		if err := m.Source.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("source")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("source")
-			}
-
-			return err
-		}
 	}
 
 	return nil
@@ -187,15 +109,7 @@ func (m *VirtualMachineServiceCreateVirtualMachineBody) validateSource(formats s
 func (m *VirtualMachineServiceCreateVirtualMachineBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateDataConnectionMounts(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateSeedFiles(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateSource(ctx, formats); err != nil {
+	if err := m.contextValidatePortForwardRules(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -205,84 +119,30 @@ func (m *VirtualMachineServiceCreateVirtualMachineBody) ContextValidate(ctx cont
 	return nil
 }
 
-func (m *VirtualMachineServiceCreateVirtualMachineBody) contextValidateDataConnectionMounts(ctx context.Context, formats strfmt.Registry) error {
+func (m *VirtualMachineServiceCreateVirtualMachineBody) contextValidatePortForwardRules(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.DataConnectionMounts); i++ {
+	for i := 0; i < len(m.PortForwardRules); i++ {
 
-		if m.DataConnectionMounts[i] != nil {
+		if m.PortForwardRules[i] != nil {
 
-			if swag.IsZero(m.DataConnectionMounts[i]) { // not required
+			if swag.IsZero(m.PortForwardRules[i]) { // not required
 				return nil
 			}
 
-			if err := m.DataConnectionMounts[i].ContextValidate(ctx, formats); err != nil {
+			if err := m.PortForwardRules[i].ContextValidate(ctx, formats); err != nil {
 				ve := new(errors.Validation)
 				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dataConnectionMounts" + "." + strconv.Itoa(i))
+					return ve.ValidateName("portForwardRules" + "." + strconv.Itoa(i))
 				}
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dataConnectionMounts" + "." + strconv.Itoa(i))
+					return ce.ValidateName("portForwardRules" + "." + strconv.Itoa(i))
 				}
 
 				return err
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *VirtualMachineServiceCreateVirtualMachineBody) contextValidateSeedFiles(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.SeedFiles); i++ {
-
-		if m.SeedFiles[i] != nil {
-
-			if swag.IsZero(m.SeedFiles[i]) { // not required
-				return nil
-			}
-
-			if err := m.SeedFiles[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("seedFiles" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("seedFiles" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *VirtualMachineServiceCreateVirtualMachineBody) contextValidateSource(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Source != nil {
-
-		if swag.IsZero(m.Source) { // not required
-			return nil
-		}
-
-		if err := m.Source.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("source")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("source")
-			}
-
-			return err
-		}
 	}
 
 	return nil

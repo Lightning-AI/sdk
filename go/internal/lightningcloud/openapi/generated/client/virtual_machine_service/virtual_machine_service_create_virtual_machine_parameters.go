@@ -68,7 +68,7 @@ type VirtualMachineServiceCreateVirtualMachineParams struct {
 
 	/* ClusterID.
 
-	   In which Cluster you should create the CloudSpace
+	   Cluster in which to create the VM (path parameter, always required).
 	*/
 	ClusterID string
 

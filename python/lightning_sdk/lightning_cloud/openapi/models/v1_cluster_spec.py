@@ -72,11 +72,13 @@ class V1ClusterSpec(object):
         'parent_cluster_id': 'str',
         'parent_cluster_type': 'str',
         'pause_automation': 'bool',
+        'rafay_v1': 'V1RafayDirectV1',
         'reservation_details': 'V1ReservationDetails',
         'reserved_capacity_provider': 'bool',
         'reserved_instances_only': 'bool',
         'security_options': 'V1ClusterSecurityOptions',
         'slurm_v1': 'V1SlurmV1',
+        'storage_retention_period_days': 'int',
         'tagging_options': 'V1ClusterTaggingOptions',
         'tensordock_v1': 'V1TensorDockDirectV1',
         'thunder_cat_v1': 'V1ThunderCatDirectV1',
@@ -119,11 +121,13 @@ class V1ClusterSpec(object):
         'parent_cluster_id': 'parentClusterId',
         'parent_cluster_type': 'parentClusterType',
         'pause_automation': 'pauseAutomation',
+        'rafay_v1': 'rafayV1',
         'reservation_details': 'reservationDetails',
         'reserved_capacity_provider': 'reservedCapacityProvider',
         'reserved_instances_only': 'reservedInstancesOnly',
         'security_options': 'securityOptions',
         'slurm_v1': 'slurmV1',
+        'storage_retention_period_days': 'storageRetentionPeriodDays',
         'tagging_options': 'taggingOptions',
         'tensordock_v1': 'tensordockV1',
         'thunder_cat_v1': 'thunderCatV1',
@@ -134,7 +138,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, rafay_v1: 'V1RafayDirectV1' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, storage_retention_period_days: 'int' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -167,11 +171,13 @@ class V1ClusterSpec(object):
         self._parent_cluster_id = None
         self._parent_cluster_type = None
         self._pause_automation = None
+        self._rafay_v1 = None
         self._reservation_details = None
         self._reserved_capacity_provider = None
         self._reserved_instances_only = None
         self._security_options = None
         self._slurm_v1 = None
+        self._storage_retention_period_days = None
         self._tagging_options = None
         self._tensordock_v1 = None
         self._thunder_cat_v1 = None
@@ -243,6 +249,8 @@ class V1ClusterSpec(object):
             self.parent_cluster_type = parent_cluster_type
         if pause_automation is not None:
             self.pause_automation = pause_automation
+        if rafay_v1 is not None:
+            self.rafay_v1 = rafay_v1
         if reservation_details is not None:
             self.reservation_details = reservation_details
         if reserved_capacity_provider is not None:
@@ -253,6 +261,8 @@ class V1ClusterSpec(object):
             self.security_options = security_options
         if slurm_v1 is not None:
             self.slurm_v1 = slurm_v1
+        if storage_retention_period_days is not None:
+            self.storage_retention_period_days = storage_retention_period_days
         if tagging_options is not None:
             self.tagging_options = tagging_options
         if tensordock_v1 is not None:
@@ -924,6 +934,27 @@ class V1ClusterSpec(object):
         self._pause_automation = pause_automation
 
     @property
+    def rafay_v1(self) -> 'V1RafayDirectV1':
+        """Gets the rafay_v1 of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The rafay_v1 of this V1ClusterSpec.  # noqa: E501
+        :rtype: V1RafayDirectV1
+        """
+        return self._rafay_v1
+
+    @rafay_v1.setter
+    def rafay_v1(self, rafay_v1: 'V1RafayDirectV1'):
+        """Sets the rafay_v1 of this V1ClusterSpec.
+
+
+        :param rafay_v1: The rafay_v1 of this V1ClusterSpec.  # noqa: E501
+        :type: V1RafayDirectV1
+        """
+
+        self._rafay_v1 = rafay_v1
+
+    @property
     def reservation_details(self) -> 'V1ReservationDetails':
         """Gets the reservation_details of this V1ClusterSpec.  # noqa: E501
 
@@ -1027,6 +1058,27 @@ class V1ClusterSpec(object):
         """
 
         self._slurm_v1 = slurm_v1
+
+    @property
+    def storage_retention_period_days(self) -> 'int':
+        """Gets the storage_retention_period_days of this V1ClusterSpec.  # noqa: E501
+
+
+        :return: The storage_retention_period_days of this V1ClusterSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._storage_retention_period_days
+
+    @storage_retention_period_days.setter
+    def storage_retention_period_days(self, storage_retention_period_days: 'int'):
+        """Sets the storage_retention_period_days of this V1ClusterSpec.
+
+
+        :param storage_retention_period_days: The storage_retention_period_days of this V1ClusterSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._storage_retention_period_days = storage_retention_period_days
 
     @property
     def tagging_options(self) -> 'V1ClusterTaggingOptions':

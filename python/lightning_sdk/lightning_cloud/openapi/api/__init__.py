@@ -5,6 +5,7 @@ from __future__ import absolute_import
 # import apis into api package
 from lightning_sdk.lightning_cloud.openapi.api.agent_service_api import AgentServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.analytics_service_api import AnalyticsServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.anthropic_credentials_service_api import AnthropicCredentialsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.assistants_service_api import AssistantsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.auth_service_api import AuthServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.billing_service_api import BillingServiceApi

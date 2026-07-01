@@ -38,6 +38,9 @@ type V1KubevirtConfig struct {
 	// Kubevirt provider
 	Provider string `json:"provider,omitempty"`
 
+	// Whether this cluster supports public IP connectivity for VMs
+	PublicIPAvailable bool `json:"publicIpAvailable,omitempty"`
+
 	// Whether this cluster is used to support Lightning with compute on the platform
 	ShowAsLightning bool `json:"showAsLightning,omitempty"`
 

@@ -41,198 +41,108 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'can_download_source_code': 'bool',
-        'cloud_space_environment_template_id': 'str',
-        'cloud_space_instance_cpu_image_override': 'str',
-        'cloud_space_instance_gpu_image_override': 'str',
+        'cloud_init_config': 'str',
         'compute_name': 'str',
-        'data_connection_mounts': 'list[V1DataConnectionMount]',
-        'disable_secrets': 'bool',
+        'cpu': 'int',
         'disk_size': 'str',
-        'display_name': 'str',
+        'gpu': 'int',
+        'ip_connectivity': 'str',
+        'memory_gb': 'str',
         'name': 'str',
         'org_id': 'str',
-        'plugins': 'list[str]',
+        'port_forward_rules': 'list[V1PortForwardRule]',
         'project_id': 'str',
-        'requested_run_duration_seconds': 'str',
-        'same_compute_on_resume': 'bool',
-        'sandbox': 'bool',
-        'seed_files': 'list[V1CloudSpaceSeedFile]',
-        'source': 'V1CloudSpaceSourceType',
-        'spot': 'bool'
+        'storage_gb': 'str',
+        'vm_image': 'str'
     }
 
     attribute_map = {
-        'can_download_source_code': 'canDownloadSourceCode',
-        'cloud_space_environment_template_id': 'cloudSpaceEnvironmentTemplateId',
-        'cloud_space_instance_cpu_image_override': 'cloudSpaceInstanceCpuImageOverride',
-        'cloud_space_instance_gpu_image_override': 'cloudSpaceInstanceGpuImageOverride',
+        'cloud_init_config': 'cloudInitConfig',
         'compute_name': 'computeName',
-        'data_connection_mounts': 'dataConnectionMounts',
-        'disable_secrets': 'disableSecrets',
+        'cpu': 'cpu',
         'disk_size': 'diskSize',
-        'display_name': 'displayName',
+        'gpu': 'gpu',
+        'ip_connectivity': 'ipConnectivity',
+        'memory_gb': 'memoryGb',
         'name': 'name',
         'org_id': 'orgId',
-        'plugins': 'plugins',
+        'port_forward_rules': 'portForwardRules',
         'project_id': 'projectId',
-        'requested_run_duration_seconds': 'requestedRunDurationSeconds',
-        'same_compute_on_resume': 'sameComputeOnResume',
-        'sandbox': 'sandbox',
-        'seed_files': 'seedFiles',
-        'source': 'source',
-        'spot': 'spot'
+        'storage_gb': 'storageGb',
+        'vm_image': 'vmImage'
     }
 
-    def __init__(self, can_download_source_code: 'bool' =None, cloud_space_environment_template_id: 'str' =None, cloud_space_instance_cpu_image_override: 'str' =None, cloud_space_instance_gpu_image_override: 'str' =None, compute_name: 'str' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_secrets: 'bool' =None, disk_size: 'str' =None, display_name: 'str' =None, name: 'str' =None, org_id: 'str' =None, plugins: 'list[str]' =None, project_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, sandbox: 'bool' =None, seed_files: 'list[V1CloudSpaceSeedFile]' =None, source: 'V1CloudSpaceSourceType' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, cloud_init_config: 'str' =None, compute_name: 'str' =None, cpu: 'int' =None, disk_size: 'str' =None, gpu: 'int' =None, ip_connectivity: 'str' =None, memory_gb: 'str' =None, name: 'str' =None, org_id: 'str' =None, port_forward_rules: 'list[V1PortForwardRule]' =None, project_id: 'str' =None, storage_gb: 'str' =None, vm_image: 'str' =None):  # noqa: E501
         """VirtualMachineServiceCreateVirtualMachineBody - a model defined in Swagger"""  # noqa: E501
-        self._can_download_source_code = None
-        self._cloud_space_environment_template_id = None
-        self._cloud_space_instance_cpu_image_override = None
-        self._cloud_space_instance_gpu_image_override = None
+        self._cloud_init_config = None
         self._compute_name = None
-        self._data_connection_mounts = None
-        self._disable_secrets = None
+        self._cpu = None
         self._disk_size = None
-        self._display_name = None
+        self._gpu = None
+        self._ip_connectivity = None
+        self._memory_gb = None
         self._name = None
         self._org_id = None
-        self._plugins = None
+        self._port_forward_rules = None
         self._project_id = None
-        self._requested_run_duration_seconds = None
-        self._same_compute_on_resume = None
-        self._sandbox = None
-        self._seed_files = None
-        self._source = None
-        self._spot = None
+        self._storage_gb = None
+        self._vm_image = None
         self.discriminator = None
-        if can_download_source_code is not None:
-            self.can_download_source_code = can_download_source_code
-        if cloud_space_environment_template_id is not None:
-            self.cloud_space_environment_template_id = cloud_space_environment_template_id
-        if cloud_space_instance_cpu_image_override is not None:
-            self.cloud_space_instance_cpu_image_override = cloud_space_instance_cpu_image_override
-        if cloud_space_instance_gpu_image_override is not None:
-            self.cloud_space_instance_gpu_image_override = cloud_space_instance_gpu_image_override
+        if cloud_init_config is not None:
+            self.cloud_init_config = cloud_init_config
         if compute_name is not None:
             self.compute_name = compute_name
-        if data_connection_mounts is not None:
-            self.data_connection_mounts = data_connection_mounts
-        if disable_secrets is not None:
-            self.disable_secrets = disable_secrets
+        if cpu is not None:
+            self.cpu = cpu
         if disk_size is not None:
             self.disk_size = disk_size
-        if display_name is not None:
-            self.display_name = display_name
+        if gpu is not None:
+            self.gpu = gpu
+        if ip_connectivity is not None:
+            self.ip_connectivity = ip_connectivity
+        if memory_gb is not None:
+            self.memory_gb = memory_gb
         if name is not None:
             self.name = name
         if org_id is not None:
             self.org_id = org_id
-        if plugins is not None:
-            self.plugins = plugins
+        if port_forward_rules is not None:
+            self.port_forward_rules = port_forward_rules
         if project_id is not None:
             self.project_id = project_id
-        if requested_run_duration_seconds is not None:
-            self.requested_run_duration_seconds = requested_run_duration_seconds
-        if same_compute_on_resume is not None:
-            self.same_compute_on_resume = same_compute_on_resume
-        if sandbox is not None:
-            self.sandbox = sandbox
-        if seed_files is not None:
-            self.seed_files = seed_files
-        if source is not None:
-            self.source = source
-        if spot is not None:
-            self.spot = spot
+        if storage_gb is not None:
+            self.storage_gb = storage_gb
+        if vm_image is not None:
+            self.vm_image = vm_image
 
     @property
-    def can_download_source_code(self) -> 'bool':
-        """Gets the can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def cloud_init_config(self) -> 'str':
+        """Gets the cloud_init_config of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Raw cloud-init YAML (#cloud-config) applied to the VM at boot.  # noqa: E501
 
-        :return: The can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._can_download_source_code
-
-    @can_download_source_code.setter
-    def can_download_source_code(self, can_download_source_code: 'bool'):
-        """Sets the can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param can_download_source_code: The can_download_source_code of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._can_download_source_code = can_download_source_code
-
-    @property
-    def cloud_space_environment_template_id(self) -> 'str':
-        """Gets the cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :return: The cloud_init_config of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
         """
-        return self._cloud_space_environment_template_id
+        return self._cloud_init_config
 
-    @cloud_space_environment_template_id.setter
-    def cloud_space_environment_template_id(self, cloud_space_environment_template_id: 'str'):
-        """Sets the cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.
+    @cloud_init_config.setter
+    def cloud_init_config(self, cloud_init_config: 'str'):
+        """Sets the cloud_init_config of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Raw cloud-init YAML (#cloud-config) applied to the VM at boot.  # noqa: E501
 
-        :param cloud_space_environment_template_id: The cloud_space_environment_template_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :param cloud_init_config: The cloud_init_config of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
         """
 
-        self._cloud_space_environment_template_id = cloud_space_environment_template_id
-
-    @property
-    def cloud_space_instance_cpu_image_override(self) -> 'str':
-        """Gets the cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloud_space_instance_cpu_image_override
-
-    @cloud_space_instance_cpu_image_override.setter
-    def cloud_space_instance_cpu_image_override(self, cloud_space_instance_cpu_image_override: 'str'):
-        """Sets the cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param cloud_space_instance_cpu_image_override: The cloud_space_instance_cpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: str
-        """
-
-        self._cloud_space_instance_cpu_image_override = cloud_space_instance_cpu_image_override
-
-    @property
-    def cloud_space_instance_gpu_image_override(self) -> 'str':
-        """Gets the cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: str
-        """
-        return self._cloud_space_instance_gpu_image_override
-
-    @cloud_space_instance_gpu_image_override.setter
-    def cloud_space_instance_gpu_image_override(self, cloud_space_instance_gpu_image_override: 'str'):
-        """Sets the cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param cloud_space_instance_gpu_image_override: The cloud_space_instance_gpu_image_override of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: str
-        """
-
-        self._cloud_space_instance_gpu_image_override = cloud_space_instance_gpu_image_override
+        self._cloud_init_config = cloud_init_config
 
     @property
     def compute_name(self) -> 'str':
         """Gets the compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Cluster-accelerator slug that determines CPU/GPU/RAM/storage resources. Optional when explicit resource fields (cpu, gpu, memory_gb, storage_gb) are provided.  # noqa: E501
 
         :return: The compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
@@ -243,6 +153,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def compute_name(self, compute_name: 'str'):
         """Sets the compute_name of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Cluster-accelerator slug that determines CPU/GPU/RAM/storage resources. Optional when explicit resource fields (cpu, gpu, memory_gb, storage_gb) are provided.  # noqa: E501
 
         :param compute_name: The compute_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
@@ -251,51 +162,33 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._compute_name = compute_name
 
     @property
-    def data_connection_mounts(self) -> 'list[V1DataConnectionMount]':
-        """Gets the data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def cpu(self) -> 'int':
+        """Gets the cpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Explicit CPU core count (bypasses compute_name accelerator lookup).  # noqa: E501
 
-        :return: The data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: list[V1DataConnectionMount]
+        :return: The cpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: int
         """
-        return self._data_connection_mounts
+        return self._cpu
 
-    @data_connection_mounts.setter
-    def data_connection_mounts(self, data_connection_mounts: 'list[V1DataConnectionMount]'):
-        """Sets the data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.
+    @cpu.setter
+    def cpu(self, cpu: 'int'):
+        """Sets the cpu of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Explicit CPU core count (bypasses compute_name accelerator lookup).  # noqa: E501
 
-        :param data_connection_mounts: The data_connection_mounts of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: list[V1DataConnectionMount]
-        """
-
-        self._data_connection_mounts = data_connection_mounts
-
-    @property
-    def disable_secrets(self) -> 'bool':
-        """Gets the disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._disable_secrets
-
-    @disable_secrets.setter
-    def disable_secrets(self, disable_secrets: 'bool'):
-        """Sets the disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param disable_secrets: The disable_secrets of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
+        :param cpu: The cpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: int
         """
 
-        self._disable_secrets = disable_secrets
+        self._cpu = cpu
 
     @property
     def disk_size(self) -> 'str':
         """Gets the disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Optional storage override in GB; when 0 the accelerator default is used.  # noqa: E501
 
         :return: The disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
@@ -306,6 +199,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def disk_size(self, disk_size: 'str'):
         """Sets the disk_size of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Optional storage override in GB; when 0 the accelerator default is used.  # noqa: E501
 
         :param disk_size: The disk_size of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
@@ -314,30 +208,77 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._disk_size = disk_size
 
     @property
-    def display_name(self) -> 'str':
-        """Gets the display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def gpu(self) -> 'int':
+        """Gets the gpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+        Explicit GPU count (bypasses compute_name accelerator lookup).  # noqa: E501
+
+        :return: The gpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: int
+        """
+        return self._gpu
+
+    @gpu.setter
+    def gpu(self, gpu: 'int'):
+        """Sets the gpu of this VirtualMachineServiceCreateVirtualMachineBody.
+
+        Explicit GPU count (bypasses compute_name accelerator lookup).  # noqa: E501
+
+        :param gpu: The gpu of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: int
+        """
+
+        self._gpu = gpu
+
+    @property
+    def ip_connectivity(self) -> 'str':
+        """Gets the ip_connectivity of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :return: The ip_connectivity of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
         """
-        return self._display_name
+        return self._ip_connectivity
 
-    @display_name.setter
-    def display_name(self, display_name: 'str'):
-        """Sets the display_name of this VirtualMachineServiceCreateVirtualMachineBody.
+    @ip_connectivity.setter
+    def ip_connectivity(self, ip_connectivity: 'str'):
+        """Sets the ip_connectivity of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param display_name: The display_name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :param ip_connectivity: The ip_connectivity of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
         """
 
-        self._display_name = display_name
+        self._ip_connectivity = ip_connectivity
+
+    @property
+    def memory_gb(self) -> 'str':
+        """Gets the memory_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+
+        Explicit RAM in GiB (bypasses compute_name accelerator lookup).  # noqa: E501
+
+        :return: The memory_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._memory_gb
+
+    @memory_gb.setter
+    def memory_gb(self, memory_gb: 'str'):
+        """Sets the memory_gb of this VirtualMachineServiceCreateVirtualMachineBody.
+
+        Explicit RAM in GiB (bypasses compute_name accelerator lookup).  # noqa: E501
+
+        :param memory_gb: The memory_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._memory_gb = memory_gb
 
     @property
     def name(self) -> 'str':
         """Gets the name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Human-readable VM name; sanitised into a provider-safe identifier.  # noqa: E501
 
         :return: The name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
@@ -348,6 +289,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def name(self, name: 'str'):
         """Sets the name of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Human-readable VM name; sanitised into a provider-safe identifier.  # noqa: E501
 
         :param name: The name of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
@@ -359,6 +301,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def org_id(self) -> 'str':
         """Gets the org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Organization ID; when empty the handler falls back to the cluster's org.  # noqa: E501
 
         :return: The org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
@@ -369,6 +312,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def org_id(self, org_id: 'str'):
         """Sets the org_id of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Organization ID; when empty the handler falls back to the cluster's org.  # noqa: E501
 
         :param org_id: The org_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
@@ -377,30 +321,31 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._org_id = org_id
 
     @property
-    def plugins(self) -> 'list[str]':
-        """Gets the plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def port_forward_rules(self) -> 'list[V1PortForwardRule]':
+        """Gets the port_forward_rules of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
 
-        :return: The plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: list[str]
+        :return: The port_forward_rules of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: list[V1PortForwardRule]
         """
-        return self._plugins
+        return self._port_forward_rules
 
-    @plugins.setter
-    def plugins(self, plugins: 'list[str]'):
-        """Sets the plugins of this VirtualMachineServiceCreateVirtualMachineBody.
+    @port_forward_rules.setter
+    def port_forward_rules(self, port_forward_rules: 'list[V1PortForwardRule]'):
+        """Sets the port_forward_rules of this VirtualMachineServiceCreateVirtualMachineBody.
 
 
-        :param plugins: The plugins of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: list[str]
+        :param port_forward_rules: The port_forward_rules of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: list[V1PortForwardRule]
         """
 
-        self._plugins = plugins
+        self._port_forward_rules = port_forward_rules
 
     @property
     def project_id(self) -> 'str':
         """Gets the project_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Project that owns the VM (used for authorization).  # noqa: E501
 
         :return: The project_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
@@ -411,6 +356,7 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
     def project_id(self, project_id: 'str'):
         """Sets the project_id of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Project that owns the VM (used for authorization).  # noqa: E501
 
         :param project_id: The project_id of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
@@ -419,130 +365,50 @@ class VirtualMachineServiceCreateVirtualMachineBody(object):
         self._project_id = project_id
 
     @property
-    def requested_run_duration_seconds(self) -> 'str':
-        """Gets the requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def storage_gb(self) -> 'str':
+        """Gets the storage_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        Explicit storage in GiB (bypasses compute_name accelerator lookup).  # noqa: E501
 
-        :return: The requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :return: The storage_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :rtype: str
         """
-        return self._requested_run_duration_seconds
+        return self._storage_gb
 
-    @requested_run_duration_seconds.setter
-    def requested_run_duration_seconds(self, requested_run_duration_seconds: 'str'):
-        """Sets the requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.
+    @storage_gb.setter
+    def storage_gb(self, storage_gb: 'str'):
+        """Sets the storage_gb of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        Explicit storage in GiB (bypasses compute_name accelerator lookup).  # noqa: E501
 
-        :param requested_run_duration_seconds: The requested_run_duration_seconds of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :param storage_gb: The storage_gb of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
         :type: str
         """
 
-        self._requested_run_duration_seconds = requested_run_duration_seconds
+        self._storage_gb = storage_gb
 
     @property
-    def same_compute_on_resume(self) -> 'bool':
-        """Gets the same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+    def vm_image(self) -> 'str':
+        """Gets the vm_image of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
 
+        VM image name override; when empty the cluster default image is used.  # noqa: E501
 
-        :return: The same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
+        :return: The vm_image of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :rtype: str
         """
-        return self._same_compute_on_resume
+        return self._vm_image
 
-    @same_compute_on_resume.setter
-    def same_compute_on_resume(self, same_compute_on_resume: 'bool'):
-        """Sets the same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.
+    @vm_image.setter
+    def vm_image(self, vm_image: 'str'):
+        """Sets the vm_image of this VirtualMachineServiceCreateVirtualMachineBody.
 
+        VM image name override; when empty the cluster default image is used.  # noqa: E501
 
-        :param same_compute_on_resume: The same_compute_on_resume of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._same_compute_on_resume = same_compute_on_resume
-
-    @property
-    def sandbox(self) -> 'bool':
-        """Gets the sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._sandbox
-
-    @sandbox.setter
-    def sandbox(self, sandbox: 'bool'):
-        """Sets the sandbox of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param sandbox: The sandbox of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
+        :param vm_image: The vm_image of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
+        :type: str
         """
 
-        self._sandbox = sandbox
-
-    @property
-    def seed_files(self) -> 'list[V1CloudSpaceSeedFile]':
-        """Gets the seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: list[V1CloudSpaceSeedFile]
-        """
-        return self._seed_files
-
-    @seed_files.setter
-    def seed_files(self, seed_files: 'list[V1CloudSpaceSeedFile]'):
-        """Sets the seed_files of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param seed_files: The seed_files of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: list[V1CloudSpaceSeedFile]
-        """
-
-        self._seed_files = seed_files
-
-    @property
-    def source(self) -> 'V1CloudSpaceSourceType':
-        """Gets the source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: V1CloudSpaceSourceType
-        """
-        return self._source
-
-    @source.setter
-    def source(self, source: 'V1CloudSpaceSourceType'):
-        """Sets the source of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param source: The source of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: V1CloudSpaceSourceType
-        """
-
-        self._source = source
-
-    @property
-    def spot(self) -> 'bool':
-        """Gets the spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-
-
-        :return: The spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._spot
-
-    @spot.setter
-    def spot(self, spot: 'bool'):
-        """Sets the spot of this VirtualMachineServiceCreateVirtualMachineBody.
-
-
-        :param spot: The spot of this VirtualMachineServiceCreateVirtualMachineBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._spot = spot
+        self._vm_image = vm_image
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
