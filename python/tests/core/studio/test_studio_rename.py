@@ -14,6 +14,7 @@ def list_cloudspaces_side_effect(existing_studios):
     return _list_cloudspaces_side_effect
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_rename():
     """Test that Studio.rename calls StudioApi._update_cloudspace and _update_studio_reference correctly."""
     # Setup

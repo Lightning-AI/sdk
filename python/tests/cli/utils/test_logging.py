@@ -29,19 +29,20 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_severit
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
 
 
-@mock.patch.dict("os.environ", {"LIGHTNING_USER_ID": "user-1", "LIGHTNING_API_KEY": "key-1"})
 class TestLogCommand:
     """Tests for the _log_command function."""
 
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "studio", "create"])
-    def test_log_command_basic(self, mock_client_class):
+    def test_log_command_basic(self, mock_client_class, mock_auth_header):
         """Test basic command logging without error."""
         mock_client = mock.Mock()
         mock_client_class.return_value = mock_client
 
         _log_command(message="Test message", duration=100)
 
+        mock_auth_header.assert_called_once_with()
         mock_client_class.assert_called_once_with(retry=False, max_tries=0, with_auth=False)
         mock_client.api_client.set_default_header.assert_called_once()
         mock_client.s_dk_command_history_service_create_sdk_command_history.assert_called_once()
@@ -57,39 +58,59 @@ class TestLogCommand:
         assert body.type == V1SDKCommandHistoryType.CLI
         assert body.version == __version__
 
+    @mock.patch("lightning_sdk.cli.utils.logging.Auth", side_effect=AssertionError("Auth should be mocked locally"))
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
+    @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "studio", "create"])
+    def test_log_command_uses_local_auth_header_mock(self, mock_client_class, mock_auth_header, mock_auth_class):
+        """Test command logging does not construct Auth when auth header is locally mocked."""
+        mock_client = mock.Mock()
+        mock_client_class.return_value = mock_client
+
+        _log_command(message="Test message", duration=100)
+
+        mock_auth_header.assert_called_once_with()
+        mock_auth_class.assert_not_called()
+        mock_client.s_dk_command_history_service_create_sdk_command_history.assert_called_once()
+
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "studio", "list"])
-    def test_log_command_with_warning_error(self, mock_client_class):
+    def test_log_command_with_warning_error(self, mock_client_class, mock_auth_header):
         """Test command logging with warning (error='0')."""
         mock_client = mock.Mock()
         mock_client_class.return_value = mock_client
 
         _log_command(message="Warning occurred", duration=50, error="0")
 
+        mock_auth_header.assert_called_once_with()
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 
         assert body.severity == V1SDKCommandHistorySeverity.WARNING
         assert "Warning occurred | Error: 0" in body.message
 
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "job", "run"])
-    def test_log_command_with_error(self, mock_client_class):
+    def test_log_command_with_error(self, mock_client_class, mock_auth_header):
         """Test command logging with error (error='1' or other)."""
         mock_client = mock.Mock()
         mock_client_class.return_value = mock_client
 
         _log_command(message="Error occurred", duration=75, error="Connection failed")
 
+        mock_auth_header.assert_called_once_with()
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 
         assert body.severity == V1SDKCommandHistorySeverity.ERROR
         assert "Error occurred | Error: Connection failed" in body.message
 
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning", "test"])
-    def test_log_command_message_truncation(self, mock_client_class):
+    def test_log_command_message_truncation(self, mock_client_class, mock_auth_header):
         """Test that long messages are truncated to 1000 characters."""
         mock_client = mock.Mock()
         mock_client_class.return_value = mock_client
@@ -98,20 +119,23 @@ class TestLogCommand:
 
         _log_command(message=long_message, duration=10)
 
+        mock_auth_header.assert_called_once_with()
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 
         assert len(body.message) == 1000
 
+    @mock.patch("lightning_sdk.cli.utils.logging._auth_header_without_browser", return_value="Bearer test-token")
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     @mock.patch("lightning_sdk.cli.utils.logging.sys.argv", ["lightning"])
-    def test_log_command_empty_message(self, mock_client_class):
+    def test_log_command_empty_message(self, mock_client_class, mock_auth_header):
         """Test command logging with empty message."""
         mock_client = mock.Mock()
         mock_client_class.return_value = mock_client
 
         _log_command()
 
+        mock_auth_header.assert_called_once_with()
         call_args = mock_client.s_dk_command_history_service_create_sdk_command_history.call_args
         body = call_args.kwargs["body"]
 

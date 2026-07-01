@@ -6,11 +6,12 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from lightning_sdk.cli.legacy.docker_cli import _api as docker_api
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 _LLITSERVE_AVAILABLE = find_spec("litserve") is not None
 
 
+@mock_command_logging
 def test_dockerize_help():
     text = assert_help_contains(
         "lightning dockerize --help",
@@ -20,6 +21,7 @@ def test_dockerize_help():
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_api_dockerize_help():
     assert_help_contains(
         "lightning api dockerize --help",
@@ -28,6 +30,7 @@ def test_api_dockerize_help():
     )
 
 
+@mock_command_logging
 def test_apis_dockerize_help():
     assert_help_contains(
         "lightning apis dockerize --help",
@@ -36,6 +39,7 @@ def test_apis_dockerize_help():
     )
 
 
+@mock_command_logging
 def test_api_help():
     assert_help_contains(
         "lightning dockerize api --help",
@@ -66,6 +70,7 @@ if __name__ == "__main__":
 
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
+@mock_command_logging
 def test_docker_api_file_not_found(mock_cwd):
     with pytest.raises(FileNotFoundError, match="Server file `server.py` must be in the current directory"):
         docker_api("server.py")
@@ -73,6 +78,7 @@ def test_docker_api_file_not_found(mock_cwd):
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("lightning_sdk.serve.Console")
+@mock_command_logging
 def test_docker_api_without_requirements(mock_console, mock_cwd, temp_script):
     with patch("litserve.__version__", "1.0.0"):
         docker_api("server.py", port=8000, gpu=False)
@@ -88,6 +94,7 @@ def test_docker_api_without_requirements(mock_console, mock_cwd, temp_script):
 
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
+@mock_command_logging
 def test_docker_api_with_requirements(mock_cwd, temp_script):
     requirements_path = Path(mock_cwd) / "requirements.txt"
     requirements_path.touch()
@@ -104,6 +111,7 @@ def test_docker_api_with_requirements(mock_cwd, temp_script):
 
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
+@mock_command_logging
 def test_docker_api_with_gpu(mock_cwd, temp_script):
     with patch("litserve.__version__", "1.0.0"):
         docker_api("server.py", port=8000, gpu=True)
@@ -116,6 +124,7 @@ def test_docker_api_with_gpu(mock_cwd, temp_script):
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("lightning_sdk.serve.Console")
+@mock_command_logging
 def test_skip_dockerfile_generation(mock_console, mock_cwd):
     console_obj = MagicMock()
     mock_console.return_value = console_obj

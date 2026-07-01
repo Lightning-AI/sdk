@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_switch_vm():
     result_text = command_text("lightning vm switch --help")
 
@@ -12,6 +13,7 @@ def test_switch_vm():
     assert "--interruptible" in result_text
 
 
+@mock_command_logging
 def test_vms_switch_help() -> None:
     assert_help_contains(
         "lightning vms switch --help", "Usage: lightning vms switch", "Switch a VM to a different machine type."

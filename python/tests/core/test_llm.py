@@ -1,6 +1,6 @@
 import re
 from typing import Generator
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -86,6 +86,7 @@ def mock_tools():
     ]
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_get_auth_info_missing_teamspace_raises(monkeypatch):
     # Clear all shared state
     LLMCLIENT._auth_info_cached = False
@@ -120,6 +121,7 @@ def test_get_auth_info_missing_teamspace_raises(monkeypatch):
         LLM(name="openai/gpt-4o", teamspace=None)
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_get_model_id_uses_cache():
     # Reset shared class state to avoid side effects
     LLMCLIENT._llm_api_cache.clear()
@@ -134,6 +136,7 @@ def test_get_model_id_uses_cache():
     assert llm.context_length == 8192
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_different_model_names(monkeypatch, mock_org_model2):
     LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
@@ -145,6 +148,7 @@ def test_different_model_names(monkeypatch, mock_org_model2):
     assert llm._model_name == "my-model/v1/new-model"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_invalid_format(monkeypatch, mock_model_data):
     mock_api = MagicMock()
     mock_api.list_models.return_value = mock_model_data
@@ -160,6 +164,7 @@ def test_invalid_format(monkeypatch, mock_model_data):
         LLM("gpt-4o")
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_org_model(monkeypatch, mock_org_model):
     LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
@@ -170,6 +175,7 @@ def test_org_model(monkeypatch, mock_org_model):
     assert llm.provider == "org-name"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_invalid_org(monkeypatch):
     # there could be a case where the model provider is an org that exists, however, the user does not have access to it
     # then it would make sense to search for whatever they have availabe in public, teamspace and org
@@ -189,6 +195,7 @@ def test_invalid_org(monkeypatch):
         LLM("org-123/dummy-model")
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_user_model(monkeypatch, mock_user_model):
     LLMCLIENT._llm_api_cache.clear()
     mock_api = MagicMock()
@@ -200,6 +207,7 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm.provider == "user-name"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_get_auth_info(monkeypatch):
     LLMCLIENT._llm_api_cache.clear()
     LLMCLIENT._auth_info_cached = False
@@ -216,6 +224,7 @@ def test_get_auth_info(monkeypatch):
     mock_resolve.assert_called_with(teamspace="teamspace-name", org=None, user="my-user")
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_ephemeral(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -247,6 +256,7 @@ def test_ephemeral(monkeypatch, mock_public_model):
     )
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_chat(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -448,6 +458,7 @@ def test_chat(monkeypatch, mock_public_model):
     assert kwargs_passed.get("parent_message_id") == "test-parent-msg-id"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_reasoning_effort(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -461,6 +472,7 @@ def test_reasoning_effort(monkeypatch, mock_public_model):
         llm.chat("Hello, how are you?", reasoning_effort="somewhat high")
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_chat_full_response(monkeypatch):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -485,6 +497,7 @@ def test_chat_full_response(monkeypatch):
     assert response == mock_response
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_chat_with_tools(monkeypatch, mock_tools):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -512,6 +525,7 @@ def test_chat_with_tools(monkeypatch, mock_tools):
     )
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_metadata(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()
@@ -555,6 +569,7 @@ def test_metadata(monkeypatch, mock_public_model):
     assert metadata == metadata2  # should return the same object
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_chat_backend(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._llm_api_cache.clear()

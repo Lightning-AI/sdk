@@ -41,7 +41,9 @@ def mock_api_list_containers_string_creation():
     return repo
 
 
-def test_api_list_containers():
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_api_list_containers(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()
     api._client = MagicMock()
     api._docker_client = MagicMock()
@@ -49,7 +51,15 @@ def test_api_list_containers():
     api._client.lit_registry_service_get_lit_project_registry.assert_called_once_with("test-project-id")
 
 
-def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list_containers_string_creation):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_list_containers(
+    _mock_docker_from_env,
+    _mock_lightning_client,
+    mock_teamspace,
+    mock_api_list_containers,
+    mock_api_list_containers_string_creation,
+):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
 
@@ -94,7 +104,11 @@ def test_list_containers(mock_teamspace, mock_api_list_containers, mock_api_list
         assert kwargs.get("cloud_account") is None
 
 
-def test_list_containers_with_org(mock_teamspace, mock_api_list_containers):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_list_containers_with_org(
+    _mock_docker_from_env, _mock_lightning_client, mock_teamspace, mock_api_list_containers
+):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
 
@@ -122,7 +136,11 @@ def test_list_containers_with_org(mock_teamspace, mock_api_list_containers):
         assert kwargs.get("cloud_account") is None
 
 
-def test_list_containers_with_org_with_cloud_account(mock_teamspace, mock_api_list_containers):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_list_containers_with_org_with_cloud_account(
+    _mock_docker_from_env, _mock_lightning_client, mock_teamspace, mock_api_list_containers
+):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
 
@@ -150,7 +168,9 @@ def test_list_containers_with_org_with_cloud_account(mock_teamspace, mock_api_li
         assert kwargs.get("cloud_account") == "byoc-123"
 
 
-def test_delete_container(mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_delete_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
 
@@ -164,7 +184,9 @@ def test_delete_container(mock_teamspace):
         registry._api.delete_container.assert_called_once_with("test-project-id", "test-repo")
 
 
-def test_delete_container_by_digest(mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
         mock_resolve_teamspace.return_value = mock_teamspace
         registry = LitContainer()
@@ -178,12 +200,10 @@ def test_delete_container_by_digest(mock_teamspace):
         registry._api.delete_container.assert_not_called()
 
 
-@pytest.fixture()
-def lit_container():
-    return LitContainer()
-
-
-def test_upload_container_success(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_container_success(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "upload_container"
     ) as mock_upload:
@@ -201,7 +221,10 @@ def test_upload_container_success(lit_container, mock_teamspace):
         )
 
 
-def test_upload_byoc_container_success(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_byoc_container_success(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "upload_container"
     ) as mock_upload:
@@ -219,7 +242,10 @@ def test_upload_byoc_container_success(lit_container, mock_teamspace):
         )
 
 
-def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_byoc_container_pull_then_push(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "_docker_client"
     ) as mock_docker_client:
@@ -256,7 +282,10 @@ def test_upload_byoc_container_pull_then_push(lit_container, mock_teamspace):
         )
 
 
-def test_upload_container_pull_then_push(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_container_pull_then_push(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "_docker_client"
     ) as mock_docker_client:
@@ -293,7 +322,10 @@ def test_upload_container_pull_then_push(lit_container, mock_teamspace):
         )
 
 
-def test_upload_container_teamspace_resolution_error(lit_container):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_container_teamspace_resolution_error(_mock_docker_from_env, _mock_lightning_client):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve:
         # Setup mock to raise an exception
         mock_resolve.side_effect = Exception("Invalid teamspace")
@@ -303,152 +335,191 @@ def test_upload_container_teamspace_resolution_error(lit_container):
             lit_container.upload_container(container="my-container", teamspace="invalid-team")
 
 
-def test_upload_container_auth_retry_success(lit_container, mock_teamspace):
-    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
-        lit_container._api, "_docker_client"
-    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
-        "time.sleep"
-    ) as mock_sleep:
-        mock_resolve.return_value = mock_teamspace
-        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
-        mock_docker_client.api.tag.return_value = True
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+@patch("lightning_sdk.lit_container._resolve_teamspace")
+@patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
+@patch("time.sleep")
+def test_upload_container_auth_retry_success(
+    mock_sleep,
+    mock_authenticate,
+    mock_resolve,
+    mock_docker_from_env,
+    _mock_lightning_client,
+    mock_teamspace,
+):
+    lit_container = LitContainer()
+    mock_docker_client = mock_docker_from_env.return_value
+    mock_resolve.return_value = mock_teamspace
+    mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+    mock_docker_client.api.tag.return_value = True
 
-        mock_docker_client.api.push.side_effect = [
-            [
-                {"status": "Pushing"},
-                {
-                    "errorDetail": {
-                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
-                    },
-                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+    mock_docker_client.api.push.side_effect = [
+        [
+            {"status": "Pushing"},
+            {
+                "errorDetail": {
+                    "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
                 },
-            ],
-            [
-                {"status": "Pushing"},
-                {
-                    "errorDetail": {
-                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
-                    },
-                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+                "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+            },
+        ],
+        [
+            {"status": "Pushing"},
+            {
+                "errorDetail": {
+                    "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
                 },
-            ],
-            [{"status": "Pushing"}, {"status": "Complete"}],
-        ]
+                "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+            },
+        ],
+        [{"status": "Pushing"}, {"status": "Complete"}],
+    ]
 
+    lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+    assert mock_docker_client.api.push.call_count == 3
+    assert mock_authenticate.call_count == 2
+    mock_authenticate.assert_called_with(reauth=True)
+    assert mock_sleep.call_count == 2
+    mock_sleep.assert_called_with(2)
+
+
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+@patch("lightning_sdk.lit_container._resolve_teamspace")
+@patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
+@patch("time.sleep")
+def test_upload_container_timeout_retry_success(
+    mock_sleep,
+    mock_authenticate,
+    mock_resolve,
+    mock_docker_from_env,
+    _mock_lightning_client,
+    mock_teamspace,
+):
+    lit_container = LitContainer()
+    mock_docker_client = mock_docker_from_env.return_value
+    mock_resolve.return_value = mock_teamspace
+    mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+    mock_docker_client.api.tag.return_value = True
+
+    mock_docker_client.api.push.side_effect = [
+        [{"error": "unauthorized"}],
+        [{"status": "Pushing"}, {"status": "Complete"}],
+    ]
+
+    lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
+    assert mock_docker_client.api.push.call_count == 2
+    mock_authenticate.assert_called_once_with(reauth=True)
+    mock_sleep.assert_called_once_with(2)
+
+
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+@patch("lightning_sdk.lit_container._resolve_teamspace")
+@patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
+@patch("time.sleep")
+def test_upload_container_auth_retry_max_attempts(
+    mock_sleep,
+    mock_authenticate,
+    mock_resolve,
+    mock_docker_from_env,
+    _mock_lightning_client,
+    mock_teamspace,
+):
+    lit_container = LitContainer()
+    mock_docker_client = mock_docker_from_env.return_value
+    mock_resolve.return_value = mock_teamspace
+    mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+    mock_docker_client.api.tag.return_value = True
+
+    lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
+
+    mock_docker_client.api.push.side_effect = [
+        [{"error": "unauthorized"}],
+        [{"error": "unauthorized"}],
+        [{"error": "unauthorized"}],
+    ]
+
+    with pytest.raises(DockerPushError, match="Max retries reached"):
         lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
-        assert mock_docker_client.api.push.call_count == 3
-        assert mock_authenticate.call_count == 2
-        mock_authenticate.assert_called_with(reauth=True)
-        assert mock_sleep.call_count == 2
-        mock_sleep.assert_called_with(2)
+
+    assert mock_docker_client.api.push.call_count == 3
+    repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
+    mock_docker_client.api.push.assert_called_with(
+        repository, tag="v1.0", stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
+    )
+    assert mock_authenticate.call_count == 2
+    mock_authenticate.assert_called_with(reauth=True)
+    mock_sleep.assert_called_with(2)
+    assert mock_sleep.call_count == 2
 
 
-def test_upload_container_timeout_retry_success(lit_container, mock_teamspace):
-    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
-        lit_container._api, "_docker_client"
-    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
-        "time.sleep"
-    ) as mock_sleep:
-        mock_resolve.return_value = mock_teamspace
-        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
-        mock_docker_client.api.tag.return_value = True
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+@patch("lightning_sdk.lit_container._resolve_teamspace")
+@patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
+@patch("time.sleep")
+def test_upload_container_timeout_retry_max_attempts(
+    mock_sleep,
+    mock_authenticate,
+    mock_resolve,
+    mock_docker_from_env,
+    _mock_lightning_client,
+    mock_teamspace,
+):
+    lit_container = LitContainer()
+    mock_docker_client = mock_docker_from_env.return_value
+    mock_resolve.return_value = mock_teamspace
+    mock_docker_client.images.get.return_value = MagicMock(id="my-container")
+    mock_docker_client.api.tag.return_value = True
 
-        mock_docker_client.api.push.side_effect = [
-            [{"error": "unauthorized"}],
-            [{"status": "Pushing"}, {"status": "Complete"}],
-        ]
+    mock_docker_client.api.push.side_effect = [
+        [
+            {"status": "Pushing"},
+            {
+                "errorDetail": {
+                    "message": "something something something proxyconnect "
+                    "tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                },
+                "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+            },
+        ],
+        [
+            {"status": "Pushing"},
+            {
+                "errorDetail": {
+                    "message": "something something something "
+                    "proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                },
+                "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+            },
+        ],
+        [
+            {"status": "Pushing"},
+            {
+                "errorDetail": {
+                    "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
+                },
+                "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
+            },
+        ],
+    ]
 
+    with pytest.raises(DockerPushError, match="Max retries reached"):
         lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
-        assert mock_docker_client.api.push.call_count == 2
-        mock_authenticate.assert_called_once_with(reauth=True)
-        mock_sleep.assert_called_once_with(2)
+
+    assert mock_docker_client.api.push.call_count == 3
+    assert mock_authenticate.call_count == 2
+    mock_authenticate.assert_called_with(reauth=True)
+    mock_sleep.assert_called_with(2)
+    assert mock_sleep.call_count == 2
 
 
-def test_upload_container_auth_retry_max_attempts(lit_container, mock_teamspace):
-    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
-        lit_container._api, "_docker_client"
-    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
-        "time.sleep"
-    ) as mock_sleep:
-        mock_resolve.return_value = mock_teamspace
-        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
-        mock_docker_client.api.tag.return_value = True
-
-        lit_container._api._docker_auth_config = {"username": "admin", "api_key": "grid"}
-
-        mock_docker_client.api.push.side_effect = [
-            [{"error": "unauthorized"}],
-            [{"error": "unauthorized"}],
-            [{"error": "unauthorized"}],
-        ]
-
-        with pytest.raises(DockerPushError, match="Max retries reached"):
-            lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
-
-        assert mock_docker_client.api.push.call_count == 3
-        repository = f"{_get_registry_url()}/lit-container/test-org/test-team/my-container"
-        mock_docker_client.api.push.assert_called_with(
-            repository, tag="v1.0", stream=True, decode=True, auth_config={"username": "admin", "api_key": "grid"}
-        )
-        assert mock_authenticate.call_count == 2
-        mock_authenticate.assert_called_with(reauth=True)
-        mock_sleep.assert_called_with(2)
-        assert mock_sleep.call_count == 2
-
-
-def test_upload_container_timeout_retry_max_attempts(lit_container, mock_teamspace):
-    with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
-        lit_container._api, "_docker_client"
-    ) as mock_docker_client, patch.object(lit_container._api, "authenticate") as mock_authenticate, patch(
-        "time.sleep"
-    ) as mock_sleep:
-        mock_resolve.return_value = mock_teamspace
-        mock_docker_client.images.get.return_value = MagicMock(id="my-container")
-        mock_docker_client.api.tag.return_value = True
-
-        mock_docker_client.api.push.side_effect = [
-            [
-                {"status": "Pushing"},
-                {
-                    "errorDetail": {
-                        "message": "something something something proxyconnect \
-                            tcp: dial tcp 192.168.65.1:3128: i/o timeout"
-                    },
-                    "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
-                },
-            ],
-            [
-                {"status": "Pushing"},
-                {
-                    "errorDetail": {
-                        "message": "something something something \
-                            proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout"
-                    },
-                    "error": "something something something proxyconnect tcp: dial tcp 192.168.65.1:3128: i/o timeout",
-                },
-            ],
-            [
-                {"status": "Pushing"},
-                {
-                    "errorDetail": {
-                        "message": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout"
-                    },
-                    "error": "something something something tcp: dial tcp 192.168.65.1:3128: i/o timeout",
-                },
-            ],
-        ]
-
-        with pytest.raises(DockerPushError, match="Max retries reached"):
-            lit_container.upload_container(container="my-container", teamspace="test-team", tag="v1.0")
-
-        assert mock_docker_client.api.push.call_count == 3
-        assert mock_authenticate.call_count == 2
-        mock_authenticate.assert_called_with(reauth=True)
-        mock_sleep.assert_called_with(2)
-        assert mock_sleep.call_count == 2
-
-
-def test_upload_container_with_org(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_container_with_org(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "upload_container"
     ) as mock_upload:
@@ -466,7 +537,10 @@ def test_upload_container_with_org(lit_container, mock_teamspace):
         )
 
 
-def test_upload_container_returns_generator_output(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_upload_container_returns_generator_output(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "upload_container"
     ) as mock_upload:
@@ -507,7 +581,10 @@ def test_upload_container_returns_generator_output(lit_container, mock_teamspace
         )
 
 
-def test_download_container(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_download_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "_docker_client"
     ) as mock_docker_client:
@@ -524,7 +601,10 @@ def test_download_container(lit_container, mock_teamspace):
         )
 
 
-def test_download_byoc_container(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_download_byoc_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
+    lit_container = LitContainer()
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve, patch.object(
         lit_container._api, "_docker_client"
     ) as mock_docker_client:
@@ -553,7 +633,9 @@ def test_authenticate(mock_lightning_client, mock_docker):
     mock_docker.from_env().login.assert_called(), "Docker client was not created"
 
 
-def test_get_container_url(lit_container, mock_teamspace):
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_get_container_url(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     api = LitContainerApi()
     docker_url = api.get_container_url(
         repository="local/litserve", tag="latest", teamspace=mock_teamspace, cloud_account=None

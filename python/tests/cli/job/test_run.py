@@ -6,9 +6,10 @@ from click.testing import CliRunner
 
 from lightning_sdk.cli.job.run import run_job
 from lightning_sdk.cli.legacy.run import _resolve_envs, _resolve_path_mapping
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_job_run_help() -> None:
     assert_help_contains(
         "lightning job run --help",
@@ -17,6 +18,7 @@ def test_job_run_help() -> None:
     )
 
 
+@mock_command_logging
 def test_jobs_run_help() -> None:
     assert_help_contains(
         "lightning jobs run --help",
@@ -25,6 +27,7 @@ def test_jobs_run_help() -> None:
     )
 
 
+@mock_command_logging
 def test_run_help() -> None:
     text = assert_help_contains(
         "lightning run --help",
@@ -35,6 +38,7 @@ def test_run_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_run_job_legacy_help() -> None:
     assert_help_contains(
         "lightning run job --help",
@@ -44,6 +48,7 @@ def test_run_job_legacy_help() -> None:
     )
 
 
+@mock_command_logging
 def test_run_job_with_cloud(monkeypatch):
     from unittest.mock import MagicMock
 
@@ -79,6 +84,7 @@ def test_run_job_with_cloud(monkeypatch):
         ),
     ],
 )
+@mock_command_logging
 def test_parse_run_path_mapping(input_mappings: str, expected: Dict[str, str]) -> None:
     assert _resolve_path_mapping(input_mappings) == expected
 
@@ -92,11 +98,13 @@ def test_parse_run_path_mapping(input_mappings: str, expected: Dict[str, str]) -
         ('{"key1":"value1","key2":"value2"}', {"key1": "value1", "key2": "value2"}),
     ],
 )
+@mock_command_logging
 def test_resolve_envs(input_env: str, expected: Dict[str, str]) -> None:
     assert _resolve_envs(input_env) == expected
 
 
 @pytest.mark.parametrize("input_env", ["some-invalid-input", '["invalid"]', '{"not closed":'])
+@mock_command_logging
 def test_resolve_invalid_envs(input_env: str) -> None:
     with pytest.raises(ValueError, match="cannot be parsed as environment variable"):
         _resolve_envs(input_env)
@@ -110,6 +118,7 @@ def test_resolve_invalid_envs(input_env: str) -> None:
         (["--image", "alpine:latest", "--command", "echo hello", "--entrypoint", "/bin/bash"], "/bin/bash"),
     ],
 )
+@mock_command_logging
 def test_job_run_entrypoint_default(extra_args: list[str], expected_entrypoint: str | None) -> None:
     runner = CliRunner()
     args = ["--name", "test-job", "--teamspace", "my-ts", *extra_args]

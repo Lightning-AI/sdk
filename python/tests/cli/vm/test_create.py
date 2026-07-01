@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_create_vm():
     result_text = command_text("lightning vm create --help")
 
@@ -13,5 +14,6 @@ def test_create_vm():
     assert "--cloud-account" not in result_text
 
 
+@mock_command_logging
 def test_vms_create_help() -> None:
     assert_help_contains("lightning vms create --help", "Usage: lightning vms create", "Create a new VM.")

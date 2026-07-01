@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_ssh_studio():
     result_text = command_text("lightning studio ssh --help")
 
@@ -11,10 +12,12 @@ def test_ssh_studio():
     assert "--option     -o  TEXT" in result_text
 
 
+@mock_command_logging
 def test_studios_ssh_help() -> None:
     assert_help_contains("lightning studios ssh --help", "Usage: lightning studios ssh", "SSH into a Studio.")
 
 
+@mock_command_logging
 def test_connect_help() -> None:
     text = assert_help_contains(
         "lightning connect --help",
@@ -24,6 +27,7 @@ def test_connect_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_connect_studio_legacy_help() -> None:
     assert_help_contains(
         "lightning connect studio --help",

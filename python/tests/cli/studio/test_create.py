@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_create_studio():
     result_text = command_text("lightning studio create --help")
 
@@ -14,10 +15,12 @@ def test_create_studio():
     assert "--studio-type" in result_text
 
 
+@mock_command_logging
 def test_studios_create_help() -> None:
     assert_help_contains("lightning studios create --help", "Usage: lightning studios create", "Create a new Studio.")
 
 
+@mock_command_logging
 def test_create_help() -> None:
     text = assert_help_contains(
         "lightning create --help",
@@ -27,6 +30,7 @@ def test_create_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_create_studio_legacy_help() -> None:
     assert_help_contains(
         "lightning create studio --help",
@@ -36,6 +40,7 @@ def test_create_studio_legacy_help() -> None:
     )
 
 
+@mock_command_logging
 def test_create_studio_with_studio_type(monkeypatch):
     """Test that --studio-type option is passed to get_base_studio_id."""
     from unittest.mock import MagicMock, patch
@@ -76,6 +81,7 @@ def test_create_studio_with_studio_type(monkeypatch):
         assert call_kwargs["studio_type"] == "template-id-123"
 
 
+@mock_command_logging
 def test_create_studio_without_studio_type(monkeypatch):
     """Test that get_base_studio_id is called with None when --studio-type is not provided."""
     from unittest.mock import MagicMock, patch
@@ -110,6 +116,7 @@ def test_create_studio_without_studio_type(monkeypatch):
         assert call_kwargs["studio_type"] == "default-template-id"
 
 
+@mock_command_logging
 def test_create_studio_with_cloud(monkeypatch):
     """Test that --cloud option is forwarded to Studio."""
     from unittest.mock import MagicMock, patch
@@ -140,6 +147,7 @@ def test_create_studio_with_cloud(monkeypatch):
         assert call_kwargs["cloud"] == "aws"
 
 
+@mock_command_logging
 def test_create_studio_passes_correct_parameter_name():
     from unittest.mock import MagicMock, patch
 
@@ -178,6 +186,7 @@ def test_create_studio_passes_correct_parameter_name():
         assert call_kwargs["studio_type"] == "template-id-xyz"
 
 
+@mock_command_logging
 def test_create_studio_with_all_options():
     """Test that all options are passed correctly to Studio constructor."""
     from unittest.mock import MagicMock, patch

@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_connect_studio():
     result_text = command_text("lightning studio connect --help")
 
@@ -18,10 +19,12 @@ def test_connect_studio():
     assert "--interruptible" in result_text
 
 
+@mock_command_logging
 def test_studios_connect_help() -> None:
     assert_help_contains("lightning studios connect --help", "Usage: lightning studios connect", "Connect to a Studio.")
 
 
+@mock_command_logging
 def test_connect_studio_machine_and_gpus_mutually_exclusive(monkeypatch):
     """Test that providing both --machine and --gpus raises an error."""
     from unittest.mock import MagicMock, patch
@@ -47,6 +50,7 @@ def test_connect_studio_machine_and_gpus_mutually_exclusive(monkeypatch):
         assert "mutually exclusive" in result.output.lower()
 
 
+@mock_command_logging
 def test_connect_studio_with_gpus_option(monkeypatch):
     """Test that --gpus option correctly converts to machine type."""
     from unittest.mock import MagicMock, patch
@@ -79,6 +83,7 @@ def test_connect_studio_with_gpus_option(monkeypatch):
         assert call_kwargs["interruptible"] is False
 
 
+@mock_command_logging
 def test_connect_studio_uses_default_machine(monkeypatch):
     """Test that default machine (CPU) is used when neither --machine nor --gpus is provided."""
     from unittest.mock import MagicMock, patch
@@ -115,6 +120,7 @@ def test_connect_studio_uses_default_machine(monkeypatch):
         assert call_kwargs["machine"] == "CPU"
 
 
+@mock_command_logging
 def test_connect_studio_with_interruptible_flag(monkeypatch):
     """Test that --interruptible flag sets interruptible=True."""
     from unittest.mock import MagicMock, patch
@@ -147,6 +153,7 @@ def test_connect_studio_with_interruptible_flag(monkeypatch):
         assert call_kwargs["interruptible"] is True
 
 
+@mock_command_logging
 def test_connect_studio_without_interruptible_flag(monkeypatch):
     """Test that interruptible defaults to False when flag is not provided."""
     from unittest.mock import MagicMock, patch
@@ -178,6 +185,7 @@ def test_connect_studio_without_interruptible_flag(monkeypatch):
         assert call_kwargs["interruptible"] is False
 
 
+@mock_command_logging
 def test_connect_studio_interruptible_with_machine(monkeypatch):
     """Test that --interruptible works correctly with --machine option."""
     from unittest.mock import MagicMock, patch
@@ -215,6 +223,7 @@ def test_connect_studio_interruptible_with_machine(monkeypatch):
         assert call_kwargs["interruptible"] is True
 
 
+@mock_command_logging
 def test_connect_studio_interruptible_with_gpus(monkeypatch):
     """Test that --interruptible works correctly with --gpus option."""
     from unittest.mock import MagicMock, patch
@@ -247,6 +256,7 @@ def test_connect_studio_interruptible_with_gpus(monkeypatch):
         assert call_kwargs["interruptible"] is True
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
     """Test when all arguments are provided by user."""
     from unittest.mock import MagicMock, patch
@@ -282,6 +292,7 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
         assert name == "my-studio"
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_falls_back_to_current_studio(monkeypatch):
     """Test that missing args fall back to current studio context."""
     from unittest.mock import MagicMock, patch
@@ -318,6 +329,7 @@ def test_parse_args_or_get_from_current_studio_falls_back_to_current_studio(monk
         assert name == "random-name"
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_no_current_studio(monkeypatch):
     """Test when there is no current studio context (ValueError raised)."""
     from unittest.mock import MagicMock, patch
@@ -351,6 +363,7 @@ def test_parse_args_or_get_from_current_studio_no_current_studio(monkeypatch):
         assert name == "my-studio"
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_gpus_preserves_machine(monkeypatch):
     """Test that when gpus is provided, machine from studio context is not used."""
     from unittest.mock import MagicMock, patch
@@ -387,6 +400,7 @@ def test_parse_args_or_get_from_current_studio_gpus_preserves_machine(monkeypatc
         assert name == "random-name"
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_cloud_preserved(monkeypatch):
     """Test that cloud is preserved as the caller's provider or account selector."""
     from unittest.mock import MagicMock, patch
@@ -414,6 +428,7 @@ def test_parse_args_or_get_from_current_studio_cloud_preserved(monkeypatch):
             assert resolved_cloud == cloud
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
     """Test that name is generated when not provided."""
     from unittest.mock import MagicMock, patch
@@ -443,6 +458,7 @@ def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
         mock_random_name.assert_called_once()
 
 
+@mock_command_logging
 def test_parse_args_or_get_from_current_studio_partial_args(monkeypatch):
     """Test with a mix of provided and missing arguments."""
     from unittest.mock import MagicMock, patch

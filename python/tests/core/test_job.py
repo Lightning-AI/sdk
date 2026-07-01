@@ -16,6 +16,7 @@ from lightning_sdk.teamspace import Teamspace
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_init(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -29,6 +30,7 @@ def test_job_init(
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_init_error(
     internal_studio_init_mocker,
     internal_studio_status_mocker,
@@ -55,6 +57,7 @@ def test_job_init_error(
         ("j-stu", Status.Completed),  # "completed"
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_status(
     internal_job_api_mocker_get_job_status_v2,
     internal_studio_init_mocker,
@@ -72,6 +75,7 @@ def test_job_status(
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_stop_job(
     internal_job_api_mocker_stop_job,
     internal_studio_init_mocker,
@@ -89,6 +93,7 @@ def test_stop_job(
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_job(
     internal_job_api_mocker_delete_job_v2,
     internal_studio_init_mocker,
@@ -110,6 +115,7 @@ def test_delete_job(
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
@@ -151,6 +157,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -186,6 +193,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
     )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_run_arg_validation(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -203,6 +211,7 @@ def test_jobv2_run_arg_validation(internal_studio_init_mocker):
         Job.run(None, Machine.CPU)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
     """Test entrypoint validation logic for image jobs."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
@@ -266,6 +275,7 @@ def test_jobv2_run_entrypoint_validation(internal_studio_init_mocker):
         )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_jobv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -369,6 +379,7 @@ def test_submit_jobv2_error_cases(internal_studio_init_mocker):
         )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_job_by_name(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace, _fetch_job=False)
@@ -381,6 +392,7 @@ def test_get_job_by_name(internal_studio_init_mocker):
     job._job_api.get_job_by_name.assert_called_once_with(name="test-job", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_job_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace, _fetch_job=False)
@@ -396,6 +408,7 @@ def test_get_job_by_id(internal_studio_init_mocker):
     job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace, _fetch_job=False)
@@ -413,6 +426,7 @@ def test_get_job_by_name_first_and_then_by_id(internal_studio_init_mocker):
     job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
@@ -433,6 +447,7 @@ def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio
         ("stopped", Status.Stopped),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -456,6 +471,7 @@ def test_jobv2_status(job_api_get_job_by_name_mocker, internal_studio_init_mocke
         ("", "unknown", Machine.from_str("unknown")),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_machine(
     internal_studio_init_mocker,
     internal_studio_api_mocker_get_machine,
@@ -480,6 +496,7 @@ def test_jobv2_machine(
     get_job_mock.assert_called_once()
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -510,6 +527,7 @@ def test_jobv2_stop(job_api_get_job_by_name_mocker, internal_studio_init_mocker)
     )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -526,6 +544,7 @@ def test_jobv2_delete(job_api_get_job_by_name_mocker, internal_studio_init_mocke
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id="st-abc")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_jobv2_studio_resolve(
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
@@ -574,6 +593,7 @@ def test_submit_jobv2_studio_resolve(
         (None, None, "ubuntu", None, None, None),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_jobv2_studio_path(
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
@@ -602,6 +622,7 @@ def test_submit_jobv2_studio_path(
     assert job.snapshot_path == expected_snapshot_path
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_job_v2_image_from_studio(
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
@@ -656,6 +677,7 @@ def test_submit_job_v2_image_from_studio(
 
 
 @mock.patch("lightning_sdk.studio._internal_status_to_external_status", return_value=Status.Running)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_run_job_with_cloud_provider(
     mock_in_studio,
     internal_get_org_api_mocker,
@@ -697,6 +719,7 @@ def test_run_job_with_cloud_provider(
     )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_logs_v2(
     internal_job_logs_mocker,
     job_api_get_job_by_name_mocker,
@@ -713,6 +736,7 @@ def test_job_logs_v2(
     assert job.logs == "⚡  ~ echo Hello\nHello\n"
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocker_get_machine):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -752,6 +776,7 @@ def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocke
 
 
 @pytest.mark.parametrize("target_state", ["stopped", "completed", "failed"])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_wait(job_api_get_job_by_name_mocker, internal_studio_init_mocker, target_state):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -782,6 +807,7 @@ def test_jobv2_wait(job_api_get_job_by_name_mocker, internal_studio_init_mocker,
     assert get_job_mock.call_count == 11
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_jobv2_wait_timeout(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -803,6 +829,7 @@ def test_jobv2_wait_timeout(job_api_get_job_by_name_mocker, internal_studio_init
 
 @pytest.mark.asyncio()
 @pytest.mark.parametrize("target_state", ["stopped", "completed", "failed"])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 async def test_jobv2_wait_async(job_api_get_job_by_name_mocker, internal_studio_init_mocker, target_state):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
@@ -832,6 +859,7 @@ async def test_jobv2_wait_async(job_api_get_job_by_name_mocker, internal_studio_
 
 
 @pytest.mark.asyncio()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 async def test_jobv2_wait_async_timeout(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
@@ -851,6 +879,7 @@ async def test_jobv2_wait_async_timeout(job_api_get_job_by_name_mocker, internal
 
 
 @mock.patch("lightning_sdk.studio._internal_status_to_external_status", return_value=Status.Running)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_job_from_running_studio(
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,

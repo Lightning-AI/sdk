@@ -14,6 +14,7 @@ from lightning_sdk.teamspace import Teamspace
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = MMT("test-job", teamspace, _fetch_job=False)
@@ -55,6 +56,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interruptible):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -91,6 +93,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
     )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmt_run_arg_validation(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -108,6 +111,7 @@ def test_mmt_run_arg_validation(internal_studio_init_mocker):
         MMT.run(None, 5, Machine.CPU)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
     """Test entrypoint validation logic for MMT image jobs."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
@@ -169,6 +173,7 @@ def test_mmt_run_entrypoint_validation(internal_studio_init_mocker):
         )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -213,6 +218,7 @@ def test_submit_mmtv2_error_cases(internal_studio_init_mocker):
         )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_mmt_by_name(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace, _fetch_job=False)
@@ -225,6 +231,7 @@ def test_get_mmt_by_name(internal_studio_init_mocker):
     job._job_api.get_job_by_name.assert_called_once_with(name="test-job", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_mmt_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace, _fetch_job=False)
@@ -240,6 +247,7 @@ def test_get_mmt_by_id(internal_studio_init_mocker):
     job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_mmt_by_name_first_and_then_by_id(internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace, _fetch_job=False)
@@ -257,6 +265,7 @@ def test_get_mmt_by_name_first_and_then_by_id(internal_studio_init_mocker):
     job._job_api.get_job.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_mmt_by_name_on_init(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace)
@@ -278,6 +287,7 @@ def test_get_mmt_by_name_on_init(mmt_api_get_job_by_name_mocker, internal_studio
         ("MultiMachineJob_STATE_COMPLETED", Status.Completed),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmtv2_status(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, internal_status, external_status):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -301,6 +311,7 @@ def test_mmtv2_status(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
         ("", "unknown", Machine.from_str("unknown")),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmtv2_machine(
     internal_studio_init_mocker,
     internal_studio_api_mocker_get_machine,
@@ -325,6 +336,7 @@ def test_mmtv2_machine(
     get_job_mock.assert_called_once()
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 
@@ -365,6 +377,7 @@ def test_mmtv2_stop(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker)
     )
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
 

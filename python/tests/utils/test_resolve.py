@@ -70,6 +70,7 @@ def test_resolve_org_name_empty_env_var(provided):
 
 @pytest.mark.parametrize("provided", [None, "org_name", -1])
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_org(internal_get_org_api_mocker, provided):
     # can't instantiate outside without proper mocking
     if provided == -1:
@@ -87,6 +88,7 @@ def test_resolve_org(internal_get_org_api_mocker, provided):
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_org_with_user(internal_get_org_api_mocker):
     name = "user-name"
     with pytest.raises(ValueError, match=f"Organization '{name}' does not exist or you are not a member of it."):
@@ -123,6 +125,7 @@ def test_resolve_user_name_env_var(provided):
 
 @pytest.mark.parametrize("provided", [None, "user_name", -1])
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_user(internal_user_api_mocker, provided):
     # can't instantiate outside without proper mocking
     if provided == -1:
@@ -174,6 +177,7 @@ def test_resolve_teamspace_name_env_var(provided):
         ("ts-def", "org-abc", None, {"name": "ts-def", "org": {"name": "org-abc"}}),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_teamspace_combinations(
     internal_user_api_mocker,
     internal_get_org_api_mocker,
@@ -398,6 +402,7 @@ def test_parse_model_name_and_version():
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_studio_url(internal_studio_init_mocker):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
 
@@ -407,6 +412,7 @@ def test_get_studio_url(internal_studio_init_mocker):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_studio_url_turn_on(internal_studio_init_mocker):
     studio = Studio("st-abc", "ts-abc", org="org-abc")
 

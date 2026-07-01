@@ -2,7 +2,7 @@ import os
 import re
 import shlex
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
@@ -10,6 +10,10 @@ from lightning_sdk.cli.entrypoint import main_cli
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _CLI_NAMES = {"lightning", "lightning-sdk"}
+
+
+def mock_command_logging(test_func):
+    return patch("lightning_sdk.cli.utils.logging._log_command", new=MagicMock())(test_func)
 
 
 def run_cli(command: str) -> SimpleNamespace:
@@ -21,16 +25,15 @@ def run_cli(command: str) -> SimpleNamespace:
     env.setdefault("COLUMNS", "80")
 
     runner = CliRunner()
-    with patch("lightning_sdk.cli.utils.logging._log_command"):
-        result = runner.invoke(
-            main_cli,
-            args,
-            prog_name="lightning",
-            env=env,
-            color=False,
-            catch_exceptions=False,
-            terminal_width=80,
-        )
+    result = runner.invoke(
+        main_cli,
+        args,
+        prog_name="lightning",
+        env=env,
+        color=False,
+        catch_exceptions=False,
+        terminal_width=80,
+    )
     return SimpleNamespace(stdout=result.output, stderr="")
 
 

@@ -4,16 +4,12 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
-from lightning_sdk.lightning_cloud.openapi import V1LoginResponse
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_download_file(mock_login, mock_requests_get, tmpdir):
-    mock_login.return_value = V1LoginResponse(token="token")
-
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_download_file(_authenticate_mock, _mock_auth, mock_requests_get, tmpdir):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "0"}
@@ -30,7 +26,8 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
 @mock.patch("lightning_sdk.api.filesystem_api.tqdm")
 @mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
-def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_download_folder(_mock_auth, authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
     authenticate_mock.return_value = "test-token-123"
     filesystem_api = FilesystemApi()
 
@@ -58,11 +55,9 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_list_files_returns_tree(mock_login, mock_requests_get):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_list_files_returns_tree(_authenticate_mock, _mock_auth, mock_requests_get):
     fake_files = [{"name": "test1.txt"}, {"name": "test2.txt"}]
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
@@ -76,11 +71,9 @@ def test_list_files_returns_tree(mock_login, mock_requests_get):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_list_files_returns_empty_when_tree_missing(mock_login, mock_requests_get):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_list_files_returns_empty_when_tree_missing(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {}
@@ -93,11 +86,9 @@ def test_list_files_returns_empty_when_tree_missing(mock_login, mock_requests_ge
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_list_files_passes_correct_url_and_params(mock_login, mock_requests_get):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_list_files_passes_correct_url_and_params(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {"tree": []}
@@ -117,11 +108,9 @@ def test_list_files_passes_correct_url_and_params(mock_login, mock_requests_get)
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_list_files_non_recursive_by_default(mock_login, mock_requests_get):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_list_files_non_recursive_by_default(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {"tree": []}
@@ -135,11 +124,9 @@ def test_list_files_non_recursive_by_default(mock_login, mock_requests_get):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_list_files_raises_on_non_200(mock_login, mock_requests_get):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+def test_list_files_raises_on_non_200(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 404
     mock_requests_get.return_value = mock_response

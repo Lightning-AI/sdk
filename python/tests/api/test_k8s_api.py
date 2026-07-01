@@ -5,6 +5,7 @@ import pytest
 
 from lightning_sdk.api.k8s_api import K8sClusterApi, K8sClusterApiError
 from lightning_sdk.lightning_cloud.openapi.models import V1ClusterMetrics, V1ListClusterMetricsResponse
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 mock_cluster = [
     {"timestamp": datetime(2025, 11, 19, 12), "num_allocated_gpus": 6, "num_requested_gpus": 6, "num_gpus": 8},
@@ -17,7 +18,8 @@ mock_cluster_metrics_error = [
 ]
 
 
-def test_get_billing_usage_with_empty_metrics():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_billing_usage_with_empty_metrics(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(return_value=V1ListClusterMetricsResponse(cluster_metrics=[]))
 
@@ -31,7 +33,8 @@ def test_get_billing_usage_with_empty_metrics():
     get_k8s_mock.assert_called_once_with("test")
 
 
-def test_get_billing_usage_metrics_with_no_range():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_billing_usage_metrics_with_no_range(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(
         return_value=V1ListClusterMetricsResponse(cluster_metrics=[V1ClusterMetrics(**data) for data in mock_cluster])
@@ -48,7 +51,8 @@ def test_get_billing_usage_metrics_with_no_range():
     get_k8s_mock.assert_called_once_with("test")
 
 
-def test_gets_calculates_metrics_with_start_and_end_dates():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_gets_calculates_metrics_with_start_and_end_dates(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     start_date = datetime(2025, 11, 19, 11, 30)
     end_date = datetime(2025, 11, 19, 14, 0, 0)
@@ -64,7 +68,8 @@ def test_gets_calculates_metrics_with_start_and_end_dates():
     assert result[1]["num_allocated_gpus"] == 4.0
 
 
-def test_gets_calculates_metrics_with_only_start_date():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_gets_calculates_metrics_with_only_start_date(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     date = datetime(2025, 11, 19, 12, 30)
     get_k8s_mock = mock.Mock(
@@ -78,7 +83,8 @@ def test_gets_calculates_metrics_with_only_start_date():
     get_k8s_mock.assert_called_once_with("user-abc", start_date=date)
 
 
-def test_gets_calculates_metrics_with_only_end_date():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_gets_calculates_metrics_with_only_end_date(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     date = datetime(2025, 11, 19, 12, 30)
     get_k8s_mock = mock.Mock(
@@ -92,15 +98,21 @@ def test_gets_calculates_metrics_with_only_end_date():
     get_k8s_mock.assert_called_once_with("user-abc", end_date=date)
 
 
-def test_gets_raises_error_with_nonexistant_cluster():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_gets_raises_error_with_nonexistant_cluster(_mock_auth):
     k8s_api = K8sClusterApi("fakey-abc")
     date = datetime(2025, 11, 19, 12, 30)
+    get_k8s_mock = mock.Mock(side_effect=ApiException(status=404, reason="Not Found"))
+    k8s_api._client.k8_s_cluster_service_list_cluster_metrics = get_k8s_mock
 
     with pytest.raises(K8sClusterApiError):
         k8s_api.get_billing_usage(end=date)
 
+    get_k8s_mock.assert_called_once_with("fakey-abc", end=date)
 
-def test_get_billing_usage_metrics_print_to_stdout():
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_billing_usage_metrics_print_to_stdout(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(
         return_value=V1ListClusterMetricsResponse(cluster_metrics=[V1ClusterMetrics(**data) for data in mock_cluster])
@@ -115,7 +127,8 @@ def test_get_billing_usage_metrics_print_to_stdout():
     get_k8s_mock.assert_called_once_with("test")
 
 
-def test_get_billing_usage_with_dates_get_folded_into_same_hour():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_billing_usage_with_dates_get_folded_into_same_hour(_mock_auth):
     k8s_api = K8sClusterApi("test")
     test_cluster = [
         mock_cluster[0],
@@ -150,7 +163,8 @@ def test_get_billing_usage_with_dates_get_folded_into_same_hour():
     get_k8s_mock.assert_called_once_with("test")
 
 
-def test_get_billing_usage_metrics_with_max_gpus_safety_check():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_billing_usage_metrics_with_max_gpus_safety_check(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(
         return_value=V1ListClusterMetricsResponse(

@@ -1,10 +1,12 @@
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_config_get_help() -> None:
     assert_help_contains("lightning config get --help", "Usage: lightning config get", "Get configuration values.")
 
 
+@mock_command_logging
 def test_config_get_cloud_account_help() -> None:
     assert_help_contains(
         "lightning config get cloud-account --help",
@@ -13,6 +15,7 @@ def test_config_get_cloud_account_help() -> None:
     )
 
 
+@mock_command_logging
 def test_config_get_cloud_provider_help() -> None:
     assert_help_contains(
         "lightning config get cloud-provider --help",
@@ -21,6 +24,7 @@ def test_config_get_cloud_provider_help() -> None:
     )
 
 
+@mock_command_logging
 def test_config_get_org_help() -> None:
     assert_help_contains(
         "lightning config get org --help",
@@ -29,6 +33,7 @@ def test_config_get_org_help() -> None:
     )
 
 
+@mock_command_logging
 def test_config_get_studio_help() -> None:
     assert_help_contains(
         "lightning config get studio --help",
@@ -37,6 +42,7 @@ def test_config_get_studio_help() -> None:
     )
 
 
+@mock_command_logging
 def test_config_get_teamspace_help() -> None:
     assert_help_contains(
         "lightning config get teamspace --help",
@@ -45,6 +51,7 @@ def test_config_get_teamspace_help() -> None:
     )
 
 
+@mock_command_logging
 def test_config_get_user_help() -> None:
     assert_help_contains(
         "lightning config get user --help",

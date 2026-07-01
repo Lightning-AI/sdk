@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_list_vm():
     result_text = command_text("lightning vm list --help")
 
@@ -11,5 +12,6 @@ def test_list_vm():
     assert "--sort-by" in result_text
 
 
+@mock_command_logging
 def test_vms_list_help() -> None:
     assert_help_contains("lightning vms list --help", "Usage: lightning vms list", "List VMs in a teamspace.")

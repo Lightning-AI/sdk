@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -40,7 +40,9 @@ def test_retry_on_lcr_auth_failure():
     api.authenticate.assert_called_once()
 
 
-def test_delete_container_by_digest():
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()
     api._client = MagicMock()
 
@@ -51,7 +53,9 @@ def test_delete_container_by_digest():
     )
 
 
-def test_delete_container_by_digest_raises_on_error():
+@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.lit_container_api.docker.from_env")
+def test_delete_container_by_digest_raises_on_error(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()
     api._client = MagicMock()
     api._client.lit_registry_service_delete_lit_registry_repository_image_artifact_version_by_digest.side_effect = (

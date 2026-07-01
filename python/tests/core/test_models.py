@@ -26,6 +26,7 @@ class MyDummyExperiment:
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_teamspace_org_owner(
     mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_resolve_org
 ):
@@ -60,6 +61,7 @@ def test_get_teamspace_org_owner(
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_teamspace_authed_owner(
     mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
 ):
@@ -91,6 +93,7 @@ def test_get_teamspace_authed_owner(
 @mock.patch("lightning_sdk.models._get_authed_user")
 @mock.patch("lightning_sdk.models.UserApi")
 @mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_teamspace_other_user_owner(
     mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
 ):
@@ -121,6 +124,7 @@ def test_get_teamspace_other_user_owner(
 
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.models.TeamspaceApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_model_errors(mock_teamspace_api, mock_get_teamspace):
     from lightning_sdk.teamspace import Teamspace
 
@@ -148,6 +152,7 @@ def test_download_model_errors(mock_teamspace_api, mock_get_teamspace):
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_model_in_studio_with_org(
     mock_org_api,
     mock_teamspace_api,
@@ -184,6 +189,7 @@ def test_download_model_in_studio_with_org(
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_model_in_studio_with_user(
     mock_user_api,
     mock_teamspace_api,
@@ -219,6 +225,7 @@ def test_download_model_in_studio_with_user(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -246,6 +253,7 @@ def test_upload_model_in_studio_with_org(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_in_studio_with_org_and_experiment(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -275,6 +283,7 @@ def test_upload_model_in_studio_with_org_and_experiment(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -302,6 +311,7 @@ def test_upload_model_in_studio_with_user(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_model_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -322,6 +332,7 @@ def test_delete_model_in_studio_with_org(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_model_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -341,6 +352,7 @@ def test_delete_model_in_studio_with_user(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_model_version_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -361,6 +373,7 @@ def test_delete_model_version_in_studio_with_org(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_model_version_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -380,6 +393,7 @@ def test_delete_model_version_in_studio_with_user(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_model_versions_in_studio_with_org(
     mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -400,6 +414,7 @@ def test_list_model_versions_in_studio_with_org(
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_model_versions_in_studio_with_user(
     mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
 ):
@@ -416,6 +431,7 @@ def test_list_model_versions_in_studio_with_user(
 
 @mock.patch("lightning_sdk.models._get_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dir_home_path_shorthand(mock_download_model_files, mock_get_teamspace):
     from lightning_sdk.teamspace import Teamspace
 

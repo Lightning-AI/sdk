@@ -1,6 +1,6 @@
 import re
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -25,11 +25,12 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_resolve_teamspace(monkeypatch):
     mock_org = MagicMock()
     mock_org.name = "org"
     monkeypatch.setattr(deployment_module, "_resolve_org", mock_org)
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
     monkeypatch.setattr(deployment_module, "_get_cluster", MagicMock())
@@ -63,6 +64,8 @@ def _mock_deployment_dependencies(monkeypatch, auth_instance):
     return teamspace_mock
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_does_not_authenticate_or_look_up_user_eagerly(monkeypatch):
     """The constructor must not eagerly authenticate or resolve the authenticated user.
 
@@ -83,6 +86,8 @@ def test_deployment_does_not_authenticate_or_look_up_user_eagerly(monkeypatch):
     assert deployment._teamspace is teamspace_mock
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_uses_explicit_owner(monkeypatch):
     """The deployment owner comes from the explicitly provided user/org, not the auth token."""
     auth_instance = MagicMock()
@@ -100,6 +105,8 @@ def test_deployment_uses_explicit_owner(monkeypatch):
     assert deployment._user is None
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_raises_when_teamspace_cannot_be_resolved(monkeypatch):
     """If neither a teamspace nor an owner can be resolved, fail with an actionable error."""
     auth_instance = MagicMock()
@@ -113,6 +120,8 @@ def test_deployment_raises_when_teamspace_cannot_be_resolved(monkeypatch):
         deployment_module.Deployment(name="my-deploy")
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_export_request_captures_wrapper(tmp_path):
     result = object()
     export_mock = MagicMock(return_value=result)
@@ -151,6 +160,8 @@ def test_deployment_export_request_captures_wrapper(tmp_path):
     )
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_to_autoscaling():
     with pytest.raises(ValueError, match="The autoscaling metric is required. Currently supported metrics are"):
         deployment_api_module.to_autoscaling(
@@ -322,6 +333,8 @@ def test_to_autoscaling():
     assert second_metric.target == "75"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_to_env():
     env = deployment_api_module.to_env({"key": "value"})
     assert env == [V1EnvVar(name="key", value="value")]
@@ -330,6 +343,8 @@ def test_to_env():
     assert env == [V1EnvVar(name="key", value="value"), V1EnvVar(from_secret="secret")]
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_to_endpoint():
     with pytest.raises(ValueError, match="At least one port is required to reach your deployment."):
         deployment_api_module.to_endpoint([], None, None)
@@ -367,8 +382,9 @@ def test_to_endpoint():
     assert endpoint.custom_domain == "custom_domain"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_start_first_time(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()
@@ -452,8 +468,9 @@ def test_deployment_start_first_time(monkeypatch):
     assert deployment.running_replicas == 4
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_start_with_cloud(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     teamspace_mock = MagicMock()
     teamspace_mock.id = "project_id"
@@ -546,8 +563,9 @@ def test_deployment_start_with_cloud(monkeypatch):
     )
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_start_already_exist(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -573,8 +591,9 @@ def test_deployment_start_already_exist(monkeypatch):
     assert call_args.kwargs["body"].desired_state == deployment_module.V1DeploymentState.RUNNING
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_update(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -641,8 +660,9 @@ def test_deployment_update(monkeypatch):
     assert deployment.command == "python server2.py"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_update_name(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -665,8 +685,9 @@ def test_deployment_update_name(monkeypatch):
     assert deployment.name == "new_entrypoint"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_update_replicas(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -691,8 +712,9 @@ def test_deployment_update_replicas(monkeypatch):
     assert deployment.replicas == 0
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_update_strategy(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -717,8 +739,9 @@ def test_deployment_update_strategy(monkeypatch):
     assert deployment._deployment.strategy is not None
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_stop(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -769,8 +792,9 @@ def test_deployment_stop(monkeypatch):
     assert deployment.image == "my-image"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_get(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -804,8 +828,9 @@ def test_deployment_get(monkeypatch):
     requests_mock.Session().get.assert_called()
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_post(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -839,8 +864,9 @@ def test_deployment_post(monkeypatch):
     requests_mock.Session().post.assert_called_with(f"{url}/api/chat", json=json, verify=False)
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_put(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -873,8 +899,9 @@ def test_deployment_put(monkeypatch):
     requests_mock.Session().put.assert_called_with(f"{url}/", verify=False)
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_delete(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
     requests_mock = MagicMock()
@@ -907,6 +934,8 @@ def test_deployment_delete(monkeypatch):
     requests_mock.Session().delete.assert_called_with(f"{url}/", verify=False)
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_to_spec():
     with pytest.raises(ValueError, match="The cloud account should be defined."):
         deployment_api_module.to_spec(None, None, None, None, None)
@@ -925,6 +954,8 @@ def test_to_spec():
     deployment_api_module.to_spec("cluster-id", Machine.CPU, "image", None, None)
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_compose_commands():
     commands = ["python server.py &", "python server.py &"]
     command = deployment_api_module.compose_commands(commands)
@@ -935,6 +966,8 @@ def test_compose_commands():
     assert command == "( python server.py & ) && ls && ( python server.py & )"
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_to_health_check_empty():
     health_check = deployment_api_module.to_health_check()
     assert health_check.failure_threshold == 3600
@@ -946,6 +979,8 @@ def test_to_health_check_empty():
     assert health_check is None
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_apply_change():
     to_health_check()
 
@@ -959,8 +994,9 @@ def test_apply_change():
     assert apply_change(spec, "readiness_probe", to_health_check(None))
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_start_with_path_mappings(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()
@@ -999,8 +1035,9 @@ def test_deployment_start_with_path_mappings(monkeypatch):
     assert len(spec.path_mappings) == 2
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_update_with_path_mappings(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     monkeypatch.setattr(user, "UserApi", MagicMock())
 
@@ -1035,8 +1072,9 @@ def test_deployment_update_with_path_mappings(monkeypatch):
     assert len(spec.path_mappings) == 2
 
 
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.deployment.login.Auth", new=MagicMock())
 def test_deployment_start_byom_builds_spec(monkeypatch):
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
 
     teamspace_mock = MagicMock()

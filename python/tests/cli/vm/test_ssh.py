@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_ssh_vm():
     result_text = command_text("lightning vm ssh --help")
 
@@ -11,5 +12,6 @@ def test_ssh_vm():
     assert "--option     -o  TEXT" in result_text
 
 
+@mock_command_logging
 def test_vms_ssh_help() -> None:
     assert_help_contains("lightning vms ssh --help", "Usage: lightning vms ssh", "SSH into a VM.")

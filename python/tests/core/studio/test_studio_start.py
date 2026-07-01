@@ -84,6 +84,7 @@ def list_cloudspaces_side_effect(existing_studios):
     "lightning_sdk.api.studio_api.StudioApi.machine_is_supported",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start(
     mock_machine_is_supported,
     mock_get_teamspace,
@@ -270,6 +271,7 @@ def test_studio_start(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_on_demand_machine(
     mock_get_teamspace,
     mock_get_org,
@@ -459,6 +461,7 @@ def test_studio_start_on_demand_machine(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_interruptible_override(
     mock_get_teamspace,
     mock_get_org,
@@ -647,6 +650,7 @@ def test_studio_start_interruptible_override(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_different_machine(
     mock_get_teamspace,
     mock_get_org,
@@ -853,6 +857,7 @@ def test_studio_start_different_machine(
     "lightning_sdk.api.studio_api.StudioApi.machine_is_supported",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
     mock_machine_is_supported,
     mock_get_teamspace,
@@ -1050,6 +1055,7 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_ignores_stopped_current_studio_machine(
     mock_get_teamspace,
     mock_get_org,
@@ -1224,6 +1230,7 @@ def test_studio_start_ignores_stopped_current_studio_machine(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_explicit_machine_overrides_current_studio_machine(
     mock_get_teamspace,
     mock_get_org,

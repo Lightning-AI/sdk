@@ -4,9 +4,10 @@ from unittest import mock
 from click.testing import CliRunner
 
 from lightning_sdk.cli.legacy.open import open
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_open_studio():
     result_text = command_text("lightning studio open --help")
 
@@ -17,6 +18,7 @@ def test_open_studio():
     assert "--cloud-account" not in result_text
 
 
+@mock_command_logging
 def test_studios_open_help() -> None:
     assert_help_contains(
         "lightning studios open --help",
@@ -25,6 +27,7 @@ def test_studios_open_help() -> None:
     )
 
 
+@mock_command_logging
 def test_open_help_redirect() -> None:
     assert_help_contains(
         "lightning open --help",
@@ -39,6 +42,7 @@ def test_open_help_redirect() -> None:
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
+@mock_command_logging
 def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
@@ -63,6 +67,7 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbr
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
+@mock_command_logging
 def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
@@ -87,6 +92,7 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrow
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
+@mock_command_logging
 def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"

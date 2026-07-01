@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_delete_studio():
     result_text = command_text("lightning studio delete --help")
 
@@ -10,10 +11,12 @@ def test_delete_studio():
     assert "--teamspace  TEXT" in result_text
 
 
+@mock_command_logging
 def test_studios_delete_help() -> None:
     assert_help_contains("lightning studios delete --help", "Usage: lightning studios delete", "Delete a Studio.")
 
 
+@mock_command_logging
 def test_delete_studio_legacy_help() -> None:
     assert_help_contains(
         "lightning delete studio --help",

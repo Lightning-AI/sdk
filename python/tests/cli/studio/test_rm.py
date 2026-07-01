@@ -6,9 +6,10 @@ import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.rm import rm_file, rm_folder, rm_impl, rm_studio_file
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_rm_help():
     """Test the rm command help text."""
     result_text = command_text("lightning studio rm --help")
@@ -20,18 +21,21 @@ def test_rm_help():
     assert "--force      -f" in result_text
 
 
+@mock_command_logging
 def test_studios_rm_help() -> None:
     assert_help_contains(
         "lightning studios rm --help", "Usage: lightning studios rm", "Remove a Studio file or directory."
     )
 
 
+@mock_command_logging
 def test_rm_impl_local_path_raises_error():
     """Test that providing a non-Studio path raises an error."""
     with pytest.raises(ValueError, match="Path must be a Studio path starting with 'lit://'."):
         rm_impl(path="local_file.txt")
 
 
+@mock_command_logging
 def test_rm_impl_with_nonexistent_file_raises_error():
     """Test that removing a nonexistent file raises FileNotFoundError."""
     mock_parse_result = {
@@ -62,6 +66,7 @@ def test_rm_impl_with_nonexistent_file_raises_error():
         )
 
 
+@mock_command_logging
 def test_rm_impl_with_nonexistent_file_and_force_succeeds():
     """Test that removing a nonexistent file with -f flag succeeds silently."""
     mock_parse_result = {
@@ -93,6 +98,7 @@ def test_rm_impl_with_nonexistent_file_and_force_succeeds():
         assert result is None
 
 
+@mock_command_logging
 def test_rm_file_successful():
     """Test successful file removal from Studio."""
     mock_parse_result = {
@@ -124,6 +130,7 @@ def test_rm_file_successful():
         mock_selected_studio._studio_api.remove_file.assert_called_once_with("studio-id", "teamspace-id", "file.txt")
 
 
+@mock_command_logging
 def test_rm_folder_without_recursive_flag_raises_error():
     """Test that removing a folder without -r flag raises an error."""
     mock_parse_result = {
@@ -154,6 +161,7 @@ def test_rm_folder_without_recursive_flag_raises_error():
         )
 
 
+@mock_command_logging
 def test_rm_folder_with_recursive_flag_succeeds():
     """Test that removing a folder with -r flag succeeds."""
     mock_parse_result = {
@@ -187,6 +195,7 @@ def test_rm_folder_with_recursive_flag_succeeds():
         )
 
 
+@mock_command_logging
 def test_rm_studio_file_integration():
     """Test the full rm_studio_file command."""
     runner = CliRunner()
@@ -217,6 +226,7 @@ def test_rm_studio_file_integration():
         mock_selected_studio._studio_api.remove_file.assert_called_once_with("studio-id", "teamspace-id", "file.txt")
 
 
+@mock_command_logging
 def test_rm_prints_correct_messages():
     """Test that rm prints the correct console messages."""
     mock_parse_result = {
@@ -255,6 +265,7 @@ def test_rm_prints_correct_messages():
         assert "Removed file: file.txt" in second_call_arg
 
 
+@mock_command_logging
 def test_rm_folder_prints_correct_messages():
     """Test that rm folder prints the correct console messages."""
     mock_parse_result = {
@@ -293,6 +304,7 @@ def test_rm_folder_prints_correct_messages():
         assert "Removed directory: /my-folder" in second_call_arg
 
 
+@mock_command_logging
 def test_rm_with_nested_path():
     """Test removing a file with nested path."""
     mock_parse_result = {
@@ -326,6 +338,7 @@ def test_rm_with_nested_path():
         )
 
 
+@mock_command_logging
 def test_rm_file_function_calls_api():
     """Test that rm_file function calls the API correctly."""
     mock_selected_studio = MagicMock()
@@ -342,6 +355,7 @@ def test_rm_file_function_calls_api():
     assert "Removed file: test.txt" in str(mock_console.print.call_args[0][0])
 
 
+@mock_command_logging
 def test_rm_folder_function_calls_api():
     """Test that rm_folder function calls the API correctly."""
     mock_selected_studio = MagicMock()
@@ -358,6 +372,7 @@ def test_rm_folder_function_calls_api():
     assert "Removed directory: /my-folder" in str(mock_console.print.call_args[0][0])
 
 
+@mock_command_logging
 def test_rm_with_force_and_recursive():
     """Test removing a nonexistent folder with both -r and -f flags."""
     mock_parse_result = {

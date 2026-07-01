@@ -16,7 +16,8 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
 
-def test_mmt_v2_submit_job():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job(_mock_auth):
     job_api = MMTApiV2()
 
     create_job_mock = mock.MagicMock()
@@ -101,7 +102,8 @@ def test_mmt_v2_submit_job():
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
-def test_get_mmt_by_name():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_mmt_by_name(_mock_auth):
     job_api = MMTApiV2()
 
     get_job_by_name_mock = mock.MagicMock()
@@ -111,7 +113,8 @@ def test_get_mmt_by_name():
     get_job_by_name_mock.assert_called_once_with(name="test-job", project_id="ts-abc")
 
 
-def test_get_mmt():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_get_mmt(_mock_auth):
     job_api = MMTApiV2()
 
     get_job_mock = mock.MagicMock()
@@ -131,7 +134,8 @@ def test_get_mmt():
         ("MultiMachineJob_STATE_COMPLETED", Status.Completed),
     ],
 )
-def test_translate_state(internal_state, expected_state):
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_translate_state(_mock_auth, internal_state, expected_state):
     job_api = MMTApiV2()
     assert job_api._job_state_to_external(internal_state) == expected_state
 
@@ -177,7 +181,8 @@ def test_machine_translate(
         ),
     ],
 )
-def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update_job: bool):
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_stop(_mock_auth, job_states: List[str], total_calls_get_job: int, called_update_job: bool):
     job_api = MMTApiV2()
 
     def get_job_side_effect(*args, **kwargs):
@@ -215,7 +220,8 @@ def test_mmt_stop(job_states: List[str], total_calls_get_job: int, called_update
         update_job_mock.assert_not_called()
 
 
-def test_mmt_delete():
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_delete(_mock_auth):
     job_api = MMTApiV2()
 
     delete_job_mock = mock.MagicMock()

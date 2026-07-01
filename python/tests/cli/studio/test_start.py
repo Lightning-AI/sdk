@@ -3,9 +3,10 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from lightning_sdk.cli.legacy import start as start_cli
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_start_studio():
     result_text = command_text("lightning studio start --help")
 
@@ -22,10 +23,12 @@ def test_start_studio():
     assert "--gpus" in result_text
 
 
+@mock_command_logging
 def test_studios_start_help() -> None:
     assert_help_contains("lightning studios start --help", "Usage: lightning studios start", "Start a Studio")
 
 
+@mock_command_logging
 def test_start_help() -> None:
     text = assert_help_contains(
         "lightning start --help",
@@ -35,6 +38,7 @@ def test_start_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_start_studio_legacy_help() -> None:
     assert_help_contains(
         "lightning start studio --help",
@@ -45,6 +49,7 @@ def test_start_studio_legacy_help() -> None:
 
 
 @patch("lightning_sdk.cli.legacy.start.Studio")
+@mock_command_logging
 def test_start_cli(mock_studio_class):
     mock_studio_instance = mock_studio_class.return_value
     mock_studio_instance.start.side_effect = Exception("Studio not found")

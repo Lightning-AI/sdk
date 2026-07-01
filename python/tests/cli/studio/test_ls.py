@@ -4,9 +4,10 @@ import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.ls import ls_impl, ls_studio
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_ls_help():
     """Test that the help message is displayed correctly."""
     result_text = command_text("lightning studio ls --help")
@@ -16,12 +17,14 @@ def test_ls_help():
     assert "lit://<owner>/<teamspace>/studios/<studio>/<directory-path>" in result_text
 
 
+@mock_command_logging
 def test_studios_ls_help() -> None:
     assert_help_contains(
         "lightning studios ls --help", "Usage: lightning studios ls", "List contents of a directory in Studio."
     )
 
 
+@mock_command_logging
 def test_ls_impl_local_path_raises_error():
     """Test that path without the prefix 'lit://' raises ValueError."""
     with pytest.raises(ValueError, match="Path must be a Studio path starting with 'lit://'."):
@@ -31,6 +34,7 @@ def test_ls_impl_local_path_raises_error():
         ls_impl(path="local/lit://path")
 
 
+@mock_command_logging
 def test_ls_impl_nonexistent_path_raises_error():
     """Test that providing a nonexistent studio path raises FileNotFoundError."""
     mock_parse_result = {
@@ -56,6 +60,7 @@ def test_ls_impl_nonexistent_path_raises_error():
         ls_impl(path="lit://test-owner/test-teamspace/studios/test-studio/nonexistent/path")
 
 
+@mock_command_logging
 def test_ls_impl_file_path_prints_filename(capsys):
     """Test that providing a file path prints just the filename."""
     mock_parse_result = {
@@ -87,6 +92,7 @@ def test_ls_impl_file_path_prints_filename(capsys):
         assert captured.out.strip() == "data/file.txt"
 
 
+@mock_command_logging
 def test_ls_impl_directory_lists_contents(capsys):
     """Test that providing a directory path lists its contents."""
     mock_parse_result = {
@@ -132,6 +138,7 @@ def test_ls_impl_directory_lists_contents(capsys):
         assert "subfolder/" in output_lines
 
 
+@mock_command_logging
 def test_ls_impl_root_directory(capsys):
     """Test listing the root directory of a studio."""
     mock_parse_result = {
@@ -177,6 +184,7 @@ def test_ls_impl_root_directory(capsys):
         assert "README.md" in output_lines
 
 
+@mock_command_logging
 def test_ls_studio_integration(capsys):
     """Test the full ls_studio command integration."""
     runner = CliRunner()
@@ -220,6 +228,7 @@ def test_ls_studio_integration(capsys):
         assert "subfolder/" in result.output
 
 
+@mock_command_logging
 def test_ls_impl_nested_path(capsys):
     """Test listing a deeply nested directory path."""
     mock_parse_result = {

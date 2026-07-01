@@ -14,6 +14,7 @@ def list_cloudspaces_side_effect(existing_studios):
     return _list_cloudspaces_side_effect
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_env_property():
     """Test that Studio.env property calls StudioApi.get_env correctly."""
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
@@ -41,6 +42,7 @@ def test_studio_env_property():
     studio._studio_api.get_env.assert_called_once_with(mock_studio)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_set_env_partial_true():
     """Test that Studio.set_env calls StudioApi.set_env correctly with partial=True."""
     mock_studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")
@@ -58,6 +60,7 @@ def test_studio_set_env_partial_true():
     studio._studio_api.set_env.assert_called_once_with(mock_studio, "ts-abc", new_env, partial=True)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_set_env_partial_false():
     """Test that Studio.set_env calls StudioApi.set_env correctly with partial=False."""
     mock_studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")

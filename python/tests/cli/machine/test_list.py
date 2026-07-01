@@ -1,18 +1,21 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_machine_list_help() -> None:
     assert_help_contains(
         "lightning machine list --help", "Usage: lightning machine list", "Display the list of available machines."
     )
 
 
+@mock_command_logging
 def test_machines_list_help() -> None:
     assert_help_contains(
         "lightning machines list --help", "Usage: lightning machines list", "Display the list of available machines."
     )
 
 
+@mock_command_logging
 def test_list_machines_legacy_help() -> None:
     assert_help_contains(
         "lightning list machines --help",
@@ -22,6 +25,7 @@ def test_list_machines_legacy_help() -> None:
     )
 
 
+@mock_command_logging
 def test_machines_output() -> None:
     result_text = command_text("lightning machine list")
 

@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_switch_studio():
     result_text = command_text("lightning studio switch --help")
     assert "Usage: lightning studio switch [OPTIONS]" in result_text
@@ -11,6 +12,7 @@ def test_switch_studio():
     assert "--interruptible" in result_text
 
 
+@mock_command_logging
 def test_studios_switch_help() -> None:
     assert_help_contains(
         "lightning studios switch --help",
@@ -19,6 +21,7 @@ def test_studios_switch_help() -> None:
     )
 
 
+@mock_command_logging
 def test_switch_help() -> None:
     text = assert_help_contains(
         "lightning switch --help",
@@ -28,6 +31,7 @@ def test_switch_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_switch_studio_legacy_help() -> None:
     assert_help_contains(
         "lightning switch studio --help",

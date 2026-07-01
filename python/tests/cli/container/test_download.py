@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_container_download_help() -> None:
     assert_help_contains(
         "lightning container download --help",
@@ -9,6 +10,7 @@ def test_container_download_help() -> None:
     )
 
 
+@mock_command_logging
 def test_containers_download_help() -> None:
     assert_help_contains(
         "lightning containers download --help",
@@ -17,6 +19,7 @@ def test_containers_download_help() -> None:
     )
 
 
+@mock_command_logging
 def test_download_help() -> None:
     text = assert_help_contains(
         "lightning download --help",
@@ -29,6 +32,7 @@ def test_download_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_download_container_legacy_help() -> None:
     assert_help_contains(
         "lightning download container --help",

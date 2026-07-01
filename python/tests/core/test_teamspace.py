@@ -46,6 +46,7 @@ class MyDummyExperiment:
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
 ):
@@ -74,6 +75,7 @@ def test_teamspace_init(
 
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init_env(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
 ):
@@ -108,12 +110,18 @@ def test_teamspace_init_env(
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch(
+    "lightning_sdk.api.teamspace_api.Auth",
+    new=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")),
+)
 def test_teamspace_list_clusters_studios_user(
+    _mock_authenticate,
     internal_studio_api_list_mocker,
     internal_user_api_mocker,
     internal_teamspace_api_cluster_list_mocker,
     internal_teamspace_api_list_mocker,
-    internal_auth_mocker,
 ):
     ts = Teamspace("ts-abc", user="user-abc")
 
@@ -124,12 +132,18 @@ def test_teamspace_list_clusters_studios_user(
 
 
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch(
+    "lightning_sdk.api.teamspace_api.Auth",
+    new=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")),
+)
 def test_teamspace_list_clusters_studios_org(
+    _mock_authenticate,
     internal_studio_api_list_mocker,
     internal_get_org_api_mocker,
     internal_teamspace_api_cluster_list_mocker,
     internal_teamspace_api_list_mocker,
-    internal_auth_mocker,
 ):
     ts = Teamspace("ts-abc", org="org-abc")
 
@@ -146,11 +160,13 @@ def test_teamspace_list_clusters_studios_org(
         ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_repr(
+    _mock_authenticate,
     internal_teamspace_api_list_mocker,
     internal_get_org_api_mocker,
     internal_user_api_mocker,
-    internal_auth_mocker,
     kwargs,
     expected,
 ):
@@ -165,11 +181,13 @@ def test_repr(
         ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
     ],
 )
+@mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_str(
+    _mock_authenticate,
     internal_teamspace_api_list_mocker,
     internal_get_org_api_mocker,
     internal_user_api_mocker,
-    internal_auth_mocker,
     kwargs,
     expected,
 ):
@@ -177,6 +195,7 @@ def test_str(
     assert str(ts) == expected
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_error_user_and_org():
     with pytest.raises(
         ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
@@ -184,10 +203,12 @@ def test_teamspace_error_user_and_org():
         Teamspace(name="ts-abc", user="foo", org="bar")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_agent(
+    _mock_authenticate,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
-    internal_auth_mocker,
     internal_teamspace_api_create_agent_mocker,
     internal_agents_api_get_agent_mocker,
 ):
@@ -202,6 +223,7 @@ def test_create_agent(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_single_file(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -256,6 +278,7 @@ def test_upload_model_single_file(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_single_file_experiment(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -314,6 +337,7 @@ def test_upload_model_single_file_experiment(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_multiple_files(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -373,6 +397,7 @@ def test_upload_model_multiple_files(
 @pytest.mark.parametrize("folder", ["download_dir", None])
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_model(
     get_model_version_mock,
     download_model_files_mock,
@@ -413,6 +438,7 @@ def test_download_model(
 
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_model_version(
     get_model_version_mock,
     download_model_files_mock,
@@ -443,6 +469,7 @@ def test_download_model_version(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_jobs(
     list_jobs_mock,
     internal_get_org_api_mocker,
@@ -467,6 +494,7 @@ def test_list_jobs(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_mmts(list_mmts_mock, internal_get_org_api_mocker, internal_teamspace_api_mocker):
     mmts = [V1MultiMachineJob(name="mmtv2-1"), V1MultiMachineJob(name="mmtv2-2"), V1MultiMachineJob(name="mmtv2-3")]
     ts = Teamspace("ts-abc", org="org-abc")
@@ -489,6 +517,7 @@ def test_list_mmts(list_mmts_mock, internal_get_org_api_mocker, internal_teamspa
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
@@ -517,6 +546,7 @@ def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_machines_global_cloud_account(
     mock_resolve_org, mock_resolve_user, mock_teamspace_api, mock_cloud_account_api
 ):
@@ -554,6 +584,7 @@ def test_list_machines_global_cloud_account(
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
@@ -582,6 +613,7 @@ def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mo
 @mock.patch("lightning_sdk.teamspace.CloudAccountApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_machines_with_machine_filter(
     mock_resolve_org, mock_resolve_user, mock_cloud_account_api, mock_teamspace_api
 ):
@@ -616,6 +648,7 @@ def test_list_machines_with_machine_filter(
 @mock.patch("lightning_sdk.teamspace.CloudAccountApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_machines_with_invalid_machine(
     mock_resolve_org, mock_resolve_user, mock_cloud_account_api, mock_teamspace_api
 ):
@@ -651,6 +684,7 @@ def test_list_machines_with_invalid_machine(
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_default_cloud_account_resolution(
     mock_resolve_org,
     mock_resolve_user,
@@ -675,6 +709,7 @@ def test_teamspace_default_cloud_account_resolution(
     assert teamspace.default_cloud_account == expected_result
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_secrets_property(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -690,6 +725,7 @@ def test_teamspace_secrets_property(
     mock_get.assert_called_once_with("ts-abc002")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_set_secret(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -703,6 +739,7 @@ def test_teamspace_set_secret(
 
 
 @pytest.mark.parametrize("secret_type", [SecretType.HF_TOKEN, "hf_token"])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_set_secret_hf_token(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -716,6 +753,7 @@ def test_teamspace_set_secret_hf_token(
     mock_set.assert_called_once_with("ts-abc002", "HF_TOKEN", "hf_xxx", secret_type=secret_type)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_set_secret_invalid_name(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -731,6 +769,7 @@ def test_teamspace_set_secret_invalid_name(
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
 @mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_agnostic(
     mock_cloud_account_client,
     mock_teamspace_client,
@@ -788,6 +827,7 @@ def test_new_folder_agnostic(
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
 @mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_byoc(
     mock_cloud_account_client,
     mock_teamspace_client,
@@ -854,6 +894,7 @@ def test_new_folder_byoc(
 @pytest.mark.parametrize("writable", [True, False])
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
 @mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, internal_user_api_mocker, writable):
     mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
@@ -934,6 +975,7 @@ def _clear_teamspace_permission_cache():
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.studios succeeds when Studios permission is allowed."""
     mock_user = mock.Mock(spec=User)
@@ -973,6 +1015,7 @@ def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspa
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.studios raises PermissionError when Studios permission is denied."""
     mock_user = mock.Mock(spec=User)
@@ -1006,6 +1049,7 @@ def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspac
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_vms_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.vms raises PermissionError with VMs in message when Studios permission is denied."""
     mock_user = mock.Mock(spec=User)
@@ -1040,6 +1084,7 @@ def test_teamspace_vms_property_when_denied(mock_resolve_user, mock_teamspace_ap
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.jobs succeeds when Jobs permission is allowed."""
     mock_user = mock.Mock(spec=User)
@@ -1075,6 +1120,7 @@ def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.jobs raises PermissionError when Jobs permission is denied."""
     mock_user = mock.Mock(spec=User)
@@ -1108,6 +1154,7 @@ def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_a
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_multi_machine_jobs_property_when_allowed(
     mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
 ):
@@ -1145,6 +1192,7 @@ def test_teamspace_multi_machine_jobs_property_when_allowed(
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace._resolve_user")
 @pytest.mark.project_permission_test()
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_multi_machine_jobs_property_when_denied(
     mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
 ):

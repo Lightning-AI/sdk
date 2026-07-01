@@ -12,11 +12,9 @@ from click.testing import CliRunner
 from lightning_sdk import Machine
 from lightning_sdk.cli.api.deploy import deploy_api
 from lightning_sdk.cli.legacy.deploy._auth import (
-    _AuthLitServe,
     _AuthMode,
     _Onboarding,
     _OnboardingStatus,
-    authenticate,
     poll_verified_status,
     select_teamspace,
 )
@@ -24,11 +22,12 @@ from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox, _LitServeDevb
 from lightning_sdk.cli.legacy.deploy.serve import _handle_cloud, is_connected
 from lightning_sdk.cli.legacy.deploy.serve import api_impl as serve_api
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpaceSourceType
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 _LLITSERVE_AVAILABLE = find_spec("litserve") is not None
 
 
+@mock_command_logging
 def test_serve_help():
     text = assert_help_contains(
         "lightning deploy --help",
@@ -38,12 +37,14 @@ def test_serve_help():
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_api_deploy_help():
     assert_help_contains(
         "lightning api deploy --help", "Usage: lightning api deploy", "Deploy a LitServe model script."
     )
 
 
+@mock_command_logging
 def test_api_deploy_cloud_option_accepts_optional_selection(monkeypatch, tmp_path):
     script = tmp_path / "server.py"
     script.write_text("print('ok')")
@@ -56,6 +57,7 @@ def test_api_deploy_cloud_option_accepts_optional_selection(monkeypatch, tmp_pat
     assert handle_cloud.call_args.kwargs["cloud"] == "aws"
 
 
+@mock_command_logging
 def test_api_deploy_cloud_option_without_value_deploys_to_cloud(monkeypatch, tmp_path):
     script = tmp_path / "server.py"
     script.write_text("print('ok')")
@@ -69,6 +71,7 @@ def test_api_deploy_cloud_option_without_value_deploys_to_cloud(monkeypatch, tmp
     assert handle_cloud.call_args.kwargs["cloud"] is None
 
 
+@mock_command_logging
 def test_api_deploy_rejects_legacy_cloud_options(monkeypatch):
     api_impl = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.api.deploy.api_impl", api_impl)
@@ -81,12 +84,14 @@ def test_api_deploy_rejects_legacy_cloud_options(monkeypatch):
     api_impl.assert_not_called()
 
 
+@mock_command_logging
 def test_apis_deploy_help():
     assert_help_contains(
         "lightning apis deploy --help", "Usage: lightning apis deploy", "Deploy a LitServe model script."
     )
 
 
+@mock_command_logging
 def test_api_help():
     assert_help_contains(
         "lightning deploy api --help",
@@ -118,6 +123,7 @@ if __name__ == "__main__":
 
 @pytest.mark.skipif(not _LLITSERVE_AVAILABLE, reason="this test requires optional LitServe dependency")
 @patch("subprocess.run")
+@mock_command_logging
 def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
     serve_api(temp_script, True, cloud=False)
 
@@ -139,6 +145,7 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
+@mock_command_logging
 def test_cloud_deployment(
     mock_poll_verified_status,
     mock_authenticate,
@@ -198,6 +205,7 @@ def test_cloud_deployment(
 @patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
+@mock_command_logging
 def test_cloud_deployment_non_interactive(
     mock_poll_verified_status,
     mock_authenticate,
@@ -237,6 +245,7 @@ def test_cloud_deployment_non_interactive(
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.datetime")
 @patch("lightning_sdk.cli.legacy.deploy.serve.subprocess.run")
+@mock_command_logging
 def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
     serve_api(temp_script, name="test", cloud=False)
     mock_dt.now.assert_not_called()
@@ -245,23 +254,27 @@ def test_args_with_repository(mock_subprocess, mock_dt, temp_script):
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.datetime")
 @patch("lightning_sdk.cli.legacy.deploy.serve.subprocess.run")
+@mock_command_logging
 def test_args_without_repository(mock_subprocess, mock_dt, temp_script):
     serve_api(temp_script, cloud=False)
     mock_dt.now.assert_called()
     mock_subprocess.assert_called_once()
 
 
+@mock_command_logging
 def test_is_connected():
     assert is_connected(), "should return True when the internet is available"
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.socket.create_connection")
+@mock_command_logging
 def test_is_connected_no_internet(mock_create_connection):
     mock_create_connection.side_effect = OSError("No internet connection")
     assert is_connected() is False, "should return True when the internet is available"
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.is_connected")
+@mock_command_logging
 def test_handle_cloud_no_internet(mock_is_connected):
     mock_is_connected.return_value = False
     console = MagicMock()
@@ -278,6 +291,7 @@ def test_handle_cloud_no_internet(mock_is_connected):
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @patch("lightning_sdk.cli.legacy.deploy.serve._Onboarding")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Thread")
+@mock_command_logging
 def test_handle_cloud_from_onboarding(
     mock_thread,
     mock_onboarding,
@@ -321,6 +335,7 @@ def test_handle_cloud_from_onboarding(
 @patch("lightning_sdk.cli.legacy.deploy.serve.webbrowser")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
+@mock_command_logging
 def test_handle_cloud(
     mock_poll_verified_status,
     mock_authenticate,
@@ -359,6 +374,7 @@ def test_handle_cloud(
 @patch("lightning_sdk.serve.DeploymentApi")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
+@mock_command_logging
 def test_handle_byoc_cloud(
     mock_poll_verified_status,
     mock_authenticate,
@@ -388,6 +404,7 @@ def test_handle_byoc_cloud(
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
+@mock_command_logging
 def test_handle_cloud_deployment_api(
     mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, mock_cluster_resolver, __, ___, temp_script
 ):
@@ -419,6 +436,7 @@ def test_handle_cloud_deployment_api(
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @patch("lightning_sdk.cli.legacy.deploy.serve._get_registry_url")
 @pytest.mark.parametrize("cloud", ["byoc-123", None])
+@mock_command_logging
 def test_handle_cloud_with_cloud(
     mock_registry_url,
     mock_poll_verified_status,
@@ -484,50 +502,10 @@ def test_handle_cloud_with_cloud(
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 
 
-@patch("lightning_sdk.cli.legacy.deploy._auth._AuthLitServe")
-def test_authenticate(mock_auth_class):
-    authenticate(_AuthMode.DEPLOY)
-    mock_auth_class.return_value.authenticate.assert_called_once()
-
-
-@patch("lightning_sdk.cli.legacy.deploy._auth._AuthServer")
-@patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
-def test_auth_run_server(_, mock_authserver):
-    mock_authserver.return_value.login_with_browser = MagicMock()
-
-    auth = _AuthLitServe(_AuthMode.DEPLOY)
-    auth.load = MagicMock(return_value=False)
-    auth._with_env_var = False
-    auth.authenticate()
-
-    auth.load.assert_called_once()
-    mock_authserver.return_value.login_with_browser.assert_called_once()
-
-
-@patch("lightning_sdk.cli.legacy.deploy._auth._AuthServer")
-@patch("lightning_sdk.lightning_cloud.login.Auth.auth_header")
-@patch("lightning_sdk.cli.legacy.deploy._auth.Confirm")
-def test_auth_run_server_confirm_browser_open(mock_auth_confirm, _, mock_authserver):
-    mock_authserver.return_value.login_with_browser = MagicMock()
-
-    auth = _AuthLitServe(_AuthMode.DEPLOY, shall_confirm=True)
-    auth.load = MagicMock(return_value=False)
-    auth._with_env_var = False
-    auth.authenticate()
-
-    auth.load.assert_called_once()
-    mock_authserver.return_value.login_with_browser.assert_called_once()
-    mock_auth_confirm.ask.assert_called_once_with(
-        "[bold yellow]LitServe needs to authenticate with Lightning AI to deploy your server.[/bold yellow]\n"
-        "This will open a browser window for login.\n"
-        "Do you want to continue?",
-        default=True,
-    )
-
-
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
 @patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user")
 @patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@mock_command_logging
 def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_user, mock_teamspace_cls):
     from lightning_sdk.user import User
 
@@ -544,6 +522,7 @@ def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_
 
 
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace")
+@mock_command_logging
 def test_select_teamspace(mock_resolve_teamspace):
     select_teamspace(teamspace="test-teamspace", org="org", user="user")
     mock_resolve_teamspace.assert_called_once_with(teamspace="test-teamspace", org="org", user="user")
@@ -551,6 +530,7 @@ def test_select_teamspace(mock_resolve_teamspace):
 
 @patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user")
 @patch("lightning_sdk.cli.legacy.deploy._auth.UserApi")
+@mock_command_logging
 def test_poll_verified_status(mock_user_api_cls, mock_get_authed_user):
     # test poll_verified_status
     mock_get_user = mock_user_api_cls.return_value.get_user = MagicMock(return_value=MagicMock(verified=False))
@@ -577,6 +557,7 @@ def mock_onboarding():
 
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
 @patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@mock_command_logging
 def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onboarding):
     (
         onboarding,
@@ -611,6 +592,7 @@ def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onb
 
 @patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
 @patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@mock_command_logging
 def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboarding):
     (
         onboarding,
@@ -641,6 +623,7 @@ def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboar
     mock_ts.assert_called_once_with(name="org-teamspace", org="test-org", user="test-user")
 
 
+@mock_command_logging
 def test_onboarding_get_cloudspace_id(mock_onboarding):
     (
         onboarding,
@@ -660,6 +643,7 @@ def test_onboarding_get_cloudspace_id(mock_onboarding):
     mock_lightning_client.return_value.cloud_space_service_list_cloud_spaces.assert_called_once()
 
 
+@mock_command_logging
 def test_handle_devbox_non_python_file():
     console = MagicMock()
     _handle_devbox(
@@ -674,6 +658,7 @@ def test_handle_devbox_non_python_file():
     )
 
 
+@mock_command_logging
 def test_detect_port(tmpdir):
     test_file1 = tmpdir.join("test.py")
     test_file1.write("s.run(port=8001)")
@@ -696,6 +681,7 @@ def test_detect_port(tmpdir):
 @patch("lightning_sdk.cli.legacy.deploy.devbox.Thread")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.poll_verified_status")
+@mock_command_logging
 def test_handle_devbox(
     mock_poll_verified_status,
     mock_authenticate,
@@ -744,6 +730,7 @@ def test_handle_devbox(
 @pytest.mark.parametrize("machine", ["CPU", "T4", "A10G_X_4"])
 @pytest.mark.parametrize("interruptible", [True, False])
 @pytest.mark.parametrize("non_interactive", [True, False])
+@mock_command_logging
 def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interruptible, non_interactive):
     serve_api(
         temp_script,

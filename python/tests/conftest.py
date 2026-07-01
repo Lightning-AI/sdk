@@ -99,7 +99,7 @@ class _DummyResponse:
 
 
 @pytest.fixture()
-def internal_user_api_mocker(mocker, internal_auth_mocker):
+def internal_user_api_mocker(mocker):
     def side_effect(self, **kwargs):
         if kwargs["query"] == "xyz":
             return V1SearchUsersResponse(users=[])
@@ -122,15 +122,8 @@ def internal_user_api_mocker(mocker, internal_auth_mocker):
         autospec=True,
     )
 
-    yield [mocker, internal_auth_mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
-def internal_auth_mocker(mocker):
-    mocker.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", autospec=True, return_value="my-auth-header")
     yield [mocker]
+
     mocker.resetall()
 
 
@@ -171,7 +164,7 @@ def internal_list_org_api_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_get_org_api_mocker(mocker, internal_auth_mocker):
+def internal_get_org_api_mocker(mocker):
     def side_effect(self, **kwargs):
         _id, _name = kwargs.get("id", ""), kwargs.get("name", "")
 
@@ -197,7 +190,7 @@ def internal_get_org_api_mocker(mocker, internal_auth_mocker):
         side_effect=side_effect,
         autospec=True,
     )
-    yield [mocker, internal_auth_mocker]
+    yield [mocker]
 
     mocker.resetall()
 

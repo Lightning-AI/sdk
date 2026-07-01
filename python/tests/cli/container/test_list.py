@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_container_list_help() -> None:
     assert_help_contains(
         "lightning container list --help",
@@ -9,6 +10,7 @@ def test_container_list_help() -> None:
     )
 
 
+@mock_command_logging
 def test_containers_list_help() -> None:
     assert_help_contains(
         "lightning containers list --help",
@@ -17,6 +19,7 @@ def test_containers_list_help() -> None:
     )
 
 
+@mock_command_logging
 def test_list_help() -> None:
     text = assert_help_contains(
         "lightning list --help",
@@ -30,6 +33,7 @@ def test_list_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_list_containers_legacy_help() -> None:
     assert_help_contains(
         "lightning list containers --help",

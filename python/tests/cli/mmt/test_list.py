@@ -1,18 +1,21 @@
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_mmt_list_help() -> None:
     assert_help_contains(
         "lightning mmt list --help", "Usage: lightning mmt list", "List multi-machine jobs for a given teamspace."
     )
 
 
+@mock_command_logging
 def test_mmts_list_help() -> None:
     assert_help_contains(
         "lightning mmts list --help", "Usage: lightning mmts list", "List multi-machine jobs for a given teamspace."
     )
 
 
+@mock_command_logging
 def test_list_mmts_legacy_help() -> None:
     assert_help_contains(
         "lightning list mmts --help",

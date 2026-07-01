@@ -19,7 +19,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ReloadDeploymentWeightsResponse,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 def _unacked_exc(*codes):
@@ -28,6 +28,7 @@ def _unacked_exc(*codes):
     return e
 
 
+@mock_command_logging
 def test_deployment_help() -> None:
     assert_help_contains(
         "lightning deployment --help",
@@ -42,6 +43,7 @@ def test_deployment_help() -> None:
     )
 
 
+@mock_command_logging
 def test_deployments_alias_help() -> None:
     assert_help_contains(
         "lightning deployments list --help",
@@ -50,6 +52,7 @@ def test_deployments_alias_help() -> None:
     )
 
 
+@mock_command_logging
 def test_list_deployments_includes_replicas(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id", name="test", owner=SimpleNamespace(name="ecorp"))
     deployment = V1Deployment(
@@ -76,6 +79,7 @@ def test_list_deployments_includes_replicas(monkeypatch) -> None:
     assert "Replicas" in result.output
 
 
+@mock_command_logging
 def test_list_deployments_source_column(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id", name="test", owner=SimpleNamespace(name="ecorp"))
     byom_dep = V1Deployment(
@@ -119,6 +123,7 @@ def test_list_deployments_source_column(monkeypatch) -> None:
     assert "studio:cs-9" in result.output
 
 
+@mock_command_logging
 def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -141,6 +146,7 @@ def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
     assert kwargs["replicas"] == 2
 
 
+@mock_command_logging
 def test_create_deployment_with_cloud(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -159,6 +165,7 @@ def test_create_deployment_with_cloud(monkeypatch) -> None:
     assert deployment.start.call_args.kwargs["cloud"] == "aws"
 
 
+@mock_command_logging
 def test_create_deployment_requires_name(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -171,6 +178,7 @@ def test_create_deployment_requires_name(monkeypatch) -> None:
     assert "Deployment name is required" in result.output
 
 
+@mock_command_logging
 def test_create_deployment_image_requires_port(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -181,6 +189,7 @@ def test_create_deployment_image_requires_port(monkeypatch) -> None:
     assert " is required" in result.output
 
 
+@mock_command_logging
 def test_create_deployment_model_mutually_exclusive_with_image(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -195,6 +204,7 @@ def test_create_deployment_model_mutually_exclusive_with_image(monkeypatch) -> N
     assert "Exactly one of --image, --studio, or --model is required." in output
 
 
+@mock_command_logging
 def test_create_deployment_model_requires_gpu(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -207,6 +217,7 @@ def test_create_deployment_model_requires_gpu(monkeypatch) -> None:
     assert "GPU machine" in result.output
 
 
+@mock_command_logging
 def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -253,6 +264,7 @@ def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> Non
         (None, None),
     ],
 )
+@mock_command_logging
 def test_create_deployment_enable_weight_reload_delegates(monkeypatch, flag, expected) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -272,6 +284,7 @@ def test_create_deployment_enable_weight_reload_delegates(monkeypatch, flag, exp
     assert kwargs["enable_weight_reload"] is expected
 
 
+@mock_command_logging
 def test_create_deployment_enable_weight_reload_in_dry_run(monkeypatch) -> None:
     deployment_cls = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
@@ -287,6 +300,7 @@ def test_create_deployment_enable_weight_reload_in_dry_run(monkeypatch) -> None:
     deployment_cls.assert_not_called()
 
 
+@mock_command_logging
 def test_create_model_force_acks_and_retries(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -303,6 +317,7 @@ def test_create_model_force_acks_and_retries(monkeypatch) -> None:
     assert "BYOM_INSUFFICIENT_VRAM_ESTIMATE" in deployment.start.call_args_list[1].kwargs["acknowledged_warnings"]
 
 
+@mock_command_logging
 def test_create_model_non_interactive_unacked_errors(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -318,6 +333,7 @@ def test_create_model_non_interactive_unacked_errors(monkeypatch) -> None:
     assert "BYOM_INSUFFICIENT_VRAM_ESTIMATE" in result.output
 
 
+@mock_command_logging
 def test_create_model_dry_run_skips_create(monkeypatch) -> None:
     deployment_cls = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
@@ -331,6 +347,7 @@ def test_create_model_dry_run_skips_create(monkeypatch) -> None:
     deployment_cls.assert_not_called()
 
 
+@mock_command_logging
 def test_create_ack_without_model_errors(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -341,6 +358,7 @@ def test_create_ack_without_model_errors(monkeypatch) -> None:
     assert "only supported with --model" in output
 
 
+@mock_command_logging
 def test_create_serving_image_variant_accepted(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = MagicMock()
@@ -357,6 +375,7 @@ def test_create_serving_image_variant_accepted(monkeypatch) -> None:
     assert deployment.start.call_args.kwargs["base_image_variant"] == "nightly"
 
 
+@mock_command_logging
 def test_create_old_byom_image_variant_rejected(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock())
 
@@ -367,6 +386,7 @@ def test_create_old_byom_image_variant_rejected(monkeypatch) -> None:
     assert result.exit_code != 0  # flag renamed to --serving-image-variant
 
 
+@mock_command_logging
 def test_follow_url_preserves_existing_query() -> None:
     url = _follow_url(
         "/v1/projects/project-id/jobs/job-id/logs?token=abc",
@@ -385,12 +405,14 @@ def test_follow_url_preserves_existing_query() -> None:
     assert "tail=50" in url
 
 
+@mock_command_logging
 def test_websocket_url_preserves_absolute_wss_url() -> None:
     url = _websocket_url("wss://lightning.ai/v1/projects/project-id/jobs/job-id/logs?follow=true")
 
     assert url == "wss://lightning.ai/v1/projects/project-id/jobs/job-id/logs?follow=true"
 
 
+@mock_command_logging
 def test_print_page_text_renders_json_log_entries(capsys) -> None:
     job = SimpleNamespace(id="job-id", name="replica-0")
 
@@ -402,6 +424,7 @@ def test_print_page_text_renders_json_log_entries(capsys) -> None:
     assert capsys.readouterr().out == "ready\nserving\n"
 
 
+@mock_command_logging
 def test_reload_weights_calls_api_and_prints_version(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
     deployment = V1Deployment(name="my-llama-deployment", id="dep-id", project_id="project-id")
@@ -423,6 +446,7 @@ def test_reload_weights_calls_api_and_prints_version(monkeypatch) -> None:
     api.reload_weights.assert_called_once_with(deployment)
 
 
+@mock_command_logging
 def test_resolve_jobs_filters_specific_job_id() -> None:
     api = MagicMock()
     api.list_deployment_jobs.return_value = [

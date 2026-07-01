@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_delete_vm():
     result_text = command_text("lightning vm delete --help")
 
@@ -10,5 +11,6 @@ def test_delete_vm():
     assert "--teamspace  TEXT" in result_text
 
 
+@mock_command_logging
 def test_vms_delete_help() -> None:
     assert_help_contains("lightning vms delete --help", "Usage: lightning vms delete", "Delete a VM.")

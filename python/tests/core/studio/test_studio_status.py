@@ -58,6 +58,7 @@ def list_cloudspaces_side_effect(existing_studios):
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_status(
     mock_get_teamspace,
     mock_get_org,

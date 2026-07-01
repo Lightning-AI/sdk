@@ -6,6 +6,7 @@ from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.lightning_cloud.openapi import V1Organization
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_org_api(internal_get_org_api_mocker):
     org_api = OrgApi()
 
@@ -13,6 +14,7 @@ def test_org_api(internal_get_org_api_mocker):
     assert isinstance(org, V1Organization)
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_org_api_valueerror(internal_get_org_api_mocker):
     org_api = OrgApi()
 

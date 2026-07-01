@@ -61,6 +61,7 @@ def list_cloudspaces_side_effect(existing_studios):
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
 @mock.patch("lightning_sdk.studio.BaseStudio", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init(
     mock_base_studio,
     mock_get_teamspace,
@@ -172,6 +173,7 @@ def test_studio_init(
 @mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": ""}, clear=False)
 @mock.patch("lightning_sdk.utils.config.Config.get_value")
 @mock.patch("lightning_sdk.studio._resolve_teamspace")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_no_teamspace(mock_resolve_teamspace, mock_config_get_value):
     # Mock config to return None for teamspace_name
     mock_config_get_value.return_value = None
@@ -210,6 +212,7 @@ def test_studio_init_no_teamspace(mock_resolve_teamspace, mock_config_get_value)
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_detects_current_studio_from_env(
     mock_get_teamspace,
     mock_get_org,
@@ -300,6 +303,7 @@ def test_studio_init_detects_current_studio_from_env(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_uses_current_studio_cloud_account(
     mock_get_teamspace,
     mock_get_org,
@@ -387,6 +391,7 @@ def test_studio_init_uses_current_studio_cloud_account(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_uses_current_studio_template(
     mock_get_teamspace,
     mock_get_org,
@@ -477,6 +482,7 @@ def test_studio_init_uses_current_studio_template(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_with_cloud_provider(
     mock_list_clusters,
     mock_list_project_clusters,
@@ -587,6 +593,7 @@ def test_studio_init_with_cloud_provider(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_with_cloud_provider_string(
     mock_list_clusters,
     mock_list_project_clusters,
@@ -689,6 +696,7 @@ def test_studio_init_with_cloud_provider_string(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_with_cloud_for_existing_studio(
     mock_list_clusters,
     mock_list_project_clusters,
@@ -776,6 +784,7 @@ def test_studio_init_with_cloud_for_existing_studio(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_opens_existing_studio_when_current_studio_in_different_teamspace(
     mock_get_teamspace,
     mock_get_org,
@@ -849,6 +858,7 @@ def test_studio_init_opens_existing_studio_when_current_studio_in_different_team
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init_creates_studio_when_current_studio_in_different_teamspace(
     mock_get_teamspace,
     mock_get_org,

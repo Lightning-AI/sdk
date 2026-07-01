@@ -1,6 +1,7 @@
-from tests.cli.help import command_text
+from tests.cli.help import command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_vm_help():
     result_text = command_text("lightning vm --help")
 

@@ -1,6 +1,7 @@
-from tests.cli.help import command_text
+from tests.cli.help import command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_studio_help():
     result_text = command_text("lightning studio --help")
 
@@ -19,6 +20,7 @@ def test_studio_help():
     assert "switch              Switch a Studio to a different machine type." in result_text
 
 
+@mock_command_logging
 def test_studios_help():
     result_text = command_text("lightning studios --help")
 

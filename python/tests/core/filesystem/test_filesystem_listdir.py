@@ -30,6 +30,7 @@ def fake_path_result():
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.filesystem.parse_lit_url")
 def test_listdir_returns_files(
@@ -53,6 +54,7 @@ def test_listdir_returns_files(
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.filesystem.parse_lit_url")
 def test_listdir_passes_correct_teamspace_id(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get):
@@ -73,6 +75,7 @@ def test_listdir_passes_correct_teamspace_id(mock_parse_lit_url, mock_resolve, m
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.filesystem.parse_lit_url")
 def test_listdir_non_recursive(

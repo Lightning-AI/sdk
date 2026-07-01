@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login
-from tests.cli.help import assert_help_contains, run_cli
+from tests.cli.help import assert_help_contains, mock_command_logging, run_cli
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _BOX_CHARS_RE = re.compile(r"[│╭╰╮─╯]")
@@ -62,6 +62,7 @@ def _help_text() -> str:
     return "\n".join(_join_cells(left_cells) + _join_cells(right_cells))
 
 
+@mock_command_logging
 def test_help():
     text = _help_text()
 
@@ -108,6 +109,7 @@ def test_help():
     assert "  upload" not in text
 
 
+@mock_command_logging
 def test_help_uvx():
     result = subprocess.run("uvx --with-editable=../ lightning-sdk --help", shell=True, capture_output=True, text=True)
     result_text = result.stdout + result.stderr
@@ -126,6 +128,7 @@ def test_help_uvx():
         return
 
 
+@mock_command_logging
 def test_login_already_authed_can_get_username(monkeypatch):
     """Test login command when already authed."""
 
@@ -150,18 +153,21 @@ def test_login_already_authed_can_get_username(monkeypatch):
     mock_auth_instance.authenticate.assert_not_called()
 
 
+@mock_command_logging
 def test_login_help():
     result_text = assert_help_contains("lightning login --help", "Usage: lightning login [OPTIONS]")
 
     assert "Sign in to Lightning AI." in result_text
 
 
+@mock_command_logging
 def test_logout_help():
     result_text = assert_help_contains("lightning logout --help", "Usage: lightning logout [OPTIONS]")
 
     assert "Sign out of the current session." in result_text
 
 
+@mock_command_logging
 def test_login_already_authed_cannot_get_username(monkeypatch):
     """Test login command when already authed."""
 
@@ -183,6 +189,7 @@ def test_login_already_authed_cannot_get_username(monkeypatch):
 
 
 @patch.dict(os.environ, {"LIGHTNING_INTERACTIVE": "true", "LIGHTNING_CLOUD_SPACE_ID": "cloud-space-id"}, clear=True)
+@mock_command_logging
 def test_cannot_login_within_studio(monkeypatch):
     mock_auth_instance = MagicMock()
     mock_auth_cls = MagicMock(return_value=mock_auth_instance)
@@ -201,6 +208,7 @@ def test_cannot_login_within_studio(monkeypatch):
 
 
 @patch.dict(os.environ, {}, clear=True)
+@mock_command_logging
 def test_login_not_authed_outside_studio(monkeypatch):
     """Test login command when not authed outsice a Studio."""
     mock_auth_instance = MagicMock()

@@ -1,14 +1,17 @@
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_job_delete_help() -> None:
     assert_help_contains("lightning job delete --help", "Usage: lightning job delete", "Delete a job.")
 
 
+@mock_command_logging
 def test_jobs_delete_help() -> None:
     assert_help_contains("lightning jobs delete --help", "Usage: lightning jobs delete", "Delete a job.")
 
 
+@mock_command_logging
 def test_delete_help() -> None:
     text = assert_help_contains(
         "lightning delete --help",
@@ -21,6 +24,7 @@ def test_delete_help() -> None:
     assert "Deprecation warning:" not in text
 
 
+@mock_command_logging
 def test_delete_job_legacy_help() -> None:
     assert_help_contains(
         "lightning delete job --help",

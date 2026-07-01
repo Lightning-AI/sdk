@@ -5,9 +5,10 @@ import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.studio.cp import cp_download, cp_impl, cp_studio_file, cp_upload, resolve_studio
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_cp_help():
     result_text = command_text("lightning studio cp --help")
 
@@ -17,10 +18,12 @@ def test_cp_help():
     assert "--recursive  -r" in result_text
 
 
+@mock_command_logging
 def test_studios_cp_help() -> None:
     assert_help_contains("lightning studios cp --help", "Usage: lightning studios cp", "Copy a Studio file.")
 
 
+@mock_command_logging
 def test_cp_impl_both_studio_files_raises_error():
     """Test that providing both source and destination as Studio files raises an error."""
     with pytest.raises(ValueError, match="Both source and destination cannot be Studio files"):
@@ -30,12 +33,14 @@ def test_cp_impl_both_studio_files_raises_error():
         )
 
 
+@mock_command_logging
 def test_cp_impl_both_local_files_raises_error():
     """Test that providing both source and destination as local files raises an error."""
     with pytest.raises(ValueError, match="Either source or destination must be a Studio file"):
         cp_impl(source="local_file1.txt", destination="local_file2.txt")
 
 
+@mock_command_logging
 def test_cp_upload_with_nonexistent_raises_error(tmp_path: Path):
     """Test that providing a nonexistent file and folder path raises FileNotFoundError."""
     nonexistent_file = tmp_path / "nonexistent.txt"
@@ -54,6 +59,7 @@ def test_cp_upload_with_nonexistent_raises_error(tmp_path: Path):
         )
 
 
+@mock_command_logging
 def test_cp_download_with_nonexistent_file_raises_error(tmp_path: Path):
     """Test that providing a nonexistent studio file path raises FileNotFoundError."""
     test_file = tmp_path / "test_file.txt"
@@ -85,6 +91,7 @@ def test_cp_download_with_nonexistent_file_raises_error(tmp_path: Path):
         )
 
 
+@mock_command_logging
 def test_cp_upload_successful(tmp_path: Path):
     """Test successful file upload to Studio."""
     test_file = tmp_path / "test_file.txt"
@@ -135,6 +142,7 @@ def test_cp_upload_successful(tmp_path: Path):
         mock_studio_instance.upload_folder.assert_called_once_with(str(test_dir), "remote-dir/")
 
 
+@mock_command_logging
 def test_cp_download_successful(tmp_path: Path):
     """Test successful file download from Studio."""
     test_file = tmp_path / "test_file.txt"
@@ -166,6 +174,7 @@ def test_cp_download_successful(tmp_path: Path):
         mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
 
 
+@mock_command_logging
 def test_cp_upload_without_teamspace(tmp_path: Path):
     """Test that cp_upload works when teamspace is not provided in the path."""
     test_file = tmp_path / "test_file.txt"
@@ -199,6 +208,7 @@ def test_cp_upload_without_teamspace(tmp_path: Path):
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
+@mock_command_logging
 def test_cp_download_without_teamspace(tmp_path: Path):
     """Test that cp_download works when teamspace is not provided in the path."""
     test_file = tmp_path / "test_file.txt"
@@ -231,6 +241,7 @@ def test_cp_download_without_teamspace(tmp_path: Path):
         mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
 
 
+@mock_command_logging
 def test_cp_studio_file_upload_integration(tmp_path: Path):
     """Test the full cp_studio_file command for upload."""
     runner = CliRunner()
@@ -264,6 +275,7 @@ def test_cp_studio_file_upload_integration(tmp_path: Path):
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
+@mock_command_logging
 def test_cp_studio_file_download_integration(tmp_path: Path):
     """Test the full cp_studio_file command for download."""
     runner = CliRunner()
@@ -296,6 +308,7 @@ def test_cp_studio_file_download_integration(tmp_path: Path):
         mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
 
 
+@mock_command_logging
 def test_resolve_studio_with_teamspace():
     """Test that resolve_studio correctly resolves studio with provided owner and teamspace."""
     mock_owner_menu = MagicMock()
@@ -322,6 +335,7 @@ def test_resolve_studio_with_teamspace():
         mock_studio_menu.assert_called_once_with(studio="test-studio")
 
 
+@mock_command_logging
 def test_resolve_studio_without_teamspace():
     """Test that resolve_studio works when teamspace and owner are None."""
     mock_owner_menu = MagicMock()
@@ -348,6 +362,7 @@ def test_resolve_studio_without_teamspace():
         mock_studio_menu.assert_called_once_with(studio="test-studio")
 
 
+@mock_command_logging
 def test_cp_upload_with_nested_path(tmp_path: Path):
     """Test uploading a file with nested destination path."""
     test_file = tmp_path / "test_file.txt"
@@ -380,6 +395,7 @@ def test_cp_upload_with_nested_path(tmp_path: Path):
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "folder/subfolder/remote_file.txt")
 
 
+@mock_command_logging
 def test_cp_download_with_nested_path(tmp_path: Path):
     """Test downloading a file with nested destination path."""
     test_file = tmp_path / "test_file.txt"
@@ -412,6 +428,7 @@ def test_cp_download_with_nested_path(tmp_path: Path):
         mock_studio_instance.download_file.assert_called_once_with("folder/subfolder/remote_file.txt", str(test_file))
 
 
+@mock_command_logging
 def test_cp_impl_dispatches_to_upload(tmp_path: Path):
     """Test that cp_impl correctly dispatches to upload when destination has lit://."""
     test_file = tmp_path / "test_file.txt"
@@ -441,6 +458,7 @@ def test_cp_impl_dispatches_to_upload(tmp_path: Path):
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
 
 
+@mock_command_logging
 def test_cp_impl_dispatches_to_download(tmp_path: Path):
     """Test that cp_impl correctly dispatches to download when source has lit://."""
     test_file = tmp_path / "test_file.txt"
@@ -495,6 +513,7 @@ def test_cp_impl_dispatches_to_download(tmp_path: Path):
         mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
 
 
+@mock_command_logging
 def test_cp_upload_prints_correct_messages(tmp_path: Path):
     """Test that cp_upload prints the correct console messages."""
     test_file = tmp_path / "test_file.txt"
@@ -538,6 +557,7 @@ def test_cp_upload_prints_correct_messages(tmp_path: Path):
         assert "test-studio" in second_call_arg
 
 
+@mock_command_logging
 def test_cp_download_prints_correct_messages(tmp_path: Path):
     """Test that cp_download prints the correct console messages."""
     test_file = tmp_path / "test_file.txt"
@@ -579,6 +599,7 @@ def test_cp_download_prints_correct_messages(tmp_path: Path):
         assert "test_file.txt" in second_call_arg
 
 
+@mock_command_logging
 def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
     """Test uploading a file with special characters in the filename."""
     test_file = tmp_path / "test file with spaces.txt"
@@ -611,6 +632,7 @@ def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
         mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "file.txt")
 
 
+@mock_command_logging
 def test_cp_upload_url_construction(tmp_path: Path):
     """Test that the Studio URL is constructed correctly with port removal."""
     test_file = tmp_path / "test_file.txt"
@@ -648,6 +670,7 @@ def test_cp_upload_url_construction(tmp_path: Path):
         assert "https://lightning.ai/my-owner/my-teamspace/studios/my-studio" in second_call_arg
 
 
+@mock_command_logging
 def test_cp_upload_folder_without_recursive_flag_raises_error(tmp_path: Path):
     """Test that uploading a folder without -r flag raises an error."""
     test_dir = tmp_path / "test_folder"
@@ -679,6 +702,7 @@ def test_cp_upload_folder_without_recursive_flag_raises_error(tmp_path: Path):
         )
 
 
+@mock_command_logging
 def test_cp_download_folder_without_recursive_flag_raises_error(tmp_path: Path):
     """Test that downloading a folder without -r flag raises an error."""
     test_file = tmp_path / "test_file.txt"
@@ -711,6 +735,7 @@ def test_cp_download_folder_without_recursive_flag_raises_error(tmp_path: Path):
         )
 
 
+@mock_command_logging
 def test_cp_download_root_directory_with_recursive(tmp_path: Path):
     """Test that downloading studio root directory with -r creates folder named after studio."""
     local_dir = tmp_path / "test_output"
@@ -747,6 +772,7 @@ def test_cp_download_root_directory_with_recursive(tmp_path: Path):
         mock_selected_studio.download_folder.assert_called_once_with("", expected_target)
 
 
+@mock_command_logging
 def test_cp_download_root_directory_without_recursive_fails(tmp_path: Path):
     """Test that downloading studio root directory without -r flag raises an error."""
     local_dir = tmp_path / "test_output"

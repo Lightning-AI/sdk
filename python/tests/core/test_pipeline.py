@@ -1,5 +1,5 @@
 import inspect
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -19,14 +19,13 @@ from lightning_sdk.pipeline.utils import DEFAULT, prepare_steps
 from lightning_sdk.utils.resolve import skip_studio_setup
 
 
-def test_pipeline_run(monkeypatch):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    pipeline_api_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
-    resolve_teamspace_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "PipelineApi")
+@patch.object(pipeline_module, "_resolve_teamspace")
+def test_pipeline_run(resolve_teamspace_mock, pipeline_api_mock):
     pipeline = Pipeline(name="first-pipeline", org="org", user="user", cloud="cluster-id")
     cloud_account_mock = MagicMock()
     cloud_account_mock.cluster_id = ""
@@ -165,14 +164,13 @@ def test_pipeline_run(monkeypatch):
 
 
 @pytest.mark.parametrize("interruption_retries", [0, 3])
-def test_pipeline_run_interruption_retries(monkeypatch, interruption_retries):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    pipeline_api_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
-    resolve_teamspace_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "PipelineApi")
+@patch.object(pipeline_module, "_resolve_teamspace")
+def test_pipeline_run_interruption_retries(resolve_teamspace_mock, pipeline_api_mock, interruption_retries):
     pipeline = Pipeline(name="first-pipeline", interruption_retries=interruption_retries)
     assert pipeline._interruption_retries == interruption_retries
 
@@ -198,12 +196,12 @@ def test_pipeline_run_interruption_retries(monkeypatch, interruption_retries):
     assert args[-1] == interruption_retries
 
 
-def test_pipeline_interruption_retries_default(monkeypatch):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    monkeypatch.setattr(pipeline_module, "PipelineApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", MagicMock())
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "PipelineApi", new=MagicMock())
+@patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
+def test_pipeline_interruption_retries_default():
     pipeline = Pipeline(name="first-pipeline")
     assert pipeline._interruption_retries == 0
 
@@ -295,6 +293,7 @@ def test_deployment_default():
     assert deployment.autoscale.target_metrics[0].name == "GPU"
 
 
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
 def test_mmt():
     mmt = MMTStep(name="mmt-0", machine=Machine.CPU)
     proto = mmt.to_proto(MagicMock(), "", False)
@@ -307,15 +306,13 @@ def test_mmt():
     assert proto.mmt.spec.instance_name == "cpu-4"
 
 
-def test_stop(monkeypatch):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    resolve_teamspace_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-
-    mock_client = MagicMock()
-    monkeypatch.setattr(pipeline_api, "LightningClient", mock_client)
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
+@patch.object(pipeline_api, "CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_api, "LightningClient")
+def test_stop(mock_client):
     pipeline_spec = MagicMock()
     pipeline_spec.id = "pipeline_id"
     pipeline = Pipeline(name="first-pipeline")
@@ -326,15 +323,13 @@ def test_stop(monkeypatch):
     assert pipeline.name == "something-else"
 
 
-def test_delete(monkeypatch):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    resolve_teamspace_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-
-    mock_client = MagicMock()
-    monkeypatch.setattr(pipeline_api, "LightningClient", mock_client)
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
+@patch.object(pipeline_api, "CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_api, "LightningClient")
+def test_delete(mock_client):
     pipeline_spec = MagicMock()
     pipeline_spec.id = "pipeline_id"
     pipeline = Pipeline(name="first-pipeline")
@@ -343,14 +338,13 @@ def test_delete(monkeypatch):
     mock_client().pipelines_service_delete_pipeline.assert_called()
 
 
-def test_shared_filesystem(monkeypatch):
-    monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-    monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-    pipeline_api_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
-    resolve_teamspace_mock = MagicMock()
-    monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "PipelineApi")
+@patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
+def test_shared_filesystem(pipeline_api_mock):
     pipeline = Pipeline(name="first-pipeline")
     cloud_account_mock = MagicMock()
     cloud_account_mock.cluster_id = "cluster_id_1"
@@ -381,21 +375,27 @@ def test_shared_filesystem(monkeypatch):
     pipeline._shared_filesystem = True
 
 
-def test_pipeline_with_studio_job_step(monkeypatch):
+@patch.object(teamspace, "TeamspaceApi", new=MagicMock())
+@patch.object(pipeline_module, "_get_cluster", new=MagicMock())
+@patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+@patch.object(pipeline_module, "PipelineApi")
+@patch.object(pipeline_module, "_resolve_teamspace")
+@patch.object(studio_module, "_resolve_teamspace")
+@patch.object(studio_module, "StudioApi")
+@patch.object(studio_module, "CloudAccountApi", new=MagicMock())
+def test_pipeline_with_studio_job_step(
+    studio_api_mock,
+    mock_studio_resolve_teamspace,
+    resolve_teamspace_mock,
+    pipeline_api_mock,
+):
     with skip_studio_setup():
-        monkeypatch.setattr(teamspace, "TeamspaceApi", MagicMock())
-        monkeypatch.setattr(pipeline_module, "_get_cluster", MagicMock())
-        pipeline_api_mock = MagicMock()
-        monkeypatch.setattr(pipeline_module, "PipelineApi", pipeline_api_mock)
-        resolve_teamspace_mock = MagicMock()
-        monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
-        monkeypatch.setattr(studio_module, "_resolve_teamspace", resolve_teamspace_mock)
-        studio_api_mock = MagicMock()
+        mock_studio_resolve_teamspace.side_effect = resolve_teamspace_mock
         # Mock the status method to return a valid status string
         studio_api_mock.return_value._get_studio_instance_status_from_object.return_value = (
             "CLOUD_SPACE_INSTANCE_STATE_STOPPED"
         )
-        monkeypatch.setattr(studio_module, "StudioApi", studio_api_mock)
 
         pipeline = Pipeline(name="first-pipeline")
         cloud_account_mock = MagicMock()
@@ -540,7 +540,9 @@ def test_print_summary_updated():
     assert "/pipelines/update-pipeline?app_id=pipeline" in output
 
 
-def test_deployment_release_step():
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi")
+def test_deployment_release_step(mock_cloud_account_api):
+    mock_cloud_account_api.return_value.resolve_cloud_account.return_value = "test-8"
     teamspace = MagicMock()
     step = DeploymentReleaseStep(
         deployment_name="prod", command="python server.py", ports=[8000], image="nginx", cloud="test-8"

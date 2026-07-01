@@ -208,6 +208,7 @@ def test_teamspace_multi_machine_jobs_property_succeeds_when_enabled(mock_teamsp
 
 
 # Studio class permission tests
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.studio._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
@@ -323,6 +324,7 @@ def test_pipeline_init_raises_error_when_pipelines_disabled(mock_teamspace_api, 
 
 
 # Deployment class permission tests
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth")
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.deployment.deployment._resolve_teamspace")
@@ -366,10 +368,14 @@ def test_deployment_init_raises_error_when_deployments_disabled(
 
 
 # LitContainer class permission tests
+@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @pytest.mark.project_permission_test()
-def test_litcontainer_list_raises_error_when_containers_disabled(mock_teamspace_api, mock_resolve_teamspace):
+def test_litcontainer_list_raises_error_when_containers_disabled(
+    mock_teamspace_api, mock_resolve_teamspace, _mock_docker_from_env, _mock_lightning_client
+):
     """Test that LitContainer.list_containers() raises PermissionError when Containers permission is disabled."""
     from lightning_sdk.lit_container import LitContainer
     from lightning_sdk.teamspace import Teamspace
@@ -394,10 +400,14 @@ def test_litcontainer_list_raises_error_when_containers_disabled(mock_teamspace_
         container.list_containers(teamspace="test-teamspace")
 
 
+@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @pytest.mark.project_permission_test()
-def test_litcontainer_delete_raises_error_when_containers_disabled(mock_teamspace_api, mock_resolve_teamspace):
+def test_litcontainer_delete_raises_error_when_containers_disabled(
+    mock_teamspace_api, mock_resolve_teamspace, _mock_docker_from_env, _mock_lightning_client
+):
     """Test that LitContainer.delete_container() raises PermissionError when Containers permission is disabled."""
     from lightning_sdk.lit_container import LitContainer
     from lightning_sdk.teamspace import Teamspace
@@ -422,10 +432,14 @@ def test_litcontainer_delete_raises_error_when_containers_disabled(mock_teamspac
         container.delete_container(container="test-container", teamspace="test-teamspace")
 
 
+@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @pytest.mark.project_permission_test()
-def test_litcontainer_upload_raises_error_when_containers_disabled(mock_teamspace_api, mock_resolve_teamspace):
+def test_litcontainer_upload_raises_error_when_containers_disabled(
+    mock_teamspace_api, mock_resolve_teamspace, _mock_docker_from_env, _mock_lightning_client
+):
     """Test that LitContainer.upload_container() raises PermissionError when Containers permission is disabled."""
     from lightning_sdk.lit_container import LitContainer
     from lightning_sdk.teamspace import Teamspace
@@ -450,12 +464,15 @@ def test_litcontainer_upload_raises_error_when_containers_disabled(mock_teamspac
         container.upload_container(container="test-container", teamspace="test-teamspace")
 
 
+@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @pytest.mark.project_permission_test()
 def test_litcontainer_download_raises_error_when_containers_disabled(
-    mock_teamspace_api, mock_resolve_teamspace, mock_user_api
+    mock_teamspace_api, mock_resolve_teamspace, mock_user_api, _mock_docker_from_env, _mock_lightning_client
 ):
     """Test that LitContainer.download_container() raises PermissionError when Containers permission is disabled."""
     from lightning_sdk.lightning_cloud.openapi.models import V1SearchUser

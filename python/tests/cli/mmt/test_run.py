@@ -4,9 +4,10 @@ import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.cli.mmt.run import run_mmt
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_mmt_run_help() -> None:
     assert_help_contains(
         "lightning mmt run --help",
@@ -15,6 +16,7 @@ def test_mmt_run_help() -> None:
     )
 
 
+@mock_command_logging
 def test_mmts_run_help() -> None:
     assert_help_contains(
         "lightning mmts run --help",
@@ -23,6 +25,7 @@ def test_mmts_run_help() -> None:
     )
 
 
+@mock_command_logging
 def test_run_mmt_legacy_help() -> None:
     assert_help_contains(
         "lightning run mmt --help",
@@ -32,6 +35,7 @@ def test_run_mmt_legacy_help() -> None:
     )
 
 
+@mock_command_logging
 def test_run_mmt_with_cloud(monkeypatch):
     from unittest.mock import MagicMock
 
@@ -60,6 +64,7 @@ def test_run_mmt_with_cloud(monkeypatch):
         (["--image", "alpine:latest", "--command", "echo hello", "--entrypoint", "/bin/bash"], "/bin/bash"),
     ],
 )
+@mock_command_logging
 def test_mmt_run_entrypoint_default(extra_args: list[str], expected_entrypoint: str | None) -> None:
     runner = CliRunner()
     args = ["--name", "test-mmt", "--teamspace", "my-ts", *extra_args]

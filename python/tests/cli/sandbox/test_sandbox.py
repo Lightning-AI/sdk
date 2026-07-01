@@ -9,7 +9,7 @@ from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import main_cli
 from lightning_sdk.cli.sandbox import commands as sandbox_commands
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 @dataclass
@@ -147,11 +147,11 @@ class FakeSandboxClient:
 
 def _invoke(args: list[str]) -> SimpleNamespace:
     runner = CliRunner()
-    with mock.patch("lightning_sdk.cli.utils.logging._log_command"):
-        result = runner.invoke(main_cli, args, catch_exceptions=False)
+    result = runner.invoke(main_cli, args, catch_exceptions=False)
     return SimpleNamespace(exit_code=result.exit_code, output=result.output)
 
 
+@mock_command_logging
 def test_sandbox_help() -> None:
     assert_help_contains(
         "lightning sandbox --help",
@@ -168,10 +168,12 @@ def test_sandbox_help() -> None:
     )
 
 
+@mock_command_logging
 def test_sandboxes_plural_alias_help() -> None:
     assert_help_contains("lightning sandboxes --help", "Usage: lightning sandboxes", "Ephemeral sandboxes for agents.")
 
 
+@mock_command_logging
 def test_sandbox_command_help_examples() -> None:
     list_help = assert_help_contains(
         "lightning sandbox list --help",
@@ -213,7 +215,9 @@ def test_sandbox_command_help_examples() -> None:
     assert_help_contains("lightning sandbox delete --help", "$ sandbox delete sbx-42", "Deleted sandbox sbx-42")
 
 
-def test_sandbox_list(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_list(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -227,7 +231,9 @@ def test_sandbox_list(monkeypatch) -> None:
     assert client.list_kwargs == {"page_token": "abc", "limit": 5, "teamspace": None}
 
 
-def test_sandbox_list_forwards_teamspace(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_list_forwards_teamspace(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -237,7 +243,9 @@ def test_sandbox_list_forwards_teamspace(monkeypatch) -> None:
     assert client.list_kwargs == {"page_token": None, "limit": None, "teamspace": "owner/teamspace"}
 
 
-def test_sandbox_create_forwards_options(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -282,7 +290,9 @@ def test_sandbox_create_forwards_options(monkeypatch) -> None:
     }
 
 
-def test_sandbox_lifecycle_commands(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_lifecycle_commands(_mock_log_command, monkeypatch) -> None:
     instance = FakeSandboxInstance()
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
@@ -298,7 +308,9 @@ def test_sandbox_lifecycle_commands(monkeypatch) -> None:
     assert client.get_ids == ["sbx-1", "sbx-1", "sbx-1"]
 
 
-def test_sandbox_update_requires_resume(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_update_requires_resume(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -308,7 +320,9 @@ def test_sandbox_update_requires_resume(monkeypatch) -> None:
     assert "Use --resume" in result.output
 
 
-def test_sandbox_update_resume(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_update_resume(_mock_log_command, monkeypatch) -> None:
     instance = FakeSandboxInstance()
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
@@ -319,7 +333,9 @@ def test_sandbox_update_resume(monkeypatch) -> None:
     assert instance.resumed is True
 
 
-def test_sandbox_run_command(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_run_command(_mock_log_command, monkeypatch) -> None:
     instance = FakeSandboxInstance()
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
@@ -348,7 +364,9 @@ def test_sandbox_run_command(monkeypatch) -> None:
     assert instance.last_command.env == {"A": "b"}
 
 
-def test_sandbox_run_command_uses_exit_code(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_run_command_uses_exit_code(_mock_log_command, monkeypatch) -> None:
     instance = FakeSandboxInstance()
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
@@ -359,7 +377,9 @@ def test_sandbox_run_command_uses_exit_code(monkeypatch) -> None:
     assert "hello" in result.output
 
 
-def test_sandbox_logs_and_command_status(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_logs_and_command_status(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -374,6 +394,7 @@ def test_sandbox_logs_and_command_status(monkeypatch) -> None:
     assert "cmd-1: output" in status.output
 
 
+@mock_command_logging
 def test_sandbox_snapshot_help() -> None:
     assert_help_contains(
         "lightning sandbox snapshot --help",
@@ -386,7 +407,9 @@ def test_sandbox_snapshot_help() -> None:
     )
 
 
-def test_sandbox_snapshot_list(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_snapshot_list(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -406,7 +429,9 @@ def test_sandbox_snapshot_list(monkeypatch) -> None:
     }
 
 
-def test_sandbox_snapshot_list_json(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_snapshot_list_json(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -417,7 +442,9 @@ def test_sandbox_snapshot_list_json(monkeypatch) -> None:
     assert '"total_size": 1' in result.output
 
 
-def test_sandbox_snapshot_get(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_snapshot_get(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
@@ -428,7 +455,9 @@ def test_sandbox_snapshot_get(monkeypatch) -> None:
     assert client.get_snapshot_ids == ["snap-9"]
 
 
-def test_sandbox_snapshot_create(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_snapshot_create(_mock_log_command, monkeypatch) -> None:
     instance = FakeSandboxInstance()
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
@@ -446,7 +475,9 @@ def test_sandbox_snapshot_create(monkeypatch) -> None:
     }
 
 
-def test_sandbox_snapshot_delete(monkeypatch) -> None:
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_snapshot_delete(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 

@@ -34,7 +34,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListDefaultClusterAcceleratorsResponse,
     V1ListEndpointsResponse,
     V1ListProjectClustersResponse,
-    V1LoginResponse,
     V1Organization,
     V1Project,
     V1Resources,
@@ -53,6 +52,7 @@ class _DummyResponse:
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_studio(mock_list_cloudspaces):
     def list_cloudspaces_side_effect(self, project_id, name):
         if name in ["st-abc", "st-def"]:
@@ -70,6 +70,7 @@ def test_get_studio(mock_list_cloudspaces):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_studio_error(mock_list_cloudspaces):
     def list_cloudspaces_side_effect(self, project_id, name):
         if name in ["st-abc", "st-def"]:
@@ -95,6 +96,7 @@ def test_get_studio_error(mock_list_cloudspaces):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_studio(mock_create_cloud_space, mock_create_lightning_run, _, cloud_account, sandbox, disable_secrets):
     def _create_cloudspace_side_effect(self, body, project_id, **kwargs):
         assert isinstance(body, CloudSpaceServiceCreateCloudSpaceBody)
@@ -139,6 +141,7 @@ def test_create_studio(mock_create_cloud_space, mock_create_lightning_run, _, cl
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_studio_status(mock_get_status):
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         requested=Externalv1CloudSpaceInstanceStatus(
@@ -184,6 +187,7 @@ def test_get_studio_status(mock_get_status):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_switch_studio_machine(mock_get_status, mock_update_config, mock_switch_instance, machine):
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         requested=Externalv1CloudSpaceInstanceStatus(
@@ -214,6 +218,7 @@ def test_switch_studio_machine(mock_get_status, mock_update_config, mock_switch_
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_switch_machine_no_requested(switch_mock, update_mock, status_mock):
     return_vals = [
         # First call: there is a requested machine (we just made the request)
@@ -274,6 +279,7 @@ def test_switch_machine_no_requested(switch_mock, update_mock, status_mock):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_start_cloud_space_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_start_studio(mock_start_instance, mock_get_status):
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         requested=Externalv1CloudSpaceInstanceStatus(
@@ -300,6 +306,7 @@ def test_start_studio(mock_start_instance, mock_get_status):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_stop_cloud_space_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_stop_studio(mock_stop_instance, mock_get_status):
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         requested=Externalv1CloudSpaceInstanceStatus(
@@ -319,6 +326,7 @@ def test_stop_studio(mock_stop_instance, mock_get_status):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_execute_command_in_cloud_space",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_run_command(mock_execute_command, mock_get_stream):
     mock_execute_command.return_value = V1ExecuteCloudSpaceCommandResponse(
         exit_code=0, output="Command Started Successfully", session_name="session-name"
@@ -346,6 +354,7 @@ def test_run_command(mock_execute_command, mock_get_stream):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_delete_studio(mock_delete_cloud_space):
     mock_delete_cloud_space.return_value = V1DeleteCloudSpaceResponse()
 
@@ -395,6 +404,7 @@ def test_delete_studio(mock_delete_cloud_space):
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_project_clusters",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_machine(
     mock_list_project_clusters, mock_list_clusters, mock_list_accelerators, mock_get_config, name, expected_machine
 ):
@@ -677,6 +687,7 @@ def test_get_machine(
     "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_duplicate_user(
     mock_get_project,
     mock_search_users,
@@ -733,6 +744,7 @@ def test_duplicate_user(
     "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_duplicate_org(
     mock_get_project,
     mock_get_org,
@@ -797,6 +809,7 @@ def test_duplicate_org(
     "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_duplicate_user_with_new_name(
     mock_get_project,
     mock_search_users,
@@ -859,6 +872,7 @@ def test_duplicate_user_with_new_name(
     "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi.projects_service_get_project",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_duplicate_org_with_new_name(
     mock_get_project,
     mock_get_org,
@@ -903,6 +917,7 @@ def test_duplicate_org_with_new_name(
     assert kwargs == {"name": "renamed-studio", "teamspace": "teamspace-abc", "org": "org-abc"}
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_job_with_service_id(monkeypatch):
     monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
     mock_client = mock.MagicMock()
@@ -921,6 +936,7 @@ def test_create_job_with_service_id(monkeypatch):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_inference_run(mock_create_app):
     def side_effect(self, body, project_id, cloudspace_id, id):
         if id == "inference_plugin":
@@ -966,13 +982,10 @@ def test_create_inference_run(mock_create_app):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_get_tree(mock_login, mock_requests_get):
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_tree(mock_authenticate, mock_requests_get):
     """Test get_tree retrieves directory structure from studio."""
-    mock_login.return_value = V1LoginResponse(token="test-token")
-
     mock_response = mock.MagicMock()
     mock_response.json.return_value = {
         "tree": [
@@ -1002,7 +1015,7 @@ def test_get_tree(mock_login, mock_requests_get):
 
     assert "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/" in call_args[0][0]
     assert call_args[1]["params"] == {"token": "test-token"}
-    mock_login.assert_called_once()
+    mock_authenticate.assert_called_once_with(studio_api._client)
 
 
 @pytest.mark.parametrize(
@@ -1046,15 +1059,9 @@ def test_get_tree(mock_login, mock_requests_get):
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
-    autospec=True,
-)
-def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expected_result):
-    from lightning_sdk.lightning_cloud.openapi import V1LoginResponse
-
-    mock_login.return_value = V1LoginResponse(token="test-token")
-
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response, expected_result):
     mock_response = mock.MagicMock()
     mock_response.json.return_value = tree_response
     mock_requests_get.return_value = mock_response
@@ -1076,6 +1083,7 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
 
     if path.strip("/") == "":
         mock_requests_get.assert_not_called()
+        mock_authenticate.assert_not_called()
     else:
         if "/" in path:
             expected_parent = path.rsplit("/", 1)[0]
@@ -1084,6 +1092,7 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
             # root level should include /trees/
             call_url = mock_requests_get.call_args[0][0]
             assert "/trees/" in call_url
+        mock_authenticate.assert_called_once_with(studio_api._client)
 
 
 @pytest.mark.parametrize(
@@ -1146,19 +1155,16 @@ def test_get_path_info(mock_login, mock_requests_get, path, tree_response, expec
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_files(
-    mock_login,
+    mock_authenticate,
     mock_requests_get,
     path,
     mock_response,
     expected_files,
 ):
     """Test that list_files correctly calls get_tree with recursive=true."""
-    mock_login.return_value = V1LoginResponse(token="test-token")
-
     studio_api = StudioApi()
     mock_response_obj = mock.MagicMock()
     mock_response_obj.json.return_value = mock_response
@@ -1182,6 +1188,7 @@ def test_list_files(
     assert call_args[1]["params"]["recursive"] == "true"
 
     assert result == expected_files
+    mock_authenticate.assert_called_once_with(studio_api._client)
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
@@ -1191,6 +1198,7 @@ def test_list_files(
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file(
     authenticate_mock,
     tqdm_mock,
@@ -1243,11 +1251,9 @@ def test_upload_file(
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_download_file(mock_login, mock_requests_get, tmpdir):
-    mock_login.return_value = V1LoginResponse(token="token")
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "1024"}
@@ -1258,15 +1264,13 @@ def test_download_file(mock_login, mock_requests_get, tmpdir):
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+    mock_authenticate.assert_called_once_with(studio_api._client)
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login", autospec=True
-)
-def test_download_file_non_200_status(mock_login, mock_requests_get, tmpdir):
-    mock_login.return_value = V1LoginResponse(token="token")
-
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_file_non_200_status(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
     mock_response.status_code = 404
     mock_requests_get.return_value = mock_response
@@ -1278,12 +1282,14 @@ def test_download_file_non_200_status(mock_login, mock_requests_get, tmpdir):
         studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
     assert not os.path.exists(filepath)
+    mock_authenticate.assert_called_once_with(studio_api._client)
 
 
 @mock.patch("lightning_sdk.api.studio_api.concurrent.futures.wait")
 @mock.patch("lightning_sdk.api.studio_api.tqdm")
 @mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
     authenticate_mock.return_value = "test-token-123"
 
@@ -1318,6 +1324,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
     "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_create_endpoint",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_add_ports(mock_create_endpoint):
     mock_create_endpoint.return_value = V1Endpoint(
         id="endpoint-id",
@@ -1337,6 +1344,7 @@ def test_add_ports(mock_create_endpoint):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_update_autoshutdown_auto_sleep_on(mock_update_sleep_config):
     def response(self, id, project_id, body):
         if id == "st-abc":
@@ -1373,6 +1381,7 @@ def test_update_autoshutdown_auto_sleep_on(mock_update_sleep_config):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_update_autoshutdown_auto_sleep_off(mock_update_sleep_config):
     def response(self, id, project_id, body):
         if id == "st-abc":
@@ -1409,6 +1418,7 @@ def test_update_autoshutdown_auto_sleep_off(mock_update_sleep_config):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_update_cloud_space_sleep_config",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_update_autoshutdown_idle_shutdown(mock_update_sleep_config):
     def response(self, id, project_id, body):
         if id == "st-abc":
@@ -1441,6 +1451,7 @@ def test_update_autoshutdown_idle_shutdown(mock_update_sleep_config):
     assert config.idle_shutdown_seconds == 900
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_env():
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
 
@@ -1464,6 +1475,7 @@ def test_get_env():
     assert result == expected
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_env_empty():
     studio_api = StudioApi()
 
@@ -1476,6 +1488,7 @@ def test_get_env_empty():
 
 
 @mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_set_env_partial_true(mock_update_cloudspace):
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
 
@@ -1515,6 +1528,7 @@ def test_set_env_partial_true(mock_update_cloudspace):
 
 
 @mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_set_env_partial_false(mock_update_cloudspace):
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
 
@@ -1550,6 +1564,7 @@ def test_set_env_partial_false(mock_update_cloudspace):
 
 
 @mock.patch("lightning_sdk.api.studio_api.StudioApi._update_cloudspace")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_set_env_empty_new_env(mock_update_cloudspace):
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
 
@@ -1654,6 +1669,7 @@ def test_set_env_empty_new_env(mock_update_cloudspace):
     "lightning_sdk.api.studio_api.StudioApi._get_machines_for_cloud_account",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected_result):
     """Test machine_has_capacity method with various scenarios."""
     mock_get_machines.return_value = accelerators
@@ -1774,6 +1790,7 @@ def test_machine_has_capacity(mock_get_machines, machine, accelerators, expected
     "lightning_sdk.api.studio_api.StudioApi._get_machines_for_cloud_account",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_machine_is_supported(mock_get_machines, machine, accelerators, expected_result):
     """Test machine_is_supported method with various scenarios."""
     mock_get_machines.return_value = accelerators
@@ -1791,6 +1808,7 @@ def test_machine_is_supported(mock_get_machines, machine, accelerators, expected
     "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_ports(mock_list_endpoints):
     """Test list_ports returns endpoints from the Studio."""
 
@@ -1885,6 +1903,7 @@ def test_list_ports(mock_list_endpoints):
     "lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api.EndpointServiceApi.endpoint_service_list_endpoints",
     autospec=True,
 )
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_port_url(mock_list_endpoints, port, name, endpoints, expected_url, should_raise, error_match):
     """Test get_port_url with various port and name scenarios."""
     mock_list_endpoints.return_value = V1ListEndpointsResponse(endpoints=endpoints)
@@ -1945,14 +1964,12 @@ def test_get_port_url(mock_list_endpoints, port, name, endpoints, expected_url, 
     ],
 )
 @mock.patch("requests.delete", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
-    autospec=True,
-)
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
 @mock.patch("lightning_sdk.api.studio_api.StudioApi.get_path_info", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_remove_file(
     mock_get_path_info,
-    mock_login,
+    mock_authenticate,
     mock_requests_delete,
     path,
     path_info,
@@ -1961,7 +1978,6 @@ def test_remove_file(
     error_match,
 ):
     """Test remove_file method with various scenarios."""
-    mock_login.return_value = V1LoginResponse(token="test-token")
     mock_get_path_info.return_value = path_info
 
     if status_code is not None:
@@ -1985,6 +2001,7 @@ def test_remove_file(
         assert f"/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs/{path}" in call_args[0][0]
         assert call_args[1]["params"]["token"] == "test-token"
         assert call_args[1]["timeout"] == 30
+        mock_authenticate.assert_called_once_with(studio_api._client)
 
     mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)
 
@@ -2026,14 +2043,12 @@ def test_remove_file(
     ],
 )
 @mock.patch("requests.delete", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_login",
-    autospec=True,
-)
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
 @mock.patch("lightning_sdk.api.studio_api.StudioApi.get_path_info", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_remove_folder(
     mock_get_path_info,
-    mock_login,
+    mock_authenticate,
     mock_requests_delete,
     path,
     path_info,
@@ -2042,7 +2057,6 @@ def test_remove_folder(
     error_match,
 ):
     """Test remove_folder method with various scenarios."""
-    mock_login.return_value = V1LoginResponse(token="test-token")
     mock_get_path_info.return_value = path_info
 
     if status_code is not None:
@@ -2066,5 +2080,6 @@ def test_remove_folder(
         assert f"/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/{path}" in call_args[0][0]
         assert call_args[1]["params"]["token"] == "test-token"
         assert call_args[1]["timeout"] == 30
+        mock_authenticate.assert_called_once_with(studio_api._client)
 
     mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)

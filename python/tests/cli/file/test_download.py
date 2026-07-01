@@ -1,9 +1,10 @@
 import os
 
 from lightning_sdk.cli.legacy.download import _expand_remote_path
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+@mock_command_logging
 def test_file_download_help() -> None:
     assert_help_contains(
         "lightning file download --help",
@@ -12,6 +13,7 @@ def test_file_download_help() -> None:
     )
 
 
+@mock_command_logging
 def test_files_download_help() -> None:
     assert_help_contains(
         "lightning files download --help",
@@ -20,6 +22,7 @@ def test_files_download_help() -> None:
     )
 
 
+@mock_command_logging
 def test_download_file_legacy_help() -> None:
     assert_help_contains(
         "lightning download file --help",
@@ -29,6 +32,7 @@ def test_download_file_legacy_help() -> None:
     )
 
 
+@mock_command_logging
 def test_expand_path() -> None:
     assert _expand_remote_path("~/test") == "test"
     assert _expand_remote_path("~/test/test2") == "test/test2"

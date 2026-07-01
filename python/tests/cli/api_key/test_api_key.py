@@ -9,7 +9,7 @@ from lightning_sdk.cli.api_key.create import create_api_key
 from lightning_sdk.cli.api_key.delete import delete_api_key
 from lightning_sdk.cli.api_key.get import get_api_key
 from lightning_sdk.cli.api_key.list import list_api_keys
-from tests.cli.help import assert_help_contains
+from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 def _mock_org(name: str = "test-org", org_id: str = "org-1") -> MagicMock:
@@ -19,6 +19,7 @@ def _mock_org(name: str = "test-org", org_id: str = "org-1") -> MagicMock:
     return org
 
 
+@mock_command_logging
 def test_api_key_help() -> None:
     assert_help_contains(
         "lightning api-key --help",
@@ -27,6 +28,7 @@ def test_api_key_help() -> None:
     )
 
 
+@mock_command_logging
 def test_api_key_get_help() -> None:
     assert_help_contains(
         "lightning api-key get --help",
@@ -35,6 +37,7 @@ def test_api_key_get_help() -> None:
     )
 
 
+@mock_command_logging
 def test_api_key_create_help() -> None:
     assert_help_contains(
         "lightning api-key create --help",
@@ -43,6 +46,7 @@ def test_api_key_create_help() -> None:
     )
 
 
+@mock_command_logging
 def test_api_key_list_help() -> None:
     assert_help_contains(
         "lightning api-key list --help",
@@ -51,6 +55,7 @@ def test_api_key_list_help() -> None:
     )
 
 
+@mock_command_logging
 def test_api_key_delete_help() -> None:
     assert_help_contains(
         "lightning api-key delete --help",
@@ -59,6 +64,7 @@ def test_api_key_delete_help() -> None:
     )
 
 
+@mock_command_logging
 def test_get_cli_prints_key() -> None:
     runner = CliRunner()
     with patch("lightning_sdk.cli.api_key.get.ApiKeyApi") as api_cls:
@@ -70,6 +76,7 @@ def test_get_cli_prints_key() -> None:
     api_cls.return_value.get_or_create_default.assert_called_once_with(None)
 
 
+@mock_command_logging
 def test_get_cli_passes_org() -> None:
     runner = CliRunner()
     with patch("lightning_sdk.cli.api_key.get.ApiKeyApi") as api_cls:
@@ -80,6 +87,7 @@ def test_get_cli_passes_org() -> None:
     api_cls.return_value.get_or_create_default.assert_called_once_with("my-org")
 
 
+@mock_command_logging
 def test_create_cli_prints_key() -> None:
     runner = CliRunner()
     org = _mock_org()
@@ -105,6 +113,7 @@ def test_create_cli_prints_key() -> None:
     )
 
 
+@mock_command_logging
 def test_create_cli_errors_when_no_secret() -> None:
     runner = CliRunner()
     org = _mock_org()
@@ -120,6 +129,7 @@ def test_create_cli_errors_when_no_secret() -> None:
     assert "API key was created but no secret was returned." in result.output
 
 
+@mock_command_logging
 def test_create_cli_usage_error_when_org_unresolved() -> None:
     runner = CliRunner()
 
@@ -133,6 +143,7 @@ def test_create_cli_usage_error_when_org_unresolved() -> None:
     assert "Could not determine an organization for this account." in result.output
 
 
+@mock_command_logging
 def test_list_cli_shows_keys() -> None:
     runner = CliRunner()
     org = _mock_org()
@@ -160,6 +171,7 @@ def test_list_cli_shows_keys() -> None:
     api_cls.return_value.list.assert_called_once_with("org-1", mine_only=True)
 
 
+@mock_command_logging
 def test_list_cli_all_users() -> None:
     runner = CliRunner()
     org = _mock_org()
@@ -175,6 +187,7 @@ def test_list_cli_all_users() -> None:
     api_cls.return_value.list.assert_called_once_with("org-1", mine_only=False)
 
 
+@mock_command_logging
 def test_delete_cli_prints_confirmation() -> None:
     runner = CliRunner()
     org = _mock_org()

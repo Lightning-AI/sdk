@@ -1,6 +1,7 @@
-from tests.cli.help import assert_help_contains, command_text
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+@mock_command_logging
 def test_list_base_studios():
     result_text = command_text("lightning base-studio list --help")
 
@@ -12,12 +13,14 @@ def test_list_base_studios():
     assert "Show this message and exit." in result_text
 
 
+@mock_command_logging
 def test_list_base_studios_plural_help():
     assert_help_contains(
         "lightning base-studios list --help", "Usage: lightning base-studios list", "List Base Studios in an org."
     )
 
 
+@mock_command_logging
 def test_format_base_studio_name():
     """Test that base studio names are formatted correctly (lowercase with hyphens)."""
     from unittest.mock import Mock, patch
@@ -64,6 +67,7 @@ def test_format_base_studio_name():
             assert "data-science-pro" in echo_call_args
 
 
+@mock_command_logging
 def test_list_handles_empty_description():
     """Test that list handles base studios with no description."""
     from unittest.mock import Mock, patch
@@ -107,6 +111,7 @@ def test_list_handles_empty_description():
             assert "empty-description" in echo_call_args
 
 
+@mock_command_logging
 def test_name_transformation():
     """Test various name transformations to lowercase with hyphens."""
     test_cases = [
@@ -122,6 +127,7 @@ def test_name_transformation():
         assert result == expected, f"Expected {original} to transform to {expected}, got {result}"
 
 
+@mock_command_logging
 def test_list_excludes_disabled_by_default():
     """Test that disabled base studios are excluded by default."""
     from unittest.mock import Mock, patch
@@ -156,6 +162,7 @@ def test_list_excludes_disabled_by_default():
             assert "enabled-studio" in echo_call_args
 
 
+@mock_command_logging
 def test_list_includes_disabled_when_flag_set():
     """Test that disabled base studios are included when --include-disabled flag is set."""
     from unittest.mock import Mock, patch
@@ -199,6 +206,7 @@ def test_list_includes_disabled_when_flag_set():
             assert "disabled-studio" in echo_call_args
 
 
+@mock_command_logging
 def test_list_displays_enabled_status():
     """Test that the enabled status is correctly displayed as Yes/No."""
     from unittest.mock import Mock, patch
@@ -240,6 +248,7 @@ def test_list_displays_enabled_status():
             assert "Enabled" in echo_call_args
 
 
+@mock_command_logging
 def test_list_displays_creator_for_managed_studios():
     """Test that managed studios display '⚡ Lightning AI' as creator."""
     from unittest.mock import Mock, patch
@@ -280,6 +289,7 @@ def test_list_displays_creator_for_managed_studios():
             assert "⚡ Lightning AI" in echo_call_args
 
 
+@mock_command_logging
 def test_list_displays_creator_for_custom_studios():
     """Test that custom studios display the username as creator."""
     from unittest.mock import Mock, patch
@@ -320,6 +330,7 @@ def test_list_displays_creator_for_custom_studios():
             assert "other_user" in echo_call_args
 
 
+@mock_command_logging
 def test_list_displays_mixed_creators():
     """Test that both managed and custom studios display correct creators."""
     from unittest.mock import Mock, patch
