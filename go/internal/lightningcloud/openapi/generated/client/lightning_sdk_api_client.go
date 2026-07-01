@@ -13,15 +13,11 @@ import (
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/cloud_space_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/cluster_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/data_connection_service"
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/file_system_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/jobs_service"
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/models_store"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/organizations_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/projects_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/secret_service"
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/storage_service"
 	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/user_service"
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/virtual_machine_service"
 )
 
 // Default lightning sdk API HTTP client.
@@ -69,15 +65,11 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *LightningS
 	cli.CloudSpaceService = cloud_space_service.New(transport, formats)
 	cli.ClusterService = cluster_service.New(transport, formats)
 	cli.DataConnectionService = data_connection_service.New(transport, formats)
-	cli.FileSystemService = file_system_service.New(transport, formats)
 	cli.JobsService = jobs_service.New(transport, formats)
-	cli.ModelsStore = models_store.New(transport, formats)
 	cli.OrganizationsService = organizations_service.New(transport, formats)
 	cli.ProjectsService = projects_service.New(transport, formats)
 	cli.SecretService = secret_service.New(transport, formats)
-	cli.StorageService = storage_service.New(transport, formats)
 	cli.UserService = user_service.New(transport, formats)
-	cli.VirtualMachineService = virtual_machine_service.New(transport, formats)
 	return cli
 }
 
@@ -128,11 +120,7 @@ type LightningSdkAPI struct {
 
 	DataConnectionService data_connection_service.ClientService
 
-	FileSystemService file_system_service.ClientService
-
 	JobsService jobs_service.ClientService
-
-	ModelsStore models_store.ClientService
 
 	OrganizationsService organizations_service.ClientService
 
@@ -140,11 +128,7 @@ type LightningSdkAPI struct {
 
 	SecretService secret_service.ClientService
 
-	StorageService storage_service.ClientService
-
 	UserService user_service.ClientService
-
-	VirtualMachineService virtual_machine_service.ClientService
 
 	Transport runtime.ClientTransport
 }
@@ -155,13 +139,9 @@ func (c *LightningSdkAPI) SetTransport(transport runtime.ClientTransport) {
 	c.CloudSpaceService.SetTransport(transport)
 	c.ClusterService.SetTransport(transport)
 	c.DataConnectionService.SetTransport(transport)
-	c.FileSystemService.SetTransport(transport)
 	c.JobsService.SetTransport(transport)
-	c.ModelsStore.SetTransport(transport)
 	c.OrganizationsService.SetTransport(transport)
 	c.ProjectsService.SetTransport(transport)
 	c.SecretService.SetTransport(transport)
-	c.StorageService.SetTransport(transport)
 	c.UserService.SetTransport(transport)
-	c.VirtualMachineService.SetTransport(transport)
 }

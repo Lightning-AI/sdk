@@ -124,7 +124,7 @@ type V1Deployment struct {
 	// Whether this deployment is running in production environment (for alerting and observability)
 	SupportsProdDeployment bool `json:"supportsProdDeployment,omitempty"`
 
-	// The id of the Template if the deployment was created from a template
+	// The id of the Template if the deployment was created from the AI Hub
 	TemplateID string `json:"templateId,omitempty"`
 
 	// The total cost of the deployment
