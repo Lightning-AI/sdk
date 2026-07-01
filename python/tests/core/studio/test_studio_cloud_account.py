@@ -16,7 +16,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListClustersResponse,
     V1ListProjectClustersResponse,
     V1Organization,
-    V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
 )
@@ -36,14 +35,6 @@ def list_cloudspaces_side_effect(existing_studios):
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
     autospec=True,
@@ -79,8 +70,6 @@ def test_studio_switch_cloud_account(
     mock_get_org,
     mock_get_status,
     mock_list_cloudspaces,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     mock_list_clusters.return_value = V1ListClustersResponse(
@@ -119,10 +108,6 @@ def test_studio_switch_cloud_account(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
 
-    # Setup plugin mocks
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="st-abc",
         teamspace="ts-abc",
@@ -154,14 +139,6 @@ def test_studio_switch_cloud_account(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
     autospec=True,
@@ -197,8 +174,6 @@ def test_studio_switch_cloud_account_not_global(
     mock_get_org,
     mock_get_status,
     mock_list_cloudspaces,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     mock_list_clusters.return_value = V1ListClustersResponse(
@@ -243,10 +218,6 @@ def test_studio_switch_cloud_account_not_global(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
-
-    # Setup plugin mocks
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
 
     studio = Studio(
         name="st-abc",

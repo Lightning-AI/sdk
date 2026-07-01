@@ -1,172 +1,81 @@
-from datetime import datetime
+import ast
+from pathlib import Path
 
-import pytest
-
-from lightning_sdk.machine import Machine
-from lightning_sdk.plugin import (
-    CustomPortPlugin,
-    InferenceServerPlugin,
-    JobsPlugin,
-    MultiMachineDataPrepPlugin,
-    MultiMachineTrainingPlugin,
-    Plugin,
-    SlurmJobsPlugin,
-    _run_name,
-)
-from lightning_sdk.studio import Studio
+PACKAGE_ROOT = Path(__file__).parents[2] / "lightning_sdk"
 
 
-def test_run_plugin(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_plugin_run_mocker):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = Plugin("my-fancy-dummy-plugin", "Description of my fancy dummy plugin", studio)
-
-    plugin.run()
+def test_plugin_module_is_not_publicly_available():
+    assert not (PACKAGE_ROOT / "plugin.py").exists()
 
 
-@pytest.mark.parametrize(
-    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-)
-def test_run_job(
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-    internal_job_get_cloudspace_mocker,
-    internal_job_run_mocker,
-    internal_job_api_mocker_all_jobs_valid,
-    job_api_get_job_by_name_mocker,
-    cloud_compute,
-):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = JobsPlugin(
-        "jobs", "Launch asynchronous scripts from a Studio - Like submitting a job to a cluster", studio
+def test_lightning_sdk_does_not_export_plugin_classes():
+    removed_exports = {
+        "JobsPlugin",
+        "MultiMachineTrainingPlugin",
+        "Plugin",
+        "SlurmJobsPlugin",
+    }
+    module = ast.parse((PACKAGE_ROOT / "__init__.py").read_text())
+
+    imported_names = {
+        alias.asname or alias.name for node in module.body if isinstance(node, ast.ImportFrom) for alias in node.names
+    }
+    exported_names = {
+        element.value
+        for node in module.body
+        if isinstance(node, ast.Assign)
+        for target in node.targets
+        if isinstance(target, ast.Name) and target.id == "__all__"
+        if isinstance(node.value, ast.List)
+        for element in node.value.elts
+        if isinstance(element, ast.Constant) and isinstance(element.value, str)
+    }
+
+    assert removed_exports.isdisjoint(imported_names)
+    assert removed_exports.isdisjoint(exported_names)
+
+
+def test_studio_does_not_expose_plugin_helpers():
+    removed_helpers = {
+        "available_plugins",
+        "install_plugin",
+        "installed_plugins",
+        "run_plugin",
+        "uninstall_plugin",
+        "_add_plugin",
+        "_execute_plugin",
+        "_list_installed_plugins",
+    }
+    module = ast.parse((PACKAGE_ROOT / "studio.py").read_text())
+    studio_class = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == "Studio")
+    studio_members = {
+        node.name for node in studio_class.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+
+    assert removed_helpers.isdisjoint(studio_members)
+
+
+def test_handwritten_sdk_does_not_import_plugin_module():
+    handwritten_sources = (
+        path for path in PACKAGE_ROOT.rglob("*.py") if "lightning_cloud/openapi" not in path.as_posix()
     )
 
-    with pytest.deprecated_call():
-        plugin.run(command="python my-file.py", name="my-fancy-job-name", cloud_compute=cloud_compute)
-
-    plugin.run(command="python my-file.py", name="my-fancy-job-name", machine=cloud_compute)
-
-    # name implicit None
-    job = plugin.run(command="python my-file.py", machine=cloud_compute)
-    assert job.name != ""
-
-    # set name explicitly to empty string
-    job = plugin.run(command="python my-file.py", name="", machine=cloud_compute)
-    assert job.name != ""
-
-    # set reuse_snapshot flag
-    # set name explicitly to empty string
-    job = plugin.run(command="python my-file.py", name="", machine=cloud_compute, reuse_snapshot=False)
-    assert job.name != ""
+    for path in handwritten_sources:
+        assert "lightning_sdk.plugin" not in path.read_text(), path
 
 
-@pytest.mark.parametrize(
-    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-)
-def test_run_mmt(
-    internal_auth_mocker,
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-    internal_job_get_cloudspace_mocker,
-    internal_mmt_run_mocker,
-    internal_job_api_mocker_all_jobs_valid,
-    cloud_compute,
-):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = MultiMachineTrainingPlugin(
-        "multi-machine-training", "Train a model across multiple cloud machines", studio
-    )
+def test_studio_init_tests_do_not_mock_plugin_list_endpoints():
+    tests_root = PACKAGE_ROOT.parent / "tests"
+    init_path_sources = [tests_root / "conftest.py", *list((tests_root / "core" / "studio").rglob("*.py"))]
+    removed_init_markers = {
+        "cloud_space_service_list_available_plugins",
+        "cloud_space_service_list_installed_plugins",
+        "mock_list_available_plugins",
+        "mock_list_installed_plugins",
+        "V1PluginsListResponse",
+    }
 
-    plugin.run(command="python my-file.py", name="my-fancy-mmt-name", num_instances=42, machine=cloud_compute)
-
-
-@pytest.mark.parametrize(
-    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-)
-def test_run_inference(
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-    internal_inference_run_mocker,
-    internal_job_api_mocker_all_jobs_valid,
-    cloud_compute,
-):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = InferenceServerPlugin("inference-server", "Deploy an ML model accessible via API", studio)
-
-    with pytest.deprecated_call():
-        plugin.run(
-            command="python my-file.py",
-            name="my-fancy-inference-name",
-            min_replicas=1,
-            max_replicas=5,
-            max_batch_size=10,
-            timeout_batching=0.3,
-            scale_in_interval=11,
-            scale_out_interval=12,
-            endpoint="/fancy-predict",
-            cloud_compute=cloud_compute,
-        )
-
-    plugin.run(
-        command="python my-file.py",
-        name="my-fancy-inference-name",
-        min_replicas=1,
-        max_replicas=5,
-        max_batch_size=10,
-        timeout_batching=0.3,
-        scale_in_interval=11,
-        scale_out_interval=12,
-        endpoint="/fancy-predict",
-        machine=cloud_compute,
-    )
-
-
-def test_run_name():
-    start_time = datetime.now().replace(second=0, microsecond=0)
-    name = _run_name("fancy-abc")
-    # removeprefix is python3.10 only, so use replace here
-    time_stamp_str = name.replace("fancy-abc-", "")
-
-    time_stamp = datetime.strptime(time_stamp_str, "%b-%d-%H_%M").replace(year=datetime.now().year)
-
-    # assert this has the same time as current time and runs fast!
-    assert start_time == time_stamp == datetime.now().replace(second=0, microsecond=0)
-
-
-@pytest.mark.parametrize(
-    "cloud_compute", [machine for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-)
-def test_run_data_prep(
-    internal_studio_init_mocker,
-    internal_studio_status_mocker,
-    internal_data_prep_run_mocker,
-    internal_job_api_mocker_all_jobs_valid,
-    cloud_compute,
-):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = MultiMachineDataPrepPlugin(
-        "multi-machine-training", "Train a model across multiple cloud machines", studio
-    )
-
-    with pytest.deprecated_call():
-        plugin.run(
-            command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, cloud_compute=cloud_compute
-        )
-
-    plugin.run(command="python my-file.py", name="my-fancy-data-prep-name", num_instances=42, machine=cloud_compute)
-
-
-def test_slurm_job(internal_studio_init_mocker, internal_studio_status_mocker, internal_slurm_run_mocker):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = SlurmJobsPlugin("slurm", "", studio)
-    plugin.run(command="python my-file.py", name="my-fancy-slurm-name", cache_id="2")
-
-    with pytest.raises(ValueError, match="The argument `work_dir` needs to be a proper path on the SLURM Cluster."):
-        plugin.run("", work_dir="")
-
-
-def test_custom_port(internal_studio_init_mocker, internal_studio_status_mocker, internal_studio_api_add_port_mocker):
-    studio = Studio("st-ghi", "ts-abc", "org-abc")
-    plugin = CustomPortPlugin("custom-port", "", studio)
-    url = plugin.run(port=8000)
-
-    assert url == "http://localhost:8000"
+    for path in init_path_sources:
+        contents = path.read_text()
+        for marker in removed_init_markers:
+            assert marker not in contents, path

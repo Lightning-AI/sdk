@@ -178,14 +178,6 @@ print(s.status)
 
 print(s.run("nvidia-smi"))
 
-# install plugins for jobs and multi-machine training
-s.install_plugin("jobs")
-s.install_plugin("multi-machine-training")
-
-# run the resulting plugins to start 1 job and 1 multi-machine training
-s.installed_plugins["jobs"].run("python my_dummy_file", name="my_first_job", machine=Machine.L4)
-s.installed_plugins["multi-machine-training"].run("python my_dummy_file", name="my_first_mmt", machine=Machine.T4, num_instances=42)
-
 print("Stopping Studio")
 s.stop()
 

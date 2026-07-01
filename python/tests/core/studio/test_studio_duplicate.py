@@ -6,7 +6,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1Organization,
-    V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
 )
@@ -25,14 +24,6 @@ def list_cloudspaces_side_effect(existing_studios):
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -53,8 +44,6 @@ def test_studio_duplicate_machine(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks
@@ -99,14 +88,9 @@ def test_studio_duplicate_machine(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="st-abc",
         teamspace="ts-abc",
@@ -132,14 +116,6 @@ def test_studio_duplicate_machine(
 
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
-@mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
 )
@@ -159,8 +135,6 @@ def test_studio_duplicate_with_new_name(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks
@@ -205,14 +179,9 @@ def test_studio_duplicate_with_new_name(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="st-abc",
         teamspace="ts-abc",

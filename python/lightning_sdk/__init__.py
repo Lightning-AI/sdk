@@ -9,7 +9,6 @@ from lightning_sdk.k8s_cluster import K8sCluster
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.mmt import MMT
 from lightning_sdk.organization import Organization
-from lightning_sdk.plugin import JobsPlugin, MultiMachineTrainingPlugin, Plugin, SlurmJobsPlugin
 from lightning_sdk.status import Status
 from lightning_sdk.studio import VM, Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
@@ -24,14 +23,10 @@ __all__ = [
     "Deployment",
     "FolderLocation",
     "Job",
-    "JobsPlugin",
     "K8sCluster",
     "Machine",
-    "MultiMachineTrainingPlugin",
     "Organization",
-    "Plugin",
     "SecretType",
-    "SlurmJobsPlugin",
     "Status",
     "Studio",
     "Teamspace",

@@ -40,10 +40,8 @@ Studios are persistent development environments. Start with
 interactive workspace, and use :class:`~lightning_sdk.VM` or
 :class:`~lightning_sdk.Machine` when selecting compute.
 
-Jobs run code in managed cloud compute. Use :class:`~lightning_sdk.Job` for
-single-node work and :class:`~lightning_sdk.MMT` for multi-machine training.
-The plugin classes in :doc:`api/plugins` expose the same surfaces when you are
-building reusable Studio workflows.
+Jobs run code in managed cloud compute. Use :meth:`lightning_sdk.Job.run` for
+single-node work and :meth:`lightning_sdk.MMT.run` for multi-machine training.
 
 Deployments turn model servers and applications into managed services. Use
 :class:`~lightning_sdk.Deployment` with the deployment helper classes in
@@ -80,7 +78,6 @@ Reference Pages
    api/job
    api/machine
    api/teamspace
-   api/plugins
    api/mmt
    api/deployment
    api/agent

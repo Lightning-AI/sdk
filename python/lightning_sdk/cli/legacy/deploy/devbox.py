@@ -104,7 +104,6 @@ def _handle_devbox(
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)
-    studio.install_plugin("custom-port")
     lit_devbox = _LitServeDevbox()
 
     studio_url = _get_studio_url(studio, turn_on=True)
@@ -152,7 +151,7 @@ def _handle_devbox(
 
     port = lit_devbox._detect_port(pathlib_path)
     console.print("🔌 Configuring server port...")
-    port_url = studio.run_plugin("custom-port", port=port)
+    port_url = studio.add_ports(port)[0].urls[0]
 
     # Add completion message with next steps
     console.print("\n✅ Studio ready!")

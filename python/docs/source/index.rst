@@ -17,9 +17,9 @@ Key Concepts
 ============
 
 - Manage :class:`~lightning_sdk.Studio` instances — create, start, stop, and run commands
-- Submit and track :class:`~lightning_sdk.Job` runs with :class:`~lightning_sdk.Machine` selection
+- Submit and track jobs with :meth:`lightning_sdk.Job.run` and :class:`~lightning_sdk.Machine` selection
 - Organize work inside a :class:`~lightning_sdk.Teamspace`
-- Scale training with :class:`~lightning_sdk.MultiMachineTrainingPlugin` or :class:`~lightning_sdk.MMT`
+- Scale training with :meth:`lightning_sdk.MMT.run`
 - Deploy models with :class:`~lightning_sdk.Deployment`
 
 Quick Example

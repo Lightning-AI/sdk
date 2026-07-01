@@ -54,8 +54,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetLongRunningCommandInCloudSpaceResponse,
     V1ManagedEndpoint,
     V1ManagedModel,
-    V1Plugin,
-    V1PluginsListResponse,
     V1UpstreamCloudSpace,
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
@@ -1303,119 +1301,6 @@ class StudioApi:
             return
 
         raise RuntimeError(f"Failed to remove folder '{path}' from the Studio. Status code: {r.status_code}")
-
-    def install_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> str:
-        """Installs the given plugin.
-
-        Args:
-            studio_id: Studio (cloud space) ID to install the plugin into.
-            teamspace_id: ID of the owning teamspace.
-            plugin_name: Identifier of the plugin to install.
-
-        Returns:
-            Additional info string returned by the server after successful installation.
-
-        Raises:
-            RuntimeError: If the plugin installation fails.
-        """
-        resp: V1Plugin = self._client.cloud_space_service_install_plugin(
-            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
-        )
-        if not (resp.state == "installation_success" and resp.error == ""):
-            raise RuntimeError(f"Failed to install plugin {plugin_name}: {resp.error}")
-
-        additional_info = resp.additional_info or ""
-
-        return additional_info.strip("\n").strip()
-
-    def uninstall_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> None:
-        """Uninstalls the given plugin.
-
-        Args:
-            studio_id: Studio (cloud space) ID to uninstall the plugin from.
-            teamspace_id: ID of the owning teamspace.
-            plugin_name: Identifier of the plugin to uninstall.
-
-        Raises:
-            RuntimeError: If the plugin uninstallation fails.
-        """
-        resp: V1Plugin = self._client.cloud_space_service_uninstall_plugin(
-            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
-        )
-        if not (resp.state == "uninstallation_success" and resp.error == ""):
-            raise RuntimeError(f"Failed to uninstall plugin {plugin_name}: {resp.error}")
-
-    def execute_plugin(self, studio_id: str, teamspace_id: str, plugin_name: str) -> Tuple[str, int]:
-        """Executes the given plugin.
-
-        Args:
-            studio_id: Studio (cloud space) ID to execute the plugin in.
-            teamspace_id: ID of the owning teamspace.
-            plugin_name: Identifier of the plugin to execute.
-
-        Returns:
-            Tuple of ``(output_message, port)`` where ``port > 0`` means the plugin is interactive.
-
-        Raises:
-            RuntimeError: If the plugin execution fails.
-        """
-        resp: V1Plugin = self._client.cloud_space_service_execute_plugin(
-            project_id=teamspace_id, id=studio_id, plugin_id=plugin_name
-        )
-        if not (resp.state == "execution_success" and resp.error == ""):
-            raise RuntimeError(f"Failed to execute plugin {plugin_name}: {resp.error}")
-
-        additional_info_string = resp.additional_info
-        additional_info = json.loads(additional_info_string)
-        port = int(additional_info["port"])
-
-        output_str = ""
-
-        # if port is specified greater than 0 this means the plugin is interactive.
-        # Prompt the user to head to the browser
-        if port > 0:
-            output_str = (
-                f"Plugin {plugin_name} is interactive. Have a look at https://{port}-{studio_id}.cloudspaces.litng.ai"
-            )
-
-        elif port < 0:
-            output_str = "This plugin can only be used on the browser interface of a Studio!"
-
-        # TODO: retrieve actual command output?
-        elif port == 0:
-            output_str = f"Successfully executed plugin {plugin_name}"
-
-        return output_str, port
-
-    def list_available_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
-        """Lists the available plugins.
-
-        Args:
-            studio_id: Studio (cloud space) ID to list plugins for.
-            teamspace_id: ID of the owning teamspace.
-
-        Returns:
-            Dict mapping plugin identifiers to their display names.
-        """
-        resp: V1PluginsListResponse = self._client.cloud_space_service_list_available_plugins(
-            project_id=teamspace_id, id=studio_id
-        )
-        return resp.plugins
-
-    def list_installed_plugins(self, studio_id: str, teamspace_id: str) -> Dict[str, str]:
-        """Lists all installed plugins.
-
-        Args:
-            studio_id: Studio (cloud space) ID to list installed plugins for.
-            teamspace_id: ID of the owning teamspace.
-
-        Returns:
-            Dict mapping plugin identifiers to their display names.
-        """
-        resp: V1PluginsListResponse = self._client.cloud_space_service_list_installed_plugins(
-            project_id=teamspace_id, id=studio_id
-        )
-        return resp.plugins
 
     def create_job(
         self,

@@ -23,5 +23,8 @@ def _offline_studio_env(monkeypatch):
     """
     for var in _AMBIENT_ENV_VARS:
         monkeypatch.delenv(var, raising=False)
-    with mock.patch("lightning_sdk.studio.raise_access_error_if_not_allowed", return_value=None):
+    with (
+        mock.patch("lightning_sdk.studio.raise_access_error_if_not_allowed", return_value=None),
+        mock.patch("lightning_sdk.api.studio_api.StudioApi.start_keeping_alive", autospec=True),
+    ):
         yield

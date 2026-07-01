@@ -14,7 +14,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LightningRun,
     V1ListCloudSpacesResponse,
     V1Organization,
-    V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
 )
@@ -36,14 +35,6 @@ class _DummyResponse:
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -79,8 +70,6 @@ def test_run_command(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks (from internal_studio_init_mocker)
@@ -130,8 +119,6 @@ def test_run_command(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
             phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
@@ -152,9 +139,6 @@ def test_run_command(
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     result = studio.run("foo", "bar")
@@ -163,14 +147,6 @@ def test_run_command(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -206,8 +182,6 @@ def test_run_command_error(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks (from internal_studio_init_mocker)
@@ -257,8 +231,6 @@ def test_run_command_error(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
             phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
@@ -276,9 +248,6 @@ def test_run_command_error(
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     with pytest.raises(RuntimeError, match="No such file or directory foo"):
@@ -286,14 +255,6 @@ def test_run_command_error(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -329,8 +290,6 @@ def test_run_command_exit_code(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks (from internal_studio_init_mocker)
@@ -380,8 +339,6 @@ def test_run_command_exit_code(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
             phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
@@ -402,9 +359,6 @@ def test_run_command_exit_code(
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio("st-abc", "ts-abc", "org-abc")
 
     result_output, result_exit_code = studio.run_with_exit_code("foo", "bar")
@@ -414,14 +368,6 @@ def test_run_command_exit_code(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -457,8 +403,6 @@ def test_run_command_and_detach(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     # Setup studio initialization mocks (from internal_studio_init_mocker)
@@ -508,8 +452,6 @@ def test_run_command_and_detach(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
             phase="CLOUD_SPACE_INSTANCE_STATE_RUNNING",
@@ -530,9 +472,6 @@ def test_run_command_and_detach(
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_create_lightning_run.return_value = V1PluginsListResponse(plugins={})
-    mock_create_cloudspace.return_value = V1PluginsListResponse(plugins={})
-
     with mock.patch(
         "lightning_sdk.api.studio_api.StudioApi._get_detached_command_status"
     ) as mock_get_detached_command_status:

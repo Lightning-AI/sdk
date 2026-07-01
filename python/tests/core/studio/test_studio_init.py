@@ -19,7 +19,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListClustersResponse,
     V1ListProjectClustersResponse,
     V1Organization,
-    V1PluginsListResponse,
     V1Project,
     V1ProjectSettings,
 )
@@ -43,14 +42,6 @@ def list_cloudspaces_side_effect(existing_studios):
 @pytest.mark.parametrize("name", ["st-abc", "st-xyz"])
 @pytest.mark.parametrize("studio_type", [None, "python"])
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -78,8 +69,6 @@ def test_studio_init(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
     name,
     cluster,
@@ -144,10 +133,6 @@ def test_studio_init(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
 
-    # Setup plugin mocks
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
-
     # Setup cloud space service mocks
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
@@ -204,14 +189,6 @@ def test_studio_init_no_teamspace(mock_resolve_teamspace, mock_config_get_value)
 )
 @mock.patch("requests.put", autospec=True)
 @mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
-@mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
 )
@@ -241,8 +218,6 @@ def test_studio_init_detects_current_studio_from_env(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that Studio.__init__ detects current studio from LIGHTNING_CLOUD_SPACE_ID env var."""
@@ -281,8 +256,6 @@ def test_studio_init_detects_current_studio_from_env(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_get_cloud_space.side_effect = _get_cloud_space_side_effect
     mock_get_status.side_effect = _get_status_side_effect
@@ -305,14 +278,6 @@ def test_studio_init_detects_current_studio_from_env(
     os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
 )
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -343,8 +308,6 @@ def test_studio_init_uses_current_studio_cloud_account(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that Studio.__init__ uses current studio's cloud_account when no cloud_account is specified."""
@@ -387,8 +350,6 @@ def test_studio_init_uses_current_studio_cloud_account(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-default"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_get_cloud_space.side_effect = _get_cloud_space_side_effect
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
@@ -404,14 +365,6 @@ def test_studio_init_uses_current_studio_cloud_account(
     os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-abc"}, clear=False
 )
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -442,8 +395,6 @@ def test_studio_init_uses_current_studio_template(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that Studio.__init__ uses current studio's environment_template_id when no studio_type is specified."""
@@ -488,8 +439,6 @@ def test_studio_init_uses_current_studio_template(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_get_cloud_space.side_effect = _get_cloud_space_side_effect
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
@@ -502,14 +451,6 @@ def test_studio_init_uses_current_studio_template(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -545,8 +486,6 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that Studio.__init__ can be called with cloud_provider without cloud_account."""
@@ -607,9 +546,6 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
 
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="test-studio-gcp",
         teamspace="ts-abc",
@@ -625,14 +561,6 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -668,8 +596,6 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that Studio.__init__ can be called with cloud_provider as string without cloud_account."""
@@ -730,9 +656,6 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
 
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="test-studio-aws-str",
         teamspace="ts-abc",
@@ -748,14 +671,6 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
 
 
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
     autospec=True,
@@ -781,8 +696,6 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
     mock_get_org,
     mock_get_status,
     mock_list_cloudspaces,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Test that cloud_provider arg doesn't break when accessing existing studio."""
@@ -826,9 +739,6 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
     )
 
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
-
     studio = Studio(
         name="existing-studio",
         teamspace="ts-abc",
@@ -848,14 +758,6 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
     os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-other"}, clear=False
 )
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
     autospec=True,
@@ -881,8 +783,6 @@ def test_studio_init_opens_existing_studio_when_current_studio_in_different_team
     mock_get_status,
     mock_list_cloudspaces,
     mock_create_cloudspace,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Opening an existing studio must not depend on the current studio when it lives in another teamspace.
@@ -909,8 +809,6 @@ def test_studio_init_opens_existing_studio_when_current_studio_in_different_team
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_get_status.side_effect = lambda *a, **k: V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(phase=None)
@@ -929,14 +827,6 @@ def test_studio_init_opens_existing_studio_when_current_studio_in_different_team
     os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "st-current", "LIGHTNING_CLOUD_PROJECT_ID": "ts-other"}, clear=False
 )
 @mock.patch("requests.put", autospec=True)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_available_plugins",
-    autospec=True,
-)
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_installed_plugins",
-    autospec=True,
-)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
     autospec=True,
@@ -967,8 +857,6 @@ def test_studio_init_creates_studio_when_current_studio_in_different_teamspace(
     mock_list_cloudspaces,
     mock_create_cloudspace,
     mock_create_lightning_run,
-    mock_list_installed_plugins,
-    mock_list_available_plugins,
     mock_requests_put,
 ):
     """Creating a studio must not depend on the current studio when it lives in another teamspace.
@@ -1010,8 +898,6 @@ def test_studio_init_creates_studio_when_current_studio_in_different_teamspace(
     mock_get_org.return_value = V1Organization(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
-    mock_list_available_plugins.return_value = V1PluginsListResponse(plugins={})
-    mock_list_installed_plugins.return_value = V1PluginsListResponse(plugins={})
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect

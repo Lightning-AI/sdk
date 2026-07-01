@@ -2,7 +2,7 @@ import glob
 import os
 import threading
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 from tqdm.auto import tqdm
 
@@ -33,7 +33,6 @@ from lightning_sdk.utils.resolve import (
 if TYPE_CHECKING:
     from lightning_sdk.job import Job
     from lightning_sdk.mmt import MMT
-    from lightning_sdk.plugin import Plugin
 
 _logger = _setup_logger(__name__)
 
@@ -93,7 +92,6 @@ class Studio(metaclass=TrackCallsMeta):
         self._teamspace = None
         self._setup_done = getattr(self._skip_setup, "value", False)
         self._disable_secrets = disable_secrets
-        self._plugins = {}
         self._studio = None
 
         if getattr(self._skip_init, "value", False):
@@ -201,17 +199,9 @@ class Studio(metaclass=TrackCallsMeta):
         )
 
     def _setup(self) -> None:
-        """Installs all plugins that should be currently installed."""
+        """Starts background keep-alive for the Studio."""
         if self._setup_done:
             return
-
-        # make sure all plugins that should be installed are actually installed
-        all_installed_plugins = self._list_installed_plugins()
-        available_plugins = self.available_plugins
-        for k in all_installed_plugins:
-            # check if plugin is available for user to prevent issues on duplication
-            if k in available_plugins:
-                self._add_plugin(k)
 
         self._studio_api.start_keeping_alive(teamspace_id=self._teamspace.id, studio_id=self._studio.id)
         self._setup_done = True
@@ -983,123 +973,6 @@ class Studio(metaclass=TrackCallsMeta):
                 If True, existing environment variables that are not in new_env will be kept.
         """
         self._studio_api.set_env(self._studio, self._teamspace.id, new_env, partial=partial)
-
-    @property
-    def available_plugins(self) -> Mapping[str, str]:
-        """All available plugins to install in the current Studio.
-
-        Returns:
-            Mapping[str, str]: A mapping of plugin names to their descriptions.
-        """
-        return self._studio_api.list_available_plugins(self._studio.id, self._teamspace.id)
-
-    @property
-    def installed_plugins(self) -> Mapping[str, "Plugin"]:
-        """All plugins that are currently installed in this Studio.
-
-        Returns:
-            Mapping[str, Plugin]: A mapping of plugin names to their :class:`~lightning_sdk.plugin.Plugin` instances.
-        """
-        return self._plugins
-
-    def install_plugin(self, plugin_name: str) -> None:
-        """Installs a given plugin to a Studio.
-
-        Args:
-            plugin_name: The name of the plugin to install.
-
-        Raises:
-            RuntimeError: If the plugin installation fails.
-        """
-        try:
-            additional_info = self._studio_api.install_plugin(self._studio.id, self._teamspace.id, plugin_name)
-        except RuntimeError as e:
-            # reraise from here to avoid having api layer in traceback
-            raise e
-
-        if additional_info and self._setup_done:
-            _logger.info(additional_info)
-
-        self._add_plugin(plugin_name)
-
-    def run_plugin(self, plugin_name: str, *args: Any, **kwargs: Any) -> str:
-        """Runs a given plugin in a Studio.
-
-        Args:
-            plugin_name: The name of the installed plugin to run.
-            *args: Positional arguments forwarded to the plugin's run method.
-            **kwargs: Keyword arguments forwarded to the plugin's run method.
-
-        Returns:
-            str: The output produced by the plugin.
-        """
-        return self._plugins[plugin_name].run(*args, **kwargs)
-
-    def uninstall_plugin(self, plugin_name: str) -> None:
-        """Uninstalls the given plugin from the Studio.
-
-        Args:
-            plugin_name: The name of the plugin to uninstall.
-
-        Raises:
-            RuntimeError: If the plugin uninstallation fails.
-        """
-        try:
-            self._studio_api.uninstall_plugin(self._studio.id, self._teamspace.id, plugin_name)
-        except RuntimeError as e:
-            # reraise from here to avoid having api layer in traceback
-            raise e
-
-        self._plugins.pop(plugin_name)
-
-    def _list_installed_plugins(self) -> Mapping[str, str]:
-        """Lists all plugins that should be installed.
-
-        Returns:
-            Mapping[str, str]: A mapping of plugin names to their descriptions.
-        """
-        return self._studio_api.list_installed_plugins(self._studio.id, self._teamspace.id)
-
-    def _add_plugin(self, plugin_name: str) -> None:
-        """Adds the just installed plugin to the internal list of plugins.
-
-        Args:
-            plugin_name: The name of the plugin to add.
-        """
-        from lightning_sdk.plugin import (
-            CustomPortPlugin,
-            InferenceServerPlugin,
-            JobsPlugin,
-            MultiMachineTrainingPlugin,
-            Plugin,
-        )
-
-        if plugin_name in self._plugins:
-            return
-
-        plugin_cls = {
-            "jobs": JobsPlugin,
-            "multi-machine-training": MultiMachineTrainingPlugin,
-            "inference-server": InferenceServerPlugin,
-            "custom-port": CustomPortPlugin,
-        }.get(plugin_name, Plugin)
-
-        description = self._list_installed_plugins()[plugin_name]
-
-        self._plugins[plugin_name] = plugin_cls(plugin_name, description, self)
-
-    def _execute_plugin(self, plugin_name: str) -> Tuple[str, int]:
-        """Executes a plugin command on the Studio.
-
-        Args:
-            plugin_name: The name of the plugin to execute.
-
-        Returns:
-            Tuple[str, int]: The command output and its exit code.
-        """
-        output = self._studio_api.execute_plugin(self._studio.id, self._teamspace.id, plugin_name)
-        _logger.info(output)
-        return output
 
     def __eq__(self, other: "Studio") -> bool:
         """Checks for equality with other Studios.
