@@ -8,12 +8,10 @@ from rich.console import Console
 
 from lightning_sdk import Machine, Studio
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.machine import CloudProvider
 
 _MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
 )
-_PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 
 @click.group("create")
@@ -39,27 +37,15 @@ def create() -> None:
     help="If specified, will start the created studio on the given machine.",
 )
 @click.option(
-    "--cloud-account",
-    "--cloud_account",
+    "--cloud",
     default=None,
-    help=(
-        "The cloud account to create the studio on. "
-        "If not specified, will try to infer from the environment (e.g. when run from within a Studio.) "
-        "or fall back to the teamspace default."
-    ),
-)
-@click.option(
-    "--cloud-provider",
-    default=None,
-    type=click.Choice(_PROVIDER_VALUES),
-    help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
+    help="Cloud provider or cloud account to create the studio on.",
 )
 def studio(
     name: str,
     teamspace: Optional[str] = None,
     start: Optional[str] = None,
-    cloud_account: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
+    cloud: Optional[str] = None,
 ) -> None:
     """Create a new studio on the Lightning AI platform.
 
@@ -71,13 +57,13 @@ def studio(
     menu = TeamspacesMenu()
     teamspace_resolved = menu(teamspace)
 
-    # default cloud account to current studios cloud account if run from studio
+    # default cloud account to current studio's cloud account if run from studio
     # else it will fall back to teamspace default in the backend
-    if cloud_account is None:
+    if cloud is None:
         with suppress(ValueError):
             s = Studio()
             if s.teamspace.name == teamspace_resolved.name and s.teamspace.owner.name == teamspace_resolved.owner.name:
-                cloud_account = s.cloud_account
+                cloud = s.cloud_account
 
     console = Console()
 
@@ -90,9 +76,8 @@ def studio(
     studio = Studio(
         name=name,
         teamspace=teamspace_resolved,
-        cloud_account=cloud_account,
+        cloud=cloud,
         create_ok=True,
-        cloud_provider=cloud_provider,
     )
 
     console.print(f"Created Studio {studio.name}.")

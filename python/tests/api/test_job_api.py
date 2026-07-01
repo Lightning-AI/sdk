@@ -34,8 +34,6 @@ def test_job_v2_submit_job(mocker_auth):
         command="echo hello",
         image_credentials=None,
         cloud_account_auth=True,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
     )
@@ -72,10 +70,8 @@ def test_job_v2_submit_job(mocker_auth):
         command=None,
         image_credentials="dockerhub",
         cloud_account_auth=False,
-        artifacts_local="/output",
-        artifacts_remote="efs:data:some-path",
         entrypoint="sh -c",
-        path_mappings={"/output2": "data2:some-other-path"},
+        path_mappings={"/output2": "data2:some-other-path", "/output": "data:some-path"},
     )
 
     spec = V1JobSpec(

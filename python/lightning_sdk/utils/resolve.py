@@ -1,6 +1,5 @@
 import logging
 import os
-import warnings
 from contextlib import contextmanager
 from functools import lru_cache
 from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
@@ -10,7 +9,7 @@ from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.machine import CloudProvider
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
@@ -42,37 +41,6 @@ def _setup_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     return _logger
 
 
-def _resolve_deprecated_cloud_compute(machine: Machine, cloud_compute: Optional[Machine]) -> Machine:
-    """Resolve the active machine, handling the deprecated ``cloud_compute`` argument.
-
-    Args:
-        machine: The ``machine`` argument passed by the caller.
-        cloud_compute: The deprecated ``cloud_compute`` argument (use ``machine`` instead).
-
-    Returns:
-        Machine: The resolved machine to use.
-
-    Raises:
-        ValueError: If both ``machine`` and ``cloud_compute`` are explicitly set.
-    """
-    if cloud_compute is not None:
-        if machine == Machine.CPU:
-            # user explicitly set cloud_compute and not machine, so use cloud_compute
-            warnings.warn(
-                "The 'cloud_compute' argument will be deprecated in the future! "
-                "Please consider using the 'machine' argument instead!",
-                DeprecationWarning,
-            )
-            return cloud_compute
-
-        raise ValueError(
-            "Cannot use both 'cloud_compute' and 'machine' at the same time."
-            "Please don't set the 'cloud_compute' as it will be deprecated!"
-        )
-
-    return machine
-
-
 def _resolve_default_cloud_provider(
     cloud_provider: Optional[Union[CloudProvider, str]],
 ) -> Optional[Union[CloudProvider, str]]:
@@ -91,24 +59,6 @@ def _resolve_default_cloud_provider(
         cloud_provider = config.get_value(DefaultConfigKeys.cloud_provider)
 
     return cloud_provider
-
-
-def _warn_deprecated_cloud_selection(
-    cloud_account: Optional[str] = None, cloud_provider: Optional[Union[CloudProvider, str]] = None
-) -> None:
-    """Warn when callers use legacy cloud selection arguments."""
-    if cloud_account is not None:
-        warnings.warn(
-            "'cloud_account' is deprecated. Use the 'cloud' argument instead.",
-            DeprecationWarning,
-            stacklevel=3,
-        )
-    if cloud_provider is not None:
-        warnings.warn(
-            "'cloud_provider' is deprecated. Use the 'cloud' argument instead.",
-            DeprecationWarning,
-            stacklevel=3,
-        )
 
 
 def _resolve_default_cloud_account(

@@ -24,7 +24,6 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple(
@@ -113,22 +112,6 @@ def deploy() -> None:
     help="The organization owning the teamspace (if any). Defaults to the current organization.",
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
-@click.option(
-    "--cloud-account",
-    "--cloud_account",
-    default=None,
-    help=(
-        "The cloud account to run the deployment on. "
-        "Defaults to the studio cloud account if running with studio compute env. "
-        "If not provided will fall back to the teamspaces default cloud account."
-    ),
-)
-@click.option(
-    "--cloud-provider",
-    "--cloud_provider",
-    default=None,
-    help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
-)
 @click.option("--port", default=8000, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=0, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=1, help="Number of replicas to scale up to.")
@@ -153,16 +136,13 @@ def api(
     teamspace: Optional[str],
     org: Optional[str],
     user: Optional[str],
-    cloud_account: Optional[str],
     port: Optional[int],
     min_replica: Optional[int],
     max_replica: Optional[int],
     replicas: Optional[int],
     no_credentials: Optional[bool],
-    cloud_provider: Optional[str],
 ) -> None:
     """Deploy a LitServe model script."""
-    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
     return api_impl(
         script_path=script_path,
         easy=easy,
@@ -175,13 +155,11 @@ def api(
         teamspace=teamspace,
         org=org,
         user=user,
-        cloud_account=cloud_account,
         port=port,
         replicas=replicas,
         min_replica=min_replica,
         max_replica=max_replica,
         include_credentials=not no_credentials,
-        cloud_provider=cloud_provider,
     )
 
 
@@ -218,13 +196,11 @@ def api_impl(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     port: Optional[int] = 8000,
     min_replica: Optional[int] = 0,
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
-    cloud_provider: Optional[str] = None,
 ) -> None:
     """Deploy a LitServe model script."""
     deploy_to_cloud, selected_cloud = _normalize_cloud_option(cloud)
@@ -258,7 +234,6 @@ def api_impl(
         return _handle_devbox(name, script_path, console, non_interactive, machine, interruptible, teamspace, org, user)
 
     machine = Machine.from_str(machine)
-    cloud_provider = CloudProvider.from_str(cloud_provider) if cloud_provider else None
     return _handle_cloud(
         script_path,
         console,
@@ -270,13 +245,11 @@ def api_impl(
         teamspace=teamspace,
         org=org,
         user=user,
-        cloud_account=cloud_account,
         port=port,
         min_replica=min_replica,
         max_replica=max_replica,
         replicas=replicas,
         include_credentials=include_credentials,
-        cloud_provider=cloud_provider,
         cloud=selected_cloud,
     )
 
@@ -333,13 +306,11 @@ def _handle_cloud(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     port: Optional[int] = 8000,
     min_replica: Optional[int] = 0,
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
-    cloud_provider: Optional[CloudProvider] = None,
     cloud: Optional[Union[CloudProvider, str]] = None,
 ) -> None:
     if not is_connected():
@@ -415,13 +386,12 @@ def _handle_cloud(
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
-    lightning_containers_cloud_account = cloud_account
-    if lightning_containers_cloud_account is None and cloud is not None and not _is_cloud_provider(cloud):
-        lightning_containers_cloud_account = str(cloud)
-    if not lightning_containers_cloud_account and not cloud_provider and not cloud:
+    deployment_cloud = cloud
+    lightning_containers_cloud_account = str(cloud) if cloud is not None and not _is_cloud_provider(cloud) else None
+    if not lightning_containers_cloud_account and not cloud:
         clusters_menu = _ClustersMenu()
         lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
-        cloud_account = resolved_teamspace.default_cloud_account
+        deployment_cloud = resolved_teamspace.default_cloud_account
 
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
@@ -445,7 +415,6 @@ def _handle_cloud(
                 "metric": None,
                 "machine": machine,
                 "spot": interruptible,
-                "cloud_account": cloud_account,
                 "port": port,
                 "min_replica": min_replica,
                 "max_replica": max_replica,
@@ -453,8 +422,7 @@ def _handle_cloud(
                 "include_credentials": include_credentials,
                 "cloudspace_id": cloudspace_id,
                 "from_onboarding": from_onboarding,
-                "cloud_provider": cloud_provider,
-                "cloud": cloud,
+                "cloud": deployment_cloud,
             },
         )
         thread.start()
@@ -479,7 +447,6 @@ def _handle_cloud(
         metric=None,
         machine=machine,
         spot=interruptible,
-        cloud_account=cloud_account,
         port=port,
         min_replica=min_replica,
         max_replica=max_replica,
@@ -487,8 +454,7 @@ def _handle_cloud(
         include_credentials=include_credentials,
         cloudspace_id=cloudspace_id,
         from_onboarding=from_onboarding,
-        cloud_provider=cloud_provider,
-        cloud=cloud,
+        cloud=deployment_cloud,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
     if user_status["onboarded"]:

@@ -110,12 +110,7 @@ def test_delete_job(
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
-@pytest.mark.parametrize(
-    ("artifacts_local", "artifacts_remote"), [(None, None), ("", ""), ("/output", "efs:data:some-path")]
-)
-def test_submit_job_v2_image(
-    internal_studio_init_mocker, machine, command, env, interruptible, artifacts_local, artifacts_remote
-):
+def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
 
@@ -129,8 +124,6 @@ def test_submit_job_v2_image(
         env=env,
         interruptible=interruptible,
         cloud_account="c-abc",
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
     )
 
     # test that everything was passed along correctly to the api layer and
@@ -147,8 +140,6 @@ def test_submit_job_v2_image(
         env=env,
         image_credentials=None,
         cloud_account_auth=False,
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
@@ -187,8 +178,6 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         env=env,
         image_credentials=None,
         cloud_account_auth=False,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
@@ -554,7 +543,6 @@ def test_submit_jobv2_studio_resolve(
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account="c-abc",
-        cloud_provider=None,
         env=None,
         image=None,
         interruptible=False,
@@ -563,8 +551,6 @@ def test_submit_jobv2_studio_resolve(
         cloud_account_auth=False,
         cloud=None,
         image_credentials=None,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
@@ -603,41 +589,7 @@ def test_submit_jobv2_studio_path(
 ):
     from lightning_sdk.job.job import Job
 
-    submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
-
-    job = Job.run(
-        "test-job",
-        machine=Machine.CPU,
-        command="echo hello",
-        studio=studio,
-        image=image,
-        teamspace="ts-abc",
-        org="org-abc",
-        artifacts_local=artifacts_source,
-        artifacts_remote=artifacts_destination,
-    )
-
-    submit_mock.assert_called_once_with(
-        command="echo hello",
-        cloud_account=None if image else "c-abc",
-        cloud_provider=None,
-        env=None,
-        image=image,
-        interruptible=False,
-        machine=Machine.CPU,
-        studio=None if image else Studio(name="st-abc", teamspace="ts-abc", org="org-abc"),
-        cloud_account_auth=False,
-        cloud=None,
-        image_credentials=None,
-        artifacts_local=artifacts_source,
-        artifacts_remote=artifacts_destination,
-        entrypoint="sh -c" if image else None,
-        path_mappings=None,
-        max_runtime=None,
-        reuse_snapshot=True,
-        scratch_disks=None,
-    )
+    job = Job("test-job", Teamspace("ts-abc", org="org-abc"), _fetch_job=False)
 
     job._job = V1Job(
         name="test-job",
@@ -686,7 +638,6 @@ def test_submit_job_v2_image_from_studio(
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account="c-abc",  # cloud account is inferred from studio we submit from
-        cloud_provider=None,
         env=None,
         image="ubuntu",
         interruptible=False,
@@ -695,8 +646,6 @@ def test_submit_job_v2_image_from_studio(
         cloud_account_auth=False,
         cloud=None,
         image_credentials=None,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
@@ -726,24 +675,20 @@ def test_run_job_with_cloud_provider(
         image="nginx",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_provider="nebius",  # providing cloud_provider
-        cloud_account=None,
+        cloud="nebius",
     )
 
     submit_mock.assert_called_once_with(
         command="echo hello",
         cloud_account=None,  # cloud_account still None
-        cloud_provider="nebius",  # cloud_provider matches
         env=None,
         image="nginx",
         interruptible=False,
         machine=Machine.CPU,
         studio=None,
         cloud_account_auth=False,
-        cloud=None,
+        cloud="nebius",
         image_credentials=None,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,

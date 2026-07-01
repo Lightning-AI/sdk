@@ -4,7 +4,7 @@ import rich_click as click
 
 from lightning_sdk.cli.studio.start import start_impl
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.machine import Machine
 
 
 @click.command("start", cls=LightningCommand)
@@ -31,16 +31,6 @@ from lightning_sdk.machine import CloudProvider, Machine
         "Only used if --create is specified."
     ),
 )
-@click.option(
-    "--cloud-provider",
-    help="Deprecated. Use --cloud. The cloud provider to start the VM on. Only used if --create is specified.",
-    type=click.Choice(m.name for m in list(CloudProvider)),
-)
-@click.option(
-    "--cloud-account",
-    help="Deprecated. Use --cloud. The cloud account to start the VM on. Only used if --create is specified.",
-    type=click.STRING,
-)
 def start_vm(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -48,8 +38,6 @@ def start_vm(
     machine: str = "CPU",
     interruptible: bool = False,
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
 ) -> None:
     """Start a VM.
 
@@ -65,7 +53,5 @@ def start_vm(
         gpus=None,
         interruptible=interruptible,
         cloud=cloud,
-        cloud_provider=cloud_provider,
-        cloud_account=cloud_account,
         vm=True,
     )

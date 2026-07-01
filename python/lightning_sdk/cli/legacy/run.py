@@ -51,23 +51,9 @@ def run() -> None:
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
 @click.option(
-    "--cloud-provider",
-    "--cloud_provider",
+    "--cloud",
     default=None,
-    help=(
-        "The provider to create the studio on. If set, must be in agreement with the provider from the "
-        "cloud_account (if specified)."
-    ),
-)
-@click.option(
-    "--cloud-account",
-    "--cloud_account",
-    default=None,
-    help=(
-        "The cloud account to run the job on. "
-        "Defaults to the studio cloud account if running with studio compute env. "
-        "If not provided will fall back to the teamspaces default cloud account."
-    ),
+    help="Cloud provider or cloud account to run the job on.",
 )
 @click.option(
     "--env",
@@ -150,8 +136,7 @@ def job(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
+    cloud: Optional[str] = None,
     env: Sequence[str] = (),
     interruptible: bool = False,
     image_credentials: Optional[str] = None,
@@ -159,8 +144,6 @@ def job(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
-    artifacts_local: Optional[str] = None,
-    artifacts_remote: Optional[str] = None,
 ) -> None:
     """Run async workloads using a docker image or studio."""
     if not name:
@@ -194,16 +177,13 @@ def job(
         teamspace=resolved_teamspace,
         org=org,
         user=user,
-        cloud_provider=cloud_provider,
-        cloud_account=cloud_account,
+        cloud=cloud,
         env=env_dict,
         interruptible=interruptible,
         image_credentials=image_credentials,
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
     )
 
 
@@ -255,14 +235,9 @@ def job(
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
 @click.option(
-    "--cloud-account",
-    "--cloud_account",
+    "--cloud",
     default=None,
-    help=(
-        "The cloud account to run the job on. "
-        "Defaults to the studio cloud account if running with studio compute env. "
-        "If not provided will fall back to the teamspaces default cloud account."
-    ),
+    help="Cloud provider or cloud account to run the job on.",
 )
 @click.option(
     "--env",
@@ -346,7 +321,7 @@ def mmt(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
-    cloud_account: Optional[str] = None,
+    cloud: Optional[str] = None,
     env: Sequence[str] = (),
     interruptible: bool = False,
     image_credentials: Optional[str] = None,
@@ -354,8 +329,6 @@ def mmt(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
-    artifacts_local: Optional[str] = None,
-    artifacts_remote: Optional[str] = None,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
     if name is None:
@@ -393,15 +366,13 @@ def mmt(
         teamspace=resolved_teamspace,
         org=org,
         user=user,
-        cloud_account=cloud_account,
+        cloud=cloud,
         env=env_dict,
         interruptible=interruptible,
         image_credentials=image_credentials,
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
     )
 
 

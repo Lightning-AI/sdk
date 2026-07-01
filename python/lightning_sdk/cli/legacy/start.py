@@ -4,12 +4,10 @@ import click
 
 from lightning_sdk import Machine, Studio
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.machine import CloudProvider
 
 _MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
 )
-_PROVIDER_VALUES = tuple([provider.value for provider in CloudProvider])
 
 
 @click.group("start")
@@ -38,16 +36,15 @@ def start() -> None:
     help="The machine type to start the studio on.",
 )
 @click.option(
-    "--cloud-provider",
+    "--cloud",
     default=None,
-    type=click.Choice(_PROVIDER_VALUES),
-    help=("The provider to create the studio on. If --cloud-account is specified, this option is prioritized."),
+    help="Cloud provider or cloud account to start the studio on.",
 )
 def studio(
     name: str,
     teamspace: Optional[str] = None,
     machine: str = "CPU",
-    cloud_provider: Optional[str] = None,
+    cloud: Optional[str] = None,
 ) -> None:
     """Start a studio on a given machine.
 
@@ -71,7 +68,7 @@ def studio(
             org=owner,
             user=None,
             create_ok=False,
-            cloud_provider=cloud_provider,
+            cloud=cloud,
         )
     except (RuntimeError, ValueError, ApiException) as first_error:
         try:
@@ -81,7 +78,7 @@ def studio(
                 org=None,
                 user=owner,
                 create_ok=False,
-                cloud_provider=cloud_provider,
+                cloud=cloud,
             )
         except (RuntimeError, ValueError, ApiException) as second_error:
             raise first_error from second_error

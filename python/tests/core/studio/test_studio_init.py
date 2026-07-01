@@ -156,7 +156,7 @@ def test_studio_init(
             name=name,
             teamspace="ts-abc",
             org="org-abc",
-            cloud_account=cluster,
+            cloud=cluster,
             create_ok=create_ok,
             studio_type=studio_type,
         )
@@ -477,7 +477,7 @@ def test_studio_init_uses_current_studio_template(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
-def test_studio_init_with_cloud_provider_without_cloud_account(
+def test_studio_init_with_cloud_provider(
     mock_list_clusters,
     mock_list_project_clusters,
     mock_get_teamspace,
@@ -488,7 +488,7 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
     mock_create_lightning_run,
     mock_requests_put,
 ):
-    """Test that Studio.__init__ can be called with cloud_provider without cloud_account."""
+    """Test that Studio.__init__ can be called with a CloudProvider cloud selector."""
     mock_list_clusters.return_value = V1ListClustersResponse(
         [
             V1ExternalCluster(
@@ -550,7 +550,7 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
         name="test-studio-gcp",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_provider=CloudProvider.GCP,
+        cloud=CloudProvider.GCP,
         create_ok=True,
     )
 
@@ -587,7 +587,7 @@ def test_studio_init_with_cloud_provider_without_cloud_account(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
-def test_studio_init_with_cloud_provider_string_without_cloud_account(
+def test_studio_init_with_cloud_provider_string(
     mock_list_clusters,
     mock_list_project_clusters,
     mock_get_teamspace,
@@ -598,7 +598,7 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
     mock_create_lightning_run,
     mock_requests_put,
 ):
-    """Test that Studio.__init__ can be called with cloud_provider as string without cloud_account."""
+    """Test that Studio.__init__ can be called with a provider string cloud selector."""
     mock_list_clusters.return_value = V1ListClustersResponse(
         [
             V1ExternalCluster(
@@ -660,7 +660,7 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
         name="test-studio-aws-str",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_provider="AWS",
+        cloud="AWS",
         create_ok=True,
     )
 
@@ -689,7 +689,7 @@ def test_studio_init_with_cloud_provider_string_without_cloud_account(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_clusters",
     autospec=True,
 )
-def test_studio_init_with_cloud_provider_for_existing_studio(
+def test_studio_init_with_cloud_for_existing_studio(
     mock_list_clusters,
     mock_list_project_clusters,
     mock_get_teamspace,
@@ -698,7 +698,7 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
     mock_list_cloudspaces,
     mock_requests_put,
 ):
-    """Test that cloud_provider arg doesn't break when accessing existing studio."""
+    """Test that cloud arg doesn't break when accessing an existing studio."""
     mock_list_clusters.return_value = V1ListClustersResponse(
         [
             V1ExternalCluster(
@@ -743,7 +743,7 @@ def test_studio_init_with_cloud_provider_for_existing_studio(
         name="existing-studio",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_provider=CloudProvider.GCP,
+        cloud=CloudProvider.GCP,
         create_ok=False,
     )
 

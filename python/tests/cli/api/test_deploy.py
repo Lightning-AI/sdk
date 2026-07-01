@@ -69,15 +69,16 @@ def test_api_deploy_cloud_option_without_value_deploys_to_cloud(monkeypatch, tmp
     assert handle_cloud.call_args.kwargs["cloud"] is None
 
 
-def test_api_deploy_legacy_cloud_options_warn(monkeypatch):
+def test_api_deploy_rejects_legacy_cloud_options(monkeypatch):
     api_impl = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.api.deploy.api_impl", api_impl)
 
     result = CliRunner().invoke(deploy_api, ["server.py", "--cloud", "--cloud-account", "acc-1"])
 
-    assert result.exit_code == 0, result.output
-    assert "Warning: --cloud-account is deprecated. Use --cloud instead." in result.output
-    assert api_impl.call_args.kwargs["cloud_account"] == "acc-1"
+    assert result.exit_code != 0
+    assert "No such option" in result.output
+    assert "--cloud-account" in result.output
+    api_impl.assert_not_called()
 
 
 def test_apis_deploy_help():
@@ -371,7 +372,7 @@ def test_handle_byoc_cloud(
     mock_ask.return_value = True
     mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
-    _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud_account="byoc-123")
+    _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud="byoc-123")
     mock_litcr.assert_called_once()
     mock_poll_verified_status.asssert_called_once()
     mock_authenticate.assert_called_once()
@@ -417,8 +418,8 @@ def test_handle_cloud_deployment_api(
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @patch("lightning_sdk.cli.legacy.deploy.serve._get_registry_url")
-@pytest.mark.parametrize("cloud_account", ["byoc-123", None])
-def test_handle_cloud_with_cloud_account(
+@pytest.mark.parametrize("cloud", ["byoc-123", None])
+def test_handle_cloud_with_cloud(
     mock_registry_url,
     mock_poll_verified_status,
     mock_authenticate,
@@ -428,7 +429,7 @@ def test_handle_cloud_with_cloud_account(
     mock_teamspace,
     ___,
     temp_script,
-    cloud_account,
+    cloud,
 ):
     mock_ask.return_value = True
     mock_deployer.created = True
@@ -437,7 +438,7 @@ def test_handle_cloud_with_cloud_account(
     repository = "litserve-model"
     resolved_teamspace = MagicMock(default_cloud_account="gcp-123")
 
-    if cloud_account is None:
+    if cloud is None:
         mock_cluster_resolver.return_value = "gcp-123"
 
     mock_teamspace.return_value = resolved_teamspace  # Mock select_teamspace to return our teamspace
@@ -446,14 +447,14 @@ def test_handle_cloud_with_cloud_account(
         mock_console,
         teamspace="test-teamspace",  # Pass string, not Teamspace object
         machine=machine,
-        cloud_account=cloud_account,
+        cloud=cloud,
         non_interactive=True,
         interruptible=True,
         repository=repository,
     )
     container_basename = repository.split("/")[-1]
     registry_url = mock_registry_url.return_value
-    suffix = cloud_account if cloud_account is not None else "gcp-123"
+    suffix = cloud if cloud is not None else "gcp-123"
     image = (
         f"{registry_url}/lit-container-{suffix}/"
         f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{container_basename}"
@@ -463,12 +464,11 @@ def test_handle_cloud_with_cloud_account(
     mock_deployer.return_value.dockerize_api.assert_called_once()
     mock_authenticate.assert_called_once()
     mock_console.print.assert_called()
-    selected_cloud_account = cloud_account or "gcp-123"
+    selected_cloud = cloud or "gcp-123"
     mock_deployer.return_value.run_on_cloud.assert_called_once_with(
         deployment_name="litserve-model",
         teamspace=resolved_teamspace,
         machine=machine,
-        cloud_account=selected_cloud_account,
         port=8000,
         min_replica=0,
         max_replica=1,
@@ -479,8 +479,7 @@ def test_handle_cloud_with_cloud_account(
         from_onboarding=False,
         image=image,
         metric=None,
-        cloud_provider=None,
-        cloud=None,
+        cloud=selected_cloud,
     )
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 

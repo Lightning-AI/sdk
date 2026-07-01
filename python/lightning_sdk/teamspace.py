@@ -872,12 +872,10 @@ class Teamspace(metaclass=TrackCallsMeta):
         if connection_type == ConnectionType.EFS and region is None:
             raise ValueError("Region must be specified")
 
-        cloud_account = self._cloud_account_api.resolve_cloud_account(
-            self.id,
-            cloud_account=cloud_account,
-            cloud_provider=provider_for_connection,
-            default_cloud_account=None,
-        )
+        if cloud_account is None:
+            provider_mapping = self._cloud_account_api.get_cloud_account_provider_mapping(self.id)
+            resolved_cloud_account = provider_mapping.get(provider_for_connection)
+            cloud_account = resolved_cloud_account.id if resolved_cloud_account else None
 
         cloud_accounts = self._cloud_account_api.list_cloud_accounts(self.id)
         resolved_cloud_accounts = [

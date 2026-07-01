@@ -4,21 +4,19 @@ from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.studio_selection import StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.machine import Machine
 from lightning_sdk.studio import VM, Studio
 
 click.rich_click.OPTION_GROUPS = {
     "lightning studio start": [
         {"name": "STUDIO", "options": ["--name", "--teamspace", "--create"]},
         {"name": "COMPUTE", "options": ["--machine", "--gpus", "--interruptible", "--cloud"]},
-        {"name": "DEPRECATED", "options": ["--cloud-provider", "--cloud-account"]},
     ],
 }
 
@@ -57,18 +55,6 @@ click.rich_click.OPTION_GROUPS = {
     "--cloud",
     help="Cloud provider or account. Default: teamspace. (with --create)",
 )
-@click.option(
-    "--cloud-provider",
-    metavar="",
-    help="Deprecated — use [bold #a78bfa]--cloud[/bold #a78bfa].",
-    type=click.Choice(m.name for m in list(CloudProvider)),
-)
-@click.option(
-    "--cloud-account",
-    metavar="",
-    help="Deprecated — use [bold #a78bfa]--cloud[/bold #a78bfa].",
-    type=click.STRING,
-)
 def start_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -77,8 +63,6 @@ def start_studio(
     gpus: Optional[str] = None,
     interruptible: bool = False,
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
 ) -> None:
     """Start a Studio — a persistent GPU cloud workspace.
 
@@ -94,8 +78,6 @@ def start_studio(
         gpus=gpus,
         interruptible=interruptible,
         cloud=cloud,
-        cloud_provider=cloud_provider,
-        cloud_account=cloud_account,
         vm=False,
     )
 
@@ -108,16 +90,10 @@ def start_impl(
     gpus: Optional[str],
     interruptible: bool,
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     vm: bool = False,
 ) -> None:
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace=teamspace)
-
-    if cloud_provider is not None:
-        cloud_provider = CloudProvider(cloud_provider)
-    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
 
     if not create:
         menu = StudiosMenu(resolved_teamspace, vm=vm)
@@ -129,8 +105,6 @@ def start_impl(
             teamspace=resolved_teamspace,
             create_ok=create,
             cloud=cloud,
-            cloud_provider=cloud_provider,
-            cloud_account=cloud_account,
         )
 
     machine = handle_machine_and_gpus_args(machine, gpus)

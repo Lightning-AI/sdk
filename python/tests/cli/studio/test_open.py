@@ -12,8 +12,9 @@ def test_open_studio():
 
     assert "Usage: lightning studio open [OPTIONS] [PATH]" in result_text
     assert "Open a local file or folder in a Lightning Studio." in result_text
-    assert "--teamspace                      TEXT" in result_text
-    assert "--cloud-account,--cloud_account  TEXT" in result_text
+    assert "--teamspace" in result_text
+    assert "--cloud" in result_text
+    assert "--cloud-account" not in result_text
 
 
 def test_studios_open_help() -> None:
@@ -47,10 +48,10 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbr
     (Path(tmpdir) / "folder" / "file.txt").touch()
 
     runner = CliRunner()
-    result = runner.invoke(open, [f"{tmpdir}/folder", "--cloud-account", "test-cloud"])
+    result = runner.invoke(open, [f"{tmpdir}/folder", "--cloud", "test-cloud"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_once_with(name="folder", teamspace=mock_teamspace(), cloud_account="test-cloud")
+    mock_studio.assert_called_once_with(name="folder", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_called_once()
     mock_webbrowser.open.assert_called_once_with(
         "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true"
@@ -70,10 +71,10 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrow
     (Path(tmpdir) / "file.txt").touch()
 
     runner = CliRunner()
-    result = runner.invoke(open, [f"{tmpdir}/file.txt", "--cloud-account", "test-cloud"])
+    result = runner.invoke(open, [f"{tmpdir}/file.txt", "--cloud", "test-cloud"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_once_with(name="file", teamspace=mock_teamspace(), cloud_account="test-cloud")
+    mock_studio.assert_called_once_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
     mock_webbrowser.open.assert_called_once_with(
@@ -100,7 +101,7 @@ def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, moc
     result = runner.invoke(open, [f"{tmpdir}/file.txt"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_with(name="file", teamspace=mock_teamspace(), cloud_account="test-cloud")
+    mock_studio.assert_called_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
     mock_webbrowser.open.assert_called_once_with(

@@ -18,7 +18,6 @@ from lightning_sdk.cli.deployment.common import (
     resolve_machine,
     resolve_teamspace,
 )
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.deployment import Deployment
 
@@ -45,7 +44,6 @@ from lightning_sdk.deployment import Deployment
 @click.option("--autoscale-metric", type=click.Choice(["CPU", "GPU", "RPM"]), help="Autoscaling metric.")
 @click.option("--autoscale-threshold", type=float, help="Autoscaling threshold.")
 @click.option("--cloud", help="Cloud provider or cloud account to run replicas on.")
-@click.option("--cloud-account", "--cloud_account", help="Deprecated. Use --cloud. Cloud account to run replicas on.")
 @click.option("--env", "-e", multiple=True, default=[""], help="Environment variable in KEY=VALUE or JSON format.")
 @click.option("--secret", multiple=True, help="Secret name to expose as an environment variable.")
 @click.option("--interruptible/--no-interruptible", default=None, help="Whether to use interruptible instances.")
@@ -113,7 +111,6 @@ def create_deployment(
     autoscale_metric: Optional[str] = None,
     autoscale_threshold: Optional[float] = None,
     cloud: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     env: Sequence[str] = (),
     secret: Sequence[str] = (),
     interruptible: Optional[bool] = None,
@@ -150,7 +147,6 @@ def create_deployment(
         raise click.UsageError("--ack, --force, and --dry-run are only supported with --model.")
 
     resolved_teamspace = resolve_teamspace(teamspace)
-    warn_deprecated_cloud_options(cloud_account=cloud_account)
     machine_obj = resolve_machine(machine)
     vllm_args = list(extra_vllm_args) or None
 
@@ -202,7 +198,6 @@ def create_deployment(
             replicas=replicas,
             auth=parse_auth(api_key_auth=api_key_auth, basic_auth=basic_auth, token_auth=token_auth),
             cloud=cloud,
-            cloud_account=cloud_account,
             custom_domain=custom_domain,
             quantity=quantity,
             include_credentials=include_credentials,

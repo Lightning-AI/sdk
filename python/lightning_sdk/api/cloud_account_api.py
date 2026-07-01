@@ -245,70 +245,43 @@ class CloudAccountApi:
         self,
         teamspace_id: str,
         cloud: Optional[Union["CloudProvider", str]] = None,
-        cloud_account: Optional[str] = None,
-        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         default_cloud_account: Optional[str] = None,
     ) -> Optional[str]:
-        """Resolve the best cloud account ID from the combination of cloud, legacy args, and default.
+        """Resolve the best cloud account ID from the requested cloud selector and default.
 
-        Priority: explicit ``cloud``/``cloud_account`` > provider mapping > ``default_cloud_account`` > None.
+        Priority: explicit ``cloud`` account/provider > ``default_cloud_account`` > None.
 
         Args:
             teamspace_id: The teamspace to resolve cloud accounts within.
             cloud: A preferred global provider (``"aws"``, ``CloudProvider.AWS``, etc.) or cloud account ID.
-            cloud_account: Deprecated. Use ``cloud`` instead. An explicit cloud account ID, if provided.
-            cloud_provider: Deprecated. Use ``cloud`` instead. A preferred provider; used to find the matching account
-                when no explicit ID is given.
             default_cloud_account: Fallback account ID when neither explicit account nor provider resolves.
 
         Returns:
             str | None: The resolved cloud account ID, or None if none can be determined.
 
         Raises:
-            ValueError: If ``cloud`` is combined with deprecated cloud selection arguments.
-            RuntimeError: If both ``cloud_account`` and ``cloud_provider`` are given but do not agree.
+            TypeError: If ``cloud`` is not a string, ``CloudProvider``, or ``None``.
         """
         from lightning_sdk.machine import CloudProvider
 
-        # When a provider is selected via `cloud` (the `--cloud <provider>` path), resolve to that
-        # provider's GLOBAL account. The deprecated `cloud_provider` arg keeps its broader behavior
-        # of matching any (incl. BYOC) account of that provider.
-        prefer_global_account = False
+        cloud_account = None
+        cloud_provider = None
         if cloud is not None:
-            if cloud_account is not None or cloud_provider is not None:
-                raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
-
             if isinstance(cloud, CloudProvider):
                 cloud_provider = cloud
-                prefer_global_account = True
             elif isinstance(cloud, str):
                 try:
                     cloud_provider = CloudProvider.from_str(cloud)
-                    prefer_global_account = True
                 except ValueError:
                     cloud_account = cloud
             else:
                 raise TypeError("cloud must be a string, CloudProvider, or None")
 
-        if cloud_provider and not isinstance(cloud_provider, CloudProvider):
-            cloud_provider = CloudProvider.from_str(cloud_provider)
-
         if cloud_account:
-            if cloud_provider:
-                cloud_account_resp = self.get_cloud_account_non_org(teamspace_id, cloud_account)
-                cloud_provider_resp = self._get_cloud_account_provider(cloud_account_resp)
-                if cloud_provider_resp != cloud_provider:
-                    raise RuntimeError(
-                        f"Specified both cloud_provider ({cloud_provider}) and cloud_account ({cloud_account} "
-                        f"has cloud provider {cloud_provider_resp}) which don't match!"
-                    )
-
             return cloud_account
 
         if cloud_provider:
-            cloud_account_mapping = self.get_cloud_account_provider_mapping(
-                teamspace_id=teamspace_id, global_only=prefer_global_account
-            )
+            cloud_account_mapping = self.get_cloud_account_provider_mapping(teamspace_id=teamspace_id, global_only=True)
             if cloud_provider in cloud_account_mapping:
                 return cloud_account_mapping[cloud_provider].id
 

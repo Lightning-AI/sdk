@@ -14,12 +14,7 @@ from lightning_sdk.teamspace import Teamspace
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
-@pytest.mark.parametrize(
-    ("artifacts_local", "artifacts_remote"), [(None, None), ("", ""), ("/output", "efs:data:some-path")]
-)
-def test_submit_mmt_v2_image(
-    internal_studio_init_mocker, machine, command, env, interruptible, artifacts_local, artifacts_remote
-):
+def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env, interruptible):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = MMT("test-job", teamspace, _fetch_job=False)
 
@@ -33,8 +28,6 @@ def test_submit_mmt_v2_image(
         env=env,
         interruptible=interruptible,
         cloud_account="c-abc",
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
     )
 
     # test that everything was passed along correctly to the api layer and
@@ -52,8 +45,6 @@ def test_submit_mmt_v2_image(
         env=env,
         image_credentials=None,
         cloud_account_auth=False,
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
@@ -93,8 +84,6 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         env=env,
         image_credentials=None,
         cloud_account_auth=False,
-        artifacts_local=None,
-        artifacts_remote=None,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,

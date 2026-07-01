@@ -27,16 +27,11 @@ from lightning_sdk.utils.resolve import _get_studio_url
     ),
 )
 @click.option(
-    "--cloud-account",
-    "--cloud_account",
+    "--cloud",
     default=None,
-    help=(
-        "The cloud account to create the studio on. "
-        "If not specified, will try to infer from the environment (e.g. when run from within a Studio.) "
-        "or fall back to the teamspace default."
-    ),
+    help="Cloud provider or cloud account to create the studio on.",
 )
-def open_studio(path: str = ".", teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
+def open_studio(path: str = ".", teamspace: Optional[str] = None, cloud: Optional[str] = None) -> None:
     """Open a local file or folder in a Lightning Studio."""
     console = Console()
     pathlib_path = Path(path).resolve()
@@ -47,16 +42,16 @@ def open_studio(path: str = ".", teamspace: Optional[str] = None, cloud_account:
         menu = TeamspacesMenu()
         resolved_teamspace = menu(teamspace=teamspace)
 
-    if cloud_account is None:
+    if cloud is None:
         with suppress(ValueError):
             studio = Studio()
             if (
                 studio.teamspace.name == resolved_teamspace.name
                 and studio.teamspace.owner.name == resolved_teamspace.owner.name
             ):
-                cloud_account = studio.cloud_account
+                cloud = studio.cloud_account
 
-    new_studio = Studio(name=pathlib_path.stem, teamspace=resolved_teamspace, cloud_account=cloud_account)
+    new_studio = Studio(name=pathlib_path.stem, teamspace=resolved_teamspace, cloud=cloud)
     console.print(
         f"[bold]Uploading {path} to {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]"
     )

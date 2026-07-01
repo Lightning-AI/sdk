@@ -963,11 +963,7 @@ def remove_datetime_prefix(text: str) -> str:
     return re.sub(r"^\[.*?\] ", "", text, flags=re.MULTILINE)
 
 
-def resolve_path_mappings(
-    mappings: Dict[str, str],
-    artifacts_local: Optional[str],
-    artifacts_remote: Optional[str],
-) -> List[V1PathMapping]:
+def resolve_path_mappings(mappings: Dict[str, str]) -> List[V1PathMapping]:
     path_mappings_list = []
     for k, v in mappings.items():
         splitted = str(v).rsplit(":", 1)
@@ -986,30 +982,6 @@ def resolve_path_mappings(
                 container_path=k,
             )
         )
-
-    if artifacts_remote:
-        splitted = str(artifacts_remote).rsplit(":", 2)
-        if len(splitted) not in (2, 3):
-            raise RuntimeError(
-                f"Artifacts remote need to be of format efs:connection_name[:path] but got {artifacts_remote}"
-            )
-        else:
-            if not artifacts_local:
-                raise RuntimeError("If Artifacts remote is specified, artifacts local should be specified as well")
-
-            if len(splitted) == 2:
-                _, connection_name = splitted
-                connection_path = ""
-            else:
-                _, connection_name, connection_path = splitted
-
-            path_mappings_list.append(
-                V1PathMapping(
-                    connection_name=connection_name,
-                    connection_path=connection_path,
-                    container_path=artifacts_local,
-                )
-            )
 
     return path_mappings_list
 

@@ -7,7 +7,6 @@ from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
@@ -16,31 +15,25 @@ from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_t
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.machine import CloudProvider, Machine
+from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.names import random_unique_name
 
 
 def _parse_args_or_get_from_current_studio(
     teamspace: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     studio_type: Optional[str] = None,
     machine: Optional[str] = None,
     gpus: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
     name: Optional[str] = None,
     cloud: Optional[str] = None,
-) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
+) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
     # Parse args provided by user
     menu = TeamspacesMenu()
     resolved_teamspace = menu(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     template_id = get_base_studio_id(studio_type, teamspace=resolved_teamspace)
-
-    if cloud_provider is not None:
-        cloud_provider = CloudProvider(cloud_provider)
-    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
 
     name = name or random_unique_name()
 
@@ -50,30 +43,20 @@ def _parse_args_or_get_from_current_studio(
         if not teamspace:
             resolved_teamspace = s.teamspace
             save_teamspace_to_config(resolved_teamspace, overwrite=False)
-        if not cloud_account:
-            cloud_account = s.cloud_account
+        if not cloud:
+            cloud = s.cloud_account
         if not template_id:
             template_id = s._studio.environment_template_id
         if not machine and not gpus:
             machine = s.machine
 
-    return resolved_teamspace, cloud_account, template_id, machine, cloud_provider, name
+    return resolved_teamspace, cloud, template_id, machine, name
 
 
 @click.command("connect", cls=LightningCommand)
 @click.argument("name", required=False)
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--cloud", help="Cloud provider or cloud account to create the studio on. Defaults to teamspace default.")
-@click.option(
-    "--cloud-provider",
-    help="Deprecated. Use --cloud. The cloud provider to start the studio on.",
-    type=click.Choice(m.name for m in list(CloudProvider)),
-)
-@click.option(
-    "--cloud-account",
-    help="Deprecated. Use --cloud. The cloud account to create the studio on.",
-    type=click.STRING,
-)
 @click.option(
     "--machine",
     help="The machine type to start the studio on. Defaults to CPU-4",
@@ -97,8 +80,6 @@ def connect_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     machine: Optional[str] = None,
     gpus: Optional[str] = None,
     studio_type: Optional[str] = None,
@@ -109,13 +90,11 @@ def connect_studio(
     Example:
         lightning studio connect
     """
-    teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+    teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
         teamspace=teamspace,
-        cloud_account=cloud_account,
         studio_type=studio_type,
         machine=machine,
         gpus=gpus,
-        cloud_provider=cloud_provider,
         name=name,
         cloud=cloud,
     )
@@ -126,8 +105,6 @@ def connect_studio(
             teamspace=teamspace,
             create_ok=True,
             cloud=cloud,
-            cloud_provider=cloud_provider,
-            cloud_account=cloud_account,
             studio_type=template_id,
         )
     except (RuntimeError, ValueError, ApiException):

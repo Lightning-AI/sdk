@@ -1,4 +1,3 @@
-import re
 from unittest import mock
 from unittest.mock import MagicMock, Mock, mock_open
 
@@ -615,38 +614,23 @@ def test_downloader_skip_does_not_touch_progress_bar_when_none(tmp_path):
 
 
 def test_resolve_path_mappings():
-    assert len(resolve_path_mappings({}, None, None)) == 0
+    assert len(resolve_path_mappings({})) == 0
 
-    assert len(resolve_path_mappings({}, "", "")) == 0
-
-    path_mappings = resolve_path_mappings({}, "/output", "efs:some-connection:some-path")
+    path_mappings = resolve_path_mappings({"/output": "some-connection:some-path"})
     assert len(path_mappings) == 1
     assert isinstance(path_mappings[0], V1PathMapping)
     assert path_mappings[0].container_path == "/output"
     assert path_mappings[0].connection_name == "some-connection"
     assert path_mappings[0].connection_path == "some-path"
 
-    with pytest.raises(
-        RuntimeError,
-        match=re.escape("Artifacts remote need to be of format efs:connection_name[:path] but got some-connection"),
-    ):
-        resolve_path_mappings({}, "/output", "some-connection")
-
-    with pytest.raises(
-        RuntimeError, match="If Artifacts remote is specified, artifacts local should be specified as well"
-    ):
-        resolve_path_mappings({}, "", "efs:some-connection:some-path")
-
     path_mappings = resolve_path_mappings(
         {
             "/path1": "conn1:remotepath1",
             "/path2": "conn2",
-        },
-        "/output",
-        "efs:some-connection:some-path",
+        }
     )
 
-    assert len(path_mappings) == 3
+    assert len(path_mappings) == 2
     assert all(isinstance(x, V1PathMapping) for x in path_mappings)
 
     assert path_mappings[0].container_path == "/path1"
@@ -656,10 +640,6 @@ def test_resolve_path_mappings():
     assert path_mappings[1].container_path == "/path2"
     assert path_mappings[1].connection_name == "conn2"
     assert path_mappings[1].connection_path == ""
-
-    assert path_mappings[2].container_path == "/output"
-    assert path_mappings[2].connection_name == "some-connection"
-    assert path_mappings[2].connection_path == "some-path"
 
 
 def test_sanitize_studio_remote_path():

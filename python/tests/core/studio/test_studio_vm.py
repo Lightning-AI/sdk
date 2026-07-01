@@ -120,7 +120,7 @@ def test_studio_vm_cls_name(
         name="st-abc",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_account=None,
+        cloud=None,
     )
 
     assert studio._cls_name == "Studio"
@@ -129,7 +129,7 @@ def test_studio_vm_cls_name(
         name="st-abc",
         teamspace="ts-abc",
         org="org-abc",
-        cloud_account=None,
+        cloud=None,
     )
 
     assert vm._cls_name == "VM"

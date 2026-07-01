@@ -6,12 +6,12 @@ def test_create_studio():
 
     assert "Usage: lightning studio create [OPTIONS]" in result_text
     assert "Create a new Studio." in result_text
-    assert "--name            TEXT" in result_text
-    assert "--teamspace       TEXT" in result_text
-    assert "--cloud           TEXT" in result_text
-    assert "--cloud-provider" in result_text
-    assert "--cloud-account   TEXT" in result_text
-    assert "--studio-type     TEXT" in result_text
+    assert "--name" in result_text
+    assert "--teamspace" in result_text
+    assert "--cloud" in result_text
+    assert "--cloud-provider" not in result_text
+    assert "--cloud-account" not in result_text
+    assert "--studio-type" in result_text
 
 
 def test_studios_create_help() -> None:
@@ -110,37 +110,6 @@ def test_create_studio_without_studio_type(monkeypatch):
         assert call_kwargs["studio_type"] == "default-template-id"
 
 
-def test_create_studio_with_cloud_provider(monkeypatch):
-    """Test that --cloud-provider option works correctly."""
-    from unittest.mock import MagicMock, patch
-
-    from click.testing import CliRunner
-
-    from lightning_sdk.cli.studio.create import create_studio
-    from lightning_sdk.machine import CloudProvider
-
-    runner = CliRunner()
-
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "owner/teamspace"
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance._studio.id = "studio-123"
-    mock_studio_class = MagicMock(return_value=mock_studio_instance)
-    mock_studio_class.__qualname__ = "Studio"
-
-    with patch("lightning_sdk.cli.studio.create.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
-        runner.invoke(create_studio, ["--name", "test-studio", "--cloud-provider", "AWS"])
-
-        mock_studio_class.assert_called_once()
-        call_kwargs = mock_studio_class.call_args[1]
-        assert call_kwargs["cloud_provider"] == CloudProvider.AWS
-
-
 def test_create_studio_with_cloud(monkeypatch):
     """Test that --cloud option is forwarded to Studio."""
     from unittest.mock import MagicMock, patch
@@ -169,36 +138,6 @@ def test_create_studio_with_cloud(monkeypatch):
         mock_studio_class.assert_called_once()
         call_kwargs = mock_studio_class.call_args[1]
         assert call_kwargs["cloud"] == "aws"
-
-
-def test_create_studio_with_cloud_account(monkeypatch):
-    """Test that --cloud-account option works correctly."""
-    from unittest.mock import MagicMock, patch
-
-    from click.testing import CliRunner
-
-    from lightning_sdk.cli.studio.create import create_studio
-
-    runner = CliRunner()
-
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "owner/teamspace"
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance._studio.id = "studio-123"
-    mock_studio_class = MagicMock(return_value=mock_studio_instance)
-    mock_studio_class.__qualname__ = "Studio"
-
-    with patch("lightning_sdk.cli.studio.create.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
-        runner.invoke(create_studio, ["--name", "test-studio", "--cloud-account", "my-account"])
-
-        mock_studio_class.assert_called_once()
-        call_kwargs = mock_studio_class.call_args[1]
-        assert call_kwargs["cloud_account"] == "my-account"
 
 
 def test_create_studio_passes_correct_parameter_name():
@@ -244,7 +183,6 @@ def test_create_studio_with_all_options():
     from unittest.mock import MagicMock, patch
 
     from lightning_sdk.cli.studio.create import create_impl
-    from lightning_sdk.machine import CloudProvider
 
     mock_teamspace_menu = MagicMock()
     mock_resolved_teamspace = MagicMock()
@@ -265,8 +203,7 @@ def test_create_studio_with_all_options():
         create_impl(
             name="my-studio",
             teamspace="owner/teamspace",
-            cloud_provider="AWS",
-            cloud_account="my-cloud-account",
+            cloud="my-cloud-account",
             vm=False,
             studio_type="machine-learning",
         )
@@ -279,7 +216,6 @@ def test_create_studio_with_all_options():
         assert call_kwargs["name"] == "my-studio"
         assert call_kwargs["teamspace"] == mock_resolved_teamspace
         assert call_kwargs["create_ok"] is True
-        assert call_kwargs["cloud_provider"] == CloudProvider.AWS
-        assert call_kwargs["cloud_account"] == "my-cloud-account"
+        assert call_kwargs["cloud"] == "my-cloud-account"
         assert call_kwargs["studio_type"] == "ml-template"
         assert "template_id" not in call_kwargs

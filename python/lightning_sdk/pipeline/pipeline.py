@@ -13,7 +13,7 @@ from lightning_sdk.pipeline.utils import prepare_steps
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _get_cluster, _resolve_teamspace, _warn_deprecated_cloud_selection
+from lightning_sdk.utils.resolve import _get_cluster, _resolve_teamspace
 
 
 class Pipeline:
@@ -24,8 +24,6 @@ class Pipeline:
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cloud_account: Optional[str] = None,
-        cloud_provider: Optional[Union[CloudProvider, str]] = None,
         shared_filesystem: Optional[bool] = None,
         studio: Optional[Union[Studio, str]] = None,
         stop_on_failure: bool = True,
@@ -39,8 +37,6 @@ class Pipeline:
             teamspace: The teamspace where the pipeline will be created.
             org: The organization where the pipeline will be created.
             user: The creator of the pipeline.
-            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to use for the entire pipeline.
-            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from.
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
@@ -64,11 +60,8 @@ class Pipeline:
 
         self._pipeline_api = PipelineApi()
         self._cloud_account_api = CloudAccountApi()
-        _warn_deprecated_cloud_selection(cloud_account=cloud_account, cloud_provider=cloud_provider)
         self._cloud_account = self._cloud_account_api.resolve_cloud_account(
             self._teamspace.id,
-            cloud_account=cloud_account,
-            cloud_provider=cloud_provider,
             default_cloud_account=self._teamspace.default_cloud_account,
             cloud=cloud,
         )
@@ -121,17 +114,13 @@ class Pipeline:
                 and (pipeline_step.image == "" or pipeline_step.image is None)
                 and pipeline_step.studio is None
             ):
-                pipeline_step.cloud_account = self._studio.cloud_account
+                pipeline_step.cloud = self._studio.cloud_account
                 pipeline_step.studio = self._studio
 
-            if not pipeline_step.cloud_account and isinstance(provided_cloud_account, str):
-                pipeline_step.cloud_account = provided_cloud_account
+            if not pipeline_step.cloud and isinstance(provided_cloud_account, str):
+                pipeline_step.cloud = provided_cloud_account
 
-        cluster_ids = set(step.cloud_account for step in steps if step.cloud_account not in ["", None])  # noqa: C401
-
-        cloud_account = (
-            list(cluster_ids)[0] if len(cluster_ids) == 1 and self._cloud_account is None else ""  # noqa: RUF015
-        )
+        cloud_account = provided_cloud_account if isinstance(provided_cloud_account, str) else ""
 
         steps = [step.to_proto(self._teamspace, cloud_account, self._shared_filesystem) for step in steps]
 

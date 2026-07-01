@@ -5,7 +5,6 @@ from typing import Dict, Mapping, Optional, Sequence, Union
 
 import rich_click as click
 
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
@@ -53,16 +52,6 @@ _MACHINE_VALUES = tuple(
     default=None,
     help=(
         "Cloud provider or cloud account to run the job on. Defaults to the studio cloud account or teamspace default."
-    ),
-)
-@click.option(
-    "--cloud-account",
-    "--cloud_account",
-    default=None,
-    help=(
-        "Deprecated. Use --cloud. The cloud account to run the job on. "
-        "Defaults to the studio cloud account if running with studio compute env. "
-        "If not provided will fall back to the teamspaces default cloud account."
     ),
 )
 @click.option(
@@ -146,7 +135,6 @@ def run_job(
     org: Optional[str] = None,
     user: Optional[str] = None,
     cloud: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     env: Sequence[str] = (),
     interruptible: bool = False,
     image_credentials: Optional[str] = None,
@@ -154,8 +142,6 @@ def run_job(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
-    artifacts_local: Optional[str] = None,
-    artifacts_remote: Optional[str] = None,
 ) -> None:
     """Run async workloads using a docker image or studio."""
     if not name:
@@ -171,7 +157,6 @@ def run_job(
         machine_enum = machine
 
     resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
-    warn_deprecated_cloud_options(cloud_account=cloud_account)
 
     path_mappings_dict = _resolve_path_mapping(path_mappings=path_mappings)
     for mapping in path_mapping:
@@ -191,15 +176,12 @@ def run_job(
         org=org,
         user=user,
         cloud=cloud,
-        cloud_account=cloud_account,
         env=env_dict,
         interruptible=interruptible,
         image_credentials=image_credentials,
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
-        artifacts_local=artifacts_local,
-        artifacts_remote=artifacts_remote,
     )
 
 

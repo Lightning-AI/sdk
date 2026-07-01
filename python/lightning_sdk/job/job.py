@@ -12,7 +12,6 @@ from lightning_sdk.utils.resolve import (
     _resolve_default_cloud_account,
     _resolve_teamspace,
     _setup_logger,
-    _warn_deprecated_cloud_selection,
     in_studio,
     skip_studio_setup,
 )
@@ -102,14 +101,10 @@ class Job(metaclass=TrackCallsMeta):
         teamspace: Union[str, "Teamspace", None] = None,
         org: Union[str, "Organization", None] = None,
         user: Union[str, "User", None] = None,
-        cloud_account: Optional[str] = None,
-        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
-        artifacts_local: Optional[str] = None,
-        artifacts_remote: Optional[str] = None,
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
@@ -129,19 +124,11 @@ class Job(metaclass=TrackCallsMeta):
             org: The organization owning the teamspace, if any. Defaults to the current organization.
             user: The user owning the teamspace, if any. Defaults to the current user.
             cloud: Cloud provider or cloud account to run the job on.
-            cloud_account: Deprecated. Use ``cloud`` instead. The cloud account to run the job on. Defaults to the
-                studio cloud account if running with studio compute env, otherwise falls back to the teamspace default.
-            cloud_provider: Deprecated. Use ``cloud`` instead. The provider to select the cloud account from. If set,
-                must agree with the provider of the cloud account, if specified.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. Cheaper but can be preempted.
             image_credentials: Credentials secret name used to pull a private image.
             cloud_account_auth: Whether to authenticate with the cloud account to pull the image.
                 Required if the registry is part of a cloud provider, such as ECR.
-            artifacts_local: The path inside the docker container to persist artifacts from.
-                Only supported for jobs with a docker image compute environment.
-            artifacts_remote: The remote storage to persist your artifacts to. Should be of format
-                ``<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>``.
             entrypoint: The entrypoint of your docker container. Defaults to ``sh -c``.
                 Set to an empty string to use the image's pre-defined entrypoint with a command.
                 Only applicable when submitting docker jobs.
@@ -164,12 +151,9 @@ class Job(metaclass=TrackCallsMeta):
         from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
 
-        explicit_cloud_account = cloud_account
-        explicit_cloud_provider = cloud_provider
-        _warn_deprecated_cloud_selection(cloud_account=explicit_cloud_account, cloud_provider=explicit_cloud_provider)
-        if cloud is not None and (explicit_cloud_account is not None or explicit_cloud_provider is not None):
-            raise ValueError("Cannot use 'cloud' with 'cloud_account' or 'cloud_provider'.")
-        cloud_account = _resolve_default_cloud_account(cloud_account)
+        cloud_account = _resolve_default_cloud_account(None)
+        if cloud is not None:
+            cloud_account = None
 
         if not name:
             raise ValueError("A job needs to have a name!")
@@ -183,7 +167,6 @@ class Job(metaclass=TrackCallsMeta):
                         org=org,
                         user=user,
                         cloud=cloud,
-                        cloud_account=cloud_account,
                         create_ok=False,
                     )
 
@@ -212,12 +195,6 @@ class Job(metaclass=TrackCallsMeta):
             if cloud_account_auth:
                 raise ValueError("cloud_account_auth is only supported when using a custom image")
 
-            if artifacts_local is not None or artifacts_remote is not None:
-                raise ValueError(
-                    "Specifying artifacts persistence is supported for docker images only. "
-                    "Other jobs will automatically persist artifacts to the teamspace distributed filesystem."
-                )
-
             if entrypoint is not None:
                 raise ValueError("Specifying the entrypoint has no effect for jobs with Studio envs.")
 
@@ -226,22 +203,13 @@ class Job(metaclass=TrackCallsMeta):
                 raise RuntimeError(
                     "image and studio are mutually exclusive as both define the environment to run the job in"
                 )
-            if cloud_account is None and cloud_provider is None and cloud is None and in_studio():
+            if cloud_account is None and cloud is None and in_studio():
                 try:
                     with skip_studio_setup():
                         resolve_studio = Studio(teamspace=teamspace, user=user, org=org)
                     cloud_account = resolve_studio.cloud_account
                 except (ValueError, ApiException):
                     warnings.warn("Could not infer cloud account from studio. Using teamspace default.")
-
-            if bool(artifacts_local) != bool(artifacts_remote):
-                raise ValueError("Artifact persistence requires both artifacts_local and artifacts_remote to be set")
-
-            if artifacts_remote and len(artifacts_remote.split(":")) != 3:
-                raise ValueError(
-                    "Artifact persistence requires exactly three arguments separated by colon of kind "
-                    f"<CONNECTION_TYPE>:<CONNECTION_NAME>:<PATH_WITHIN_CONNECTION>, got {artifacts_local}"
-                )
 
             if command is not None and entrypoint is None:
                 entrypoint = "sh -c"
@@ -259,11 +227,8 @@ class Job(metaclass=TrackCallsMeta):
             env=env,
             interruptible=interruptible,
             cloud_account=cloud_account,
-            cloud_provider=cloud_provider,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
-            artifacts_local=artifacts_local,
-            artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
@@ -284,14 +249,11 @@ class Job(metaclass=TrackCallsMeta):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         cloud_account: Optional[str] = None,
-        cloud_provider: Optional[Union["CloudProvider", str]] = None,
         image_credentials: Optional[str] = None,
         cloud_account_auth: bool = False,
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
-        artifacts_local: Optional[str] = None,
-        artifacts_remote: Optional[str] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
     ) -> "Job":
@@ -310,9 +272,7 @@ class Job(metaclass=TrackCallsMeta):
 
         cloud_account = self._cloud_account_api.resolve_cloud_account(
             self._teamspace.id,
-            cloud=cloud,
-            cloud_account=cloud_account,
-            cloud_provider=cloud_provider,
+            cloud=cloud or cloud_account,
             default_cloud_account=self._teamspace.default_cloud_account,
         )
 
@@ -349,8 +309,6 @@ class Job(metaclass=TrackCallsMeta):
             env=env,
             image_credentials=image_credentials,
             cloud_account_auth=cloud_account_auth,
-            artifacts_local=artifacts_local,
-            artifacts_remote=artifacts_remote,
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,

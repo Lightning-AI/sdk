@@ -4,14 +4,12 @@ from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import VM, Studio
 
 
@@ -19,16 +17,6 @@ from lightning_sdk.studio import VM, Studio
 @click.option("--name", help="The name of the studio to create. If not provided, a random name will be generated.")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--cloud", help="Cloud provider or cloud account to create the studio on. Defaults to teamspace default.")
-@click.option(
-    "--cloud-provider",
-    help="Deprecated. Use --cloud. The cloud provider to start the studio on.",
-    type=click.Choice(m.name for m in list(CloudProvider)),
-)
-@click.option(
-    "--cloud-account",
-    help="Deprecated. Use --cloud. The cloud account to create the studio on.",
-    type=click.STRING,
-)
 @click.option(
     "--studio-type",
     help="The base studio template name to use for creating the studio. "
@@ -41,8 +29,6 @@ def create_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     studio_type: Optional[str] = None,
 ) -> None:
     """Create a new Studio.
@@ -54,8 +40,6 @@ def create_studio(
         name=name,
         teamspace=teamspace,
         cloud=cloud,
-        cloud_provider=cloud_provider,
-        cloud_account=cloud_account,
         vm=False,
         studio_type=studio_type,
     )
@@ -65,8 +49,6 @@ def create_impl(
     name: Optional[str],
     teamspace: Optional[str],
     cloud: Optional[str] = None,
-    cloud_provider: Optional[str] = None,
-    cloud_account: Optional[str] = None,
     vm: bool = False,
     studio_type: Optional[str] = None,
 ) -> None:
@@ -74,10 +56,6 @@ def create_impl(
 
     resolved_teamspace = menu(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
-
-    if cloud_provider is not None:
-        cloud_provider = CloudProvider(cloud_provider)
-    warn_deprecated_cloud_options(cloud_account=cloud_account, cloud_provider=cloud_provider)
 
     create_cls = VM if vm else Studio
     cls_name = create_cls.__qualname__
@@ -92,8 +70,6 @@ def create_impl(
             teamspace=resolved_teamspace,
             create_ok=True,
             cloud=cloud,
-            cloud_provider=cloud_provider,
-            cloud_account=cloud_account,
             studio_type=template_id,
         )
     except (RuntimeError, ValueError, ApiException):

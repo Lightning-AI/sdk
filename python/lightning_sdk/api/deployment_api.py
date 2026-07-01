@@ -485,9 +485,7 @@ class DeploymentApi:
         requires_release |= apply_change(deployment.spec, "image", image)
 
         if path_mappings:
-            requires_release |= apply_change(
-                deployment.spec, "path_mappings", resolve_path_mappings(path_mappings, None, None)
-            )
+            requires_release |= apply_change(deployment.spec, "path_mappings", resolve_path_mappings(path_mappings))
 
         requires_release |= apply_change(deployment.spec, "entrypoint", entrypoint)
         requires_release |= apply_change(deployment.spec, "command", command)
@@ -1559,7 +1557,7 @@ def to_spec(
     if max_runtime:
         optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
 
-    path_mapping_list = resolve_path_mappings(path_mappings or {}, None, None)
+    path_mapping_list = resolve_path_mappings(path_mappings or {})
 
     return V1JobSpec(
         cluster_id=cloud_account,

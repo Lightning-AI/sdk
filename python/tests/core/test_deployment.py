@@ -412,7 +412,7 @@ def test_deployment_start_first_time(monkeypatch):
             threshold=75,
         ),
         ports=[50],
-        cloud_account="cluster_id",
+        cloud="cluster_id",
         machine=Machine.L4,
         image="ollama/ollama:latest",
         quantity=2,
@@ -452,7 +452,7 @@ def test_deployment_start_first_time(monkeypatch):
     assert deployment.running_replicas == 4
 
 
-def test_deployment_start_with_cloud_provider(monkeypatch):
+def test_deployment_start_with_cloud(monkeypatch):
     monkeypatch.setattr(deployment_module, "Auth", MagicMock())
     monkeypatch.setattr(deployment_module, "User", MagicMock())
     teamspace_mock = MagicMock()
@@ -500,7 +500,7 @@ def test_deployment_start_with_cloud_provider(monkeypatch):
             threshold=75,
         ),
         ports=[50],
-        cloud_provider=CloudProvider.GCP,
+        cloud=CloudProvider.GCP,
         machine=Machine.L4,
         image="ollama/ollama:latest",
         quantity=2,
@@ -541,73 +541,8 @@ def test_deployment_start_with_cloud_provider(monkeypatch):
 
     mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
         teamspace_mock.id,
-        cloud=None,
-        cloud_account=None,
-        cloud_provider=CloudProvider.GCP,
+        cloud=CloudProvider.GCP,
         default_cloud_account=teamspace_mock.default_cloud_account,
-    )
-
-
-def test_deployment_start_with_both_cloud_account_and_provider(monkeypatch):
-    """Test that passing both cloud_account and cloud_provider raises an error."""
-    monkeypatch.setattr(deployment_module, "Auth", MagicMock())
-    monkeypatch.setattr(deployment_module, "User", MagicMock())
-
-    # Create mock objects for the cluster-related API methods
-    mock_cloud_account_api = MagicMock()
-    # Configure the mock to raise an error when both are provided
-    mock_cloud_account_api.resolve_cloud_account.side_effect = ValueError(
-        "Cannot specify both cloud_account and cloud_provider"
-    )
-
-    # Patch the CloudAccountApi to return your mock
-    monkeypatch.setattr(deployment_module, "CloudAccountApi", MagicMock(return_value=mock_cloud_account_api))
-
-    teamspace_mock = MagicMock()
-    teamspace_mock.id = "project_id"
-    teamspace_mock.default_cloud_account = None
-    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
-    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
-
-    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
-
-    organization = organization_module.Organization(name="toto")
-    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
-
-    client = MagicMock()
-
-    def fn(*_, **__):
-        raise ApiException(status=400, reason="Reason: Not Found")
-
-    client.jobs_service_get_deployment_by_name = fn
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
-
-    deployment = deployment_module.Deployment(name="ollama")
-
-    # This should raise ValueError
-    with pytest.raises(ValueError, match="Cannot specify both cloud_account and cloud_provider"):
-        deployment.start(
-            autoscale=AutoScaleConfig(
-                metric="GPU",
-                threshold=75,
-            ),
-            ports=[50],
-            cloud_account="aws-public",  # Both specified
-            cloud_provider=CloudProvider.GCP,  # Both specified
-            machine=Machine.L4,
-            image="ollama/ollama:latest",
-            quantity=2,
-            include_credentials=False,
-            commands=["cd /", "ls"],
-        )
-
-    # Verify resolve_cloud_account was called with both parameters
-    mock_cloud_account_api.resolve_cloud_account.assert_called_once_with(
-        teamspace_mock.id,
-        cloud=None,
-        cloud_account="aws-public",
-        cloud_provider=CloudProvider.GCP,
-        default_cloud_account=None,
     )
 
 
@@ -1052,7 +987,7 @@ def test_deployment_start_with_path_mappings(monkeypatch):
 
     deployment.start(
         ports=[8080],
-        cloud_account="cluster_id",
+        cloud="cluster_id",
         machine=Machine.L4,
         image="test:latest",
         path_mappings=path_mappings,
@@ -1120,7 +1055,7 @@ def test_deployment_start_byom_builds_spec(monkeypatch):
     deployment = deployment_module.Deployment(name="llama")
     deployment.start(
         ports=[8000],
-        cloud_account="cluster_id",
+        cloud="cluster_id",
         machine=Machine.L4,
         model="meta-llama/Llama-3-8B",
         tensor_parallel_size=4,

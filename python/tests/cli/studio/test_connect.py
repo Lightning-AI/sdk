@@ -8,12 +8,13 @@ def test_connect_studio():
     assert "Connect to a Studio." in result_text
     assert "Example:" in result_text
     assert "lightning studio connect" in result_text
-    assert "--teamspace       TEXT" in result_text
-    assert "--cloud-provider" in result_text
-    assert "--cloud-account   TEXT" in result_text
+    assert "--teamspace" in result_text
+    assert "--cloud" in result_text
+    assert "--cloud-provider" not in result_text
+    assert "--cloud-account" not in result_text
     assert "--machine" in result_text
-    assert "--gpus            TEXT" in result_text
-    assert "--studio-type     TEXT" in result_text
+    assert "--gpus" in result_text
+    assert "--studio-type" in result_text
     assert "--interruptible" in result_text
 
 
@@ -263,23 +264,21 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", mock_get_base_studio_id), patch(
         "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
-            cloud_account="account-123",
             studio_type="python-template",
             machine="L4",
             gpus=None,
-            cloud_provider="AWS",
             name="my-studio",
+            cloud="account-123",
         )
 
         mock_get_base_studio_id.assert_called_once_with("python-template", teamspace=mock_resolved_teamspace)
 
         assert teamspace == mock_resolved_teamspace
-        assert cloud_account == "account-123"
+        assert cloud == "account-123"
         assert template_id == "template-123"
         assert machine == "L4"
-        assert cloud_provider.value == "AWS"
         assert name == "my-studio"
 
 
@@ -303,21 +302,19 @@ def test_parse_args_or_get_from_current_studio_falls_back_to_current_studio(monk
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None), patch(
         "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace=None,
-            cloud_account=None,
             studio_type=None,
             machine=None,
             gpus=None,
-            cloud_provider=None,
             name=None,
+            cloud=None,
         )
 
         assert teamspace == "studio-owner/studio-teamspace"
-        assert cloud_account == "studio-cloud-account"
+        assert cloud == "studio-cloud-account"
         assert template_id == "studio-template-id"
         assert machine == "A100"
-        assert cloud_provider is None
         assert name == "random-name"
 
 
@@ -338,21 +335,19 @@ def test_parse_args_or_get_from_current_studio_no_current_studio(monkeypatch):
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
         "lightning_sdk.cli.studio.connect.Studio", side_effect=mock_studio_init
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
-            cloud_account="account-123",
             studio_type="python-template",
             machine="L4",
             gpus=None,
-            cloud_provider=None,
             name="my-studio",
+            cloud="account-123",
         )
 
         assert teamspace == "resolved-owner/resolved-teamspace"
-        assert cloud_account == "account-123"
+        assert cloud == "account-123"
         assert template_id == "template-123"
         assert machine == "L4"
-        assert cloud_provider is None
         assert name == "my-studio"
 
 
@@ -376,30 +371,27 @@ def test_parse_args_or_get_from_current_studio_gpus_preserves_machine(monkeypatc
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None), patch(
         "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace=None,
-            cloud_account=None,
             studio_type=None,
             machine=None,
             gpus="L4:4",
-            cloud_provider=None,
             name=None,
+            cloud=None,
         )
 
         assert teamspace == "studio-owner/studio-teamspace"
-        assert cloud_account == "studio-cloud-account"
+        assert cloud == "studio-cloud-account"
         assert template_id == "studio-template-id"
         assert machine is None
-        assert cloud_provider is None
         assert name == "random-name"
 
 
-def test_parse_args_or_get_from_current_studio_cloud_provider_conversion(monkeypatch):
-    """Test that cloud_provider string is converted to CloudProvider enum."""
+def test_parse_args_or_get_from_current_studio_cloud_preserved(monkeypatch):
+    """Test that cloud is preserved as the caller's provider or account selector."""
     from unittest.mock import MagicMock, patch
 
     from lightning_sdk.cli.studio.connect import _parse_args_or_get_from_current_studio
-    from lightning_sdk.machine import CloudProvider
 
     mock_teamspace_menu = MagicMock()
     mock_teamspace_menu.return_value = "owner/teamspace"
@@ -409,19 +401,17 @@ def test_parse_args_or_get_from_current_studio_cloud_provider_conversion(monkeyp
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
         "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        for provider_str in ["AWS", "GCP", "LAMBDA_LABS"]:
-            _, _, _, _, cloud_provider, _ = _parse_args_or_get_from_current_studio(
+        for cloud in ["AWS", "GCP", "account-123"]:
+            _, resolved_cloud, _, _, _ = _parse_args_or_get_from_current_studio(
                 teamspace="owner/teamspace",
-                cloud_account=None,
                 studio_type=None,
                 machine="CPU",
                 gpus=None,
-                cloud_provider=provider_str,
                 name="my-studio",
+                cloud=cloud,
             )
 
-            assert isinstance(cloud_provider, CloudProvider)
-            assert cloud_provider.value == provider_str
+            assert resolved_cloud == cloud
 
 
 def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
@@ -440,14 +430,13 @@ def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
     ), patch(
         "lightning_sdk.cli.studio.connect.random_unique_name", return_value="generated-unique-name"
     ) as mock_random_name:
-        _, _, _, _, _, name = _parse_args_or_get_from_current_studio(
+        _, _, _, _, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
-            cloud_account=None,
             studio_type=None,
             machine="CPU",
             gpus=None,
-            cloud_provider=None,
             name=None,
+            cloud=None,
         )
 
         assert name == "generated-unique-name"
@@ -474,19 +463,17 @@ def test_parse_args_or_get_from_current_studio_partial_args(monkeypatch):
     ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="user-template-id"), patch(
         "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
     ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
-        teamspace, cloud_account, template_id, machine, cloud_provider, name = _parse_args_or_get_from_current_studio(
+        teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="user-teamspace",
-            cloud_account=None,
             studio_type="user-template",
             machine="L4",
             gpus=None,
-            cloud_provider=None,
             name=None,
+            cloud=None,
         )
 
         assert teamspace == "resolved-teamspace"
-        assert cloud_account == "studio-cloud-account"
+        assert cloud == "studio-cloud-account"
         assert template_id == "user-template-id"
         assert machine == "L4"
-        assert cloud_provider is None
         assert name == "random-name"

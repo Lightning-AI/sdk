@@ -5,7 +5,6 @@ from typing import Any
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy.serve import api_impl
-from lightning_sdk.cli.utils.cloud_selection import warn_deprecated_cloud_options
 from lightning_sdk.cli.utils.logging import LightningCommand
 
 
@@ -41,13 +40,6 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     "--org", default=None, help="The organization owning the teamspace (if any). Defaults to the current organization."
 )
 @click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
-@click.option("--cloud-account", "--cloud_account", default=None, help="The cloud account to run the deployment on.")
-@click.option(
-    "--cloud-provider",
-    "--cloud_provider",
-    default=None,
-    help="The provider to create the studio on. If --cloud-account is specified, this option is prioritized.",
-)
 @click.option("--port", default=None, type=int, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=None, type=int, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=None, type=int, help="Number of replicas to scale up to.")
@@ -61,8 +53,5 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 )
 def deploy_api(**kwargs: Any) -> None:
     """Deploy a LitServe model script."""
-    warn_deprecated_cloud_options(
-        cloud_account=kwargs.get("cloud_account"), cloud_provider=kwargs.get("cloud_provider")
-    )
     kwargs["include_credentials"] = not kwargs.pop("no_credentials")
     api_impl(**kwargs)

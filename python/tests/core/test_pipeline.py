@@ -27,7 +27,7 @@ def test_pipeline_run(monkeypatch):
     resolve_teamspace_mock = MagicMock()
     monkeypatch.setattr(pipeline_module, "_resolve_teamspace", resolve_teamspace_mock)
 
-    pipeline = Pipeline(name="first-pipeline", org="org", user="user", cloud_account="cluster-id")
+    pipeline = Pipeline(name="first-pipeline", org="org", user="user", cloud="cluster-id")
     cloud_account_mock = MagicMock()
     cloud_account_mock.cluster_id = ""
     pipeline._cloud_account = cloud_account_mock
@@ -218,11 +218,7 @@ def test_job_parameters_stay_in_sync():
     job_keys = job_signature.parameters.keys()
     job_type_keys = job_type_signature.parameters.keys()
 
-    # ignore the depreceated parameters
-    job_keys = [key for key in job_keys if key not in ["artifacts_local", "artifacts_remote", "cloud_provider"]]
-    job_type_keys = [
-        key for key in job_type_keys if key not in ["wait_for", "self", "cloud_provider", "machine_image_version"]
-    ]
+    job_type_keys = [key for key in job_type_keys if key not in ["wait_for", "self", "machine_image_version"]]
 
     assert sorted(job_keys) == sorted(job_type_keys), [sorted(job_keys), sorted(job_type_keys)]
 
@@ -367,7 +363,7 @@ def test_shared_filesystem(monkeypatch):
                 machine=Machine.CPU,
                 command="echo 'Hello, World!'",
                 image="ubuntu:latest",
-                cloud_account="cluster_id_2",
+                cloud="cluster_id_2",
             ),
         ]
     )
@@ -414,7 +410,7 @@ def test_pipeline_with_studio_job_step(monkeypatch):
                         machine=Machine.CPU,
                         command="echo 'Hello, World!'",
                         studio="my-studio",
-                        cloud_account="any_cloud_account",
+                        cloud="any_cloud_account",
                     ),
                 ]
             )
@@ -547,7 +543,7 @@ def test_print_summary_updated():
 def test_deployment_release_step():
     teamspace = MagicMock()
     step = DeploymentReleaseStep(
-        deployment_name="prod", command="python server.py", ports=[8000], image="nginx", cloud_account="test-8"
+        deployment_name="prod", command="python server.py", ports=[8000], image="nginx", cloud="test-8"
     )
     step_proto = step.to_proto(teamspace, "test-8", True)
     assert step_proto.deployment.name == "prod"
