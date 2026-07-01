@@ -77,8 +77,6 @@ _CLI_ARGUMENT_HELP = {
     ("lightning license download", "name"): "License name to download.",
     ("lightning cp", "source"): "Source path to copy.",
     ("lightning cp", "destination"): "Optional destination path.",
-    ("lightning aihub api-info", "api_id"): "AI Hub API template ID to inspect.",
-    ("lightning aihub deploy", "api_id"): "AI Hub API template ID to deploy.",
     ("lightning open", "path"): "Local path to open in Lightning Studio.",
 }
 

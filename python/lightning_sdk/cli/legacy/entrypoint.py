@@ -11,7 +11,6 @@ from rich.text import Text
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
-from lightning_sdk.cli.legacy.ai_hub import aihub
 from lightning_sdk.cli.legacy.coloring import CustomHelpFormatter
 from lightning_sdk.cli.legacy.configure import configure
 from lightning_sdk.cli.legacy.connect import connect
@@ -88,7 +87,6 @@ def logout() -> None:
 
 
 # additional commands
-main_cli.add_command(aihub)
 main_cli.add_command(configure)
 main_cli.add_command(connect)
 main_cli.add_command(create)

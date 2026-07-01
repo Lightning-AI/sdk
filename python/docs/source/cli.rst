@@ -57,8 +57,8 @@ Common Workflows
 - Develop interactively with :doc:`cli/studio` and :doc:`cli/vm`.
 - Submit and inspect training or batch work with :doc:`cli/job` and
   :doc:`cli/mmt`.
-- Build and operate inference services with :doc:`cli/deployment`,
-  :doc:`cli/aihub`, and :doc:`cli/model`.
+- Build and operate inference services with :doc:`cli/deployment` and
+  :doc:`cli/model`.
 - Move data and artifacts with :doc:`cli/file`, :doc:`cli/folder`,
   :doc:`cli/container`, and :doc:`cli/cp`.
 - Configure accounts, organizations, teamspaces, cloud accounts, and SSH with
@@ -87,7 +87,6 @@ Command Groups
    cli/sandbox
    cli/base-studio
    cli/license
-   cli/aihub
    cli/cp
 
 .. click:: lightning_sdk.cli.entrypoint:main_cli

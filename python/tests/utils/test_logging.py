@@ -251,14 +251,6 @@ class TestMetaclassIntegration:
         assert isinstance(Agent, type)
 
     @mock.patch("lightning_sdk.utils.logging.LightningClient")
-    def test_ai_hub_class_compatibility(self, mock_client):
-        """Test that AIHub works with the metaclass."""
-        from lightning_sdk.ai_hub import AIHub
-
-        # Verify the metaclass is applied
-        assert isinstance(AIHub, type)
-
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
     def test_deployment_class_compatibility(self, mock_client):
         """Test that Deployment works with the metaclass."""
         from lightning_sdk.deployment import Deployment

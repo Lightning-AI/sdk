@@ -42,7 +42,6 @@ class V1UserFeatures(object):
     """
     swagger_types = {
         'affiliate_links': 'bool',
-        'ai_hub_monetization': 'bool',
         'auto_fast_load': 'bool',
         'b2c_experience': 'bool',
         'byo_machine_type': 'bool',
@@ -159,7 +158,6 @@ class V1UserFeatures(object):
 
     attribute_map = {
         'affiliate_links': 'affiliateLinks',
-        'ai_hub_monetization': 'aiHubMonetization',
         'auto_fast_load': 'autoFastLoad',
         'b2c_experience': 'b2cExperience',
         'byo_machine_type': 'byoMachineType',
@@ -274,10 +272,9 @@ class V1UserFeatures(object):
         'weka': 'weka'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f307: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f335: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f307: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f335: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
-        self._ai_hub_monetization = None
         self._auto_fast_load = None
         self._b2c_experience = None
         self._byo_machine_type = None
@@ -393,8 +390,6 @@ class V1UserFeatures(object):
         self.discriminator = None
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
-        if ai_hub_monetization is not None:
-            self.ai_hub_monetization = ai_hub_monetization
         if auto_fast_load is not None:
             self.auto_fast_load = auto_fast_load
         if b2c_experience is not None:
@@ -640,27 +635,6 @@ class V1UserFeatures(object):
         """
 
         self._affiliate_links = affiliate_links
-
-    @property
-    def ai_hub_monetization(self) -> 'bool':
-        """Gets the ai_hub_monetization of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The ai_hub_monetization of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._ai_hub_monetization
-
-    @ai_hub_monetization.setter
-    def ai_hub_monetization(self, ai_hub_monetization: 'bool'):
-        """Sets the ai_hub_monetization of this V1UserFeatures.
-
-
-        :param ai_hub_monetization: The ai_hub_monetization of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._ai_hub_monetization = ai_hub_monetization
 
     @property
     def auto_fast_load(self) -> 'bool':

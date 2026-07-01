@@ -21,7 +21,6 @@ Key Concepts
 - Organize work inside a :class:`~lightning_sdk.Teamspace`
 - Scale training with :class:`~lightning_sdk.MultiMachineTrainingPlugin` or :class:`~lightning_sdk.MMT`
 - Deploy models with :class:`~lightning_sdk.Deployment`
-- Interact with the :class:`~lightning_sdk.AIHub` model registry
 
 Quick Example
 =============

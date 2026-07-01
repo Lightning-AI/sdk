@@ -85,7 +85,6 @@ def test_help():
     assert "mmt       Multi-node distributed training." in text
     assert "model     Register and version models." in text
     assert "deploym…  Deploy autoscaling inference APIs." in text
-    assert "aihub     Browse and launch AI Hub templates." in text
 
     # ACCESS
     assert "api-key   Keys for model endpoint access." in text

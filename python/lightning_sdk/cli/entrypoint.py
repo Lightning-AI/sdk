@@ -42,7 +42,7 @@ click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "vm", "machine", "container", "sandbox"]},
-        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "aihub"]},
+        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment"]},
         {"name": "ACCESS", "commands": ["api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "file", "folder"]},
     ]
@@ -149,9 +149,6 @@ main_cli.add_command(build_hidden_alias_group("base-studios", base_studio))
 
 if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
     #### LEGACY COMMANDS ####
-    from lightning_sdk.cli.legacy.ai_hub import aihub
-
-    main_cli.add_command(aihub)
     main_cli.add_command(
         build_legacy_forward_group("configure", {"ssh": ("lightning ssh configure", ssh.commands["configure"])})
     )

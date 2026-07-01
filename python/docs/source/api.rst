@@ -83,7 +83,6 @@ Reference Pages
    api/plugins
    api/mmt
    api/deployment
-   api/aihub
    api/agent
    api/k8s-cluster
    api/owner
