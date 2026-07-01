@@ -10,11 +10,10 @@ from lightning_sdk.pipeline.printer import PipelinePrinter
 from lightning_sdk.pipeline.schedule import _TIMEZONES, Schedule
 from lightning_sdk.pipeline.steps import DeploymentStep, JobStep, MMTStep, _get_studio
 from lightning_sdk.pipeline.utils import prepare_steps
-from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _resolve_teamspace, _warn_deprecated_cloud_selection
+from lightning_sdk.utils.resolve import _get_cluster, _resolve_teamspace, _warn_deprecated_cloud_selection
 
 
 class Pipeline:

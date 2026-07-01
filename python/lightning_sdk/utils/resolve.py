@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, Generator, List, Optional, Tuple, Union
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.lightning_cloud.openapi import V1ProjectClusterBinding
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import CloudProvider, Machine
 
 if TYPE_CHECKING:
@@ -131,6 +133,36 @@ def _resolve_default_cloud_account(
             cloud_account = current_cloud_account
 
     return cloud_account
+
+
+def _get_cluster(
+    client: LightningClient, project_id: str, cluster_id: Optional[str] = None, allow_neoclouds: bool = False
+) -> Optional[V1ProjectClusterBinding]:
+    """Return a project cluster binding for the given project."""
+    clusters = client.projects_service_list_project_cluster_bindings(project_id=project_id)
+    if cluster_id:
+        for cluster in clusters.clusters:
+            if cluster.cluster_id == cluster_id:
+                return cluster
+        raise ValueError(
+            f"No valid cluster found with the provided {cluster_id}."
+            f"Found {[c.cluster_id for c in clusters.clusters]}."
+        )
+
+    if not allow_neoclouds:
+        cluster_objs = client.cluster_service_list_clusters(project_id=project_id)
+        valid_clusters = filter(
+            lambda c: c.spec.aws_v1 is not None or c.spec.google_cloud_v1 is not None, cluster_objs.clusters
+        )
+        valid_clusters = {c.id for c in valid_clusters}
+
+        if len(valid_clusters):
+            clusters.clusters = list(filter(lambda c: c.cluster_id in valid_clusters, clusters.clusters))
+
+    clusters = sorted(clusters.clusters, key=lambda x: x.created_at)
+    if len(clusters):
+        return clusters[0]
+    return None
 
 
 def _resolve_org_name(name: Optional[str]) -> Optional[str]:

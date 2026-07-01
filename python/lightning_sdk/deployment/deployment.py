@@ -37,12 +37,12 @@ from lightning_sdk.lightning_cloud import login
 from lightning_sdk.lightning_cloud.openapi import V1Deployment, V1DeploymentState
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.organization import Organization
-from lightning_sdk.services.utilities import _get_cluster
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
+    _get_cluster,
     _resolve_default_cloud_account,
     _resolve_org,
     _resolve_teamspace,
