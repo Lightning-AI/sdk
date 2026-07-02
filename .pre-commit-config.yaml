@@ -1,0 +1,117 @@
+# Copyright The Lightning team.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+exclude: |
+  (?x)^(
+    python/lightning_sdk/lightning_cloud/.* |
+    js/src/lightning_cloud/.* |
+    go/internal/lightningcloud/openapi/generated/.*
+  )$
+
+default_language_version:
+  python: python3
+
+ci:
+  autofix_prs: true
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit suggestions"
+  autoupdate_schedule: quarterly
+  # submodules: true
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      # - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=150", "--enforce-all"]
+        exclude: ^go/internal/lightningcloud/openapi/generated/.*
+      - id: detect-private-key
+
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          #- mdformat-black
+          - mdformat_frontmatter
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      # Enforce that noqa annotations always occur with specific codes. Sample annotations: # noqa: F401, # noqa: F401,W203
+      - id: python-check-blanket-noqa
+      # Enforce that # type: ignore annotations always occur with specific codes. Sample annotations: # type: ignore[attr-defined], # type: ignore[attr-defined, name-defined]
+      #- id: python-check-blanket-type-ignore  # TODO
+      # Prevent common mistakes of assert mck.not_called(), assert mck.called_once_with(...) and mck.assert_called.
+      - id: python-check-mock-methods
+      # A quick check for the eval() built-in function
+      #- id: python-no-eval broken check - https://github.com/pre-commit/pygrep-hooks/issues/135
+      # A quick check for the deprecated .warn() method of python loggers
+      - id: python-no-log-warn
+      # Enforce that python3.6+ type annotations are used instead of type comments
+      #- id: python-use-type-annotations # false positive - https://github.com/pre-commit/pygrep-hooks/issues/154
+      # Detect common mistake of using single backticks when writing rst
+      #- id: rst-backticks  # todo
+      # Detect mistake of rst directive not ending with double colon or space before the double colon
+      - id: rst-directive-colons
+      # Detect mistake of inline code touching normal text in rst
+      - id: rst-inline-touching-normal
+      # Forbid files which have a UTF-8 Unicode replacement character
+      - id: text-unicode-replacement-char
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.0
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+
+  - repo: https://github.com/tekwizely/pre-commit-golang
+    rev: v1.0.0-rc.1
+    hooks:
+      - id: go-fmt
+        args: ["-s", "-w"]
+        files: ^go/.*\.go$
+
+  - repo: local
+    hooks:
+      - id: go-imports
+        name: go-imports
+        language: golang
+        additional_dependencies:
+          - golang.org/x/tools/cmd/goimports@v0.39.0
+        entry: goimports -w -local github.com/lightning-ai/sdk/go
+        files: ^go/.*\.go$
+
+      - id: golangci-lint
+        name: golangci-lint
+        language: system
+        pass_filenames: false
+        entry: bash -c 'cd go && golangci-lint run --new-from-rev=HEAD ./...'
+        files: ^go/.*\.go$
+
+      - id: js-check
+        name: js build and test
+        language: system
+        pass_filenames: false
+        entry: bash -c 'cd js && npm ci && npm run build && npm test'
+        files: ^js/.*\.(json|ts)$

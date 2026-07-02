@@ -1,0 +1,32 @@
+"""Studio CLI commands."""
+
+import rich_click as click
+
+
+def register_commands(group: click.Group) -> None:
+    """Register studio commands with the given group."""
+    from lightning_sdk.cli.studio.connect import connect_studio
+    from lightning_sdk.cli.studio.cp import cp_studio_file
+    from lightning_sdk.cli.studio.create import create_studio
+    from lightning_sdk.cli.studio.delete import delete_studio
+    from lightning_sdk.cli.studio.list import list_studios
+    from lightning_sdk.cli.studio.ls import ls_studio
+    from lightning_sdk.cli.studio.open import open_studio
+    from lightning_sdk.cli.studio.rm import rm_studio_file
+    from lightning_sdk.cli.studio.ssh import ssh_studio
+    from lightning_sdk.cli.studio.start import start_studio
+    from lightning_sdk.cli.studio.stop import stop_studio
+    from lightning_sdk.cli.studio.switch import switch_studio
+
+    group.add_command(delete_studio)
+    group.add_command(create_studio)
+    group.add_command(list_studios)
+    group.add_command(ssh_studio)
+    group.add_command(start_studio)
+    group.add_command(stop_studio)
+    group.add_command(switch_studio)
+    group.add_command(connect_studio)
+    group.add_command(cp_studio_file)
+    group.add_command(ls_studio)
+    group.add_command(rm_studio_file)
+    group.add_command(open_studio, name="open")

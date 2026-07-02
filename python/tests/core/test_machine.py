@@ -1,0 +1,235 @@
+import pytest
+
+from lightning_sdk import CloudProvider, Machine
+from lightning_sdk.lightning_cloud.openapi import V1ClusterAccelerator, V1Resources
+
+
+@pytest.mark.parametrize(
+    ("machine_str", "expected_enum"),
+    [
+        # CPU machines
+        ("CPU_SMALL", Machine.CPU_SMALL),
+        ("CPU", Machine.CPU),
+        ("CPU_X_2", Machine.CPU_X_2),
+        ("CPU_X_4", Machine.CPU_X_4),
+        ("CPU_X_8", Machine.CPU_X_8),
+        ("CPU_X_16", Machine.CPU_X_16),
+        ("DATA_PREP", Machine.DATA_PREP),
+        ("DATA_PREP_MAX", Machine.DATA_PREP_MAX),
+        ("DATA_PREP_ULTRA", Machine.DATA_PREP_ULTRA),
+        # GPU machines
+        ("T4", Machine.T4),
+        ("T4_X_2", Machine.T4_X_2),
+        ("T4_X_4", Machine.T4_X_4),
+        ("T4_X_8", Machine.T4_X_8),
+        ("L4", Machine.L4),
+        ("L4_X_2", Machine.L4_X_2),
+        ("L4_X_4", Machine.L4_X_4),
+        ("L4_X_8", Machine.L4_X_8),
+        ("L40S", Machine.L40S),
+        ("L40S_X_2", Machine.L40S_X_2),
+        ("L40S_X_4", Machine.L40S_X_4),
+        ("L40S_X_8", Machine.L40S_X_8),
+        ("RTXP_6000", Machine.RTXP_6000),
+        ("RTXP_6000_X_2", Machine.RTXP_6000_X_2),
+        ("RTXP_6000_X_4", Machine.RTXP_6000_X_4),
+        ("RTXP_6000_X_8", Machine.RTXP_6000_X_8),
+        ("A100", Machine.A100),
+        ("A100_X_2", Machine.A100_X_2),
+        ("A100_X_4", Machine.A100_X_4),
+        ("A100_X_8", Machine.A100_X_8),
+        ("A100_40GB", Machine.A100_40GB),
+        ("A100_40GB_X_2", Machine.A100_40GB_X_2),
+        ("A100_40GB_X_4", Machine.A100_40GB_X_4),
+        ("A100_40GB_X_8", Machine.A100_40GB_X_8),
+        ("A100_80GB", Machine.A100_80GB),
+        ("A100_80GB_X_2", Machine.A100_80GB_X_2),
+        ("A100_80GB_X_4", Machine.A100_80GB_X_4),
+        ("A100_80GB_X_8", Machine.A100_80GB_X_8),
+        ("H100", Machine.H100),
+        ("H100_X_2", Machine.H100_X_2),
+        ("H100_X_4", Machine.H100_X_4),
+        ("H100_X_8", Machine.H100_X_8),
+        ("H200", Machine.H200),
+        ("H200_X_8", Machine.H200_X_8),
+        ("B200_X_8", Machine.B200_X_8),
+    ],
+)
+def test_machine_equal(machine_str: str, expected_enum: Machine):
+    assert getattr(Machine, machine_str) == expected_enum
+
+
+@pytest.mark.parametrize(
+    ("provider_str", "expected_enum"),
+    [
+        ("LIGHTNING", CloudProvider.LIGHTNING),
+        ("lightning", CloudProvider.LIGHTNING),
+        ("LIGHTNING_AGGREGATE", CloudProvider.LIGHTNING_AGGREGATE),
+        ("lightning_aggregate", CloudProvider.LIGHTNING_AGGREGATE),
+    ],
+)
+def test_cloud_provider_from_str(provider_str: str, expected_enum: CloudProvider):
+    assert CloudProvider.from_str(provider_str) == expected_enum
+
+
+@pytest.mark.parametrize(
+    ("machine_str", "expected_cls_value"),
+    [
+        # CPU machines
+        ("CPU_SMALL", Machine.CPU_SMALL),
+        ("cpu-2", Machine.CPU_SMALL),
+        ("CPU", Machine.CPU),
+        ("cpu-4", Machine.CPU),
+        ("CPU_X_8", Machine.CPU_X_8),
+        ("cpu-8", Machine.CPU_X_8),
+        ("CPU_X_16", Machine.CPU_X_16),
+        ("cpu-16", Machine.CPU_X_16),
+        ("DATA_PREP", Machine.DATA_PREP),
+        ("data-prep-mid", Machine.DATA_PREP),
+        ("DATA_PREP_MAX", Machine.DATA_PREP_MAX),
+        ("data-prep-max-large", Machine.DATA_PREP_MAX),
+        ("DATA_PREP_ULTRA", Machine.DATA_PREP_ULTRA),
+        ("data-prep-ultra-extra-large", Machine.DATA_PREP_ULTRA),
+        # GPU machines
+        ("T4", Machine.T4),
+        ("lit-t4-1", Machine.T4),
+        ("T4_X_2", Machine.T4_X_2),
+        ("lit-t4-2", Machine.T4_X_2),
+        ("T4_X_4", Machine.T4_X_4),
+        ("lit-t4-4", Machine.T4_X_4),
+        ("T4_X_8", Machine.T4_X_8),
+        ("lit-t4-8", Machine.T4_X_8),
+        ("L4", Machine.L4),
+        ("lit-l4-1", Machine.L4),
+        ("L4_X_2", Machine.L4_X_2),
+        ("lit-l4-2", Machine.L4_X_2),
+        ("L4_X_4", Machine.L4_X_4),
+        ("lit-l4-4", Machine.L4_X_4),
+        ("L4_X_8", Machine.L4_X_8),
+        ("lit-l4-8", Machine.L4_X_8),
+        ("L40S", Machine.L40S),
+        ("lit-l40s-1", Machine.L40S),
+        ("L40S_X_2", Machine.L40S_X_2),
+        ("lit-l40s-2", Machine.L40S_X_2),
+        ("L40S_X_4", Machine.L40S_X_4),
+        ("lit-l40s-4", Machine.L40S_X_4),
+        ("L40S_X_8", Machine.L40S_X_8),
+        ("lit-l40s-8", Machine.L40S_X_8),
+        ("RTXP_6000", Machine.RTXP_6000),
+        ("lit-rtx-6000-pro-1", Machine.RTXP_6000),
+        ("RTXP_6000_X_2", Machine.RTXP_6000_X_2),
+        ("lit-rtx-6000-pro-2", Machine.RTXP_6000_X_2),
+        ("RTXP_6000_X_4", Machine.RTXP_6000_X_4),
+        ("lit-rtx-6000-pro-4", Machine.RTXP_6000_X_4),
+        ("RTXP_6000_X_8", Machine.RTXP_6000_X_8),
+        ("lit-rtx-6000-pro-8", Machine.RTXP_6000_X_8),
+        ("A100", Machine.A100),
+        ("lit-a100-1", Machine.A100),
+        ("A100_X_2", Machine.A100_X_2),
+        ("lit-a100-2", Machine.A100_X_2),
+        ("A100_X_4", Machine.A100_X_4),
+        ("lit-a100-4", Machine.A100_X_4),
+        ("A100_X_8", Machine.A100_X_8),
+        ("lit-a100-8", Machine.A100_X_8),
+        ("A100_40GB", Machine.A100_40GB),
+        ("lit-a100-40gb-1", Machine.A100_40GB),
+        ("A100_40GB_X_2", Machine.A100_40GB_X_2),
+        ("lit-a100-40gb-2", Machine.A100_40GB_X_2),
+        ("A100_40GB_X_4", Machine.A100_40GB_X_4),
+        ("lit-a100-40gb-4", Machine.A100_40GB_X_4),
+        ("A100_40GB_X_8", Machine.A100_40GB_X_8),
+        ("lit-a100-40gb-8", Machine.A100_40GB_X_8),
+        ("A100_80GB", Machine.A100_80GB),
+        ("lit-a100-80gb-1", Machine.A100_80GB),
+        ("A100_80GB_X_2", Machine.A100_80GB_X_2),
+        ("lit-a100-80gb-2", Machine.A100_80GB_X_2),
+        ("A100_80GB_X_4", Machine.A100_80GB_X_4),
+        ("lit-a100-80gb-4", Machine.A100_80GB_X_4),
+        ("A100_80GB_X_8", Machine.A100_80GB_X_8),
+        ("lit-a100-80gb-8", Machine.A100_80GB_X_8),
+        ("H100", Machine.H100),
+        ("lit-h100-1", Machine.H100),
+        ("H100_X_2", Machine.H100_X_2),
+        ("lit-h100-2", Machine.H100_X_2),
+        ("H100_X_4", Machine.H100_X_4),
+        ("lit-h100-4", Machine.H100_X_4),
+        ("H100_X_8", Machine.H100_X_8),
+        ("lit-h100-8", Machine.H100_X_8),
+        ("H200", Machine.H200),
+        ("lit-h200x-1", Machine.H200),
+        ("H200_X_8", Machine.H200_X_8),
+        ("lit-h200x-8", Machine.H200_X_8),
+        ("B200_X_8", Machine.B200_X_8),
+        ("lit-b200x-8", Machine.B200_X_8),
+    ],
+)
+def test_machine_from_str(machine_str: str, expected_cls_value: Machine):
+    assert Machine.from_str(machine_str) == expected_cls_value
+    assert Machine.from_str("unknown", machine_str) == expected_cls_value
+
+
+@pytest.mark.parametrize(
+    ("variant", "default_machine", "is_equal"),
+    [
+        (Machine.A100_40GB, Machine.A100, True),
+        (Machine.A100_80GB, Machine.A100, True),
+        (Machine.A100_40GB, Machine.A100_80GB, True),
+        (Machine.A100_40GB_X_2, Machine.A100_X_2, True),
+        (Machine.A100_80GB_X_2, Machine.A100_X_2, True),
+        (Machine.A100_40GB_X_4, Machine.A100_X_4, True),
+        (Machine.A100_80GB_X_4, Machine.A100_X_4, True),
+        (Machine.A100_40GB_X_8, Machine.A100_X_8, True),
+        (Machine.A100_80GB_X_8, Machine.A100_X_8, True),
+        (Machine.A100_40GB_X_2, Machine.A100_40GB, False),
+        (Machine.A100_80GB_X_2, Machine.A100_80GB, False),
+        (Machine.A100_40GB_X_4, Machine.A100_40GB_X_2, False),
+    ],
+)
+def test_machine_equal_variant(variant, default_machine, is_equal):
+    assert (variant == default_machine) is is_equal
+
+
+@pytest.mark.parametrize(
+    ("accelerator", "expected_machine_equality"),
+    [
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                display_name="T4",
+                family="T4",
+                instance_id="g4dn.2xlarge",
+                resources=V1Resources(cpu=8, gpu=1),
+                slug="g4dn.2xlarge",
+                slug_multi_cloud="lit-t4-1",
+                secondary_instance_id="",
+            ),
+            Machine.T4,
+        ),
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                display_name="T4",
+                family="T4",
+                instance_id="g4dn.xlarge",
+                resources=V1Resources(cpu=4, gpu=1),
+                slug="g4dn.xlarge",
+                slug_multi_cloud="",
+                secondary_instance_id="",
+            ),
+            Machine.T4,
+        ),
+        (
+            V1ClusterAccelerator(
+                accelerator_type="GPU",
+                family="T4",
+                resources=V1Resources(gpu=1),
+                slug=None,
+                slug_multi_cloud="lit-t4-1",
+            ),
+            Machine.T4,
+        ),
+    ],
+)
+def test_machine_from_accelerator(accelerator: V1ClusterAccelerator, expected_machine_equality: Machine):
+    acc_machine = Machine._from_accelerator(accelerator)
+    assert acc_machine == expected_machine_equality

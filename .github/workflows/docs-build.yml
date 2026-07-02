@@ -1,0 +1,91 @@
+name: Docs
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+
+jobs:
+  docs-build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+    - name: Install uv and setup python
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      with:
+        activate-environment: true
+        python-version: "3.12"
+        enable-cache: true
+
+    - name: Install package & doc dependencies
+      working-directory: python
+      run: |
+        uv sync --group docs
+        uv pip install -e .
+        uv pip list
+
+    - name: Build docs
+      working-directory: python/docs
+      run: |
+        export PATH="$PWD/../.venv/bin:$PATH"
+        make html SPHINXOPTS="-W --keep-going"
+
+    - name: Upload docs artifact
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      with:
+        name: docs-build
+        path: python/docs/build/html/
+        retention-days: 7
+
+  docs-linkcheck:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+    - name: Install uv and setup python
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+      with:
+        activate-environment: true
+        python-version: "3.12"
+        enable-cache: true
+
+    - name: Install package & doc dependencies
+      working-directory: python
+      run: |
+        uv sync --group docs
+        uv pip install -e .
+
+    - name: Check links
+      working-directory: python/docs
+      run: |
+        export PATH="$PWD/../.venv/bin:$PATH"
+        make linkcheck
+
+  guardian-docs:
+    runs-on: ubuntu-latest
+    needs: [docs-build, docs-linkcheck]
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+    steps:
+    - run: |
+        echo "build: ${{ needs.docs-build.result }}"
+        echo "linkcheck: ${{ needs.docs-linkcheck.result }}"
+    - name: failing...
+      if: |
+        needs.docs-build.result == 'failure' ||
+        needs.docs-linkcheck.result == 'failure'
+      run: exit 1
+    - name: cancelled or skipped...
+      if: |
+        contains(fromJSON('["cancelled", "skipped"]'), needs.docs-build.result) ||
+        contains(fromJSON('["cancelled", "skipped"]'), needs.docs-linkcheck.result)
+      timeout-minutes: 1
+      run: sleep 90

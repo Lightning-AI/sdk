@@ -1,0 +1,1021 @@
+import glob
+import os
+import threading
+import warnings
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+
+from tqdm.auto import tqdm
+
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
+from lightning_sdk.base_studio import BaseStudio
+from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.exceptions import NotSupportedError, OutOfCapacityError
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Endpoint
+from lightning_sdk.machine import DEFAULT_MACHINE, CloudProvider, Machine
+from lightning_sdk.organization import Organization
+from lightning_sdk.owner import Owner
+from lightning_sdk.status import Status
+from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.user import User
+from lightning_sdk.utils.logging import TrackCallsMeta
+from lightning_sdk.utils.names import random_unique_name
+from lightning_sdk.utils.resolve import (
+    _get_org_id,
+    _resolve_default_cloud_account,
+    _resolve_default_cloud_provider,
+    _resolve_teamspace,
+    _setup_logger,
+)
+
+if TYPE_CHECKING:
+    from lightning_sdk.job import Job
+    from lightning_sdk.mmt import MMT
+
+_logger = _setup_logger(__name__)
+
+
+class Studio(metaclass=TrackCallsMeta):
+    """A single Lightning AI Studio.
+
+    Allows to fully control a studio, including retrieving the status, running commands
+    and switching machine types.
+
+    Args:
+        name: the name of the studio
+        teamspace: the name of the teamspace the studio is contained by
+        org: the name of the organization owning the the teamspace in case it is owned by an org
+        user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
+        cloud: Cloud provider or cloud account to create the studio on.
+        create_ok: whether the studio will be created if it does not yet exist. Defaults to True
+        studio_type: Type of studio to create. Only effective during initial creation;
+            ignored for existing studios.
+
+    Note:
+        Since a teamspace can either be owned by an org or by a user directly,
+        only one of the arguments can be provided.
+
+    """
+
+    # skips init of studio, only set when using this as a shell for names, ids etc.
+    _skip_init = threading.local()
+    _skip_setup = threading.local()
+
+    # whether to show progress bars during operations
+    show_progress = False
+
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        teamspace: Optional[Union[str, Teamspace]] = None,
+        org: Optional[Union[str, Organization]] = None,
+        user: Optional[Union[str, User]] = None,
+        cloud: Optional[Union[CloudProvider, str]] = None,
+        create_ok: bool = True,
+        source: Optional[str] = None,
+        disable_secrets: bool = False,
+        studio_type: Optional[str] = None,  # for base studio templates
+    ) -> None:
+        self._studio_api = StudioApi()
+        self._cloud_account_api = CloudAccountApi()
+
+        self._prevent_refetch = False
+        self._teamspace = None
+        self._setup_done = getattr(self._skip_setup, "value", False)
+        self._disable_secrets = disable_secrets
+        self._studio = None
+
+        if getattr(self._skip_init, "value", False):
+            return
+
+        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if self._teamspace is None:
+            raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+        raise_access_error_if_not_allowed(AccessibleResource.Studios, self._teamspace.id)
+
+        # Check if we're running inside a studio that can be used as source. This is only
+        # relevant if it exists within the same teamspace as the target studio (if specified).
+        current_studio = None
+        current_studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", "") or None
+        current_teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", "") or None
+        if current_studio_id is not None and current_teamspace_id == self._teamspace.id:
+            current_studio = self._studio_api.get_studio_by_id(
+                studio_id=current_studio_id, teamspace_id=current_teamspace_id
+            )
+
+        # This is only used for studio creation, but resolve config defaults early.
+        resolved_cloud = cloud
+        if resolved_cloud is None:
+            resolved_cloud = _resolve_default_cloud_account(None, current_studio.cluster_id if current_studio else None)
+        if resolved_cloud is None:
+            resolved_cloud = _resolve_default_cloud_provider(None)
+
+        # If no name is provided, but we're running on a studio in the same teamspace,
+        # return the current studio.
+        if name is None and current_studio is not None:
+            self._studio = current_studio
+            self._setup()
+            return
+
+        if name is None:
+            from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+            name = Config().get_value(DefaultConfigKeys.studio)
+
+        # If a name is provided, try to find an existing studio with that name.
+        if name is not None:
+            existing_studio = self._studio_api.find_studio(name, self._teamspace.id)
+            if existing_studio is not None:
+                self._studio = existing_studio
+
+                if (
+                    _internal_status_to_external_status(
+                        self._studio_api._get_studio_instance_status_from_object(self._studio)
+                    )
+                    == Status.Running
+                ):
+                    self._setup()
+
+                return
+
+        # Otherwise, create a new studio if allowed, or raise an error if not.
+        if not create_ok:
+            raise ValueError(
+                f"Studio '{name}' does not exist."
+                if name
+                else (
+                    f"Cannot autodetect {self._cls_name}. "
+                    f"Either use the SDK from within a {self._cls_name} or pass a name!"
+                )
+            )
+
+        _cloud_account = self._cloud_account_api.resolve_cloud_account(
+            self._teamspace.id,
+            cloud=resolved_cloud,
+            default_cloud_account=self._teamspace.default_cloud_account,
+        )
+
+        if studio_type:
+            available_base_studios = BaseStudio(teamspace=self._teamspace).list()
+            for bst in available_base_studios:
+                if (
+                    bst.id == studio_type
+                    or bst.name == studio_type
+                    or bst.name.lower().replace(" ", "-") == studio_type
+                ):
+                    studio_type = bst.id
+                    break
+            else:
+                raise ValueError(
+                    f"Could not find studio type with ID or name '{studio_type}'. "
+                    f"Available studio types: "
+                    f"{[bst.name.lower().replace(' ', '-') for bst in available_base_studios]}"
+                )
+        elif current_studio:
+            studio_type = current_studio.environment_template_id
+
+        self._studio = self._studio_api.create_studio(
+            name or random_unique_name(),
+            self._teamspace.id,
+            cloud_account=_cloud_account,
+            source=source,
+            disable_secrets=self._disable_secrets,
+            cloud_space_environment_template_id=studio_type,
+        )
+
+    def _setup(self) -> None:
+        """Starts background keep-alive for the Studio."""
+        if self._setup_done:
+            return
+
+        self._studio_api.start_keeping_alive(teamspace_id=self._teamspace.id, studio_id=self._studio.id)
+        self._setup_done = True
+
+    @property
+    def name(self) -> str:
+        """Returns the name of the studio.
+
+        Returns:
+            str: The studio name.
+        """
+        return self._studio.name
+
+    @property
+    def status(self) -> Status:
+        """Returns the Status of the Studio.
+
+        Can be one of { NotCreated | Pending | Running | Stopping | Stopped | Failed }
+
+        Returns:
+            Status: The current :class:`~lightning_sdk.status.Status` of the Studio.
+        """
+        internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        return _internal_status_to_external_status(
+            internal_status.phase if internal_status is not None else internal_status
+        )
+
+    @property
+    def teamspace(self) -> Teamspace:
+        """Returns the name of the Teamspace.
+
+        Returns:
+            Teamspace: The :class:`~lightning_sdk.teamspace.Teamspace` this Studio belongs to.
+        """
+        return self._teamspace
+
+    @property
+    def owner(self) -> Owner:
+        """Returns the name of the owner (either user or org).
+
+        Returns:
+            Owner: The owning :class:`~lightning_sdk.owner.Owner` (user or org).
+        """
+        return self.teamspace.owner
+
+    @property
+    def machine(self) -> Optional[Machine]:
+        """Returns the current machine type the Studio is running on.
+
+        Returns:
+            Optional[Machine]: The active :class:`~lightning_sdk.machine.Machine`, or None if not running.
+        """
+        if self.status != Status.Running:
+            return None
+        return self._studio_api.get_machine(
+            self._studio.id,
+            self._teamspace.id,
+            self.cloud_account,
+            _get_org_id(self._teamspace),
+        )
+
+    @property
+    def public_ip(self) -> Optional[str]:
+        """Returns the public IP address of the machine the Studio is running on.
+
+        Returns:
+            Optional[str]: The public IP, or None if unavailable.
+        """
+        return self._studio_api.get_public_ip(
+            self._studio.id,
+            self._teamspace.id,
+        )
+
+    @property
+    def interruptible(self) -> bool:
+        """Returns whether the Studio is running on a interruptible instance.
+
+        Returns:
+            bool: True if the Studio is on an interruptible instance, None if not running.
+        """
+        if self.status != Status.Running:
+            return None
+
+        return self._studio_api.get_interruptible(self._studio.id, self._teamspace.id)
+
+    @property
+    def cluster(self) -> str:
+        """Returns the cluster the Studio is running on.
+
+        Returns:
+            str: The cloud account (cluster) ID.
+        """
+        warnings.warn(
+            f"{self._cls_name}.cluster is deprecated. Use {self._cls_name}.cloud_account instead", DeprecationWarning
+        )
+        return self.cloud_account
+
+    @property
+    def cloud_account(self) -> str:
+        """The cloud account ID this Studio is associated with.
+
+        Returns:
+            str: The cloud account (cluster) ID.
+        """
+        return self._studio.cluster_id
+
+    def start(
+        self,
+        machine: Optional[Union[Machine, str]] = None,
+        interruptible: Optional[bool] = None,
+        max_runtime: Optional[int] = None,
+    ) -> None:
+        """Starts a Studio on the specified machine type (default: CPU-4).
+
+        Args:
+            machine: the machine type to start the studio on. Defaults to CPU-4
+            interruptible: whether to use interruptible machines
+            max_runtime: the duration (in seconds) for which to allocate the machine.
+                Irrelevant for most machines, required for some of the top-end machines on GCP.
+                If in doubt, set it. Won't have an effect on machines not requiring it.
+                Defaults to 3h
+
+        Raises:
+            RuntimeError: If the Studio is already running on a different machine or is not stopped.
+            RuntimeError: If the requested machine is not supported or has no available capacity.
+        """
+        # Check to see if we're inside a studio and if its running
+        current_studio_machine = None
+        current_studio_id = os.environ.get("LIGHTNING_CLOUD_SPACE_ID", "") or None
+        current_teamspace_id = os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", "") or None
+        if current_studio_id is not None and current_teamspace_id == self._teamspace.id:
+            # We're inside a studio in this teamspace, get the machine if it is running.
+            # Skip when the teamspaces differ, as the by-ID lookup would 404.
+            current_studio = self._studio_api.get_studio_by_id(
+                studio_id=current_studio_id, teamspace_id=self._teamspace.id
+            )
+            current_status = self._studio_api._get_studio_instance_status_from_object(current_studio)
+
+            if current_status and _internal_status_to_external_status(current_status) == Status.Running:
+                current_studio_machine = self._studio_api.get_machine(
+                    current_studio.id,
+                    self._teamspace.id,
+                    current_studio.cluster_id,
+                    _get_org_id(self._teamspace),
+                )
+
+        status = self.status
+
+        if interruptible is None:
+            interruptible_override = os.environ.get("LIGHTNING_INTERRUPTIBLE_OVERRIDE", None)
+            if interruptible_override is not None:
+                interruptible = interruptible_override.lower() == "true"
+            else:
+                interruptible = self.teamspace.start_studios_on_interruptible
+
+        new_machine = DEFAULT_MACHINE
+        if machine is not None:
+            new_machine = machine
+        elif current_studio_machine is not None:
+            new_machine = current_studio_machine
+
+        if not isinstance(new_machine, Machine):
+            new_machine = Machine.from_str(new_machine)
+
+        if status == Status.Running:
+            if new_machine != self.machine:
+                raise RuntimeError(
+                    f"Requested to start {self._cls_name} on {new_machine}, "
+                    f"but {self._cls_name} is already running on {self.machine}."
+                    " Consider switching instead!"
+                )
+            _logger.info(f"{self._cls_name} {self.name} is already running")
+            return
+
+        if not self._studio_api.machine_is_supported(
+            new_machine, self._teamspace.id, self.cloud_account, _get_org_id(self._teamspace)
+        ):
+            raise NotSupportedError(
+                "Requested machine is not supported in the selected cloud account. "
+                "Try a different machine or cloud account by setting the `machine` or `cloud_account` argument."
+            )
+
+        if not self._studio_api.machine_has_capacity(
+            new_machine,
+            self._teamspace.id,
+            self.cloud_account,
+            _get_org_id(self._teamspace),
+        ):
+            raise OutOfCapacityError(
+                "Requested machine is not available in the selected cloud account. "
+                "Try a different machine or cloud account."
+            )
+
+        if status != Status.Stopped:
+            raise RuntimeError(
+                f"Cannot start a {self._cls_name} that is not stopped. {self._cls_name} {self.name} is {status}."
+            )
+
+        # Show progress bar during startup
+        if self.show_progress:
+            from lightning_sdk.utils.progress import StudioProgressTracker
+
+            with StudioProgressTracker("start", show_progress=True) as progress:
+                # Start the studio without blocking
+                self._studio_api.start_studio_async(
+                    self._studio.id,
+                    self._teamspace.id,
+                    new_machine,
+                    interruptible=interruptible,
+                    max_runtime=max_runtime,
+                )
+
+                # Track progress through completion
+                progress.track_startup_phases(
+                    lambda: self._studio_api.get_studio_status(self._studio.id, self._teamspace.id)
+                )
+        else:
+            # Use the blocking version if no progress is needed
+            self._studio_api.start_studio(
+                self._studio.id, self._teamspace.id, new_machine, interruptible=interruptible, max_runtime=max_runtime
+            )
+
+        self._setup()
+
+    def stop(self) -> None:
+        """Stops a running Studio.
+
+        Raises:
+            RuntimeError: If the Studio is not currently running or pending.
+        """
+        status = self.status
+        if status not in (Status.Running, Status.Pending):
+            raise RuntimeError(f"Cannot stop a studio that is not running. Studio {self.name} is {status}.")
+        self._studio_api.stop_studio(self._studio.id, self._teamspace.id)
+
+    def delete(self) -> None:
+        """Deletes the current Studio."""
+        self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
+
+    def duplicate(
+        self,
+        target_teamspace: Optional[Union["Teamspace", str]] = None,
+        machine: Machine = Machine.CPU,
+        name: Optional[str] = None,
+    ) -> "Studio":
+        """Duplicates the existing Studio.
+
+        Args:
+            target_teamspace: the teamspace to duplicate the studio to.
+                Must have the same owner as the source teamspace.
+                If not provided, defaults to current teamspace.
+            machine: the machine to start the duplicated studio on.
+                Defaults to CPU
+
+        Returns:
+            Studio: The newly created duplicate Studio.
+
+        Raises:
+            ValueError: If the target teamspace cannot be resolved.
+        """
+        if target_teamspace is None:
+            target_teamspace_id = self._teamspace.id
+        else:
+            target_teamspace = _resolve_teamspace(
+                target_teamspace,
+                org=self._teamspace.owner if isinstance(self._teamspace.owner, Organization) else None,
+                user=self._teamspace.owner if isinstance(self._teamspace.owner, User) else None,
+            )
+
+            if target_teamspace is None:
+                raise ValueError(
+                    f"Could not resolve target teamspace {target_teamspace} "
+                    f"with owner {self.teamspace.owner} for duplication!"
+                )
+
+            target_teamspace_id = target_teamspace.id
+
+        kwargs = self._studio_api.duplicate_studio(
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            target_teamspace_id=target_teamspace_id,
+            machine=machine,
+            new_name=name,
+        )
+        return Studio(**kwargs)
+
+    def switch_machine(
+        self, machine: Union[Machine, str], interruptible: bool = False, cloud_provider: Optional[CloudProvider] = None
+    ) -> None:
+        """Switches machine to the provided machine type/.
+
+        Args:
+            machine: the new machine type to switch to
+            interruptible: determines whether to switch to an interruptible instance
+            cloud_provider: the cloud provider to switch to, has no effect if the Studio is not on Lightning Cloud
+
+        Note:
+            this call is blocking until the new machine is provisioned
+
+        Raises:
+            RuntimeError: If the Studio is not currently running.
+        """
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(
+                f"Cannot switch machine on a {self._cls_name} that is not running. "
+                "{self._cls_name} {self.name} is {status}."
+            )
+
+        current_cloud = self._cloud_account_api.get_cloud_account_non_org(
+            self._teamspace.id,
+            self._studio.cluster_id,
+        )
+
+        cloud_account = ""
+        if cloud_provider is not None and current_cloud.spec.cluster_type == V1ClusterType.GLOBAL:
+            cloud_account = self._cloud_account_api.resolve_cloud_account(
+                self._teamspace.id,
+                cloud=cloud_provider,
+                default_cloud_account=None,
+            )
+
+        if self.show_progress:
+            from lightning_sdk.utils.progress import StudioProgressTracker
+
+            with StudioProgressTracker("switch", show_progress=True) as progress:
+                # Update progress before starting the switch
+                progress.update_progress(5, "Initiating machine switch...")
+
+                # Start the switch operation with progress tracking
+                self._studio_api.switch_studio_machine_with_progress(
+                    self._studio.id,
+                    self._teamspace.id,
+                    machine,
+                    interruptible=interruptible,
+                    progress=progress,
+                    cloud_account=cloud_account,
+                )
+        else:
+            self._studio_api.switch_studio_machine(
+                self._studio.id, self._teamspace.id, machine, interruptible=interruptible, cloud_account=cloud_account
+            )
+
+        if self._studio and cloud_account:
+            # TODO: get this from the API
+            self._studio.cluster_id = cloud_account
+
+    def run_and_detach(self, *commands: str, timeout: float = 10, check_interval: float = 1) -> str:
+        """Runs given commands on the Studio and returns immediately.
+
+        The command will continue to run in the background.
+
+        Args:
+            *commands: The shell commands to execute in sequence.
+            timeout: Wait for this many seconds for the command to finish. Defaults to ``10``.
+            check_interval: Poll the command status every this many seconds. Defaults to ``1``.
+
+        Returns:
+            Tuple of (output, exit_code) collected up to the timeout.
+
+        Raises:
+            ValueError: If ``check_interval`` is greater than ``timeout``.
+            RuntimeError: If the Studio is not currently running.
+        """
+        if check_interval > timeout:
+            raise ValueError("check_interval must be less than timeout")
+
+        if _LIGHTNING_DEBUG:
+            print(f"Running {commands=}")
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(
+                f"Cannot run a command in a {self._cls_name} that is not running. "
+                "{self._cls_name} {self.name} is {status}."
+            )
+
+        iter_output = self._studio_api.run_studio_commands_and_yield(
+            self._studio.id, self._teamspace.id, *commands, timeout=timeout, check_interval=check_interval
+        )
+
+        output = ""
+        code = None
+        for line, exit_code in iter_output:
+            print(line)
+            output += line
+            code = exit_code
+        return output, code
+
+    def run_with_exit_code(self, *commands: str) -> Tuple[str, int]:
+        """Runs given commands on the Studio while returning output and exit code.
+
+        Args:
+            commands: the commands to run on the Studio in sequence.
+
+        Returns:
+            Tuple[str, int]: A tuple of (output, exit_code).
+
+        Raises:
+            RuntimeError: If the Studio is not currently running.
+        """
+        if _LIGHTNING_DEBUG:
+            print(f"Running {commands=}")
+
+        status = self.status
+        if status != Status.Running:
+            raise RuntimeError(
+                f"Cannot run a command in a {self._cls_name} that is not running. "
+                f"{self._cls_name} {self.name} is {status}."
+            )
+        output, exit_code = self._studio_api.run_studio_commands(self._studio.id, self._teamspace.id, *commands)
+        output = output.strip()
+
+        if _LIGHTNING_DEBUG:
+            print(f"Output {exit_code=} {output=}")
+
+        return output, exit_code
+
+    def run(self, *commands: str) -> str:
+        """Runs given commands on the Studio while returning only the output.
+
+        Args:
+            commands: the commands to run on the Studio in sequence.
+
+        Returns:
+            str: The combined stdout output of the commands.
+
+        Raises:
+            RuntimeError: If any command exits with a non-zero exit code.
+        """
+        output, exit_code = self.run_with_exit_code(*commands)
+        if exit_code != 0:
+            raise RuntimeError(output)
+        return output
+
+    def upload_file(self, file_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+        """Uploads a given file to a remote path on the Studio.
+
+        Args:
+            file_path: Local path of the file to upload.
+            remote_path: Destination path inside the Studio. Defaults to the file's basename.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+        """
+        if remote_path is None:
+            remote_path = os.path.split(file_path)[1]
+
+        self._studio_api.upload_file(
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cloud_account=self._studio.cluster_id,
+            file_path=file_path,
+            remote_path=os.path.normpath(remote_path),
+            progress_bar=progress_bar,
+        )
+
+    def upload_folder(self, folder_path: str, remote_path: Optional[str] = None, progress_bar: bool = True) -> None:
+        """Uploads a given folder to a remote path on the Studio.
+
+        Args:
+            folder_path: Local directory to upload.
+            remote_path: Destination directory inside the Studio. Defaults to preserving the relative structure.
+            progress_bar: Whether to display a progress bar. Defaults to ``True``.
+
+        Raises:
+            ValueError: If ``folder_path`` is ``None``.
+            NotADirectoryError: If ``folder_path`` is a file or does not exist.
+        """
+        if folder_path is None:
+            raise ValueError("Cannot upload a folder that is None.")
+        folder_path = os.path.normpath(folder_path)
+        if os.path.isfile(folder_path):
+            raise NotADirectoryError(f"Cannot upload a file as a folder. '{folder_path}' is a file.")
+        if not os.path.exists(folder_path):
+            raise NotADirectoryError(f"Cannot upload a folder that does not exist. '{folder_path}' is not a directory.")
+        all_files = []
+        for fp in glob.glob(os.path.join(folder_path, "**"), recursive=True):
+            if not os.path.isfile(fp):
+                continue
+            rel_path = os.path.relpath(fp, folder_path)
+            remote_file = os.path.join(remote_path, rel_path) if remote_path else rel_path
+            all_files.append((fp, remote_file))
+
+        if progress_bar:
+            progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
+        for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
+            if progress_bar:
+                progress_bar.set_description("Uploading files")
+            self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
+            if progress_bar:
+                progress_bar.update(1)
+        if progress_bar:
+            progress_bar.set_description("Upload complete")
+            progress_bar.refresh()
+            progress_bar.close()
+
+    def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
+        """Downloads a file from the Studio to a given target path.
+
+        Args:
+            remote_path: Path of the file inside the Studio to download.
+            file_path: Local destination path. Defaults to ``remote_path``.
+        """
+        if file_path is None:
+            file_path = remote_path
+
+        self._studio_api.download_file(
+            path=remote_path,
+            target_path=file_path,
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cloud_account=self._studio.cluster_id,
+        )
+
+    def download_folder(self, remote_path: str, target_path: Optional[str] = None) -> None:
+        """Downloads a folder from the Studio to a given target path.
+
+        Args:
+            remote_path: Path of the directory inside the Studio to download.
+            target_path: Local destination directory. Defaults to ``remote_path``.
+        """
+        if target_path is None:
+            target_path = remote_path
+
+        self._studio_api.download_folder(
+            path=remote_path,
+            target_path=target_path,
+            studio_id=self._studio.id,
+            teamspace_id=self._teamspace.id,
+            cloud_account=self._studio.cluster_id,
+        )
+
+    def run_job(
+        self,
+        name: str,
+        machine: Union["Machine", str],
+        command: str,
+        env: Optional[Dict[str, str]] = None,
+        interruptible: bool = False,
+        reuse_snapshot: bool = True,
+    ) -> "Job":
+        """Run async workloads using the compute environment from your studio.
+
+        Args:
+            name: The name of the job. Needs to be unique within the teamspace.
+            machine: The machine type to run the job on.
+            command: The command to run inside your job.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
+                submitted. Turning this off may result in longer job startup times. Defaults to True.
+
+        Returns:
+            Job: The submitted :class:`Job` instance.
+        """
+        from lightning_sdk.job import Job
+
+        return Job.run(
+            name=name,
+            machine=machine,
+            command=command,
+            studio=self,
+            image=None,
+            teamspace=self.teamspace,
+            cloud=self.cloud_account,
+            env=env,
+            interruptible=interruptible,
+            reuse_snapshot=reuse_snapshot,
+        )
+
+    def run_mmt(
+        self,
+        name: str,
+        num_machines: int,
+        machine: Union["Machine", str],
+        command: str,
+        env: Optional[Dict[str, str]] = None,
+        interruptible: bool = False,
+    ) -> "MMT":
+        """Run async workloads using the compute environment from your studio.
+
+        Args:
+            name: The name of the job. Needs to be unique within the teamspace.
+            num_machines: The number of machines to run on.
+            machine: The machine type to run the job on.
+            command: The command to run inside your job.
+            env: Environment variables to set inside the job.
+            interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+
+        Returns:
+            MMT: The submitted :class:`MMT` instance.
+        """
+        from lightning_sdk.mmt import MMT
+
+        return MMT.run(
+            name=name,
+            num_machines=num_machines,
+            machine=machine,
+            command=command,
+            studio=self,
+            image=None,
+            teamspace=self.teamspace,
+            cloud=self.cloud_account,
+            env=env,
+            interruptible=interruptible,
+        )
+
+    def add_ports(self, ports: Union[int, List[int], Dict[str, int]]) -> List[V1Endpoint]:
+        """Add one or more ports to the studio and return their endpoints.
+
+        Args:
+            ports: Port to add. Can be:
+                - int: Single port (e.g., 8080)
+                - List[int]: Multiple ports ()
+                - dict[str, int]: Named ports (e.g., {"web": 8080})
+
+        Returns:
+            Endpoints for the added ports. Each entry exposes ``name``,
+            ``ports``, and ``urls`` attributes.
+        """
+        if isinstance(ports, dict):
+            port_items = ports.items()
+        elif isinstance(ports, list):
+            port_items = ((None, port) for port in ports)
+        else:
+            port_items = [(None, ports)]
+
+        return [
+            self._studio_api.add_port(self._teamspace.id, self._studio.id, name=name, port=port)
+            for name, port in port_items
+        ]
+
+    def list_ports(self) -> List[V1Endpoint]:
+        """List ports that are exposed in the Studio.
+
+        Returns:
+            List[V1Endpoint]: The currently exposed port endpoints.
+        """
+        return self._studio_api.list_ports(self._teamspace.id, self._studio.id)
+
+    def create_assistant(self, name: str, port: int) -> None:
+        """Create a Lightning AI assistant backed by a service running on this Studio.
+
+        Args:
+            name: Display name for the assistant.
+            port: The port on this Studio that serves the assistant endpoint.
+
+        Returns:
+            ``None``; the assistant ID is stored on the instance for later use.
+        """
+        assistant = self._studio_api.create_assistant(
+            studio_id=self._studio.id, teamspace_id=self._teamspace.id, port=port, assistant_name=name
+        )
+        assistant_info = f"Created assisant with name: {assistant.name}, ID: {assistant.id}"
+        self._assistant_id = assistant.id
+        _logger.info(assistant_info)
+
+    def rename(self, new_name: str) -> None:
+        """Renames the current Studio to the provided new name.
+
+        Args:
+            new_name: The new display name for the Studio.
+        """
+        if new_name == self._studio.name:
+            return
+
+        self._studio_api._update_cloudspace(self._studio, self._teamspace.id, "display_name", new_name)
+        self._update_studio_reference()
+
+    @property
+    def auto_sleep(self) -> bool:
+        """Returns if a Studio has auto-sleep enabled.
+
+        Returns:
+            bool: True if auto-sleep is enabled for this Studio.
+        """
+        return not self._studio.code_config.disable_auto_shutdown
+
+    @auto_sleep.setter
+    def auto_sleep(self, value: bool) -> None:
+        """Enable or disable auto-sleep for this Studio.
+
+        Args:
+            value: Pass ``True`` to enable auto-sleep, ``False`` to disable it.
+                Disabling auto-sleep on a CPU Studio converts it from free to paid.
+        """
+        if not value and self.machine == Machine.CPU:
+            warnings.warn(f"Disabling auto-sleep will convert the {self._cls_name} from free to paid!")
+        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, enabled=value)
+        self._update_studio_reference()
+
+    @property
+    def auto_sleep_time(self) -> int:
+        """Returns the time in seconds a Studio has to be idle for auto-sleep to kick in (if enabled).
+
+        Returns:
+            int: Idle timeout in seconds before auto-sleep activates.
+        """
+        return self._studio.code_config.idle_shutdown_seconds
+
+    @auto_sleep_time.setter
+    def auto_sleep_time(self, value: int) -> None:
+        """Set the idle timeout before auto-sleep kicks in.
+
+        Args:
+            value: Idle time in seconds before the Studio is automatically stopped.
+                Setting this converts a free CPU Studio to paid.
+        """
+        warnings.warn(f"Setting auto-sleep time will convert the {self._cls_name} from free to paid!")
+        self._studio_api.update_autoshutdown(self._studio.id, self._teamspace.id, idle_shutdown_seconds=value)
+        self._update_studio_reference()
+
+    @property
+    def auto_shutdown(self) -> bool:
+        """Whether auto-sleep is enabled. Deprecated — use :attr:`auto_sleep` instead.
+
+        Returns:
+            bool: True if auto-sleep is currently enabled.
+        """
+        warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
+        return self.auto_sleep
+
+    @auto_shutdown.setter
+    def auto_shutdown(self, value: bool) -> None:
+        """Enable or disable auto-sleep. Deprecated — use :attr:`auto_sleep` instead.
+
+        Args:
+            value: Pass ``True`` to enable auto-sleep, ``False`` to disable it.
+        """
+        warnings.warn("auto_shutdown is deprecated. Use auto_sleep instead", DeprecationWarning)
+        self.auto_sleep = value
+
+    @property
+    def auto_shutdown_time(self) -> int:
+        """Idle timeout in seconds before auto-sleep. Deprecated — use :attr:`auto_sleep_time` instead.
+
+        Returns:
+            int: The current idle timeout in seconds.
+        """
+        warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
+        return self.auto_sleep_time
+
+    @auto_shutdown_time.setter
+    def auto_shutdown_time(self, value: int) -> None:
+        """Set idle timeout in seconds. Deprecated — use :attr:`auto_sleep_time` instead.
+
+        Args:
+            value: Idle time in seconds before the Studio is automatically stopped.
+        """
+        warnings.warn("auto_shutdown_time is deprecated. Use auto_sleep_time instead", DeprecationWarning)
+        self.auto_sleep_time = value
+
+    @property
+    def env(self) -> Dict[str, str]:
+        """All environment variables currently set on this Studio.
+
+        Returns:
+            dict[str, str]: Mapping of environment variable names to their values.
+        """
+        self._update_studio_reference()
+        return self._studio_api.get_env(self._studio)
+
+    def set_env(self, new_env: Dict[str, str], partial: bool = True) -> None:
+        """Set the environment variables for the Studio.
+
+        Args:
+            new_env: The new environment variables to set.
+            partial: Whether to only set the environment variables that are provided.
+                If False, existing environment variables that are not in new_env will be removed.
+                If True, existing environment variables that are not in new_env will be kept.
+        """
+        self._studio_api.set_env(self._studio, self._teamspace.id, new_env, partial=partial)
+
+    def __eq__(self, other: "Studio") -> bool:
+        """Checks for equality with other Studios.
+
+        Args:
+            other: The other Studio to compare against.
+
+        Returns:
+            bool: True if both Studios share the same name, teamspace, and owner.
+        """
+        return (
+            isinstance(other, Studio)
+            and self.name == other.name
+            and self.teamspace == other.teamspace
+            and self.owner == other.owner
+        )
+
+    def __repr__(self) -> str:
+        """Returns reader friendly representation.
+
+        Returns:
+            str: A string of the form ``Studio(name=..., teamspace=...)``.
+        """
+        return f"Studio(name={self.name}, teamspace={self.teamspace!r})"
+
+    def __str__(self) -> str:
+        """Returns reader friendly representation.
+
+        Returns:
+            str: Same value as :meth:`__repr__`.
+        """
+        return repr(self)
+
+    def _update_studio_reference(self) -> None:
+        self._studio = self._studio_api.get_studio_by_id(studio_id=self._studio.id, teamspace_id=self._teamspace.id)
+
+    @property
+    def _cls_name(self) -> str:
+        return self.__class__.__qualname__
+
+
+def _internal_status_to_external_status(internal_status: str) -> Status:
+    """Converts internal status strings from HTTP requests to external enums.
+
+    Args:
+        internal_status: The raw status string returned by the API (e.g. ``"CLOUD_SPACE_INSTANCE_STATE_RUNNING"``).
+
+    Returns:
+        Status: The corresponding :class:`~lightning_sdk.status.Status` enum value.
+    """
+    return {
+        # don't get a status if no instance alive
+        None: Status.Stopped,
+        # TODO: should unspecified resolve to pending?
+        "CLOUD_SPACE_INSTANCE_STATE_UNSPECIFIED": Status.Pending,
+        "CLOUD_SPACE_INSTANCE_STATE_PENDING": Status.Pending,
+        "CLOUD_SPACE_INSTANCE_STATE_RUNNING": Status.Running,
+        "CLOUD_SPACE_INSTANCE_STATE_FAILED": Status.Failed,
+        "CLOUD_SPACE_INSTANCE_STATE_STOPPING": Status.Stopping,
+        "CLOUD_SPACE_INSTANCE_STATE_STOPPED": Status.Stopped,
+    }[internal_status]

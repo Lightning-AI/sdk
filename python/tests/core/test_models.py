@@ -1,0 +1,457 @@
+import os
+from pathlib import Path
+from unittest import mock
+
+import pytest
+
+from lightning_sdk.lightning_cloud.openapi.models import (
+    V1Membership,
+    V1Organization,
+    V1OwnerType,
+    V1Project,
+    V1SearchUser,
+)
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.models import _get_teamspace, delete_model, download_model, list_model_versions, upload_model
+from lightning_sdk.user import User
+
+
+class MyDummyExperiment:
+    def __init__(self, id: str) -> None:
+        self.id = id
+
+
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.models._get_authed_user")
+@mock.patch("lightning_sdk.models.UserApi")
+@mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_teamspace_org_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_resolve_org
+):
+    mock_user_api()._get_all_teamspace_memberships.return_value = [
+        V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
+        V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
+        V1Membership(name="test-teamspace-2", owner_id="user-id", owner_type=V1OwnerType.USER),
+    ]
+
+    mock_org_api()._get_org_by_id.return_value = V1Organization(name="test-org")
+    mock_org_api()._get_org.return_value = V1Organization(name="test-org")
+
+    mock_get_authed_user.return_value.id = "user-id"
+
+    mock_org_instance = mock.MagicMock()
+    mock_org_instance.name = "test-org"
+    mock_resolve_org.return_value = mock_org_instance
+
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace")
+
+    teamspace = _get_teamspace("test-teamspace", "test-org")
+
+    assert teamspace.name == "test-teamspace"
+    assert teamspace.owner.name == "test-org"
+
+    mock_user_api()._get_all_teamspace_memberships.assert_called_once()
+    mock_org_api()._get_org_by_id.assert_called_once_with("org-id")
+
+
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.models._get_authed_user")
+@mock.patch("lightning_sdk.models.UserApi")
+@mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_teamspace_authed_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
+):
+    mock_user_api()._get_all_teamspace_memberships.return_value = [
+        V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
+        V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
+        V1Membership(name="test-teamspace-2", owner_id="user-id", owner_type=V1OwnerType.USER),
+    ]
+
+    mock_org_api()._get_org_by_id.return_value = V1Organization(name="test-org")
+
+    mock_authed_user_api().get_user.return_value.id = "user-id"
+    mock_authed_user_api().get_user.return_value.username = "test-user"
+    mock_get_authed_user.return_value = User("test-user")
+
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace")
+
+    teamspace = _get_teamspace("test-teamspace", "test-user")
+
+    assert teamspace.name == "test-teamspace"
+    assert teamspace.owner.name == "test-user"
+
+    mock_user_api()._get_all_teamspace_memberships.assert_called_once()
+    mock_org_api()._get_org_by_id.assert_called_once_with("org-id")
+
+
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.models._get_authed_user")
+@mock.patch("lightning_sdk.models.UserApi")
+@mock.patch("lightning_sdk.models.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_teamspace_other_user_owner(
+    mock_org_api, mock_user_api, mock_get_authed_user, mock_teamspace_api, mock_authed_user_api
+):
+    mock_user_api()._get_all_teamspace_memberships.return_value = [
+        V1Membership(name="test-teamspace", owner_id="org-id", owner_type=V1OwnerType.ORGANIZATION),
+        V1Membership(name="test-teamspace", owner_id="user-id", owner_type=V1OwnerType.USER),
+        V1Membership(name="test-teamspace-2", owner_id="user-id-2", owner_type=V1OwnerType.USER),
+    ]
+
+    mock_org_api()._get_org_by_id.return_value = V1Organization(name="test-org")
+
+    mock_user_api()._get_user_by_id.return_value = V1SearchUser(username="test-user-2")
+    mock_authed_user_api().get_user.return_value.id = "user-id-2"
+    mock_authed_user_api().get_user.return_value.username = "test-user-2"
+
+    mock_get_authed_user.return_value.id = "user-id"
+
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="test-teamspace-2")
+
+    teamspace = _get_teamspace("test-teamspace-2", "test-user-2")
+
+    assert teamspace.name == "test-teamspace-2"
+    assert teamspace.owner.name == "test-user-2"
+
+    mock_user_api()._get_all_teamspace_memberships.assert_called_once()
+    mock_user_api()._get_user_by_id.assert_called_once_with("user-id-2")
+
+
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.models.TeamspaceApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_model_errors(mock_teamspace_api, mock_get_teamspace):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
+    mock_teamspace_api().download_model_files.side_effect = ApiException(status=404)
+
+    with pytest.raises(RuntimeError, match="Model 'owner/teamspace/model' not found"):
+        download_model("owner/teamspace/model")
+
+    with pytest.raises(RuntimeError, match="Model 'owner/teamspace/model:version' not found"):
+        download_model("owner/teamspace/model:version")
+
+    mock_teamspace_api().download_model_files.side_effect = ApiException(status=500)
+
+    with pytest.raises(RuntimeError, match="Error downloading model. Status code: 500"):
+        download_model("owner/teamspace/model")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_model_in_studio_with_org(
+    mock_org_api,
+    mock_teamspace_api,
+    mock_download_model_files,
+    mock_parse_org_teamspace_model_version,
+    mock_get_teamspace,
+):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+
+    download_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        download_dir=Path(".").expanduser().resolve(),
+        name="model_name",
+        progress_bar=True,
+        teamspace_name="ts-abc",
+        teamspace_owner_name="org-abc",
+        version="default",
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_model_in_studio_with_user(
+    mock_user_api,
+    mock_teamspace_api,
+    mock_download_model_files,
+    mock_parse_org_teamspace_model_version,
+    mock_get_teamspace,
+):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+
+    download_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        download_dir=Path(".").expanduser().resolve(),
+        name="model_name",
+        progress_bar=True,
+        teamspace_name="ts-abc",
+        teamspace_owner_name="user-abc",
+        version="default",
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_model_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    upload_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+        experiment=None,
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_model_in_studio_with_org_and_experiment(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    experiment = MyDummyExperiment(id="abc")
+
+    upload_model("model_name", experiment=experiment)
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+        experiment=experiment,
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_model_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    upload_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_ts.upload_model.assert_called_once_with(
+        cloud_account=None,
+        metadata=None,
+        name="model_name",
+        path=".",
+        progress_bar=True,
+        version=None,
+        experiment=None,
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_model_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.delete_model.assert_called_once_with(name="model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_model_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_ts.delete_model.assert_called_once_with(name="model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_model_version_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", "abc")
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name:abc")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name:abc")
+    mock_ts.delete_model.assert_called_once_with(name="model_name:abc")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_model_version_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", "abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    delete_model("model_name:abc")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name:abc")
+    mock_ts.delete_model.assert_called_once_with(name="model_name:abc")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_ORG": "org-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.organization.OrgApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_model_versions_in_studio_with_org(
+    mock_org_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("org-abc", "ts-abc", "model_name", None)
+    mock_get_teamspace.return_value = mock.MagicMock()
+    mock_org_api().get_org.return_value = V1Organization(name="org-abc")
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    list_model_versions("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
+    mock_ts.list_model_versions.assert_called_once_with(name="model_name")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "user-abc", "LIGHTNING_TEAMSPACE": "ts-abc"})
+@mock.patch("lightning_sdk.models._parse_org_teamspace_model_version")
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_model_versions_in_studio_with_user(
+    mock_user_api, mock_teamspace_api, mock_get_teamspace, mock_parse_org_teamspace_model_version
+):
+    mock_parse_org_teamspace_model_version.return_value = ("user-abc", "ts-abc", "model_name", None)
+    mock_teamspace_api().get_teamspace.return_value = V1Project(name="ts-abc")
+    mock_user_api().get_user.return_value = V1SearchUser(username="user-abc")
+    mock_ts = mock.MagicMock()
+    mock_get_teamspace.return_value = mock_ts
+
+    list_model_versions("model_name")
+    mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
+    mock_ts.list_model_versions.assert_called_once_with(name="model_name")
+
+
+@mock.patch("lightning_sdk.models._get_teamspace")
+@mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_dir_home_path_shorthand(mock_download_model_files, mock_get_teamspace):
+    from lightning_sdk.teamspace import Teamspace
+
+    mock_ts = mock.MagicMock(spec=Teamspace)
+    mock_ts.id = "test-teamspace-id"
+    mock_get_teamspace.return_value = mock_ts
+
+    input_model = "lightning-ai/general/sdk-test-file"
+    file_name = "sdk-test-file"
+    teamspace = "general"
+    owner = "lightning-ai"
+    download_path = "~/test_dir"
+    expanded_path = Path(download_path).expanduser().resolve()
+    download_model(input_model, download_path)
+    mock_download_model_files.assert_called_once_with(
+        client=mock.ANY,
+        name=file_name,
+        version="default",
+        download_dir=expanded_path,
+        teamspace_name=teamspace,
+        teamspace_owner_name=owner,
+        progress_bar=True,
+    )

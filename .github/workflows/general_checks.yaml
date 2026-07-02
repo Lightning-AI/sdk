@@ -1,0 +1,94 @@
+name: General checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref }}
+  cancel-in-progress: ${{ ! (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')) }}
+
+jobs:
+  check-schema:
+    uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@bbe30252725442db7b535b7b1eec38f6b0d0f983 # main
+    with:
+      azure-dir: ''
+
+  check-package:
+    if: github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest]
+        python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    env:
+      LIGHTNING_USER_ID: dummy-user-id
+      LIGHTNING_API_KEY: dummy-api-key
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: pip
+    - name: Build wheel and smoke-install
+      run: |
+        cd python
+        pip install build twine
+        python -m build
+        twine check dist/*
+        pip install dist/*.whl
+        python -c "import lightning_sdk; from lightning_sdk.llm.public_assistants import PUBLIC_MODELS; assert len(PUBLIC_MODELS.keys())"
+
+  pkg-guardian:
+    runs-on: ubuntu-latest
+    needs: check-package
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+    steps:
+      - run: echo "${{ needs.check-package.result }}"
+      - name: failing...
+        if: needs.check-package.result == 'failure'
+        run: exit 1
+      - name: cancelled or skipped...
+        if: contains(fromJSON('["cancelled", "skipped"]'), needs.check-package.result)
+        timeout-minutes: 1
+        run: sleep 90
+
+  pre-commit:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      with:
+        fetch-depth: 0
+        submodules: recursive
+
+    - name: Set up Python 🐍
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: "3.11"
+
+    - name: Set up Go
+      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+      with:
+        go-version: "1.24.x"
+
+    - name: Install Go pre-commit tools
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v2.12.2/install.sh | sh -s -- -b "$(go env GOPATH)/bin" v2.12.2
+        echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+    - name: Determine cache hash
+      run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
+
+    - name: Cache 💽 pre-commit
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml', 'python/pyproject.toml') }}
+
+    - name: Run pre-commit
+      uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1

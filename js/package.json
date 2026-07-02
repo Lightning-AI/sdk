@@ -1,0 +1,43 @@
+{
+    "name": "@lightningai/sdk",
+    "version": "2026.07.03",
+    "description": "Lightning AI Sandbox SDK — create and manage sandboxes, run commands, read/write files",
+    "type": "module",
+    "license": "Apache-2.0",
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "tsc",
+        "prepublishOnly": "npm run clean && npm run build",
+        "test": "node --test --import tsx tests/config.test.ts tests/sandbox.test.ts tests/filesystem.test.ts tests/pty.test.ts tests/persistence.test.ts"
+    },
+    "dependencies": {
+        "axios": "^1.7.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.19.18",
+        "tsx": "^4.0.0",
+        "typescript": "^5.4.0"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gridai/lightning-sdk.git",
+        "directory": "js"
+    }
+}
