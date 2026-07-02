@@ -108,7 +108,7 @@ jobs:
   guardian-CLI:
     runs-on: ubuntu-latest
     needs: cli-tests
-    if: always()
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     steps:
     - run: echo "${{ needs.cli-tests.result }}"
     - name: failing...

@@ -75,20 +75,41 @@ jobs:
       working-directory: js
       run: npm test
 
+  go-unittests:
+    runs-on: "ubuntu-22.04"
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go/go.mod
+        cache-dependency-path: go/go.sum
+    - name: Install tparse
+      run: go install github.com/mfridman/tparse@v0.18.0
+    - name: Run tests
+      working-directory: go
+      run: |
+        go test -count=1 -json ./... > test.json || true
+        cat test.json | "$(go env GOPATH)/bin/tparse" -smallscreen -sort elapsed
+
   guardian-unittest:
     runs-on: ubuntu-latest
-    needs: [cpu-unittests, js-unittests]
-    if: always()
+    needs: [cpu-unittests, js-unittests, go-unittests]
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     steps:
     - run: |
         echo "cpu-unittests: ${{ needs.cpu-unittests.result }}"
         echo "js-unittests: ${{ needs.js-unittests.result }}"
+        echo "go-unittests: ${{ needs.go-unittests.result }}"
     - name: failing...
-      if: needs.cpu-unittests.result == 'failure' || needs.js-unittests.result == 'failure'
+      if: needs.cpu-unittests.result == 'failure' || needs.js-unittests.result == 'failure' || needs.go-unittests.result == 'failure'
       run: exit 1
     - name: cancelled or skipped...
       if: |
         contains(fromJSON('["cancelled", "skipped"]'), needs.cpu-unittests.result) ||
-        contains(fromJSON('["cancelled", "skipped"]'), needs.js-unittests.result)
+        contains(fromJSON('["cancelled", "skipped"]'), needs.js-unittests.result) ||
+        contains(fromJSON('["cancelled", "skipped"]'), needs.go-unittests.result)
       timeout-minutes: 1
       run: sleep 90
