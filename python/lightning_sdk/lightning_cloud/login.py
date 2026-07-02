@@ -20,8 +20,6 @@ from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi import ApiClient, Configuration
 from lightning_sdk.lightning_cloud.openapi.api import \
     AuthServiceApi
-from lightning_sdk.lightning_cloud.openapi.models.v1_guest_login_request import \
-    V1GuestLoginRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_token_login_request import \
     V1TokenLoginRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_request import \
@@ -30,7 +28,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_request import \
 logger = logging.getLogger(__name__)
 
 # Authentication override types
-AuthOverride = Literal["auth_token", "api_key", "guest"]
+AuthOverride = Literal["auth_token", "api_key"]
 
 class Keys(Enum):
     # USERNAME = "LIGHTNING_USERNAME"
@@ -124,7 +122,6 @@ class Auth:
             Override the default authentication method:
             - "auth_token": Force use of JWT auth token (Bearer)
             - "api_key": Force use of API key (Basic)
-            - "guest": Force use of guest credentials (Basic)
             - None: Use automatic selection (default)
             
         Returns
@@ -155,15 +152,6 @@ class Auth:
             token = f"{self.user_id}:{self.api_key}"
             return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
         
-        elif override == "guest":
-            if not self.api_key or not self.user_id:
-                raise ValueError(
-                    "Guest override requested but no guest credentials available. "
-                    "Please call guest_login() method first."
-                )
-            token = f"{self.user_id}:{self.api_key}"
-            return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
-        
         elif override is None:
             # Use the original automatic selection logic (default behavior)
             if self.auth_token:
@@ -174,7 +162,7 @@ class Auth:
             else:
                 raise ValueError(
                     "No authentication credentials available. Please authenticate first using "
-                    "token_login(), guest_login(), or authenticate() methods."
+                    "token_login() or authenticate() methods."
                 )
         
         else:
@@ -214,61 +202,6 @@ class Auth:
         raise ValueError(
             "We couldn't find any credentials linked to your account. Please try logging in using the CLI command `lightning login`"
         )
-
-    def guest_login(self) -> Optional[str]:
-        """Performs guest user authentication.
-        This method sends a request to the guest login endpoint to get temporary
-        credentials, saves them, and returns the authorization header.
-        Useful to log experiments as a non signed in user, using a guest account
-        in the background.
-        Returns
-        -------
-        Optional[str]
-            The authorization header to use for subsequent requests.
-        Raises
-        ------
-        RuntimeError
-            If the guest login request fails.
-        ValueError
-            If the response from the server is invalid.
-        """
-
-        config = Configuration()
-        config.host = env.LIGHTNING_CLOUD_URL
-        api_client = ApiClient(configuration=config)
-        auth_api = AuthServiceApi(api_client)
-
-        logger.debug(f"Attempting guest login to {config.host}")
-
-        try:
-            # The body is an empty object for a guest login.
-            body = V1GuestLoginRequest()
-            credentials = auth_api.auth_service_guest_login(body)
-
-        except requests.RequestException as e:
-            logger.error(f"Guest login request failed: {e}")
-            raise RuntimeError(
-                "Failed to connect to the guest login endpoint. "
-                "Please check your network connection and the server status."
-            ) from e
-
-        # attributes based on the `V1GuestLoginResponse` model.
-        user = getattr(credentials, "user", None)
-        user_id = getattr(user, "id", None) if user else None
-        api_key = getattr(user, "api_key", None) if user else None
-
-        if not all([user_id, api_key]):
-            logger.error(
-                f"Incomplete credentials received from guest login: {credentials}"
-            )
-            raise ValueError(
-                "The guest login response did not contain the required 'user_id' and 'api_key' fields."
-            )
-
-        self.save(user_id=user_id, api_key=api_key)
-        logger.info("Successfully authenticated as a guest user.")
-
-        return self.authenticate()
 
     def token_login(self, token_key: str, save_token: bool = True) -> Optional[str]:
         """Performs token-based authentication.
