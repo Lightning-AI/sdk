@@ -85,6 +85,18 @@ type JobsServiceGetLogsParams struct {
 	// Query.
 	Query *string
 
+	/* SandboxCommandIds.
+
+	   sandbox_command_ids narrows to specific commands (within sandbox_id when set).
+	*/
+	SandboxCommandIds []string
+
+	/* SandboxID.
+
+	   sandbox_id returns logs for all of a sandbox's recorded commands.
+	*/
+	SandboxID *string
+
 	/* Severity.
 
 	     Minimum severity to include: returns only lines equal to or more severe than this
@@ -229,6 +241,28 @@ func (o *JobsServiceGetLogsParams) SetQuery(query *string) {
 	o.Query = query
 }
 
+// WithSandboxCommandIds adds the sandboxCommandIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSandboxCommandIds(sandboxCommandIds []string) *JobsServiceGetLogsParams {
+	o.SetSandboxCommandIds(sandboxCommandIds)
+	return o
+}
+
+// SetSandboxCommandIds adds the sandboxCommandIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSandboxCommandIds(sandboxCommandIds []string) {
+	o.SandboxCommandIds = sandboxCommandIds
+}
+
+// WithSandboxID adds the sandboxID to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSandboxID(sandboxID *string) *JobsServiceGetLogsParams {
+	o.SetSandboxID(sandboxID)
+	return o
+}
+
+// SetSandboxID adds the sandboxId to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSandboxID(sandboxID *string) {
+	o.SandboxID = sandboxID
+}
+
 // WithSeverity adds the severity to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) WithSeverity(severity *string) *JobsServiceGetLogsParams {
 	o.SetSeverity(severity)
@@ -371,6 +405,34 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
+	if o.SandboxCommandIds != nil {
+
+		// binding items for sandboxCommandIds
+		joinedSandboxCommandIds := o.bindParamSandboxCommandIds(reg)
+
+		// query array param sandboxCommandIds
+		if err := r.SetQueryParam("sandboxCommandIds", joinedSandboxCommandIds...); err != nil {
+			return err
+		}
+	}
+
+	if o.SandboxID != nil {
+
+		// query param sandboxId
+		var qrSandboxID string
+
+		if o.SandboxID != nil {
+			qrSandboxID = *o.SandboxID
+		}
+		qSandboxID := qrSandboxID
+		if qSandboxID != "" {
+
+			if err := r.SetQueryParam("sandboxId", qSandboxID); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.Severity != nil {
 
 		// query param severity
@@ -443,4 +505,21 @@ func (o *JobsServiceGetLogsParams) bindParamJobIds(formats strfmt.Registry) []st
 	jobIdsIS := swag.JoinByFormat(jobIdsIC, "multi")
 
 	return jobIdsIS
+}
+
+// bindParamJobsServiceGetLogs binds the parameter sandboxCommandIds
+func (o *JobsServiceGetLogsParams) bindParamSandboxCommandIds(formats strfmt.Registry) []string {
+	sandboxCommandIdsIR := o.SandboxCommandIds
+
+	var sandboxCommandIdsIC []string
+	for _, sandboxCommandIdsIIR := range sandboxCommandIdsIR { // explode []string
+
+		sandboxCommandIdsIIV := sandboxCommandIdsIIR // string as string
+		sandboxCommandIdsIC = append(sandboxCommandIdsIC, sandboxCommandIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	sandboxCommandIdsIS := swag.JoinByFormat(sandboxCommandIdsIC, "multi")
+
+	return sandboxCommandIdsIS
 }
