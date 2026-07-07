@@ -90,6 +90,25 @@ describe("Sandbox", () => {
     });
   });
 
+  describe("port URLs", () => {
+    const url = "https://8080-sb-test-s.cloudspaces.litng.ai";
+
+    it("maps portUrls and resolves them via getPortUrl", async () => {
+      enqueueJson(sampleV1({ ports: ["8080"], portUrls: { "8080": url } }));
+      const sb = await Sandbox.get({ sandboxId: "sb-test" });
+      assert.deepEqual(sb.portUrls, { "8080": url });
+      assert.equal(sb.getPortUrl(8080), url);
+      assert.equal(sb.getPortUrl("8080"), url);
+    });
+
+    it("defaults to empty portUrls and throws for unexposed ports", async () => {
+      enqueueJson(sampleV1());
+      const sb = await Sandbox.get({ sandboxId: "sb-test" });
+      assert.deepEqual(sb.portUrls, {});
+      assert.throws(() => sb.getPortUrl(9000), /no URL for port 9000/);
+    });
+  });
+
   describe("list", () => {
     it("returns sandboxes and pagination fields", async () => {
       enqueueJson({

@@ -95,6 +95,7 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     spot: v.spot ?? false,
     status: v.status ?? "",
     ports: v.ports ?? [],
+    portUrls: v.portUrls ?? {},
     runtime: v.runtime ?? "",
     image: v.image ?? "",
     imageSecretRef: v.imageSecretRef ?? "",
@@ -174,6 +175,13 @@ export class Sandbox {
   readonly spot: boolean;
   readonly status: string;
   readonly ports: string[];
+  /**
+   * Public HTTPS URLs for the sandbox's exposed ports, keyed by port number
+   * (e.g. `"8080": "https://8080-<sandbox-id>-s.cloudspaces.litng.ai"`).
+   * Populated when the sandbox was created with `ports`; empty otherwise.
+   * Use {@link Sandbox.getPortUrl} to look up a single port.
+   */
+  readonly portUrls: Record<string, string>;
 
   /** Cluster placement, kept internally for PTY attach. Not exposed publicly. */
   private readonly _clusterId: string;
@@ -225,6 +233,7 @@ export class Sandbox {
     this.spot = data.spot;
     this.status = data.status;
     this.ports = data.ports ?? [];
+    this.portUrls = data.portUrls ?? {};
     this.runtime = data.runtime ?? "";
     this.image = data.image ?? "";
     this.imageSecretRef = data.imageSecretRef ?? "";
@@ -450,6 +459,34 @@ export class Sandbox {
       "DELETE",
       `/v1/core/sandboxes/snapshots/${encodeURIComponent(snapshotId)}`,
     );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Instance methods — networking
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Return the public URL for one of the sandbox's exposed ports.
+   *
+   * ```ts
+   * const sandbox = await Sandbox.create({ instanceType: "cpu-1", ports: [8080] });
+   * const url = sandbox.getPortUrl(8080);
+   * // => "https://8080-<sandbox-id>-s.cloudspaces.litng.ai"
+   * ```
+   *
+   * @throws If the sandbox does not expose `port` (it must be passed via
+   *   `ports` at create time).
+   */
+  getPortUrl(port: number | string): string {
+    const url = this.portUrls[String(port)];
+    if (!url) {
+      const exposed = this.ports.length ? this.ports.join(", ") : "none";
+      throw new Error(
+        `Sandbox ${this.sandboxId} has no URL for port ${port}. ` +
+          `Exposed ports: ${exposed} (pass 'ports' when creating the sandbox).`,
+      );
+    }
+    return url;
   }
 
   // ---------------------------------------------------------------------------
