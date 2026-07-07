@@ -23,6 +23,11 @@ export interface SandboxData {
   spot: boolean;
   status: string;
   ports: string[];
+  /**
+   * Public HTTPS URLs for the sandbox's exposed ports, keyed by port number.
+   * Populated when the sandbox was created with `ports`; empty otherwise.
+   */
+  portUrls: Record<string, string>;
   runtime: string;
   /** Custom OCI image the sandbox was created with (`""` for a curated runtime). */
   image: string;

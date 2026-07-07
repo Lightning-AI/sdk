@@ -466,6 +466,25 @@ def test_sandbox_instance_write_files_uses_write_file():
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_sandbox_instance_port_urls_and_get_port_url():
+    url = "https://8080-sb-7-s.cloudspaces.litng.ai"
+    sb = SandboxInstance(_v1(id="sb-7", ports=["8080"], port_urls={"8080": url}))
+
+    assert sb.port_urls == {"8080": url}
+    assert sb.get_port_url(8080) == url
+    assert sb.get_port_url("8080") == url
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_sandbox_instance_get_port_url_raises_for_unexposed_port():
+    sb = SandboxInstance(_v1(id="sb-8"))
+
+    assert sb.port_urls == {}
+    with pytest.raises(ValueError, match="no URL for port 9000"):
+        sb.get_port_url(9000)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_sandbox_entry_create_forwards_to_create_sandbox():
     mock_inst = mock.MagicMock()
     with mock.patch("lightning_sdk.sandbox.sandbox.create_sandbox", return_value=mock_inst) as m_create:

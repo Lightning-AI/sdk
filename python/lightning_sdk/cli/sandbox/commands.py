@@ -54,6 +54,7 @@ def _sandbox_to_dict(sandbox: SandboxInstance) -> dict[str, Any]:
         "organization_id": sandbox.organization_id,
         "project_id": sandbox.project_id,
         "ports": sandbox.ports,
+        "port_urls": sandbox.port_urls,
         "timeout": sandbox.timeout,
         "created_at": sandbox.created_at,
         "updated_at": sandbox.updated_at,
