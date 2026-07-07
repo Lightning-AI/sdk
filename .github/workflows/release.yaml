@@ -21,6 +21,18 @@ jobs:
       with:
         python-version: 3.11
 
+    # On a release the git tag is authoritative: rewrite the canonical version so
+    # the built wheel matches the tag (strip a leading "v"). This removes the
+    # manual-bump footgun where a release rebuilt an already-published version.
+    - name: Set version from release tag
+      if: github.event_name == 'release'
+      run: |
+        set -euo pipefail
+        VER="${GITHUB_REF_NAME#v}"
+        echo "Releasing version ${VER} (from tag ${GITHUB_REF_NAME})"
+        sed -i -E "s/^__version__ = \".*\"/__version__ = \"${VER}\"/" python/lightning_sdk/__version__.py
+        cat python/lightning_sdk/__version__.py
+
     - name: Install dependencies
       run: >-
         python -m pip install --user --upgrade setuptools wheel
@@ -78,3 +90,6 @@ jobs:
       uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
       with:
         verbose: true
+        # Keep re-runs / already-uploaded files green instead of failing with
+        # "400 File already exists".
+        skip-existing: true

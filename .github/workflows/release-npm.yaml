@@ -24,11 +24,18 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       # Overwrites js/package.json + package-lock.json "version" fields only (no git tag).
+      # On a release the git tag is authoritative (strip a leading "v"); otherwise fall
+      # back to the canonical Python version. Keeps the npm tarball aligned with PyPI.
       # Uses --allow-same-version so jobs stay green when the repo is already in sync.
-      - name: Sync npm version with Python SDK
+      - name: Sync npm version
         run: |
           set -euo pipefail
-          VER=$(grep -E '^__version__ = ' python/lightning_sdk/__version__.py | sed -E 's/^__version__ = "([^"]+)".*/\1/')
+          if [ "${GITHUB_EVENT_NAME}" = "release" ]; then
+            VER="${GITHUB_REF_NAME#v}"
+          else
+            VER=$(grep -E '^__version__ = ' python/lightning_sdk/__version__.py | sed -E 's/^__version__ = "([^"]+)".*/\1/')
+          fi
+          echo "Using version ${VER}"
           (cd js && npm version "$VER" --no-git-tag-version --allow-same-version)
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -95,6 +102,16 @@ jobs:
 
       # Artifact was built in build-package; prepublishOnly would run `npm run clean` and wipe dist/.
       # node_modules are absent here, so --ignore-scripts skips lifecycle hooks and publishes as-is.
+      # Skip if this exact version is already on the registry so re-runs stay green instead of
+      # failing with "cannot publish over the previously published versions".
       - name: Publish distribution to npm
         working-directory: package
-        run: npm publish --access public --ignore-scripts --tag latest
+        run: |
+          set -euo pipefail
+          NAME=$(node -p "require('./package.json').name")
+          VER=$(node -p "require('./package.json').version")
+          if [ -n "$(npm view "${NAME}@${VER}" version 2>/dev/null || true)" ]; then
+            echo "${NAME}@${VER} already published; skipping."
+            exit 0
+          fi
+          npm publish --access public --ignore-scripts --tag latest
