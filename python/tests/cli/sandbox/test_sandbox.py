@@ -62,7 +62,7 @@ class FakeSandboxInstance:
             wait=lambda **_: None,
         )
 
-    def get_command_logs(self, command_id: str):
+    def get_command_logs(self, command_id: str | None = None, *, query: str | None = None, severity: str | None = None):
         return [
             SimpleNamespace(timestamp="2026-01-01T12:00:00Z", message=f"{command_id}: start"),
             SimpleNamespace(timestamp="2026-01-01T12:00:01Z", message=f"{command_id}: done"),
@@ -195,7 +195,8 @@ def test_sandbox_command_help_examples() -> None:
     )
     assert_help_contains(
         "lightning sandbox logs --help",
-        "$ sandbox logs sbx-42 cmd-abc123 --no-timestamps",
+        "$ sandbox logs sbx-42 cmd-abc123",
+        "all commands",
         "start",
         "done",
     )
