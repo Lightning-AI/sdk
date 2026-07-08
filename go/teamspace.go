@@ -745,6 +745,71 @@ func (t *Teamspace) UploadFile(filePath, remotePath string, cloudAccount ...stri
 	return api.Upload(context.Background(), teamspaceArtifactBlobPath(id, remotePath), query, filePath, false)
 }
 
+// DownloadDatasetVersion downloads a dataset version as a zip file to the given
+// target path. The datasetID and version identify the dataset version to download.
+// An optional cloudAccount may be passed to target a specific cluster.
+func (t *Teamspace) DownloadDatasetVersion(datasetID, version, targetPath string, cloudAccount ...string) error {
+	id, err := t.requireID("download dataset version")
+	if err != nil {
+		return err
+	}
+	if datasetID == "" {
+		return errors.New("teamspace download dataset version requires dataset ID")
+	}
+	if version == "" {
+		return errors.New("teamspace download dataset version requires version")
+	}
+	if targetPath == "" {
+		return errors.New("teamspace download dataset version requires target path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	query := url.Values{}
+	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
+		query.Set("token", token)
+	}
+	if len(cloudAccount) > 0 && cloudAccount[0] != "" {
+		query.Set("clusterId", cloudAccount[0])
+	}
+	downloadPath := "/v1/projects/" + url.PathEscape(id) + "/datasets/" + url.PathEscape(datasetID) + "/versions/" + url.PathEscape(version) + "/download"
+	return api.Download(context.Background(), downloadPath, query, targetPath)
+}
+
+// UploadDatasetVersion uploads a file as a dataset version.
+// datasetID and version identify the target dataset version.
+// sourcePath is the local file to upload.
+// An optional cloudAccount may be passed to target a specific cluster.
+func (t *Teamspace) UploadDatasetVersion(datasetID, version, sourcePath string, cloudAccount ...string) error {
+	id, err := t.requireID("upload dataset version")
+	if err != nil {
+		return err
+	}
+	if datasetID == "" {
+		return errors.New("teamspace upload dataset version requires dataset ID")
+	}
+	if version == "" {
+		return errors.New("teamspace upload dataset version requires version")
+	}
+	if sourcePath == "" {
+		return errors.New("teamspace upload dataset version requires source path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	query := url.Values{}
+	if len(cloudAccount) > 0 && cloudAccount[0] != "" {
+		query.Set("clusterId", cloudAccount[0])
+	}
+	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
+		query.Set("token", token)
+	}
+	uploadPath := "/v1/projects/" + url.PathEscape(id) + "/datasets/" + url.PathEscape(datasetID) + "/versions/" + url.PathEscape(version) + "/uploads"
+	return api.Upload(context.Background(), uploadPath, query, sourcePath, true)
+}
+
 // UploadFolder uploads all files from a local folder into teamspace artifacts.
 func (t *Teamspace) UploadFolder(folderPath, remotePath string, cloudAccount ...string) error {
 	if _, err := t.requireID("upload folder"); err != nil {

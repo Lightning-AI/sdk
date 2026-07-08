@@ -133,7 +133,7 @@ class DatasetServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/datasets', 'POST',
+            '/v1/projects/{projectId}/lit-datasets', 'POST',
             path_params,
             query_params,
             header_params,
@@ -234,7 +234,7 @@ class DatasetServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/datasets/{id}', 'DELETE',
+            '/v1/projects/{projectId}/lit-datasets/{id}', 'DELETE',
             path_params,
             query_params,
             header_params,
@@ -343,7 +343,7 @@ class DatasetServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/datasets/{id}', 'GET',
+            '/v1/projects/{projectId}/lit-datasets/{id}', 'GET',
             path_params,
             query_params,
             header_params,
@@ -444,7 +444,7 @@ class DatasetServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/datasets', 'GET',
+            '/v1/projects/{projectId}/lit-datasets', 'GET',
             path_params,
             query_params,
             header_params,
@@ -557,7 +557,7 @@ class DatasetServiceApi(object):
         auth_settings = []  # noqa: E501
 
         return self.api_client.call_api(
-            '/v1/projects/{projectId}/datasets/{id}', 'PUT',
+            '/v1/projects/{projectId}/lit-datasets/{id}', 'PUT',
             path_params,
             query_params,
             header_params,
