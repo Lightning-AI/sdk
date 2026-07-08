@@ -35,8 +35,15 @@ jobs:
           else
             VER=$(grep -E '^__version__ = ' python/lightning_sdk/__version__.py | sed -E 's/^__version__ = "([^"]+)".*/\1/')
           fi
-          echo "Using version ${VER}"
-          (cd js && npm version "$VER" --no-git-tag-version --allow-same-version)
+          # PyPI/PEP440 post-releases look like "2026.7.7.post1", which is NOT valid
+          # semver. Feeding that straight to `npm version` makes node-semver's loose
+          # parser silently mangle it (e.g. the zero-padded tag "2026.07.07.post1"
+          # became "2026.7.0-7.post1" on npm). Map the ".postN" suffix to this
+          # project's npm convention "-postN" (e.g. 2026.6.8-post0); `npm version`
+          # then normalizes the zero-padded CalVer core (2026.07.07 -> 2026.7.7).
+          NPM_VER="${VER/.post/-post}"
+          echo "Using version ${VER} (npm: ${NPM_VER})"
+          (cd js && npm version "$NPM_VER" --no-git-tag-version --allow-same-version)
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
