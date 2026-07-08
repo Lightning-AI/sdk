@@ -7,6 +7,7 @@ claim_pattern:
     _test-sdk-integrations\\.yml|\
     test-with-tired-proxy\\.yml|\
     test-baremetal-agent\\.yml|\
+    test-baremetal-sandbox\\.yml|\
     vendor_cloud_with_sdk\\.yml\
     )@refs/(heads|pull)/.*"
 
