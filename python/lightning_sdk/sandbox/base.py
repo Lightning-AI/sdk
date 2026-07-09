@@ -709,8 +709,16 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             exit_code=None if detached else api_result.exit_code,
         )
 
-    def get_command_logs(self, cmd_id: str) -> list[CommandLog]:
-        return self._sandbox_api.get_command_logs(self.sandbox_id, cmd_id, self.organization_id or None)
+    def get_command_logs(
+        self, cmd_id: str | None = None, *, query: str | None = None, severity: str | None = None
+    ) -> list[CommandLog]:
+        return self._sandbox_api.get_command_logs(
+            self.sandbox_id,
+            cmd_id,
+            project_id=self.project_id or None,
+            query=query,
+            severity=severity,
+        )
 
     def kill_command(self, cmd_id: str) -> None:
         self._sandbox_api.kill_command(self.sandbox_id, cmd_id, self.organization_id or None)

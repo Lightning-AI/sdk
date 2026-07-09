@@ -502,17 +502,28 @@ def run_sandbox_command(
 @click.command("logs", cls=LightningCommand)
 @_with_common_options
 @click.argument("sandbox_id")
-@click.argument("command_id")
+@click.argument("command_id", required=False)
 @click.option("--no-timestamps", is_flag=True, help="Only print log messages.")
+@click.option("--query", default=None, help="Only show lines containing this substring.")
+@click.option(
+    "--severity",
+    default=None,
+    type=click.Choice(["debug", "info", "warning", "error"]),
+    help="Only show lines at or above this severity.",
+)
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def logs_sandbox_command(
     api_key: str | None,
     sandbox_id: str,
-    command_id: str,
+    command_id: str | None,
     no_timestamps: bool,
+    query: str | None,
+    severity: str | None,
     as_json: bool,
 ) -> None:
     """Show logs for a sandbox command.
+
+    Omit COMMAND_ID to show the merged logs of every command in the sandbox.
 
     Example:
       $ sandbox logs sbx-42 cmd-abc123
@@ -521,14 +532,14 @@ def logs_sandbox_command(
 
       2026-01-01T12:00:01Z done
 
-      $ sandbox logs sbx-42 cmd-abc123 --no-timestamps
+      $ sandbox logs sbx-42   # all commands
 
       start
 
       done
     """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
-    logs = sandbox.get_command_logs(command_id)
+    logs = sandbox.get_command_logs(command_id, query=query, severity=severity)
     payload = [{"timestamp": log.timestamp, "message": log.message} for log in logs]
     if as_json:
         _echo_json(payload)
