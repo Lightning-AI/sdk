@@ -1250,6 +1250,69 @@ def test_upload_file(
         assert requests_put_mock.call_count == 0
 
 
+@pytest.mark.parametrize("remote_path", ["/home/zeus/content/file1.tar.gz", "home/zeus/content/file1.tar.gz"])
+@mock.patch("lightning_sdk.api.studio_api._FileUploader")
+@mock.patch("requests.post")
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.utils.tqdm")
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_single_part_leading_slash(
+    authenticate_mock,
+    tqdm_mock,
+    requests_put_mock,
+    requests_post_mock,
+    file_uploader_mock,
+    tmpdir,
+    remote_path,
+):
+    # A leading slash in the remote path must not leak into the request URL as a
+    # double slash after "blobs/"; both variants should hit the same clean URL.
+    requests_put_mock.return_value.status_code = 200
+    requests_post_mock.return_value.status_code = 200
+    tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+    authenticate_mock.return_value = "test-token-123"
+
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 4MB {filepath}".split(" "))
+
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, remote_path, progress_bar=False)
+
+    # Upload PUT targets the cleaned path.
+    (put_url,) = requests_put_mock.call_args.args
+    assert "blobs//" not in put_url
+    assert put_url.endswith("/blobs/home/zeus/content/file1.tar.gz")
+
+    # Completion notification is a POST to "<upload-url>/complete".
+    (complete_url,) = requests_post_mock.call_args.args
+    assert "blobs//" not in complete_url
+    assert complete_url.endswith("/blobs/home/zeus/content/file1.tar.gz/complete")
+
+
+@mock.patch("lightning_sdk.api.studio_api._FileUploader")
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_multipart_leading_slash(authenticate_mock, file_uploader_mock, tmpdir):
+    # A leading slash must not make os.path.join in _sanitize_studio_remote_path
+    # drop the content-root prefix (an absolute second arg would replace the root).
+    authenticate_mock.return_value = "test-token-123"
+
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 200MB {filepath}".split(" "))
+
+    studio_api.upload_file(
+        "st-abc", "ts-abc", "cluster-abc", filepath, "/home/zeus/content/file1.tar.gz", progress_bar=False
+    )
+
+    file_uploader_mock.assert_called_once()
+    remote = file_uploader_mock.call_args.kwargs["remote_path"]
+    assert remote == "/cloudspaces/st-abc/code/content/home/zeus/content/file1.tar.gz"
+
+
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

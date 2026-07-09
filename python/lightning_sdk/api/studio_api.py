@@ -1026,6 +1026,10 @@ class StudioApi:
             remote_path: Destination path inside the Studio.
             progress_bar: Whether to display a progress bar during upload.
         """
+        # The remote path is always relative to the Studio's content root; a leading
+        # slash would produce a malformed upload URL (a double slash after "blobs/").
+        remote_path = remote_path.strip("/")
+
         file_size = os.path.getsize(file_path)
         multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
 
