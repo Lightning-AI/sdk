@@ -1,0 +1,14 @@
+# Orchestration ("brain") dependencies -- run locally.
+# The agent's generated code runs remotely in a Lightning sandbox; torch and
+# transformers are installed there at create time (see src/common.py), not here.
+#
+# The LLM is reached over Lightning's OpenAI-compatible REST gateway via plain
+# `requests` (see src/llm.py) using the same Lightning API key as the sandbox,
+# so there is no langchain-openai / OpenAI key dependency.
+lightning-sdk>=2026.6.25
+requests>=2.31
+beautifulsoup4~=4.12
+langchain-core==0.3.12
+langchain-community==0.3.3
+langgraph==0.2.39
+pydantic==2.9.1
