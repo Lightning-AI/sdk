@@ -8,11 +8,12 @@ the agent's generated code is executed.
 from typing import Any, Dict, TypedDict
 
 # --- LLM configuration -----------------------------------------------------
-# The agent's "brain" talks to Lightning's chat/completions gateway (see
-# src/llm.py), authenticated with the same Lightning API key used for
-# sandboxes -- so no separate LLM provider key is needed.
-MODEL = "openai/gpt-4o"
-DEBUG_MODEL = "openai/gpt-5-mini"
+# The agent's "brain" is a standard LangChain ``ChatOpenAI`` model pointed at
+# Lightning's OpenAI-compatible gateway (see src/llm.py), authenticated with the
+# same Lightning API key used for sandboxes -- so no separate LLM provider key
+# is needed. Any model id from the gateway's catalog works here.
+MODEL = "anthropic/claude-opus-4-8"
+DEBUG_MODEL = "lightning-ai/deepseek-v4-pro"
 
 # --- Sandbox configuration -------------------------------------------------
 # The agent executes its generated code inside a Lightning sandbox. Lightning

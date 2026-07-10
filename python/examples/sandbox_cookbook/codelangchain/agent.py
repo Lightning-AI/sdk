@@ -7,9 +7,10 @@ iterates on failures. Documentation crawled from the web informs its approach.
 How the pieces fit together:
   * The LangGraph "brain" runs locally on your machine; only the agent's
     generated code runs remotely, inside a Lightning sandbox.
-  * The LLM is reached through Lightning's chat/completions gateway (see
-    ``src/llm.py``). The same Lightning API key authenticates both the sandbox
-    API and the LLM, so a single ``sk-lit-...`` key is all you need.
+  * The LLM is a standard LangChain ``ChatOpenAI`` model pointed at Lightning's
+    OpenAI-compatible gateway (see ``src/llm.py``). The same Lightning API key
+    authenticates both the sandbox API and the LLM, so a single ``sk-lit-...``
+    key is all you need -- no OpenAI/Anthropic key required.
   * The sandbox's ML dependencies (torch + transformers) are installed at
     create time (see ``src/common.py``).
   * A sandbox command's stdout and stderr arrive as one combined stream, so we
@@ -166,13 +167,18 @@ def create_sandbox(timeout_ms: int = 30 * MINUTES_MS) -> SandboxInstance:
     return sb
 
 
-def run(code: str, sb: SandboxInstance) -> tuple[str, str]:
-    """Execute ``code`` inside the sandbox, returning (stdout, stderr).
+def run(code: str, sb: SandboxInstance) -> tuple[int, str, str]:
+    """Execute ``code`` inside the sandbox, returning (exit_code, stdout, stderr).
 
     We reuse the same sandbox container for every run, preserving state.
     Lightning merges stdout/stderr into one stream, so we redirect each to a
     file in the sandbox and read them back to recover the separate streams the
     graph nodes rely on.
+
+    We return the process *exit code* alongside the streams: it -- not the mere
+    presence of stderr -- is what distinguishes a real failure from benign
+    warnings (e.g. Hugging Face writes model-download progress to stderr while
+    still exiting 0).
     """
     print(
         f"{COLOR['HEADER']}📦: Running in sandbox{COLOR['ENDC']}",
@@ -201,7 +207,7 @@ def run(code: str, sb: SandboxInstance) -> tuple[str, str]:
             f"{COLOR['HEADER']}📦: Failed with exitcode {returncode}{COLOR['ENDC']}"
         )
 
-    return stdout, stderr
+    return returncode, stdout, stderr
 
 
 def construct_graph(

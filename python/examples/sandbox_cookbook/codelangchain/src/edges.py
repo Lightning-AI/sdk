@@ -55,12 +55,11 @@ def decide_to_check_code_exec(state: GraphState) -> str:
     error = state_dict["error"]
 
     if error == "None":
-        # All documents have been filtered check_relevance
-        # We will re-generate a new query
+        # Imports ran cleanly -- go execute the full code block.
         print("---DECISION: TEST CODE EXECUTION---")
         return "check_code_execution"
     else:
-        # We have relevant documents, so generate answer
+        # Imports failed -- regenerate the solution with the error as feedback.
         print("---DECISION: RE-TRY SOLUTION---")
         return "generate"
 
