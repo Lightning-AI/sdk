@@ -6,6 +6,7 @@ import click
 
 _PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 _PATH_ROOT = os.path.realpath(os.path.join(_PATH_HERE, "..", ".."))
+sys.path.insert(0, _PATH_HERE)
 sys.path.insert(0, _PATH_ROOT)
 
 # The legacy forwarding commands intentionally exit with a migration error when
@@ -15,6 +16,7 @@ os.environ["LIGHTNING_EXPERIMENTAL_CLI_ONLY"] = "1"
 
 import lightning_sdk  # noqa: E402
 from lightning_sdk.cli.entrypoint import main_cli as _main_cli  # noqa: E402
+from _reference import ReferenceDirective  # noqa: E402
 
 _CLI_ARGUMENT_HELP = {
     ("lightning config set user", "user_name"): "User name to make active in the local Lightning CLI config.",
@@ -120,18 +122,14 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_paramlinks",
     "sphinx_togglebutton",
-    "myst_parser",
 ]
 
 click_extra_enable_exec_directives = True
 
 templates_path = ["_templates"]
 
-myst_heading_anchors = 3
-
 source_suffix = {
     ".rst": "restructuredtext",
-    ".md": "markdown",
 }
 
 master_doc = "index"
@@ -231,3 +229,4 @@ linkcheck_ignore = [
 
 def setup(app) -> None:  # noqa: ANN001
     app.add_css_file("main.css")
+    app.add_directive("lightning-reference", ReferenceDirective)
