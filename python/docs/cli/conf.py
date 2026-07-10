@@ -9,9 +9,6 @@ _PATH_ROOT = os.path.realpath(os.path.join(_PATH_HERE, "..", ".."))
 sys.path.insert(0, _PATH_HERE)
 sys.path.insert(0, _PATH_ROOT)
 
-# The legacy forwarding commands intentionally exit with a migration error when
-# invoked. Keep them out of the generated reference while documenting the
-# supported noun-first command tree.
 os.environ["LIGHTNING_EXPERIMENTAL_CLI_ONLY"] = "1"
 
 import lightning_sdk  # noqa: E402

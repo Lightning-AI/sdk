@@ -7,9 +7,6 @@ console script is an alias for the same command group.
 Use the CLI when you want to manage Lightning AI resources from a terminal,
 CI job, shell script, or other automation.
 
-Legacy aliases that only emit a migration error are intentionally omitted;
-their supported noun-first replacements are documented instead.
-
 .. lightning-reference:: main_cli
    :root-label: lightning
    :anchor-prefix: lightning
