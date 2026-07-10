@@ -7,7 +7,7 @@ Make the repository easier to maintain by removing obsolete Chainguard configura
 ## Scope
 
 - Remove the two files under `.github/chainguard/` and leave no empty directory behind.
-- Add a root `CONTRIBUTING.md` and link it from the root `README.md`.
+- Add root `CONTRIBUTING.md` and `RELEASE.md` guides and link them from the root `README.md`.
 - Replace `.github/CODEOWNERS` with the approved ownership rules below.
 - Do not modify SDK implementation or test code.
 - Preserve the unrelated untracked `.codex/` directory.
@@ -27,6 +27,16 @@ The Python section will state these architectural requirements explicitly:
 1. Calls to generated API clients belong only in the `lightning_sdk.api` subpackage. Public modules use that layer instead of calling generated clients directly.
 2. Public Python APIs must not require or optionally accept opaque resource IDs from users. They accept names or resource objects and resolve the corresponding IDs internally.
 3. Tests should cover the public name-based behavior and keep generated-client interactions behind the API layer.
+
+## Release Guide
+
+The release guide will document the required sequence without duplicating the GitHub Actions implementation:
+
+1. Every release candidate must undergo automated internal integration testing before a release tag is created.
+2. A tag and GitHub Release may be created only after that testing succeeds.
+3. Publishing the GitHub Release triggers the existing workflows that publish the Python package to PyPI and the TypeScript package to npm automatically.
+
+The guide will link to `.github/workflows/release.yaml` and `.github/workflows/release-npm.yaml` as the source of truth for the publishing automation.
 
 ## CODEOWNERS Ordering
 
@@ -88,5 +98,6 @@ The approved rules are:
 - Confirm all named CODEOWNERS have write access after `@viveque` is upgraded.
 - Check owner ordering and ensure every explicit module rule contains at least two owners.
 - Check that the contribution guide describes all three language trees and contains both Python architectural requirements.
+- Check that the release guide makes automated internal integration testing a pre-tag requirement and accurately describes GitHub Release-based PyPI and npm publishing.
 - Run Markdown formatting or lint checks available in the repository, plus `git diff --check`.
 - Review the final diff to ensure only the approved housekeeping files changed.
