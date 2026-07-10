@@ -297,8 +297,13 @@ Run package-specific tests from the relevant package directory. See
 [`go/README.md`](go/README.md), and [`python/examples/README.md`](python/examples/README.md)
 for narrower package guides.
 
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for repository-wide contribution
+requirements and development checks.
+
 # Community
 
 Read the [SDK docs](https://lightning.ai/docs/overview/sdk-reference), build on
 [Lightning AI](https://lightning.ai), and use the Apache-2.0 license terms in
 [`LICENSE`](LICENSE).
+
+Maintainers preparing a release should follow [`RELEASE.md`](RELEASE.md).
