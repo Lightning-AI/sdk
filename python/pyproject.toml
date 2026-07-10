@@ -8,13 +8,12 @@ authors = [
     {name = "Lightning-AI", email = "justus@lightning.ai"},
 ]
 description = "SDK to develop using Lightning AI Studios"
-license = {file = "LICENSE"}
+license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 keywords = ["deep learning", "machine learning", "pytorch", "AI"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
 ]
 dependencies = [ # alphabetically sorted
     "backoff", # for api retries
