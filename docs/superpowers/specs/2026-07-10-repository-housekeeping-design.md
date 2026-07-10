@@ -25,16 +25,17 @@ It will direct contributors to the language-specific development configuration a
 The Python section will state these architectural requirements explicitly:
 
 1. Calls to generated API clients belong only in the `lightning_sdk.api` subpackage. Public modules use that layer instead of calling generated clients directly.
-2. Public Python APIs must not require or optionally accept opaque resource IDs from users. They accept names or resource objects and resolve the corresponding IDs internally.
-3. Tests should cover the public name-based behavior and keep generated-client interactions behind the API layer.
+1. Public Python APIs must not require or optionally accept opaque resource IDs from users. They accept names or resource objects and resolve the corresponding IDs internally.
+1. Tests should cover the public name-based behavior and keep generated-client interactions behind the API layer.
 
 ## Release Guide
 
 The release guide will document the required sequence without duplicating the GitHub Actions implementation:
 
 1. Every release candidate must undergo automated internal integration testing before a release tag is created.
-2. A tag and GitHub Release may be created only after that testing succeeds.
-3. Publishing the GitHub Release triggers the existing workflows that publish the Python package to PyPI and the TypeScript package to npm automatically.
+1. The first release tag on a given day uses `vYYYY.MM.DD`. Additional releases that day use `.post0`, `.post1`, and subsequent sequential suffixes, for example `v2026.07.10.post0`.
+1. A tag and GitHub Release may be created only after testing succeeds.
+1. Publishing the GitHub Release triggers the existing workflows that publish the Python package to PyPI and the TypeScript package to npm automatically.
 
 The guide will link to `.github/workflows/release.yaml` and `.github/workflows/release-npm.yaml` as the source of truth for the publishing automation.
 
@@ -43,9 +44,9 @@ The guide will link to `.github/workflows/release.yaml` and `.github/workflows/r
 Within each rule, owners are ordered by priority:
 
 1. `@justusschock`
-2. `@ethanwharris`
-3. `@k223kim`
-4. Other owners ordered according to their contribution history for that file or package
+1. `@ethanwharris`
+1. `@k223kim`
+1. Other owners ordered according to their contribution history for that file or package
 
 The approved rules are:
 
@@ -98,6 +99,6 @@ The approved rules are:
 - Confirm all named CODEOWNERS have write access after `@viveque` is upgraded.
 - Check owner ordering and ensure every explicit module rule contains at least two owners.
 - Check that the contribution guide describes all three language trees and contains both Python architectural requirements.
-- Check that the release guide makes automated internal integration testing a pre-tag requirement and accurately describes GitHub Release-based PyPI and npm publishing.
+- Check that the release guide makes automated internal integration testing a pre-tag requirement, documents the `vYYYY.MM.DD` and `.postN` tag convention, and accurately describes GitHub Release-based PyPI and npm publishing.
 - Run Markdown formatting or lint checks available in the repository, plus `git diff --check`.
 - Review the final diff to ensure only the approved housekeeping files changed.
