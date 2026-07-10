@@ -84,7 +84,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
-        go-version-file: go/go.mod
+        go-version: "1.23.0"
         cache-dependency-path: go/go.sum
     - name: Install tparse
       run: go install github.com/mfridman/tparse@v0.18.0
