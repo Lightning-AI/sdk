@@ -9,6 +9,10 @@ on:
 jobs:
   docs-build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        root: [sdk, cli]
     if: github.event.pull_request.draft == false
     timeout-minutes: 15
 
@@ -30,21 +34,25 @@ jobs:
         uv pip list
 
     - name: Build docs
-      working-directory: python/docs
+      working-directory: python/docs/${{ matrix.root }}
       run: |
-        export PATH="$PWD/../.venv/bin:$PATH"
+        export PATH="$PWD/../../.venv/bin:$PATH"
         make html SPHINXOPTS="-W --keep-going"
 
     - name: Upload docs artifact
       if: github.event_name == 'pull_request'
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
-        name: docs-build
-        path: python/docs/build/html/
+        name: docs-${{ matrix.root }}
+        path: python/docs/${{ matrix.root }}/build/html/
         retention-days: 7
 
   docs-linkcheck:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        root: [sdk, cli]
     if: github.event.pull_request.draft == false
     timeout-minutes: 15
 
@@ -65,9 +73,9 @@ jobs:
         uv pip install -e .
 
     - name: Check links
-      working-directory: python/docs
+      working-directory: python/docs/${{ matrix.root }}
       run: |
-        export PATH="$PWD/../.venv/bin:$PATH"
+        export PATH="$PWD/../../.venv/bin:$PATH"
         make linkcheck
 
   guardian-docs:

@@ -47,8 +47,6 @@ Documentation Map
 The :ref:`Examples <examples:Examples>` provide tutorial walkthroughs for
 common CLI and SDK workflows.
 
-The :ref:`CLI reference <cli:Command Line Interface>` documents the command-line interface.
-
 The :ref:`API reference <api:API Reference>` documents every public class and function.
 
 .. _start-section:
@@ -62,14 +60,4 @@ Start
     install
     quickstart
     examples
-    cli
-
-.. _api-reference-section:
-
-API Reference
-=============
-
-.. toctree::
-    :maxdepth: 1
-
     api

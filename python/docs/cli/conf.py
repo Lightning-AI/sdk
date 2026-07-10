@@ -96,47 +96,6 @@ def _apply_cli_argument_help(command: click.Command, command_path: str) -> None:
 _apply_cli_argument_help(_main_cli, "lightning")
 
 
-def _strip_click_bar(line: str) -> str:
-    return line[2:] if line.startswith("| ") else line
-
-
-def _is_cli_example_heading(line: str) -> bool:
-    return _strip_click_bar(line).strip() in {"Example:", "Examples:"}
-
-
-def _is_cli_example_line(line: str) -> bool:
-    line = _strip_click_bar(line)
-    return line == "" or line.startswith(" ")
-
-
-def _format_cli_examples_as_code_blocks(app, ctx, lines: list[str]) -> None:  # noqa: ANN001, ARG001
-    formatted: list[str] = []
-    index = 0
-
-    while index < len(lines):
-        line = lines[index]
-        if not _is_cli_example_heading(line):
-            formatted.append(line)
-            index += 1
-            continue
-
-        formatted.extend([_strip_click_bar(line).strip(), "", ".. code-block:: console", ""])
-        index += 1
-
-        example_lines: list[str] = []
-        while index < len(lines) and _is_cli_example_line(lines[index]):
-            example_lines.append(_strip_click_bar(lines[index]))
-            index += 1
-
-        while example_lines and example_lines[-1] == "":
-            example_lines.pop()
-
-        formatted.extend(f"    {example_line.lstrip()}" if example_line else "" for example_line in example_lines)
-        formatted.append("")
-
-    lines[:] = formatted
-
-
 project = "Lightning SDK"
 copyright = "Lightning AI"  # noqa: A001
 author = "Lightning AI"
@@ -155,12 +114,14 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.todo",
     "sphinx_autodoc_typehints",
-    "sphinx_click",
+    "click_extra.sphinx",
     "sphinx_copybutton",
     "sphinx_paramlinks",
     "sphinx_togglebutton",
     "myst_parser",
 ]
+
+click_extra_enable_exec_directives = True
 
 templates_path = ["_templates"]
 
@@ -254,8 +215,6 @@ autodoc_mock_imports = [
     "tqdm",
     "backoff",
 ]
-sphinx_click_mock_imports = autodoc_mock_imports
-
 copybutton_prompt_text = ">>> "
 copybutton_prompt_text1 = "... "
 copybutton_only_copy_prompt_lines = True
@@ -270,4 +229,3 @@ linkcheck_ignore = [
 
 def setup(app) -> None:  # noqa: ANN001
     app.add_css_file("main.css")
-    app.connect("sphinx-click-process-description", _format_cli_examples_as_code_blocks)
