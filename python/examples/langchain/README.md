@@ -89,10 +89,10 @@ export LIGHTNING_API_KEY=sk-lit-...
 # export LIGHTNING_CLOUD_URL=https://lightning.ai   # the default
 ```
 
-Then run from the directory that contains the `codelangchain` package:
+Then run from the directory that contains the `langchain` package:
 
 ```bash
-python -m codelangchain.agent --question "How do I run a pre-trained model from the transformers library?"
+python -m langchain.agent --question "How do I run a pre-trained model from the transformers library?"
 ```
 
 Useful flags:

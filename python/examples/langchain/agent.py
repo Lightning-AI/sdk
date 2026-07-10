@@ -17,11 +17,11 @@ How the pieces fit together:
     redirect each to a separate file inside the sandbox and read them back to
     recover the (stdout, stderr) pair the graph nodes expect.
 
-Run it from the directory that contains the ``codelangchain`` package. Provide
+Run it from the directory that contains the ``langchain`` package. Provide
 your Lightning API key via the environment (recommended) or --api-key:
 
     export LIGHTNING_SANDBOX_API_KEY=sk-lit-...
-    python -m codelangchain.agent --question "How do I run a pre-trained model from the transformers library?"
+    python -m langchain.agent --question "How do I run a pre-trained model from the transformers library?"
 """
 
 import argparse
@@ -130,7 +130,7 @@ def create_sandbox(timeout_ms: int = 30 * MINUTES_MS) -> SandboxInstance:
     for attempt in range(3):
         try:
             sb = Sandbox.create(
-                name="codelangchain",
+                name="langchain",
                 instance_type=SANDBOX_INSTANCE_TYPE,
                 runtime=SANDBOX_RUNTIME,
                 storage_gb=SANDBOX_STORAGE_GB,
