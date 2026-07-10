@@ -12,6 +12,9 @@ The live command tree below is expanded at documentation build time. Click
 Extra supplies the headings and terminal fences, while the imported command
 object remains the SDK's existing `rich-click` CLI.
 
+Legacy aliases that only emit a migration error are intentionally omitted;
+their supported noun-first replacements are documented instead.
+
 ```{click:tree} main_cli
 :root-label: lightning --help
 :anchor-prefix: lightning

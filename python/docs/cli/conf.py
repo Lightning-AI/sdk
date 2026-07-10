@@ -3,16 +3,18 @@ import socket
 import sys
 
 import click
-from click.formatting import HelpFormatter
 
 _PATH_HERE = os.path.abspath(os.path.dirname(__file__))
 _PATH_ROOT = os.path.realpath(os.path.join(_PATH_HERE, "..", ".."))
 sys.path.insert(0, _PATH_ROOT)
 
+# The legacy forwarding commands intentionally exit with a migration error when
+# invoked. Keep them out of the generated reference while documenting the
+# supported noun-first command tree.
+os.environ["LIGHTNING_EXPERIMENTAL_CLI_ONLY"] = "1"
+
 import lightning_sdk  # noqa: E402
 from lightning_sdk.cli.entrypoint import main_cli as _main_cli  # noqa: E402
-
-_main_cli.context_class.formatter_class = HelpFormatter
 
 _CLI_ARGUMENT_HELP = {
     ("lightning config set user", "user_name"): "User name to make active in the local Lightning CLI config.",
