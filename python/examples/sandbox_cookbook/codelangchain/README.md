@@ -31,14 +31,14 @@ generate ──▶ check_code_imports ──▶ check_code_execution ──▶ e
    (`PromptTemplate | chat_model.with_structured_output(Code)`) asks the model
    for a structured `{prefix, imports, code}` solution, using crawled
    documentation as context.
-2. **`check_code_imports`** — runs *just the imports* in the sandbox. A non-zero
+1. **`check_code_imports`** — runs *just the imports* in the sandbox. A non-zero
    exit code means the imports are broken → regenerate with the error as
    feedback.
-3. **`check_code_execution`** — runs the full code block in the sandbox and
+1. **`check_code_execution`** — runs the full code block in the sandbox and
    captures its stdout/stderr and exit code.
-4. **`evaluate_execution`** — the model judges whether the run succeeded and
+1. **`evaluate_execution`** — the model judges whether the run succeeded and
    decides `finish` or `retry`.
-5. **`finish`** — assembles the final answer (approach + code + real execution
+1. **`finish`** — assembles the final answer (approach + code + real execution
    output) and deletes the sandbox.
 
 Because Lightning merges a command's stdout and stderr into one stream, `run()`
@@ -64,14 +64,14 @@ DEBUG_MODEL = "lightning-ai/deepseek-v4-pro"
 
 ## Repo structure
 
-| File | Purpose |
-| --- | --- |
-| `agent.py` | Entry point: creates the sandbox, builds + runs the graph, defines `run()`. |
-| `src/common.py` | Shared config: model ids, sandbox runtime/instance, dependency install script, graph state. |
-| `src/llm.py` | Builds a `ChatOpenAI` wired to Lightning's gateway. |
-| `src/nodes.py` | Graph nodes (the actions that mutate state). |
-| `src/edges.py` | Graph edges (the transitions between nodes). |
-| `src/retrieval.py` | Crawls the docs used as context for generation. |
+| File               | Purpose                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| `agent.py`         | Entry point: creates the sandbox, builds + runs the graph, defines `run()`.                 |
+| `src/common.py`    | Shared config: model ids, sandbox runtime/instance, dependency install script, graph state. |
+| `src/llm.py`       | Builds a `ChatOpenAI` wired to Lightning's gateway.                                         |
+| `src/nodes.py`     | Graph nodes (the actions that mutate state).                                                |
+| `src/edges.py`     | Graph edges (the transitions between nodes).                                                |
+| `src/retrieval.py` | Crawls the docs used as context for generation.                                             |
 
 ## Running it
 
@@ -127,4 +127,4 @@ def factorial(n):
 To make the agent an expert on a *different* library, change two things:
 
 1. The sandbox dependency install (`SANDBOX_SETUP_SCRIPT` in `src/common.py`).
-2. The documentation URL crawled in `src/retrieval.py`.
+1. The documentation URL crawled in `src/retrieval.py`.
