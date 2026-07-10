@@ -35,6 +35,40 @@ Read /workspace/notes.md from our previous turn and add the current kernel versi
 The default Eve HTTP channel is also available at `http://127.0.0.1:2000/eve/v1`.
 For a headless server, use `npm run dev:no-ui`.
 
+## Using Lightning models API
+
+Eve accepts baseURL and authToken options to connect to the Lightning models API and since we support Anthropic models, this works out of the box:
+
+```js
+const lightning = createAnthropic({
+  baseURL: "https://lightning.ai/v1",
+  authToken: apiKey,
+});
+
+export default defineAgent({
+  model: lightning("claude-opus-4-8"),
+  reasoning: "high",
+  limits: {
+    maxOutputTokensPerSession: 40_000,
+  },
+});
+```
+
+## Using Lightning sandboxes
+
+Eve allows you to define custom sandbox backends, to add lightning:
+
+```js
+export default defineSandbox({
+  description: "A durable Lightning AI CPU sandbox with a persistent /workspace.",
+  backend: lightningSandbox({
+    instanceType: "cpu-1",
+    networkPolicy: "allow-all",
+    timeout: 30 * 60_000,
+  }),
+});
+```
+
 ## Files worth reading
 
 - `agent/agent.ts` configures Lightning's Anthropic-compatible Models API.
