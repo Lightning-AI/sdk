@@ -2,7 +2,7 @@
  * Create a CPU sandbox, run a command, and tear it down.
  *
  * Usage:
- *   LIGHTNING_API_KEY=... npx tsx examples/cpu-sandbox.ts
+ *   LIGHTNING_SANDBOX_API_KEY=... npx tsx examples/cpu-sandbox.ts
  */
 import { Sandbox } from "../src/index.js";
 

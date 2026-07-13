@@ -7,7 +7,7 @@
  * Requires Node 22+ for the built-in WebSocket global.
  *
  * Usage:
- *   LIGHTNING_API_KEY=... npx tsx examples/sandbox-pty.ts
+ *   LIGHTNING_SANDBOX_API_KEY=... npx tsx examples/sandbox-pty.ts
  */
 import { Sandbox } from "../src/index.js";
 

@@ -88,7 +88,7 @@ npm install
 Provide your Lightning API key (and cloud URL if you're not on the default):
 
 ```bash
-export LIGHTNING_API_KEY=sk-lit-...
+export LIGHTNING_SANDBOX_API_KEY=sk-lit-...
 # export LIGHTNING_CLOUD_URL=https://lightning.ai   # the default
 ```
 

@@ -14,7 +14,7 @@ stopping the server snapshots it, and the next run resumes it by sandbox ID.
 
 ## Run it
 
-Node 24+ and `LIGHTNING_API_KEY` are required. From this directory:
+Node 24+ and `LIGHTNING_SANDBOX_API_KEY` are required. From this directory:
 
 ```bash
 npm install
@@ -22,7 +22,7 @@ npm run dev
 ```
 
 The scripts automatically load the repository-root `.env` when it exists.
-Otherwise, export `LIGHTNING_API_KEY` before running them.
+Otherwise, export `LIGHTNING_SANDBOX_API_KEY` before running them.
 
 Try prompts that force real sandbox work:
 
