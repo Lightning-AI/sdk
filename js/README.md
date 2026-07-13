@@ -121,8 +121,13 @@ const pty = await sandbox.process.createPty({
   onData: writeToStdout,
 });
 
+await pty.waitForConnection();
 await pty.sendInput("python --version\n");
-await pty.sendInput("exit\n");
+
+// A PTY is backed by a persistent `screen` session, so `exit` alone leaves the
+// attach socket open and `pty.wait()` would block forever. Detach explicitly
+// (or use `sandbox.process.killPtySession(...)` to also kill the screen session).
+await pty.disconnect();
 await pty.wait();
 
 await sandbox.delete();
