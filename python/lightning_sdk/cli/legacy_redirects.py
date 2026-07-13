@@ -104,5 +104,33 @@ class HiddenAliasGroup(LightningGroup):
         return self.target_group.list_commands(ctx)
 
 
+class DeprecatedGroup(LightningGroup):
+    """A hidden group whose subcommands show deprecation warnings pointing to a replacement."""
+
+    def __init__(self, *args: object, replacement: str, **kwargs: object) -> None:
+        kwargs.setdefault("hidden", True)
+        super().__init__(*args, **kwargs)
+        self._replacement = replacement
+
+    def get_help(self, ctx: click.Context) -> str:
+        return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n{super().get_help(ctx)}"
+
+    def add_command(self, cmd: click.Command, name: str | None = None) -> None:
+        cmd.invoke = self._make_deprecated_invoke(cmd.invoke)
+        cmd.get_help = self._make_deprecated_get_help(cmd.get_help)
+        super().add_command(cmd, name)
+
+    def _make_deprecated_invoke(self, original_invoke):
+        def _deprecated_invoke(ctx):
+            _echo_deprecation_warning(ctx.command_path, self._replacement)
+            return original_invoke(ctx)
+        return _deprecated_invoke
+
+    def _make_deprecated_get_help(self, original_get_help):
+        def _deprecated_get_help(ctx):
+            return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n" + original_get_help(ctx)
+        return _deprecated_get_help
+
+
 def build_hidden_alias_group(name: str, target_group: click.Group) -> HiddenAliasGroup:
     return HiddenAliasGroup(name=name, target_group=target_group)

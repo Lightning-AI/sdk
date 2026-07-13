@@ -21,6 +21,7 @@ from lightning_sdk.cli.sandbox import register_commands as register_sandbox_comm
 from lightning_sdk.cli.ssh import register_commands as register_ssh_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
 from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
+from lightning_sdk.cli.legacy_redirects import DeprecatedGroup
 
 
 @click.group(name="studio", cls=LightningGroup)
@@ -131,12 +132,12 @@ def api_key() -> None:
     """
 
 
-@click.group(name="file", cls=LightningGroup)
+@click.group(name="file", cls=DeprecatedGroup, replacement="lightning cp")
 def file() -> None:
     """Upload and download files."""
 
 
-@click.group(name="folder", cls=LightningGroup)
+@click.group(name="folder", cls=DeprecatedGroup, replacement="lightning cp -r")
 def folder() -> None:
     """Upload and download folders."""
 

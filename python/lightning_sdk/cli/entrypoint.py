@@ -43,7 +43,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment"]},
         {"name": "ACCESS", "commands": ["api-key", "ssh", "license"]},
-        {"name": "DATA & FILES", "commands": ["cp", "file", "folder"]},
+        {"name": "DATA & FILES", "commands": ["cp"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
@@ -177,8 +177,8 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             "download",
             {
                 "container": ("lightning container download", container.commands["download"]),
-                "file": ("lightning file download", file.commands["download"]),
-                "folder": ("lightning folder download", folder.commands["download"]),
+                "file": ("lightning cp", cp),
+                "folder": ("lightning cp -r", cp),
                 "model": ("lightning model download", model.commands["download"]),
             },
         )
@@ -238,8 +238,8 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             "upload",
             {
                 "container": ("lightning container upload", container.commands["upload"]),
-                "file": ("lightning file upload", file.commands["upload"]),
-                "folder": ("lightning folder upload", folder.commands["upload"]),
+                "file": ("lightning cp", cp),
+                "folder": ("lightning cp -r", cp),
                 "model": ("lightning model upload", model.commands["upload"]),
             },
         )
