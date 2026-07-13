@@ -21,7 +21,7 @@ def test_upload_file_legacy_help() -> None:
         "lightning upload file --help",
         "Deprecation warning:",
         "Use `lightning cp` instead of `lightning upload file`.",
-        "Usage: lightning upload file [OPTIONS] PATH",
+        "Usage: lightning upload file [OPTIONS] SOURCE [DESTINATION]",
     )
 
 

@@ -25,5 +25,5 @@ def test_download_folder_legacy_help() -> None:
         "lightning download folder --help",
         "Deprecation warning:",
         "Use `lightning cp -r` instead of `lightning download folder`.",
-        "Usage: lightning download folder [OPTIONS] PATH",
+        "Usage: lightning download folder [OPTIONS] SOURCE [DESTINATION]",
     )
