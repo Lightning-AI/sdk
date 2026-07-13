@@ -4,6 +4,8 @@ import re
 
 import rich_click as click
 
+from lightning_sdk.cli.utils.logging import LightningGroup
+
 _RAW_API_COMMAND_NAME = "__request"
 _RELATIVE_API_PATH_RE = re.compile(r"^v\d+(?:/|$)")
 _OPTIONS_WITH_VALUES = {
@@ -45,7 +47,7 @@ def _request_path_arg(args: list[str]) -> str | None:
     return None
 
 
-class APIGroup(click.Group):
+class APIGroup(LightningGroup):
     """API command group with a raw HTTP request fallback."""
 
     def parse_args(self, ctx: click.Context, args: list[str]) -> list[str]:

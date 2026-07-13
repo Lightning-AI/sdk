@@ -20,6 +20,7 @@ import rich_click as click
 
 from lightning_sdk import __version__
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.lightning_cloud.login import Auth
 
 _CACHE_DIR = Path.home() / ".lightning" / "cache" / "api"
@@ -30,7 +31,7 @@ _JSON_CONTENT_TYPES = ("application/json", "+json")
 _REQUEST_TIMEOUT = 60
 
 
-class _APIRequestCommand(click.Command):
+class _APIRequestCommand(LightningCommand):
     def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         formatter.write_usage(ctx.command_path.replace(" __request", ""), " ".join(self.collect_usage_pieces(ctx)))
 
