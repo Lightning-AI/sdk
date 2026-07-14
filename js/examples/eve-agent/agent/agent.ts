@@ -1,9 +1,9 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { defineAgent } from "eve";
 
-const apiKey = process.env.LIGHTNING_API_KEY;
+const apiKey = process.env.LIGHTNING_SANDBOX_API_KEY ?? process.env.LIGHTNING_API_KEY;
 if (!apiKey) {
-  throw new Error("LIGHTNING_API_KEY is required");
+  throw new Error("LIGHTNING_SANDBOX_API_KEY is required");
 }
 
 const lightning = createAnthropic({

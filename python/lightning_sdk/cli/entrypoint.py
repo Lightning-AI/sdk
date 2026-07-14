@@ -17,6 +17,7 @@ from lightning_sdk.cli.groups import (
     config,
     container,
     cp,
+    dataset,
     deployment,
     file,
     folder,
@@ -127,6 +128,7 @@ main_cli.add_command(ssh)
 main_cli.add_command(studio)
 main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
+main_cli.add_command(dataset)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 
@@ -140,6 +142,7 @@ main_cli.add_command(build_hidden_alias_group("containers", container))
 main_cli.add_command(build_hidden_alias_group("models", model))
 main_cli.add_command(build_hidden_alias_group("files", file))
 main_cli.add_command(build_hidden_alias_group("folders", folder))
+main_cli.add_command(build_hidden_alias_group("datasets", dataset))
 main_cli.add_command(build_hidden_alias_group("studios", studio))
 main_cli.add_command(build_hidden_alias_group("sandboxes", sandbox))
 main_cli.add_command(build_hidden_alias_group("base-studios", base_studio))
@@ -177,6 +180,7 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             "download",
             {
                 "container": ("lightning container download", container.commands["download"]),
+                "dataset": ("lightning dataset download", dataset.commands["download"]),
                 "file": ("lightning cp", cp),
                 "folder": ("lightning cp -r", cp),
                 "model": ("lightning model download", model.commands["download"]),
