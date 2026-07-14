@@ -1,0 +1,25 @@
+{
+  "name": "langchain-js",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Coding agent that runs LLM-generated code inside a Lightning Sandbox, orchestrated with LangGraph.",
+  "scripts": {
+    "agent": "tsx agent.ts"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/langgraph": "^0.2.0",
+    "@langchain/openai": "^0.3.0",
+    "@lightningai/sdk": "^2026.7.3",
+    "cheerio": "^1.0.0",
+    "jsdom": "^25.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0"
+  }
+}
