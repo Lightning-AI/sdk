@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Mapping
 
 import click
@@ -120,15 +121,21 @@ class DeprecatedGroup(LightningGroup):
         cmd.get_help = self._make_deprecated_get_help(cmd.get_help)
         super().add_command(cmd, name)
 
-    def _make_deprecated_invoke(self, original_invoke):
-        def _deprecated_invoke(ctx):
+    def _make_deprecated_invoke(
+        self, original_invoke: Callable[[click.Context], object]
+    ) -> Callable[[click.Context], object]:
+        def _deprecated_invoke(ctx: click.Context) -> object:
             _echo_deprecation_warning(ctx.command_path, self._replacement)
             return original_invoke(ctx)
+
         return _deprecated_invoke
 
-    def _make_deprecated_get_help(self, original_get_help):
-        def _deprecated_get_help(ctx):
+    def _make_deprecated_get_help(
+        self, original_get_help: Callable[[click.Context], str]
+    ) -> Callable[[click.Context], str]:
+        def _deprecated_get_help(ctx: click.Context) -> str:
             return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n" + original_get_help(ctx)
+
         return _deprecated_get_help
 
 
