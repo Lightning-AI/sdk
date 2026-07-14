@@ -1,9 +1,55 @@
-from typing import Optional
+from typing import List, Optional, Union
 import json
+import math
 import os
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+from pathlib import Path
+
+import backoff
+import requests
+from tqdm.auto import tqdm
+
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
 from lightning_sdk.lightning_cloud import env
+
+from lightning_sdk.api.utils import (
+    _BYTES_PER_MB,
+    _MAX_BATCH_SIZE,
+    _MAX_SIZE_MULTI_PART_CHUNK,
+    _MAX_WORKERS,
+    _SIZE_LIMIT_SINGLE_PART,
+)
+
+
+def _parse_dataset_path(name: str) -> tuple:
+    """Parse a dataset path like 'org/teamspace/dataset/version' into components.
+
+    Returns (org, teamspace_name, dataset_name, version).
+    """
+    parts = name.split("/")
+    if len(parts) == 3:
+        # org/teamspace/dataset_name (no version specified)
+        org_name, ts_name, dataset_name = parts
+        version = None
+    elif len(parts) >= 4:
+        # org/teamspace/dataset_name/version
+        org_name, ts_name, dataset_name, *rest = parts
+        version = rest[0] if rest else None
+    else:
+        raise ValueError(
+            "NAME must be a Lightning path in the format <ORG>/<TEAMSPACE>/<DATASET_NAME> "
+            "or <ORG>/<TEAMSPACE>/<DATASET_NAME>/<VERSION>, "
+            "e.g. 'my-org/my-teamspace/my-dataset' or 'my-org/my-teamspace/my-dataset/v3'"
+        )
+    if not org_name or not ts_name or not dataset_name:
+        raise ValueError(
+            "NAME must be a Lightning path in the format <ORG>/<TEAMSPACE>/<DATASET_NAME> "
+            "or <ORG>/<TEAMSPACE>/<DATASET_NAME>/<VERSION>, "
+            "e.g. 'my-org/my-teamspace/my-dataset' or 'my-org/my-teamspace/my-dataset/v3'"
+        )
+    return org_name, ts_name, dataset_name, version
 
 
 def _resolve_dataset_current_version(project_id: str, dataset_name: str) -> Optional[str]:
@@ -148,3 +194,315 @@ def _download_dataset_version(
         shutil.make_archive(base, "zip", tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+def _create_dataset(
+    project_id: str,
+    name: str,
+    cluster_id: Optional[str] = None,
+) -> dict:
+    """Create a new Lightning Dataset via the API.
+
+    This only creates the dataset record. It does not create a version;
+    call ``_create_dataset_version`` afterwards before uploading any files.
+
+    Args:
+        project_id: The teamspace/project ID.
+        name: Dataset name.
+        cluster_id: Optional cloud account/cluster ID for storage.
+
+    Returns:
+        The created dataset dict (containing ``id``).
+    """
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+
+    body: dict = {"name": name}
+    if cluster_id:
+        body["cluster_id"] = cluster_id
+
+    resp = api_client.request(
+        "POST",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}/lit-datasets",
+        headers=api_client.default_headers,
+        body=body,
+        _preload_content=True,
+    )
+    return json.loads(resp.data) if resp.data else {}
+
+
+def _create_dataset_version(
+    project_id: str,
+    dataset_id: str,
+    cluster_id: str,
+    version: Optional[str] = None,
+) -> dict:
+    """Create a new version of a Lightning Dataset via the API.
+
+    A dataset version must exist before any files can be uploaded, since the
+    upload endpoints are scoped to a specific version. When ``version`` is
+    omitted, the backend auto-assigns the next ``vN`` tag.
+
+    Args:
+        project_id: The teamspace/project ID.
+        dataset_id: The ID of the dataset to add a version to.
+        cluster_id: Cloud account/cluster ID for storage (required).
+        version: Optional explicit version tag (e.g. ``"v1"``).
+
+    Returns:
+        The created version dict (containing ``version``).
+    """
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+
+    body: dict = {"cluster_id": cluster_id}
+    if version:
+        body["version"] = version
+
+    resp = api_client.request(
+        "POST",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}/lit-datasets/{dataset_id}/versions",
+        headers=api_client.default_headers,
+        body=body,
+        _preload_content=True,
+    )
+    return json.loads(resp.data) if resp.data else {}
+
+
+class _DatasetFileUploader:
+    """Handles the upload of dataset files using the Lit Dataset Service API."""
+
+    def __init__(
+        self,
+        client: LightningClient,
+        dataset_id: str,
+        version: str,
+        teamspace_id: str,
+        file_path: str,
+        remote_path: str,
+        progress_bar: bool,
+    ) -> None:
+        self._client = client
+        self._dataset_id = dataset_id
+        self._version = version
+        self._teamspace_id = teamspace_id
+        self._local_path = file_path
+        self._remote_path = remote_path
+        self._filesize = os.path.getsize(file_path)
+        self._chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
+        assert self._chunk_size < _SIZE_LIMIT_SINGLE_PART
+        self._max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
+        self._batch_size = int(os.environ.get("LIGHTNING_MULTI_PART_BATCH_SIZE", _MAX_BATCH_SIZE))
+        self._multipart_threshold = int(
+            os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK)
+        )
+        if progress_bar:
+            self._progress_bar = tqdm(
+                desc=f"Uploading {os.path.split(file_path)[1]}",
+                total=self._filesize, unit="B", unit_scale=True,
+                unit_divisor=1000, leave=False, position=-1, mininterval=1,
+            )
+        else:
+            self._progress_bar = None
+
+    def __call__(self) -> None:
+        count = 1 if self._filesize <= self._multipart_threshold else math.ceil(
+            self._filesize / self._chunk_size
+        )
+        return self._multipart_upload(count=count)
+
+    @property
+    def _base_url(self) -> str:
+        return (
+            f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{self._teamspace_id}"
+            f"/lit-datasets/{self._dataset_id}/versions/{self._version}"
+        )
+
+    def _request(self, method, url, body=None):
+        api_client: ApiClient = self._client.api_client
+        resp = api_client.request(
+            method, url, headers=api_client.default_headers,
+            body=body, _preload_content=True,
+        )
+        return json.loads(resp.data) if resp.data else {}
+
+    def _multipart_upload(self, count):
+        resp = self._request("POST", f"{self._base_url}/uploads",
+                             body={"filepath": self._remote_path})
+        upload_id = resp.get("uploadId") or resp.get("upload_id")
+        if not upload_id:
+            raise ValueError(f"Could not find upload_id in response: {resp}")
+        with ThreadPoolExecutor(max_workers=self._max_workers) as p:
+            parts = list(range(1, count + 1))
+            batches = [parts[i:i + self._batch_size] for i in range(0, len(parts), self._batch_size)]
+            completed = []
+            for batch in tqdm(batches, desc=f"Chunks {os.path.split(self._local_path)[1]}", leave=False):
+                completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=upload_id))
+        self._request("POST", f"{self._base_url}/uploads/{upload_id}/complete", body={
+            "filepath": self._remote_path,
+            "parts": [{"etag": p["etag"], "partNumber": str(p["part_number"])} for p in completed],
+        })
+
+    def _process_upload_batch(self, executor, batch, upload_id):
+        urls = self._request_urls(parts=batch, upload_id=upload_id)
+        func = partial(self._handle_uploading_single_part, upload_id=upload_id)
+        return list(executor.map(func, urls))
+
+    def _request_urls(self, parts, upload_id):
+        resp = self._request("POST", f"{self._base_url}/uploads/{upload_id}/parts",
+                             body={"filepath": self._remote_path, "parts": [str(p) for p in parts]})
+        return resp.get("urls", [])
+
+    def _handle_uploading_single_part(self, presigned_url, upload_id):
+        try:
+            return self._handle_upload_presigned_url(presigned_url)
+        except Exception:
+            part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
+            return self._error_handling_upload(part=int(part_number), upload_id=upload_id)
+
+    def _handle_upload_presigned_url(self, presigned_url):
+        part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
+        url = presigned_url.get("url")
+        with open(self._local_path, "rb") as f:
+            f.seek((int(part_number) - 1) * self._chunk_size)
+            data = f.read(self._chunk_size)
+        response = requests.put(url, data=data)
+        response.raise_for_status()
+        if self._progress_bar is not None:
+            self._progress_bar.update(len(data))
+        return {"etag": response.headers.get("ETag"), "part_number": part_number}
+
+    @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
+    def _error_handling_upload(self, part, upload_id):
+        urls = self._request_urls(parts=[part], upload_id=upload_id)
+        if len(urls) != 1:
+            raise ValueError(f"expected 1 URL, got {len(urls)} for part {part}")
+        return self._handle_upload_presigned_url(presigned_url=urls[0])
+
+
+def _upload_dataset_files(
+    project_id: str,
+    dataset_id: str,
+    version: str,
+    file_paths: List[Union[str, Path]],
+    remote_paths: List[str],
+    progress_bar: bool = True,
+) -> None:
+    """Upload files to a version using multipart uploads."""
+    client = LightningClient(retry=False)
+    main_pbar = tqdm(total=len(file_paths), desc="Uploading files...", position=0) if progress_bar else None
+
+    assert len(file_paths) == len(remote_paths)
+    for filepath, remote_path in zip(file_paths, remote_paths):
+        _DatasetFileUploader(
+            client=client, dataset_id=dataset_id, version=version,
+            teamspace_id=project_id, file_path=str(filepath),
+            remote_path=str(remote_path), progress_bar=progress_bar,
+        )()
+        if main_pbar:
+            main_pbar.update(1)
+
+
+def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> None:
+    """Signal that all files for a dataset version have been uploaded."""
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+    api_client.request(
+        "POST",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}"
+        f"/lit-datasets/{dataset_id}/versions/{version}/complete",
+        headers=api_client.default_headers,
+        body={},
+        _preload_content=True,
+    )
+
+
+def _list_datasets(project_id: str) -> list:
+    """List all Lightning Datasets in a Teamspace."""
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+    resp = api_client.request(
+        "GET",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}/lit-datasets",
+        headers=api_client.default_headers,
+        _preload_content=True,
+    )
+    data = json.loads(resp.data) if resp.data else {}
+    return data.get("datasets", [])
+
+
+def _list_dataset_versions(project_id: str, dataset_id: str) -> list:
+    """List all versions of a Lightning Dataset."""
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+    resp = api_client.request(
+        "GET",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}/lit-datasets/{dataset_id}/versions",
+        headers=api_client.default_headers,
+        _preload_content=True,
+    )
+    data = json.loads(resp.data) if resp.data else {}
+    return data.get("versions", [])
+
+
+def _get_dataset_by_name(project_id: str, dataset_name: str) -> Optional[dict]:
+    """Look up a Lightning Dataset by name."""
+    datasets = _list_datasets(project_id)
+    for ds in datasets:
+        if ds.get("name") == dataset_name:
+            return ds
+    return None
+
+
+def _upload_dataset(
+    project_id: str,
+    name: str,
+    version: Optional[str],
+    cluster_id: Optional[str],
+    file_paths: List[Path],
+    relative_paths: List[str],
+    progress_bar: bool,
+) -> dict:
+    """Perform a full dataset upload.
+
+    If a dataset with the given name already exists, a new version is created
+    on the existing dataset.  Otherwise a new dataset record is created first.
+    """
+    existing = _get_dataset_by_name(project_id=project_id, dataset_name=name)
+    if existing:
+        dataset_id = existing.get("id")
+        # compute the next version number from existing versions
+        if version is None:
+            versions = _list_dataset_versions(project_id=project_id, dataset_id=dataset_id)
+            max_v = 0
+            for v in versions:
+                ver_str = v.get("version", "") if isinstance(v, dict) else str(v)
+                if ver_str.startswith("v"):
+                    try:
+                        n = int(ver_str[1:])
+                        max_v = max(max_v, n)
+                    except ValueError:
+                        pass
+            version = f"v{max_v + 1}"
+    else:
+        ds = _create_dataset(
+            project_id=project_id, name=name, cluster_id=cluster_id,
+        )
+        dataset_id = ds.get("id")
+
+    # CreateLitDataset only creates the dataset record; a version must be
+    # created explicitly before the version-scoped upload endpoints exist.
+    ver = _create_dataset_version(
+        project_id=project_id, dataset_id=dataset_id,
+        cluster_id=cluster_id, version=version,
+    )
+    ds_version = ver.get("version")
+
+    _upload_dataset_files(
+        project_id=project_id, dataset_id=dataset_id,
+        version=ds_version, file_paths=file_paths,
+        remote_paths=relative_paths, progress_bar=progress_bar,
+    )
+    _complete_dataset_upload(
+        project_id=project_id, dataset_id=dataset_id, version=ds_version,
+    )
+    return {"id": dataset_id, "name": name, "version": ds_version}
