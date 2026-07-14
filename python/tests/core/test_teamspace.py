@@ -474,6 +474,7 @@ def test_list_jobs(
     list_jobs_mock,
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
+    internal_user_api_mocker,
 ):
     jobs = [V1Job(name="jobv2-1"), V1Job(name="jobv2-2"), V1Job(name="jobv2-3")]
     ts = Teamspace("ts-abc", org="org-abc")
@@ -495,7 +496,12 @@ def test_list_jobs(
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_mmts(list_mmts_mock, internal_get_org_api_mocker, internal_teamspace_api_mocker):
+def test_list_mmts(
+    list_mmts_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
     mmts = [V1MultiMachineJob(name="mmtv2-1"), V1MultiMachineJob(name="mmtv2-2"), V1MultiMachineJob(name="mmtv2-3")]
     ts = Teamspace("ts-abc", org="org-abc")
 
@@ -1239,7 +1245,7 @@ def test_download_dataset_version(
         )
         mock_api_client.request.assert_any_call(
             "GET",
-            "https://lightning.ai/v1/projects/proj-1/datasets/ds-1/versions/3/files",
+            "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-1/versions/3/files",
             query_params={"clusterId": "aws-us-east"},
             headers=mock.ANY,
             _preload_content=True,
@@ -1300,7 +1306,7 @@ def test_download_dataset_version_no_token_no_cluster(
         )
         mock_api_client.request.assert_any_call(
             "GET",
-            "https://lightning.ai/v1/projects/proj-1/datasets/ds-2/versions/1/files",
+            "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-2/versions/1/files",
             query_params={},
             headers=mock.ANY,
             _preload_content=True,
