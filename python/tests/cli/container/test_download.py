@@ -25,8 +25,8 @@ def test_download_help() -> None:
         "lightning download --help",
         "`lightning download` has moved to noun-first commands:",
         "container -> lightning container download",
-        "file -> lightning file download",
-        "folder -> lightning folder download",
+        "file -> lightning cp",
+        "folder -> lightning cp -r",
         "model -> lightning model download",
     )
     assert "Deprecation warning:" not in text

@@ -27,8 +27,8 @@ def test_download_file_legacy_help() -> None:
     assert_help_contains(
         "lightning download file --help",
         "Deprecation warning:",
-        "Use `lightning file download` instead of `lightning download file`.",
-        "Usage: lightning download file [OPTIONS] PATH",
+        "Use `lightning cp` instead of `lightning download file`.",
+        "Usage: lightning download file [OPTIONS] SOURCE [DESTINATION]",
     )
 
 
