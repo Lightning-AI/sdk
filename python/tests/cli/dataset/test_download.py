@@ -32,7 +32,8 @@ def test_download_dataset_legacy_help() -> None:
 
 @mock_command_logging
 def test_dataset_download_invalid_name() -> None:
+    import pytest
     from tests.cli.help import command_text
 
-    text = command_text("lightning dataset download badname")
-    assert "NAME must be a Lightning path" in text
+    with pytest.raises(ValueError, match="NAME must be a Lightning path"):
+        command_text("lightning dataset download badname")

@@ -6,7 +6,7 @@ def test_dataset_upload_help() -> None:
     assert_help_contains(
         "lightning dataset upload --help",
         "Usage: lightning dataset upload",
-        "Upload a dataset to the Lightning Dataset Store.",
+        "Upload a dataset to Lightning Datasets.",
         "NAME must be a Lightning path:",
     )
 
@@ -16,7 +16,7 @@ def test_datasets_upload_help() -> None:
     assert_help_contains(
         "lightning datasets upload --help",
         "Usage: lightning datasets upload",
-        "Upload a dataset to the Lightning Dataset Store.",
+        "Upload a dataset to Lightning Datasets.",
     )
 
 
