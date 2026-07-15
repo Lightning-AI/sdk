@@ -151,6 +151,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 
@@ -225,6 +226,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 
@@ -610,6 +612,7 @@ def test_submit_jobv2_studio_resolve(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 
@@ -707,6 +710,7 @@ def test_submit_job_v2_image_from_studio(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -751,6 +755,7 @@ def test_run_job_with_cloud_provider(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 

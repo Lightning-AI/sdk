@@ -294,9 +294,6 @@ class MMT(metaclass=TrackCallsMeta):
 
         mmt = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         submit_cloud = cloud if cloud_account is None else None
-        submit_kwargs = {}
-        if placement_group_id is not None:
-            submit_kwargs["placement_group_id"] = placement_group_id
 
         mmt._submit(
             num_machines=num_machines,
@@ -314,7 +311,7 @@ class MMT(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
-            **submit_kwargs,
+            placement_group_id=placement_group_id,
         )
 
         _logger.info(f"Multi-Machine Job was successfully launched. View it at {mmt.link}")
@@ -358,10 +355,6 @@ class MMT(metaclass=TrackCallsMeta):
             default_cloud_account=self._teamspace.default_cloud_account,
         )
 
-        submit_kwargs = {}
-        if placement_group_id is not None:
-            submit_kwargs["placement_group_id"] = placement_group_id
-
         submitted = self._job_api.submit_job(
             name=self.name,
             num_machines=num_machines,
@@ -379,7 +372,7 @@ class MMT(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
-            **submit_kwargs,
+            placement_group_id=placement_group_id,
         )
         self._job = submitted
         self._name = submitted.name

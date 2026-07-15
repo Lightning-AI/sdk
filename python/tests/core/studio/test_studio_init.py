@@ -9,6 +9,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     V1AWSDirectV1,
     V1CloudSpace,
+    V1CloudSpaceInstanceConfig,
     V1ClusterType,
     V1ExternalCluster,
     V1ExternalClusterSpec,
@@ -21,6 +22,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Organization,
     V1Project,
     V1ProjectSettings,
+    V1UserRequestedComputeConfig,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider
@@ -35,6 +37,28 @@ def list_cloudspaces_side_effect(existing_studios):
         return V1ListCloudSpacesResponse([])
 
     return _list_cloudspaces_side_effect
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_studio_exposes_placement_group_id(internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    studio._studio = V1CloudSpace(
+        id="st-abc",
+        name="st-abc",
+        code_config=V1CloudSpaceInstanceConfig(
+            compute_config=V1UserRequestedComputeConfig(placement_group_id="pg-1")
+        ),
+    )
+
+    assert studio.placement_group_id == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_studio_placement_group_id_is_none_without_compute_config(internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    studio._studio = V1CloudSpace(id="st-abc", name="st-abc")
+
+    assert studio.placement_group_id is None
 
 
 @pytest.mark.parametrize("create_ok", [True, False])

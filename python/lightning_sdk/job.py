@@ -224,9 +224,6 @@ class Job(metaclass=TrackCallsMeta):
 
         job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         submit_cloud = cloud if cloud_account is None else None
-        submit_kwargs = {}
-        if placement_group_id is not None:
-            submit_kwargs["placement_group_id"] = placement_group_id
 
         job._submit(
             machine=machine,
@@ -244,7 +241,7 @@ class Job(metaclass=TrackCallsMeta):
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
-            **submit_kwargs,
+            placement_group_id=placement_group_id,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -309,10 +306,6 @@ class Job(metaclass=TrackCallsMeta):
                 if ".." in path.parts:
                     raise ValueError("scratch_disk path cannot contain '..'")
 
-        submit_kwargs = {}
-        if placement_group_id is not None:
-            submit_kwargs["placement_group_id"] = placement_group_id
-
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -330,7 +323,7 @@ class Job(metaclass=TrackCallsMeta):
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
-            **submit_kwargs,
+            placement_group_id=placement_group_id,
         )
         self._job = submitted
         self._name = submitted.name

@@ -55,6 +55,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        placement_group_id=None,
     )
 
 
@@ -151,6 +152,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        placement_group_id=None,
     )
 
 
