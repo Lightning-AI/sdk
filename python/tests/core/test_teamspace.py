@@ -1316,3 +1316,259 @@ def test_download_dataset_version_no_token_no_cluster(
     finally:
         if os.path.exists(target_path):
             os.unlink(target_path)
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_dataset_new(
+    mock_lightning_client,
+    mock_upload_files,
+    mock_complete,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    """Upload a brand-new dataset (dataset does not exist yet)."""
+    import json
+
+    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+
+    src_file = tmp_path / "data.txt"
+    src_file.write_text("hello upload dataset", encoding="utf-8")
+
+    # _list_datasets returns empty -> dataset does not exist -> _create_dataset
+    mock_list = mock.MagicMock()
+    mock_list.data = json.dumps({"datasets": []})
+
+    mock_create_ds = mock.MagicMock()
+    mock_create_ds.data = json.dumps({"id": "ds-new-1", "name": "my-new-dataset"})
+
+    mock_create_ver = mock.MagicMock()
+    mock_create_ver.data = json.dumps({"version": "v1"})
+
+    mock_api_client = mock.MagicMock()
+    mock_api_client.request.side_effect = [
+        mock_list,
+        mock_create_ds,
+        mock_create_ver,
+    ]
+    mock_api_client.default_headers = {"Authorization": "Bearer test"}
+
+    mock_client_instance = mock.MagicMock()
+    mock_client_instance.api_client = mock_api_client
+    mock_lightning_client.return_value = mock_client_instance
+
+    result = _upload_dataset(
+        project_id="proj-1",
+        name="my-new-dataset",
+        version=None,
+        cluster_id="aws-us-east",
+        file_paths=[src_file],
+        relative_paths=["data.txt"],
+        progress_bar=False,
+    )
+
+    assert result["name"] == "my-new-dataset"
+    assert result["version"] == "v1"
+
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "POST",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        headers=mock.ANY,
+        body={"name": "my-new-dataset", "cluster_id": "aws-us-east"},
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "POST",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-new-1/versions",
+        headers=mock.ANY,
+        body={"cluster_id": "aws-us-east"},
+        _preload_content=True,
+    )
+    mock_upload_files.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-new-1",
+        version="v1",
+        file_paths=[src_file],
+        remote_paths=["data.txt"],
+        progress_bar=False,
+    )
+    mock_complete.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-new-1",
+        version="v1",
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_dataset_existing(
+    mock_lightning_client,
+    mock_upload_files,
+    mock_complete,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    """Upload to an existing dataset, auto-incrementing version from v3 to v4."""
+    import json
+
+    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+
+    src_file = tmp_path / "data.csv"
+    src_file.write_text("col1,col2\n1,2\n", encoding="utf-8")
+
+    # Dataset exists
+    mock_list = mock.MagicMock()
+    mock_list.data = json.dumps({"datasets": [{"id": "ds-existing-1", "name": "existing-ds"}]})
+
+    # List versions returns v1, v2, v3 -> auto-increment to v4
+    mock_ver_list = mock.MagicMock()
+    mock_ver_list.data = json.dumps({"versions": [{"version": "v1"}, {"version": "v2"}, {"version": "v3"}]})
+
+    mock_create_ver = mock.MagicMock()
+    mock_create_ver.data = json.dumps({"version": "v4"})
+
+    mock_api_client = mock.MagicMock()
+    mock_api_client.request.side_effect = [
+        mock_list,
+        mock_ver_list,
+        mock_create_ver,
+    ]
+    mock_api_client.default_headers = {"Authorization": "Bearer test"}
+
+    mock_client_instance = mock.MagicMock()
+    mock_client_instance.api_client = mock_api_client
+    mock_lightning_client.return_value = mock_client_instance
+
+    result = _upload_dataset(
+        project_id="proj-1",
+        name="existing-ds",
+        version=None,
+        cluster_id=None,
+        file_paths=[src_file],
+        relative_paths=["data.csv"],
+        progress_bar=False,
+    )
+
+    assert result["name"] == "existing-ds"
+    assert result["version"] == "v4"
+
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "POST",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        headers=mock.ANY,
+        body={"cluster_id": None, "version": "v4"},
+        _preload_content=True,
+    )
+    mock_upload_files.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-existing-1",
+        version="v4",
+        file_paths=[src_file],
+        remote_paths=["data.csv"],
+        progress_bar=False,
+    )
+    mock_complete.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-existing-1",
+        version="v4",
+    )
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_dataset_with_explicit_version(
+    mock_lightning_client,
+    mock_upload_files,
+    mock_complete,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    """Upload to an existing dataset with an explicit version tag."""
+    import json
+
+    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+
+    src_file = tmp_path / "model.pt"
+    src_file.write_text("weights", encoding="utf-8")
+
+    # Dataset exists; explicit version skips listing versions
+    mock_list = mock.MagicMock()
+    mock_list.data = json.dumps({"datasets": [{"id": "ds-existing-1", "name": "existing-ds"}]})
+
+    mock_create_ver = mock.MagicMock()
+    mock_create_ver.data = json.dumps({"version": "experiment-v1"})
+
+    mock_api_client = mock.MagicMock()
+    mock_api_client.request.side_effect = [
+        mock_list,
+        mock_create_ver,
+    ]
+    mock_api_client.default_headers = {"Authorization": "Bearer test"}
+
+    mock_client_instance = mock.MagicMock()
+    mock_client_instance.api_client = mock_api_client
+    mock_lightning_client.return_value = mock_client_instance
+
+    result = _upload_dataset(
+        project_id="proj-1",
+        name="existing-ds",
+        version="experiment-v1",
+        cluster_id=None,
+        file_paths=[src_file],
+        relative_paths=["model.pt"],
+        progress_bar=False,
+    )
+
+    assert result["name"] == "existing-ds"
+    assert result["version"] == "experiment-v1"
+
+    mock_api_client.request.assert_any_call(
+        "POST",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        headers=mock.ANY,
+        body={"cluster_id": None, "version": "experiment-v1"},
+        _preload_content=True,
+    )
+    mock_upload_files.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-existing-1",
+        version="experiment-v1",
+        file_paths=[src_file],
+        remote_paths=["model.pt"],
+        progress_bar=False,
+    )
+    mock_complete.assert_called_once_with(
+        project_id="proj-1",
+        dataset_id="ds-existing-1",
+        version="experiment-v1",
+    )
