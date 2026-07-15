@@ -6,8 +6,9 @@ def test_dataset_download_help() -> None:
     assert_help_contains(
         "lightning dataset download --help",
         "Usage: lightning dataset download",
-        "Download a dataset version as a zip file.",
+        "Download a dataset version.",
         "NAME must be a Lightning path:",
+        "--zip",
     )
 
 
@@ -16,7 +17,7 @@ def test_datasets_download_help() -> None:
     assert_help_contains(
         "lightning datasets download --help",
         "Usage: lightning datasets download",
-        "Download a dataset version as a zip file.",
+        "Download a dataset version.",
     )
 
 

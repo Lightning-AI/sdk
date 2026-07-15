@@ -115,19 +115,23 @@ def _download_dataset_version(
     version: str,
     target_path: str,
     cluster_id: Optional[str] = None,
+    as_zip: bool = False,
 ):
     """
-    Download a dataset version as a zip file from the API.
+    Download a dataset version from the API.
 
-    Fetches presigned file URLs from the files endpoint, downloads each file,
-    and packages them into a proper zip archive at the target path.
+    Fetches presigned file URLs from the files endpoint and downloads each file.
+    By default the files are written into ``target_path`` as a directory. When
+    ``as_zip`` is set, they are packaged into a zip archive at ``target_path``
+    instead.
 
     Args:
         project_id: The project ID.
         dataset_name: The dataset name.
         version: The dataset version to download.
-        target_path: Local file path where the downloaded zip will be saved.
+        target_path: Local directory to download into, or the zip path when as_zip is set.
         cluster_id: Optional cluster ID.
+        as_zip: If True, package the files into a single zip archive.
     """
     import shutil
     import tempfile
@@ -176,8 +180,11 @@ def _download_dataset_version(
     if not files_list:
         raise ValueError(f"No files found for dataset '{dataset_name}' version '{version}' in project '{project_id}'.")
 
-    # create a zip archive from the downloaded files
-    tmp_dir = tempfile.mkdtemp()
+    # Download into a directory. When zipping, use a temp dir and archive it
+    # afterwards; otherwise download straight into target_path.
+    dest_dir = tempfile.mkdtemp() if as_zip else target_path
+    if not as_zip:
+        os.makedirs(dest_dir, exist_ok=True)
     try:
         for i, file_info in enumerate(files_list):
             file_url = file_info.get("url")
@@ -185,15 +192,17 @@ def _download_dataset_version(
                 continue
             filepath = file_info.get("filepath", f"file_{i}")
             filepath = filepath.lstrip("/")
-            local_tmp = os.path.join(tmp_dir, filepath)
-            os.makedirs(os.path.dirname(local_tmp), exist_ok=True)
-            urllib.request.urlretrieve(file_url, local_tmp)
-        base = target_path
-        if base.endswith(".zip"):
-            base = base[:-4]
-        shutil.make_archive(base, "zip", tmp_dir)
+            local_path = os.path.join(dest_dir, filepath)
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            urllib.request.urlretrieve(file_url, local_path)
+        if as_zip:
+            base = target_path
+            if base.endswith(".zip"):
+                base = base[:-4]
+            shutil.make_archive(base, "zip", dest_dir)
     finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+        if as_zip:
+            shutil.rmtree(dest_dir, ignore_errors=True)
 
 def _create_dataset(
     project_id: str,

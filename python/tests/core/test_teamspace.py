@@ -1235,6 +1235,7 @@ def test_download_dataset_version(
                 version="3",
                 target_path=target_path,
                 cluster_id="aws-us-east",
+                as_zip=True,
             )
 
         mock_api_client.request.assert_any_call(
@@ -1255,6 +1256,60 @@ def test_download_dataset_version(
     finally:
         if os.path.exists(target_path):
             os.unlink(target_path)
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_dataset_version_default_downloads_files_no_zip(
+    mock_lightning_client,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    import json
+    import shutil
+    import tempfile
+    import urllib
+
+    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
+
+    mock_list_response = mock.MagicMock()
+    mock_list_response.data = json.dumps({"datasets": []})
+
+    mock_files_response = mock.MagicMock()
+    mock_files_response.data = json.dumps(
+        {"files": [{"filepath": "data.csv", "url": "https://presigned.example.com/data.csv"}]}
+    )
+
+    mock_api_client = mock.MagicMock()
+    mock_api_client.request.side_effect = [mock_list_response, mock_files_response]
+    mock_api_client.default_headers = {"Authorization": "Bearer test"}
+
+    mock_client_instance = mock.MagicMock()
+    mock_client_instance.api_client = mock_api_client
+    mock_lightning_client.return_value = mock_client_instance
+
+    target_path = tempfile.mkdtemp()
+    try:
+        with mock.patch.object(urllib.request, "urlretrieve", return_value=None) as mock_urlretrieve, mock.patch(
+            "shutil.make_archive"
+        ) as mock_make_archive:
+            # as_zip defaults to False: files land in target_path, no archive is created
+            _download_dataset_version(
+                project_id="proj-1",
+                dataset_name="ds-1",
+                version="3",
+                target_path=target_path,
+                cluster_id="aws-us-east",
+            )
+
+        mock_make_archive.assert_not_called()
+        mock_urlretrieve.assert_called_once()
+        args = mock_urlretrieve.call_args.args
+        assert args[0] == "https://presigned.example.com/data.csv"
+        assert args[1] == os.path.join(target_path, "data.csv")
+    finally:
+        shutil.rmtree(target_path, ignore_errors=True)
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
@@ -1296,6 +1351,7 @@ def test_download_dataset_version_no_token_no_cluster(
                 dataset_name="ds-2",
                 version="1",
                 target_path=target_path,
+                as_zip=True,
             )
 
         mock_api_client.request.assert_any_call(

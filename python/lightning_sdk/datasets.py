@@ -36,7 +36,7 @@ class DownloadedDatasetInfo:
     """Metadata returned after a successful dataset download.
 
     Attributes:
-        path: The local file path to the downloaded zip file.
+        path: The local path the dataset was downloaded to (a directory, or a zip file when downloaded with as_zip).
         name: The dataset name.
         version: The version tag that was downloaded (e.g. ``"v1"``).
     """
@@ -111,17 +111,22 @@ def download_dataset(
     name: str,
     target_path: str = ".",
     cluster_id: Optional[str] = None,
+    as_zip: bool = False,
 ) -> DownloadedDatasetInfo:
-    """Download a dataset version as a zip file from Lightning Datasets.
+    """Download a dataset version from Lightning Datasets.
+
+    By default the files are downloaded into a directory. Set ``as_zip`` to
+    package them into a single zip archive instead.
 
     Args:
         name: Lightning path to dataset in the format
             ``<ORGANIZATION>/<TEAMSPACE>/<DATASET-NAME>`` or
             ``<ORGANIZATION>/<TEAMSPACE>/<DATASET-NAME>/<VERSION>``.
             If no version specified, defaults to the most recent version.
-        target_path: Local directory to download the dataset zip into.
+        target_path: Local directory to download the dataset into.
             Defaults to the current directory (``"."``).
         cluster_id: Optional cluster ID to download from.
+        as_zip: If True, package the files into a single zip archive.
 
     Returns:
         DownloadedDatasetInfo: Metadata about the downloaded dataset, including
@@ -136,15 +141,17 @@ def download_dataset(
 
     import os
 
-    zip_path = os.path.join(target_path, f"{dataset_name}_{version}.zip")
+    base_name = f"{dataset_name}_{version}"
+    out_path = os.path.join(target_path, f"{base_name}.zip" if as_zip else base_name)
     _download_dataset_version(
         project_id=project_id,
         dataset_name=dataset_name,
         version=version,
-        target_path=zip_path,
+        target_path=out_path,
         cluster_id=cluster_id,
+        as_zip=as_zip,
     )
-    return DownloadedDatasetInfo(path=zip_path, name=dataset_name, version=version)
+    return DownloadedDatasetInfo(path=out_path, name=dataset_name, version=version)
 
 
 def list_datasets(name: str) -> list:
