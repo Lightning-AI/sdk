@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Iterable
 
 import click
 from click_extra.sphinx.click import TreeDirective
@@ -56,11 +55,7 @@ def _split_help(value: str | None) -> tuple[list[str], list[str]]:
 
     lines = text.splitlines()
     example_index = next(
-        (
-            index
-            for index, line in enumerate(lines)
-            if line.strip().lower() in {"example:", "examples:"}
-        ),
+        (index for index, line in enumerate(lines) if line.strip().lower() in {"example:", "examples:"}),
         None,
     )
     if example_index is None:
@@ -70,10 +65,7 @@ def _split_help(value: str | None) -> tuple[list[str], list[str]]:
     while description and not description[-1].strip():
         description.pop()
 
-    examples = [
-        line[2:] if line.startswith("  ") else line
-        for line in lines[example_index + 1 :]
-    ]
+    examples = [line[2:] if line.startswith("  ") else line for line in lines[example_index + 1 :]]
     while examples and not examples[-1].strip():
         examples.pop()
     return description, examples
@@ -86,24 +78,20 @@ def _parameter_rows(
 ) -> tuple[list[list[str]], list[list[str]]]:
     arguments: list[list[str]] = []
     options: list[list[str]] = []
-    params: Iterable[click.Parameter] = command.params
 
-    # Click adds --help dynamically, so include it alongside declared options.
-    help_option = command.get_help_option(context)
-    if help_option is not None and not any(
-        isinstance(param, click.Option) and "--help" in param.opts
-        for param in params
-    ):
-        params = [*params, help_option]
-
-    for param in params:
+    for param in command.params:
+        # Every command answers --help identically, so a row for it on each
+        # Options table is repeated noise — omit it throughout.
+        if isinstance(param, click.Option) and "--help" in param.opts:
+            continue
         description = _clean_text(getattr(param, "help", None))
-        type_name = _display_type(param, context)
         if isinstance(param, click.Argument):
+            # An argument's metavar just repeats its name, so show the Click
+            # type (text, path, integer, ...) instead.
             arguments.append(
                 [
                     _literal(param.name.upper(), rst),
-                    _literal(type_name, rst),
+                    _literal(param.type.name or "text", rst),
                     "yes" if param.required else "no",
                     description,
                 ],
@@ -115,16 +103,26 @@ def _parameter_rows(
             options.append(
                 [
                     ", ".join(_literal(name, rst) for name in names),
-                    _literal(type_name, rst) if not param.is_flag else "—",
+                    _literal(_display_type(param, context), rst) if not param.is_flag else "—",
                     "yes" if param.required else "no",
-                    _literal(_display_default(param.default), rst)
-                    if param.default is not None
-                    else "—",
+                    # A flag's implicit false default carries no information.
+                    "—"
+                    if param.default is None or (param.is_flag and param.default is False)
+                    else _literal(_display_default(param.default), rst),
                     description,
                 ],
             )
 
     return arguments, options
+
+
+def _command_link(name: str, anchor: str) -> nodes.paragraph:
+    """A table cell linking a command's name to its section on this page."""
+    paragraph = nodes.paragraph()
+    link = nodes.reference(refuri=f"#{anchor}")
+    link += nodes.literal(text=name)
+    paragraph += link
+    return paragraph
 
 
 def _append_table(
@@ -140,11 +138,14 @@ def _append_table(
     for _ in headers:
         tgroup += nodes.colspec(colwidth=1)
 
-    def add_row(container: nodes.Element, values: list[str]) -> None:
+    def add_row(container: nodes.Element, values: list[str | nodes.Node]) -> None:
         row = nodes.row()
         for value in values:
             entry = nodes.entry()
-            directive.state.nested_parse(StringList([value], source_file), 0, entry)
+            if isinstance(value, nodes.Node):
+                entry += value
+            else:
+                directive.state.nested_parse(StringList([value], source_file), 0, entry)
             row += entry
         container += row
 
@@ -167,15 +168,14 @@ class ReferenceDirective(TreeDirective):
 
         cli_expr = self.arguments[0].strip()
         try:
-            cli = eval(cli_expr, self.runner.namespace)  # noqa: S307
+            cli = eval(cli_expr, self.runner.namespace)
         except Exception as exc:
             raise RuntimeError(
                 f"lightning-reference: failed to evaluate {cli_expr!r}: {exc}",
             ) from exc
         if not isinstance(cli, click.Command):
             raise TypeError(
-                f"lightning-reference: {cli_expr!r} did not yield a click.Command "
-                f"(got {type(cli).__name__}).",
+                f"lightning-reference: {cli_expr!r} did not yield a click.Command (got {type(cli).__name__}).",
             )
 
         max_depth = self.options.get("max-depth", 10)
@@ -184,8 +184,13 @@ class ReferenceDirective(TreeDirective):
         root_parts = root_label.split()
         entries = self._walk(cli, max_depth)
         source_file, _ = self.get_source_info()
-        root_section = nodes.section(ids=[anchor_prefix])
-        command_sections: dict[tuple[str, ...], nodes.section] = {(): root_section}
+        # A container (not a section): the page's own title already names the
+        # root command, so the root gets no heading of its own — and a title-less
+        # section would leak its first paragraph into the page toc. The class lets
+        # downstream stylesheets target CLI reference pages without content-sniffing.
+        # Child sections are hoisted out on return (see below).
+        root_section = nodes.container(ids=[anchor_prefix], classes=["cli-reference"])
+        command_sections: dict[tuple[str, ...], nodes.Element] = {(): root_section}
 
         for path, command in [([], cli), *entries]:
             anchor = "-".join([anchor_prefix, *(self._slug(part) for part in path)])
@@ -196,9 +201,9 @@ class ReferenceDirective(TreeDirective):
                 command_section = nodes.section(ids=[anchor])
                 command_sections[tuple(path[:-1])] += command_section
                 command_sections[tuple(path)] = command_section
+                command_section += nodes.title(text=label)
             else:
                 command_section = root_section
-            command_section += nodes.title(text=label)
 
             description, examples = _split_help(command.help)
             if description:
@@ -207,21 +212,27 @@ class ReferenceDirective(TreeDirective):
             usage = " ".join(command.collect_usage_pieces(context))
             usage = " ".join([*full_path, usage]).strip()
             if usage:
-                usage_node = nodes.paragraph()
-                usage_node += nodes.strong(text="Usage:")
-                usage_node += nodes.Text(" ")
-                usage_node += nodes.literal(text=usage)
-                command_section += usage_node
+                # A literal block (rather than an inline literal) so themes give
+                # the synopsis code-block treatment: highlighting + a copy button.
+                label = nodes.paragraph()
+                label += nodes.strong(text="Usage:")
+                command_section += label
+                command_section += nodes.literal_block(usage, usage, language="console")
 
             if isinstance(command, click.Group) and command.commands:
-                subcommands = nodes.section(ids=[f"{anchor}-subcommands"])
-                subcommands += nodes.title(text="Subcommands")
+                # "Commands" matches Click's own vocabulary: the usage line says
+                # `COMMAND [ARGS]...` and Click's help prints a "Commands" section.
+                commands_section = nodes.section(ids=[f"{anchor}-commands"])
+                commands_section += nodes.title(text="Commands")
                 rows = [
-                    [_literal(name, True), _clean_text(subcommand.get_short_help_str())]
+                    [
+                        _command_link(name, f"{anchor}-{self._slug(name)}"),
+                        _clean_text(subcommand.get_short_help_str(limit=200)),
+                    ]
                     for name, subcommand in sorted(command.commands.items())
                 ]
-                _append_table(self, subcommands, ["Command", "Description"], rows, source_file)
-                command_section += subcommands
+                _append_table(self, commands_section, ["Command", "Description"], rows, source_file)
+                command_section += commands_section
 
             arguments, options = _parameter_rows(command, context, True)
             if arguments:
@@ -256,4 +267,12 @@ class ReferenceDirective(TreeDirective):
                 )
                 command_section += examples_section
 
-        return [root_section]
+        # Hoist the root's child sections (Commands, each subcommand, ...) to
+        # document level: Sphinx's page toc only descends through sections, so
+        # anything left inside the container would vanish from "On this page".
+        result: list[nodes.Node] = [root_section]
+        for child in list(root_section.children):
+            if isinstance(child, nodes.section):
+                root_section.remove(child)
+                result.append(child)
+        return result
