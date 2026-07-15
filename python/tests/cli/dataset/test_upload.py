@@ -23,6 +23,7 @@ def test_datasets_upload_help() -> None:
 @mock_command_logging
 def test_dataset_upload_invalid_name() -> None:
     import pytest
+
     from lightning_sdk.datasets import upload_dataset
 
     with pytest.raises(ValueError, match="NAME must be a Lightning path"):

@@ -1436,9 +1436,7 @@ def test_upload_dataset_existing(
 
     # List versions returns v1, v2, v3 -> auto-increment to v4
     mock_ver_list = mock.MagicMock()
-    mock_ver_list.data = json.dumps(
-        {"versions": [{"version": "v1"}, {"version": "v2"}, {"version": "v3"}]}
-    )
+    mock_ver_list.data = json.dumps({"versions": [{"version": "v1"}, {"version": "v2"}, {"version": "v3"}]})
 
     mock_create_ver = mock.MagicMock()
     mock_create_ver.data = json.dumps({"version": "v4"})
@@ -1574,4 +1572,3 @@ def test_upload_dataset_with_explicit_version(
         dataset_id="ds-existing-1",
         version="experiment-v1",
     )
-
