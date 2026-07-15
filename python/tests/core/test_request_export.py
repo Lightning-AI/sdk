@@ -40,6 +40,7 @@ class _FakeClient:
         self.project_owner_name = "my-org"
         self.project_owner_id = "owner-id"
         self.project_owner_type = "organization"
+        self.api_client = SimpleNamespace(configuration=SimpleNamespace(host="https://api.example.com"))
 
     def jobs_service_list_deployment_routing_telemetry(self, **kwargs):
         self.list_calls.append(kwargs)
@@ -224,7 +225,7 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
                 manifest_uploads.append(json.loads(Path(self.kwargs["file_path"]).read_text()))
             return
 
-    monkeypatch.setattr(deployment_api_module, "_FileUploader", _FakeUploader)
+    monkeypatch.setattr(deployment_api_module, "_BlobUploader", _FakeUploader)
 
     result = _deployment_api(client).export_request_captures(
         _deployment(),
@@ -253,13 +254,16 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
         r2=V1R2DataConnection(name="blackbox-exports"),
     )
     assert [upload["remote_path"] for upload in uploads] == [
-        "daily/2026-04-22/requests.csv",
-        "daily/2026-04-22/requests.jsonl",
-        "daily/2026-04-22/manifest.json",
+        "lightning_storage/blackbox-exports/daily/2026-04-22/requests.csv",
+        "lightning_storage/blackbox-exports/daily/2026-04-22/requests.jsonl",
+        "lightning_storage/blackbox-exports/daily/2026-04-22/manifest.json",
     ]
     assert manifest_uploads[0]["uploaded_artifacts"] == result.uploaded_artifacts
-    assert all(upload["data_connection_id"] == "data-connection-id" for upload in uploads)
-    assert all(upload["cloud_account"] == "project-cluster-id" for upload in uploads)
+    # lightning_storage uploads resolve the folder bucket by path, without a cluster
+    assert all(
+        upload["endpoint_base"] == "https://api.example.com/v1/projects/teamspace-id/artifacts" for upload in uploads
+    )
+    assert all("cluster_id" not in upload for upload in uploads)
     assert sleeps == [lightning_storage_upload_module.LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS]
 
 
@@ -293,7 +297,7 @@ def test_export_keeps_local_manifest_honest_when_manifest_upload_fails(tmp_path,
                 raise RuntimeError("manifest upload failed")
             return
 
-    monkeypatch.setattr(deployment_api_module, "_FileUploader", _FakeUploader)
+    monkeypatch.setattr(deployment_api_module, "_BlobUploader", _FakeUploader)
 
     with pytest.raises(RuntimeError, match=r"failed to upload request export artifact .*manifest\.json"):
         _deployment_api(client).export_request_captures(
@@ -364,7 +368,7 @@ def test_export_records_partial_remote_uploads_when_jsonl_upload_fails(tmp_path,
                 raise RuntimeError("jsonl upload failed")
             return
 
-    monkeypatch.setattr(deployment_api_module, "_FileUploader", _FakeUploader)
+    monkeypatch.setattr(deployment_api_module, "_BlobUploader", _FakeUploader)
 
     with pytest.raises(RuntimeError, match=r"failed to upload request export artifact .*requests\.jsonl"):
         _deployment_api(client).export_request_captures(
@@ -560,7 +564,17 @@ def test_export_prefers_project_default_cluster_for_lightning_storage_upload(tmp
         def __call__(self):
             return None
 
-    monkeypatch.setattr(deployment_api_module, "_FileUploader", _FakeUploader)
+    monkeypatch.setattr(deployment_api_module, "_BlobUploader", _FakeUploader)
+
+    resolved_cloud_accounts = []
+    original_resolve = lightning_storage_upload_module._resolve_lightning_storage_upload_cloud_account
+
+    def spy_resolve(**kwargs):
+        result = original_resolve(**kwargs)
+        resolved_cloud_accounts.append(result)
+        return result
+
+    monkeypatch.setattr(lightning_storage_upload_module, "_resolve_lightning_storage_upload_cloud_account", spy_resolve)
 
     _deployment_api(client).export_request_captures(
         _deployment(),
@@ -571,7 +585,10 @@ def test_export_prefers_project_default_cluster_for_lightning_storage_upload(tmp
         remote_path="lightning_storage/blackbox-exports/daily/2026-04-22",
     )
 
-    assert all(upload["cloud_account"] == "project-cluster-b" for upload in uploads)
+    # the upload itself no longer needs a cluster, but target resolution still
+    # prefers the project default
+    assert uploads
+    assert resolved_cloud_accounts == ["project-cluster-b"]
 
 
 @pytest.mark.parametrize(

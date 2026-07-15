@@ -4,7 +4,7 @@ from pathlib import Path, PurePosixPath
 from time import monotonic, sleep
 from typing import Any, List, Optional, Tuple, Type, Union
 
-from lightning_sdk.api.utils import _FileUploader
+from lightning_sdk.api.utils import _BlobUploader
 from lightning_sdk.lightning_cloud.openapi import DataConnectionServiceCreateDataConnectionBody, V1R2DataConnection
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.utils.filesystem import parse_lit_url
@@ -165,17 +165,19 @@ def upload_file_to_resolved_lightning_storage_target(
     Returns:
         str: The absolute artifact path (``/teamspace/lightning_storage/…``) of the uploaded file.
     """
-    uploader_cls = _FileUploader if uploader_cls is None else uploader_cls
+    uploader_cls = _BlobUploader if uploader_cls is None else uploader_cls
     local_path = Path(local_path)
     destination_parts = tuple(destination_parts)
 
+    host = client.api_client.configuration.host
+    # lightning_storage paths resolve to the folder's own bucket, so no cluster_id
     uploader_cls(
         client=client,
-        teamspace_id=teamspace_id,
-        cloud_account=upload_target.cloud_account,
-        data_connection_id=upload_target.data_connection_id,
+        endpoint_base=f"{host}/v1/projects/{teamspace_id}/artifacts",
         file_path=str(local_path),
-        remote_path=upload_target.remote_path(*destination_parts),
+        remote_path=_join_remote_parts(
+            "lightning_storage", upload_target.folder_name, *upload_target.relative_parts, *destination_parts
+        ),
         progress_bar=progress_bar,
     )()
     return upload_target.absolute_path(*destination_parts)

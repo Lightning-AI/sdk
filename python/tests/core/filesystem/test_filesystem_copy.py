@@ -34,7 +34,7 @@ def fake_path_result():
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
 def test_copy_download_file(
-    mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace
+    mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace, tmp_path
 ):
     remote_path = "data/model.ckpt"
     mock_parse_lit_url.return_value = {
@@ -58,11 +58,14 @@ def test_copy_download_file(
 
     mock_get.side_effect = fake_get
 
+    # the download really writes to disk, so keep it inside tmp_path
+    target = tmp_path / "model.ckpt"
     fs = Filesystem()
-    fs.copy(LIT_URL, LOCAL_PATH)
+    fs.copy(LIT_URL, str(target))
 
     calls = [c[0][0] for c in mock_get.call_args_list]
     assert any("blobs" in url for url in calls)
+    assert target.read_bytes() == b"x" * 1024
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.concurrent.futures.wait")
@@ -81,6 +84,7 @@ def test_copy_download_folder(
     mock_executor,
     mock_wait,
     fake_teamspace,
+    tmp_path,
 ):
     mock_parse_lit_url.return_value = {
         "teamspace": "my-teamspace",
@@ -104,8 +108,10 @@ def test_copy_download_folder(
 
     mock_get.side_effect = fake_get
 
+    # download_folder creates the target directory even with the executor mocked,
+    # so keep it inside tmp_path
     fs = Filesystem()
-    fs.copy("lit://my-org/my-teamspace/data/mydir", "/tmp/local_out", recursive=True)
+    fs.copy("lit://my-org/my-teamspace/data/mydir", str(tmp_path / "local_out"), recursive=True)
 
     mock_executor.assert_called_once()
     mock_executor.return_value.__enter__.return_value.submit.assert_called()
