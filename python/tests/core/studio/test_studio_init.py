@@ -45,9 +45,7 @@ def test_studio_exposes_placement_group_id(internal_studio_init_mocker):
     studio._studio = V1CloudSpace(
         id="st-abc",
         name="st-abc",
-        code_config=V1CloudSpaceInstanceConfig(
-            compute_config=V1UserRequestedComputeConfig(placement_group_id="pg-1")
-        ),
+        code_config=V1CloudSpaceInstanceConfig(compute_config=V1UserRequestedComputeConfig(placement_group_id="pg-1")),
     )
 
     assert studio.placement_group_id == "pg-1"
