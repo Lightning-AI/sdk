@@ -153,7 +153,7 @@ class _BlobUploader:
             return
 
         count = math.ceil(self.filesize / self.chunk_size)
-        upload_id, urls = self._create_upload(parts=count)
+        upload_id, urls = self._create_multipart_upload(parts=count)
         if self.show_progress:
             self.progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(self.local_path)[1]}",
@@ -223,6 +223,22 @@ class _BlobUploader:
         r = self._post_blob_request("/blobs", blob, action="request upload URLs for")
         result = r.json()["results"][0]
         return result.get("upload_id") or upload_id, result.get("urls") or []
+
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
+    )
+    def _create_multipart_upload(self, parts: int) -> Tuple[str, List[Dict[str, Any]]]:
+        """Create a multipart upload, retrying transient failures.
+
+        Unlike single-part signing, creating a multipart upload makes the
+        server reach out to storage, so it shares the transient failure modes
+        of the storage requests themselves (e.g. a just-created
+        lightning_storage folder's credentials may not have propagated yet).
+
+        Returns:
+            The upload ID and the URL descriptors for every part.
+        """
+        return self._create_upload(parts=parts)
 
     @backoff.on_exception(
         backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10

@@ -134,6 +134,46 @@ def test_blob_uploader_multipart(tmp_path, monkeypatch):
     assert uploader.progress_bar.update.call_args_list == [mock.call(4), mock.call(4), mock.call(2)]
 
 
+@mock.patch("time.sleep", return_value=None)
+def test_blob_uploader_multipart_retries_create(_, tmp_path, monkeypatch):
+    """Creating a multipart upload makes the server call out to storage, so a
+    transient failure (e.g. fresh lightning_storage credentials) is retried."""
+    monkeypatch.setenv("LIGHTNING_MULTIPART_THRESHOLD", "4")
+    monkeypatch.setenv("LIGHTNING_MULTI_PART_PART_SIZE", "4")
+
+    file_path = tmp_path / "file"
+    file_path.write_bytes(b"01234567")  # 2 parts of 4 bytes
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch, file_path=str(file_path), remote_path="remote-path", cluster_id="test-cluster-id"
+    )
+
+    post_mock = Mock(
+        side_effect=[
+            Mock(status_code=500),
+            _blob_upload_response(
+                "remote-path",
+                "test-upload-id",
+                [{"url": "test-url-1", "part_number": 1}, {"url": "test-url-2", "part_number": 2}],
+            ),
+            Mock(status_code=204),
+        ]
+    )
+    put_mock = Mock(return_value=Mock(status_code=200, headers={"ETag": "test-etag"}))
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
+
+    uploader()
+
+    # first create failed with a 500 and was retried; upload then completed
+    assert [c.args[0] for c in post_mock.call_args_list] == [
+        f"{_TEST_ENDPOINT_BASE}/blobs",
+        f"{_TEST_ENDPOINT_BASE}/blobs",
+        f"{_TEST_ENDPOINT_BASE}/blobs/complete",
+    ]
+    assert put_mock.call_count == 2
+
+
 def test_blob_uploader_multipart_resigns_failed_part(tmp_path, monkeypatch):
     """A failed part PUT re-requests that part's URL (upload_id + part_numbers) and retries."""
     monkeypatch.setenv("LIGHTNING_MULTIPART_THRESHOLD", "4")
