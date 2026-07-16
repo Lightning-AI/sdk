@@ -22,11 +22,19 @@ def _parser() -> argparse.ArgumentParser:
     studio_mmt.add_argument("--num-machines", type=int, default=2, help="Number of machines.")
     studio_mmt.add_argument("--machine", default="CPU", help="Machine type.")
     studio_mmt.add_argument("--command", default="python train_distributed.py --epochs 1", help="Command to run.")
+    studio_mmt.add_argument(
+        "--placement-group-id",
+        help="Existing placement group to join, for example from a Studio or Job.",
+    )
 
     image_mmt = subcommands.add_parser("image", help="Run a container-backed MMT.")
     image_mmt.add_argument("--name", default="sdk-image-mmt", help="MMT name.")
     image_mmt.add_argument("--num-machines", type=int, default=2, help="Number of machines.")
     image_mmt.add_argument("--machine", default="L4", help="Machine type.")
+    image_mmt.add_argument(
+        "--placement-group-id",
+        help="Existing placement group to join, for example from a Studio or Job.",
+    )
     image_mmt.add_argument(
         "--image",
         default="pytorch/pytorch:2.4.1-cuda12.1-cudnn9-runtime",
@@ -56,15 +64,24 @@ def main() -> None:
             machine=Machine.from_str(args.machine),
             env={"RUN_MODE": "distributed"},
             command=args.command,
+            placement_group_id=args.placement_group_id,
         )
 
         print(f"MMT link: {mmt.link}")
         mmt.wait(interval=15, timeout=2 * 60 * 60, stop_on_timeout=True)
         print(mmt.json())
+        print(f"MMT placement group: {mmt.placement_group_id}")
 
         if mmt.status == Status.Failed:
             for worker in mmt.machines:
                 print(f"Worker {worker.name}: {worker.status}")
+        else:
+            for worker in mmt.machines:
+                print(
+                    f"Worker rank={worker.rank} "
+                    f"resource_id={worker.resource_id} "
+                    f"private_ip={worker.private_ip_address}"
+                )
         # sdk-studio-mmt-end
     elif args.example == "image":
         # sdk-image-mmt-start
@@ -78,10 +95,18 @@ def main() -> None:
             machine=Machine.from_str(args.machine),
             command=args.command,
             interruptible=True,
+            placement_group_id=args.placement_group_id,
         )
 
         mmt.wait(interval=15)
         print(f"{mmt.name} used {mmt.num_machines} machines")
+        print(f"MMT placement group: {mmt.placement_group_id}")
+        for worker in mmt.machines:
+            print(
+                f"Worker rank={worker.rank} "
+                f"resource_id={worker.resource_id} "
+                f"private_ip={worker.private_ip_address}"
+            )
         # sdk-image-mmt-end
 
 

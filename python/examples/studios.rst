@@ -60,6 +60,10 @@ Operational notes
   does not exist. Use ``create_ok=False`` when automation should fail instead of
   creating a new resource.
 - ``studio.start`` is blocking while compute is provisioned.
+- ``studio.placement_group_id`` reports the active Studio compute placement
+  group, or ``None`` when placement metadata is not available. Use this value as
+  ``placement_group_id=...`` for Jobs or MMTs that must colocate with the
+  Studio.
 - ``studio.run`` requires the Studio to be running and raises if the command
   exits non-zero.
 - Jobs and MMTs can reuse a Studio environment, which is useful when the Studio

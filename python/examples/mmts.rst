@@ -54,7 +54,15 @@ Operational notes
 
 - ``MMT.run`` creates a new multi-machine job; ``MMT("name", teamspace=...)``
   fetches an existing one.
-- ``mmt.machines`` returns the per-machine job handles for detailed inspection.
+- Pass ``placement_group_id=...`` when the whole MMT should join an existing
+  placement group, for example to colocate with a Studio or another workload.
+- ``mmt.placement_group_id`` reports the placement group associated with the
+  multi-machine job, or ``None`` when the run is not tied to one.
+- ``mmt.machines`` returns the per-machine job handles for detailed inspection,
+  sorted by ``job.rank``.
+- Each member in ``mmt.machines`` exposes the same machine-level metadata as a
+  Job, including ``resource_id``, ``private_ip_address``, ``placement_group_id``,
+  and ``rank``.
 - ``MMT.run`` rejects ``num_machines`` values less than two.
 - Studio-backed MMT runs must use a Studio in the same teamspace and cloud
   account as the run.

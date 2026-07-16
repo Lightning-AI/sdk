@@ -59,6 +59,13 @@ Operational notes
 
 - ``Job.run`` creates a new job; ``Job("name", teamspace=...)`` fetches an
   existing one.
+- Pass ``placement_group_id=...`` when a job must join an existing placement
+  group, for example to colocate with a running Studio, Job, or MMT.
+- ``job.resource_id`` is the stable Lightning resource ID for the job.
+- ``job.private_ip_address`` is populated when the job has a private worker
+  address available.
+- ``job.placement_group_id`` reports the placement group associated with the
+  job, or ``None`` when the job is not tied to one.
 - ``job.logs`` is available after the job reaches a terminal state.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.

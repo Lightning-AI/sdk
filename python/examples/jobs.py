@@ -21,11 +21,19 @@ def _parser() -> argparse.ArgumentParser:
     studio_job.add_argument("--name", default="sdk-tutorial-job", help="Job name.")
     studio_job.add_argument("--machine", default="CPU", help="Machine type.")
     studio_job.add_argument("--command", default="python train.py --epochs 1", help="Command to run.")
+    studio_job.add_argument(
+        "--placement-group-id",
+        help="Existing placement group to join, for example from a Studio or another Job.",
+    )
 
     image_job = subcommands.add_parser("image", help="Run a container-backed job.")
     image_job.add_argument("--name", default="sdk-image-job", help="Job name.")
     image_job.add_argument("--machine", default="CPU", help="Machine type.")
     image_job.add_argument("--image", default="python:3.11-slim", help="Docker image.")
+    image_job.add_argument(
+        "--placement-group-id",
+        help="Existing placement group to join, for example from a Studio or another Job.",
+    )
     image_job.add_argument(
         "--command",
         default="python -c 'print(\"hello from a Lightning job\")'",
@@ -49,12 +57,16 @@ def main() -> None:
             machine=Machine.from_str(args.machine),
             env={"RUN_MODE": "tutorial"},
             command=args.command,
+            placement_group_id=args.placement_group_id,
         )
 
         print(f"Job link: {job.link}")
         job.wait(interval=10, timeout=60 * 60, stop_on_timeout=True)
 
         print(job.json())
+        print(f"Job resource id: {job.resource_id}")
+        print(f"Job private IP: {job.private_ip_address}")
+        print(f"Job placement group: {job.placement_group_id}")
         if job.status == Status.Failed:
             print(job.logs)
         # sdk-studio-job-end
@@ -70,10 +82,14 @@ def main() -> None:
             command=args.command,
             env={"RUN_MODE": "tutorial"},
             interruptible=True,
+            placement_group_id=args.placement_group_id,
         )
 
         job.wait(interval=10)
         print(f"{job.name} finished with status {job.status}")
+        print(f"Job resource id: {job.resource_id}")
+        print(f"Job private IP: {job.private_ip_address}")
+        print(f"Job placement group: {job.placement_group_id}")
         # sdk-image-job-end
 
 

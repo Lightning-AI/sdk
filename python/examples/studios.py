@@ -34,6 +34,7 @@ def main() -> None:
 
     studio.start(machine=Machine.from_str(args.machine))
     print(f"{studio.name} is {studio.status} on {studio.machine}")
+    print(f"Studio placement group: {studio.placement_group_id}")
 
     output = studio.run("python --version")
     print(output)
