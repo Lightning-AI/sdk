@@ -4,13 +4,15 @@ from typing import List, Optional, Union
 
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.utils.dataset import (
+    _DEFAULT_DOWNLOAD_PART_SIZE,
+    _DEFAULT_DOWNLOAD_WORKERS,
     _DEFAULT_UPLOAD_WORKERS,
     _download_dataset_version,
     _get_dataset_by_name,
     _list_dataset_versions,
     _list_datasets,
     _parse_dataset_path,
-    _resolve_dataset_version,
+    _resolve_dataset_id_and_version,
     _upload_dataset,
 )
 from lightning_sdk.models import _get_teamspace
@@ -119,8 +121,12 @@ def download_dataset(
     name: str,
     target_path: str = ".",
     cluster_id: Optional[str] = None,
+    num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
+    part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
 ) -> DownloadedDatasetInfo:
     """Download a dataset version as a zip file from Lightning Datasets.
+
+    Files download concurrently, each fetched via chunked HTTP-Range requests.
 
     Args:
         name: Lightning path to dataset in the format
@@ -130,6 +136,8 @@ def download_dataset(
         target_path: Local directory to download the dataset zip into.
             Defaults to the current directory (``"."``).
         cluster_id: Optional cluster ID to download from.
+        num_workers: number of concurrent download threads (default 16).
+        part_size: byte-range part size for splitting large files (default 64 MB).
 
     Returns:
         DownloadedDatasetInfo: Metadata about the downloaded dataset, including
@@ -140,7 +148,9 @@ def download_dataset(
     raise_access_error_if_not_allowed(AccessibleResource.Models, teamspace.id)
     project_id = teamspace.id
 
-    version = _resolve_dataset_version(project_id, dataset_name, version)
+    # One API round-trip resolves both the dataset id and (if unspecified) the
+    # current version, avoiding a second datasets-list call before download.
+    dataset_id, version = _resolve_dataset_id_and_version(project_id, dataset_name, version)
 
     import os
 
@@ -151,6 +161,9 @@ def download_dataset(
         version=version,
         target_path=zip_path,
         cluster_id=cluster_id,
+        dataset_id=dataset_id,
+        num_workers=num_workers,
+        part_size=part_size,
     )
     return DownloadedDatasetInfo(path=zip_path, name=dataset_name, version=version)
 

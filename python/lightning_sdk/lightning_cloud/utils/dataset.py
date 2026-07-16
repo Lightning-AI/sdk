@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 import json
 import math
 import os
@@ -24,6 +24,9 @@ from lightning_sdk.api.utils import (
 
 # Total upload concurrency budget, split across files x within-file parts.
 _DEFAULT_UPLOAD_WORKERS = 16
+# Download concurrency defaults (measured throughput sweet spot; see download docs).
+_DEFAULT_DOWNLOAD_WORKERS = 16
+_DEFAULT_DOWNLOAD_PART_SIZE = 64 * 1024 * 1024  # 64 MiB byte-range parts
 
 
 def _parse_dataset_path(name: str) -> tuple:
@@ -112,6 +115,131 @@ def _resolve_dataset_version(project_id: str, dataset_name: str, version: Option
 
     raise ValueError(f"Dataset '{dataset_name}' not found in project '{project_id}', or it has no versions.")
 
+def _resolve_dataset_id_and_version(
+    project_id: str, dataset_name: str, version: Optional[str] = None
+) -> tuple:
+    """List datasets once and return ``(dataset_id, resolved_version)``.
+
+    Combines name->id and default-version resolution into a single API round-trip
+    so callers don't list datasets twice before downloading.
+    """
+    client = LightningClient(retry=False)
+    api_client: ApiClient = client.api_client
+    url = env.LIGHTNING_CLOUD_URL
+    resp = api_client.request(
+        "GET",
+        f"{url}/v1/projects/{project_id}/lit-datasets",
+        headers=api_client.default_headers,
+        _preload_content=True,
+    )
+    data = json.loads(resp.data) if resp.data else {}
+    for ds in data.get("datasets", []):
+        if ds.get("name") == dataset_name:
+            ds_id = ds.get("id")
+            if version:
+                return ds_id, version
+            default_ver = ds.get("default_version") or ds.get("defaultVersion")
+            latest_ver = ds.get("latest_version") or ds.get("latestVersion")
+            current = (default_ver or {}).get("version") or (latest_ver or {}).get("version") or ds.get("version")
+            if not current:
+                raise ValueError(f"Dataset '{dataset_name}' in project '{project_id}' has no versions.")
+            return ds_id, current
+    raise ValueError(f"Dataset '{dataset_name}' not found in project '{project_id}'.")
+
+
+def _download_dataset_files(
+    files_list: list,
+    dest_dir: str,
+    project_id: str,
+    refresh_file: Callable[[str], dict],
+    num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
+    part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
+) -> None:
+    """Download all dataset files concurrently using chunked HTTP-Range requests.
+
+    A single flat pool of ``num_workers`` threads works over byte-range parts of
+    every file at once: small files download as one part, large files split into
+    ``part_size`` parts. This parallelizes both many-small-file and few-large-file
+    datasets. Files are pre-allocated so parts can be written at their offsets
+    concurrently. Presigned URLs that expire mid-download (HTTP 403) are re-minted
+    via ``refresh_file`` and the part is retried.
+
+    Args:
+        files_list: entries from the files endpoint, each with ``url``/``filepath``/``size``.
+        dest_dir: local directory to write files into (relative paths preserved).
+        project_id: unused; kept for signature stability with callers.
+        refresh_file: callable(rel_path) -> {"url", "size"} to re-mint an expired URL.
+        num_workers: number of concurrent download threads (default 16, the
+            measured throughput/throttling sweet spot).
+        part_size: byte-range part size for splitting large files (default 64 MB).
+    """
+    import concurrent.futures
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    request_chunk = 10 * 1024 * 1024
+
+    entries = [
+        (f.get("filepath", f"file_{i}").lstrip("/"), f.get("url"), int(f.get("size") or 0))
+        for i, f in enumerate(files_list)
+        if f.get("url")
+    ]
+    if not entries:
+        return
+
+    total_bytes = sum(size for _, _, size in entries)
+    # Per-file current presigned URL (refreshed on expiry), guarded by a lock.
+    urls = {rel: url for rel, url, _ in entries}
+    url_lock = threading.Lock()
+
+    # Pre-allocate each file at full size, then build a flat list of byte-range
+    # parts across all files so one worker pool downloads them concurrently.
+    tasks = []
+    for rel, _url, size in entries:
+        local_path = os.path.join(dest_dir, rel)
+        os.makedirs(os.path.dirname(local_path) or dest_dir, exist_ok=True)
+        with open(local_path, "wb") as f:
+            if size:
+                f.truncate(size)
+        for start in range(0, size, part_size):
+            end = min(start + part_size, size) - 1
+            tasks.append((rel, local_path, start, end))
+
+    pbar = tqdm(
+        desc="Downloading dataset",
+        total=total_bytes,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+        mininterval=1,
+    )
+
+    @backoff.on_exception(backoff.expo, requests.exceptions.HTTPError, max_tries=10)
+    def _download_part(task: tuple) -> None:
+        rel, local_path, start, end = task
+        with url_lock:
+            url = urls[rel]
+        with requests.get(url, headers={"Range": f"bytes={start}-{end}"}, stream=True) as resp:
+            if resp.status_code == 403:  # presigned URL expired -> re-mint and retry
+                fresh = refresh_file(rel)
+                if fresh.get("url"):
+                    with url_lock:
+                        urls[rel] = fresh["url"]
+            resp.raise_for_status()
+            with open(local_path, "r+b") as f:
+                f.seek(start)
+                for chunk in resp.iter_content(chunk_size=request_chunk):
+                    f.write(chunk)
+                    pbar.update(len(chunk))
+
+    try:
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = [executor.submit(_download_part, t) for t in tasks]
+            concurrent.futures.wait(futures)
+            for fut in futures:
+                fut.result()  # surface any download error
+    finally:
+        pbar.close()
 
 def _download_dataset_version(
     project_id: str,
@@ -119,12 +247,17 @@ def _download_dataset_version(
     version: str,
     target_path: str,
     cluster_id: Optional[str] = None,
+    dataset_id: Optional[str] = None,
+    num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
+    part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
 ):
     """
     Download a dataset version as a zip file from the API.
 
-    Fetches presigned file URLs from the files endpoint, downloads each file,
-    and packages them into a proper zip archive at the target path.
+    Fetches presigned file URLs from the files endpoint and downloads the files
+    concurrently, each fetched with chunked HTTP-Range requests (see
+    ``_download_dataset_files``), then packages them into a zip archive at
+    ``target_path``.
 
     Args:
         project_id: The project ID.
@@ -132,30 +265,34 @@ def _download_dataset_version(
         version: The dataset version to download.
         target_path: Local file path where the downloaded zip will be saved.
         cluster_id: Optional cluster ID.
+        dataset_id: The resolved dataset ID; when provided, skips an extra
+            datasets-list API round-trip to resolve the name.
+        num_workers: number of concurrent download threads (default 16).
+        part_size: byte-range part size for splitting large files (default 64 MB).
     """
     import shutil
     import tempfile
-    import urllib.request
 
     cloud_url = env.LIGHTNING_CLOUD_URL
     client = LightningClient(retry=False)
     api_client: ApiClient = client.api_client
 
-    resolved_id = dataset_name
-    try:
-        resp = api_client.request(
-            "GET",
-            f"{cloud_url}/v1/projects/{project_id}/lit-datasets",
-            headers=api_client.default_headers,
-            _preload_content=True,
-        )
-        data = json.loads(resp.data) if resp.data else {}
-        for ds in data.get("datasets", []):
-            if ds.get("name") == dataset_name:
-                resolved_id = ds.get("id", dataset_name)
-                break
-    except Exception:
-        pass
+    resolved_id = dataset_id or dataset_name
+    if dataset_id is None:
+        try:
+            resp = api_client.request(
+                "GET",
+                f"{cloud_url}/v1/projects/{project_id}/lit-datasets",
+                headers=api_client.default_headers,
+                _preload_content=True,
+            )
+            data = json.loads(resp.data) if resp.data else {}
+            for ds in data.get("datasets", []):
+                if ds.get("name") == dataset_name:
+                    resolved_id = ds.get("id", dataset_name)
+                    break
+        except Exception:
+            pass
 
     # get presigned file URLs
     files_url = f"{cloud_url}/v1/projects/{project_id}/lit-datasets/{resolved_id}/versions/{version}/files"
@@ -180,18 +317,26 @@ def _download_dataset_version(
     if not files_list:
         raise ValueError(f"No files found for dataset '{dataset_name}' version '{version}' in project '{project_id}'.")
 
-    # create a zip archive from the downloaded files
+    # Re-fetch a fresh presigned URL for one file (used when a URL expires mid-download).
+    def _refresh_file(rel_path: str) -> dict:
+        r = api_client.request(
+            "GET",
+            files_url,
+            query_params=query_params,
+            headers=api_client.default_headers,
+            _preload_content=True,
+        )
+        for f in (json.loads(r.data) if r.data else {}).get("files", []):
+            if f.get("filepath", "").lstrip("/") == rel_path:
+                return {"url": f.get("url"), "size": int(f.get("size") or 0)}
+        return {"url": None, "size": 0}
+
+    # Download in parallel into a temp dir, then package into a zip archive.
     tmp_dir = tempfile.mkdtemp()
     try:
-        for i, file_info in enumerate(files_list):
-            file_url = file_info.get("url")
-            if not file_url:
-                continue
-            filepath = file_info.get("filepath", f"file_{i}")
-            filepath = filepath.lstrip("/")
-            local_tmp = os.path.join(tmp_dir, filepath)
-            os.makedirs(os.path.dirname(local_tmp), exist_ok=True)
-            urllib.request.urlretrieve(file_url, local_tmp)
+        _download_dataset_files(
+            files_list, tmp_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
+        )
         base = target_path
         if base.endswith(".zip"):
             base = base[:-4]
