@@ -22,6 +22,9 @@ from lightning_sdk.api.utils import (
     _SIZE_LIMIT_SINGLE_PART,
 )
 
+# Total upload concurrency budget, split across files x within-file parts.
+_DEFAULT_UPLOAD_WORKERS = 16
+
 
 def _parse_dataset_path(name: str) -> tuple:
     """Parse a dataset path like 'org/teamspace/dataset/version' into components.
@@ -109,6 +112,7 @@ def _resolve_dataset_version(project_id: str, dataset_name: str, version: Option
 
     raise ValueError(f"Dataset '{dataset_name}' not found in project '{project_id}', or it has no versions.")
 
+
 def _download_dataset_version(
     project_id: str,
     dataset_name: str,
@@ -195,6 +199,7 @@ def _download_dataset_version(
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
+
 def _create_dataset(
     project_id: str,
     name: str,
@@ -280,6 +285,8 @@ class _DatasetFileUploader:
         file_path: str,
         remote_path: str,
         progress_bar: bool,
+        max_workers: Optional[int] = None,
+        shared_progress: Optional[tqdm] = None,
     ) -> None:
         self._client = client
         self._dataset_id = dataset_id
@@ -290,24 +297,35 @@ class _DatasetFileUploader:
         self._filesize = os.path.getsize(file_path)
         self._chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
         assert self._chunk_size < _SIZE_LIMIT_SINGLE_PART
-        self._max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
+        # Within-file part concurrency; an explicit value (from the file-parallel
+        # orchestrator) overrides the env default so total concurrency stays bounded.
+        if max_workers is not None:
+            self._max_workers = max_workers
+        else:
+            self._max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
         self._batch_size = int(os.environ.get("LIGHTNING_MULTI_PART_BATCH_SIZE", _MAX_BATCH_SIZE))
-        self._multipart_threshold = int(
-            os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK)
-        )
-        if progress_bar:
+        self._multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
+        # When a shared (aggregate) progress bar is provided, update it instead of
+        # creating per-file/per-chunk bars (which get messy under parallel uploads).
+        self._shared_progress = shared_progress
+        if shared_progress is not None:
+            self._progress_bar = shared_progress
+        elif progress_bar:
             self._progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(file_path)[1]}",
-                total=self._filesize, unit="B", unit_scale=True,
-                unit_divisor=1024, leave=False, position=-1, mininterval=1,
+                total=self._filesize,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1024,
+                leave=False,
+                position=-1,
+                mininterval=1,
             )
         else:
             self._progress_bar = None
 
     def __call__(self) -> None:
-        count = 1 if self._filesize <= self._multipart_threshold else math.ceil(
-            self._filesize / self._chunk_size
-        )
+        count = 1 if self._filesize <= self._multipart_threshold else math.ceil(self._filesize / self._chunk_size)
         return self._multipart_upload(count=count)
 
     @property
@@ -320,27 +338,38 @@ class _DatasetFileUploader:
     def _request(self, method, url, body=None):
         api_client: ApiClient = self._client.api_client
         resp = api_client.request(
-            method, url, headers=api_client.default_headers,
-            body=body, _preload_content=True,
+            method,
+            url,
+            headers=api_client.default_headers,
+            body=body,
+            _preload_content=True,
         )
         return json.loads(resp.data) if resp.data else {}
 
     def _multipart_upload(self, count):
-        resp = self._request("POST", f"{self._base_url}/uploads",
-                             body={"filepath": self._remote_path})
+        resp = self._request("POST", f"{self._base_url}/uploads", body={"filepath": self._remote_path})
         upload_id = resp.get("uploadId") or resp.get("upload_id")
         if not upload_id:
             raise ValueError(f"Could not find upload_id in response: {resp}")
         with ThreadPoolExecutor(max_workers=self._max_workers) as p:
             parts = list(range(1, count + 1))
-            batches = [parts[i:i + self._batch_size] for i in range(0, len(parts), self._batch_size)]
+            batches = [parts[i : i + self._batch_size] for i in range(0, len(parts), self._batch_size)]
             completed = []
-            for batch in tqdm(batches, desc=f"Chunks {os.path.split(self._local_path)[1]}", leave=False):
+            for batch in tqdm(
+                batches,
+                desc=f"Chunks {os.path.split(self._local_path)[1]}",
+                leave=False,
+                disable=self._shared_progress is not None,
+            ):
                 completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=upload_id))
-        self._request("POST", f"{self._base_url}/uploads/{upload_id}/complete", body={
-            "filepath": self._remote_path,
-            "parts": [{"etag": p["etag"], "partNumber": str(p["part_number"])} for p in completed],
-        })
+        self._request(
+            "POST",
+            f"{self._base_url}/uploads/{upload_id}/complete",
+            body={
+                "filepath": self._remote_path,
+                "parts": [{"etag": p["etag"], "partNumber": str(p["part_number"])} for p in completed],
+            },
+        )
 
     def _process_upload_batch(self, executor, batch, upload_id):
         urls = self._request_urls(parts=batch, upload_id=upload_id)
@@ -348,8 +377,11 @@ class _DatasetFileUploader:
         return list(executor.map(func, urls))
 
     def _request_urls(self, parts, upload_id):
-        resp = self._request("POST", f"{self._base_url}/uploads/{upload_id}/parts",
-                             body={"filepath": self._remote_path, "parts": [str(p) for p in parts]})
+        resp = self._request(
+            "POST",
+            f"{self._base_url}/uploads/{upload_id}/parts",
+            body={"filepath": self._remote_path, "parts": [str(p) for p in parts]},
+        )
         return resp.get("urls", [])
 
     def _handle_uploading_single_part(self, presigned_url, upload_id):
@@ -386,20 +418,57 @@ def _upload_dataset_files(
     file_paths: List[Union[str, Path]],
     remote_paths: List[str],
     progress_bar: bool = True,
+    num_workers: int = _DEFAULT_UPLOAD_WORKERS,
 ) -> None:
-    """Upload files to a version using multipart uploads."""
-    client = LightningClient(retry=False)
-    main_pbar = tqdm(total=len(file_paths), desc="Uploading files...", position=0) if progress_bar else None
+    """Upload files to a version using multipart uploads, files in parallel.
+
+    A total concurrency budget of ``num_workers`` is split across files and the
+    parts within each file: ``file_workers = min(num_workers, n_files)`` files
+    upload at once, each using ``max(1, num_workers // file_workers)`` part
+    workers. So many-small-file datasets parallelize across files (overlapping
+    the per-file create/parts/complete round-trips), while a few-large-file
+    dataset still chunks within each file — without exceeding the budget.
+    """
+    import concurrent.futures
+    from concurrent.futures import ThreadPoolExecutor
 
     assert len(file_paths) == len(remote_paths)
-    for filepath, remote_path in zip(file_paths, remote_paths):
+    if not file_paths:
+        return
+
+    client = LightningClient(retry=False)
+    file_workers = max(1, min(num_workers, len(file_paths)))
+    part_workers = max(1, num_workers // file_workers)
+
+    total_bytes = sum(os.path.getsize(str(p)) for p in file_paths)
+    pbar = (
+        tqdm(total=total_bytes, desc="Uploading dataset", unit="B", unit_scale=True, unit_divisor=1000, mininterval=1)
+        if progress_bar
+        else None
+    )
+
+    def _upload_one(filepath: Union[str, Path], remote_path: str) -> None:
         _DatasetFileUploader(
-            client=client, dataset_id=dataset_id, version=version,
-            teamspace_id=project_id, file_path=str(filepath),
-            remote_path=str(remote_path), progress_bar=progress_bar,
+            client=client,
+            dataset_id=dataset_id,
+            version=version,
+            teamspace_id=project_id,
+            file_path=str(filepath),
+            remote_path=str(remote_path),
+            progress_bar=False,
+            max_workers=part_workers,
+            shared_progress=pbar,
         )()
-        if main_pbar:
-            main_pbar.update(1)
+
+    try:
+        with ThreadPoolExecutor(max_workers=file_workers) as executor:
+            futures = [executor.submit(_upload_one, fp, rp) for fp, rp in zip(file_paths, remote_paths)]
+            concurrent.futures.wait(futures)
+            for fut in futures:
+                fut.result()  # surface any upload error
+    finally:
+        if pbar:
+            pbar.close()
 
 
 def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> None:
@@ -408,8 +477,7 @@ def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> 
     api_client: ApiClient = client.api_client
     api_client.request(
         "POST",
-        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}"
-        f"/lit-datasets/{dataset_id}/versions/{version}/complete",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}" f"/lit-datasets/{dataset_id}/versions/{version}/complete",
         headers=api_client.default_headers,
         body={},
         _preload_content=True,
@@ -461,6 +529,7 @@ def _upload_dataset(
     file_paths: List[Path],
     relative_paths: List[str],
     progress_bar: bool,
+    num_workers: int = _DEFAULT_UPLOAD_WORKERS,
 ) -> dict:
     """Perform a full dataset upload.
 
@@ -485,24 +554,34 @@ def _upload_dataset(
             version = f"v{max_v + 1}"
     else:
         ds = _create_dataset(
-            project_id=project_id, name=name, cluster_id=cluster_id,
+            project_id=project_id,
+            name=name,
+            cluster_id=cluster_id,
         )
         dataset_id = ds.get("id")
 
     # CreateLitDataset only creates the dataset record; a version must be
     # created explicitly before the version-scoped upload endpoints exist.
     ver = _create_dataset_version(
-        project_id=project_id, dataset_id=dataset_id,
-        cluster_id=cluster_id, version=version,
+        project_id=project_id,
+        dataset_id=dataset_id,
+        cluster_id=cluster_id,
+        version=version,
     )
     ds_version = ver.get("version")
 
     _upload_dataset_files(
-        project_id=project_id, dataset_id=dataset_id,
-        version=ds_version, file_paths=file_paths,
-        remote_paths=relative_paths, progress_bar=progress_bar,
+        project_id=project_id,
+        dataset_id=dataset_id,
+        version=ds_version,
+        file_paths=file_paths,
+        remote_paths=relative_paths,
+        progress_bar=progress_bar,
+        num_workers=num_workers,
     )
     _complete_dataset_upload(
-        project_id=project_id, dataset_id=dataset_id, version=ds_version,
+        project_id=project_id,
+        dataset_id=dataset_id,
+        version=ds_version,
     )
     return {"id": dataset_id, "name": name, "version": ds_version}
