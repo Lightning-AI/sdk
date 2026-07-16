@@ -134,7 +134,61 @@ func (c *RawClient) Download(ctx context.Context, requestPath string, query url.
 	return err
 }
 
-func (c *RawClient) Upload(ctx context.Context, requestPath string, query url.Values, sourcePath string, notifyCompletion bool) error {
+// UploadOptions configures RawClient.Upload.
+type UploadOptions struct {
+	// ClusterID is the cluster to store the blob on; required for teamspace
+	// uploads, ignored by the studio scope.
+	ClusterID string
+	// NotifyCompletion finalizes the upload via {scope}/blobs/complete after
+	// the PUT; the studio scope needs it so the file shows up in a running
+	// Studio.
+	NotifyCompletion bool
+}
+
+type blobUploadBlob struct {
+	Path string `json:"path"`
+}
+
+type blobUploadBatch struct {
+	ClusterID string           `json:"cluster_id,omitempty"`
+	Blobs     []blobUploadBlob `json:"blobs"`
+}
+
+// blobUploadURL is one presigned URL returned by the blob-upload route, with
+// any headers that must be replayed so the request matches the signature.
+type blobUploadURL struct {
+	URL     string            `json:"url"`
+	Headers map[string]string `json:"headers,omitempty"`
+}
+
+type blobUploadResult struct {
+	Path string          `json:"path"`
+	URLs []blobUploadURL `json:"urls"`
+}
+
+type blobUploadResponse struct {
+	Results []blobUploadResult `json:"results"`
+}
+
+// Upload sends sourcePath to blobPath within the upload scope rooted at
+// scopePath (e.g. /v1/projects/{id}/artifacts): it requests a presigned URL
+// from POST {scopePath}/blobs, PUTs the file bytes straight to storage, and
+// finalizes via POST {scopePath}/blobs/complete when requested.
+func (c *RawClient) Upload(ctx context.Context, scopePath, blobPath string, query url.Values, sourcePath string, opts UploadOptions) error {
+	batch := blobUploadBatch{
+		ClusterID: opts.ClusterID,
+		Blobs:     []blobUploadBlob{{Path: blobPath}},
+	}
+	uploadPath := strings.TrimRight(scopePath, "/") + "/blobs"
+	var created blobUploadResponse
+	if err := c.Do(ctx, http.MethodPost, uploadPath, query, batch, &created); err != nil {
+		return err
+	}
+	if len(created.Results) != 1 || len(created.Results[0].URLs) != 1 {
+		return fmt.Errorf("POST %s returned no upload URL for %q", uploadPath, blobPath)
+	}
+	signed := created.Results[0].URLs[0]
+
 	file, err := os.Open(sourcePath)
 	if err != nil {
 		return err
@@ -144,40 +198,40 @@ func (c *RawClient) Upload(ctx context.Context, requestPath string, query url.Va
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodPut, c.url(requestPath, query), file)
+	// An empty file must go out as http.NoBody: a zero ContentLength with a
+	// non-nil body is treated as unknown length and sent chunked, which
+	// storage providers reject on presigned PUTs.
+	var body io.Reader = file
+	if info.Size() == 0 {
+		body = http.NoBody
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPut, signed.URL, body)
 	if err != nil {
 		return err
 	}
 	req.ContentLength = info.Size()
 	req.GetBody = func() (io.ReadCloser, error) {
+		if info.Size() == 0 {
+			return http.NoBody, nil
+		}
 		return os.Open(sourcePath)
 	}
-	setRequestAuth(req, c.auth)
+	// The presigned URL carries its own authentication; extra credentials
+	// would invalidate the signature.
+	for name, value := range signed.Headers {
+		req.Header.Set(name, value)
+	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
-	if err := closeUploadResponse(resp, http.StatusOK, requestPath); err != nil {
+	if err := closeUploadResponse(resp, http.StatusOK, blobPath); err != nil {
 		return err
 	}
-	if !notifyCompletion {
+	if !opts.NotifyCompletion {
 		return nil
 	}
-	completePath := strings.TrimRight(requestPath, "/") + "/complete"
-	completeReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.url(completePath, query), nil)
-	if err != nil {
-		return err
-	}
-	setRequestAuth(completeReq, c.auth)
-	completeResp, err := c.httpClient.Do(completeReq)
-	if err != nil {
-		return err
-	}
-	if completeResp.StatusCode == http.StatusOK || completeResp.StatusCode == http.StatusNoContent {
-		_, _ = io.Copy(io.Discard, completeResp.Body)
-		return completeResp.Body.Close()
-	}
-	return closeUploadResponse(completeResp, http.StatusOK, completePath)
+	return c.Do(ctx, http.MethodPost, uploadPath+"/complete", query, batch, nil)
 }
 
 func (c *RawClient) url(requestPath string, query url.Values) string {

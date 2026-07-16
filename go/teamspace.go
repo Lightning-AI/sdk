@@ -736,13 +736,14 @@ func (t *Teamspace) UploadFile(filePath, remotePath string, cloudAccount ...stri
 		return err
 	}
 	query := url.Values{}
-	if len(cloudAccount) > 0 && cloudAccount[0] != "" {
-		query.Set("clusterId", cloudAccount[0])
-	}
 	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
 		query.Set("token", token)
 	}
-	return api.Upload(context.Background(), teamspaceArtifactBlobPath(id, remotePath), query, filePath, false)
+	opts := sdkclient.UploadOptions{}
+	if len(cloudAccount) > 0 {
+		opts.ClusterID = cloudAccount[0]
+	}
+	return api.Upload(context.Background(), teamspaceArtifactScopePath(id), strings.TrimLeft(remotePath, "/"), query, filePath, opts)
 }
 
 // UploadFolder uploads all files from a local folder into teamspace artifacts.
@@ -982,8 +983,12 @@ func (t *Teamspace) mmtFromModel(model *models.V1MultiMachineJob) *MMT {
 	return result
 }
 
+func teamspaceArtifactScopePath(teamspaceID string) string {
+	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts"
+}
+
 func teamspaceArtifactBlobPath(teamspaceID, remotePath string) string {
-	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts/blobs/" + strings.TrimLeft(remotePath, "/")
+	return teamspaceArtifactScopePath(teamspaceID) + "/blobs/" + strings.TrimLeft(remotePath, "/")
 }
 
 func teamspaceArtifactTreePath(teamspaceID, remotePath string) string {
