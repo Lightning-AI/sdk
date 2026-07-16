@@ -3,6 +3,7 @@ package sdkclient
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -341,14 +342,46 @@ func TestUploadSurfacesSignedPutFailure(t *testing.T) {
 			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin")
 			return
 		}
-		http.Error(w, "signature does not match", http.StatusForbidden)
+		http.Error(w, "no such key", http.StatusNotFound)
 	}))
 	defer server.Close()
 
 	c := newUploadTestClient(t, server.URL)
 	err := c.Upload(context.Background(), "/scope", "file.bin", nil, writeUploadTestFile(t, "data"), UploadOptions{})
-	if err == nil || !strings.Contains(err.Error(), "403") {
-		t.Fatalf("Upload error = %v, want the storage PUT's 403 to surface", err)
+	if err == nil || !strings.Contains(err.Error(), "404") {
+		t.Fatalf("Upload error = %v, want the storage PUT's 404 to surface", err)
+	}
+}
+
+func TestUploadResignsOnSignedPutAuthFailure(t *testing.T) {
+	// Storage 401/403 must be retried with a freshly signed URL: just-issued
+	// storage credentials can lag behind (e.g. right after a managed folder
+	// is created), and signatures expire.
+	creates := 0
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPost:
+			creates++
+			writeUploadTestResponse(t, w, "file.bin", server.URL+fmt.Sprintf("/signed/%d/file.bin", creates))
+		case r.URL.Path == "/signed/1/file.bin":
+			http.Error(w, "credentials not yet active", http.StatusUnauthorized)
+		case r.URL.Path == "/signed/2/file.bin":
+			// fresh URL accepted
+		default:
+			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+			http.Error(w, "unexpected request", http.StatusBadRequest)
+		}
+	}))
+	defer server.Close()
+
+	c := newUploadTestClient(t, server.URL)
+	err := c.Upload(context.Background(), "/scope", "file.bin", nil, writeUploadTestFile(t, "data"), UploadOptions{})
+	if err != nil {
+		t.Fatalf("Upload returned error: %v", err)
+	}
+	if creates != 2 {
+		t.Fatalf("upload URL requested %d times, want 2 (fresh URL per attempt)", creates)
 	}
 }
 

@@ -170,33 +170,89 @@ type blobUploadResponse struct {
 	Results []blobUploadResult `json:"results"`
 }
 
+const (
+	// signedPutAttempts bounds the fresh-URL retries of the storage PUT.
+	signedPutAttempts = 7
+	// signedPutBaseDelay is the first retry delay; it doubles per attempt.
+	signedPutBaseDelay = 500 * time.Millisecond
+)
+
+// storagePutClient sends the presigned storage PUTs. It deliberately skips the
+// retrying transport: a rejected signed URL should be re-signed, not replayed.
+var storagePutClient = &http.Client{}
+
 // Upload sends sourcePath to blobPath within the upload scope rooted at
 // scopePath (e.g. /v1/projects/{id}/artifacts): it requests a presigned URL
 // from POST {scopePath}/blobs, PUTs the file bytes straight to storage, and
 // finalizes via POST {scopePath}/blobs/complete when requested.
+//
+// Every attempt PUTs to a freshly signed URL, so retries heal expired
+// signatures, transient storage errors, and newly issued storage credentials
+// that haven't propagated yet (e.g. right after a managed folder is created).
 func (c *RawClient) Upload(ctx context.Context, scopePath, blobPath string, query url.Values, sourcePath string, opts UploadOptions) error {
 	batch := blobUploadBatch{
 		ClusterID: opts.ClusterID,
 		Blobs:     []blobUploadBlob{{Path: blobPath}},
 	}
 	uploadPath := strings.TrimRight(scopePath, "/") + "/blobs"
-	var created blobUploadResponse
-	if err := c.Do(ctx, http.MethodPost, uploadPath, query, batch, &created); err != nil {
-		return err
-	}
-	if len(created.Results) != 1 || len(created.Results[0].URLs) != 1 {
-		return fmt.Errorf("POST %s returned no upload URL for %q", uploadPath, blobPath)
-	}
-	signed := created.Results[0].URLs[0]
 
-	file, err := os.Open(sourcePath)
+	var err error
+	for attempt := 1; attempt <= signedPutAttempts; attempt++ {
+		if attempt > 1 {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(signedPutBaseDelay << (attempt - 2)):
+			}
+		}
+		var signed blobUploadURL
+		signed, err = c.requestUploadURL(ctx, uploadPath, query, batch, blobPath)
+		if err != nil {
+			return err
+		}
+		var retryable bool
+		retryable, err = putFileToSignedURL(ctx, signed, sourcePath, blobPath)
+		if err == nil {
+			break
+		}
+		if !retryable {
+			return err
+		}
+	}
 	if err != nil {
 		return err
+	}
+
+	if !opts.NotifyCompletion {
+		return nil
+	}
+	return c.Do(ctx, http.MethodPost, uploadPath+"/complete", query, batch, nil)
+}
+
+func (c *RawClient) requestUploadURL(ctx context.Context, uploadPath string, query url.Values, batch blobUploadBatch, blobPath string) (blobUploadURL, error) {
+	var created blobUploadResponse
+	if err := c.Do(ctx, http.MethodPost, uploadPath, query, batch, &created); err != nil {
+		return blobUploadURL{}, err
+	}
+	if len(created.Results) != 1 || len(created.Results[0].URLs) != 1 {
+		return blobUploadURL{}, fmt.Errorf("POST %s returned no upload URL for %q", uploadPath, blobPath)
+	}
+	return created.Results[0].URLs[0], nil
+}
+
+// putFileToSignedURL PUTs the file to the presigned URL, reporting whether a
+// failure is worth retrying with a freshly signed URL: transport errors,
+// throttling, server errors, and 401/403 (storage may not honor just-issued
+// credentials yet, and signatures expire).
+func putFileToSignedURL(ctx context.Context, signed blobUploadURL, sourcePath, blobPath string) (retryable bool, err error) {
+	file, err := os.Open(sourcePath)
+	if err != nil {
+		return false, err
 	}
 	defer file.Close()
 	info, err := file.Stat()
 	if err != nil {
-		return err
+		return false, err
 	}
 	// An empty file must go out as http.NoBody: a zero ContentLength with a
 	// non-nil body is treated as unknown length and sent chunked, which
@@ -207,31 +263,21 @@ func (c *RawClient) Upload(ctx context.Context, scopePath, blobPath string, quer
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPut, signed.URL, body)
 	if err != nil {
-		return err
+		return false, err
 	}
 	req.ContentLength = info.Size()
-	req.GetBody = func() (io.ReadCloser, error) {
-		if info.Size() == 0 {
-			return http.NoBody, nil
-		}
-		return os.Open(sourcePath)
-	}
 	// The presigned URL carries its own authentication; extra credentials
 	// would invalidate the signature.
 	for name, value := range signed.Headers {
 		req.Header.Set(name, value)
 	}
-	resp, err := c.httpClient.Do(req)
+	resp, err := storagePutClient.Do(req)
 	if err != nil {
-		return err
+		return true, err
 	}
-	if err := closeUploadResponse(resp, http.StatusOK, blobPath); err != nil {
-		return err
-	}
-	if !opts.NotifyCompletion {
-		return nil
-	}
-	return c.Do(ctx, http.MethodPost, uploadPath+"/complete", query, batch, nil)
+	retryable = resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden ||
+		resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= 500
+	return retryable, closeUploadResponse(resp, http.StatusOK, blobPath)
 }
 
 func (c *RawClient) url(requestPath string, query url.Values) string {

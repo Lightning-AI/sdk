@@ -262,10 +262,14 @@ class _BlobUploader:
                 r = requests.put(urls[0]["url"], data=f, timeout=30, headers=headers or None)
 
         if r.status_code != 200:
-            # Transient server errors / throttling should be retried. The backoff
-            # decorator only retries HTTPError/RequestException, so raise an HTTPError
-            # for these to trigger a retry instead of failing immediately.
-            if r.status_code >= 500 or r.status_code == 429:
+            # Retry transient server errors / throttling, and also 401/403 from
+            # storage: every attempt signs a fresh URL, which heals expired
+            # signatures and newly issued storage credentials that haven't
+            # propagated yet (e.g. right after a lightning_storage folder is
+            # created). The backoff decorator only retries HTTPError/
+            # RequestException, so raise an HTTPError for these instead of
+            # failing immediately.
+            if r.status_code >= 500 or r.status_code in (401, 403, 429):
                 raise HTTPError(
                     f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
                 )

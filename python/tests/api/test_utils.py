@@ -844,12 +844,32 @@ def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
+def test_single_part_uploader_retries_auth_errors_with_fresh_url(mock_requests, _, tmp_path):
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
+
+    # Storage 401/403 must be retried: fresh credentials can lag right after a
+    # lightning_storage folder is created, and each retry signs a fresh URL.
+    mock_requests.put.side_effect = [
+        Mock(status_code=401),
+        Mock(status_code=200),
+    ]
+
+    uploader()
+
+    assert mock_requests.put.call_count == 2
+    # each attempt requested a freshly signed URL
+    assert mock_requests.post.call_count == 2
+
+
+@mock.patch("time.sleep", return_value=None)
+@mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_does_not_retry_client_error(mock_requests, _, tmp_path):
     uploader = _make_single_part_blob_uploader(tmp_path)
     _configure_single_part_create(mock_requests)
 
     # A non-transient 4xx should fail immediately without retrying.
-    mock_requests.put.return_value = Mock(status_code=403)
+    mock_requests.put.return_value = Mock(status_code=404)
 
     with pytest.raises(RuntimeError, match="Failed to upload file"):
         uploader()
