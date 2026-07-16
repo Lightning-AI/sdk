@@ -97,6 +97,32 @@ def test_job_v2_submit_job(mocker_auth):
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
+def test_job_v2_submit_job_threads_placement_group_id(mocker_auth):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        placement_group_id="pg-1",
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.placement_group_id == "pg-1"
+
+
 def test_get_job_by_name(mocker_auth):
     job_api = JobApiV2()
 

@@ -151,7 +151,43 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(
+        id="job-123",
+        name="test-job",
+        private_ip_address="10.0.0.7",
+        spec=V1JobSpec(placement_group_id="pg-1", rank=3),
+    )
+
+    assert job.resource_id == "job-123"
+    assert job.private_ip_address == "10.0.0.7"
+    assert job.placement_group_id == "pg-1"
+    assert job.rank == 3
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_job_threads_placement_group_id(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        placement_group_id="pg-1",
+    )
+
+    assert submit_mock.call_args.kwargs["placement_group_id"] == "pg-1"
 
 
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
@@ -190,6 +226,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 
@@ -575,6 +612,7 @@ def test_submit_jobv2_studio_resolve(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 
@@ -672,6 +710,7 @@ def test_submit_job_v2_image_from_studio(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -716,6 +755,7 @@ def test_run_job_with_cloud_provider(
         max_runtime=None,
         reuse_snapshot=True,
         scratch_disks=None,
+        placement_group_id=None,
     )
 
 

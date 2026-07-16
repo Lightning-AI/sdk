@@ -294,6 +294,14 @@ class Studio(metaclass=TrackCallsMeta):
         """
         return self._studio.cluster_id
 
+    @property
+    def placement_group_id(self) -> Optional[str]:
+        """The placement group identifier for this Studio's current compute, if assigned."""
+        code_config = self._studio.code_config
+        if code_config is None or code_config.compute_config is None:
+            return None
+        return code_config.compute_config.placement_group_id
+
     def start(
         self,
         machine: Optional[Union[Machine, str]] = None,

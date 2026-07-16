@@ -50,6 +50,7 @@ class MMTApiV2:
         path_mappings: Optional[Dict[str, str]],
         max_runtime: Optional[int],
         reuse_snapshot: bool,
+        placement_group_id: Optional[str] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -70,6 +71,7 @@ class MMTApiV2:
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -90,6 +92,7 @@ class MMTApiV2:
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            placement_group_id=placement_group_id,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -113,6 +116,7 @@ class MMTApiV2:
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
+        placement_group_id: Optional[str] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -133,6 +137,7 @@ class MMTApiV2:
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -167,6 +172,7 @@ class MMTApiV2:
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
             machine_image_version=machine_image_version,
+            placement_group_id=placement_group_id,
             **optional_spec_kwargs,
         )
         return JobsServiceCreateMultiMachineJobBody(

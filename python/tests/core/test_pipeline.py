@@ -163,6 +163,14 @@ def test_pipeline_run(resolve_teamspace_mock, pipeline_api_mock):
     assert step_2.job.spec.instance_name == "cpu-8"
 
 
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_job_step_threads_placement_group_id():
+    job = JobStep(name="job-0", machine=Machine.CPU, placement_group_id="pg-1")
+    proto = job.to_proto(MagicMock(), "", False)
+
+    assert proto.job.spec.placement_group_id == "pg-1"
+
+
 @pytest.mark.parametrize("interruption_retries", [0, 3])
 @patch.object(teamspace, "TeamspaceApi", new=MagicMock())
 @patch.object(pipeline_module, "_get_cluster", new=MagicMock())
@@ -304,6 +312,15 @@ def test_mmt():
     assert proto.deployment is None
     assert proto.mmt.machines == 2
     assert proto.mmt.spec.instance_name == "cpu-4"
+    assert proto.mmt.spec.placement_group_id is None
+
+
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_mmt_step_threads_placement_group_id():
+    mmt = MMTStep(name="mmt-0", machine=Machine.CPU, placement_group_id="pg-1")
+    proto = mmt.to_proto(MagicMock(), "", False)
+
+    assert proto.mmt.spec.placement_group_id == "pg-1"
 
 
 @patch.object(teamspace, "TeamspaceApi", new=MagicMock())
