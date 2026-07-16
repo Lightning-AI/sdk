@@ -1478,6 +1478,54 @@ def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     assert all(c["max_workers"] == 5 for c in calls)
 
 
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
+    """The concurrency budget splits sensibly at the edges: a single large file
+    gets all workers within-file; many small files fan out one part-worker each."""
+    from lightning_sdk.lightning_cloud.utils import dataset as d
+
+    def run(n_files, num_workers):
+        paths, rels = [], []
+        for i in range(n_files):
+            p = tmp_path / f"n{n_files}_{i}.bin"
+            p.write_bytes(b"x")
+            paths.append(p)
+            rels.append(p.name)
+        calls = []
+
+        class _FakeUploader:
+            def __init__(self, **kwargs):
+                calls.append(kwargs)
+
+            def __call__(self):
+                return None
+
+        with (
+            mock.patch.object(d, "_DatasetFileUploader", _FakeUploader),
+            mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+        ):
+            d._upload_dataset_files(
+                project_id="p",
+                dataset_id="ds",
+                version="v1",
+                file_paths=paths,
+                remote_paths=rels,
+                progress_bar=False,
+                num_workers=num_workers,
+            )
+        return calls
+
+    # single file -> all workers go to within-file parts
+    calls = run(1, 16)
+    assert len(calls) == 1
+    assert calls[0]["max_workers"] == 16
+    # more files than workers -> one part-worker each (fan out across files)
+    calls = run(40, 16)
+    assert len(calls) == 40
+    assert all(c["max_workers"] == 1 for c in calls)
+
+
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
 @mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
