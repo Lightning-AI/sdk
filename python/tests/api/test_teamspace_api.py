@@ -642,14 +642,30 @@ def test_list_files(
     mock_authenticate.assert_called_once_with(teamspace_api._client)
 
 
+def _blob_upload_create_response(path, upload_id, urls):
+    response = mock.Mock(status_code=200)
+    response.json.return_value = {
+        "expires_at": "2026-01-01T00:00:00Z",
+        "results": [{"path": path, "upload_id": upload_id, "urls": urls}],
+    }
+    return response
+
+
+def _make_upload_teamspace_api():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.Mock()
+    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
+    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+    return teamspace_api
+
+
 @pytest.mark.parametrize("progress_bar", [True, False])
-@pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 100MB for multipart
-@mock.patch("lightning_sdk.api.teamspace_api._FileUploader")
+@pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 200MB for multipart
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch(
-    "lightning_sdk.api.teamspace_api._authenticate_and_get_token",
+    "lightning_sdk.api.utils._authenticate_and_get_token",
     new=mock.MagicMock(return_value="test-token"),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
@@ -659,62 +675,115 @@ def test_upload_file(
     tqdm_mock,
     requests_put_mock,
     requests_post_mock,
-    file_uploader_mock,
     tmpdir,
     progress_bar,
     file_size_mb,
+    monkeypatch,
 ):
-    requests_put_mock.return_value.status_code = 200
-    requests_post_mock.return_value.status_code = 200
+    # the autouse keep_alive_mocker fixture mocks threading.Thread, so real
+    # executor workers would never run; fall back to a plain map
+    monkeypatch.setattr("lightning_sdk.api.utils.ThreadPoolExecutor.map", map)
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"
-    teamspace_api = TeamspaceApi()
-
-    teamspace_api._client = mock.Mock()
-    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
-    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+    teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s {file_size_mb}MB {filepath}".split(" "))
 
+    single_part = file_size_mb <= 100
+    urls = (
+        [{"url": "https://storage.example.com/signed"}]
+        if single_part
+        else [
+            {"url": "https://storage.example.com/part1", "part_number": 1},
+            {"url": "https://storage.example.com/part2", "part_number": 2},
+        ]
+    )
+    requests_post_mock.side_effect = [
+        _blob_upload_create_response("file1", "" if single_part else "upload-1", urls),
+        mock.Mock(status_code=204),
+    ]
+    requests_put_mock.return_value = mock.Mock(status_code=200, headers={"ETag": "etag-1"})
+
     teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
-    if file_size_mb <= 100:
-        # Single-part upload should be used
-        assert requests_put_mock.call_count == 1
-        (url,) = requests_put_mock.call_args.args
-        params = requests_put_mock.call_args.kwargs["params"]
-        assert "ts-abc" in url
-        assert "file1" in url
-        assert "token" in params
+    # URL request goes to the project-scoped batch endpoint with the cluster in the body.
+    create_call = requests_post_mock.call_args_list[0]
+    assert create_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/blobs"
+    assert create_call.kwargs["params"] == {"token": "test-token"}
 
-        # FileUploader (multipart) should not be called
-        file_uploader_mock.assert_not_called()
+    if single_part:
+        assert create_call.kwargs["json"] == {"cluster_id": "cluster-abc", "blobs": [{"path": "file1"}]}
+
+        assert requests_put_mock.call_count == 1
+        assert requests_put_mock.call_args.args[0] == "https://storage.example.com/signed"
+
+        # single-part project uploads don't need finalizing
+        assert requests_post_mock.call_count == 1
 
         if progress_bar:
             tqdm_mock.wrapattr.assert_called_once()
         else:
             tqdm_mock.wrapattr.assert_not_called()
     else:
-        # Multipart upload should be used
-        file_uploader_mock.assert_called_once()
-        call_kwargs = file_uploader_mock.call_args.kwargs
-        assert call_kwargs["teamspace_id"] == "ts-abc"
-        assert call_kwargs["cloud_account"] == "cluster-abc"
-        assert call_kwargs["file_path"] == filepath
-        assert call_kwargs["progress_bar"] == progress_bar
+        assert create_call.kwargs["json"] == {
+            "cluster_id": "cluster-abc",
+            "blobs": [{"path": "file1", "parts": 2, "part_size": 100_000_000}],
+        }
 
-        # Single-part upload should not be called
-        assert requests_put_mock.call_count == 0
+        assert requests_put_mock.call_count == 2
+
+        complete_call = requests_post_mock.call_args_list[1]
+        assert complete_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/blobs/complete"
+        completed = complete_call.kwargs["json"]["blobs"][0]
+        assert completed["path"] == "file1"
+        assert completed["upload_id"] == "upload-1"
+        assert [p["part_number"] for p in completed["parts"]] == [1, 2]
+
+
+@pytest.mark.parametrize("remote_path", ["uploads/file1", "Uploads/file1"])
+@mock.patch("requests.post")
+@mock.patch("requests.put")
+@mock.patch(
+    "lightning_sdk.api.utils._authenticate_and_get_token",
+    new=mock.MagicMock(return_value="test-token"),
+)
+@mock.patch("lightning_sdk.api.teamspace_api.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_uploads_prefix(
+    auth_mock,
+    requests_put_mock,
+    requests_post_mock,
+    tmpdir,
+    remote_path,
+):
+    """Paths under uploads/ go to the uploads-scoped endpoint, minus the prefix."""
+    auth_instance = auth_mock.return_value
+    auth_instance.api_key = "test-api-key"
+    teamspace_api = _make_upload_teamspace_api()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    requests_post_mock.return_value = _blob_upload_create_response(
+        "file1", "", [{"url": "https://storage.example.com/signed"}]
+    )
+    requests_put_mock.return_value = mock.Mock(status_code=200)
+
+    teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, remote_path, progress_bar=False)
+
+    create_call = requests_post_mock.call_args_list[0]
+    assert create_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/uploads/blobs"
+    assert create_call.kwargs["json"] == {"cluster_id": "cluster-abc", "blobs": [{"path": "file1"}]}
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
 @mock.patch("requests.post")
 @mock.patch("requests.put")
-@mock.patch("lightning_sdk.api.teamspace_api.tqdm")
+@mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch(
-    "lightning_sdk.api.teamspace_api._authenticate_and_get_token",
+    "lightning_sdk.api.utils._authenticate_and_get_token",
     new=mock.MagicMock(return_value="test-token"),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
@@ -727,32 +796,37 @@ def test_upload_file_with_headers(
     tmpdir,
     progress_bar,
 ):
-    """Test that custom headers are passed to requests.put when uploading files."""
-    requests_put_mock.return_value.status_code = 200
-    requests_post_mock.return_value.status_code = 200
+    """Test that custom headers are bound into the upload and replayed on requests.put."""
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
 
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"
-
-    teamspace_api = TeamspaceApi()
-
-    # Mock the entire _client object
-    teamspace_api._client = mock.Mock()
-    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
-    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+    teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    # the server echoes the content type back as a header to replay on the PUT
+    requests_post_mock.return_value = _blob_upload_create_response(
+        "file1", "", [{"url": "https://storage.example.com/signed", "headers": {"Content-Type": "image/png"}}]
+    )
+    requests_put_mock.return_value = mock.Mock(status_code=200)
 
     custom_headers = {"Content-Type": "image/png"}
     teamspace_api.upload_file(
         "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar, headers=custom_headers
     )
 
+    # the content type is bound into the signed URL request...
+    create_call = requests_post_mock.call_args_list[0]
+    assert create_call.kwargs["json"] == {
+        "cluster_id": "cluster-abc",
+        "blobs": [{"path": "file1", "content_type": "image/png"}],
+    }
+
+    # ...and the returned headers are replayed on the storage PUT
     assert requests_put_mock.call_count == 1
     headers = requests_put_mock.call_args.kwargs["headers"]
-
     assert headers == custom_headers
     assert headers["Content-Type"] == "image/png"
 
@@ -760,7 +834,7 @@ def test_upload_file_with_headers(
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch(
-    "lightning_sdk.api.teamspace_api._authenticate_and_get_token",
+    "lightning_sdk.api.utils._authenticate_and_get_token",
     new=mock.MagicMock(return_value="test-token"),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
@@ -772,20 +846,17 @@ def test_upload_file_without_headers(
     tmpdir,
 ):
     """Test that headers is None by default when not provided."""
-    requests_put_mock.return_value.status_code = 200
-    requests_post_mock.return_value.status_code = 200
-
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"
-
-    teamspace_api = TeamspaceApi()
-
-    teamspace_api._client = mock.Mock()
-    teamspace_api._client.auth_service_login.return_value = mock.Mock(token="test-token")
-    teamspace_api._client.api_client.configuration.host = "https://api.example.com"
+    teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
+
+    requests_post_mock.return_value = _blob_upload_create_response(
+        "file1", "", [{"url": "https://storage.example.com/signed"}]
+    )
+    requests_put_mock.return_value = mock.Mock(status_code=200)
 
     teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, "file1", progress_bar=False)
 

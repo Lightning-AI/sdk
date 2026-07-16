@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Literal, Optional, Sequence, TextIO, Tuple, 
 import requests
 
 from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
-from lightning_sdk.api.utils import _FileUploader, _machine_to_compute_name, resolve_path_mappings
+from lightning_sdk.api.utils import _BlobUploader, _machine_to_compute_name, resolve_path_mappings
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateDeploymentBody,
     JobsServiceReloadDeploymentWeightsBody,
@@ -1186,7 +1186,7 @@ def _upload_request_export_artifact(
             local_path=local_path,
             destination_parts=(local_path.name,),
             progress_bar=False,
-            uploader_cls=_FileUploader,
+            uploader_cls=_BlobUploader,
         )
     except Exception as ex:
         destination = upload_target.absolute_artifact_path(local_path.name)

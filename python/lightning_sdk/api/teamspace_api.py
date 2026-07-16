@@ -11,16 +11,13 @@ import requests
 from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
-    _MAX_SIZE_MULTI_PART_CHUNK,
     Experiment,
     _authenticate_and_get_token,
+    _BlobUploader,
     _download_model_files,
     _DummyBody,
-    _FileUploader,
     _get_model_version,
     _ModelFileUploader,
-    _resolve_teamspace_remote_path,
-    _SinglePartFileUploader,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -726,49 +723,40 @@ class TeamspaceApi:
     ) -> None:
         """Uploads file to given remote path in the Teamspace drive.
 
-        Uses single-part upload for files <= 5MB, multipart upload for larger files.
-
         Args:
             teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID used for multipart uploads.
+            cloud_account: Cloud account ID to store the file on.
             file_path: Local filesystem path of the file to upload.
             remote_path: Destination path inside the Teamspace drive.
             progress_bar: Whether to display a progress bar during upload.
             headers: Optional extra HTTP headers to include in the upload request.
         """
-        file_size = os.path.getsize(file_path)
+        remote_path = remote_path.lstrip("/")
+        if remote_path.startswith("teamspace/"):
+            remote_path = remote_path[len("teamspace/") :]
 
-        multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
+        client_host = self._client.api_client.configuration.host
+        endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts"
+        if remote_path.startswith(("uploads/", "Uploads/")):
+            remote_path = remote_path[len("uploads/") :]
+            endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads"
 
-        if file_size <= multipart_threshold:
-            token = _authenticate_and_get_token(self._client)
+        content_type = None
+        extra_headers = dict(headers) if headers else None
+        if extra_headers:
+            # bind the content type into the signed URL; the rest ride along on the PUT
+            content_type = extra_headers.pop("Content-Type", None)
 
-            query_params = {"token": token, "clusterId": cloud_account}
-            client_host = self._client.api_client.configuration.host
-            # we need this because there is no unified upload endpoint yet
-            url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
-            if remote_path.startswith(("uploads/", "Uploads/")):
-                remote_path = remote_path[8:]
-                print("remote_path", remote_path)
-                url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads/blobs/{remote_path}"
-
-            _SinglePartFileUploader(
-                client=self._client,
-                file_path=file_path,
-                url=url,
-                query_params=query_params,
-                progress_bar=progress_bar,
-                headers=headers,
-            )()
-        else:
-            _FileUploader(
-                client=self._client,
-                teamspace_id=teamspace_id,
-                cloud_account=cloud_account,
-                file_path=file_path,
-                remote_path=_resolve_teamspace_remote_path(remote_path),
-                progress_bar=progress_bar,
-            )()
+        _BlobUploader(
+            client=self._client,
+            endpoint_base=endpoint_base,
+            file_path=file_path,
+            remote_path=remote_path,
+            progress_bar=progress_bar,
+            cluster_id=cloud_account,
+            content_type=content_type,
+            extra_headers=extra_headers or None,
+        )()
 
     def download_file(
         self,
