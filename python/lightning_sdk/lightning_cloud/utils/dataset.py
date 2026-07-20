@@ -118,9 +118,7 @@ def _download_dataset_files(
             measured throughput/throttling sweet spot).
         part_size: byte-range part size for splitting large files (default 64 MB).
     """
-    import concurrent.futures
     import threading
-    from concurrent.futures import ThreadPoolExecutor
 
     request_chunk = 10 * 1024 * 1024
 
