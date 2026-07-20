@@ -24,7 +24,9 @@ from lightning_sdk.api.utils import (
 
 # Total upload concurrency budget, split across files x within-file parts.
 _DEFAULT_UPLOAD_WORKERS = 16
-# Download concurrency defaults (measured throughput sweet spot; see download docs).
+# Download concurrency defaults. 16 workers was the throughput sweet spot in our
+# benchmarks: fewer underutilizes bandwidth, more triggers S3 request throttling
+# (backoff) and nets out slower.
 _DEFAULT_DOWNLOAD_WORKERS = 16
 _DEFAULT_DOWNLOAD_PART_SIZE = 64 * 1024 * 1024  # 64 MiB byte-range parts
 
@@ -57,63 +59,6 @@ def _parse_dataset_path(name: str) -> tuple:
         )
     return org_name, ts_name, dataset_name, version
 
-
-def _resolve_dataset_current_version(project_id: str, dataset_name: str) -> Optional[str]:
-    """Resolve a dataset name to its current version.
-
-    If no current version exists, returns None.
-    Raises ValueError if the dataset cannot be found.
-    """
-    client = LightningClient(retry=False)
-
-    api_client: ApiClient = client.api_client
-    url = env.LIGHTNING_CLOUD_URL
-    resp = api_client.request(
-        "GET",
-        f"{url}/v1/projects/{project_id}/lit-datasets",
-        headers=api_client.default_headers,
-        _preload_content=True,
-    )
-    data = json.loads(resp.data) if resp.data else {}
-    for ds in data.get("datasets", []):
-        if ds.get("name") == dataset_name:
-            current_version = None
-            default_ver = ds.get("default_version") or ds.get("defaultVersion")
-            if default_ver and default_ver.get("version"):
-                current_version = default_ver["version"]
-            if not current_version:
-                latest_ver = ds.get("latest_version") or ds.get("latestVersion")
-                if latest_ver and latest_ver.get("version"):
-                    current_version = latest_ver["version"]
-            if not current_version:
-                current_version = ds.get("version")
-            return current_version
-
-    raise ValueError(f"Dataset '{dataset_name}' not found in project '{project_id}'.")
-
-
-def _resolve_dataset_version(project_id: str, dataset_name: str, version: Optional[str] = None) -> str:
-    """Resolve the dataset version, defaulting to the most recent if not provided.
-
-    Args:
-        project_id: The project ID.
-        dataset_name: The dataset ID (name).
-        version: Optional version. If None, the most recent version is returned.
-
-    Returns:
-        The resolved version string.
-
-    Raises:
-        ValueError: If the dataset cannot be found or has no version.
-    """
-    if version:
-        return version
-
-    current_version = _resolve_dataset_current_version(project_id, dataset_name)
-    if current_version:
-        return current_version
-
-    raise ValueError(f"Dataset '{dataset_name}' not found in project '{project_id}', or it has no versions.")
 
 def _resolve_dataset_id_and_version(
     project_id: str, dataset_name: str, version: Optional[str] = None
