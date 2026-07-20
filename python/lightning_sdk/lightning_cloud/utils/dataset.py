@@ -1,4 +1,5 @@
 from typing import Callable, List, Optional, Union
+import concurrent.futures
 import json
 import math
 import os
@@ -176,7 +177,7 @@ def _download_dataset_files(
                     pbar.update(len(chunk))
 
     try:
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
             futures = [executor.submit(_download_part, t) for t in tasks]
             concurrent.futures.wait(futures)
             for fut in futures:
