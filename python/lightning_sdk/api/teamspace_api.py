@@ -790,12 +790,12 @@ class TeamspaceApi:
             params=query_params,
             stream=True,
         )
-        total_length = int(r.headers.get("content-length"))
+        total_length = int(r.headers.get("content-length", 0))
 
         if progress_bar:
             pbar = tqdm(
                 desc=f"Downloading {os.path.split(path)[1]}",
-                total=total_length,
+                total=total_length if total_length > 0 else None,
                 unit="B",
                 unit_scale=True,
                 unit_divisor=1024,

@@ -105,15 +105,14 @@ class FilesystemApi:
         owned_pbar = None
         if pbar is None and progress_bar:
             total_length = int(r.headers.get("content-length", 0))
-            if total_length > 0:
-                owned_pbar = tqdm(
-                    desc=f"Downloading {os.path.split(remote_path)[1]}",
-                    total=total_length,
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=1024,
-                )
-                pbar = owned_pbar
+            owned_pbar = tqdm(
+                desc=f"Downloading {os.path.split(remote_path)[1]}",
+                total=total_length if total_length > 0 else None,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1024,
+            )
+            pbar = owned_pbar
 
         local_path.parent.mkdir(parents=True, exist_ok=True)
         with open(local_path, "wb") as f:
