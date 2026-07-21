@@ -1289,6 +1289,7 @@ def test_download_dataset_version(
                 version="3",
                 target_path=target_path,
                 cluster_id="aws-us-east",
+                as_zip=True,
             )
 
         mock_api_client.request.assert_any_call(
@@ -1354,6 +1355,7 @@ def test_download_dataset_version_no_token_no_cluster(
                 dataset_name="ds-2",
                 version="1",
                 target_path=target_path,
+                as_zip=True,
             )
 
         mock_api_client.request.assert_any_call(
