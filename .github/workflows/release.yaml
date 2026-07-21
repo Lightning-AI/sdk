@@ -17,31 +17,20 @@ jobs:
     timeout-minutes: 10
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      with:
+        fetch-depth: 0
     - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: 3.11
 
-    # On a release the git tag is authoritative: rewrite the canonical version so
-    # the built wheel matches the tag (strip a leading "v"). This removes the
-    # manual-bump footgun where a release rebuilt an already-published version.
-    - name: Set version from release tag
-      if: github.event_name == 'release'
-      run: |
-        set -euo pipefail
-        VER="${GITHUB_REF_NAME#v}"
-        echo "Releasing version ${VER} (from tag ${GITHUB_REF_NAME})"
-        sed -i -E "s/^__version__ = \".*\"/__version__ = \"${VER}\"/" python/lightning_sdk/__version__.py
-        cat python/lightning_sdk/__version__.py
-
     - name: Install dependencies
       run: >-
-        python -m pip install --user --upgrade setuptools wheel
+        python -m pip install --user --upgrade build
 
     - name: Build packages
+      working-directory: python
       run: |
-        # todo: add sdist once public
-        cd python
-        python setup.py bdist_wheel
+        python -m build --wheel
         ls -lh dist/
 
     - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

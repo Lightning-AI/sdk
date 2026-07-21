@@ -46,9 +46,9 @@ class _DummyBody:
         self.attribute_map = {}
 
 
-_BYTES_PER_KB = 1000
-_BYTES_PER_MB = 1000 * _BYTES_PER_KB
-_BYTES_PER_GB = 1000 * _BYTES_PER_MB
+_BYTES_PER_KB = 1024
+_BYTES_PER_MB = 1024 * _BYTES_PER_KB
+_BYTES_PER_GB = 1024 * _BYTES_PER_MB
 
 _SIZE_LIMIT_SINGLE_PART = 5 * _BYTES_PER_GB
 _MAX_SIZE_MULTI_PART_CHUNK = 100 * _BYTES_PER_MB
@@ -160,7 +160,7 @@ class _BlobUploader:
                 total=self.filesize,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 position=-1,
                 mininterval=1,
             )
@@ -266,7 +266,7 @@ class _BlobUploader:
                     total=self.filesize,
                     unit="B",
                     unit_scale=True,
-                    unit_divisor=1000,
+                    unit_divisor=1024,
                 ) as wrapped_file:
                     r = requests.put(
                         urls[0]["url"],
@@ -402,7 +402,7 @@ class _ModelFileUploader:
                 total=self.filesize,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 leave=False,
                 position=-1,
                 mininterval=1,
@@ -775,7 +775,7 @@ def _download_model_files(
             unit="B",
             total=float(response.size_bytes),
             unit_scale=True,
-            unit_divisor=1000,
+            unit_divisor=1024,
             position=-1,
             mininterval=1,
         )
@@ -835,7 +835,7 @@ def _download_teamspace_files(
             desc="Downloading files",
             unit="B",
             unit_scale=True,
-            unit_divisor=1000,
+            unit_divisor=1024,
             position=-1,
             mininterval=1,
         )

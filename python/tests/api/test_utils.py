@@ -379,7 +379,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tm
         "unit": "B",
         "total": 10.0,
         "unit_scale": True,
-        "unit_divisor": 1000,
+        "unit_divisor": 1024,
         "position": -1,
         "mininterval": 1,
     }

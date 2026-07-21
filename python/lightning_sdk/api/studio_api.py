@@ -1084,7 +1084,7 @@ class StudioApi:
                 total=total_length if total_length > 0 else None,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
             )
 
             pbar_update = pbar.update
@@ -1190,7 +1190,7 @@ class StudioApi:
                 total=total_size,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 mininterval=1,
             )
 

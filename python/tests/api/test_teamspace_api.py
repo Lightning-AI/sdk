@@ -729,7 +729,7 @@ def test_upload_file(
     else:
         assert create_call.kwargs["json"] == {
             "cluster_id": "cluster-abc",
-            "blobs": [{"path": "file1", "parts": 2, "part_size": 100_000_000}],
+            "blobs": [{"path": "file1", "parts": 2, "part_size": 104_857_600}],
         }
 
         assert requests_put_mock.call_count == 2

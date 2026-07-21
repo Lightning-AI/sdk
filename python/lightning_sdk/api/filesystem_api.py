@@ -110,7 +110,7 @@ class FilesystemApi:
                 total=total_length if total_length > 0 else None,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
             )
             pbar = owned_pbar
 
@@ -159,7 +159,7 @@ class FilesystemApi:
                 total=total_size,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 mininterval=1,
             )
 

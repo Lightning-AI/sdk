@@ -1266,7 +1266,7 @@ def test_upload_file(
         else:
             tqdm_mock.wrapattr.assert_not_called()
     else:
-        assert create_call.kwargs["json"] == {"blobs": [{"path": "file1", "parts": 2, "part_size": 100_000_000}]}
+        assert create_call.kwargs["json"] == {"blobs": [{"path": "file1", "parts": 2, "part_size": 104_857_600}]}
 
         assert requests_put_mock.call_count == 2
         put_urls = sorted(c.args[0] for c in requests_put_mock.call_args_list)

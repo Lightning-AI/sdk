@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "build"]
+requires = ["setuptools>=80", "setuptools-scm>=9.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -66,8 +66,8 @@ lightning = "lightning_sdk.cli.entrypoint:main_cli"
 lightning-sdk = "lightning_sdk.cli.entrypoint:main_cli"
 sandbox = "lightning_sdk.cli.groups:sandbox"
 
-[tool.setuptools.dynamic]
-version = {attr = "lightning_sdk.__version__.__version__"}
+[tool.setuptools_scm]
+root = ".."
 
 [tool.setuptools.packages.find]
 where = ["."]
