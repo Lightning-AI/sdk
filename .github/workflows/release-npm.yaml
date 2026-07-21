@@ -87,7 +87,7 @@ jobs:
       - name: Publish distribution to npm
         run: |
           set -euo pipefail
-          TARBALL=$(echo package/*.tgz)
+          TARBALL=$(realpath package/*.tgz)
           read -r NAME VER < <(
             tar -xOf "$TARBALL" package/package.json |
               node -e 'let input = ""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => { const pkg = JSON.parse(input); console.log(pkg.name, pkg.version); });'
