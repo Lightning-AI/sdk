@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
+import requests
 
 import lightning_sdk
 from lightning_sdk.api.teamspace_api import SecretType
@@ -1195,6 +1196,51 @@ def test_teamspace_multi_machine_jobs_property_when_denied(
         _ = ts.multi_machine_jobs
 
 
+class _SyncExecutor:
+    """Synchronous stand-in for ThreadPoolExecutor so download tests are
+    deterministic (no real threads under pytest's harness)."""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def submit(self, fn, *args, **kwargs):
+        import concurrent.futures
+
+        fut = concurrent.futures.Future()
+        try:
+            fut.set_result(fn(*args, **kwargs))
+        except Exception as exc:
+            fut.set_exception(exc)
+        return fut
+
+
+class _FakeRangeResponse:
+    """Minimal stand-in for a streamed requests.Response to a Range GET."""
+
+    def __init__(self, payload: bytes = b"data", status_code: int = 200):
+        self._payload = payload
+        self.status_code = status_code
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.exceptions.HTTPError(str(self.status_code))
+
+    def iter_content(self, chunk_size=None):
+        return iter([self._payload])
+
+
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
 @mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1204,7 +1250,6 @@ def test_download_dataset_version(
     internal_user_api_mocker,
 ):
     import json
-    import urllib
 
     from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
 
@@ -1213,7 +1258,7 @@ def test_download_dataset_version(
 
     mock_files_response = mock.MagicMock()
     mock_files_response.data = json.dumps(
-        {"files": [{"filepath": "data.csv", "url": "https://presigned.example.com/data.csv"}]}
+        {"files": [{"filepath": "data.csv", "url": "https://presigned.example.com/data.csv", "size": 4}]}
     )
 
     mock_api_client = mock.MagicMock()
@@ -1224,11 +1269,20 @@ def test_download_dataset_version(
     mock_client_instance.api_client = mock_api_client
     mock_lightning_client.return_value = mock_client_instance
 
+    captured = {}
+
+    def fake_get(url, headers=None, stream=None, **kwargs):
+        captured["url"] = url
+        captured["headers"] = headers
+        return _FakeRangeResponse(b"data")
+
     target_path = "/tmp/test_dataset_download.zip"
     try:
-        with mock.patch.object(urllib.request, "urlretrieve", return_value=None) as mock_urlretrieve, mock.patch(
-            "shutil.make_archive"
-        ) as mock_make_archive:
+        with (
+            mock.patch("requests.get", side_effect=fake_get) as mock_get,
+            mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+            mock.patch("shutil.make_archive") as mock_make_archive,
+        ):
             _download_dataset_version(
                 project_id="proj-1",
                 dataset_name="ds-1",
@@ -1250,7 +1304,10 @@ def test_download_dataset_version(
             headers=mock.ANY,
             _preload_content=True,
         )
-        mock_urlretrieve.assert_called_once_with("https://presigned.example.com/data.csv", mock.ANY)
+        # parallel/chunked download issues a Range GET against the presigned URL
+        assert mock_get.call_count == 1
+        assert captured["url"] == "https://presigned.example.com/data.csv"
+        assert captured["headers"]["Range"] == "bytes=0-3"
         mock_make_archive.assert_called_once_with("/tmp/test_dataset_download", "zip", mock.ANY)
     finally:
         if os.path.exists(target_path):
@@ -1266,7 +1323,6 @@ def test_download_dataset_version_no_token_no_cluster(
     internal_user_api_mocker,
 ):
     import json
-    import urllib
 
     from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
 
@@ -1275,7 +1331,7 @@ def test_download_dataset_version_no_token_no_cluster(
 
     mock_files_response = mock.MagicMock()
     mock_files_response.data = json.dumps(
-        {"files": [{"filepath": "data.csv", "url": "https://presigned.example.com/data.csv"}]}
+        {"files": [{"filepath": "data.csv", "url": "https://presigned.example.com/data.csv", "size": 4}]}
     )
 
     mock_api_client = mock.MagicMock()
@@ -1288,9 +1344,11 @@ def test_download_dataset_version_no_token_no_cluster(
 
     target_path = "/tmp/test_ds_no_token.zip"
     try:
-        with mock.patch.object(urllib.request, "urlretrieve", return_value=None) as mock_urlretrieve, mock.patch(
-            "shutil.make_archive"
-        ) as mock_make_archive:
+        with (
+            mock.patch("requests.get", side_effect=lambda *a, **k: _FakeRangeResponse(b"data")),
+            mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+            mock.patch("shutil.make_archive") as mock_make_archive,
+        ):
             _download_dataset_version(
                 project_id="proj-1",
                 dataset_name="ds-2",
@@ -1311,11 +1369,100 @@ def test_download_dataset_version_no_token_no_cluster(
             headers=mock.ANY,
             _preload_content=True,
         )
-        mock_urlretrieve.assert_called_once_with("https://presigned.example.com/data.csv", mock.ANY)
         mock_make_archive.assert_called_once_with("/tmp/test_ds_no_token", "zip", mock.ANY)
     finally:
         if os.path.exists(target_path):
             os.unlink(target_path)
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_resolve_dataset_id_and_version(
+    mock_lightning_client,
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    """One list call returns both the dataset id and the resolved current version."""
+    import json
+
+    from lightning_sdk.lightning_cloud.utils.dataset import _resolve_dataset_id_and_version
+
+    resp = mock.MagicMock()
+    resp.data = json.dumps({"datasets": [{"name": "ds-1", "id": "id-123", "defaultVersion": {"version": "v7"}}]})
+    mock_api_client = mock.MagicMock()
+    mock_api_client.request.return_value = resp
+    mock_api_client.default_headers = {}
+    mock_client_instance = mock.MagicMock()
+    mock_client_instance.api_client = mock_api_client
+    mock_lightning_client.return_value = mock_client_instance
+
+    # unspecified version -> resolves to default; a single list call is made
+    ds_id, ver = _resolve_dataset_id_and_version("proj-1", "ds-1", None)
+    assert (ds_id, ver) == ("id-123", "v7")
+    assert mock_api_client.request.call_count == 1
+
+    # explicit version is returned as-is
+    ds_id, ver = _resolve_dataset_id_and_version("proj-1", "ds-1", "v2")
+    assert (ds_id, ver) == ("id-123", "v2")
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+def test_download_dataset_files_parallel(tmp_path):
+    """Files download concurrently via Range GETs, each written to its own path."""
+    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+
+    files = [
+        {"filepath": "a.bin", "url": "https://x/a", "size": 4},
+        {"filepath": "sub/b.bin", "url": "https://x/b", "size": 4},
+        {"filepath": "empty.bin", "url": "https://x/e", "size": 0},
+        {"filepath": "missing-url.bin", "size": 4},
+    ]
+
+    def fake_get(url, headers=None, stream=None, **kwargs):
+        return _FakeRangeResponse(b"data")
+
+    with (
+        mock.patch("requests.get", side_effect=fake_get) as mock_get,
+        mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+    ):
+        _download_dataset_files(files, str(tmp_path), "proj-1", refresh_file=lambda r: {"url": None, "size": 0})
+
+    # non-zero files fetched (one Range GET each); zero-byte file needs no GET
+    assert mock_get.call_count == 2
+    assert (tmp_path / "a.bin").read_bytes() == b"data"
+    assert (tmp_path / "sub" / "b.bin").read_bytes() == b"data"
+    assert (tmp_path / "empty.bin").exists()
+    assert (tmp_path / "empty.bin").stat().st_size == 0
+    assert not (tmp_path / "missing-url.bin").exists()
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+def test_download_dataset_files_chunked(tmp_path):
+    """A file larger than part_size is fetched as multiple byte-range parts and
+    reassembled correctly at their offsets."""
+    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+
+    content = b"ABCDEFGH"  # 8 bytes
+    files = [{"filepath": "big.bin", "url": "https://x/big", "size": len(content)}]
+    ranges_seen = []
+
+    def fake_get(url, headers=None, stream=None, **kwargs):
+        start, end = (int(x) for x in headers["Range"].split("=")[1].split("-"))
+        ranges_seen.append((start, end))
+        return _FakeRangeResponse(content[start : end + 1])
+
+    with (
+        mock.patch("requests.get", side_effect=fake_get),
+        mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+    ):
+        _download_dataset_files(
+            files, str(tmp_path), "proj-1", refresh_file=lambda r: {"url": None, "size": 0}, part_size=3
+        )
+
+    # 8 bytes / part_size 3 -> three parts, and the file is reassembled exactly
+    assert sorted(ranges_seen) == [(0, 2), (3, 5), (6, 7)]
+    assert (tmp_path / "big.bin").read_bytes() == content
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
