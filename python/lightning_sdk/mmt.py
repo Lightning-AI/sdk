@@ -74,6 +74,26 @@ class MMTMachine(Protocol):
         ...
 
     @property
+    def resource_id(self) -> Optional[str]:
+        """The stable resource identifier for this machine."""
+        ...
+
+    @property
+    def private_ip_address(self) -> Optional[str]:
+        """The private IP address for this machine, if assigned."""
+        ...
+
+    @property
+    def placement_group_id(self) -> Optional[str]:
+        """The placement group identifier for this machine, if assigned."""
+        ...
+
+    @property
+    def rank(self) -> Optional[int]:
+        """The stable rank for this machine inside the multi-machine job."""
+        ...
+
+    @property
     def logs(self) -> str:
         """The logs of the given machine.
 
@@ -157,6 +177,7 @@ class MMT(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        placement_group_id: Optional[str] = None,
     ) -> "MMT":
         """Run async workloads using a docker image across multiple machines.
 
@@ -190,6 +211,7 @@ class MMT(metaclass=TrackCallsMeta):
                 Defaults to 3 hours.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             MMT: The newly submitted multi-machine job instance.
@@ -272,6 +294,7 @@ class MMT(metaclass=TrackCallsMeta):
 
         mmt = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         submit_cloud = cloud if cloud_account is None else None
+
         mmt._submit(
             num_machines=num_machines,
             machine=machine,
@@ -288,6 +311,7 @@ class MMT(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            placement_group_id=placement_group_id,
         )
 
         _logger.info(f"Multi-Machine Job was successfully launched. View it at {mmt.link}")
@@ -310,6 +334,7 @@ class MMT(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
+        placement_group_id: Optional[str] = None,
     ) -> "MMT":
         if studio is not None:
             studio_id = studio._studio.id
@@ -347,6 +372,7 @@ class MMT(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
+            placement_group_id=placement_group_id,
         )
         self._job = submitted
         self._name = submitted.name
@@ -356,10 +382,16 @@ class MMT(metaclass=TrackCallsMeta):
     def machines(self) -> Tuple["Job", ...]:
         from lightning_sdk.job import Job
 
-        return tuple(
-            Job(name=j.name, teamspace=self.teamspace)
-            for j in self._job_api.list_mmt_subjobs(self._guaranteed_job.id, self.teamspace.id)
+        subjobs = sorted(
+            self._job_api.list_mmt_subjobs(self._guaranteed_job.id, self.teamspace.id),
+            key=lambda job: job.spec.rank,
         )
+        machines = []
+        for subjob in subjobs:
+            job = Job(name=subjob.name, teamspace=self.teamspace, _fetch_job=False)
+            job._job = subjob
+            machines.append(job)
+        return tuple(machines)
 
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Completed, Status.Failed):
@@ -407,6 +439,10 @@ class MMT(metaclass=TrackCallsMeta):
     @property
     def status(self) -> Status:
         return self._job_api._job_state_to_external(self._latest_job.state)
+
+    @property
+    def placement_group_id(self) -> Optional[str]:
+        return self._guaranteed_job.spec.placement_group_id
 
     @property
     def artifact_path(self) -> Optional[str]:

@@ -1,14 +1,18 @@
-# Minimal makefile for Sphinx documentation
+# Build both independent Sphinx documentation roots.
 
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = build
+SPHINXOPTS ?=
+ROOTS      = sdk cli
+
+.PHONY: help html linkcheck clean
 
 help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@echo "Build targets: html, linkcheck, clean"
 
-.PHONY: help Makefile
+html:
+	@for root in $(ROOTS); do $(MAKE) -C $$root html SPHINXOPTS="$(SPHINXOPTS)" || exit $$?; done
 
-%: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+linkcheck:
+	@for root in $(ROOTS); do $(MAKE) -C $$root linkcheck SPHINXOPTS="$(SPHINXOPTS)" || exit $$?; done
+
+clean:
+	@for root in $(ROOTS); do $(MAKE) -C $$root clean || exit $$?; done

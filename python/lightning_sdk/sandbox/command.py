@@ -124,14 +124,18 @@ class Command:
         """Alias for :meth:`stdout`; the API exposes a single combined output stream."""
         return self._output
 
-    def logs(self) -> list[CommandLog]:
+    def logs(self, *, query: str | None = None, severity: str | None = None) -> list[CommandLog]:
         """Fetch this command's log lines from the server.
 
         Returns the timestamped log messages via
         :meth:`SandboxInstance.get_command_logs`. Unlike :meth:`output` (a single
         combined buffer), this returns discrete ``(timestamp, message)`` entries.
+
+        ``query`` filters to lines containing that substring; ``severity`` returns
+        only lines at or above that level (``error`` > ``warning`` > ``info`` >
+        ``debug``).
         """
-        return self._sandbox.get_command_logs(self._cmd_id)
+        return self._sandbox.get_command_logs(self._cmd_id, query=query, severity=severity)
 
     def get_status(self) -> CommandStatus:
         """Refresh status from the server, updating :attr:`output` and :attr:`exit_code`.

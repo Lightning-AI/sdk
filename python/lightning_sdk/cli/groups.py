@@ -9,10 +9,12 @@ from lightning_sdk.cli.base_studio import register_commands as register_base_stu
 from lightning_sdk.cli.config import register_commands as register_config_commands
 from lightning_sdk.cli.container import register_commands as register_container_commands
 from lightning_sdk.cli.cp import register_commands as register_cp_commands
+from lightning_sdk.cli.dataset import register_commands as register_dataset_commands
 from lightning_sdk.cli.deployment import register_commands as register_deployment_commands
 from lightning_sdk.cli.file import register_commands as register_file_commands
 from lightning_sdk.cli.folder import register_commands as register_folder_commands
 from lightning_sdk.cli.job import register_commands as register_job_commands
+from lightning_sdk.cli.legacy_redirects import DeprecatedGroup
 from lightning_sdk.cli.license import register_commands as register_license_commands
 from lightning_sdk.cli.machine import register_commands as register_machine_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
@@ -131,12 +133,12 @@ def api_key() -> None:
     """
 
 
-@click.group(name="file", cls=LightningGroup)
+@click.group(name="file", cls=DeprecatedGroup, replacement="lightning cp")
 def file() -> None:
     """Upload and download files."""
 
 
-@click.group(name="folder", cls=LightningGroup)
+@click.group(name="folder", cls=DeprecatedGroup, replacement="lightning cp -r")
 def folder() -> None:
     """Upload and download folders."""
 
@@ -154,6 +156,11 @@ def base_studio() -> None:
 @click.group(name="license", cls=LightningGroup)
 def license() -> None:  # noqa: A001
     """View and manage product licenses."""
+
+
+@click.group(name="dataset", cls=LightningGroup, hidden=True)
+def dataset() -> None:
+    """Download datasets."""
 
 
 @click.command(name="cp", cls=LightningCommand)
@@ -191,4 +198,5 @@ register_folder_commands(folder)
 register_ssh_commands(ssh)
 register_base_studio_commands(base_studio)
 register_license_commands(license)
+register_dataset_commands(dataset)
 register_cp_commands(cp)

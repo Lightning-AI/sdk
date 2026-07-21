@@ -8,13 +8,12 @@ authors = [
     {name = "Lightning-AI", email = "justus@lightning.ai"},
 ]
 description = "SDK to develop using Lightning AI Studios"
-license = {file = "LICENSE"}
+license = "Apache-2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 keywords = ["deep learning", "machine learning", "pytorch", "AI"]
 classifiers = [
   "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
 ]
 dependencies = [ # alphabetically sorted
     "backoff", # for api retries
@@ -50,7 +49,7 @@ serve = ["litserve>=0.2.5"]
 [dependency-groups]
 docs = [
     "sphinx>=8.0,<9.0",
-    "sphinx-click>=6.2,<7.0",
+    "click-extra[sphinx]>=8.3,<9.0",
     "myst-parser>=5.0.0",
     "docutils>=0.20",
     "sphinx-autodoc-typehints>=1.16",

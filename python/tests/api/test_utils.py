@@ -7,10 +7,10 @@ import requests
 import lightning_sdk.api.utils
 from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
+    _BlobUploader,
     _download_model_files,
     _download_teamspace_files,
     _FileDownloader,
-    _FileUploader,
     _local_file_matches_size,
     _machine_to_compute_name,
     _ModelFileUploader,
@@ -20,36 +20,42 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
-    StorageServiceCompleteUploadProjectArtifactBody,
-    StorageServiceUploadProjectArtifactBody,
-    StorageServiceUploadProjectArtifactPartsBody,
     V1ListProjectArtifactsResponse,
     V1PathMapping,
-    V1PresignedUrl,
     V1ProjectArtifact,
     V1SignedUrl,
-    V1UploadProjectArtifactPartsResponse,
 )
 from lightning_sdk.machine import Machine
 
+_TEST_ENDPOINT_BASE = "https://api.example.com/v1/projects/test-project-id/artifacts"
 
-def _make_mocked_file_uploader(monkeypatch, file_path, remote_path, data_connection_id=None):
+
+def _make_mocked_blob_uploader(monkeypatch, file_path, remote_path, **kwargs):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
-    return _FileUploader(
+    monkeypatch.setattr(lightning_sdk.api.utils, "_authenticate_and_get_token", lambda client: "test-token")
+    return _BlobUploader(
         client=Mock(),
-        teamspace_id="test-project-id",
-        cloud_account="test-cluster-id",
-        data_connection_id=data_connection_id,
+        endpoint_base=_TEST_ENDPOINT_BASE,
         progress_bar=False,
         file_path=file_path,
         remote_path=remote_path,
+        **kwargs,
     )
 
 
-def test_file_uploader_path_exists(monkeypatch):
+def _blob_upload_response(remote_path, upload_id, urls):
+    response = Mock(status_code=200)
+    response.json.return_value = {
+        "expires_at": "2026-01-01T00:00:00Z",
+        "results": [{"path": remote_path, "upload_id": upload_id, "urls": urls}],
+    }
+    return response
+
+
+def test_blob_uploader_path_exists(monkeypatch):
     with pytest.raises(FileNotFoundError):
-        _make_mocked_file_uploader(monkeypatch, file_path="not-exist", remote_path="any")
+        _make_mocked_blob_uploader(monkeypatch, file_path="not-exist", remote_path="any")
 
 
 @pytest.mark.parametrize(
@@ -64,91 +70,217 @@ def test_machine_to_compute_name(machine, compute_name):
     assert _machine_to_compute_name(machine) == compute_name
 
 
-@mock.patch("lightning_sdk.api.utils.requests")
-def test_file_uploader(_, tmp_path, monkeypatch):
-    """Tests the basic calls that uploader makes to model store API."""
+def test_blob_uploader_multipart(tmp_path, monkeypatch):
+    """A file above the multipart threshold requests part URLs, PUTs each part, and completes."""
+    monkeypatch.setenv("LIGHTNING_MULTIPART_THRESHOLD", "4")
+    monkeypatch.setenv("LIGHTNING_MULTI_PART_PART_SIZE", "4")
+
     file_path = tmp_path / "file"
-    file_path.touch()
-    uploader = _make_mocked_file_uploader(monkeypatch, file_path=file_path, remote_path="path/to/file/on/remote")
+    file_path.write_bytes(b"0123456789")  # 3 parts of 4 bytes
 
-    uploader.progress_bar = Mock()
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch, file_path=str(file_path), remote_path="path/to/file/on/remote", cluster_id="test-cluster-id"
+    )
 
-    uploader.client.storage_service_upload_project_artifact.return_value = Mock(upload_id="test-upload-id")
-    uploader.client.storage_service_upload_project_artifact_parts.return_value = V1UploadProjectArtifactPartsResponse(
-        urls=[
-            V1PresignedUrl(url="test-url-1", part_number=1),
-            V1PresignedUrl(url="test-url-2", part_number=2),
+    post_mock = Mock(
+        side_effect=[
+            _blob_upload_response(
+                "path/to/file/on/remote",
+                "test-upload-id",
+                [
+                    {"url": "test-url-1", "part_number": 1},
+                    {"url": "test-url-2", "part_number": 2},
+                    {"url": "test-url-3", "part_number": 3},
+                ],
+            ),
+            Mock(status_code=204),
         ]
     )
+    put_mock = Mock(return_value=Mock(status_code=200, headers={"ETag": "test-etag"}))
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
 
-    uploader.client.storage_service_complete_upload_project_artifact = Mock()
-
+    uploader.progress_bar = Mock()
     uploader()
 
-    uploader.client.storage_service_upload_project_artifact.assert_called_once_with(
-        body=StorageServiceUploadProjectArtifactBody(filename="path/to/file/on/remote", cluster_id="test-cluster-id"),
-        project_id="test-project-id",
-    )
-    uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
-        StorageServiceUploadProjectArtifactPartsBody(
-            filename="path/to/file/on/remote", parts=[1], cluster_id="test-cluster-id"
-        ),
-        "test-project-id",
-        "test-upload-id",
-    )
-    uploader.client.storage_service_complete_upload_project_artifact.assert_called_once()
+    create_call = post_mock.call_args_list[0]
+    assert create_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
+    assert create_call.kwargs["params"] == {"token": "test-token"}
+    assert create_call.kwargs["json"] == {
+        "cluster_id": "test-cluster-id",
+        "blobs": [{"path": "path/to/file/on/remote", "parts": 3, "part_size": 4}],
+    }
 
-    # 0 because mocked data has length 0
-    assert uploader.progress_bar.update.call_args_list == [mock.call(0), mock.call(0)]
+    assert [c.args[0] for c in put_mock.call_args_list] == ["test-url-1", "test-url-2", "test-url-3"]
+    assert [c.kwargs["data"] for c in put_mock.call_args_list] == [b"0123", b"4567", b"89"]
+
+    complete_call = post_mock.call_args_list[1]
+    assert complete_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs/complete"
+    assert complete_call.kwargs["json"] == {
+        "cluster_id": "test-cluster-id",
+        "blobs": [
+            {
+                "path": "path/to/file/on/remote",
+                "upload_id": "test-upload-id",
+                "parts": [
+                    {"part_number": 1, "etag": "test-etag"},
+                    {"part_number": 2, "etag": "test-etag"},
+                    {"part_number": 3, "etag": "test-etag"},
+                ],
+            }
+        ],
+    }
+
+    assert uploader.progress_bar.update.call_args_list == [mock.call(4), mock.call(4), mock.call(2)]
 
 
-@mock.patch("lightning_sdk.api.utils.requests")
-def test_file_uploader_includes_data_connection_id(_, tmp_path, monkeypatch):
+@mock.patch("time.sleep", return_value=None)
+def test_blob_uploader_multipart_retries_create(_, tmp_path, monkeypatch):
+    """Creating a multipart upload makes the server call out to storage, so a
+    transient failure (e.g. fresh lightning_storage credentials) is retried."""
+    monkeypatch.setenv("LIGHTNING_MULTIPART_THRESHOLD", "4")
+    monkeypatch.setenv("LIGHTNING_MULTI_PART_PART_SIZE", "4")
+
     file_path = tmp_path / "file"
-    file_path.touch()
-    uploader = _make_mocked_file_uploader(
-        monkeypatch,
-        file_path=file_path,
-        remote_path="path/to/file/on/remote",
-        data_connection_id="data-connection-id",
+    file_path.write_bytes(b"01234567")  # 2 parts of 4 bytes
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch, file_path=str(file_path), remote_path="remote-path", cluster_id="test-cluster-id"
     )
 
-    uploader.client.storage_service_upload_project_artifact.return_value = Mock(upload_id="test-upload-id")
-    uploader.client.storage_service_upload_project_artifact_parts.return_value = V1UploadProjectArtifactPartsResponse(
-        urls=[V1PresignedUrl(url="test-url-1", part_number=1)]
+    post_mock = Mock(
+        side_effect=[
+            Mock(status_code=500),
+            _blob_upload_response(
+                "remote-path",
+                "test-upload-id",
+                [{"url": "test-url-1", "part_number": 1}, {"url": "test-url-2", "part_number": 2}],
+            ),
+            Mock(status_code=204),
+        ]
     )
-    uploader.client.storage_service_complete_upload_project_artifact = Mock()
+    put_mock = Mock(return_value=Mock(status_code=200, headers={"ETag": "test-etag"}))
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
 
     uploader()
 
-    uploader.client.storage_service_upload_project_artifact.assert_called_once_with(
-        body=StorageServiceUploadProjectArtifactBody(
-            filename="path/to/file/on/remote",
-            cluster_id="test-cluster-id",
-            data_connection_id="data-connection-id",
-        ),
-        project_id="test-project-id",
+    # first create failed with a 500 and was retried; upload then completed
+    assert [c.args[0] for c in post_mock.call_args_list] == [
+        f"{_TEST_ENDPOINT_BASE}/blobs",
+        f"{_TEST_ENDPOINT_BASE}/blobs",
+        f"{_TEST_ENDPOINT_BASE}/blobs/complete",
+    ]
+    assert put_mock.call_count == 2
+
+
+def test_blob_uploader_multipart_resigns_failed_part(tmp_path, monkeypatch):
+    """A failed part PUT re-requests that part's URL (upload_id + part_numbers) and retries."""
+    monkeypatch.setenv("LIGHTNING_MULTIPART_THRESHOLD", "4")
+    monkeypatch.setenv("LIGHTNING_MULTI_PART_PART_SIZE", "4")
+
+    file_path = tmp_path / "file"
+    file_path.write_bytes(b"01234567")  # 2 parts of 4 bytes
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch, file_path=str(file_path), remote_path="remote-path", cluster_id="test-cluster-id"
     )
-    uploader.client.storage_service_upload_project_artifact_parts.assert_called_once_with(
-        StorageServiceUploadProjectArtifactPartsBody(
-            filename="path/to/file/on/remote",
-            parts=[1],
-            cluster_id="test-cluster-id",
-            data_connection_id="data-connection-id",
-        ),
-        "test-project-id",
-        "test-upload-id",
+
+    post_mock = Mock(
+        side_effect=[
+            _blob_upload_response(
+                "remote-path",
+                "test-upload-id",
+                [{"url": "test-url-1", "part_number": 1}, {"url": "test-url-2", "part_number": 2}],
+            ),
+            _blob_upload_response("remote-path", "test-upload-id", [{"url": "test-url-2b", "part_number": 2}]),
+            Mock(status_code=204),
+        ]
     )
-    uploader.client.storage_service_complete_upload_project_artifact.assert_called_once_with(
-        body=StorageServiceCompleteUploadProjectArtifactBody(
-            filename="path/to/file/on/remote",
-            parts=[mock.ANY],
-            upload_id="test-upload-id",
-            cluster_id="test-cluster-id",
-            data_connection_id="data-connection-id",
-        ),
-        project_id="test-project-id",
+    failed_put = Mock(status_code=500, headers={})
+    failed_put.raise_for_status.side_effect = requests.exceptions.HTTPError("boom")
+    ok_put = Mock(status_code=200, headers={"ETag": "test-etag"})
+    put_mock = Mock(side_effect=[ok_put, failed_put, ok_put])
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
+
+    uploader()
+
+    resign_call = post_mock.call_args_list[1]
+    assert resign_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
+    assert resign_call.kwargs["json"] == {
+        "cluster_id": "test-cluster-id",
+        "blobs": [{"path": "remote-path", "upload_id": "test-upload-id", "part_numbers": [2]}],
+    }
+    assert [c.args[0] for c in put_mock.call_args_list] == ["test-url-1", "test-url-2", "test-url-2b"]
+
+    complete_call = post_mock.call_args_list[2]
+    assert complete_call.kwargs["json"]["blobs"][0]["parts"] == [
+        {"part_number": 1, "etag": "test-etag"},
+        {"part_number": 2, "etag": "test-etag"},
+    ]
+
+
+def test_blob_uploader_single_part(tmp_path, monkeypatch):
+    """A small file gets one presigned PUT; completion only fires when notify_completion is set."""
+    file_path = tmp_path / "file"
+    file_path.write_bytes(b"0123")
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch,
+        file_path=str(file_path),
+        remote_path="remote-path",
+        content_type="text/plain",
+        notify_completion=True,
     )
+
+    post_mock = Mock(
+        side_effect=[
+            _blob_upload_response(
+                "remote-path", "", [{"url": "signed-put-url", "headers": {"Content-Type": "text/plain"}}]
+            ),
+            Mock(status_code=204),
+        ]
+    )
+    put_mock = Mock(return_value=Mock(status_code=200))
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
+
+    uploader()
+
+    create_call = post_mock.call_args_list[0]
+    assert create_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
+    # no cluster_id (e.g. studio and lightning_storage scopes), single-part has no "parts"
+    assert create_call.kwargs["json"] == {"blobs": [{"path": "remote-path", "content_type": "text/plain"}]}
+
+    put_call = put_mock.call_args_list[0]
+    assert put_call.args[0] == "signed-put-url"
+    assert put_call.kwargs["headers"] == {"Content-Type": "text/plain"}
+
+    complete_call = post_mock.call_args_list[1]
+    assert complete_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs/complete"
+    assert complete_call.kwargs["json"] == {"blobs": [{"path": "remote-path"}]}
+
+
+def test_blob_uploader_single_part_no_completion(tmp_path, monkeypatch):
+    """Without notify_completion, a single-part upload never calls the complete route."""
+    file_path = tmp_path / "file"
+    file_path.write_bytes(b"0123")
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch, file_path=str(file_path), remote_path="remote-path", cluster_id="test-cluster-id"
+    )
+
+    post_mock = Mock(return_value=_blob_upload_response("remote-path", "", [{"url": "signed-put-url"}]))
+    put_mock = Mock(return_value=Mock(status_code=200))
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "post", post_mock)
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", put_mock)
+
+    uploader()
+
+    assert post_mock.call_count == 1
+    assert post_mock.call_args.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
+    put_mock.assert_called_once()
 
 
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
@@ -247,7 +379,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tm
         "unit": "B",
         "total": 10.0,
         "unit_scale": True,
-        "unit_divisor": 1000,
+        "unit_divisor": 1024,
         "position": -1,
         "mininterval": 1,
     }
@@ -657,39 +789,53 @@ def test_sanitize_studio_remote_path():
     assert result == f"/cloudspaces/{studio_id}/code/content/"
 
 
-def _make_single_part_uploader(tmp_path, progress_bar=False, notify_completion=False, headers=None):
+def _make_single_part_blob_uploader(tmp_path, progress_bar=False, notify_completion=False, extra_headers=None):
     file_path = tmp_path / "test_file.txt"
     file_path.write_text("hello world")
-    return utils._SinglePartFileUploader(
-        client=Mock(),
-        file_path=str(file_path),
-        url="http://example.com/upload",
-        query_params={"token": "test-token"},
-        progress_bar=progress_bar,
-        headers=headers,
-        notify_completion=notify_completion,
-    )
+    with mock.patch("lightning_sdk.api.utils._authenticate_and_get_token", return_value="test-token"):
+        return utils._BlobUploader(
+            client=Mock(),
+            endpoint_base=_TEST_ENDPOINT_BASE,
+            file_path=str(file_path),
+            remote_path="test_file.txt",
+            progress_bar=progress_bar,
+            extra_headers=extra_headers,
+            notify_completion=notify_completion,
+        )
+
+
+def _configure_single_part_create(mock_requests, url="http://example.com/upload", headers=None):
+    mock_requests.post.return_value = _blob_upload_response("test_file.txt", "", [{"url": url, "headers": headers}])
 
 
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_basic(mock_requests, tmp_path):
-    uploader = _make_single_part_uploader(tmp_path)
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
 
     mock_requests.put.return_value = Mock(status_code=200)
 
     uploader()
 
+    # one URL request against the batch endpoint, authenticated via token param
+    assert mock_requests.post.call_count == 1
+    post_call = mock_requests.post.call_args
+    assert post_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
+    assert post_call.kwargs["params"] == {"token": "test-token"}
+
+    # one PUT straight to the signed storage URL, with no token
     assert mock_requests.put.call_count == 1
     call = mock_requests.put.call_args
     assert call.args[0] == "http://example.com/upload"
-    assert call.kwargs["params"] == {"token": "test-token"}
+    assert "params" not in call.kwargs
     assert call.kwargs["timeout"] == 30
     assert call.kwargs["headers"] is None
 
 
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path):
-    uploader = _make_single_part_uploader(tmp_path, progress_bar=True)
+    uploader = _make_single_part_blob_uploader(tmp_path, progress_bar=True)
+    _configure_single_part_create(mock_requests)
 
     mock_requests.put.return_value = Mock(status_code=200)
 
@@ -704,7 +850,8 @@ def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path):
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path):
-    uploader = _make_single_part_uploader(tmp_path)
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
 
     mock_requests.put.side_effect = [
         requests.exceptions.RequestException(),
@@ -714,12 +861,15 @@ def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path):
     uploader()
 
     assert mock_requests.put.call_count == 2
+    # each attempt requests a fresh signed URL
+    assert mock_requests.post.call_count == 2
 
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_path):
-    uploader = _make_single_part_uploader(tmp_path)
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
 
     # A transient 503 must be retried rather than failing immediately.
     mock_requests.put.side_effect = [
@@ -734,11 +884,32 @@ def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
+def test_single_part_uploader_retries_auth_errors_with_fresh_url(mock_requests, _, tmp_path):
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
+
+    # Storage 401/403 must be retried: fresh credentials can lag right after a
+    # lightning_storage folder is created, and each retry signs a fresh URL.
+    mock_requests.put.side_effect = [
+        Mock(status_code=401),
+        Mock(status_code=200),
+    ]
+
+    uploader()
+
+    assert mock_requests.put.call_count == 2
+    # each attempt requested a freshly signed URL
+    assert mock_requests.post.call_count == 2
+
+
+@mock.patch("time.sleep", return_value=None)
+@mock.patch("lightning_sdk.api.utils.requests")
 def test_single_part_uploader_does_not_retry_client_error(mock_requests, _, tmp_path):
-    uploader = _make_single_part_uploader(tmp_path)
+    uploader = _make_single_part_blob_uploader(tmp_path)
+    _configure_single_part_create(mock_requests)
 
     # A non-transient 4xx should fail immediately without retrying.
-    mock_requests.put.return_value = Mock(status_code=403)
+    mock_requests.put.return_value = Mock(status_code=404)
 
     with pytest.raises(RuntimeError, match="Failed to upload file"):
         uploader()

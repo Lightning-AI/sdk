@@ -206,6 +206,7 @@ class JobStep:
         wait_for: Union[str, List[str], None] = DEFAULT,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
+        placement_group_id: Optional[str] = None,
     ) -> None:
         """Configure a job step in a pipeline.
 
@@ -229,6 +230,7 @@ class JobStep:
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         """
         self.name = name
@@ -251,6 +253,7 @@ class JobStep:
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.scratch_disks = scratch_disks
+        self.placement_group_id = placement_group_id
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -300,6 +303,7 @@ class JobStep:
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
             scratch_disks=self.scratch_disks,
+            placement_group_id=self.placement_group_id,
         )
 
         return V1PipelineStep(
@@ -334,6 +338,7 @@ class MMTStep:
         max_runtime: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         reuse_snapshot: bool = True,
+        placement_group_id: Optional[str] = None,
     ) -> None:
         """Configure a multi-machine training step in a pipeline.
 
@@ -357,6 +362,7 @@ class MMTStep:
             max_runtime: Maximum runtime in seconds.
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         """
         self.machine = machine or Machine.CPU
@@ -378,6 +384,7 @@ class MMTStep:
         self.max_runtime = max_runtime
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
+        self.placement_group_id = placement_group_id
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -427,6 +434,7 @@ class MMTStep:
             max_runtime=self.max_runtime,
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
+            placement_group_id=self.placement_group_id,
         )
 
         return V1PipelineStep(

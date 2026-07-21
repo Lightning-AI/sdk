@@ -25,8 +25,8 @@ def test_upload_help() -> None:
         "lightning upload --help",
         "`lightning upload` has moved to noun-first commands:",
         "container -> lightning container upload",
-        "file -> lightning file upload",
-        "folder -> lightning folder upload",
+        "file -> lightning cp",
+        "folder -> lightning cp -r",
         "model -> lightning model upload",
     )
     assert "Deprecation warning:" not in text

@@ -63,6 +63,7 @@ class JobApiV2:
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
+        placement_group_id: Optional[str] = None,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -83,6 +84,7 @@ class JobApiV2:
             max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             The newly created ``V1Job`` object.
@@ -111,6 +113,7 @@ class JobApiV2:
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=sanitized_scratch_disks,
+            placement_group_id=placement_group_id,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -134,6 +137,7 @@ class JobApiV2:
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
+        placement_group_id: Optional[str] = None,
     ) -> JobsServiceCreateJobBody:
         """Build the request body for creating a v2 job.
 
@@ -154,6 +158,7 @@ class JobApiV2:
             max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             A fully populated ``JobsServiceCreateJobBody`` ready to be sent to the jobs service.
@@ -191,6 +196,7 @@ class JobApiV2:
             image_secret_ref=image_credentials or "",
             path_mappings=path_mappings_list,
             machine_image_version=machine_image_version,
+            placement_group_id=placement_group_id,
             volumes=[V1Volume(path=k, size_gb=v, ephemeral=True) for k, v in scratch_disks.items()],
             **optional_spec_kwargs,
         )

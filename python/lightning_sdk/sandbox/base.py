@@ -446,6 +446,31 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         return list(self._v1.ports or [])
 
     @property
+    def port_urls(self) -> dict[str, str]:
+        """Public HTTPS URLs for the sandbox's exposed ports, keyed by port number.
+
+        Populated by the control plane when the sandbox was created with
+        ``ports`` (e.g. ``{"8080": "https://8080-<sandbox-id>-s.cloudspaces.litng.ai"}``);
+        empty otherwise. Use :meth:`get_port_url` to look up a single port.
+        """
+        return dict(getattr(self._v1, "port_urls", None) or {})
+
+    def get_port_url(self, port: int | str) -> str:
+        """Return the public URL for one of the sandbox's exposed ports.
+
+        Raises:
+            ValueError: If the sandbox does not expose ``port`` (it must be
+                passed via ``ports`` at create time).
+        """
+        url = self.port_urls.get(str(port))
+        if not url:
+            raise ValueError(
+                f"Sandbox {self.sandbox_id} has no URL for port {port}. "
+                f"Exposed ports: {self.ports or 'none'} (pass 'ports' when creating the sandbox)."
+            )
+        return url
+
+    @property
     def created_at(self) -> datetime:
         return self._v1.created_at
 
@@ -684,8 +709,16 @@ class SandboxInstance(metaclass=TrackCallsMeta):
             exit_code=None if detached else api_result.exit_code,
         )
 
-    def get_command_logs(self, cmd_id: str) -> list[CommandLog]:
-        return self._sandbox_api.get_command_logs(self.sandbox_id, cmd_id, self.organization_id or None)
+    def get_command_logs(
+        self, cmd_id: str | None = None, *, query: str | None = None, severity: str | None = None
+    ) -> list[CommandLog]:
+        return self._sandbox_api.get_command_logs(
+            self.sandbox_id,
+            cmd_id,
+            project_id=self.project_id or None,
+            query=query,
+            severity=severity,
+        )
 
     def kill_command(self, cmd_id: str) -> None:
         self._sandbox_api.kill_command(self.sandbox_id, cmd_id, self.organization_id or None)

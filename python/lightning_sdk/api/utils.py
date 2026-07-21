@@ -24,17 +24,10 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCompleteMultiPartUploadBody,
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
-    StorageServiceCompleteUploadProjectArtifactBody,
-    StorageServiceUploadProjectArtifactBody,
-    StorageServiceUploadProjectArtifactPartsBody,
     V1CompletedPart,
-    V1CompleteUpload,
     V1LoginRequest,
     V1PathMapping,
-    V1PresignedUrl,
     V1SignedUrl,
-    V1UploadProjectArtifactPartsResponse,
-    V1UploadProjectArtifactResponse,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -53,14 +46,16 @@ class _DummyBody:
         self.attribute_map = {}
 
 
-_BYTES_PER_KB = 1000
-_BYTES_PER_MB = 1000 * _BYTES_PER_KB
-_BYTES_PER_GB = 1000 * _BYTES_PER_MB
+_BYTES_PER_KB = 1024
+_BYTES_PER_MB = 1024 * _BYTES_PER_KB
+_BYTES_PER_GB = 1024 * _BYTES_PER_MB
 
 _SIZE_LIMIT_SINGLE_PART = 5 * _BYTES_PER_GB
 _MAX_SIZE_MULTI_PART_CHUNK = 100 * _BYTES_PER_MB
 _MAX_BATCH_SIZE = 50
 _MAX_WORKERS = 10
+# S3, R2, and GCS all cap multipart uploads at 10,000 parts
+_MAX_UPLOAD_PARTS = 10000
 
 
 def _local_file_matches_size(local_path: str, expected_size: Optional[int]) -> bool:
@@ -88,54 +83,180 @@ class _IterableFileWrapper:
         return iter(self._wrapped)
 
 
-class _SinglePartFileUploader:
-    """A class handling upload files to studio and teamspace drive with new endpoint."""
+class _BlobUploader:
+    """Uploads a single file via the batch blob-upload endpoints.
+
+    Requests presigned URL(s) from ``POST {endpoint_base}/blobs``, PUTs the bytes
+    straight to storage (single-part below the multipart threshold, parallel
+    multipart above it), then finalizes via ``POST {endpoint_base}/blobs/complete``
+    where required: always for multipart, and for single-part only when
+    ``notify_completion`` is set (the studio scope uses that so uploads show
+    up in a running Studio).
+    """
 
     def __init__(
         self,
         client: LightningClient,
+        endpoint_base: str,
         file_path: str,
-        url: str,
-        query_params: Dict[str, str],
+        remote_path: str,
         progress_bar: bool,
-        headers: Optional[Dict[str, str]] = None,
+        cluster_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
         notify_completion: bool = False,
     ) -> None:
-        """Initialise the uploader with the target URL and file metadata.
+        """Initialise the uploader.
 
         Args:
-            client: The Lightning API client (stored for potential future use).
+            client: The Lightning API client, used for authentication.
+            endpoint_base: Absolute URL of the upload scope, e.g.
+                ``{host}/v1/projects/{id}/artifacts`` or
+                ``{host}/v1/projects/{id}/artifacts/cloudspaces/{studio_id}``.
             file_path: Local path of the file to upload.
-            url: Pre-signed PUT URL for the upload.
-            query_params: Query parameters to append to every request.
+            remote_path: Destination blob path within the scope.
             progress_bar: Whether to show a tqdm progress bar during upload.
-            headers: Optional extra HTTP headers to include in the PUT request.
-            notify_completion: Whether to POST a completion notification after upload.
+            cluster_id: Cluster to store the file on. Required for the project and
+                uploads scopes, except for ``lightning_storage/`` paths; ignored by
+                the studio scope.
+            content_type: Optional content type to bind to the upload.
+            extra_headers: Optional extra HTTP headers for the storage PUT requests.
+            notify_completion: Whether to finalize single-part uploads too.
         """
         self.client = client
+        self.endpoint_base = endpoint_base.rstrip("/")
         self.local_path = file_path
-        self.url = url
-        self.query_params = query_params
-        self.headers = headers
-        self.filesize = os.path.getsize(file_path)
+        self.remote_path = remote_path
+        self.cluster_id = cluster_id
+        self.content_type = content_type
+        self.extra_headers = extra_headers
         self.notify_completion = notify_completion
         self.show_progress = progress_bar
+        self.progress_bar = None
+
+        self.filesize = os.path.getsize(file_path)
+        self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
+        self.chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
+        assert self.chunk_size < _SIZE_LIMIT_SINGLE_PART
+        # storage providers cap multipart uploads at 10k parts; grow the chunks to fit
+        if self.filesize > self.chunk_size * _MAX_UPLOAD_PARTS:
+            self.chunk_size = math.ceil(self.filesize / _MAX_UPLOAD_PARTS)
+        self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
+        self._token = _authenticate_and_get_token(client)
 
     def __call__(self) -> None:
-        """Execute the upload, including the optional completion notification."""
-        self._upload_with_retry()
-        if self.notify_completion:
-            self._notify_completion()
+        """Execute the upload, dispatching to single-part or multipart."""
+        if self.filesize <= self.multipart_threshold:
+            self._single_part_upload()
+            if self.notify_completion:
+                self._complete_upload()
+            return
+
+        count = math.ceil(self.filesize / self.chunk_size)
+        upload_id, urls = self._create_multipart_upload(parts=count)
+        if self.show_progress:
+            self.progress_bar = tqdm(
+                desc=f"Uploading {os.path.split(self.local_path)[1]}",
+                total=self.filesize,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1024,
+                position=-1,
+                mininterval=1,
+            )
+        with ThreadPoolExecutor(self.max_workers) as p:
+            completed = list(p.map(partial(self._upload_part_with_recovery, upload_id=upload_id), urls))
+        if self.progress_bar is not None:
+            self.progress_bar.close()
+        self._complete_upload(upload_id=upload_id, parts=completed)
+
+    def _post_blob_request(self, suffix: str, blob: Dict[str, Any], action: str) -> requests.Response:
+        """POST a one-blob batch to ``{endpoint_base}{suffix}``.
+
+        Args:
+            suffix: Route suffix, ``/blobs`` or ``/blobs/complete``.
+            blob: The single entry of the request's ``blobs`` list.
+            action: Verb for error messages, e.g. ``"request upload URLs for"``.
+
+        Raises:
+            HTTPError: On retryable statuses (5xx / 429), so backoff-wrapped
+                callers retry.
+            RuntimeError: On any other non-2xx status.
+        """
+        url = f"{self.endpoint_base}{suffix}"
+        body: Dict[str, Any] = {"blobs": [blob]}
+        if self.cluster_id:
+            body["cluster_id"] = self.cluster_id
+        r = requests.post(url, json=body, params={"token": self._token}, timeout=30)
+        if r.status_code >= 500 or r.status_code == 429:
+            raise HTTPError(
+                f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
+            )
+        if r.status_code not in (200, 204):
+            raise RuntimeError(f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}")
+        return r
+
+    def _create_upload(
+        self, parts: int, part_numbers: Optional[List[int]] = None, upload_id: str = ""
+    ) -> Tuple[str, List[Dict[str, Any]]]:
+        """Request presigned upload URL(s) for the blob.
+
+        Args:
+            parts: Total number of parts (1 requests a single presigned PUT).
+            part_numbers: With ``upload_id``, re-signs just these parts of an
+                in-progress multipart upload instead of creating a new one.
+            upload_id: The multipart upload to re-sign parts of.
+
+        Returns:
+            The upload ID (empty for single-part) and the URL descriptors, each
+            with ``url`` and optional ``part_number``/``headers``.
+        """
+        blob: Dict[str, Any] = {"path": self.remote_path}
+        if self.content_type:
+            blob["content_type"] = self.content_type
+        if upload_id:
+            blob["upload_id"] = upload_id
+            blob["part_numbers"] = part_numbers
+        elif parts > 1:
+            blob["parts"] = parts
+            blob["part_size"] = self.chunk_size
+        r = self._post_blob_request("/blobs", blob, action="request upload URLs for")
+        result = r.json()["results"][0]
+        return result.get("upload_id") or upload_id, result.get("urls") or []
 
     @backoff.on_exception(
         backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
     )
-    def _upload_with_retry(self) -> None:
-        """Upload the file via HTTP PUT, retrying on transient errors.
+    def _create_multipart_upload(self, parts: int) -> Tuple[str, List[Dict[str, Any]]]:
+        """Create a multipart upload, retrying transient failures.
+
+        Unlike single-part signing, creating a multipart upload makes the
+        server reach out to storage, so it shares the transient failure modes
+        of the storage requests themselves (e.g. a just-created
+        lightning_storage folder's credentials may not have propagated yet).
+
+        Returns:
+            The upload ID and the URL descriptors for every part.
+        """
+        return self._create_upload(parts=parts)
+
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
+    )
+    def _single_part_upload(self) -> None:
+        """Request a presigned URL and PUT the whole file to it.
+
+        Each retry requests a fresh URL, so an expired signature can't wedge the
+        upload.
 
         Raises:
-            RuntimeError: If the server returns a non-200 status code after all retries.
+            RuntimeError: If the upload fails with a non-retryable status code.
         """
+        _, urls = self._create_upload(parts=1)
+        headers = dict(urls[0].get("headers") or {})
+        if self.extra_headers:
+            headers.update(self.extra_headers)
+
         with open(self.local_path, "rb") as f:
             if self.show_progress:
                 with tqdm.wrapattr(
@@ -145,246 +266,108 @@ class _SinglePartFileUploader:
                     total=self.filesize,
                     unit="B",
                     unit_scale=True,
-                    unit_divisor=1000,
+                    unit_divisor=1024,
                 ) as wrapped_file:
                     r = requests.put(
-                        self.url,
+                        urls[0]["url"],
                         data=_IterableFileWrapper(wrapped_file),
-                        params=self.query_params,
                         timeout=30,
-                        headers=self.headers,
+                        headers=headers or None,
                     )
             else:
-                r = requests.put(self.url, data=f, params=self.query_params, timeout=30, headers=self.headers)
+                r = requests.put(urls[0]["url"], data=f, timeout=30, headers=headers or None)
 
         if r.status_code != 200:
-            # Transient server errors / throttling should be retried. The backoff
-            # decorator only retries HTTPError/RequestException, so raise an HTTPError
-            # for these to trigger a retry instead of failing immediately.
-            if r.status_code >= 500 or r.status_code == 429:
+            # Retry transient server errors / throttling, and also 401/403 from
+            # storage: every attempt signs a fresh URL, which heals expired
+            # signatures and newly issued storage credentials that haven't
+            # propagated yet (e.g. right after a lightning_storage folder is
+            # created). The backoff decorator only retries HTTPError/
+            # RequestException, so raise an HTTPError for these instead of
+            # failing immediately.
+            if r.status_code >= 500 or r.status_code in (401, 403, 429):
                 raise HTTPError(
                     f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
                 )
             raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
 
-    @backoff.on_exception(
-        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=3
-    )
-    def _notify_completion(self) -> None:
-        """Notify the server that the upload is complete to trigger sidecar notification.
-
-        Raises:
-            RuntimeError: If the completion notification returns a non-200/204 status code.
-        """
-        complete_url = f"{self.url}/complete"
-        r = requests.post(complete_url, params=self.query_params, timeout=10)
-        if r.status_code not in (200, 204):
-            raise RuntimeError(
-                f"Failed to notify upload completion for '{self.local_path}'. Status code: {r.status_code}"
-            )
-
-
-class _FileUploader:
-    """A class handling the upload to studios.
-
-    Supports both single part and parallelized multi part uploads
-
-    """
-
-    def __init__(
-        self,
-        client: LightningClient,
-        teamspace_id: str,
-        cloud_account: Optional[str],
-        file_path: str,
-        remote_path: str,
-        progress_bar: bool,
-        data_connection_id: Optional[str] = None,
-    ) -> None:
-        """Initialise the multi-part-aware uploader.
+    def _upload_part_with_recovery(self, url_info: Dict[str, Any], upload_id: str) -> Dict[str, Any]:
+        """Upload one part, falling back to re-signing its URL on failure.
 
         Args:
-            client: The Lightning API client used to obtain upload URLs.
-            teamspace_id: ID of the target teamspace.
-            cloud_account: Cloud account to store the file in.
-            file_path: Local path of the file to upload.
-            remote_path: Destination path within the storage connection.
-            progress_bar: Whether to display a tqdm progress bar.
-            data_connection_id: Optional data-connection ID for direct connection uploads.
-        """
-        self.client = client
-        self.teamspace_id = teamspace_id
-        self.cloud_account = cloud_account
-        self.data_connection_id = data_connection_id
-
-        self.local_path = file_path
-
-        self.remote_path = remote_path
-        self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
-        self.filesize = os.path.getsize(file_path)
-        if progress_bar:
-            self.progress_bar = tqdm(
-                desc=f"Uploading {os.path.split(file_path)[1]}",
-                total=self.filesize,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1000,
-                position=-1,
-                mininterval=1,
-            )
-        else:
-            self.progress_bar = None
-        self.chunk_size = int(os.environ.get("LIGHTNING_MULTI_PART_PART_SIZE", _MAX_SIZE_MULTI_PART_CHUNK))
-        assert self.chunk_size < _SIZE_LIMIT_SINGLE_PART
-        self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
-        self.batch_size = int(os.environ.get("LIGHTNING_MULTI_PART_BATCH_SIZE", _MAX_BATCH_SIZE))
-
-    def __call__(self) -> None:
-        """Does the actual uploading.
-
-        Dispatches to single and multipart uploads respectively
-
-        """
-        count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
-
-        return self._multipart_upload(count=count)
-
-    def _multipart_upload(self, count: int) -> None:
-        """Does a parallel multipart upload.
-
-        Args:
-            count: Total number of parts to split the file into.
-        """
-        body_kwargs = {"filename": self.remote_path}
-        if self.cloud_account is not None:
-            body_kwargs["cluster_id"] = self.cloud_account
-        if self.data_connection_id is not None:
-            body_kwargs["data_connection_id"] = self.data_connection_id
-        body = StorageServiceUploadProjectArtifactBody(**body_kwargs)
-        resp: V1UploadProjectArtifactResponse = self.client.storage_service_upload_project_artifact(
-            body=body, project_id=self.teamspace_id
-        )
-
-        # get indices for each batch, part numbers start at 1
-        batched_indices = [
-            list(range(i + 1, min(i + self.batch_size + 1, count + 1))) for i in range(0, count, self.batch_size)
-        ]
-
-        completed: List[V1CompleteUpload] = []
-        with ThreadPoolExecutor(self.max_workers) as p:
-            for batch in batched_indices:
-                completed.extend(self._process_upload_batch(executor=p, batch=batch, upload_id=resp.upload_id))
-
-        completed_body_kwargs = {
-            "filename": self.remote_path,
-            "parts": completed,
-            "upload_id": resp.upload_id,
-        }
-        if self.cloud_account is not None:
-            completed_body_kwargs["cluster_id"] = self.cloud_account
-        if self.data_connection_id is not None:
-            completed_body_kwargs["data_connection_id"] = self.data_connection_id
-        completed_body = StorageServiceCompleteUploadProjectArtifactBody(**completed_body_kwargs)
-        self.client.storage_service_complete_upload_project_artifact(body=completed_body, project_id=self.teamspace_id)
-
-    def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
-        """Uploads a single batch of chunks in parallel.
-
-        Args:
-            executor: The thread-pool executor to submit upload tasks to.
-            batch: List of 1-based part numbers in this batch.
-            upload_id: The multipart upload session ID.
-        """
-        urls = self._request_urls(parts=batch, upload_id=upload_id)
-        func = partial(self._handle_uploading_single_part, upload_id=upload_id)
-        return executor.map(func, urls)
-
-    def _request_urls(self, parts: List[int], upload_id: str) -> List[V1PresignedUrl]:
-        """Requests urls for a batch of parts.
-
-        Args:
-            parts: List of 1-based part numbers to request presigned URLs for.
-            upload_id: The multipart upload session ID.
+            url_info: URL descriptor with ``url`` and ``part_number``.
+            upload_id: The multipart upload session ID, used to re-sign.
 
         Returns:
-            List[V1PresignedUrl]: Presigned URLs for each requested part.
-        """
-        body_kwargs = {
-            "filename": self.remote_path,
-            "parts": parts,
-        }
-        if self.cloud_account is not None:
-            body_kwargs["cluster_id"] = self.cloud_account
-        if self.data_connection_id is not None:
-            body_kwargs["data_connection_id"] = self.data_connection_id
-        body = StorageServiceUploadProjectArtifactPartsBody(**body_kwargs)
-        resp: V1UploadProjectArtifactPartsResponse = self.client.storage_service_upload_project_artifact_parts(
-            body, self.teamspace_id, upload_id
-        )
-        return resp.urls
-
-    def _handle_uploading_single_part(self, presigned_url: V1PresignedUrl, upload_id: str) -> V1CompleteUpload:
-        """Uploads a single part of a multipart upload including retires with backoff.
-
-        Args:
-            presigned_url: The presigned URL and part metadata for this chunk.
-            upload_id: The multipart upload session ID used for retry URL requests.
-
-        Returns:
-            V1CompleteUpload: The ETag and part number for the completed upload.
+            The completed part as ``{"part_number": ..., "etag": ...}``.
         """
         try:
-            return self._handle_upload_presigned_url(
-                presigned_url=presigned_url,
-            )
+            return self._upload_part(url_info)
         except Exception:
-            return self._error_handling_upload(part=presigned_url.part_number, upload_id=upload_id)
+            return self._resign_and_upload_part(part=int(url_info["part_number"]), upload_id=upload_id)
 
-    def _handle_upload_presigned_url(self, presigned_url: V1PresignedUrl) -> V1CompleteUpload:
-        """Straightforward uploads the part given a single url.
+    def _upload_part(self, url_info: Dict[str, Any]) -> Dict[str, Any]:
+        """PUT a single part to its presigned URL.
 
         Args:
-            presigned_url: The presigned URL and part metadata for this chunk.
+            url_info: URL descriptor with ``url`` and ``part_number``.
 
         Returns:
-            V1CompleteUpload: The ETag and part number for the completed upload.
+            The completed part as ``{"part_number": ..., "etag": ...}``.
         """
+        part_number = int(url_info["part_number"])
         with open(self.local_path, "rb") as f:
-            f.seek((int(presigned_url.part_number) - 1) * self.chunk_size)
+            f.seek((part_number - 1) * self.chunk_size)
             data = f.read(self.chunk_size)
 
-        response = requests.put(presigned_url.url, data=data)
+        headers = dict(url_info.get("headers") or {})
+        if self.extra_headers:
+            headers.update(self.extra_headers)
+        response = requests.put(url_info["url"], data=data, headers=headers or None)
         response.raise_for_status()
         if self.progress_bar is not None:
             self.progress_bar.update(len(data))
 
-        etag = response.headers.get("ETag")
-        return V1CompleteUpload(etag=etag, part_number=presigned_url.part_number)
+        return {"part_number": part_number, "etag": response.headers.get("ETag")}
 
-    @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _error_handling_upload(self, part: int, upload_id: str) -> V1CompleteUpload:
-        """Retries uploading with re-requesting the url.
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
+    )
+    def _resign_and_upload_part(self, part: int, upload_id: str) -> Dict[str, Any]:
+        """Re-sign a part's URL and retry uploading it.
 
         Args:
             part: The 1-based part number to retry.
             upload_id: The multipart upload session ID.
 
         Returns:
-            V1CompleteUpload: The ETag and part number for the completed upload.
+            The completed part as ``{"part_number": ..., "etag": ...}``.
 
         Raises:
-            ValueError: If the re-requested URL list does not contain exactly one URL.
+            ValueError: If re-signing does not return exactly one URL.
         """
-        urls = self._request_urls(
-            parts=[part],
-            upload_id=upload_id,
-        )
+        _, urls = self._create_upload(parts=1, part_numbers=[part], upload_id=upload_id)
         if len(urls) != 1:
             raise ValueError(
                 f"expected to get exactly one url, but got {len(urls)} for part {part} of {self.remote_path}"
             )
+        return self._upload_part(urls[0])
 
-        return self._handle_upload_presigned_url(presigned_url=urls[0])
+    @backoff.on_exception(
+        backoff.expo, (requests.exceptions.HTTPError, requests.exceptions.RequestException), max_tries=10
+    )
+    def _complete_upload(self, upload_id: str = "", parts: Optional[List[Dict[str, Any]]] = None) -> None:
+        """Finalize the upload (multipart completion and/or Studio sync).
+
+        Args:
+            upload_id: The multipart upload session ID; empty for single-part.
+            parts: The completed parts for a multipart upload.
+        """
+        blob: Dict[str, Any] = {"path": self.remote_path}
+        if upload_id:
+            blob["upload_id"] = upload_id
+            blob["parts"] = parts
+        self._post_blob_request("/blobs/complete", blob, action="finalize upload of")
 
 
 class _ModelFileUploader:
@@ -419,7 +402,7 @@ class _ModelFileUploader:
                 total=self.filesize,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 leave=False,
                 position=-1,
                 mininterval=1,
@@ -598,10 +581,6 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
     path = path.replace("/teamspace/studios/this_studio/", "")
     root = f"/cloudspaces/{studio_id}/code/content/"
     return os.path.join(root, path)
-
-
-def _resolve_teamspace_remote_path(path: str) -> str:
-    return f"{path.replace('/teamspace/', '')}"
 
 
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
@@ -796,7 +775,7 @@ def _download_model_files(
             unit="B",
             total=float(response.size_bytes),
             unit_scale=True,
-            unit_divisor=1000,
+            unit_divisor=1024,
             position=-1,
             mininterval=1,
         )
@@ -856,7 +835,7 @@ def _download_teamspace_files(
             desc="Downloading files",
             unit="B",
             unit_scale=True,
-            unit_divisor=1000,
+            unit_divisor=1024,
             position=-1,
             mininterval=1,
         )

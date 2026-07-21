@@ -612,7 +612,8 @@ func (s *Studio) UploadFile(filePath, remotePath string) error {
 	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
 		query.Set("token", token)
 	}
-	return api.Upload(context.Background(), studioArtifactBlobPath(s.teamspaceID, s.id, remotePath), query, filePath, true)
+	// Completion makes the file show up in a running Studio.
+	return api.Upload(context.Background(), studioArtifactScopePath(s.teamspaceID, s.id), strings.TrimLeft(remotePath, "/"), query, filePath, sdkclient.UploadOptions{NotifyCompletion: true})
 }
 
 // UploadFolder uploads a folder to the studio.
@@ -1285,8 +1286,12 @@ func sleepConfigPath(teamspaceID, studioID string) string {
 	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/cloudspaces/" + url.PathEscape(studioID) + "/sleepconfig"
 }
 
+func studioArtifactScopePath(teamspaceID, studioID string) string {
+	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts/cloudspaces/" + url.PathEscape(studioID)
+}
+
 func studioArtifactBlobPath(teamspaceID, studioID, remotePath string) string {
-	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts/cloudspaces/" + url.PathEscape(studioID) + "/blobs/" + strings.TrimLeft(remotePath, "/")
+	return studioArtifactScopePath(teamspaceID, studioID) + "/blobs/" + strings.TrimLeft(remotePath, "/")
 }
 
 func studioArtifactTreePath(teamspaceID, studioID, remotePath string) string {

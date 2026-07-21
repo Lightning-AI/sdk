@@ -185,6 +185,35 @@ def internal_get_org_api_mocker(mocker):
 
         return V1Organization(display_name=_name, name=_name, id=_id, preferred_cluster="my-preferred-cluster")
 
+    def list_side_effect(self):
+        return V1ListOrganizationsResponse(
+            [
+                V1Organization(
+                    display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="my-preferred-cluster"
+                ),
+                V1Organization(
+                    display_name="org-def", name="org-def", id="org-def", preferred_cluster="my-preferred-cluster"
+                ),
+                V1Organization(
+                    display_name="my-org-name",
+                    name="my-org-name",
+                    id="my-org-name",
+                    preferred_cluster="my-preferred-cluster",
+                ),
+                V1Organization(
+                    display_name="my-orgname",
+                    name="my-orgname",
+                    id="my-orgname",
+                    preferred_cluster="my-preferred-cluster",
+                ),
+            ]
+        )
+
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_list_organizations",
+        side_effect=list_side_effect,
+        autospec=True,
+    )
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.organizations_service_api.OrganizationsServiceApi.organizations_service_get_organization",
         side_effect=side_effect,

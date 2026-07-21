@@ -13,15 +13,13 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _MAX_SIZE_MULTI_PART_CHUNK,
     _authenticate_and_get_token,
+    _BlobUploader,
     _create_app,
     _DummyBody,
     _DummyResponse,
-    _FileUploader,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
-    _SinglePartFileUploader,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -1016,43 +1014,26 @@ class StudioApi:
     ) -> None:
         """Uploads file to given remote path in the studio.
 
-        Uses single-part upload for files <= 5MB, multipart upload for larger files.
-
         Args:
             studio_id: Studio (cloud space) ID to upload the file into.
             teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID used for multipart uploads.
+            cloud_account: Unused; the studio's cloud account determines storage.
             file_path: Local filesystem path of the file to upload.
             remote_path: Destination path inside the Studio.
             progress_bar: Whether to display a progress bar during upload.
         """
-        file_size = os.path.getsize(file_path)
-        multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
+        # The remote path is relative to the Studio's content root.
+        remote_path = remote_path.strip("/")
 
-        if file_size <= multipart_threshold:
-            token = _authenticate_and_get_token(self._client)
-
-            query_params = {"token": token}
-            client_host = self._client.api_client.configuration.host
-            url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{remote_path}"
-
-            _SinglePartFileUploader(
-                client=self._client,
-                file_path=file_path,
-                url=url,
-                query_params=query_params,
-                progress_bar=progress_bar,
-                notify_completion=True,
-            )()
-        else:
-            _FileUploader(
-                client=self._client,
-                teamspace_id=teamspace_id,
-                cloud_account=cloud_account,
-                file_path=file_path,
-                remote_path=_sanitize_studio_remote_path(remote_path, studio_id),
-                progress_bar=progress_bar,
-            )()
+        client_host = self._client.api_client.configuration.host
+        _BlobUploader(
+            client=self._client,
+            endpoint_base=f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}",
+            file_path=file_path,
+            remote_path=remote_path,
+            progress_bar=progress_bar,
+            notify_completion=True,
+        )()
 
     def download_file(
         self,
@@ -1103,7 +1084,7 @@ class StudioApi:
                 total=total_length,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
             )
 
             pbar_update = pbar.update
@@ -1209,7 +1190,7 @@ class StudioApi:
                 total=total_size,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 mininterval=1,
             )
 

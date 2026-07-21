@@ -42,16 +42,16 @@ def test_parse_get_command_response_running_true():
     assert s == CommandStatus(output="tail", exit_code=0, running=True)
 
 
-def test_parse_command_logs_response_empty():
-    assert sandbox_api_mod._parse_command_logs_response(None) == []
-    assert sandbox_api_mod._parse_command_logs_response(mock.MagicMock(logs=None)) == []
+def test_parse_get_logs_response_empty():
+    assert sandbox_api_mod._parse_get_logs_response(None) == []
+    assert sandbox_api_mod._parse_get_logs_response(mock.MagicMock(entries=None)) == []
 
 
-def test_parse_command_logs_response_entries():
+def test_parse_get_logs_response_entries():
     e1 = mock.MagicMock(timestamp="t1", message="m1")
     e2 = mock.MagicMock(timestamp="t2", message="m2")
-    resp = mock.MagicMock(logs=[e1, e2])
-    logs = sandbox_api_mod._parse_command_logs_response(resp)
+    resp = mock.MagicMock(entries=[e1, e2])
+    logs = sandbox_api_mod._parse_get_logs_response(resp)
     assert logs == [
         CommandLog(timestamp="t1", message="m1"),
         CommandLog(timestamp="t2", message="m2"),
@@ -168,13 +168,57 @@ def test_get_command_returns_command_status(patched_sandbox_api):
     )
 
 
-def test_get_command_logs_no_org_kwarg_when_missing(patched_sandbox_api):
-    api, mock_svc = patched_sandbox_api
-    mock_svc.sandboxes_service_get_sandbox_command_logs.return_value = mock.MagicMock(logs=[])
+def test_get_command_logs_uses_durable_jobs_endpoint(patched_sandbox_api):
+    api, _mock_svc = patched_sandbox_api
+    mock_jobs = mock.MagicMock()
+    mock_jobs.jobs_service_get_logs.return_value = mock.MagicMock(entries=[], next_page_token=None)
 
-    api.get_command_logs("sandbox-1", "cmd-1", organization_id=None)
+    with mock.patch.object(api, "jobs", return_value=mock_jobs):
+        assert api.get_command_logs("sandbox-1", "cmd-1", project_id="proj-1") == []
 
-    mock_svc.sandboxes_service_get_sandbox_command_logs.assert_called_once_with("sandbox-1", "cmd-1")
+    mock_jobs.jobs_service_get_logs.assert_called_once_with(
+        "proj-1", sandbox_id="sandbox-1", sandbox_command_ids=["cmd-1"]
+    )
+
+
+def test_get_command_logs_all_commands_when_cmd_id_omitted(patched_sandbox_api):
+    api, _mock_svc = patched_sandbox_api
+    mock_jobs = mock.MagicMock()
+    mock_jobs.jobs_service_get_logs.return_value = mock.MagicMock(entries=[], next_page_token=None)
+
+    with mock.patch.object(api, "jobs", return_value=mock_jobs):
+        assert api.get_command_logs("sandbox-1", project_id="proj-1") == []
+
+    # No sandbox_command_ids => the endpoint merges every command in the sandbox.
+    mock_jobs.jobs_service_get_logs.assert_called_once_with("proj-1", sandbox_id="sandbox-1")
+
+
+def test_get_command_logs_pages_through_results(patched_sandbox_api):
+    api, _mock_svc = patched_sandbox_api
+    page1 = mock.MagicMock(entries=[mock.MagicMock(timestamp="t1", message="m1")], next_page_token="tok")
+    page2 = mock.MagicMock(entries=[mock.MagicMock(timestamp="t2", message="m2")], next_page_token=None)
+    mock_jobs = mock.MagicMock()
+    mock_jobs.jobs_service_get_logs.side_effect = [page1, page2]
+
+    with mock.patch.object(api, "jobs", return_value=mock_jobs):
+        logs = api.get_command_logs("sandbox-1", "cmd-1", project_id="proj-1")
+
+    assert logs == [CommandLog(timestamp="t1", message="m1"), CommandLog(timestamp="t2", message="m2")]
+    assert mock_jobs.jobs_service_get_logs.call_count == 2
+    assert mock_jobs.jobs_service_get_logs.call_args_list[1].kwargs["page_token"] == "tok"
+
+
+def test_get_command_logs_forwards_query_and_severity(patched_sandbox_api):
+    api, _mock_svc = patched_sandbox_api
+    mock_jobs = mock.MagicMock()
+    mock_jobs.jobs_service_get_logs.return_value = mock.MagicMock(entries=[], next_page_token=None)
+
+    with mock.patch.object(api, "jobs", return_value=mock_jobs):
+        api.get_command_logs("sandbox-1", "cmd-1", project_id="proj-1", query="boom", severity="error")
+
+    mock_jobs.jobs_service_get_logs.assert_called_once_with(
+        "proj-1", sandbox_id="sandbox-1", sandbox_command_ids=["cmd-1"], query="boom", severity="error"
+    )
 
 
 def test_kill_command_passes_organization_id(patched_sandbox_api):

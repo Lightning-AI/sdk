@@ -103,6 +103,36 @@ def test_mmt_v2_submit_job(_mock_auth):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_threads_placement_group_id(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=2,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        placement_group_id="pg-1",
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.placement_group_id == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
 def test_get_mmt_by_name(_mock_auth):
     job_api = MMTApiV2()
 

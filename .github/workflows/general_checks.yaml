@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   check-schema:
-    uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@bbe30252725442db7b535b7b1eec38f6b0d0f983 # main
+    uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@c89c402603f4f267525f17dc2850ec53e0e48a9a # main
     with:
       azure-dir: ''
 
@@ -29,10 +29,10 @@ jobs:
       LIGHTNING_USER_ID: dummy-user-id
       LIGHTNING_API_KEY: dummy-api-key
     steps:
-    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: ${{ matrix.python-version }}
         cache: pip
@@ -63,18 +63,18 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout 🛎️
-      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         fetch-depth: 0
         submodules: recursive
 
     - name: Set up Python 🐍
-      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: "3.11"
 
     - name: Set up Go
-      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       with:
         go-version: "1.24.x"
 
@@ -87,7 +87,7 @@ jobs:
       run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
 
     - name: Cache 💽 pre-commit
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.cache/pre-commit
         key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml', 'python/pyproject.toml') }}

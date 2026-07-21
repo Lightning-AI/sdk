@@ -1191,26 +1191,35 @@ def test_list_files(
     mock_authenticate.assert_called_once_with(studio_api._client)
 
 
+def _blob_upload_create_response(path, upload_id, urls):
+    response = mock.Mock(status_code=200)
+    response.json.return_value = {
+        "expires_at": "2026-01-01T00:00:00Z",
+        "results": [{"path": path, "upload_id": upload_id, "urls": urls}],
+    }
+    return response
+
+
 @pytest.mark.parametrize("progress_bar", [True, False])
-@pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 100MB for multipart
-@mock.patch("lightning_sdk.api.studio_api._FileUploader")
+@pytest.mark.parametrize("file_size_mb", [4, 200])  # 4MB for single-part, 200MB for multipart
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.utils._authenticate_and_get_token")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file(
     authenticate_mock,
     tqdm_mock,
     requests_put_mock,
     requests_post_mock,
-    file_uploader_mock,
     tmpdir,
     progress_bar,
     file_size_mb,
+    monkeypatch,
 ):
-    requests_put_mock.return_value.status_code = 200
-    requests_post_mock.return_value.status_code = 200
+    # the autouse keep_alive_mocker fixture mocks threading.Thread, so real
+    # executor workers would never run; fall back to a plain map
+    monkeypatch.setattr("lightning_sdk.api.utils.ThreadPoolExecutor.map", map)
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
     authenticate_mock.return_value = "test-token-123"
 
@@ -1219,35 +1228,93 @@ def test_upload_file(
     filepath = os.path.join(tmpdir, "file1")
     subprocess.run(f"truncate -s {file_size_mb}MB {filepath}".split(" "))
 
+    single_part = file_size_mb <= 100
+    urls = (
+        [{"url": "https://storage.example.com/signed"}]
+        if single_part
+        else [
+            {"url": "https://storage.example.com/part1", "part_number": 1},
+            {"url": "https://storage.example.com/part2", "part_number": 2},
+        ]
+    )
+    requests_post_mock.side_effect = [
+        _blob_upload_create_response("file1", "" if single_part else "upload-1", urls),
+        mock.Mock(status_code=204),
+    ]
+    requests_put_mock.return_value = mock.Mock(status_code=200, headers={"ETag": "etag-1"})
+
     studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, "file1", progress_bar=progress_bar)
 
-    if file_size_mb <= 5:
-        # Single-part upload should be used
-        assert requests_put_mock.call_count == 1
-        (url,) = requests_put_mock.call_args.args
-        params = requests_put_mock.call_args.kwargs["params"]
-        assert "ts-abc" in url
-        assert "file1" in url
-        assert "token" in params
+    # URL request and completion both go to the studio-scoped batch endpoints,
+    # with the blob path in the body rather than the URL.
+    create_call = requests_post_mock.call_args_list[0]
+    assert create_call.args[0].endswith("/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs")
+    assert create_call.kwargs["params"] == {"token": "test-token-123"}
+    complete_call = requests_post_mock.call_args_list[1]
+    assert complete_call.args[0].endswith("/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs/complete")
+    assert complete_call.kwargs["params"] == {"token": "test-token-123"}
 
-        # FileUploader (multipart) should not be called
-        file_uploader_mock.assert_not_called()
+    if single_part:
+        assert create_call.kwargs["json"] == {"blobs": [{"path": "file1"}]}
+        assert complete_call.kwargs["json"] == {"blobs": [{"path": "file1"}]}
+
+        assert requests_put_mock.call_count == 1
+        assert requests_put_mock.call_args.args[0] == "https://storage.example.com/signed"
 
         if progress_bar:
             tqdm_mock.wrapattr.assert_called_once()
         else:
             tqdm_mock.wrapattr.assert_not_called()
     else:
-        # Multipart upload should be used
-        file_uploader_mock.assert_called_once()
-        call_kwargs = file_uploader_mock.call_args.kwargs
-        assert call_kwargs["teamspace_id"] == "ts-abc"
-        assert call_kwargs["cloud_account"] == "cluster-abc"
-        assert call_kwargs["file_path"] == filepath
-        assert call_kwargs["progress_bar"] == progress_bar
+        assert create_call.kwargs["json"] == {"blobs": [{"path": "file1", "parts": 2, "part_size": 104_857_600}]}
 
-        # Single-part upload should not be called
-        assert requests_put_mock.call_count == 0
+        assert requests_put_mock.call_count == 2
+        put_urls = sorted(c.args[0] for c in requests_put_mock.call_args_list)
+        assert put_urls == ["https://storage.example.com/part1", "https://storage.example.com/part2"]
+
+        completed = complete_call.kwargs["json"]["blobs"][0]
+        assert completed["path"] == "file1"
+        assert completed["upload_id"] == "upload-1"
+        assert [p["part_number"] for p in completed["parts"]] == [1, 2]
+        assert all(p["etag"] == "etag-1" for p in completed["parts"])
+
+
+@pytest.mark.parametrize("remote_path", ["/home/zeus/content/file1.tar.gz", "home/zeus/content/file1.tar.gz"])
+@mock.patch("requests.post")
+@mock.patch("requests.put")
+@mock.patch("lightning_sdk.api.utils.tqdm")
+@mock.patch("lightning_sdk.api.utils._authenticate_and_get_token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_leading_slash(
+    authenticate_mock,
+    tqdm_mock,
+    requests_put_mock,
+    requests_post_mock,
+    tmpdir,
+    remote_path,
+):
+    # A leading slash must not leak into the blob path sent to the upload
+    # endpoints; both variants request the same clean path.
+    tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
+    authenticate_mock.return_value = "test-token-123"
+
+    studio_api = StudioApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    subprocess.run(f"truncate -s 4MB {filepath}".split(" "))
+
+    requests_post_mock.side_effect = [
+        _blob_upload_create_response("home/zeus/content/file1.tar.gz", "", [{"url": "https://storage.example.com/s"}]),
+        mock.Mock(status_code=204),
+    ]
+    requests_put_mock.return_value = mock.Mock(status_code=200)
+
+    studio_api.upload_file("st-abc", "ts-abc", "cluster-abc", filepath, remote_path, progress_bar=False)
+
+    create_call = requests_post_mock.call_args_list[0]
+    assert create_call.kwargs["json"] == {"blobs": [{"path": "home/zeus/content/file1.tar.gz"}]}
+    complete_call = requests_post_mock.call_args_list[1]
+    assert complete_call.kwargs["json"] == {"blobs": [{"path": "home/zeus/content/file1.tar.gz"}]}
 
 
 @mock.patch("requests.get", autospec=True)

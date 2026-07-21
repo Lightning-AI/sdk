@@ -379,21 +379,30 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 
 func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 	var seen []string
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
-		assert.Falsef(t, r.Method != http.MethodPut || r.URL.Path != "/v1/projects/project-1/artifacts/blobs/drive/remote.txt",
-			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
-
-		query := r.URL.Query()
-		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || query.Get("token") != "token-1",
-			"unexpected query: %s", r.URL.RawQuery)
-
-		body, err := io.ReadAll(r.Body)
-		require.NoErrorf(t, err,
-			"read upload body")
-		assert.Falsef(t, string(body) != "teamspace upload",
-			"upload body = %q, want teamspace upload", string(body))
-
+		switch r.Method + " " + r.URL.Path {
+		case "POST /v1/projects/project-1/artifacts/blobs":
+			if token := r.URL.Query().Get("token"); token != "token-1" {
+				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
+			}
+			// the cluster travels in the body, not the query
+			clusterID, paths := decodeBlobUploadBatch(t, r)
+			assert.Falsef(t, clusterID != "cloud-1" || len(paths) != 1 || paths[0] != "drive/remote.txt",
+				"unexpected upload request: cluster_id=%q paths=%v", clusterID, paths)
+			writeBlobUploadResponse(w, "drive/remote.txt", server.URL+"/signed/drive/remote.txt", nil)
+		case "PUT /signed/drive/remote.txt":
+			assert.Falsef(t, r.Header.Get("Authorization") != "",
+				"presigned PUT must not carry credentials")
+			body, err := io.ReadAll(r.Body)
+			assert.NoErrorf(t, err,
+				"read upload body")
+			assert.Falsef(t, err == nil && string(body) != "teamspace upload",
+				"upload body = %q, want teamspace upload", string(body))
+		default:
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		}
 	}))
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
@@ -407,7 +416,11 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 	require.NoErrorf(t, ts.UploadFile(sourcePath, "drive/remote.txt", "cloud-1"),
 		"teamspace.UploadFile returned error")
 
-	want := []string{"PUT /v1/projects/project-1/artifacts/blobs/drive/remote.txt?clusterId=cloud-1&token=token-1"}
+	// single-part teamspace uploads don't need finalizing, so no complete call
+	want := []string{
+		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"PUT /signed/drive/remote.txt",
+	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
 
@@ -420,18 +433,26 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 
 func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 	var seen []string
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
-		assert.Falsef(t, r.Method != http.MethodPut,
-			"unexpected method: %s", r.Method)
-
-		switch r.URL.Path {
-		case "/v1/projects/project-1/artifacts/blobs/drive/a.txt",
-			"/v1/projects/project-1/artifacts/blobs/drive/nested/b.txt":
-			query := r.URL.Query()
-			if query.Get("clusterId") != "cloud-1" || query.Get("token") != "token-1" {
-				assert.Fail(t, fmt.Sprintf("unexpected query: %s", r.URL.RawQuery))
+		switch r.Method + " " + r.URL.Path {
+		case "POST /v1/projects/project-1/artifacts/blobs":
+			if token := r.URL.Query().Get("token"); token != "token-1" {
+				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
 			}
+			clusterID, paths := decodeBlobUploadBatch(t, r)
+			// non-fatal on the handler goroutine; a 400 fails fast (not retried)
+			if len(paths) != 1 {
+				assert.Failf(t, "unexpected upload paths", "%v", paths)
+				http.Error(w, "expected exactly one blob", http.StatusBadRequest)
+				return
+			}
+			assert.Falsef(t, clusterID != "cloud-1",
+				"cluster_id = %q, want cloud-1", clusterID)
+			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil)
+		case "PUT /signed/drive/a.txt", "PUT /signed/drive/nested/b.txt":
+			// presigned storage PUT
 		default:
 			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
 		}
@@ -453,8 +474,10 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 		"teamspace.UploadFolder returned error")
 
 	want := []string{
-		"PUT /v1/projects/project-1/artifacts/blobs/drive/a.txt?clusterId=cloud-1&token=token-1",
-		"PUT /v1/projects/project-1/artifacts/blobs/drive/nested/b.txt?clusterId=cloud-1&token=token-1",
+		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"PUT /signed/drive/a.txt",
+		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"PUT /signed/drive/nested/b.txt",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)

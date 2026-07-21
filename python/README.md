@@ -197,7 +197,8 @@ pip install -e .
 Build docs from the repository root:
 
 ```bash
-uv run --group docs sphinx-build -M html python/docs/source python/docs/build -W --keep-going
+uv run --group docs sphinx-build -M html python/docs/sdk python/docs/sdk/build -W --keep-going
+uv run --group docs sphinx-build -M html python/docs/cli python/docs/cli/build -W --keep-going
 ```
 
 # License

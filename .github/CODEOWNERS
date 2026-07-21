@@ -1,10 +1,35 @@
-# This is a comment.
-# Each line is a file pattern followed by one or more owners.
+* @justusschock @ethanwharris
 
-# These owners will be the default owners for everything in
-# the repo. Unless a later match takes precedence,
-# @global-owner1 and @global-owner2 will be requested for
-# review when someone opens a pull request.
-* @gridai/platform @gridai/application
+/.github/ @justusschock @ethanwharris @owbone
 
-lightning_sdk/cli/deploy @aniketmaurya
+/python/ @justusschock @ethanwharris @k223kim
+/python/docs/ @justusschock @dhedey
+/python/examples/ @justusschock @k223kim
+
+/python/lightning_sdk/api/ @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/cli/ @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/llm/ @k223kim @Danidapena
+/python/lightning_sdk/pipeline/ @justusschock @tchaton
+/python/lightning_sdk/sandbox/ @k223kim @rusenask
+
+/python/lightning_sdk/agents.py @k223kim @Danidapena
+/python/lightning_sdk/base_studio.py @justusschock @ethanwharris @vivequeramji
+/python/lightning_sdk/deployment.py @justusschock @tchaton
+/python/lightning_sdk/filesystem.py @justusschock @k223kim @owbone
+/python/lightning_sdk/job.py @justusschock @ethanwharris
+/python/lightning_sdk/k8s_cluster.py @ethanwharris @k223kim
+/python/lightning_sdk/lit_container.py @ethanwharris @k223kim
+/python/lightning_sdk/machine.py @justusschock @ethanwharris
+/python/lightning_sdk/mmt.py @justusschock @ethanwharris
+/python/lightning_sdk/models.py @justusschock @ethanwharris
+/python/lightning_sdk/organization.py @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/owner.py @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/sandbox.py @justusschock @k223kim
+/python/lightning_sdk/serve.py @k223kim @tchaton
+/python/lightning_sdk/status.py @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/studio.py @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/teamspace.py @justusschock @ethanwharris @k223kim
+/python/lightning_sdk/user.py @justusschock @ethanwharris @k223kim
+
+/js/ @k223kim @rusenask
+/go/ @justusschock @owbone

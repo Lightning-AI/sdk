@@ -2,7 +2,12 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.lightning_cloud.openapi import JobsServiceUpdateMultiMachineJobBody, V1JobSpec, V1MultiMachineJob
+from lightning_sdk.lightning_cloud.openapi import (
+    JobsServiceUpdateMultiMachineJobBody,
+    V1Job,
+    V1JobSpec,
+    V1MultiMachineJob,
+)
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
@@ -50,7 +55,64 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        placement_group_id=None,
     )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_mmt_threads_placement_group_id(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = MMT("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        num_machines=2,
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        placement_group_id="pg-1",
+    )
+
+    assert submit_mock.call_args.kwargs["placement_group_id"] == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmt_exposes_placement_group_id(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+    job._job = V1MultiMachineJob(id="mmt-123", spec=V1JobSpec(placement_group_id="pg-1"))
+
+    assert job.placement_group_id == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmt_members_have_stable_rank_identity(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+    job._job = V1MultiMachineJob(id="mmt-123", spec=V1JobSpec(placement_group_id="pg-1"))
+    job._job_api.list_mmt_subjobs = mock.MagicMock(
+        return_value=[
+            V1Job(
+                id="job-1",
+                name="rank-1",
+                private_ip_address="10.0.0.8",
+                spec=V1JobSpec(placement_group_id="pg-1", rank=1),
+            ),
+            V1Job(
+                id="job-0",
+                name="rank-0",
+                private_ip_address="10.0.0.7",
+                spec=V1JobSpec(placement_group_id="pg-1", rank=0),
+            ),
+        ]
+    )
+
+    assert [(member.rank, member.resource_id) for member in job.machines] == [
+        (0, "job-0"),
+        (1, "job-1"),
+    ]
 
 
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
@@ -90,6 +152,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         path_mappings=None,
         max_runtime=None,
         reuse_snapshot=True,
+        placement_group_id=None,
     )
 
 

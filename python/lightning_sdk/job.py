@@ -114,6 +114,7 @@ class Job(metaclass=TrackCallsMeta):
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
+        placement_group_id: Optional[str] = None,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -144,6 +145,7 @@ class Job(metaclass=TrackCallsMeta):
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
+            placement_group_id: Optional placement group identifier for colocating the job.
 
         Returns:
             Job: The newly submitted Job instance.
@@ -222,6 +224,7 @@ class Job(metaclass=TrackCallsMeta):
 
         job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
         submit_cloud = cloud if cloud_account is None else None
+
         job._submit(
             machine=machine,
             cloud=submit_cloud,
@@ -238,6 +241,7 @@ class Job(metaclass=TrackCallsMeta):
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
+            placement_group_id=placement_group_id,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -260,6 +264,7 @@ class Job(metaclass=TrackCallsMeta):
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
+        placement_group_id: Optional[str] = None,
     ) -> "Job":
         if studio is not None:
             studio_id = studio._studio.id
@@ -318,6 +323,7 @@ class Job(metaclass=TrackCallsMeta):
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
+            placement_group_id=placement_group_id,
         )
         self._job = submitted
         self._name = submitted.name
@@ -391,6 +397,22 @@ class Job(metaclass=TrackCallsMeta):
             return self._job.public_ip_address
         except AttributeError:
             return None
+
+    @property
+    def resource_id(self) -> Optional[str]:
+        return self._guaranteed_job.id
+
+    @property
+    def private_ip_address(self) -> Optional[str]:
+        return self._guaranteed_job.private_ip_address
+
+    @property
+    def placement_group_id(self) -> Optional[str]:
+        return self._guaranteed_job.spec.placement_group_id
+
+    @property
+    def rank(self) -> Optional[int]:
+        return self._guaranteed_job.spec.rank
 
     @property
     def artifact_path(self) -> Optional[str]:

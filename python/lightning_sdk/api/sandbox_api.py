@@ -5,7 +5,7 @@ from typing import Any
 
 from lightning_sdk.lightning_cloud import env as lightning_env
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.openapi import SandboxesServiceApi
+from lightning_sdk.lightning_cloud.openapi import JobsServiceApi, SandboxesServiceApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     SandboxesServiceCreateSandboxDirectoryBody,
     SandboxesServiceExtendSandboxTimeoutBody,
@@ -139,19 +139,19 @@ def _parse_get_command_response(resp: Any) -> CommandStatus:
     )
 
 
-def _parse_command_logs_response(resp: Any) -> list[CommandLog]:
+def _parse_get_logs_response(resp: Any) -> list[CommandLog]:
+    """Parse a ``V1GetLogsResponse`` (``entries``) into :class:`CommandLog`s."""
     if resp is None:
         return []
-    logs_attr = getattr(resp, "logs", None)
-    if not logs_attr:
+    entries = getattr(resp, "entries", None)
+    if not entries:
         return []
-    return [
-        CommandLog(
-            timestamp=str(x.timestamp if hasattr(x, "timestamp") else ""),
-            message=str(x.message if hasattr(x, "message") else ""),
-        )
-        for x in logs_attr
-    ]
+    parsed: list[CommandLog] = []
+    for e in entries:
+        ts = getattr(e, "timestamp", None)
+        timestamp = ts.isoformat() if hasattr(ts, "isoformat") else (str(ts) if ts else "")
+        parsed.append(CommandLog(timestamp=timestamp, message=str(getattr(e, "message", "") or "")))
+    return parsed
 
 
 class SandboxApi:
@@ -251,6 +251,10 @@ class SandboxApi:
     def sandboxes(self) -> SandboxesServiceApi:
         self._ensure_auth()
         return SandboxesServiceApi(self._client.api_client)
+
+    def jobs(self) -> JobsServiceApi:
+        self._ensure_auth()
+        return JobsServiceApi(self._client.api_client)
 
     def get_sandbox(self, sandbox_id: str, *, organization_id: str | None = None) -> V1Sandbox:
         """Fetch one sandbox row via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox`."""
@@ -403,18 +407,44 @@ class SandboxApi:
             raise_sandbox_api_error(e)
         return list(resp.commands or [])
 
-    def get_command_logs(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> Any:
-        """Fetch command logs via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_command_logs`."""
-        api = self.sandboxes()
+    def get_command_logs(
+        self,
+        sandbox_id: str,
+        cmd_id: str | None = None,
+        *,
+        project_id: str | None = None,
+        query: str | None = None,
+        severity: str | None = None,
+    ) -> list[CommandLog]:
+        """Fetch a sandbox's command logs.
+
+        With ``cmd_id`` set the logs are scoped to that command; otherwise every
+        command in the sandbox is merged. ``query`` filters to lines containing that
+        substring; ``severity`` returns only lines at or above the given level
+        (``error`` > ``warning`` > ``info`` > ``debug``).
+        """
+        api = self.jobs()
+        parsed: list[CommandLog] = []
+        page_token: str | None = None
         try:
-            resp = api.sandboxes_service_get_sandbox_command_logs(
-                sandbox_id,
-                cmd_id,
-                **({"organization_id": organization_id} if organization_id else {}),
-            )
+            while True:
+                kwargs: dict[str, Any] = {"sandbox_id": sandbox_id}
+                if cmd_id:
+                    kwargs["sandbox_command_ids"] = [cmd_id]
+                if query:
+                    kwargs["query"] = query
+                if severity:
+                    kwargs["severity"] = severity
+                if page_token:
+                    kwargs["page_token"] = page_token
+                resp = api.jobs_service_get_logs(project_id or "", **kwargs)
+                parsed.extend(_parse_get_logs_response(resp))
+                page_token = getattr(resp, "next_page_token", None) or None
+                if not page_token:
+                    break
         except ApiException as e:
             raise_sandbox_api_error(e)
-        return _parse_command_logs_response(resp)
+        return parsed
 
     def kill_command(self, sandbox_id: str, cmd_id: str, organization_id: str | None) -> None:
         """Kill a running command via :meth:`SandboxesServiceApi.sandboxes_service_kill_sandbox_command`."""

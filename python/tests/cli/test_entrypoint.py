@@ -93,8 +93,10 @@ def test_help():
 
     # DATA & FILES
     assert "cp        Copy between local, Studios, Drive." in text
-    assert "file      Upload and download files." in text
-    assert "folder    Upload and download folders." in text
+
+    # Deprecated commands should not appear
+    assert "file      Upload and download files." not in text
+    assert "folder    Upload and download folders." not in text
 
     # Hidden commands should not appear
     assert "  create" not in text

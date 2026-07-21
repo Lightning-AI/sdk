@@ -1,0 +1,25 @@
+{
+  "name": "lightning-eve-agent-example",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=../../../.env ./node_modules/eve/bin/eve.js dev",
+    "dev:no-ui": "node --env-file-if-exists=../../../.env ./node_modules/eve/bin/eve.js dev --no-ui",
+    "build": "node --env-file-if-exists=../../../.env ./node_modules/eve/bin/eve.js build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.11",
+    "@lightningai/sdk": "2026.7.9",
+    "ai": "^7.0.19",
+    "eve": "^0.22.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "typescript": "^5.9.3"
+  }
+}
