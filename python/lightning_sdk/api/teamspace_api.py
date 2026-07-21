@@ -798,7 +798,7 @@ class TeamspaceApi:
                 total=total_length,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
             )
 
             pbar_update = pbar.update
@@ -903,7 +903,7 @@ class TeamspaceApi:
                 total=total_size,
                 unit="B",
                 unit_scale=True,
-                unit_divisor=1000,
+                unit_divisor=1024,
                 mininterval=1,
             )
 
