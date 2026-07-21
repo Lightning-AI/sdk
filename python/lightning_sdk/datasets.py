@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.utils.dataset import (
+    _DEFAULT_UPLOAD_WORKERS,
     _download_dataset_version,
     _get_dataset_by_name,
     _list_dataset_versions,
@@ -51,8 +52,12 @@ def upload_dataset(
     path: Union[str, Path, List[Union[str, Path]]] = ".",
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
+    num_workers: int = _DEFAULT_UPLOAD_WORKERS,
 ) -> UploadedDatasetInfo:
     """Upload a dataset to Lightning Datasets.
+
+    Files upload concurrently (many-small-file datasets parallelize across files;
+    large files chunk within-file), bounded by ``num_workers`` total.
 
     Args:
         name: Lightning path to dataset in the format
@@ -62,6 +67,8 @@ def upload_dataset(
         cloud_account: Cloud account to store the dataset files in.
             Falls back to teamspace default when not provided.
         progress_bar: Whether to display an upload progress bar.
+        num_workers: total upload concurrency, split across files and their parts
+            (default 16).
 
     Returns:
         UploadedDatasetInfo: Metadata about the newly uploaded dataset version.
@@ -99,6 +106,7 @@ def upload_dataset(
         file_paths=file_paths,
         relative_paths=relative_paths,
         progress_bar=progress_bar,
+        num_workers=num_workers,
     )
     return UploadedDatasetInfo(
         name=dataset_name,
