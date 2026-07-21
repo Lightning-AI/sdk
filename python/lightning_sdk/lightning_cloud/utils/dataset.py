@@ -123,23 +123,25 @@ def _download_dataset_files(
 
     request_chunk = 10 * 1024 * 1024
 
-    entries = [
-        (f.get("filepath", f"file_{i}").lstrip("/"), f.get("url"), int(f.get("size") or 0))
-        for i, f in enumerate(files_list)
-        if f.get("url")
-    ]
-    if not entries:
-        return
+    def _to_entry(indexed_file: tuple) -> tuple:
+        index, file_info = indexed_file
+        return (
+            file_info.get("filepath", f"file_{index}").lstrip("/"),
+            file_info.get("url"),
+            int(file_info.get("size") or 0),
+        )
 
-    total_bytes = sum(size for _, _, size in entries)
-    # Per-file current presigned URL (refreshed on expiry), guarded by a lock.
-    urls = {rel: url for rel, url, _ in entries}
-    url_lock = threading.Lock()
-
-    # Pre-allocate each file at full size, then build a flat list of byte-range
-    # parts across all files so one worker pool downloads them concurrently.
+    entries = map(_to_entry, enumerate(files_list))
+    total_bytes = 0
+    urls = {}
     tasks = []
-    for rel, _url, size in entries:
+    # Lazily normalize each entry while pre-allocating its file and building the
+    # flat byte-range task list, so files_list is traversed only once.
+    for rel, url, size in entries:
+        if not url:
+            continue
+        total_bytes += size
+        urls[rel] = url
         local_path = os.path.join(dest_dir, rel)
         os.makedirs(os.path.dirname(local_path) or dest_dir, exist_ok=True)
         with open(local_path, "wb") as f:
@@ -148,6 +150,12 @@ def _download_dataset_files(
         for start in range(0, size, part_size):
             end = min(start + part_size, size) - 1
             tasks.append((rel, local_path, start, end))
+
+    if not urls:
+        return
+
+    # Per-file current presigned URL (refreshed on expiry), guarded by a lock.
+    url_lock = threading.Lock()
 
     pbar = tqdm(
         desc="Downloading dataset",

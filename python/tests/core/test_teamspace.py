@@ -1416,6 +1416,7 @@ def test_download_dataset_files_parallel(tmp_path):
         {"filepath": "a.bin", "url": "https://x/a", "size": 4},
         {"filepath": "sub/b.bin", "url": "https://x/b", "size": 4},
         {"filepath": "empty.bin", "url": "https://x/e", "size": 0},
+        {"filepath": "missing-url.bin", "size": 4},
     ]
 
     def fake_get(url, headers=None, stream=None, **kwargs):
@@ -1433,6 +1434,7 @@ def test_download_dataset_files_parallel(tmp_path):
     assert (tmp_path / "sub" / "b.bin").read_bytes() == b"data"
     assert (tmp_path / "empty.bin").exists()
     assert (tmp_path / "empty.bin").stat().st_size == 0
+    assert not (tmp_path / "missing-url.bin").exists()
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
