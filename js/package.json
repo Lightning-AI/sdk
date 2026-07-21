@@ -1,6 +1,6 @@
 {
     "name": "@lightningai/sdk",
-    "version": "2026.07.03",
+    "version": "0.0.0",
     "description": "Lightning AI Sandbox SDK — create and manage sandboxes, run commands, read/write files",
     "type": "module",
     "license": "Apache-2.0",
@@ -21,8 +21,9 @@
     "scripts": {
         "clean": "rm -rf dist",
         "build": "tsc",
+        "pack:scm": "node scripts/scm-package.mjs",
         "prepublishOnly": "npm run clean && npm run build",
-        "test": "node --test --import tsx tests/config.test.ts tests/sandbox.test.ts tests/filesystem.test.ts tests/pty.test.ts tests/persistence.test.ts"
+        "test": "node --test --import tsx tests/config.test.ts tests/sandbox.test.ts tests/filesystem.test.ts tests/pty.test.ts tests/persistence.test.ts tests/scm-version.test.ts tests/scm-package.test.ts"
     },
     "dependencies": {
         "axios": "^1.7.0"

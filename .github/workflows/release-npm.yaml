@@ -1,12 +1,6 @@
 # Publishes @lightningai/sdk to https://www.npmjs.com/ when a version tag is pushed or a GitHub Release is published.
-# Same trigger pattern as PyPI Release (.github/workflows/release.yaml).
-#
-# --- Version alignment (Python ↔ npm) ---
-# • Canonical version string: python/lightning_sdk/__version__.py → __version__
-# • PyPI reads that via setuptools dynamic metadata (see pyproject.toml).
-# • Before "npm ci", this workflow runs `npm version <that string>` in js/ so the published
-#   tarball matches PyPI for the same git commit. Committers may still bump js/package.json
-#   manually after changing __version__.py to avoid noisy diffs; CI corrects it if they forget.
+# Same trigger pattern as PyPI Release (.github/workflows/release.yaml). Both
+# packages derive their versions from the same Git tag and repository state.
 
 name: npm Release
 
@@ -22,14 +16,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
-      # Overwrites js/package.json + package-lock.json "version" fields only (no git tag).
-      # Uses --allow-same-version so jobs stay green when the repo is already in sync.
-      - name: Sync npm version with Python SDK
-        run: |
-          set -euo pipefail
-          VER=$(grep -E '^__version__ = ' python/lightning_sdk/__version__.py | sed -E 's/^__version__ = "([^"]+)".*/\1/')
-          (cd js && npm version "$VER" --no-git-tag-version --allow-same-version)
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -42,12 +30,16 @@ jobs:
         run: |
           npm ci
           npm run build
-          rm -rf node_modules
+          if [ "$GITHUB_EVENT_NAME" = "release" ]; then
+            npm run pack:scm -- --release --output package
+          else
+            npm run pack:scm -- --output package
+          fi
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: npm-packages-${{ github.sha }}
-          path: js
+          path: js/package/*.tgz
 
   upload-package:
     needs: build-package
@@ -61,10 +53,6 @@ jobs:
           path: package
 
       - run: ls -lh package/
-
-      - name: Pack tarball for release assets
-        working-directory: package
-        run: npm pack
 
       - name: Upload to release
         uses: AButler/upload-release-assets@3d6774fae0ed91407dc5ae29d576b166536d1777 # v3.0
@@ -93,8 +81,6 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
 
-      # Artifact was built in build-package; prepublishOnly would run `npm run clean` and wipe dist/.
-      # node_modules are absent here, so --ignore-scripts skips lifecycle hooks and publishes as-is.
+      # Publish the exact tarball produced and tested by build-package.
       - name: Publish distribution to npm
-        working-directory: package
-        run: npm publish --access public --ignore-scripts --tag latest
+        run: npm publish package/*.tgz --access public --ignore-scripts --tag latest

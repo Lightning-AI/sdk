@@ -1,3 +1,5 @@
 """Version information for lightning_sdk."""
 
-__version__ = "2026.07.03"
+from importlib.metadata import version
+
+__version__ = version("lightning-sdk")
