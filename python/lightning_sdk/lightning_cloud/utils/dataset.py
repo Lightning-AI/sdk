@@ -299,7 +299,7 @@ class _DatasetFileUploader:
             self._progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(file_path)[1]}",
                 total=self._filesize, unit="B", unit_scale=True,
-                unit_divisor=1000, leave=False, position=-1, mininterval=1,
+                unit_divisor=1024, leave=False, position=-1, mininterval=1,
             )
         else:
             self._progress_bar = None
