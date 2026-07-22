@@ -78,15 +78,8 @@ def _zip_payload(files):
     return output.getvalue()
 
 
-@pytest.mark.parametrize(
-    ("as_zip", "unzip", "expected_name"),
-    [
-        (False, False, "my-dataset_v7"),
-        (True, False, "my-dataset_v7.zip"),
-        (False, True, "my-dataset_v7"),
-    ],
-)
-def test_download_dataset_output_mode_and_parallel_options(tmp_path, as_zip, unzip, expected_name):
+@pytest.mark.parametrize("unzip", [False, True])
+def test_download_dataset_output_mode_and_parallel_options(tmp_path, unzip):
     teamspace = SimpleNamespace(id="project-id")
     with (
         mock.patch("lightning_sdk.datasets._get_teamspace", return_value=teamspace),
@@ -102,11 +95,10 @@ def test_download_dataset_output_mode_and_parallel_options(tmp_path, as_zip, unz
             target_path=str(tmp_path),
             num_workers=3,
             part_size=1024,
-            as_zip=as_zip,
             unzip=unzip,
         )
 
-    expected_path = str(tmp_path / expected_name)
+    expected_path = str(tmp_path / "my-dataset_v7")
     assert result.path == expected_path
     download_version.assert_called_once_with(
         project_id="project-id",
@@ -117,14 +109,8 @@ def test_download_dataset_output_mode_and_parallel_options(tmp_path, as_zip, unz
         dataset_id="dataset-id",
         num_workers=3,
         part_size=1024,
-        as_zip=as_zip,
         unzip=unzip,
     )
-
-
-def test_download_dataset_rejects_zip_and_unzip():
-    with pytest.raises(ValueError, match="cannot both be True"):
-        download_dataset("my-org/my-teamspace/my-dataset", as_zip=True, unzip=True)
 
 
 def test_download_dataset_version_defaults_to_directory(tmp_path):
@@ -170,29 +156,6 @@ def test_download_dataset_version_never_auto_extracts(tmp_path):
 
     assert (output / "dataset.zip").read_bytes() == payload
     assert not (output / "nested").exists()
-
-
-def test_download_dataset_version_opt_in_zip(tmp_path):
-    payload = b"archived dataset contents"
-    files = [{"filepath": "nested/data.txt", "url": "https://files/data", "size": len(payload)}]
-    output = tmp_path / "dataset_v1.zip"
-
-    with (
-        _mock_files_api(files),
-        mock.patch("requests.get", side_effect=_range_get({"https://files/data": payload})),
-        mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
-    ):
-        _download_dataset_version(
-            project_id="project-id",
-            dataset_name="dataset",
-            version="v1",
-            target_path=str(output),
-            dataset_id="dataset-id",
-            as_zip=True,
-        )
-
-    with zipfile.ZipFile(output) as archive:
-        assert archive.read("nested/data.txt") == payload
 
 
 def test_download_dataset_version_explicit_unzip(tmp_path):

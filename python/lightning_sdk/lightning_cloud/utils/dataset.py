@@ -264,7 +264,6 @@ def _download_dataset_version(
     dataset_id: Optional[str] = None,
     num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
     part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
-    as_zip: bool = False,
     unzip: bool = False,
 ) -> None:
     """Download a dataset version from the API.
@@ -272,26 +271,21 @@ def _download_dataset_version(
     Fetches presigned file URLs from the files endpoint and downloads the files
     concurrently, each fetched with chunked HTTP-Range requests (see
     ``_download_dataset_files``). By default files are written into
-    ``target_path``. With ``as_zip``, they are packaged into an archive instead.
-    With ``unzip``, the version must contain one ZIP artifact, which is safely
-    extracted into ``target_path``.
+    ``target_path``. With ``unzip``, the version must contain one ZIP artifact,
+    which is safely extracted into ``target_path``.
 
     Args:
         project_id: The project ID.
         dataset_name: The dataset name.
         version: The dataset version to download.
-        target_path: Destination directory, or archive path when ``as_zip`` is set.
+        target_path: Destination directory.
         cluster_id: Optional cluster ID.
         dataset_id: The resolved dataset ID; when provided, skips an extra
             datasets-list API round-trip to resolve the name.
         num_workers: number of concurrent download threads (default 16).
         part_size: byte-range part size for splitting large files (default 64 MB).
-        as_zip: Package the downloaded file tree into a ZIP archive.
         unzip: Extract a dataset stored as exactly one ZIP artifact.
     """
-    if as_zip and unzip:
-        raise ValueError("`as_zip` and `unzip` cannot both be True.")
-
     cloud_url = env.LIGHTNING_CLOUD_URL
     client = LightningClient(retry=False)
     api_client: ApiClient = client.api_client
@@ -367,9 +361,9 @@ def _download_dataset_version(
                 return {"url": f.get("url"), "size": int(f.get("size") or 0)}
         return {"url": None, "size": 0}
 
-    # ZIP creation and extraction stage downloads in a temporary directory.
+    # ZIP extraction stages the archive in a temporary directory.
     # Raw directory downloads write directly to the requested output directory.
-    staging = as_zip or unzip
+    staging = unzip
     dest_dir = tempfile.mkdtemp(prefix="lightning-dataset-") if staging else target_path
     if not staging:
         os.makedirs(dest_dir, exist_ok=True)
@@ -377,11 +371,7 @@ def _download_dataset_version(
         _download_dataset_files(
             files_list, dest_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
         )
-        if as_zip:
-            Path(target_path).parent.mkdir(parents=True, exist_ok=True)
-            base = target_path[:-4] if target_path.lower().endswith(".zip") else target_path
-            shutil.make_archive(base, "zip", dest_dir)
-        elif unzip:
+        if unzip:
             archive_path = _safe_destination_path(dest_dir, zip_relative_path, "dataset filepath")
             _extract_zip_safely(str(archive_path), target_path)
     finally:
