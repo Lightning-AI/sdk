@@ -328,7 +328,7 @@ class Job(metaclass=TrackCallsMeta):
         if submitted.name != self._name:
             warnings.warn(
                 f"Job name '{self._name}' was already taken in this teamspace; "
-                f"the job was created as '{submitted.name}' instead. "
+                f"the job was created as '{submitted.name}' instead.",
                 stacklevel=2,
             )
 
