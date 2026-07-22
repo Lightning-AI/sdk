@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Optional, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
@@ -440,10 +440,48 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def logs(self) -> str:
-        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
-            raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
+        if self.status in (Status.Failed, Status.Completed, Status.Stopped):
+            return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
 
-        return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+        if self.status == Status.Running:
+            raise RuntimeError(
+                "Reading the logs of a running job via `logs` is not supported. "
+                "Use `stream_logs()` to follow the logs live instead."
+            )
+
+        raise RuntimeError(f"Logs are not available while the job is {self.status}.")
+
+    def stream_logs(
+        self,
+        *,
+        follow: bool = True,
+        tail: Optional[int] = None,
+        rank: Optional[int] = None,
+        idle_timeout: Optional[float] = None,
+    ) -> Iterator[str]:
+        """Stream the job's logs live, line by line.
+
+        Args:
+            follow: Keep the stream open and yield new lines as they are produced.
+            tail: Number of recent lines to emit before following.
+            rank: Distributed job rank to stream from.
+            idle_timeout: If set, stop after this many seconds without new data.
+
+        Yields:
+            Individual log lines.
+
+        Example:
+            for line in job.stream_logs():
+                print(line)
+        """
+        return self._job_api.stream_logs(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self.teamspace.id,
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            idle_timeout=idle_timeout,
+        )
 
     @property
     def link(self) -> str:
