@@ -325,6 +325,13 @@ class Job(metaclass=TrackCallsMeta):
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
         )
+        if submitted.name != self._name:
+            warnings.warn(
+                f"Job name '{self._name}' was already taken in this teamspace; "
+                f"the job was created as '{submitted.name}' instead. "
+                stacklevel=2,
+            )
+
         self._job = submitted
         self._name = submitted.name
         return self
