@@ -41,6 +41,7 @@ class V1AwsDataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'available_in_non_aws_providers': 'bool',
         'destination': 'str',
         'kms_arn': 'str',
         'region': 'str',
@@ -54,6 +55,7 @@ class V1AwsDataConnection(object):
     }
 
     attribute_map = {
+        'available_in_non_aws_providers': 'availableInNonAwsProviders',
         'destination': 'destination',
         'kms_arn': 'kmsArn',
         'region': 'region',
@@ -66,8 +68,9 @@ class V1AwsDataConnection(object):
         'source': 'source'
     }
 
-    def __init__(self, destination: 'str' =None, kms_arn: 'str' =None, region: 'str' =None, secret_arn_name: 'str' =None, secret_arn_value: 'str' =None, secret_id_access_key_id: 'str' =None, secret_id_secret_access_key: 'str' =None, secret_value_access_key_id: 'str' =None, secret_value_secret_access_key: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, available_in_non_aws_providers: 'bool' =None, destination: 'str' =None, kms_arn: 'str' =None, region: 'str' =None, secret_arn_name: 'str' =None, secret_arn_value: 'str' =None, secret_id_access_key_id: 'str' =None, secret_id_secret_access_key: 'str' =None, secret_value_access_key_id: 'str' =None, secret_value_secret_access_key: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1AwsDataConnection - a model defined in Swagger"""  # noqa: E501
+        self._available_in_non_aws_providers = None
         self._destination = None
         self._kms_arn = None
         self._region = None
@@ -79,6 +82,8 @@ class V1AwsDataConnection(object):
         self._secret_value_secret_access_key = None
         self._source = None
         self.discriminator = None
+        if available_in_non_aws_providers is not None:
+            self.available_in_non_aws_providers = available_in_non_aws_providers
         if destination is not None:
             self.destination = destination
         if kms_arn is not None:
@@ -99,6 +104,29 @@ class V1AwsDataConnection(object):
             self.secret_value_secret_access_key = secret_value_secret_access_key
         if source is not None:
             self.source = source
+
+    @property
+    def available_in_non_aws_providers(self) -> 'bool':
+        """Gets the available_in_non_aws_providers of this V1AwsDataConnection.  # noqa: E501
+
+        When true, mount on non-AWS Studios via project-role STS. Default false (AWS-only).  # noqa: E501
+
+        :return: The available_in_non_aws_providers of this V1AwsDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._available_in_non_aws_providers
+
+    @available_in_non_aws_providers.setter
+    def available_in_non_aws_providers(self, available_in_non_aws_providers: 'bool'):
+        """Sets the available_in_non_aws_providers of this V1AwsDataConnection.
+
+        When true, mount on non-AWS Studios via project-role STS. Default false (AWS-only).  # noqa: E501
+
+        :param available_in_non_aws_providers: The available_in_non_aws_providers of this V1AwsDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._available_in_non_aws_providers = available_in_non_aws_providers
 
     @property
     def destination(self) -> 'str':
