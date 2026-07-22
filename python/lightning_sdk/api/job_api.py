@@ -1,6 +1,7 @@
 import json
 import time
 from contextlib import suppress
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Union
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from urllib.request import urlopen
@@ -57,8 +58,30 @@ def _job_logs_ws_url(
     return absolute
 
 
-def _decode_log_messages(message: str) -> Iterator[str]:
-    """Decode a websocket log frame into individual log lines."""
+def _format_log_timestamp(value: object) -> Optional[str]:
+    """Best-effort convert a ``LogEntry`` timestamp into an ISO-8601 string.
+
+    The controlplane serialises the protobuf ``Timestamp`` as ``{"seconds": ..., "nanos": ...}``,
+    but we also accept an already-formatted string in case that ever changes.
+    """
+    if isinstance(value, dict):
+        seconds = value.get("seconds")
+        if seconds is None:
+            return None
+        epoch = float(seconds) + float(value.get("nanos", 0)) / 1e9
+        return datetime.fromtimestamp(epoch, tz=timezone.utc).isoformat()
+    if isinstance(value, str) and value:
+        return value
+    return None
+
+
+def _decode_log_messages(message: str, *, timestamps: bool = False) -> Iterator[str]:
+    """Decode a websocket log frame into individual log lines.
+
+    Args:
+        message: A raw websocket text frame (usually a JSON array of log entries).
+        timestamps: When ``True``, prepend each line with its ISO-8601 timestamp if available.
+    """
     try:
         payload = json.loads(message)
     except json.JSONDecodeError:
@@ -68,7 +91,12 @@ def _decode_log_messages(message: str) -> Iterator[str]:
     entries = payload if isinstance(payload, list) else [payload]
     for entry in entries:
         if isinstance(entry, dict):
-            yield entry.get("message") or entry.get("Message") or json.dumps(entry)
+            line = entry.get("message") or entry.get("Message") or json.dumps(entry)
+            if timestamps:
+                ts = _format_log_timestamp(entry.get("timestamp") or entry.get("Timestamp"))
+                if ts:
+                    line = f"{ts} {line}"
+            yield line
         else:
             yield str(entry)
 
@@ -346,6 +374,7 @@ class JobApiV2:
         rank: Optional[int] = None,
         idle_timeout: Optional[float] = None,
         reconnect: bool = True,
+        timestamps: bool = False,
     ) -> Iterator[str]:
         """Yield job log lines live over the controlplane websocket.
 
@@ -360,6 +389,7 @@ class JobApiV2:
             rank: Distributed job rank to stream from.
             idle_timeout: If set, stop the stream after this many seconds without data.
             reconnect: Reconnect on transient socket drops while following.
+            timestamps: When ``True``, prepend each line with its ISO-8601 timestamp.
 
         Yields:
             Individual decoded log lines.
@@ -394,7 +424,7 @@ class JobApiV2:
                         break  # fall through to reconnect logic
                     if message == "":
                         break
-                    yield from _decode_log_messages(message)
+                    yield from _decode_log_messages(message, timestamps=timestamps)
             finally:
                 if ws is not None:
                     with suppress(Exception):

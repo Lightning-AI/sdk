@@ -951,3 +951,51 @@ def test_submit_job_from_running_studio(
             org="org-abc",
         )
     assert keeping_alive_mock.call_count == 0
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_raises_while_running_and_points_to_stream_logs(
+    job_api_get_job_by_name_mocker, internal_studio_init_mocker
+):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
+    # reading logs of a running job is unsupported, and the error should point users at stream_logs
+    with pytest.raises(RuntimeError, match="stream_logs"):
+        _ = job.logs
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_returns_finished_logs(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    logs_mock = mock.MagicMock(return_value="all done")
+    job._job_api.get_logs_finished = logs_mock
+
+    assert job.logs == "all done"
+    logs_mock.assert_called_once_with(job_id="test-job-id", teamspace_id=job.teamspace.id)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_stream_logs_delegates_to_api(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    stream_mock = mock.MagicMock(return_value=iter(["line-1", "line-2"]))
+    job._job_api.stream_logs = stream_mock
+
+    result = list(job.stream_logs(follow=True, tail=10, rank=1, idle_timeout=5, timestamps=True))
+
+    assert result == ["line-1", "line-2"]
+    stream_mock.assert_called_once_with(
+        job_id="test-job-id",
+        teamspace_id=job.teamspace.id,
+        follow=True,
+        tail=10,
+        rank=1,
+        idle_timeout=5,
+        timestamps=True,
+    )

@@ -440,16 +440,13 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def logs(self) -> str:
-        if self.status in (Status.Failed, Status.Completed, Status.Stopped):
-            return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
-
-        if self.status == Status.Running:
+        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
             raise RuntimeError(
-                "Reading the logs of a running job via `logs` is not supported. "
-                "Use `stream_logs()` to follow the logs live instead."
+                "Getting jobs logs while the job is pending or running is not supported yet! "
+                "Use `stream_logs()` to follow the logs of a running job live."
             )
 
-        raise RuntimeError(f"Logs are not available while the job is {self.status}.")
+        return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
 
     def stream_logs(
         self,
@@ -458,6 +455,7 @@ class Job(metaclass=TrackCallsMeta):
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         idle_timeout: Optional[float] = None,
+        timestamps: bool = False,
     ) -> Iterator[str]:
         """Stream the job's logs live, line by line.
 
@@ -466,6 +464,7 @@ class Job(metaclass=TrackCallsMeta):
             tail: Number of recent lines to emit before following.
             rank: Distributed job rank to stream from.
             idle_timeout: If set, stop after this many seconds without new data.
+            timestamps: When ``True``, prepend each line with its ISO-8601 timestamp.
 
         Yields:
             Individual log lines.
@@ -481,6 +480,7 @@ class Job(metaclass=TrackCallsMeta):
             tail=tail,
             rank=rank,
             idle_timeout=idle_timeout,
+            timestamps=timestamps,
         )
 
     @property
