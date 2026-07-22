@@ -17,6 +17,9 @@ import (
 // swagger:model v1AwsDataConnection
 type V1AwsDataConnection struct {
 
+	// When true, mount on non-AWS Studios via project-role STS. Default false (AWS-only).
+	AvailableInNonAwsProviders bool `json:"availableInNonAwsProviders,omitempty"`
+
 	// destination
 	Destination string `json:"destination,omitempty"`
 
