@@ -3,7 +3,7 @@ from contextlib import suppress
 from typing import Dict, List, Optional
 
 import rich_click as click
-from .terminal_menu_wrapper import TerminalMenu
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.studio import Studio
