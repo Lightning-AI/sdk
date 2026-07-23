@@ -25,7 +25,8 @@ dependencies = [ # alphabetically sorted
     "pyyaml", # for config handling
     "requests", # for downloading files via urls
     "rich", # for nice printing
-    "simple-term-menu", # for CLI
+    "simple-term-menu; sys_platform != 'win32'", # for CLI on POSIX
+    "inquirer; sys_platform == 'win32'", # for CLI on Windows
     "six", # for lightning_cloud
     "tqdm", # for progressbars
     "urllib3<=2.5.0", # for downloading files via urls

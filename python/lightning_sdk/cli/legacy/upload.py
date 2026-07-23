@@ -9,7 +9,6 @@ import click
 import rich
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-from simple_term_menu import TerminalMenu
 from tqdm import tqdm
 
 from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi
@@ -17,6 +16,7 @@ from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import upload_model as _upload_model
