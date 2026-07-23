@@ -3,10 +3,10 @@ from contextlib import suppress
 from typing import Dict, List, Optional
 
 import rich_click as click
-from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 from lightning_sdk.teamspace import Organization, Teamspace
 from lightning_sdk.user import Owner, User
 from lightning_sdk.utils.resolve import ApiException, _get_authed_user, _resolve_teamspace

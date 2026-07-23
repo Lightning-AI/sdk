@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional
 
 from rich.console import Console
-from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 from lightning_sdk.job import Job
 from lightning_sdk.teamspace import Teamspace
 
