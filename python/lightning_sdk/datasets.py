@@ -39,7 +39,7 @@ class DownloadedDatasetInfo:
     """Metadata returned after a successful dataset download.
 
     Attributes:
-        path: The local file path to the downloaded zip file.
+        path: The local directory containing the dataset.
         name: The dataset name.
         version: The version tag that was downloaded (e.g. ``"v1"``).
     """
@@ -123,25 +123,34 @@ def download_dataset(
     cluster_id: Optional[str] = None,
     num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
     part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
+    unzip: bool = False,
 ) -> DownloadedDatasetInfo:
-    """Download a dataset version as a zip file from Lightning Datasets.
+    """Download a dataset version from Lightning Datasets.
 
-    Files download concurrently, each fetched via chunked HTTP-Range requests.
+    By default, files are downloaded into a directory. Set ``unzip=True`` to
+    safely extract a dataset version stored as exactly one ZIP artifact. Files
+    download concurrently, each fetched via chunked HTTP-Range requests.
 
     Args:
         name: Lightning path to dataset in the format
             ``<ORGANIZATION>/<TEAMSPACE>/<DATASET-NAME>`` or
             ``<ORGANIZATION>/<TEAMSPACE>/<DATASET-NAME>/<VERSION>``.
             If no version specified, defaults to the most recent version.
-        target_path: Local directory to download the dataset zip into.
+        target_path: Local directory to download the dataset into.
             Defaults to the current directory (``"."``).
         cluster_id: Optional cluster ID to download from.
         num_workers: number of concurrent download threads (default 16).
         part_size: byte-range part size for splitting large files (default 64 MB).
+        unzip: Extract a version stored as exactly one ZIP artifact into a
+            directory. This is never enabled automatically.
 
     Returns:
         DownloadedDatasetInfo: Metadata about the downloaded dataset, including
             the local path, dataset name, and version.
+
+    Raises:
+        ValueError: If ``unzip=True`` is used with a version that is not exactly
+            one ZIP artifact.
     """
     org_name, ts_name, dataset_name, version = _parse_dataset_path(name)
     teamspace = _get_teamspace(name=ts_name, organization=org_name)
@@ -154,18 +163,19 @@ def download_dataset(
 
     import os
 
-    zip_path = os.path.join(target_path, f"{dataset_name}_{version}.zip")
+    output_path = os.path.join(target_path, f"{dataset_name}_{version}")
     _download_dataset_version(
         project_id=project_id,
         dataset_name=dataset_name,
         version=version,
-        target_path=zip_path,
+        target_path=output_path,
         cluster_id=cluster_id,
         dataset_id=dataset_id,
         num_workers=num_workers,
         part_size=part_size,
+        unzip=unzip,
     )
-    return DownloadedDatasetInfo(path=zip_path, name=dataset_name, version=version)
+    return DownloadedDatasetInfo(path=output_path, name=dataset_name, version=version)
 
 
 def list_datasets(name: str) -> list:

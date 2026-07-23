@@ -1,27 +1,28 @@
-from typing import Callable, List, Optional, Union
 import concurrent.futures
 import json
 import math
 import os
+import shutil
+import tempfile
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
+from typing import Callable, List, Optional, Union
 
 import backoff
 import requests
 from tqdm.auto import tqdm
 
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
-from lightning_sdk.lightning_cloud import env
-
 from lightning_sdk.api.utils import (
-    _BYTES_PER_MB,
     _MAX_BATCH_SIZE,
     _MAX_SIZE_MULTI_PART_CHUNK,
     _MAX_WORKERS,
     _SIZE_LIMIT_SINGLE_PART,
 )
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 # Total upload concurrency budget, split across files x within-file parts.
 _DEFAULT_UPLOAD_WORKERS = 16
@@ -30,6 +31,65 @@ _DEFAULT_UPLOAD_WORKERS = 16
 # (backoff) and nets out slower.
 _DEFAULT_DOWNLOAD_WORKERS = 16
 _DEFAULT_DOWNLOAD_PART_SIZE = 64 * 1024 * 1024  # 64 MiB byte-range parts
+
+
+def _normalize_relative_path(path: str, source: str, strip_leading_slashes: bool = False) -> str:
+    """Normalize a relative path and reject paths that could escape a destination."""
+    if not isinstance(path, str) or not path or "\x00" in path:
+        raise ValueError(f"Unsafe {source} path {path!r}: expected a non-empty relative path.")
+
+    if strip_leading_slashes:
+        path = path.lstrip("/")
+
+    # Dataset and ZIP paths use forward slashes, but validate backslashes as
+    # separators too so the same input cannot become unsafe on Windows.
+    normalized = path.replace("\\", "/")
+    posix_path = PurePosixPath(normalized)
+    windows_path = PureWindowsPath(path)
+    if (
+        posix_path.is_absolute()
+        or windows_path.is_absolute()
+        or windows_path.drive
+        or any(part == ".." for part in posix_path.parts)
+    ):
+        raise ValueError(
+            f"Unsafe {source} path {path!r}: absolute paths and parent-directory traversal are not allowed."
+        )
+
+    relative_path = str(posix_path)
+    if relative_path in {"", "."}:
+        raise ValueError(f"Unsafe {source} path {path!r}: expected a non-empty relative path.")
+    return relative_path
+
+
+def _safe_destination_path(destination: str, relative_path: str, source: str) -> Path:
+    """Return a path contained by destination, accounting for existing symlinks."""
+    root = Path(destination).resolve()
+    target = root.joinpath(*PurePosixPath(relative_path).parts)
+    try:
+        target.resolve(strict=False).relative_to(root)
+    except ValueError as ex:
+        raise ValueError(f"Unsafe {source} path {relative_path!r}: path escapes the destination.") from ex
+    return target
+
+
+def _extract_zip_safely(archive_path: str, destination: str) -> None:
+    """Extract a ZIP after validating every member path."""
+    with zipfile.ZipFile(archive_path) as archive:
+        members = []
+        for member in archive.infolist():
+            relative_path = _normalize_relative_path(member.filename, "ZIP member")
+            target = _safe_destination_path(destination, relative_path, "ZIP member")
+            members.append((member, target))
+
+        Path(destination).mkdir(parents=True, exist_ok=True)
+        for member, target in members:
+            if member.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(member) as source_file, target.open("wb") as target_file:
+                shutil.copyfileobj(source_file, target_file)
 
 
 def _parse_dataset_path(name: str) -> tuple:
@@ -61,9 +121,7 @@ def _parse_dataset_path(name: str) -> tuple:
     return org_name, ts_name, dataset_name, version
 
 
-def _resolve_dataset_id_and_version(
-    project_id: str, dataset_name: str, version: Optional[str] = None
-) -> tuple:
+def _resolve_dataset_id_and_version(project_id: str, dataset_name: str, version: Optional[str] = None) -> tuple:
     """List datasets once and return ``(dataset_id, resolved_version)``.
 
     Combines name->id and default-version resolution into a single API round-trip
@@ -125,8 +183,13 @@ def _download_dataset_files(
 
     def _to_entry(indexed_file: tuple) -> tuple:
         index, file_info = indexed_file
+        raw_path = file_info.get("filepath")
+        if raw_path is None:
+            raw_path = f"file_{index}"
+        relative_path = _normalize_relative_path(raw_path, "dataset filepath", strip_leading_slashes=True)
         return (
-            file_info.get("filepath", f"file_{index}").lstrip("/"),
+            relative_path,
+            _safe_destination_path(dest_dir, relative_path, "dataset filepath"),
             file_info.get("url"),
             int(file_info.get("size") or 0),
         )
@@ -135,21 +198,19 @@ def _download_dataset_files(
     total_bytes = 0
     urls = {}
     tasks = []
-    # Lazily normalize each entry while pre-allocating its file and building the
-    # flat byte-range task list, so files_list is traversed only once.
-    for rel, url, size in entries:
+    # Pre-allocate each downloadable file and build the flat byte-range task list.
+    for rel, local_path, url, size in entries:
         if not url:
             continue
         total_bytes += size
         urls[rel] = url
-        local_path = os.path.join(dest_dir, rel)
-        os.makedirs(os.path.dirname(local_path) or dest_dir, exist_ok=True)
-        with open(local_path, "wb") as f:
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        with local_path.open("wb") as f:
             if size:
                 f.truncate(size)
         for start in range(0, size, part_size):
             end = min(start + part_size, size) - 1
-            tasks.append((rel, local_path, start, end))
+            tasks.append((rel, str(local_path), start, end))
 
     if not urls:
         return
@@ -193,6 +254,7 @@ def _download_dataset_files(
     finally:
         pbar.close()
 
+
 def _download_dataset_version(
     project_id: str,
     dataset_name: str,
@@ -202,29 +264,28 @@ def _download_dataset_version(
     dataset_id: Optional[str] = None,
     num_workers: int = _DEFAULT_DOWNLOAD_WORKERS,
     part_size: int = _DEFAULT_DOWNLOAD_PART_SIZE,
-):
-    """
-    Download a dataset version as a zip file from the API.
+    unzip: bool = False,
+) -> None:
+    """Download a dataset version from the API.
 
     Fetches presigned file URLs from the files endpoint and downloads the files
     concurrently, each fetched with chunked HTTP-Range requests (see
-    ``_download_dataset_files``), then packages them into a zip archive at
-    ``target_path``.
+    ``_download_dataset_files``). By default files are written into
+    ``target_path``. With ``unzip``, the version must contain one ZIP artifact,
+    which is safely extracted into ``target_path``.
 
     Args:
         project_id: The project ID.
         dataset_name: The dataset name.
         version: The dataset version to download.
-        target_path: Local file path where the downloaded zip will be saved.
+        target_path: Destination directory.
         cluster_id: Optional cluster ID.
         dataset_id: The resolved dataset ID; when provided, skips an extra
             datasets-list API round-trip to resolve the name.
         num_workers: number of concurrent download threads (default 16).
         part_size: byte-range part size for splitting large files (default 64 MB).
+        unzip: Extract a dataset stored as exactly one ZIP artifact.
     """
-    import shutil
-    import tempfile
-
     cloud_url = env.LIGHTNING_CLOUD_URL
     client = LightningClient(retry=False)
     api_client: ApiClient = client.api_client
@@ -262,12 +323,25 @@ def _download_dataset_version(
 
     try:
         files_data = json.loads(resp.data) if resp.data else {}
-    except json.JSONDecodeError:
-        raise ValueError(f"Failed to parse response from {files_url}: {resp.data[:200]}")
+    except json.JSONDecodeError as ex:
+        raise ValueError(f"Failed to parse response from {files_url}: {resp.data[:200]}") from ex
 
     files_list = files_data.get("files", [])
     if not files_list:
         raise ValueError(f"No files found for dataset '{dataset_name}' version '{version}' in project '{project_id}'.")
+
+    zip_relative_path = None
+    if unzip:
+        if len(files_list) != 1:
+            raise ValueError("`unzip=True` requires the dataset version to contain exactly one .zip artifact.")
+        raw_path = files_list[0].get("filepath")
+        if raw_path is None:
+            raw_path = "file_0"
+        zip_relative_path = _normalize_relative_path(raw_path, "dataset filepath", strip_leading_slashes=True)
+        if not zip_relative_path.lower().endswith(".zip"):
+            raise ValueError("`unzip=True` requires the dataset version to contain exactly one .zip artifact.")
+        if not files_list[0].get("url"):
+            raise ValueError("The dataset ZIP artifact does not have a download URL.")
 
     # Re-fetch a fresh presigned URL for one file (used when a URL expires mid-download).
     def _refresh_file(rel_path: str) -> dict:
@@ -279,22 +353,30 @@ def _download_dataset_version(
             _preload_content=True,
         )
         for f in (json.loads(r.data) if r.data else {}).get("files", []):
-            if f.get("filepath", "").lstrip("/") == rel_path:
+            filepath = f.get("filepath")
+            if (
+                filepath is not None
+                and _normalize_relative_path(filepath, "dataset filepath", strip_leading_slashes=True) == rel_path
+            ):
                 return {"url": f.get("url"), "size": int(f.get("size") or 0)}
         return {"url": None, "size": 0}
 
-    # Download in parallel into a temp dir, then package into a zip archive.
-    tmp_dir = tempfile.mkdtemp()
+    # ZIP extraction stages the archive in a temporary directory.
+    # Raw directory downloads write directly to the requested output directory.
+    staging = unzip
+    dest_dir = tempfile.mkdtemp(prefix="lightning-dataset-") if staging else target_path
+    if not staging:
+        os.makedirs(dest_dir, exist_ok=True)
     try:
         _download_dataset_files(
-            files_list, tmp_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
+            files_list, dest_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
         )
-        base = target_path
-        if base.endswith(".zip"):
-            base = base[:-4]
-        shutil.make_archive(base, "zip", tmp_dir)
+        if unzip:
+            archive_path = _safe_destination_path(dest_dir, zip_relative_path, "dataset filepath")
+            _extract_zip_safely(str(archive_path), target_path)
     finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+        if staging:
+            shutil.rmtree(dest_dir, ignore_errors=True)
 
 
 def _create_dataset(

@@ -1248,6 +1248,7 @@ def test_download_dataset_version(
     mock_lightning_client,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    tmp_path,
 ):
     import json
 
@@ -1276,42 +1277,37 @@ def test_download_dataset_version(
         captured["headers"] = headers
         return _FakeRangeResponse(b"data")
 
-    target_path = "/tmp/test_dataset_download.zip"
-    try:
-        with (
-            mock.patch("requests.get", side_effect=fake_get) as mock_get,
-            mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
-            mock.patch("shutil.make_archive") as mock_make_archive,
-        ):
-            _download_dataset_version(
-                project_id="proj-1",
-                dataset_name="ds-1",
-                version="3",
-                target_path=target_path,
-                cluster_id="aws-us-east",
-            )
+    target_path = tmp_path / "test_dataset_download"
+    with (
+        mock.patch("requests.get", side_effect=fake_get) as mock_get,
+        mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+    ):
+        _download_dataset_version(
+            project_id="proj-1",
+            dataset_name="ds-1",
+            version="3",
+            target_path=str(target_path),
+            cluster_id="aws-us-east",
+        )
 
-        mock_api_client.request.assert_any_call(
-            "GET",
-            "https://lightning.ai/v1/projects/proj-1/lit-datasets",
-            headers=mock.ANY,
-            _preload_content=True,
-        )
-        mock_api_client.request.assert_any_call(
-            "GET",
-            "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-1/versions/3/files",
-            query_params={"clusterId": "aws-us-east"},
-            headers=mock.ANY,
-            _preload_content=True,
-        )
-        # parallel/chunked download issues a Range GET against the presigned URL
-        assert mock_get.call_count == 1
-        assert captured["url"] == "https://presigned.example.com/data.csv"
-        assert captured["headers"]["Range"] == "bytes=0-3"
-        mock_make_archive.assert_called_once_with("/tmp/test_dataset_download", "zip", mock.ANY)
-    finally:
-        if os.path.exists(target_path):
-            os.unlink(target_path)
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-1/versions/3/files",
+        query_params={"clusterId": "aws-us-east"},
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    # parallel/chunked download issues a Range GET against the presigned URL
+    assert mock_get.call_count == 1
+    assert captured["url"] == "https://presigned.example.com/data.csv"
+    assert captured["headers"]["Range"] == "bytes=0-3"
+    assert (target_path / "data.csv").read_bytes() == b"data"
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
@@ -1321,6 +1317,7 @@ def test_download_dataset_version_no_token_no_cluster(
     mock_lightning_client,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    tmp_path,
 ):
     import json
 
@@ -1342,37 +1339,32 @@ def test_download_dataset_version_no_token_no_cluster(
     mock_client_instance.api_client = mock_api_client
     mock_lightning_client.return_value = mock_client_instance
 
-    target_path = "/tmp/test_ds_no_token.zip"
-    try:
-        with (
-            mock.patch("requests.get", side_effect=lambda *a, **k: _FakeRangeResponse(b"data")),
-            mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
-            mock.patch("shutil.make_archive") as mock_make_archive,
-        ):
-            _download_dataset_version(
-                project_id="proj-1",
-                dataset_name="ds-2",
-                version="1",
-                target_path=target_path,
-            )
+    target_path = tmp_path / "test_ds_no_token"
+    with (
+        mock.patch("requests.get", side_effect=lambda *a, **k: _FakeRangeResponse(b"data")),
+        mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
+    ):
+        _download_dataset_version(
+            project_id="proj-1",
+            dataset_name="ds-2",
+            version="1",
+            target_path=str(target_path),
+        )
 
-        mock_api_client.request.assert_any_call(
-            "GET",
-            "https://lightning.ai/v1/projects/proj-1/lit-datasets",
-            headers=mock.ANY,
-            _preload_content=True,
-        )
-        mock_api_client.request.assert_any_call(
-            "GET",
-            "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-2/versions/1/files",
-            query_params={},
-            headers=mock.ANY,
-            _preload_content=True,
-        )
-        mock_make_archive.assert_called_once_with("/tmp/test_ds_no_token", "zip", mock.ANY)
-    finally:
-        if os.path.exists(target_path):
-            os.unlink(target_path)
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    mock_api_client.request.assert_any_call(
+        "GET",
+        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-2/versions/1/files",
+        query_params={},
+        headers=mock.ANY,
+        _preload_content=True,
+    )
+    assert (target_path / "data.csv").read_bytes() == b"data"
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
