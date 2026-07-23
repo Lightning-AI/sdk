@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 
 from rich.console import Console
-from ..utils.terminal_menu_wrapper import TerminalMenu
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 
 from lightning_sdk import Studio
 from lightning_sdk.api import OrgApi, TeamspaceApi

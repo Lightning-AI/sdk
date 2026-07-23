@@ -9,7 +9,7 @@ import click
 import rich
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-from ..utils.terminal_menu_wrapper import TerminalMenu
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 from tqdm import tqdm
 
 from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi

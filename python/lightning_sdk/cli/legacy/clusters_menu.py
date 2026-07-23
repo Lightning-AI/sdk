@@ -2,7 +2,7 @@ import sys
 from typing import List, Optional
 
 from rich.console import Console
-from ..utils.terminal_menu_wrapper import TerminalMenu
+from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 
 from lightning_sdk import Teamspace
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
