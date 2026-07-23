@@ -1,9 +1,17 @@
+import json
+import sys
+import types
 from typing import List
 from unittest import mock
 
 import pytest
 
-from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.job_api import (
+    JobApiV2,
+    _decode_log_messages,
+    _format_log_timestamp,
+    _job_logs_ws_url,
+)
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateJobBody,
     V1Job,
@@ -236,3 +244,200 @@ def test_jobv2_delete(mocker_auth, cloudspace_id, expected_cloudspace_id):
     job_api.delete_job("test-job-id", "ts-abc", cloudspace_id)
 
     delete_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc", cloudspace_id=expected_cloudspace_id)
+
+
+# ---------------------------------------------------------------------------
+# live log streaming
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ({"seconds": 0, "nanos": 0}, "1970-01-01T00:00:00+00:00"),
+        ({"seconds": 1_700_000_000}, "2023-11-14T22:13:20+00:00"),
+        ({"nanos": 5}, None),  # no seconds -> cannot build a timestamp
+        ("2023-11-14T22:13:20Z", "2023-11-14T22:13:20Z"),  # already-formatted string passes through
+        (None, None),
+        (123, None),  # unexpected type
+    ],
+)
+def test_format_log_timestamp(value, expected):
+    assert _format_log_timestamp(value) == expected
+
+
+def test_decode_log_messages_plain_and_json():
+    # a JSON array of entries -> one line per entry, using the `message` field
+    frame = json.dumps([{"message": "hello"}, {"Message": "world"}])
+    assert list(_decode_log_messages(frame)) == ["hello", "world"]
+
+    # non-JSON payloads are yielded verbatim
+    assert list(_decode_log_messages("not json")) == ["not json"]
+
+
+def test_decode_log_messages_with_timestamps():
+    frame = json.dumps(
+        [
+            {"message": "hello", "timestamp": {"seconds": 0, "nanos": 0}},
+            {"message": "no-ts"},  # missing timestamp -> line unchanged
+        ]
+    )
+    assert list(_decode_log_messages(frame, timestamps=True)) == [
+        "1970-01-01T00:00:00+00:00 hello",
+        "no-ts",
+    ]
+
+
+def test_job_logs_ws_url_builds_websocket_url():
+    url = _job_logs_ws_url("ts-abc", "job-1", follow=True, tail=50, rank=2)
+
+    assert url.startswith("wss://")
+    assert "/v1/projects/ts-abc/jobs/job-1/logs" in url
+    assert "follow=true" in url
+    assert "direction=forward" in url
+    assert "tail=50" in url
+    assert "rank=2" in url
+
+    # optional params are omitted when not provided
+    minimal = _job_logs_ws_url("ts-abc", "job-1", follow=False, tail=None, rank=None)
+    assert "follow=false" in minimal
+    assert "tail=" not in minimal
+    assert "rank=" not in minimal
+
+
+class _FakeWebSocket:
+    """Minimal stand-in for a websocket-client connection."""
+
+    def __init__(self, frames):
+        self._frames = list(frames)
+        self.closed = False
+
+    def recv(self):
+        if not self._frames:
+            return ""  # empty frame signals the server closed the stream
+        item = self._frames.pop(0)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+    def close(self):
+        self.closed = True
+
+
+def _install_fake_websocket(mocker, connections):
+    """Register a fake ``websocket`` module whose ``create_connection`` returns the given connections."""
+    module = types.ModuleType("websocket")
+
+    # names mirror websocket-client exactly, since stream_logs imports them by name
+    class WebSocketConnectionClosedException(Exception):  # noqa: N818
+        pass
+
+    class WebSocketTimeoutException(Exception):  # noqa: N818
+        pass
+
+    module.WebSocketConnectionClosedException = WebSocketConnectionClosedException
+    module.WebSocketTimeoutException = WebSocketTimeoutException
+    module.create_connection = mock.MagicMock(side_effect=list(connections))
+
+    mocker.patch.dict(sys.modules, {"websocket": module})
+    return module
+
+
+def test_stream_logs_yields_lines_and_stops(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    frame = json.dumps([{"message": "line-1"}, {"message": "line-2"}])
+    module = _install_fake_websocket(mocker, [_FakeWebSocket([frame])])
+
+    job_api = JobApiV2()
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=False))
+
+    assert lines == ["line-1", "line-2"]
+    # no reconnect when follow is off -> exactly one connection
+    assert module.create_connection.call_count == 1
+
+
+def test_stream_logs_passes_timestamps_flag(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    frame = json.dumps([{"message": "hi", "timestamp": {"seconds": 0, "nanos": 0}}])
+    _install_fake_websocket(mocker, [_FakeWebSocket([frame])])
+
+    job_api = JobApiV2()
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=False, timestamps=True))
+
+    assert lines == ["1970-01-01T00:00:00+00:00 hi"]
+
+
+def test_stream_logs_reconnects_on_transient_drop(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+
+    module_holder = {}
+
+    def _closed_exc():
+        return module_holder["module"].WebSocketConnectionClosedException()
+
+    # first connection yields a line then drops; second connection yields another line then ends
+    first = _FakeWebSocket([json.dumps([{"message": "before-drop"}])])
+    second = _FakeWebSocket([json.dumps([{"message": "after-reconnect"}])])
+    module = _install_fake_websocket(mocker, [first, second])
+    module_holder["module"] = module
+    # make the first connection drop after its frame
+    first._frames.append(_closed_exc())
+
+    # stop the loop after the second connection by raising out of the reconnect backoff
+    class _StopLoopError(Exception):
+        pass
+
+    mocker.patch("lightning_sdk.api.job_api.time.sleep", side_effect=[None, _StopLoopError()])
+
+    job_api = JobApiV2()
+    # job is still running, so drops are treated as transient and we reconnect
+    job_api.get_job = mock.MagicMock(return_value=V1Job(id="job-1", state="running"))
+    collected = []
+
+    def _drain() -> None:
+        for line in job_api.stream_logs("job-1", "ts-abc", follow=True):
+            collected.append(line)
+
+    with pytest.raises(_StopLoopError):
+        _drain()
+
+    assert collected == ["before-drop", "after-reconnect"]
+    assert module.create_connection.call_count == 2
+
+
+def test_stream_logs_follow_stops_when_job_finishes(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    ws = _FakeWebSocket([json.dumps([{"message": "last-line"}])])
+    module = _install_fake_websocket(mocker, [ws])
+    # after the final line the socket goes quiet (heartbeats only) -> recv times out
+    ws._frames.append(module.WebSocketTimeoutException())
+
+    job_api = JobApiV2()
+    job_api.get_job = mock.MagicMock(return_value=V1Job(id="job-1", state="completed"))
+
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=True))
+
+    assert lines == ["last-line"]
+    assert module.create_connection.call_count == 1  # finished -> no reconnect
+    job_api.get_job.assert_called()
+
+
+def test_stream_logs_follow_keeps_waiting_while_running(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    ws = _FakeWebSocket([json.dumps([{"message": "l1"}])])
+    module = _install_fake_websocket(mocker, [ws])
+    # quiet (still running -> keep waiting), another line, then quiet again (now finished -> stop)
+    ws._frames.append(module.WebSocketTimeoutException())
+    ws._frames.append(json.dumps([{"message": "l2"}]))
+    ws._frames.append(module.WebSocketTimeoutException())
+
+    job_api = JobApiV2()
+    job_api.get_job = mock.MagicMock(
+        side_effect=[V1Job(id="job-1", state="running"), V1Job(id="job-1", state="completed")]
+    )
+
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=True))
+
+    assert lines == ["l1", "l2"]
+    assert module.create_connection.call_count == 1
+    assert job_api.get_job.call_count == 2

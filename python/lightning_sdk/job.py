@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Dict, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
@@ -28,6 +28,71 @@ _logger = _setup_logger(__name__)
 __all__ = [
     "Job",
 ]
+
+# A running job's log stream never sends a clean end-of-stream frame, so a bounded
+# snapshot ("give me the logs up to now") is read until this many seconds of silence.
+_RUNNING_LOGS_IDLE_TIMEOUT = 5.0
+
+
+class _Logs:
+    """A logs handle that is both a value and callable.
+
+    ``job.logs`` behaves like the log text (a snapshot), so ``print(job.logs)``,
+    ``job.logs.splitlines()`` and ``for line in job.logs`` all work. Calling it,
+    ``job.logs(follow=True, tail=..., rank=...)``, fetches logs with options and
+    returns an iterator of lines while ``follow=True``.
+
+    Note: this is a str-like proxy, not an actual ``str`` (``isinstance(job.logs, str)``
+    is ``False``), and static type checkers see ``_Logs`` rather than ``str``.
+    """
+
+    def __init__(self, fetch: Callable[..., Union[str, Iterator[str]]]) -> None:
+        self._fetch = fetch
+        self._cached: Optional[str] = None
+
+    def __call__(
+        self,
+        *,
+        follow: bool = False,
+        tail: Optional[int] = None,
+        rank: Optional[int] = None,
+        timestamps: bool = False,
+    ) -> Union[str, Iterator[str]]:
+        return self._fetch(follow=follow, tail=tail, rank=rank, timestamps=timestamps)
+
+    def _text(self) -> str:
+        if self._cached is None:
+            self._cached = self._fetch(follow=False)  # type: ignore[assignment]
+        return self._cached
+
+    def __str__(self) -> str:
+        return self._text()
+
+    def __repr__(self) -> str:
+        return repr(self._text())
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._text().splitlines())
+
+    def __len__(self) -> int:
+        return len(self._text())
+
+    def __contains__(self, item: object) -> bool:
+        return item in self._text()
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, _Logs):
+            other = other._text()
+        return self._text() == other
+
+    __hash__ = None  # type: ignore[assignment]
+
+    def __getattr__(self, name: str) -> Any:
+        # only invoked for attributes not found normally; delegate to the log text.
+        # guard private/dunder lookups to avoid recursing through _fetch/_cached.
+        if name.startswith("_"):
+            raise AttributeError(name)
+        return getattr(self._text(), name)
 
 
 class JobDict(TypedDict):
@@ -446,11 +511,92 @@ class Job(metaclass=TrackCallsMeta):
         raise NotImplementedError("Not implemented yet")
 
     @property
-    def logs(self) -> str:
-        if self.status not in (Status.Failed, Status.Completed, Status.Stopped):
-            raise RuntimeError("Getting jobs logs while the job is pending or running is not supported yet!")
+    def logs(self) -> _Logs:
+        """The job's logs.
 
-        return self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+        Use it as a value for a snapshot of the logs up to now::
+
+            print(job.logs)
+
+        or call it to pass options and/or follow the logs live::
+
+            recent = job.logs(tail=100)            # snapshot of the last 100 lines
+            for line in job.logs(follow=True):     # stream new lines as they arrive
+                print(line)
+
+        Options:
+
+        - ``follow``: Keep the stream open and yield new lines as they are produced.
+          Returns an iterator of lines instead of a string.
+        - ``tail``: Only include the last N lines.
+        - ``rank``: Distributed job rank to read from (running jobs only).
+        - ``timestamps``: Prepend each line with its ISO-8601 timestamp.
+        """
+        return _Logs(self._compute_logs)
+
+    def _compute_logs(
+        self,
+        *,
+        follow: bool = False,
+        tail: Optional[int] = None,
+        rank: Optional[int] = None,
+        timestamps: bool = False,
+    ) -> Union[str, Iterator[str]]:
+        """Fetch the logs, dispatching on job state. See :attr:`logs` for the public API."""
+        status = self.status
+
+        # Live-follow only makes sense while the job is running. For a finished job there is
+        # nothing more to stream, so we fall through and return the saved lines rather than
+        # opening a websocket that would never receive anything (and would reconnect forever).
+        if follow and status == Status.Running:
+            return self._stream_logs(follow=True, tail=tail, rank=rank, timestamps=timestamps)
+
+        if status in (Status.Failed, Status.Completed, Status.Stopped):
+            if rank is not None:
+                warnings.warn(
+                    "`rank` is only supported for running jobs; ignoring it for finished-job logs.",
+                    stacklevel=2,
+                )
+            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+        elif status == Status.Running:
+            # a running job's stream has no clean end signal, so read until it goes idle
+            text = "\n".join(
+                self._stream_logs(
+                    follow=False,
+                    tail=tail,
+                    rank=rank,
+                    timestamps=timestamps,
+                    idle_timeout=_RUNNING_LOGS_IDLE_TIMEOUT,
+                )
+            )
+        else:
+            raise RuntimeError(f"Logs are not available while the job is {status}.")
+
+        if tail is not None:
+            text = "\n".join(text.splitlines()[-tail:])
+        # `follow` on an already-finished job returns the saved lines as an iterator (and stops),
+        # keeping the return type consistent with the live-follow path.
+        return iter(text.splitlines()) if follow else text
+
+    def _stream_logs(
+        self,
+        *,
+        follow: bool = True,
+        tail: Optional[int] = None,
+        rank: Optional[int] = None,
+        idle_timeout: Optional[float] = None,
+        timestamps: bool = False,
+    ) -> Iterator[str]:
+        """Stream the job's logs live over the websocket (internal; see :attr:`logs`)."""
+        return self._job_api.stream_logs(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self.teamspace.id,
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            idle_timeout=idle_timeout,
+            timestamps=timestamps,
+        )
 
     @property
     def link(self) -> str:
