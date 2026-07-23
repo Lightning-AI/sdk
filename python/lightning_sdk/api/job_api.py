@@ -31,6 +31,11 @@ from lightning_sdk.machine import Machine
 if TYPE_CHECKING:
     from lightning_sdk.status import Status
 
+# While following, recv() is given this timeout so we can periodically check whether the job has
+# finished. It must stay below the server's log-socket heartbeat (10s) so recv() actually wakes up
+# during quiet periods.
+_FOLLOW_POLL_INTERVAL = 5.0
+
 
 def _job_logs_ws_url(
     teamspace_id: str,
@@ -408,18 +413,28 @@ class JobApiV2:
         auth_header = Auth().authenticate()
         url = _job_logs_ws_url(teamspace_id, job_id, follow=follow, tail=tail, rank=rank)
 
+        # For follow we poll recv() with a timeout so we can periodically check whether the job has
+        # finished: the server keeps the socket open (heartbeats only) after a job ends rather than
+        # closing it, so a plain blocking recv() would hang forever once the job is done.
+        recv_timeout = idle_timeout if idle_timeout is not None else (_FOLLOW_POLL_INTERVAL if follow else None)
+
         while True:
             ws = None
             try:
                 kwargs: Dict = {"header": [f"Authorization: {auth_header}"]}
-                if idle_timeout is not None:
-                    kwargs["timeout"] = idle_timeout
+                if recv_timeout is not None:
+                    kwargs["timeout"] = recv_timeout
                 ws = websocket.create_connection(url, **kwargs)
                 while True:
                     try:
                         message = ws.recv()
                     except WebSocketTimeoutException:
-                        return  # idle timeout: treat the stream as finished
+                        if follow:
+                            # quiet socket (heartbeats only): stop if the job is done, else keep waiting
+                            if self._is_job_finished(job_id, teamspace_id):
+                                return
+                            continue
+                        return  # idle timeout on a snapshot: treat the stream as finished
                     except WebSocketConnectionClosedException:
                         break  # fall through to reconnect logic
                     if message == "":
@@ -432,6 +447,8 @@ class JobApiV2:
 
             if not (follow and reconnect):
                 return
+            if self._is_job_finished(job_id, teamspace_id):
+                return  # socket dropped and the job is done — nothing more to stream
             time.sleep(1)  # brief backoff before reconnecting, matches the CLI
 
     def get_studio_name(self, job: V1Job) -> Optional[str]:
@@ -488,6 +505,29 @@ class JobApiV2:
             if len(splits) == 2:
                 return splits[0]
         return ""
+
+    def _is_job_finished(self, job_id: str, teamspace_id: str) -> bool:
+        """Return whether the job has reached a terminal state.
+
+        Used while following logs to decide when to stop: the server keeps the log socket open
+        (heartbeats only) after a job ends, so we poll the job state to detect completion.
+
+        Args:
+            job_id: The unique identifier of the job.
+            teamspace_id: The ID of the teamspace that owns the job.
+
+        Returns:
+            ``True`` if the job is Completed/Failed/Stopped, else ``False`` (including when the
+            state cannot be determined, so a transient status-check failure never kills a stream).
+        """
+        from lightning_sdk.status import Status
+
+        try:
+            job = self.get_job(job_id, teamspace_id)
+        except Exception:
+            # a status-check failure must not kill an active stream
+            return False
+        return self._job_state_to_external(job.state) in (Status.Stopped, Status.Completed, Status.Failed)
 
     def _job_state_to_external(self, state: str) -> "Status":
         """Convert a raw v2 job state string to the public ``Status`` enum.

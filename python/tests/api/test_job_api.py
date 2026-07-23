@@ -390,6 +390,8 @@ def test_stream_logs_reconnects_on_transient_drop(mocker, mocker_auth):
     mocker.patch("lightning_sdk.api.job_api.time.sleep", side_effect=[None, _StopLoopError()])
 
     job_api = JobApiV2()
+    # job is still running, so drops are treated as transient and we reconnect
+    job_api.get_job = mock.MagicMock(return_value=V1Job(id="job-1", state="running"))
     collected = []
 
     def _drain() -> None:
@@ -401,3 +403,41 @@ def test_stream_logs_reconnects_on_transient_drop(mocker, mocker_auth):
 
     assert collected == ["before-drop", "after-reconnect"]
     assert module.create_connection.call_count == 2
+
+
+def test_stream_logs_follow_stops_when_job_finishes(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    ws = _FakeWebSocket([json.dumps([{"message": "last-line"}])])
+    module = _install_fake_websocket(mocker, [ws])
+    # after the final line the socket goes quiet (heartbeats only) -> recv times out
+    ws._frames.append(module.WebSocketTimeoutException())
+
+    job_api = JobApiV2()
+    job_api.get_job = mock.MagicMock(return_value=V1Job(id="job-1", state="completed"))
+
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=True))
+
+    assert lines == ["last-line"]
+    assert module.create_connection.call_count == 1  # finished -> no reconnect
+    job_api.get_job.assert_called()
+
+
+def test_stream_logs_follow_keeps_waiting_while_running(mocker, mocker_auth):
+    mocker.patch("lightning_sdk.api.job_api.Auth")
+    ws = _FakeWebSocket([json.dumps([{"message": "l1"}])])
+    module = _install_fake_websocket(mocker, [ws])
+    # quiet (still running -> keep waiting), another line, then quiet again (now finished -> stop)
+    ws._frames.append(module.WebSocketTimeoutException())
+    ws._frames.append(json.dumps([{"message": "l2"}]))
+    ws._frames.append(module.WebSocketTimeoutException())
+
+    job_api = JobApiV2()
+    job_api.get_job = mock.MagicMock(
+        side_effect=[V1Job(id="job-1", state="running"), V1Job(id="job-1", state="completed")]
+    )
+
+    lines = list(job_api.stream_logs("job-1", "ts-abc", follow=True))
+
+    assert lines == ["l1", "l2"]
+    assert module.create_connection.call_count == 1
+    assert job_api.get_job.call_count == 2
