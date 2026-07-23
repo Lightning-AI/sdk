@@ -1,3 +1,6 @@
+import tempfile
+import zipfile
+from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
@@ -55,11 +58,13 @@ def upload_dataset(
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
     num_workers: int = _DEFAULT_UPLOAD_WORKERS,
+    as_zip: bool = False,
 ) -> UploadedDatasetInfo:
     """Upload a dataset to Lightning Datasets.
 
     Files upload concurrently (many-small-file datasets parallelize across files;
-    large files chunk within-file), bounded by ``num_workers`` total.
+    large files chunk within-file), bounded by ``num_workers`` total. Set
+    ``as_zip=True`` to package all source files into one archive before upload.
 
     Args:
         name: Lightning path to dataset in the format
@@ -71,6 +76,9 @@ def upload_dataset(
         progress_bar: Whether to display an upload progress bar.
         num_workers: total upload concurrency, split across files and their parts
             (default 16).
+        as_zip: Whether to upload one ``<DATASET-NAME>.zip`` archive whose
+            members preserve the source files' relative paths. Defaults to
+            uploading each file individually.
 
     Returns:
         UploadedDatasetInfo: Metadata about the newly uploaded dataset version.
@@ -100,16 +108,28 @@ def upload_dataset(
     if cloud_account is None:
         cloud_account = teamspace._teamspace_api._determine_cloud_account(project_id)
 
-    result = _upload_dataset(
-        project_id=project_id,
-        name=dataset_name,
-        version=version,
-        cluster_id=cloud_account,
-        file_paths=file_paths,
-        relative_paths=relative_paths,
-        progress_bar=progress_bar,
-        num_workers=num_workers,
-    )
+    with ExitStack() as stack:
+        upload_file_paths = file_paths
+        upload_relative_paths = relative_paths
+        if as_zip:
+            temporary_directory = Path(stack.enter_context(tempfile.TemporaryDirectory()))
+            archive_path = temporary_directory / f"{dataset_name}.zip"
+            with zipfile.ZipFile(archive_path, mode="w", compression=zipfile.ZIP_DEFLATED) as archive:
+                for file_path, relative_path in zip(file_paths, relative_paths):
+                    archive.write(file_path, arcname=relative_path)
+            upload_file_paths = [archive_path]
+            upload_relative_paths = [archive_path.name]
+
+        result = _upload_dataset(
+            project_id=project_id,
+            name=dataset_name,
+            version=version,
+            cluster_id=cloud_account,
+            file_paths=upload_file_paths,
+            relative_paths=upload_relative_paths,
+            progress_bar=progress_bar,
+            num_workers=num_workers,
+        )
     return UploadedDatasetInfo(
         name=dataset_name,
         version=result["version"],
