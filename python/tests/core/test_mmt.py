@@ -87,6 +87,14 @@ def test_mmt_exposes_placement_group_id(mmt_api_get_job_by_name_mocker, internal
     assert job.placement_group_id == "pg-1"
 
 
+def test_mmt_exposes_resource_id(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+    job._job = V1MultiMachineJob(id="mmt-123")
+
+    assert job.resource_id == "mmt-123"
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_mmt_members_have_stable_rank_identity(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")

@@ -476,6 +476,10 @@ class MMT(metaclass=TrackCallsMeta):
         return self._name
 
     @property
+    def resource_id(self) -> Optional[str]:
+        return self._guaranteed_job.id
+
+    @property
     def teamspace(self) -> "Teamspace":
         return self._teamspace
 
