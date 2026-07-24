@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 from click.testing import CliRunner
 
-from lightning_sdk.status import Status
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
@@ -12,6 +11,10 @@ def test_job_logs_help() -> None:
         "lightning job logs --help",
         "Usage: lightning job logs",
         "Print the logs for a job.",
+        "--follow",
+        "--tail",
+        "--rank",
+        "--timestamps",
     )
 
 
@@ -40,14 +43,12 @@ def _patch_action(monkeypatch, job: MagicMock, captured: dict) -> None:
 
 
 @mock_command_logging
-def test_job_logs_prints_logs_when_terminal(monkeypatch) -> None:
+def test_job_logs_prints_snapshot(monkeypatch) -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
     captured: dict = {}
     job = MagicMock()
-    job.name = "my-job"
-    job.status = Status.Completed
-    job.logs = "hello from the job\n42"
+    job.logs.return_value = "hello from the job\n42"
     _patch_action(monkeypatch, job, captured)
 
     result = CliRunner().invoke(logs_job, ["my-job", "--teamspace", "org/teamspace"])
@@ -56,21 +57,39 @@ def test_job_logs_prints_logs_when_terminal(monkeypatch) -> None:
     assert captured == {"name": "my-job", "teamspace": "org/teamspace"}
     assert "hello from the job" in result.output
     assert "42" in result.output
+    job.logs.assert_called_once_with(follow=False, tail=None, rank=None, timestamps=False)
 
 
 @mock_command_logging
-def test_job_logs_errors_while_not_terminal(monkeypatch) -> None:
+def test_job_logs_follows_with_options(monkeypatch) -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
     captured: dict = {}
     job = MagicMock()
-    job.name = "my-job"
-    job.status = Status.Pending
+    job.logs.return_value = iter(["line 1", "line 2"])
     _patch_action(monkeypatch, job, captured)
 
-    result = CliRunner().invoke(logs_job, ["my-job", "--teamspace", "org/teamspace"])
+    result = CliRunner().invoke(
+        logs_job,
+        ["my-job", "--follow", "--tail", "10", "--rank", "2", "--timestamps"],
+    )
 
-    # errors cleanly (mentioning the status) rather than raising the raw SDK RuntimeError
+    assert result.exit_code == 0
+    assert result.output == "line 1\nline 2\n"
+    job.logs.assert_called_once_with(follow=True, tail=10, rank=2, timestamps=True)
+
+
+@mock_command_logging
+def test_job_logs_reports_sdk_errors_cleanly(monkeypatch) -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    captured: dict = {}
+    job = MagicMock()
+    job.logs.side_effect = RuntimeError("Logs are not available while the job is Pending.")
+    _patch_action(monkeypatch, job, captured)
+
+    result = CliRunner().invoke(logs_job, ["my-job"])
+
     assert result.exit_code != 0
     assert "Pending" in result.output
     assert not isinstance(result.exception, RuntimeError)
