@@ -1,7 +1,7 @@
 """Deployment logs command.
 
-A shortcut for ``lightning logs --deployment-name <name>``: it resolves the deployment and
-hands off to :func:`lightning_sdk.cli.logs.read_logs`, so both print identically.
+Reads every replica of a deployment, merged into one timeline. The reading and rendering live
+in :mod:`lightning_sdk.cli.utils.logs`, shared with the other per-resource log commands.
 """
 
 from typing import Optional, Sequence
@@ -12,14 +12,14 @@ from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
-from lightning_sdk.cli.logs import (
+from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.logs import (
     LIVE_FALLBACK_IDLE_TIMEOUT,
     LogSelection,
     deployment_replica_labels,
     read_logs,
     resolve_time,
 )
-from lightning_sdk.cli.utils.logging import LightningCommand
 
 _DEFAULT_TAIL = 100
 

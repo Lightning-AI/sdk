@@ -58,6 +58,8 @@ class _Logs:
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         timestamps: bool = False,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
         query: Optional[str] = None,
         severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
@@ -66,6 +68,8 @@ class _Logs:
             tail=tail,
             rank=rank,
             timestamps=timestamps,
+            since=since,
+            until=until,
             query=query,
             severity=severity,
         )
@@ -542,12 +546,13 @@ class Job(metaclass=TrackCallsMeta):
         - ``tail``: Only include the last N lines.
         - ``rank``: Distributed job rank to read from (running jobs only).
         - ``timestamps``: Prepend each line with its ISO-8601 timestamp.
+        - ``since``/``until``: Only include lines within this RFC3339 time range.
         - ``query``: Only include lines containing every whitespace-separated term.
         - ``severity``: Only include lines at or above this level (``error``, ``warning``,
           ``info`` or ``debug``).
 
-        ``query`` and ``severity`` are applied by the server, to both the saved logs and the
-        live stream.
+        ``since``, ``until``, ``query`` and ``severity`` are applied by the server, to both the
+        saved logs and the live stream.
         """
         return _Logs(self._compute_logs)
 
@@ -558,6 +563,8 @@ class Job(metaclass=TrackCallsMeta):
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         timestamps: bool = False,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
         query: Optional[str] = None,
         severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
@@ -638,8 +645,10 @@ class Job(metaclass=TrackCallsMeta):
         follow: bool,
         tail: Optional[int],
         timestamps: bool,
-        query: Optional[str],
-        severity: Optional[str],
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
     ) -> Iterator[str]:
         """Yield formatted log lines from the logs API (saved logs, then the live tail)."""
         job = self._guaranteed_job
@@ -647,6 +656,8 @@ class Job(metaclass=TrackCallsMeta):
         entries = self._logs_api.stream(
             self.teamspace.id,
             job_ids=[job_id],
+            since=since,
+            until=until,
             query=query,
             severity=severity,
             follow=follow,

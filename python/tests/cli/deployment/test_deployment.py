@@ -395,10 +395,10 @@ def _patch_logs_command(monkeypatch, api, entries):
         MagicMock(return_value=teamspace),
     )
     monkeypatch.setattr("lightning_sdk.cli.deployment.logs.DeploymentApi", MagicMock(return_value=api))
-    # the command delegates to the shared reader in `lightning logs`, which owns the API client
+    # the command delegates to the shared reader, which owns the API client
     stream = MagicMock(return_value=list(entries))
     monkeypatch.setattr(
-        "lightning_sdk.cli.logs.LogsApi",
+        "lightning_sdk.cli.utils.logs.LogsApi",
         MagicMock(return_value=SimpleNamespace(stream=stream, get_page=MagicMock())),
     )
     return stream

@@ -69,7 +69,8 @@ Operational notes
 - The same reads are available from the CLI, one command per resource:
   ``lightning job logs <name>``, ``lightning mmt logs <name>``,
   ``lightning deployment logs <name>`` and ``lightning sandbox logs <id>``. Each
-  takes ``--follow``, ``--tail``, ``--query`` and ``--severity``.
+  takes ``--follow``, ``--tail``, ``--since``/``--until``, ``--query`` and
+  ``--severity``.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.
 - Container-backed jobs cannot also pass ``studio=``.

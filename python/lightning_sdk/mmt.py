@@ -531,6 +531,7 @@ class MMT(metaclass=TrackCallsMeta):
           Returns an iterator of lines instead of a string.
         - ``tail``: Only include the last N lines.
         - ``timestamps``: Prepend each line with its ISO-8601 timestamp.
+        - ``since``/``until``: Only include lines within this RFC3339 time range.
         - ``query``: Only include lines containing every whitespace-separated term.
         - ``severity``: Only include lines at or above this level (``error``, ``warning``,
           ``info`` or ``debug``).
@@ -547,6 +548,8 @@ class MMT(metaclass=TrackCallsMeta):
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         timestamps: bool = False,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
         query: Optional[str] = None,
         severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
@@ -562,6 +565,8 @@ class MMT(metaclass=TrackCallsMeta):
             follow=follow and status == Status.Running,
             tail=tail,
             timestamps=timestamps,
+            since=since,
+            until=until,
             query=query,
             severity=severity,
         )
@@ -576,14 +581,18 @@ class MMT(metaclass=TrackCallsMeta):
         follow: bool,
         tail: Optional[int],
         timestamps: bool,
-        query: Optional[str],
-        severity: Optional[str],
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
     ) -> Iterator[str]:
         """Yield formatted log lines for every machine, labelled with the machine they came from."""
         names = {machine._guaranteed_job.id: machine.name for machine in self.machines}
         entries = self._logs_api.stream(
             self.teamspace.id,
             mmt_id=self._guaranteed_job.id,
+            since=since,
+            until=until,
             query=query,
             severity=severity,
             follow=follow,

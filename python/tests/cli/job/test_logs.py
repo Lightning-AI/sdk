@@ -59,7 +59,9 @@ def test_job_logs_prints_snapshot(monkeypatch) -> None:
     assert captured == {"name": "my-job", "teamspace": "org/teamspace"}
     assert "hello from the job" in result.output
     assert "42" in result.output
-    job.logs.assert_called_once_with(follow=False, tail=None, rank=None, timestamps=False, query=None, severity=None)
+    job.logs.assert_called_once_with(
+        follow=False, tail=None, rank=None, timestamps=False, since=None, until=None, query=None, severity=None
+    )
 
 
 @mock_command_logging
@@ -78,7 +80,9 @@ def test_job_logs_follows_with_options(monkeypatch) -> None:
 
     assert result.exit_code == 0
     assert result.output == "line 1\nline 2\n"
-    job.logs.assert_called_once_with(follow=True, tail=10, rank=2, timestamps=True, query=None, severity=None)
+    job.logs.assert_called_once_with(
+        follow=True, tail=10, rank=2, timestamps=True, since=None, until=None, query=None, severity=None
+    )
 
 
 @mock_command_logging
@@ -94,7 +98,7 @@ def test_job_logs_passes_filters(monkeypatch) -> None:
 
     assert result.exit_code == 0, result.output
     job.logs.assert_called_once_with(
-        follow=False, tail=None, rank=None, timestamps=False, query="boom", severity="error"
+        follow=False, tail=None, rank=None, timestamps=False, since=None, until=None, query="boom", severity="error"
     )
 
 

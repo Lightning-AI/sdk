@@ -53,7 +53,9 @@ def test_mmt_logs_prints_merged_snapshot(monkeypatch) -> None:
     assert captured == {"name": "my-mmt", "teamspace": "org/teamspace"}
     assert "[my-mmt-0] rank 0 up" in result.output
     assert "[my-mmt-1] rank 1 up" in result.output
-    mmt.logs.assert_called_once_with(follow=False, tail=None, timestamps=False, query=None, severity=None)
+    mmt.logs.assert_called_once_with(
+        follow=False, tail=None, timestamps=False, since=None, until=None, query=None, severity=None
+    )
 
 
 @mock_command_logging
@@ -72,7 +74,9 @@ def test_mmt_logs_follows_with_options(monkeypatch) -> None:
 
     assert result.exit_code == 0, result.output
     assert result.output == "line 1\nline 2\n"
-    mmt.logs.assert_called_once_with(follow=True, tail=10, timestamps=True, query="loss", severity="error")
+    mmt.logs.assert_called_once_with(
+        follow=True, tail=10, timestamps=True, since=None, until=None, query="loss", severity="error"
+    )
 
 
 @mock_command_logging

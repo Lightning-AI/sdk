@@ -34,7 +34,6 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_command,
     build_legacy_forward_group,
 )
-from lightning_sdk.cli.logs import logs
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -43,7 +42,7 @@ click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
-        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "logs"]},
+        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment"]},
         {"name": "ACCESS", "commands": ["api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp"]},
     ]
@@ -132,7 +131,6 @@ main_cli.add_command(base_studio)
 main_cli.add_command(dataset)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
-main_cli.add_command(logs)
 
 # hidden plural aliases for noun-first groups
 main_cli.add_command(build_hidden_alias_group("apis", api))

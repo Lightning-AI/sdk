@@ -7,6 +7,7 @@ import rich_click as click
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.logs import resolve_time
 
 
 @click.command("logs", cls=LightningCommand)
@@ -23,6 +24,8 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, default=None, help="Only show the last N lines.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+@click.option("--since", default=None, help='Only include lines at or after this time (e.g. "2h", RFC3339).')
+@click.option("--until", default=None, help='Only include lines at or before this time (e.g. "30m", RFC3339).')
 @click.option("--query", default=None, help="Only include lines containing every whitespace-separated term.")
 @click.option(
     "--severity",
@@ -36,6 +39,8 @@ def logs_mmt(
     follow: bool = False,
     tail: Optional[int] = None,
     timestamps: bool = False,
+    since: Optional[str] = None,
+    until: Optional[str] = None,
     query: Optional[str] = None,
     severity: Optional[str] = None,
 ) -> None:
@@ -52,6 +57,8 @@ def logs_mmt(
             follow=follow,
             tail=tail,
             timestamps=timestamps,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
             query=query,
             severity=severity,
         )
