@@ -15,6 +15,8 @@ def test_job_logs_help() -> None:
         "--tail",
         "--rank",
         "--timestamps",
+        "--query",
+        "--severity",
     )
 
 
@@ -57,7 +59,7 @@ def test_job_logs_prints_snapshot(monkeypatch) -> None:
     assert captured == {"name": "my-job", "teamspace": "org/teamspace"}
     assert "hello from the job" in result.output
     assert "42" in result.output
-    job.logs.assert_called_once_with(follow=False, tail=None, rank=None, timestamps=False)
+    job.logs.assert_called_once_with(follow=False, tail=None, rank=None, timestamps=False, query=None, severity=None)
 
 
 @mock_command_logging
@@ -76,7 +78,37 @@ def test_job_logs_follows_with_options(monkeypatch) -> None:
 
     assert result.exit_code == 0
     assert result.output == "line 1\nline 2\n"
-    job.logs.assert_called_once_with(follow=True, tail=10, rank=2, timestamps=True)
+    job.logs.assert_called_once_with(follow=True, tail=10, rank=2, timestamps=True, query=None, severity=None)
+
+
+@mock_command_logging
+def test_job_logs_passes_filters(monkeypatch) -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    captured: dict = {}
+    job = MagicMock()
+    job.logs.return_value = "boom"
+    _patch_action(monkeypatch, job, captured)
+
+    result = CliRunner().invoke(logs_job, ["my-job", "--query", "boom", "--severity", "error"])
+
+    assert result.exit_code == 0, result.output
+    job.logs.assert_called_once_with(
+        follow=False, tail=None, rank=None, timestamps=False, query="boom", severity="error"
+    )
+
+
+@mock_command_logging
+def test_job_logs_rejects_unknown_severity(monkeypatch) -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    job = MagicMock()
+    _patch_action(monkeypatch, job, {})
+
+    result = CliRunner().invoke(logs_job, ["my-job", "--severity", "critical"])
+
+    assert result.exit_code != 0
+    job.logs.assert_not_called()
 
 
 @mock_command_logging

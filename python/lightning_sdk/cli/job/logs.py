@@ -4,6 +4,7 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
 
@@ -23,6 +24,13 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 @click.option("--tail", type=int, default=None, help="Only show the last N lines.")
 @click.option("--rank", type=int, default=None, help="Distributed job rank to read from (running jobs only).")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+@click.option("--query", default=None, help="Only include lines containing every whitespace-separated term.")
+@click.option(
+    "--severity",
+    type=click.Choice(SEVERITIES),
+    default=None,
+    help="Only include lines at or above this severity.",
+)
 def logs_job(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -30,16 +38,26 @@ def logs_job(
     tail: Optional[int] = None,
     rank: Optional[int] = None,
     timestamps: bool = False,
+    query: Optional[str] = None,
+    severity: Optional[str] = None,
 ) -> None:
     """Print the logs for a job.
 
     Prints a snapshot of the logs available so far. Pass --follow to stream new
-    lines from a running job until it finishes or you press Ctrl-C.
+    lines from a running job until it finishes or you press Ctrl-C. --query and
+    --severity are applied by the server, to both the snapshot and the stream.
     """
     job = _JobAndMMTAction().job(name=name, teamspace=teamspace)
 
     try:
-        logs = job.logs(follow=follow, tail=tail, rank=rank, timestamps=timestamps)
+        logs = job.logs(
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            timestamps=timestamps,
+            query=query,
+            severity=severity,
+        )
         if follow:
             for line in logs:
                 click.echo(line)

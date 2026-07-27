@@ -1,9 +1,11 @@
 import warnings
-from typing import TYPE_CHECKING, Any, Dict, Optional, Protocol, Tuple, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterator, Optional, Protocol, Tuple, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.api.logs_api import LogsApi
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
+from lightning_sdk.job import _RUNNING_LOGS_IDLE_TIMEOUT, _Logs
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -152,6 +154,7 @@ class MMT(metaclass=TrackCallsMeta):
         self._prevent_refetch_latest = False
         self._cloud_account_api = CloudAccountApi()
         self._job_api = MMTApiV2()
+        self._logs_api = LogsApi()
 
         if _fetch_job:
             self._update_internal_job()
@@ -505,8 +508,93 @@ class MMT(metaclass=TrackCallsMeta):
         return self._job_api.get_num_machines(self._guaranteed_job)
 
     @property
-    def logs(self) -> str:
-        raise NotImplementedError
+    def logs(self) -> _Logs:
+        """The logs of every machine, merged into one timeline.
+
+        Use it as a value for a snapshot of the logs up to now::
+
+            print(mmt.logs)
+
+        or call it to pass options and/or follow the logs live::
+
+            recent = mmt.logs(tail=100)            # snapshot of the last 100 lines
+            for line in mmt.logs(follow=True):     # stream new lines as they arrive
+                print(line)
+
+        Options:
+
+        - ``follow``: Keep the stream open and yield new lines as they are produced.
+          Returns an iterator of lines instead of a string.
+        - ``tail``: Only include the last N lines.
+        - ``timestamps``: Prepend each line with its ISO-8601 timestamp.
+        - ``query``: Only include lines containing every whitespace-separated term.
+        - ``severity``: Only include lines at or above this level (``error``, ``warning``,
+          ``info`` or ``debug``).
+
+        Every line is labelled with the machine it came from. To read a single machine, use
+        ``mmt.machines[rank].logs``.
+        """
+        return _Logs(self._compute_logs)
+
+    def _compute_logs(
+        self,
+        *,
+        follow: bool = False,
+        tail: Optional[int] = None,
+        rank: Optional[int] = None,
+        timestamps: bool = False,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
+    ) -> Union[str, Iterator[str]]:
+        """Fetch the merged logs of every machine. See :attr:`logs` for the public API."""
+        if rank is not None:
+            raise ValueError("`rank` is not supported here; read a single machine with `mmt.machines[rank].logs`.")
+
+        status = self.status
+        if status not in (Status.Running, Status.Failed, Status.Completed, Status.Stopped):
+            raise RuntimeError(f"Logs are not available while the job is {status}.")
+
+        lines = self._stream_entries(
+            follow=follow and status == Status.Running,
+            tail=tail,
+            timestamps=timestamps,
+            query=query,
+            severity=severity,
+        )
+        if follow and status == Status.Running:
+            return lines
+        collected = list(lines)
+        return iter(collected) if follow else "\n".join(collected)
+
+    def _stream_entries(
+        self,
+        *,
+        follow: bool,
+        tail: Optional[int],
+        timestamps: bool,
+        query: Optional[str],
+        severity: Optional[str],
+    ) -> Iterator[str]:
+        """Yield formatted log lines for every machine, labelled with the machine they came from."""
+        names = {machine._guaranteed_job.id: machine.name for machine in self.machines}
+        entries = self._logs_api.stream(
+            self.teamspace.id,
+            mmt_id=self._guaranteed_job.id,
+            query=query,
+            severity=severity,
+            follow=follow,
+            tail=tail,
+            # A finished job's last lines sit at its stop time, so start the tail search there
+            # instead of walking back from now through a job that ran days ago.
+            tail_anchor=getattr(self._guaranteed_job, "stopped_at", None),
+            idle_timeout=None if follow else _RUNNING_LOGS_IDLE_TIMEOUT,
+            # A running job whose logs are not in the current storage format yet has no saved
+            # history; tail its live stream so a snapshot still shows something.
+            fallback_to_live=not follow,
+            stop=lambda: self.status in (Status.Stopped, Status.Completed, Status.Failed),
+        )
+        for entry in entries:
+            yield entry.format(timestamps=timestamps, prefix=names.get(entry.resource_id, entry.resource_id))
 
     def dict(self) -> Dict[str, object]:
         studio = self.studio
