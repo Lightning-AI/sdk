@@ -15,7 +15,8 @@ def test_logs_help() -> None:
     assert_help_contains(
         "lightning logs --help",
         "Usage: lightning logs",
-        "Search, tail and follow logs across a teamspace.",
+        "Search and page through a teamspace's logs.",
+        "lightning job logs my-job",
         "--tail",
         "--follow",
         "--limit",

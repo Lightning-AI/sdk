@@ -329,18 +329,24 @@ def logs(
     timestamps: bool,
     as_json: bool,
 ) -> None:
-    """Search, tail and follow logs across a teamspace.
+    """Search and page through a teamspace's logs.
 
-    Filter by resource (--job-id/--job-name, --deployment-id/--deployment-name,
-    --mmt-id/--mmt-name, --sandbox-id/--sandbox-name, --sandbox-command-id), text (--query),
-    severity and time range. --tail shows the last N lines and --follow streams new ones;
-    without either, results are paginated oldest-first and the cursor for the next page is
-    printed at the end.
+    To read one resource's logs, prefer the per-resource commands — same output, less typing:
+
+      lightning job logs my-job --tail 100
+      lightning deployment logs my-api --follow --severity warning
+      lightning mmt logs my-mmt --query error
+      lightning sandbox logs sbx-42
+
+    Use this command to select by id, or to walk a large range with an explicit cursor. Filter by
+    resource (--job-id/--job-name, --deployment-id/--deployment-name, --mmt-id/--mmt-name,
+    --sandbox-id/--sandbox-name, --sandbox-command-id), text (--query), severity and time range.
+    --tail shows the last N lines and --follow streams new ones; without either, results are
+    paginated oldest-first and the cursor for the next page is printed at the end.
 
     Examples:
-      lightning logs --job-name my-job --tail 100
-      lightning logs --deployment-name my-api --follow --severity warning
-      lightning logs --mmt-name my-mmt --query error --since 2h
+      lightning logs --job-id job-123 --tail 100
+      lightning logs --deployment-name my-api --query error --since 2h
       lightning logs --sandbox-id sbx-42 --sandbox-command-id cmd-abc
       lightning logs --job-id job-123 --page-token <token>
     """
