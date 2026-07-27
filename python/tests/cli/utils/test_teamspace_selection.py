@@ -41,9 +41,7 @@ def test_bare_teamspace_name_still_falls_back(monkeypatch):
     """A teamspace without an explicit owner keeps the existing (possibly interactive) flow."""
     # First call: the direct-slug resolution attempt (no owner supplied) fails.
     # Second call: resolution proceeds once an owner has been picked via the menu.
-    monkeypatch.setattr(
-        teamspace_selection, "_resolve_teamspace", MagicMock(side_effect=[None, "resolved-teamspace"])
-    )
+    monkeypatch.setattr(teamspace_selection, "_resolve_teamspace", MagicMock(side_effect=[None, "resolved-teamspace"]))
     # The owner gets resolved (here via the menu) and resolution proceeds with org scope.
     owner = MagicMock(spec=Organization)
     monkeypatch.setattr(
