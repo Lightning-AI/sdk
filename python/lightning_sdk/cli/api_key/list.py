@@ -36,11 +36,15 @@ def list_api_keys(org: Optional[str], all_users: bool) -> None:
     table.add_column("Secret visible")
 
     for key in keys:
+        created_at = key.created_at
+        if created_at:
+            created_at = created_at.isoformat() if hasattr(created_at, "isoformat") else str(created_at)
+
         table.add_row(
             key.id or "",
             key.name or "",
             key.description or "",
-            key.created_at.isoformat() if key.created_at else "",
+            created_at,
             "yes" if key.raw_key else "no",
         )
 
