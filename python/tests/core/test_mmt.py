@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.logs_api import LogEntry
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateMultiMachineJobBody,
     V1Job,
@@ -463,3 +464,67 @@ def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
     job.delete()
 
     delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmtv2_logs_merges_ranks(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+
+    monkeypatch.setattr(type(job), "status", mock.PropertyMock(return_value=Status.Completed))
+    machines = [mock.MagicMock(), mock.MagicMock()]
+    for i, machine in enumerate(machines):
+        machine.name = f"test-job-{i}"
+        machine._guaranteed_job = V1Job(id=f"job-{i}")
+    monkeypatch.setattr(type(job), "machines", mock.PropertyMock(return_value=tuple(machines)))
+
+    stream_mock = mock.MagicMock(
+        return_value=[
+            LogEntry(message="rank 0 up", resource_id="job-0"),
+            LogEntry(message="rank 1 up", resource_id="job-1"),
+        ]
+    )
+    job._logs_api.stream = stream_mock
+
+    # every rank is read through the one mmt selector, each line labelled with its machine
+    assert job.logs == "[test-job-0] rank 0 up\n[test-job-1] rank 1 up"
+    assert stream_mock.call_args.kwargs["mmt_id"] == "test-job-id"
+    assert stream_mock.call_args.kwargs["follow"] is False
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmtv2_logs_follow_and_filters(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+
+    monkeypatch.setattr(type(job), "status", mock.PropertyMock(return_value=Status.Running))
+    monkeypatch.setattr(type(job), "machines", mock.PropertyMock(return_value=()))
+    stream_mock = mock.MagicMock(return_value=[LogEntry(message="boom", resource_id="job-0")])
+    job._logs_api.stream = stream_mock
+
+    assert list(job.logs(follow=True, query="boom", severity="error")) == ["[job-0] boom"]
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["follow"] is True
+    assert kwargs["query"] == "boom"
+    assert kwargs["severity"] == "error"
+    assert kwargs["idle_timeout"] is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmtv2_logs_rejects_rank(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+
+    with pytest.raises(ValueError, match="mmt.machines"):
+        job.logs(rank=1)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmtv2_logs_unavailable_while_pending(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+
+    monkeypatch.setattr(type(job), "status", mock.PropertyMock(return_value=Status.Pending))
+
+    with pytest.raises(RuntimeError, match="Pending"):
+        str(job.logs)

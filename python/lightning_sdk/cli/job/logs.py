@@ -4,11 +4,9 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.status import Status
-
-_TERMINAL = (Status.Completed, Status.Failed, Status.Stopped)
 
 
 @click.command("logs", cls=LightningCommand)
@@ -22,17 +20,50 @@ _TERMINAL = (Status.Completed, Status.Failed, Status.Stopped)
         "If not specified can be selected interactively."
     ),
 )
-def logs_job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
+@click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
+@click.option("--tail", type=int, default=None, help="Only show the last N lines.")
+@click.option("--rank", type=int, default=None, help="Distributed job rank to read from (running jobs only).")
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+@click.option("--query", default=None, help="Only include lines containing every whitespace-separated term.")
+@click.option(
+    "--severity",
+    type=click.Choice(SEVERITIES),
+    default=None,
+    help="Only include lines at or above this severity.",
+)
+def logs_job(
+    name: Optional[str] = None,
+    teamspace: Optional[str] = None,
+    follow: bool = False,
+    tail: Optional[int] = None,
+    rank: Optional[int] = None,
+    timestamps: bool = False,
+    query: Optional[str] = None,
+    severity: Optional[str] = None,
+) -> None:
     """Print the logs for a job.
 
-    Logs are available once the job reaches a terminal state (Completed, Failed or
-    Stopped). While the job is still pending or running this prints its current status
-    instead of erroring — re-run once it has finished.
+    Prints a snapshot of the logs available so far. Pass --follow to stream new
+    lines from a running job until it finishes or you press Ctrl-C. --query and
+    --severity are applied by the server, to both the snapshot and the stream.
     """
     job = _JobAndMMTAction().job(name=name, teamspace=teamspace)
-    if job.status not in _TERMINAL:
-        raise click.ClickException(
-            f"Job '{job.name}' is {job.status}; logs are only available once it reaches a "
-            "terminal state (Completed/Failed/Stopped). Re-run this command after it finishes."
+
+    try:
+        logs = job.logs(
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            timestamps=timestamps,
+            query=query,
+            severity=severity,
         )
-    click.echo(job.logs)
+        if follow:
+            for line in logs:
+                click.echo(line)
+        elif logs:
+            click.echo(logs)
+    except KeyboardInterrupt:
+        pass
+    except RuntimeError as ex:
+        raise click.ClickException(str(ex)) from ex
