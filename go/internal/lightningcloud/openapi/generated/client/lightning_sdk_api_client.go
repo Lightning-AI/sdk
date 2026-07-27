@@ -10,14 +10,14 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/cloud_space_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/cluster_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/data_connection_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/jobs_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/organizations_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/projects_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/secret_service"
-	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/client/user_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/cloud_space_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/cluster_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/data_connection_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/jobs_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/organizations_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/projects_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/secret_service"
+	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/user_service"
 )
 
 // Default lightning sdk API HTTP client.
