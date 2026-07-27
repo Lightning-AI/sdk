@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
 )
 
 // ClusterServiceCreateClusterUsageRestrictionReader is a Reader for the ClusterServiceCreateClusterUsageRestriction structure.

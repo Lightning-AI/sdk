@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
 )
 
 // UserServiceGetUserProfileReader is a Reader for the UserServiceGetUserProfile structure.

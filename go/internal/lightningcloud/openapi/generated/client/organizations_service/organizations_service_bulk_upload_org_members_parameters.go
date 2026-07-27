@@ -15,7 +15,7 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/lightning-ai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
 )
 
 // NewOrganizationsServiceBulkUploadOrgMembersParams creates a new OrganizationsServiceBulkUploadOrgMembersParams object,
