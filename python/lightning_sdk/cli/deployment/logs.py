@@ -1,4 +1,8 @@
-"""Deployment logs command."""
+"""Deployment logs command.
+
+A shortcut for ``lightning logs --deployment-name <name>``: it resolves the deployment and
+hands off to :func:`lightning_sdk.cli.logs.read_logs`, so both print identically.
+"""
 
 from typing import Optional, Sequence
 
@@ -6,21 +10,26 @@ import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.job_api import JobApiV2
-from lightning_sdk.api.logs_api import SEVERITIES, LogsApi
+from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
+from lightning_sdk.cli.logs import (
+    LIVE_FALLBACK_IDLE_TIMEOUT,
+    LogSelection,
+    deployment_replica_labels,
+    read_logs,
+    resolve_time,
+)
 from lightning_sdk.cli.utils.logging import LightningCommand
 
-# A deployment whose logs are not in the current storage format yet has no saved history to
-# print. Rather than show nothing, briefly tail the live stream and stop once it goes quiet.
-_LIVE_FALLBACK_IDLE_TIMEOUT = 8
+_DEFAULT_TAIL = 100
 
 
 @click.command("logs", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--job-id", "job_ids", multiple=True, help="Specific deployment job ID. Can be repeated.")
-@click.option("--since", help="Only include logs after this timestamp.")
-@click.option("--until", help="Only include logs before this timestamp.")
+@click.option("--since", help='Only include lines at or after this time (e.g. "2h", RFC3339).')
+@click.option("--until", help='Only include lines at or before this time (e.g. "30m", RFC3339).')
 @click.option("--query", help="Only include lines containing every whitespace-separated term.")
 @click.option(
     "--severity",
@@ -29,7 +38,7 @@ _LIVE_FALLBACK_IDLE_TIMEOUT = 8
 )
 @click.option("--rank", type=int, help="Machine of a single replica to read (legacy log path).")
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
-@click.option("--tail", type=int, help="Only show the last N lines of the available logs.")
+@click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 def deployment_logs(
     name: str,
@@ -68,39 +77,34 @@ def deployment_logs(
         )
         return
 
-    jobs = api.list_deployment_jobs(resolved_teamspace.id, deployment.id, limit=100)
-    if not jobs and not job_ids:
-        click.echo("No jobs found for this deployment.")
-        return
-
-    names = {job.id: job.name or job.id for job in jobs}
     selected = list(job_ids)
-    # Only label lines when more than one replica can show up in the stream.
-    labelled = len(selected or jobs) > 1
+    if not selected:
+        jobs = api.list_deployment_jobs(resolved_teamspace.id, deployment.id, limit=100)
+        if not jobs:
+            click.echo("No jobs found for this deployment.")
+            return
+        labels = {job.id: job.name or job.id for job in jobs} if len(jobs) > 1 else {}
+    else:
+        labels = deployment_replica_labels(resolved_teamspace.id, deployment.id) if len(selected) > 1 else {}
 
-    entries = LogsApi().stream(
-        resolved_teamspace.id,
-        job_ids=selected,
-        # Selecting the deployment picks up replicas that start later; a job id list is fixed.
-        deployment_id=None if selected else deployment.id,
-        since=since,
-        until=until,
+    read_logs(
+        LogSelection(
+            teamspace_id=resolved_teamspace.id,
+            job_ids=selected,
+            # Selecting the deployment picks up replicas that start later; a job id list is fixed.
+            deployment_id=None if selected else deployment.id,
+            labels=labels,
+        ),
         query=query,
         severity=severity,
+        since=resolve_time(since, "--since"),
+        until=resolve_time(until, "--until"),
+        # A deployment's history can span months of replicas. With no tail and no range asked
+        # for, show the recent tail rather than paging from the beginning of time.
+        tail=_DEFAULT_TAIL if tail is None and since is None and until is None else tail,
         follow=follow,
-        tail=tail,
-        idle_timeout=None if follow else _LIVE_FALLBACK_IDLE_TIMEOUT,
-        fallback_to_live=not follow,
+        timestamps=timestamps,
     )
-
-    try:
-        for entry in entries:
-            label = names.get(entry.resource_id, entry.resource_id) if labelled else None
-            click.echo(entry.format(timestamps=timestamps, prefix=label))
-    except KeyboardInterrupt:
-        pass
-    except RuntimeError as ex:
-        raise click.ClickException(str(ex)) from ex
 
 
 def _ranked_logs(
@@ -141,8 +145,8 @@ def _ranked_logs(
             teamspace_id,
             job_id,
             deployment_id=deployment_id,
-            since=since,
-            until=until,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
             rank=rank,
         )
     )
@@ -161,7 +165,7 @@ def _ranked_logs(
             follow=follow,
             tail=tail,
             rank=rank,
-            idle_timeout=None if follow else _LIVE_FALLBACK_IDLE_TIMEOUT,
+            idle_timeout=None if follow else LIVE_FALLBACK_IDLE_TIMEOUT,
             timestamps=timestamps,
         ):
             click.echo(line)

@@ -395,10 +395,11 @@ def _patch_logs_command(monkeypatch, api, entries):
         MagicMock(return_value=teamspace),
     )
     monkeypatch.setattr("lightning_sdk.cli.deployment.logs.DeploymentApi", MagicMock(return_value=api))
+    # the command delegates to the shared reader in `lightning logs`, which owns the API client
     stream = MagicMock(return_value=list(entries))
     monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.logs.LogsApi",
-        MagicMock(return_value=SimpleNamespace(stream=stream)),
+        "lightning_sdk.cli.logs.LogsApi",
+        MagicMock(return_value=SimpleNamespace(stream=stream, get_page=MagicMock())),
     )
     return stream
 
@@ -432,6 +433,8 @@ def test_deployment_logs_reads_whole_deployment_and_labels_replicas(monkeypatch)
     kwargs = stream.call_args.kwargs
     assert kwargs["deployment_id"] == "dep-id"
     assert kwargs["job_ids"] == []
+    # months of replicas can sit behind a deployment, so a plain read shows the recent tail
+    assert kwargs["tail"] == 100
 
 
 @mock_command_logging
@@ -473,7 +476,7 @@ def test_deployment_logs_selected_job_ids_and_filters(monkeypatch) -> None:
     assert kwargs["deployment_id"] is None
     assert kwargs["query"] == "timeout"
     assert kwargs["severity"] == "error"
-    assert kwargs["since"] == "2026-07-27T00:00:00Z"
+    assert kwargs["since"] == "2026-07-27T00:00:00+00:00"
     assert kwargs["follow"] is True
     assert kwargs["idle_timeout"] is None
 

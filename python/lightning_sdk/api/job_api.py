@@ -21,7 +21,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
     V1EnvVar,
-    V1GetLogsResponse,
     V1Job,
     V1JobSpec,
     V1Volume,
@@ -369,66 +368,6 @@ class JobApiV2:
 
         data = urlopen(resp.url).read().decode("utf-8")
         return remove_datetime_prefix(str(data))
-
-    def search_logs(
-        self,
-        teamspace_id: str,
-        *,
-        job_ids: Optional[List[str]] = None,
-        deployment_id: Optional[str] = None,
-        mmt_id: Optional[str] = None,
-        sandbox_id: Optional[str] = None,
-        sandbox_command_ids: Optional[List[str]] = None,
-        query: Optional[str] = None,
-        severity: Optional[str] = None,
-        since: Optional[str] = None,
-        until: Optional[str] = None,
-        page_size: Optional[int] = None,
-        page_token: Optional[str] = None,
-    ) -> V1GetLogsResponse:
-        """Search a teamspace's logs, filtered by resource, text query, severity and time range.
-
-        Backed by the ``/v1/projects/{id}/page-logs`` endpoint. Results are paginated: pass the
-        ``next_page_token`` from a previous response back as ``page_token`` to fetch the next page.
-
-        Args:
-            teamspace_id: The ID of the teamspace (project) to search logs in.
-            job_ids: Restrict to these job IDs.
-            deployment_id: Restrict to a deployment.
-            mmt_id: Restrict to a multi-machine job.
-            sandbox_id: Restrict to a sandbox (all of its recorded commands).
-            sandbox_command_ids: Restrict to specific sandbox command IDs (within ``sandbox_id``).
-            query: Only return lines matching this text.
-            severity: Minimum severity to include (error > warning > info > debug).
-            since: Only return lines at or after this time (RFC3339 or relative, e.g. "1h").
-            until: Only return lines at or before this time.
-            page_size: Maximum number of lines to return.
-            page_token: Cursor from a previous response's ``next_page_token``.
-        """
-        kwargs: Dict[str, Union[str, List[str]]] = {}
-        if job_ids:
-            kwargs["job_ids"] = job_ids
-        if deployment_id:
-            kwargs["deployment_id"] = deployment_id
-        if mmt_id:
-            kwargs["mmt_id"] = mmt_id
-        if sandbox_id:
-            kwargs["sandbox_id"] = sandbox_id
-        if sandbox_command_ids:
-            kwargs["sandbox_command_ids"] = sandbox_command_ids
-        if query:
-            kwargs["query"] = query
-        if severity:
-            kwargs["severity"] = severity
-        if since:
-            kwargs["since"] = since
-        if until:
-            kwargs["until"] = until
-        if page_size is not None:
-            kwargs["page_size"] = str(page_size)
-        if page_token:
-            kwargs["page_token"] = page_token
-        return self._client.jobs_service_get_logs(project_id=teamspace_id, **kwargs)
 
     def stream_logs(
         self,
