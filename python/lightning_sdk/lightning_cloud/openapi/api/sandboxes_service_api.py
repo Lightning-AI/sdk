@@ -765,6 +765,8 @@ class SandboxesServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param str organization_id:
+        :param str name:
+        :param str project_id:
         :return: V1Sandbox
                  If the method is called asynchronously,
                  returns the request thread.
@@ -787,12 +789,14 @@ class SandboxesServiceApi(object):
         :param async_req bool
         :param str id: (required)
         :param str organization_id:
+        :param str name:
+        :param str project_id:
         :return: V1Sandbox
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['id', 'organization_id']  # noqa: E501
+        all_params = ['id', 'organization_id', 'name', 'project_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -821,6 +825,10 @@ class SandboxesServiceApi(object):
         query_params = []
         if 'organization_id' in params:
             query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+        if 'name' in params:
+            query_params.append(('name', params['name']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
 
         header_params = {}
 

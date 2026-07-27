@@ -42,21 +42,26 @@ class CloudSpaceServiceStartCloudSpaceInstanceBody(object):
     """
     swagger_types = {
         'compute_config': 'V1UserRequestedComputeConfig',
+        'desired_machine_id': 'str',
         'is_forked': 'bool'
     }
 
     attribute_map = {
         'compute_config': 'computeConfig',
+        'desired_machine_id': 'desiredMachineId',
         'is_forked': 'isForked'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, is_forked: 'bool' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, desired_machine_id: 'str' =None, is_forked: 'bool' =None):  # noqa: E501
         """CloudSpaceServiceStartCloudSpaceInstanceBody - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
+        self._desired_machine_id = None
         self._is_forked = None
         self.discriminator = None
         if compute_config is not None:
             self.compute_config = compute_config
+        if desired_machine_id is not None:
+            self.desired_machine_id = desired_machine_id
         if is_forked is not None:
             self.is_forked = is_forked
 
@@ -80,6 +85,27 @@ class CloudSpaceServiceStartCloudSpaceInstanceBody(object):
         """
 
         self._compute_config = compute_config
+
+    @property
+    def desired_machine_id(self) -> 'str':
+        """Gets the desired_machine_id of this CloudSpaceServiceStartCloudSpaceInstanceBody.  # noqa: E501
+
+
+        :return: The desired_machine_id of this CloudSpaceServiceStartCloudSpaceInstanceBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._desired_machine_id
+
+    @desired_machine_id.setter
+    def desired_machine_id(self, desired_machine_id: 'str'):
+        """Sets the desired_machine_id of this CloudSpaceServiceStartCloudSpaceInstanceBody.
+
+
+        :param desired_machine_id: The desired_machine_id of this CloudSpaceServiceStartCloudSpaceInstanceBody.  # noqa: E501
+        :type: str
+        """
+
+        self._desired_machine_id = desired_machine_id
 
     @property
     def is_forked(self) -> 'bool':

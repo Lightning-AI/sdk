@@ -45,7 +45,6 @@ class LitLoggerServiceCreateMetricsStreamBody(object):
         'cloudspace_id': 'str',
         'dark_color': 'str',
         'experiment_project_name': 'str',
-        'guest': 'bool',
         'job_id': 'str',
         'light_color': 'str',
         'name': 'str',
@@ -61,7 +60,6 @@ class LitLoggerServiceCreateMetricsStreamBody(object):
         'cloudspace_id': 'cloudspaceId',
         'dark_color': 'darkColor',
         'experiment_project_name': 'experimentProjectName',
-        'guest': 'guest',
         'job_id': 'jobId',
         'light_color': 'lightColor',
         'name': 'name',
@@ -72,13 +70,12 @@ class LitLoggerServiceCreateMetricsStreamBody(object):
         'work_id': 'workId'
     }
 
-    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, guest: 'bool' =None, job_id: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, work_id: 'str' =None):  # noqa: E501
+    def __init__(self, app_id: 'str' =None, cloudspace_id: 'str' =None, dark_color: 'str' =None, experiment_project_name: 'str' =None, job_id: 'str' =None, light_color: 'str' =None, name: 'str' =None, store_created_at: 'bool' =None, store_step: 'bool' =None, system_info: 'V1SystemInfo' =None, tags: 'list[V1MetricsTags]' =None, work_id: 'str' =None):  # noqa: E501
         """LitLoggerServiceCreateMetricsStreamBody - a model defined in Swagger"""  # noqa: E501
         self._app_id = None
         self._cloudspace_id = None
         self._dark_color = None
         self._experiment_project_name = None
-        self._guest = None
         self._job_id = None
         self._light_color = None
         self._name = None
@@ -96,8 +93,6 @@ class LitLoggerServiceCreateMetricsStreamBody(object):
             self.dark_color = dark_color
         if experiment_project_name is not None:
             self.experiment_project_name = experiment_project_name
-        if guest is not None:
-            self.guest = guest
         if job_id is not None:
             self.job_id = job_id
         if light_color is not None:
@@ -198,27 +193,6 @@ class LitLoggerServiceCreateMetricsStreamBody(object):
         """
 
         self._experiment_project_name = experiment_project_name
-
-    @property
-    def guest(self) -> 'bool':
-        """Gets the guest of this LitLoggerServiceCreateMetricsStreamBody.  # noqa: E501
-
-
-        :return: The guest of this LitLoggerServiceCreateMetricsStreamBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._guest
-
-    @guest.setter
-    def guest(self, guest: 'bool'):
-        """Sets the guest of this LitLoggerServiceCreateMetricsStreamBody.
-
-
-        :param guest: The guest of this LitLoggerServiceCreateMetricsStreamBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._guest = guest
 
     @property
     def job_id(self) -> 'str':

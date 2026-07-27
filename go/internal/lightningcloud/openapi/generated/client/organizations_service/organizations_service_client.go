@@ -76,6 +76,8 @@ type ClientService interface {
 
 	OrganizationsServiceDeleteOrganization(params *OrganizationsServiceDeleteOrganizationParams, opts ...ClientOption) (*OrganizationsServiceDeleteOrganizationOK, error)
 
+	OrganizationsServiceGetOrgModelAPIDailyLimits(params *OrganizationsServiceGetOrgModelAPIDailyLimitsParams, opts ...ClientOption) (*OrganizationsServiceGetOrgModelAPIDailyLimitsOK, error)
+
 	OrganizationsServiceGetOrgRole(params *OrganizationsServiceGetOrgRoleParams, opts ...ClientOption) (*OrganizationsServiceGetOrgRoleOK, error)
 
 	OrganizationsServiceGetOrganization(params *OrganizationsServiceGetOrganizationParams, opts ...ClientOption) (*OrganizationsServiceGetOrganizationOK, error)
@@ -93,6 +95,10 @@ type ClientService interface {
 	OrganizationsServiceListOrganizations(params *OrganizationsServiceListOrganizationsParams, opts ...ClientOption) (*OrganizationsServiceListOrganizationsOK, error)
 
 	OrganizationsServiceSearchOrganizations(params *OrganizationsServiceSearchOrganizationsParams, opts ...ClientOption) (*OrganizationsServiceSearchOrganizationsOK, error)
+
+	OrganizationsServiceSetOrgMemberModelAPIDailyLimit(params *OrganizationsServiceSetOrgMemberModelAPIDailyLimitParams, opts ...ClientOption) (*OrganizationsServiceSetOrgMemberModelAPIDailyLimitOK, error)
+
+	OrganizationsServiceSetOrgModelAPIDailyLimitDefault(params *OrganizationsServiceSetOrgModelAPIDailyLimitDefaultParams, opts ...ClientOption) (*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultOK, error)
 
 	OrganizationsServiceUpdateOrgRole(params *OrganizationsServiceUpdateOrgRoleParams, opts ...ClientOption) (*OrganizationsServiceUpdateOrgRoleOK, error)
 
@@ -568,6 +574,48 @@ func (a *Client) OrganizationsServiceDeleteOrganization(params *OrganizationsSer
 }
 
 /*
+OrganizationsServiceGetOrgModelAPIDailyLimits models API per user daily spend limits read the org wide default plus all per user overrides for the org settings page
+*/
+func (a *Client) OrganizationsServiceGetOrgModelAPIDailyLimits(params *OrganizationsServiceGetOrgModelAPIDailyLimitsParams, opts ...ClientOption) (*OrganizationsServiceGetOrgModelAPIDailyLimitsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceGetOrgModelAPIDailyLimitsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_GetOrgModelAPIDailyLimits",
+		Method:             "GET",
+		PathPattern:        "/v1/orgs/{orgId}/model-api-daily-limits",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceGetOrgModelAPIDailyLimitsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceGetOrgModelAPIDailyLimitsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceGetOrgModelAPIDailyLimitsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 OrganizationsServiceGetOrgRole organizations service get org role API
 */
 func (a *Client) OrganizationsServiceGetOrgRole(params *OrganizationsServiceGetOrgRoleParams, opts ...ClientOption) (*OrganizationsServiceGetOrgRoleOK, error) {
@@ -941,6 +989,90 @@ func (a *Client) OrganizationsServiceSearchOrganizations(params *OrganizationsSe
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*OrganizationsServiceSearchOrganizationsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+OrganizationsServiceSetOrgMemberModelAPIDailyLimit sets clear fall back to org default or explicitly uncap a single member s model API daily spend limit
+*/
+func (a *Client) OrganizationsServiceSetOrgMemberModelAPIDailyLimit(params *OrganizationsServiceSetOrgMemberModelAPIDailyLimitParams, opts ...ClientOption) (*OrganizationsServiceSetOrgMemberModelAPIDailyLimitOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceSetOrgMemberModelAPIDailyLimitParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_SetOrgMemberModelAPIDailyLimit",
+		Method:             "PUT",
+		PathPattern:        "/v1/orgs/{orgId}/model-api-daily-limits/members/{userId}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceSetOrgMemberModelAPIDailyLimitReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceSetOrgMemberModelAPIDailyLimitOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceSetOrgMemberModelAPIDailyLimitDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+OrganizationsServiceSetOrgModelAPIDailyLimitDefault sets or clear the org wide default per user model API daily spend limit
+*/
+func (a *Client) OrganizationsServiceSetOrgModelAPIDailyLimitDefault(params *OrganizationsServiceSetOrgModelAPIDailyLimitDefaultParams, opts ...ClientOption) (*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceSetOrgModelAPIDailyLimitDefaultParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_SetOrgModelAPIDailyLimitDefault",
+		Method:             "PUT",
+		PathPattern:        "/v1/orgs/{orgId}/model-api-daily-limits/default",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceSetOrgModelAPIDailyLimitDefaultReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

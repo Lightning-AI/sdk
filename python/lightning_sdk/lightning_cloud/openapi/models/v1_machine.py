@@ -55,8 +55,10 @@ class V1Machine(object):
         'management_api_url': 'str',
         'mode': 'str',
         'name': 'str',
+        'only_spot': 'bool',
         'ordering_index': 'int',
         'org_id': 'str',
+        'owned_by_lightning': 'bool',
         'private_address': 'str',
         'project_id': 'str',
         'provider': 'str',
@@ -97,8 +99,10 @@ class V1Machine(object):
         'management_api_url': 'managementApiUrl',
         'mode': 'mode',
         'name': 'name',
+        'only_spot': 'onlySpot',
         'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
+        'owned_by_lightning': 'ownedByLightning',
         'private_address': 'privateAddress',
         'project_id': 'projectId',
         'provider': 'provider',
@@ -124,7 +128,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, only_spot: 'bool' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -140,8 +144,10 @@ class V1Machine(object):
         self._management_api_url = None
         self._mode = None
         self._name = None
+        self._only_spot = None
         self._ordering_index = None
         self._org_id = None
+        self._owned_by_lightning = None
         self._private_address = None
         self._project_id = None
         self._provider = None
@@ -194,10 +200,14 @@ class V1Machine(object):
             self.mode = mode
         if name is not None:
             self.name = name
+        if only_spot is not None:
+            self.only_spot = only_spot
         if ordering_index is not None:
             self.ordering_index = ordering_index
         if org_id is not None:
             self.org_id = org_id
+        if owned_by_lightning is not None:
+            self.owned_by_lightning = owned_by_lightning
         if private_address is not None:
             self.private_address = private_address
         if project_id is not None:
@@ -540,6 +550,27 @@ class V1Machine(object):
         self._name = name
 
     @property
+    def only_spot(self) -> 'bool':
+        """Gets the only_spot of this V1Machine.  # noqa: E501
+
+
+        :return: The only_spot of this V1Machine.  # noqa: E501
+        :rtype: bool
+        """
+        return self._only_spot
+
+    @only_spot.setter
+    def only_spot(self, only_spot: 'bool'):
+        """Sets the only_spot of this V1Machine.
+
+
+        :param only_spot: The only_spot of this V1Machine.  # noqa: E501
+        :type: bool
+        """
+
+        self._only_spot = only_spot
+
+    @property
     def ordering_index(self) -> 'int':
         """Gets the ordering_index of this V1Machine.  # noqa: E501
 
@@ -580,6 +611,27 @@ class V1Machine(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def owned_by_lightning(self) -> 'bool':
+        """Gets the owned_by_lightning of this V1Machine.  # noqa: E501
+
+
+        :return: The owned_by_lightning of this V1Machine.  # noqa: E501
+        :rtype: bool
+        """
+        return self._owned_by_lightning
+
+    @owned_by_lightning.setter
+    def owned_by_lightning(self, owned_by_lightning: 'bool'):
+        """Sets the owned_by_lightning of this V1Machine.
+
+
+        :param owned_by_lightning: The owned_by_lightning of this V1Machine.  # noqa: E501
+        :type: bool
+        """
+
+        self._owned_by_lightning = owned_by_lightning
 
     @property
     def private_address(self) -> 'str':

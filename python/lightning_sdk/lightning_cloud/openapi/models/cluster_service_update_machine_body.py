@@ -46,6 +46,7 @@ class ClusterServiceUpdateMachineBody(object):
         'name': 'str',
         'ordering_index': 'int',
         'org_id': 'str',
+        'owned_by_lightning': 'bool',
         'purpose': 'str',
         'reboot': 'bool',
         'requires_maintenance': 'bool',
@@ -61,6 +62,7 @@ class ClusterServiceUpdateMachineBody(object):
         'name': 'name',
         'ordering_index': 'orderingIndex',
         'org_id': 'orgId',
+        'owned_by_lightning': 'ownedByLightning',
         'purpose': 'purpose',
         'reboot': 'reboot',
         'requires_maintenance': 'requiresMaintenance',
@@ -70,13 +72,14 @@ class ClusterServiceUpdateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, desired_cluster_id: 'str' =None, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, desired_cluster_id: 'str' =None, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._desired_cluster_id = None
         self._machine_mode = None
         self._name = None
         self._ordering_index = None
         self._org_id = None
+        self._owned_by_lightning = None
         self._purpose = None
         self._reboot = None
         self._requires_maintenance = None
@@ -95,6 +98,8 @@ class ClusterServiceUpdateMachineBody(object):
             self.ordering_index = ordering_index
         if org_id is not None:
             self.org_id = org_id
+        if owned_by_lightning is not None:
+            self.owned_by_lightning = owned_by_lightning
         if purpose is not None:
             self.purpose = purpose
         if reboot is not None:
@@ -218,6 +223,27 @@ class ClusterServiceUpdateMachineBody(object):
         """
 
         self._org_id = org_id
+
+    @property
+    def owned_by_lightning(self) -> 'bool':
+        """Gets the owned_by_lightning of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+
+        :return: The owned_by_lightning of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._owned_by_lightning
+
+    @owned_by_lightning.setter
+    def owned_by_lightning(self, owned_by_lightning: 'bool'):
+        """Sets the owned_by_lightning of this ClusterServiceUpdateMachineBody.
+
+
+        :param owned_by_lightning: The owned_by_lightning of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._owned_by_lightning = owned_by_lightning
 
     @property
     def purpose(self) -> 'str':

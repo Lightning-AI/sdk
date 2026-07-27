@@ -41,6 +41,7 @@ class V1VMInstance(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'config': 'str',
         'cpus': 'int',
         'debug': 'bool',
         'disk_gb': 'int',
@@ -60,6 +61,7 @@ class V1VMInstance(object):
     }
 
     attribute_map = {
+        'config': 'config',
         'cpus': 'cpus',
         'debug': 'debug',
         'disk_gb': 'diskGb',
@@ -78,8 +80,9 @@ class V1VMInstance(object):
         'user_data': 'userData'
     }
 
-    def __init__(self, cpus: 'int' =None, debug: 'bool' =None, disk_gb: 'int' =None, enable_infiniband: 'bool' =None, extra_run_cmds: 'list[str]' =None, gpus: 'int' =None, id: 'str' =None, image: 'str' =None, memory_gb: 'int' =None, name: 'str' =None, ports: 'list[int]' =None, resource_type: 'str' =None, server_id: 'str' =None, ssh_authorized_keys: 'str' =None, user: 'str' =None, user_data: 'str' =None):  # noqa: E501
+    def __init__(self, config: 'str' =None, cpus: 'int' =None, debug: 'bool' =None, disk_gb: 'int' =None, enable_infiniband: 'bool' =None, extra_run_cmds: 'list[str]' =None, gpus: 'int' =None, id: 'str' =None, image: 'str' =None, memory_gb: 'int' =None, name: 'str' =None, ports: 'list[int]' =None, resource_type: 'str' =None, server_id: 'str' =None, ssh_authorized_keys: 'str' =None, user: 'str' =None, user_data: 'str' =None):  # noqa: E501
         """V1VMInstance - a model defined in Swagger"""  # noqa: E501
+        self._config = None
         self._cpus = None
         self._debug = None
         self._disk_gb = None
@@ -97,6 +100,8 @@ class V1VMInstance(object):
         self._user = None
         self._user_data = None
         self.discriminator = None
+        if config is not None:
+            self.config = config
         if cpus is not None:
             self.cpus = cpus
         if debug is not None:
@@ -129,6 +134,27 @@ class V1VMInstance(object):
             self.user = user
         if user_data is not None:
             self.user_data = user_data
+
+    @property
+    def config(self) -> 'str':
+        """Gets the config of this V1VMInstance.  # noqa: E501
+
+
+        :return: The config of this V1VMInstance.  # noqa: E501
+        :rtype: str
+        """
+        return self._config
+
+    @config.setter
+    def config(self, config: 'str'):
+        """Sets the config of this V1VMInstance.
+
+
+        :param config: The config of this V1VMInstance.  # noqa: E501
+        :type: str
+        """
+
+        self._config = config
 
     @property
     def cpus(self) -> 'int':

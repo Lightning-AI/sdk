@@ -15,7 +15,7 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
 )
 
 // NewProjectsServiceUpdateProjectTabOrderParams creates a new ProjectsServiceUpdateProjectTabOrderParams object,

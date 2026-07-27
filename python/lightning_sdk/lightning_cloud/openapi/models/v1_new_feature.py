@@ -41,7 +41,11 @@ class V1NewFeature(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'banner_end_time': 'datetime',
+        'banner_text': 'str',
+        'banner_url_copy': 'str',
         'created_at': 'datetime',
+        'cta_text': 'str',
         'description': 'str',
         'feature_name': 'str',
         'highlights': 'list[str]',
@@ -55,7 +59,11 @@ class V1NewFeature(object):
     }
 
     attribute_map = {
+        'banner_end_time': 'bannerEndTime',
+        'banner_text': 'bannerText',
+        'banner_url_copy': 'bannerUrlCopy',
         'created_at': 'createdAt',
+        'cta_text': 'ctaText',
         'description': 'description',
         'feature_name': 'featureName',
         'highlights': 'highlights',
@@ -68,9 +76,13 @@ class V1NewFeature(object):
         'viewed': 'viewed'
     }
 
-    def __init__(self, created_at: 'datetime' =None, description: 'str' =None, feature_name: 'str' =None, highlights: 'list[str]' =None, id: 'str' =None, image_url: 'str' =None, learn_more_url: 'str' =None, poster_url: 'str' =None, title: 'str' =None, video_url: 'str' =None, viewed: 'bool' =None):  # noqa: E501
+    def __init__(self, banner_end_time: 'datetime' =None, banner_text: 'str' =None, banner_url_copy: 'str' =None, created_at: 'datetime' =None, cta_text: 'str' =None, description: 'str' =None, feature_name: 'str' =None, highlights: 'list[str]' =None, id: 'str' =None, image_url: 'str' =None, learn_more_url: 'str' =None, poster_url: 'str' =None, title: 'str' =None, video_url: 'str' =None, viewed: 'bool' =None):  # noqa: E501
         """V1NewFeature - a model defined in Swagger"""  # noqa: E501
+        self._banner_end_time = None
+        self._banner_text = None
+        self._banner_url_copy = None
         self._created_at = None
+        self._cta_text = None
         self._description = None
         self._feature_name = None
         self._highlights = None
@@ -82,8 +94,16 @@ class V1NewFeature(object):
         self._video_url = None
         self._viewed = None
         self.discriminator = None
+        if banner_end_time is not None:
+            self.banner_end_time = banner_end_time
+        if banner_text is not None:
+            self.banner_text = banner_text
+        if banner_url_copy is not None:
+            self.banner_url_copy = banner_url_copy
         if created_at is not None:
             self.created_at = created_at
+        if cta_text is not None:
+            self.cta_text = cta_text
         if description is not None:
             self.description = description
         if feature_name is not None:
@@ -106,6 +126,69 @@ class V1NewFeature(object):
             self.viewed = viewed
 
     @property
+    def banner_end_time(self) -> 'datetime':
+        """Gets the banner_end_time of this V1NewFeature.  # noqa: E501
+
+
+        :return: The banner_end_time of this V1NewFeature.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._banner_end_time
+
+    @banner_end_time.setter
+    def banner_end_time(self, banner_end_time: 'datetime'):
+        """Sets the banner_end_time of this V1NewFeature.
+
+
+        :param banner_end_time: The banner_end_time of this V1NewFeature.  # noqa: E501
+        :type: datetime
+        """
+
+        self._banner_end_time = banner_end_time
+
+    @property
+    def banner_text(self) -> 'str':
+        """Gets the banner_text of this V1NewFeature.  # noqa: E501
+
+
+        :return: The banner_text of this V1NewFeature.  # noqa: E501
+        :rtype: str
+        """
+        return self._banner_text
+
+    @banner_text.setter
+    def banner_text(self, banner_text: 'str'):
+        """Sets the banner_text of this V1NewFeature.
+
+
+        :param banner_text: The banner_text of this V1NewFeature.  # noqa: E501
+        :type: str
+        """
+
+        self._banner_text = banner_text
+
+    @property
+    def banner_url_copy(self) -> 'str':
+        """Gets the banner_url_copy of this V1NewFeature.  # noqa: E501
+
+
+        :return: The banner_url_copy of this V1NewFeature.  # noqa: E501
+        :rtype: str
+        """
+        return self._banner_url_copy
+
+    @banner_url_copy.setter
+    def banner_url_copy(self, banner_url_copy: 'str'):
+        """Sets the banner_url_copy of this V1NewFeature.
+
+
+        :param banner_url_copy: The banner_url_copy of this V1NewFeature.  # noqa: E501
+        :type: str
+        """
+
+        self._banner_url_copy = banner_url_copy
+
+    @property
     def created_at(self) -> 'datetime':
         """Gets the created_at of this V1NewFeature.  # noqa: E501
 
@@ -125,6 +208,27 @@ class V1NewFeature(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def cta_text(self) -> 'str':
+        """Gets the cta_text of this V1NewFeature.  # noqa: E501
+
+
+        :return: The cta_text of this V1NewFeature.  # noqa: E501
+        :rtype: str
+        """
+        return self._cta_text
+
+    @cta_text.setter
+    def cta_text(self, cta_text: 'str'):
+        """Sets the cta_text of this V1NewFeature.
+
+
+        :param cta_text: The cta_text of this V1NewFeature.  # noqa: E501
+        :type: str
+        """
+
+        self._cta_text = cta_text
 
     @property
     def description(self) -> 'str':

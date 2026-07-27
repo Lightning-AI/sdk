@@ -54,6 +54,8 @@ type ClientOption func(*runtime.ClientOperation)
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	ClusterServiceBatchServerCheckIn(params *ClusterServiceBatchServerCheckInParams, opts ...ClientOption) (*ClusterServiceBatchServerCheckInOK, error)
+
 	ClusterServiceCheckClusterNameAvailability(params *ClusterServiceCheckClusterNameAvailabilityParams, opts ...ClientOption) (*ClusterServiceCheckClusterNameAvailabilityOK, error)
 
 	ClusterServiceCreateCluster(params *ClusterServiceCreateClusterParams, opts ...ClientOption) (*ClusterServiceCreateClusterOK, error)
@@ -160,6 +162,8 @@ type ClientService interface {
 
 	ClusterServicePurchaseOrgCapacityBlock(params *ClusterServicePurchaseOrgCapacityBlockParams, opts ...ClientOption) (*ClusterServicePurchaseOrgCapacityBlockOK, error)
 
+	ClusterServiceRenewSandboxSnapshotCredentials(params *ClusterServiceRenewSandboxSnapshotCredentialsParams, opts ...ClientOption) (*ClusterServiceRenewSandboxSnapshotCredentialsOK, error)
+
 	ClusterServiceReportMachineSystemMetrics(params *ClusterServiceReportMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceReportMachineSystemMetricsOK, error)
 
 	ClusterServiceReportSandboxResourceMetrics(params *ClusterServiceReportSandboxResourceMetricsParams, opts ...ClientOption) (*ClusterServiceReportSandboxResourceMetricsOK, error)
@@ -182,13 +186,59 @@ type ClientService interface {
 
 	ClusterServiceUpdateMachine(params *ClusterServiceUpdateMachineParams, opts ...ClientOption) (*ClusterServiceUpdateMachineOK, error)
 
+	ClusterServiceUpdateMachineAgent(params *ClusterServiceUpdateMachineAgentParams, opts ...ClientOption) (*ClusterServiceUpdateMachineAgentOK, error)
+
 	ClusterServiceUpdateProjectCluster(params *ClusterServiceUpdateProjectClusterParams, opts ...ClientOption) (*ClusterServiceUpdateProjectClusterOK, error)
 
 	ClusterServiceUpdateProjectClusterAccelerators(params *ClusterServiceUpdateProjectClusterAcceleratorsParams, opts ...ClientOption) (*ClusterServiceUpdateProjectClusterAcceleratorsOK, error)
 
+	ClusterServiceUpdateSandboxCommandExitCode(params *ClusterServiceUpdateSandboxCommandExitCodeParams, opts ...ClientOption) (*ClusterServiceUpdateSandboxCommandExitCodeOK, error)
+
 	ClusterServiceUpdateServer(params *ClusterServiceUpdateServerParams, opts ...ClientOption) (*ClusterServiceUpdateServerOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+ClusterServiceBatchServerCheckIn cluster service batch server check in API
+*/
+func (a *Client) ClusterServiceBatchServerCheckIn(params *ClusterServiceBatchServerCheckInParams, opts ...ClientOption) (*ClusterServiceBatchServerCheckInOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceBatchServerCheckInParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_BatchServerCheckIn",
+		Method:             "POST",
+		PathPattern:        "/v1/core/servers/check-ins",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceBatchServerCheckInReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceBatchServerCheckInOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceBatchServerCheckInDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
@@ -2418,6 +2468,48 @@ func (a *Client) ClusterServicePurchaseOrgCapacityBlock(params *ClusterServicePu
 }
 
 /*
+ClusterServiceRenewSandboxSnapshotCredentials res mints scoped short lived object store read credentials for a snapshot so a baremetal agent doing a lazy f u s e lower restore can keep fetching cold blobs after the credentials issued at restore time expire the agent re calls this before expiry auth mirrors mint sandbox logs token a valid machine bearer token and the machine must belong to the named cluster
+*/
+func (a *Client) ClusterServiceRenewSandboxSnapshotCredentials(params *ClusterServiceRenewSandboxSnapshotCredentialsParams, opts ...ClientOption) (*ClusterServiceRenewSandboxSnapshotCredentialsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceRenewSandboxSnapshotCredentialsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_RenewSandboxSnapshotCredentials",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/{machineId}/sandbox-snapshot-credentials",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceRenewSandboxSnapshotCredentialsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceRenewSandboxSnapshotCredentialsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceRenewSandboxSnapshotCredentialsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceReportMachineSystemMetrics cluster service report machine system metrics API
 */
 func (a *Client) ClusterServiceReportMachineSystemMetrics(params *ClusterServiceReportMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceReportMachineSystemMetricsOK, error) {
@@ -2880,6 +2972,48 @@ func (a *Client) ClusterServiceUpdateMachine(params *ClusterServiceUpdateMachine
 }
 
 /*
+ClusterServiceUpdateMachineAgent updates machine agent updates the baremetal agent on specific machines in the cluster over SSH out of band from the update agent reconcile loop
+*/
+func (a *Client) ClusterServiceUpdateMachineAgent(params *ClusterServiceUpdateMachineAgentParams, opts ...ClientOption) (*ClusterServiceUpdateMachineAgentOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceUpdateMachineAgentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_UpdateMachineAgent",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/update-agent",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceUpdateMachineAgentReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceUpdateMachineAgentOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceUpdateMachineAgentDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceUpdateProjectCluster cluster service update project cluster API
 */
 func (a *Client) ClusterServiceUpdateProjectCluster(params *ClusterServiceUpdateProjectClusterParams, opts ...ClientOption) (*ClusterServiceUpdateProjectClusterOK, error) {
@@ -2959,6 +3093,48 @@ func (a *Client) ClusterServiceUpdateProjectClusterAccelerators(params *ClusterS
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceUpdateProjectClusterAcceleratorsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceUpdateSandboxCommandExitCode records the exit code of a detached sandbox command once it finishes detached commands return to the caller immediately so the sandbox agent reports the final exit code out of band when the process exits auth is by the sandbox server token like get cluster credentials the caller may only update commands belonging to its own sandbox
+*/
+func (a *Client) ClusterServiceUpdateSandboxCommandExitCode(params *ClusterServiceUpdateSandboxCommandExitCodeParams, opts ...ClientOption) (*ClusterServiceUpdateSandboxCommandExitCodeOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceUpdateSandboxCommandExitCodeParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_UpdateSandboxCommandExitCode",
+		Method:             "POST",
+		PathPattern:        "/v1/core/sandbox-command-exit-code",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceUpdateSandboxCommandExitCodeReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceUpdateSandboxCommandExitCodeOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceUpdateSandboxCommandExitCodeDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -63,6 +63,7 @@ class V1Organization(object):
         'default_machine_type': 'str',
         'default_project_id': 'str',
         'description': 'str',
+        'disable_coding_agents': 'bool',
         'disable_public_templates': 'bool',
         'disallow_aws_saas': 'bool',
         'disallow_dgx_saas': 'bool',
@@ -123,6 +124,7 @@ class V1Organization(object):
         'default_machine_type': 'defaultMachineType',
         'default_project_id': 'defaultProjectId',
         'description': 'description',
+        'disable_coding_agents': 'disableCodingAgents',
         'disable_public_templates': 'disablePublicTemplates',
         'disallow_aws_saas': 'disallowAwsSaas',
         'disallow_dgx_saas': 'disallowDgxSaas',
@@ -160,7 +162,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -184,6 +186,7 @@ class V1Organization(object):
         self._default_machine_type = None
         self._default_project_id = None
         self._description = None
+        self._disable_coding_agents = None
         self._disable_public_templates = None
         self._disallow_aws_saas = None
         self._disallow_dgx_saas = None
@@ -264,6 +267,8 @@ class V1Organization(object):
             self.default_project_id = default_project_id
         if description is not None:
             self.description = description
+        if disable_coding_agents is not None:
+            self.disable_coding_agents = disable_coding_agents
         if disable_public_templates is not None:
             self.disable_public_templates = disable_public_templates
         if disallow_aws_saas is not None:
@@ -798,6 +803,27 @@ class V1Organization(object):
         """
 
         self._description = description
+
+    @property
+    def disable_coding_agents(self) -> 'bool':
+        """Gets the disable_coding_agents of this V1Organization.  # noqa: E501
+
+
+        :return: The disable_coding_agents of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_coding_agents
+
+    @disable_coding_agents.setter
+    def disable_coding_agents(self, disable_coding_agents: 'bool'):
+        """Sets the disable_coding_agents of this V1Organization.
+
+
+        :param disable_coding_agents: The disable_coding_agents of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_coding_agents = disable_coding_agents
 
     @property
     def disable_public_templates(self) -> 'bool':

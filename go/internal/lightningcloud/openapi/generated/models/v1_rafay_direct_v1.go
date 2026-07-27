@@ -34,6 +34,9 @@ type V1RafayDirectV1 struct {
 
 	// We deploy the bare bones infrastructure into every region
 	Regions []string `json:"regions"`
+
+	// Rafay workspace
+	Workspace string `json:"workspace,omitempty"`
 }
 
 // Validate validates this v1 rafay direct v1

@@ -73,6 +73,9 @@ type OrganizationsServiceUpdateOrganizationBody struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// This will disable the coding agents for all users in the org
+	DisableCodingAgents bool `json:"disableCodingAgents,omitempty"`
+
 	// This will disable the public templates in the template gallery for all users in the org
 	DisablePublicTemplates bool `json:"disablePublicTemplates,omitempty"`
 

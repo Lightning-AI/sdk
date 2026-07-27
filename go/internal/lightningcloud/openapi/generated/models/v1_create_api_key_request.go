@@ -7,7 +7,9 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -16,6 +18,9 @@ import (
 //
 // swagger:model v1CreateAPIKeyRequest
 type V1CreateAPIKeyRequest struct {
+
+	// Optional budget
+	BudgetConfig *V1APIKeyBudget `json:"budgetConfig,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -41,11 +46,77 @@ type V1CreateAPIKeyRequest struct {
 
 // Validate validates this v1 create API key request
 func (m *V1CreateAPIKeyRequest) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateBudgetConfig(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this v1 create API key request based on context it is used
+func (m *V1CreateAPIKeyRequest) validateBudgetConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.BudgetConfig) { // not required
+		return nil
+	}
+
+	if m.BudgetConfig != nil {
+		if err := m.BudgetConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("budgetConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("budgetConfig")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this v1 create API key request based on the context it is used
 func (m *V1CreateAPIKeyRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBudgetConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1CreateAPIKeyRequest) contextValidateBudgetConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.BudgetConfig != nil {
+
+		if swag.IsZero(m.BudgetConfig) { // not required
+			return nil
+		}
+
+		if err := m.BudgetConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("budgetConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("budgetConfig")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

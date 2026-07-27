@@ -20,6 +20,12 @@ type V1GCPDirectVPC struct {
 	// Name of the VPC network
 	NetworkName string `json:"networkName,omitempty"`
 
+	// Region this subnet belongs to. When set, this entry is only used for
+	// instances created in this region. When empty, the entry applies to any
+	// region (backwards-compatible behaviour). This lets a cluster map a
+	// differently-named subnet per region.
+	Region string `json:"region,omitempty"`
+
 	// Name of the subnet
 	SubnetName string `json:"subnetName,omitempty"`
 }

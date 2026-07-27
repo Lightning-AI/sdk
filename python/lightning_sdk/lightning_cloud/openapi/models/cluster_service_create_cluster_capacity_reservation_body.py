@@ -45,11 +45,14 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         'cloud_provider_capacity_reservation_id': 'str',
         'end_time': 'datetime',
         'full_cloud_provider_reservation_string': 'str',
+        'infiniband_tier': 'V1InfinibandTier',
         'instance_type': 'str',
         'match_pattern': 'str',
         'num_instances': 'int',
+        'org_id': 'str',
         'populate_from_cloud_provider': 'bool',
         'region': 'str',
+        'shadow': 'bool',
         'start_time': 'datetime',
         'zone': 'str'
     }
@@ -59,26 +62,32 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'end_time': 'endTime',
         'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
+        'infiniband_tier': 'infinibandTier',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'num_instances': 'numInstances',
+        'org_id': 'orgId',
         'populate_from_cloud_provider': 'populateFromCloudProvider',
         'region': 'region',
+        'shadow': 'shadow',
         'start_time': 'startTime',
         'zone': 'zone'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'int' =None, populate_from_cloud_provider: 'bool' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, infiniband_tier: 'V1InfinibandTier' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'int' =None, org_id: 'str' =None, populate_from_cloud_provider: 'bool' =None, region: 'str' =None, shadow: 'bool' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """ClusterServiceCreateClusterCapacityReservationBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._end_time = None
         self._full_cloud_provider_reservation_string = None
+        self._infiniband_tier = None
         self._instance_type = None
         self._match_pattern = None
         self._num_instances = None
+        self._org_id = None
         self._populate_from_cloud_provider = None
         self._region = None
+        self._shadow = None
         self._start_time = None
         self._zone = None
         self.discriminator = None
@@ -90,16 +99,22 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
             self.end_time = end_time
         if full_cloud_provider_reservation_string is not None:
             self.full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
+        if infiniband_tier is not None:
+            self.infiniband_tier = infiniband_tier
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
             self.match_pattern = match_pattern
         if num_instances is not None:
             self.num_instances = num_instances
+        if org_id is not None:
+            self.org_id = org_id
         if populate_from_cloud_provider is not None:
             self.populate_from_cloud_provider = populate_from_cloud_provider
         if region is not None:
             self.region = region
+        if shadow is not None:
+            self.shadow = shadow
         if start_time is not None:
             self.start_time = start_time
         if zone is not None:
@@ -190,6 +205,27 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         self._full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
 
     @property
+    def infiniband_tier(self) -> 'V1InfinibandTier':
+        """Gets the infiniband_tier of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The infiniband_tier of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :rtype: V1InfinibandTier
+        """
+        return self._infiniband_tier
+
+    @infiniband_tier.setter
+    def infiniband_tier(self, infiniband_tier: 'V1InfinibandTier'):
+        """Sets the infiniband_tier of this ClusterServiceCreateClusterCapacityReservationBody.
+
+
+        :param infiniband_tier: The infiniband_tier of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :type: V1InfinibandTier
+        """
+
+        self._infiniband_tier = infiniband_tier
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
 
@@ -253,6 +289,27 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         self._num_instances = num_instances
 
     @property
+    def org_id(self) -> 'str':
+        """Gets the org_id of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The org_id of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._org_id
+
+    @org_id.setter
+    def org_id(self, org_id: 'str'):
+        """Sets the org_id of this ClusterServiceCreateClusterCapacityReservationBody.
+
+
+        :param org_id: The org_id of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :type: str
+        """
+
+        self._org_id = org_id
+
+    @property
     def populate_from_cloud_provider(self) -> 'bool':
         """Gets the populate_from_cloud_provider of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
 
@@ -293,6 +350,27 @@ class ClusterServiceCreateClusterCapacityReservationBody(object):
         """
 
         self._region = region
+
+    @property
+    def shadow(self) -> 'bool':
+        """Gets the shadow of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The shadow of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._shadow
+
+    @shadow.setter
+    def shadow(self, shadow: 'bool'):
+        """Sets the shadow of this ClusterServiceCreateClusterCapacityReservationBody.
+
+
+        :param shadow: The shadow of this ClusterServiceCreateClusterCapacityReservationBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._shadow = shadow
 
     @property
     def start_time(self) -> 'datetime':

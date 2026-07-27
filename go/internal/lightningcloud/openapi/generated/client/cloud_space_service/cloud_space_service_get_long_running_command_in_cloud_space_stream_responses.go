@@ -17,7 +17,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/gridai/lightning-sdk/go/internal/lightningcloud/openapi/generated/models"
 )
 
 // CloudSpaceServiceGetLongRunningCommandInCloudSpaceStreamReader is a Reader for the CloudSpaceServiceGetLongRunningCommandInCloudSpaceStream structure.

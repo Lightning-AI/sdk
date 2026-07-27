@@ -64,6 +64,9 @@ type V1ClusterSpec struct {
 	// (used by the DGX/Lightning clusters since otherwise they're GCP)
 	Driver *V1CloudProvider `json:"driver,omitempty"`
 
+	// Enforces the compute_on_demand_access billing entitlement for on-demand workloads.
+	EnforceLightningComputeOnDemandAccess bool `json:"enforceLightningComputeOnDemandAccess,omitempty"`
+
 	// Never update the accelerator list
 	FreezeAccelerators bool `json:"freezeAccelerators,omitempty"`
 

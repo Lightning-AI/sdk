@@ -55,6 +55,7 @@ class V1ClusterSpec(object):
         'desired_state': 'V1ClusterState',
         'domain': 'str',
         'driver': 'V1CloudProvider',
+        'enforce_lightning_compute_on_demand_access': 'bool',
         'freeze_accelerators': 'bool',
         'google_cloud_v1': 'V1GoogleCloudDirectV1',
         'host_dns_enabled': 'bool',
@@ -104,6 +105,7 @@ class V1ClusterSpec(object):
         'desired_state': 'desiredState',
         'domain': 'domain',
         'driver': 'driver',
+        'enforce_lightning_compute_on_demand_access': 'enforceLightningComputeOnDemandAccess',
         'freeze_accelerators': 'freezeAccelerators',
         'google_cloud_v1': 'googleCloudV1',
         'host_dns_enabled': 'hostDnsEnabled',
@@ -138,7 +140,7 @@ class V1ClusterSpec(object):
         'vultr_v1': 'vultrV1'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, rafay_v1: 'V1RafayDirectV1' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, storage_retention_period_days: 'int' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, enforce_lightning_compute_on_demand_access: 'bool' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, rafay_v1: 'V1RafayDirectV1' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, storage_retention_period_days: 'int' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
@@ -154,6 +156,7 @@ class V1ClusterSpec(object):
         self._desired_state = None
         self._domain = None
         self._driver = None
+        self._enforce_lightning_compute_on_demand_access = None
         self._freeze_accelerators = None
         self._google_cloud_v1 = None
         self._host_dns_enabled = None
@@ -215,6 +218,8 @@ class V1ClusterSpec(object):
             self.domain = domain
         if driver is not None:
             self.driver = driver
+        if enforce_lightning_compute_on_demand_access is not None:
+            self.enforce_lightning_compute_on_demand_access = enforce_lightning_compute_on_demand_access
         if freeze_accelerators is not None:
             self.freeze_accelerators = freeze_accelerators
         if google_cloud_v1 is not None:
@@ -575,6 +580,29 @@ class V1ClusterSpec(object):
         """
 
         self._driver = driver
+
+    @property
+    def enforce_lightning_compute_on_demand_access(self) -> 'bool':
+        """Gets the enforce_lightning_compute_on_demand_access of this V1ClusterSpec.  # noqa: E501
+
+        Enforces the compute_on_demand_access billing entitlement for on-demand workloads.  # noqa: E501
+
+        :return: The enforce_lightning_compute_on_demand_access of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._enforce_lightning_compute_on_demand_access
+
+    @enforce_lightning_compute_on_demand_access.setter
+    def enforce_lightning_compute_on_demand_access(self, enforce_lightning_compute_on_demand_access: 'bool'):
+        """Sets the enforce_lightning_compute_on_demand_access of this V1ClusterSpec.
+
+        Enforces the compute_on_demand_access billing entitlement for on-demand workloads.  # noqa: E501
+
+        :param enforce_lightning_compute_on_demand_access: The enforce_lightning_compute_on_demand_access of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._enforce_lightning_compute_on_demand_access = enforce_lightning_compute_on_demand_access
 
     @property
     def freeze_accelerators(self) -> 'bool':

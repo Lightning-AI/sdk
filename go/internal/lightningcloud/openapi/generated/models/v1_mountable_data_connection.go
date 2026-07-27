@@ -51,6 +51,9 @@ type V1MountableDataConnection struct {
 	// Source instance of the data connection
 	Source string `json:"source,omitempty"`
 
+	// Provider storage volume id, for teardown of Lightning-managed volumes
+	StorageID string `json:"storageId,omitempty"`
+
 	// Type of the storage backend
 	Type *V1StorageType `json:"type,omitempty"`
 

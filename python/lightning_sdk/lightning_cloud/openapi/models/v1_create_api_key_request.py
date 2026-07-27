@@ -41,6 +41,7 @@ class V1CreateAPIKeyRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'budget_config': 'V1APIKeyBudget',
         'description': 'str',
         'name': 'str',
         'org_id': 'str',
@@ -51,6 +52,7 @@ class V1CreateAPIKeyRequest(object):
     }
 
     attribute_map = {
+        'budget_config': 'budgetConfig',
         'description': 'description',
         'name': 'name',
         'org_id': 'orgId',
@@ -60,8 +62,9 @@ class V1CreateAPIKeyRequest(object):
         'role': 'role'
     }
 
-    def __init__(self, description: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, budget_config: 'V1APIKeyBudget' =None, description: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, role: 'str' =None):  # noqa: E501
         """V1CreateAPIKeyRequest - a model defined in Swagger"""  # noqa: E501
+        self._budget_config = None
         self._description = None
         self._name = None
         self._org_id = None
@@ -70,6 +73,8 @@ class V1CreateAPIKeyRequest(object):
         self._resource_type = None
         self._role = None
         self.discriminator = None
+        if budget_config is not None:
+            self.budget_config = budget_config
         if description is not None:
             self.description = description
         if name is not None:
@@ -84,6 +89,27 @@ class V1CreateAPIKeyRequest(object):
             self.resource_type = resource_type
         if role is not None:
             self.role = role
+
+    @property
+    def budget_config(self) -> 'V1APIKeyBudget':
+        """Gets the budget_config of this V1CreateAPIKeyRequest.  # noqa: E501
+
+
+        :return: The budget_config of this V1CreateAPIKeyRequest.  # noqa: E501
+        :rtype: V1APIKeyBudget
+        """
+        return self._budget_config
+
+    @budget_config.setter
+    def budget_config(self, budget_config: 'V1APIKeyBudget'):
+        """Sets the budget_config of this V1CreateAPIKeyRequest.
+
+
+        :param budget_config: The budget_config of this V1CreateAPIKeyRequest.  # noqa: E501
+        :type: V1APIKeyBudget
+        """
+
+        self._budget_config = budget_config
 
     @property
     def description(self) -> 'str':
