@@ -29,9 +29,11 @@ class _Sandbox:
         cloud: Cloud provider or cloud account to use for the sandbox.
         machine: The machine to use for the sandbox.
         interruptible: Whether the sandbox is interruptible.
-        teamspace: The teamspace to use for the sandbox.
-        org: The organization to use for the sandbox.
-        user: The user to use for the sandbox.
+        teamspace: The teamspace to use for the sandbox. Accepts a bare name or an ``owner/teamspace`` slug.
+        org: The organization to use for the sandbox. Deprecated — pass the owner as part of ``teamspace`` instead,
+            e.g. ``teamspace="owner/teamspace"``.
+        user: The user to use for the sandbox. Deprecated — pass the owner as part of ``teamspace`` instead,
+            e.g. ``teamspace="owner/teamspace"``.
         disable_secrets: If true, user secrets such as LIGHTNING_API_KEY are not stored in the sandbox.
 
     Example:

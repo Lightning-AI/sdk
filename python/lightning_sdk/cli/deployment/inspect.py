@@ -5,8 +5,9 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
-from lightning_sdk.cli.deployment.common import deployment_to_dict, resolve_deployment, resolve_teamspace, to_json
+from lightning_sdk.cli.deployment.common import deployment_to_dict, resolve_deployment, to_json
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 
 
 @click.command("inspect", cls=LightningCommand)

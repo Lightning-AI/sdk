@@ -34,9 +34,12 @@ class Pipeline:
         Arguments:
             name: The desired name of the pipeline.
             cloud: Cloud provider or cloud account to use for the entire pipeline.
-            teamspace: The teamspace where the pipeline will be created.
-            org: The organization where the pipeline will be created.
-            user: The creator of the pipeline.
+            teamspace: The teamspace where the pipeline will be created. Accepts a bare name or an
+                ``owner/teamspace`` slug.
+            org: The organization where the pipeline will be created. Deprecated — pass the owner as part of
+                ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+            user: The creator of the pipeline. Deprecated — pass the owner as part of ``teamspace`` instead,
+                e.g. ``teamspace="owner/teamspace"``.
             shared_filesystem: Whether the pipeline should use a shared filesystem across all nodes.
                 Note: This forces the pipeline steps to be in the cloud_account and same region
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.

@@ -1,4 +1,5 @@
 import os
+import warnings
 from contextlib import nullcontext
 from pathlib import Path
 from unittest import mock
@@ -202,6 +203,89 @@ def test_teamspace_error_user_and_org():
         ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
     ):
         Teamspace(name="ts-abc", user="foo", org="bar")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_resolves_as_org(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_org = mock_resolve_org.return_value
+    mock_org.id = "org-1"
+    mock_resolve_user.return_value = None
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    ts = Teamspace("my-org/my-ts")
+
+    mock_resolve_org.assert_any_call("my-org")
+    assert mock.call("my-org") not in mock_resolve_user.call_args_list
+    assert ts.owner is mock_org
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_falls_back_to_user_when_owner_is_not_an_org(
+    mock_resolve_org, mock_resolve_user, mock_teamspace_api
+):
+    mock_resolve_org.side_effect = ValueError("Organization 'someone' does not exist or you are not a member of it.")
+    mock_user = mock_resolve_user.return_value
+    mock_user.id = "user-1"
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    ts = Teamspace("someone/my-ts")
+
+    mock_resolve_user.assert_any_call("someone")
+    assert ts.owner is mock_user
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_conflicts_with_explicit_org_raises():
+    with pytest.raises(ValueError, match="specified both as part of 'name'"):
+        Teamspace(name="my-org/my-ts", org="another-org")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_conflicts_with_explicit_user_raises():
+    with pytest.raises(ValueError, match="specified both as part of 'name'"):
+        Teamspace(name="my-org/my-ts", user="another-user")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_org_kwarg_emits_deprecation_warning(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_resolve_user.return_value = None
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
+        Teamspace(name="my-ts", org="my-org")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_user_kwarg_emits_deprecation_warning(mock_resolve_user, mock_teamspace_api):
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
+        Teamspace(name="my-ts", user="my-user")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_without_org_or_user_does_not_warn(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_org = mock_resolve_org.return_value
+    mock_org.id = "org-1"
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        Teamspace("my-org/my-ts")
 
 
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")

@@ -5,8 +5,9 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
-from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
+from lightning_sdk.cli.deployment.common import resolve_deployment
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 
 
 @click.command("delete", cls=LightningCommand)
