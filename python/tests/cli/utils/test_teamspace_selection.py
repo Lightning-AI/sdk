@@ -10,7 +10,7 @@ from lightning_sdk.organization import Organization
 def test_explicit_owner_teamspace_is_used_directly(monkeypatch):
     """When 'owner/teamspace' resolves, it is returned without touching interactive menus."""
     resolved = MagicMock()
-    monkeypatch.setattr(teamspace_selection, "resolve_teamspace_owner_name_format", MagicMock(return_value=resolved))
+    monkeypatch.setattr(teamspace_selection, "_resolve_teamspace", MagicMock(return_value=resolved))
     # If any of these are reached we are no longer non-interactive.
     owner_menu = MagicMock(side_effect=AssertionError("OwnerMenu should not be used"))
     monkeypatch.setattr("lightning_sdk.cli.utils.owner_selection.OwnerMenu", owner_menu)
@@ -24,7 +24,7 @@ def test_explicit_owner_teamspace_raises_instead_of_prompting(monkeypatch):
     The interactive fallback resolves the authenticated user, which is unavailable for
     org/teamspace-scoped API keys - so falling through would break those keys entirely.
     """
-    monkeypatch.setattr(teamspace_selection, "resolve_teamspace_owner_name_format", MagicMock(return_value=None))
+    monkeypatch.setattr(teamspace_selection, "_resolve_teamspace", MagicMock(return_value=None))
     owner_menu = MagicMock(side_effect=AssertionError("OwnerMenu should not be used"))
     monkeypatch.setattr("lightning_sdk.cli.utils.owner_selection.OwnerMenu", owner_menu)
     monkeypatch.setattr(
@@ -39,13 +39,14 @@ def test_explicit_owner_teamspace_raises_instead_of_prompting(monkeypatch):
 
 def test_bare_teamspace_name_still_falls_back(monkeypatch):
     """A teamspace without an explicit owner keeps the existing (possibly interactive) flow."""
-    monkeypatch.setattr(teamspace_selection, "resolve_teamspace_owner_name_format", MagicMock(return_value=None))
+    # First call: the direct-slug resolution attempt (no owner supplied) fails.
+    # Second call: resolution proceeds once an owner has been picked via the menu.
+    monkeypatch.setattr(teamspace_selection, "_resolve_teamspace", MagicMock(side_effect=[None, "resolved-teamspace"]))
     # The owner gets resolved (here via the menu) and resolution proceeds with org scope.
     owner = MagicMock(spec=Organization)
     monkeypatch.setattr(
         "lightning_sdk.cli.utils.owner_selection.OwnerMenu", MagicMock(return_value=MagicMock(return_value=owner))
     )
-    monkeypatch.setattr(teamspace_selection, "_resolve_teamspace", MagicMock(return_value="resolved-teamspace"))
 
     # No '/' in the name -> must not hit the explicit-owner guard, so resolution proceeds.
     assert TeamspacesMenu()(teamspace="just-a-name") == "resolved-teamspace"

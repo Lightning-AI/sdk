@@ -44,9 +44,12 @@ class Studio(metaclass=TrackCallsMeta):
 
     Args:
         name: the name of the studio
-        teamspace: the name of the teamspace the studio is contained by
-        org: the name of the organization owning the the teamspace in case it is owned by an org
-        user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an org
+        teamspace: the name of the teamspace the studio is contained by. Accepts a bare name or an
+            ``owner/teamspace`` slug.
+        org: the name of the organization owning the the teamspace in case it is owned by an org. Deprecated —
+            pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+        user: the name of the user owning the the teamspace in case it is owned directly by a user instead of an
+            org. Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
         cloud: Cloud provider or cloud account to create the studio on.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
         studio_type: Type of studio to create. Only effective during initial creation;

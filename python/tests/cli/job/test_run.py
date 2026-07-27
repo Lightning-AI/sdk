@@ -58,7 +58,7 @@ def test_run_job_with_cloud(monkeypatch):
 
     mock_job = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.job.run.Job", mock_job)
-    monkeypatch.setattr("lightning_sdk.cli.job.run.Teamspace", MagicMock(return_value="teamspace"))
+    monkeypatch.setattr("lightning_sdk.cli.job.run.resolve_teamspace", MagicMock(return_value="teamspace"))
 
     result = CliRunner().invoke(
         run_job,
@@ -123,7 +123,7 @@ def test_job_run_entrypoint_default(extra_args: list[str], expected_entrypoint: 
     runner = CliRunner()
     args = ["--name", "test-job", "--teamspace", "my-ts", *extra_args]
 
-    with patch("lightning_sdk.cli.job.run.Teamspace", return_value=MagicMock()), patch(
+    with patch("lightning_sdk.cli.job.run.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.job.run.Job.run", return_value=MagicMock()
     ) as mock_run:
         result = runner.invoke(run_job, args)

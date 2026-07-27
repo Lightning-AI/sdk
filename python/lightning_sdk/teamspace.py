@@ -75,9 +75,11 @@ class Teamspace(metaclass=TrackCallsMeta):
     """A teamspace is a collection of Studios, Clusters, Members and an associated Budget.
 
     Args:
-        name: the name of the teamspace
-        org: the owning organization
-        user: the owning user
+        name: the name of the teamspace, either a bare name or an ``owner/teamspace`` slug
+        org: the owning organization. Deprecated — pass the owner as part of ``name`` instead,
+            e.g. ``name="owner/teamspace"``.
+        user: the owning user. Deprecated — pass the owner as part of ``name`` instead,
+            e.g. ``name="owner/teamspace"``.
 
     Note:
         Either user or organization should be specified.
@@ -101,6 +103,28 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         if name is None:
             raise ValueError("Teamspace name wasn't provided and could not be inferred from environment")
+
+        if org is not None or user is not None:
+            warnings.warn(
+                "Passing 'org'/'user' is deprecated. Provide the owner as part of 'name' instead, "
+                "e.g. name='owner/teamspace'.",
+                DeprecationWarning,
+            )
+
+        if "/" in name:
+            if org is not None or user is not None:
+                raise ValueError(
+                    "The owner was specified both as part of 'name' (e.g. 'owner/teamspace') and via "
+                    "'org'/'user'. Please only specify the owner once."
+                )
+
+            slug_owner, name = name.split("/", 1)
+            try:
+                org = _resolve_org(slug_owner)
+                self._teamspace_api.get_teamspace(name=name, owner_id=org.id)
+            except Exception:
+                org = None
+                user = _resolve_user(slug_owner)
 
         if user is not None and org is not None:
             raise ValueError("User and org are mutually exclusive. Please only specify the one who owns the teamspace.")

@@ -258,40 +258,7 @@ def _resolve_teamspace(
     if teamspace is None:
         return None
 
-    # if user was specified explicitly, use that, else resolve
-    if user is not None:
-        user = _resolve_user(user=user)
-        return Teamspace(name=teamspace, user=user)
-
-    org = _resolve_org(org)
-
-    if org is not None:
-        return Teamspace(name=teamspace, org=org)
-
-    user = _resolve_user(user)
-
-    # If still no user or org resolved, try config defaults
-    if user is None and org is None:
-        from lightning_sdk.utils.config import Config, DefaultConfigKeys
-
-        config = Config()
-        owner_type = config.get_value(DefaultConfigKeys.teamspace_owner_type)
-        owner_name = config.get_value(DefaultConfigKeys.teamspace_owner)
-
-        if owner_type and owner_name:
-            if owner_type.lower() == "organization":
-                org = _resolve_org(owner_name)
-            elif owner_type.lower() == "user":
-                user = _resolve_user(owner_name)
-
-    # Final resolution check
-    if org is not None:
-        return Teamspace(name=teamspace, org=org)
-
-    if user is not None:
-        return Teamspace(name=teamspace, user=user)
-
-    raise RuntimeError("Neither user nor org provided, but one of them needs to be provided")
+    return Teamspace(name=teamspace, org=org, user=user)
 
 
 def _get_organizations_for_authed_user(user_api: Optional[UserApi] = None) -> List["Organization"]:
