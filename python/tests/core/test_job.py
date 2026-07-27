@@ -1,8 +1,10 @@
 import os
+from datetime import datetime, timezone
 from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.logs_api import LogEntry
 from lightning_sdk.job import _RUNNING_LOGS_IDLE_TIMEOUT, Job
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateJobBody,
@@ -953,12 +955,61 @@ def test_submit_job_from_running_studio(
     assert keeping_alive_mock.call_count == 0
 
 
+def _stub_logs_api(job, entries=()):
+    """Point the job's logs API at ``entries`` and return the stub."""
+    stream_mock = mock.MagicMock(return_value=list(entries))
+    job._logs_api.stream = stream_mock
+    return stream_mock
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_finished_snapshot(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_reads_logs_api(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    stream_mock = _stub_logs_api(
+        job,
+        [
+            LogEntry(message="line 1", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc)),
+            LogEntry(message="line 2"),
+        ],
+    )
+    fallback = mock.MagicMock()
+    job._job_api.get_logs_finished = fallback
+
+    assert job.logs == "line 1\nline 2"
+    fallback.assert_not_called()
+    assert stream_mock.call_args.kwargs["job_ids"] == ["test-job-id"]
+    assert stream_mock.call_args.kwargs["follow"] is False
+    assert stream_mock.call_args.args == (job.teamspace.id,)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_timestamps_and_filters(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
+    stream_mock = _stub_logs_api(
+        job,
+        [LogEntry(message="boom", severity="error", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))],
+    )
+
+    assert job.logs(timestamps=True, query="boom", severity="error") == "2026-07-27T09:00:00+00:00 boom"
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["query"] == "boom"
+    assert kwargs["severity"] == "error"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_finished_falls_back_to_saved_file(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    # no lines in the current log format (e.g. an older job): the saved log file is used instead
+    _stub_logs_api(job, [])
     logs_mock = mock.MagicMock(return_value="line 1\nline 2\n")
     job._job_api.get_logs_finished = logs_mock
 
@@ -971,14 +1022,32 @@ def test_job_logs_finished_snapshot(job_api_get_job_by_name_mocker, internal_stu
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_filtered_read_does_not_fall_back(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    _stub_logs_api(job, [])
+    fallback = mock.MagicMock(return_value="everything\n")
+    job._job_api.get_logs_finished = fallback
+
+    # a filtered read matching nothing must stay empty rather than dump the unfiltered file
+    assert job.logs(query="nope") == ""
+    fallback.assert_not_called()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_logs_finished_tail(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    stream_mock = _stub_logs_api(job, [])
     job._job_api.get_logs_finished = mock.MagicMock(return_value="a\nb\nc\nd\n")
 
     assert job.logs(tail=2) == "c\nd"
+    # the API pages forward only, so the tail is requested from it too
+    assert stream_mock.call_args.kwargs["tail"] == 2
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -994,25 +1063,37 @@ def test_job_logs_rank_warns_when_finished(job_api_get_job_by_name_mocker, inter
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_running_snapshot_reads_until_idle(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_running_snapshot_falls_back_to_live(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
-    stream_mock = mock.MagicMock(return_value=iter(["a", "b"]))
-    job._job_api.stream_logs = stream_mock
+    stream_mock = _stub_logs_api(job, [LogEntry(message="a"), LogEntry(message="b")])
 
-    # a running snapshot reads the live stream until it goes idle, then joins the lines
     assert job.logs() == "a\nb"
-    stream_mock.assert_called_once_with(
-        job_id="test-job-id",
-        teamspace_id=job.teamspace.id,
-        follow=False,
-        tail=None,
-        rank=None,
-        idle_timeout=_RUNNING_LOGS_IDLE_TIMEOUT,
-        timestamps=False,
-    )
+    kwargs = stream_mock.call_args.kwargs
+    # a running job with no saved lines still shows its live stream, bounded by the idle timeout
+    assert kwargs["fallback_to_live"] is True
+    assert kwargs["idle_timeout"] == _RUNNING_LOGS_IDLE_TIMEOUT
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_follow_streams_from_logs_api(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
+    stream_mock = _stub_logs_api(job, [LogEntry(message="live-1"), LogEntry(message="live-2")])
+    legacy = mock.MagicMock()
+    job._job_api.stream_logs = legacy
+
+    assert list(job.logs(follow=True)) == ["live-1", "live-2"]
+    legacy.assert_not_called()
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["follow"] is True
+    assert kwargs["idle_timeout"] is None
+    # the tail keeps running until the job itself is done
+    assert callable(kwargs["stop"])
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1022,6 +1103,7 @@ def test_job_logs_follow_on_finished_returns_saved_lines(job_api_get_job_by_name
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
     job._job_api.get_logs_finished = mock.MagicMock(return_value="a\nb\n")
+    _stub_logs_api(job, [])
     stream_mock = mock.MagicMock()
     job._job_api.stream_logs = stream_mock
 

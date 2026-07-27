@@ -59,7 +59,13 @@ Operational notes
 
 - ``Job.run`` creates a new job; ``Job("name", teamspace=...)`` fetches an
   existing one.
-- ``job.logs`` is available after the job reaches a terminal state.
+- ``job.logs`` reads the logs saved so far, whether the job is running or
+  finished. Call it to pass options: ``job.logs(follow=True)`` streams new lines
+  from a running job, and ``tail``, ``timestamps``, ``query`` (only lines
+  containing every whitespace-separated term) and ``severity`` (``error``,
+  ``warning``, ``info`` or ``debug`` and above) narrow what comes back.
+- ``mmt.logs`` reads every machine of a multi-machine job, merged into one
+  timeline and labelled with the machine each line came from.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.
 - Container-backed jobs cannot also pass ``studio=``.

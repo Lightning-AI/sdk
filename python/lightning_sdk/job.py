@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Typed
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.logs_api import LogsApi
 from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
@@ -57,8 +58,17 @@ class _Logs:
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         timestamps: bool = False,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
-        return self._fetch(follow=follow, tail=tail, rank=rank, timestamps=timestamps)
+        return self._fetch(
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            timestamps=timestamps,
+            query=query,
+            severity=severity,
+        )
 
     def _text(self) -> str:
         if self._cached is None:
@@ -147,6 +157,7 @@ class Job(metaclass=TrackCallsMeta):
         self._prevent_refetch_latest = False
         self._cloud_account_api = CloudAccountApi()
         self._job_api = JobApiV2()
+        self._logs_api = LogsApi()
 
         if _fetch_job:
             from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -531,6 +542,12 @@ class Job(metaclass=TrackCallsMeta):
         - ``tail``: Only include the last N lines.
         - ``rank``: Distributed job rank to read from (running jobs only).
         - ``timestamps``: Prepend each line with its ISO-8601 timestamp.
+        - ``query``: Only include lines containing every whitespace-separated term.
+        - ``severity``: Only include lines at or above this level (``error``, ``warning``,
+          ``info`` or ``debug``).
+
+        ``query`` and ``severity`` are applied by the server, to both the saved logs and the
+        live stream.
         """
         return _Logs(self._compute_logs)
 
@@ -541,42 +558,110 @@ class Job(metaclass=TrackCallsMeta):
         tail: Optional[int] = None,
         rank: Optional[int] = None,
         timestamps: bool = False,
+        query: Optional[str] = None,
+        severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
         """Fetch the logs, dispatching on job state. See :attr:`logs` for the public API."""
         status = self.status
 
-        # Live-follow only makes sense while the job is running. For a finished job there is
-        # nothing more to stream, so we fall through and return the saved lines rather than
-        # opening a websocket that would never receive anything (and would reconnect forever).
-        if follow and status == Status.Running:
-            return self._stream_logs(follow=True, tail=tail, rank=rank, timestamps=timestamps)
+        if rank is not None:
+            # Reading one machine of a multi-machine job has no equivalent on the logs API, so a
+            # ranked read stays on the older per-job log path.
+            return self._compute_logs_ranked(status=status, follow=follow, tail=tail, rank=rank, timestamps=timestamps)
 
-        if status in (Status.Failed, Status.Completed, Status.Stopped):
-            if rank is not None:
-                warnings.warn(
-                    "`rank` is only supported for running jobs; ignoring it for finished-job logs.",
-                    stacklevel=2,
-                )
-            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
-        elif status == Status.Running:
-            # a running job's stream has no clean end signal, so read until it goes idle
-            text = "\n".join(
-                self._stream_logs(
-                    follow=False,
-                    tail=tail,
-                    rank=rank,
-                    timestamps=timestamps,
-                    idle_timeout=_RUNNING_LOGS_IDLE_TIMEOUT,
-                )
-            )
-        else:
+        if status not in (Status.Running, Status.Failed, Status.Completed, Status.Stopped):
             raise RuntimeError(f"Logs are not available while the job is {status}.")
 
-        if tail is not None:
-            text = "\n".join(text.splitlines()[-tail:])
+        # Live-follow only makes sense while the job is running. For a finished job there is
+        # nothing more to stream, so we return the saved lines rather than opening a websocket
+        # that would never receive anything (and would reconnect forever).
+        if follow and status == Status.Running:
+            return self._stream_entries(follow=True, tail=tail, timestamps=timestamps, query=query, severity=severity)
+
+        lines = list(
+            self._stream_entries(follow=False, tail=tail, timestamps=timestamps, query=query, severity=severity)
+        )
+        if not lines and status != Status.Running and query is None and severity is None:
+            # Nothing in the current log format for this job: fall back to the saved log file.
+            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+            if tail is not None:
+                text = "\n".join(text.splitlines()[-tail:])
+            return iter(text.splitlines()) if follow else text
+
         # `follow` on an already-finished job returns the saved lines as an iterator (and stops),
         # keeping the return type consistent with the live-follow path.
-        return iter(text.splitlines()) if follow else text
+        return iter(lines) if follow else "\n".join(lines)
+
+    def _compute_logs_ranked(
+        self,
+        *,
+        status: Status,
+        follow: bool,
+        tail: Optional[int],
+        rank: int,
+        timestamps: bool,
+    ) -> Union[str, Iterator[str]]:
+        """Read a single machine's logs over the legacy per-job websocket."""
+        if status in (Status.Failed, Status.Completed, Status.Stopped):
+            warnings.warn(
+                "`rank` is only supported for running jobs; ignoring it for finished-job logs.",
+                stacklevel=3,
+            )
+            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+            if tail is not None:
+                text = "\n".join(text.splitlines()[-tail:])
+            return iter(text.splitlines()) if follow else text
+
+        if status != Status.Running:
+            raise RuntimeError(f"Logs are not available while the job is {status}.")
+
+        if follow:
+            return self._stream_logs(follow=True, tail=tail, rank=rank, timestamps=timestamps)
+
+        # a running job's stream has no clean end signal, so read until it goes idle
+        text = "\n".join(
+            self._stream_logs(
+                follow=False,
+                tail=tail,
+                rank=rank,
+                timestamps=timestamps,
+                idle_timeout=_RUNNING_LOGS_IDLE_TIMEOUT,
+            )
+        )
+        if tail is not None:
+            text = "\n".join(text.splitlines()[-tail:])
+        return text
+
+    def _stream_entries(
+        self,
+        *,
+        follow: bool,
+        tail: Optional[int],
+        timestamps: bool,
+        query: Optional[str],
+        severity: Optional[str],
+    ) -> Iterator[str]:
+        """Yield formatted log lines from the logs API (saved logs, then the live tail)."""
+        job = self._guaranteed_job
+        job_id = job.id
+        entries = self._logs_api.stream(
+            self.teamspace.id,
+            job_ids=[job_id],
+            query=query,
+            severity=severity,
+            follow=follow,
+            tail=tail,
+            # A finished job's last lines sit at its stop time, so start the tail search there
+            # instead of walking back from now through a job that ran days ago.
+            tail_anchor=getattr(job, "stopped_at", None),
+            idle_timeout=None if follow else _RUNNING_LOGS_IDLE_TIMEOUT,
+            # A running job whose logs are not in the current storage format yet has no saved
+            # history; tail its live stream so a snapshot still shows something.
+            fallback_to_live=not follow,
+            stop=lambda: self._job_api._is_job_finished(job_id, self.teamspace.id),
+        )
+        for entry in entries:
+            yield entry.format(timestamps=timestamps)
 
     def _stream_logs(
         self,

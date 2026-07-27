@@ -1,283 +1,175 @@
-"""Deployment logs command."""
+"""Deployment logs command.
 
-import json
-import threading
-import time
-from contextlib import suppress
-from typing import Any, Iterable, List, Optional, Sequence
-from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+A shortcut for ``lightning logs --deployment-name <name>``: it resolves the deployment and
+hands off to :func:`lightning_sdk.cli.logs.read_logs`, so both print identically.
+"""
 
-import requests
+from typing import Optional, Sequence
+
 import rich_click as click
 
 from lightning_sdk.api.deployment_api import DeploymentApi
-from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
+from lightning_sdk.cli.logs import (
+    LIVE_FALLBACK_IDLE_TIMEOUT,
+    LogSelection,
+    deployment_replica_labels,
+    read_logs,
+    resolve_time,
+)
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.openapi import V1Job
 
-_LIVE_FALLBACK_IDLE_TIMEOUT = 8
-_LIVE_FALLBACK_TAIL = 100
+_DEFAULT_TAIL = 100
 
 
 @click.command("logs", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
 @click.option("--job-id", "job_ids", multiple=True, help="Specific deployment job ID. Can be repeated.")
-@click.option("--since", help="Only include logs after this timestamp.")
-@click.option("--until", help="Only include logs before this timestamp.")
-@click.option("--rank", type=int, help="Distributed job rank.")
-@click.option("--follow", "-f", is_flag=True, default=False, help="Follow live logs after printing available pages.")
-@click.option("--tail", type=int, help="Number of recent live log lines to show when following.")
+@click.option("--since", help='Only include lines at or after this time (e.g. "2h", RFC3339).')
+@click.option("--until", help='Only include lines at or before this time (e.g. "30m", RFC3339).')
+@click.option("--query", help="Only include lines containing every whitespace-separated term.")
+@click.option(
+    "--severity",
+    type=click.Choice(SEVERITIES),
+    help="Only include lines at or above this severity.",
+)
+@click.option("--rank", type=int, help="Machine of a single replica to read (legacy log path).")
+@click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
+@click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 def deployment_logs(
     name: str,
     teamspace: Optional[str] = None,
     job_ids: Sequence[str] = (),
     since: Optional[str] = None,
     until: Optional[str] = None,
+    query: Optional[str] = None,
+    severity: Optional[str] = None,
     rank: Optional[int] = None,
     follow: bool = False,
     tail: Optional[int] = None,
+    timestamps: bool = False,
 ) -> None:
-    """Print deployment logs."""
+    """Print deployment logs.
+
+    Reads every replica by default, merged into one timeline and labelled with the replica each
+    line came from. Pass --job-id (repeatable) to read specific replicas.
+    """
     resolved_teamspace = resolve_teamspace(teamspace)
     api = DeploymentApi()
     deployment = resolve_deployment(api, resolved_teamspace.id, name)
-    jobs = _resolve_jobs(api, resolved_teamspace.id, deployment.id, job_ids)
-    if not jobs:
-        click.echo("No jobs found for this deployment.")
-        return
 
-    auth_header = Auth().authenticate()
-    session = requests.Session()
-    session.headers.update({"Authorization": auth_header})
-
-    follow_targets = []
-    live_fallback_targets = []
-    prefix = len(jobs) > 1
-    for job in jobs:
-        logs = api.get_job_logs(
+    if rank is not None:
+        _ranked_logs(
+            api,
             resolved_teamspace.id,
-            job.id,
-            deployment_id=deployment.id,
+            deployment.id,
+            job_ids,
             since=since,
             until=until,
             rank=rank,
-        )
-        printed_lines = _print_pages(session, job, logs.pages or [], prefix=prefix)
-        if follow:
-            follow_targets.append((job, logs.follow_url))
-        elif printed_lines == 0:
-            live_fallback_targets.append((job, logs.follow_url))
-
-    if follow:
-        _stream_jobs(
-            resolved_teamspace.id,
-            follow_targets,
-            auth_header,
-            follow=True,
-            idle_timeout=None,
-            rank=rank,
+            follow=follow,
             tail=tail,
-            prefix=prefix,
+            timestamps=timestamps,
         )
-    elif live_fallback_targets:
-        _stream_jobs(
-            resolved_teamspace.id,
-            live_fallback_targets,
-            auth_header,
-            follow=True,
-            idle_timeout=_LIVE_FALLBACK_IDLE_TIMEOUT,
-            rank=rank,
-            tail=tail or _LIVE_FALLBACK_TAIL,
-            prefix=prefix,
-        )
+        return
+
+    selected = list(job_ids)
+    if not selected:
+        jobs = api.list_deployment_jobs(resolved_teamspace.id, deployment.id, limit=100)
+        if not jobs:
+            click.echo("No jobs found for this deployment.")
+            return
+        labels = {job.id: job.name or job.id for job in jobs} if len(jobs) > 1 else {}
+    else:
+        labels = deployment_replica_labels(resolved_teamspace.id, deployment.id) if len(selected) > 1 else {}
+
+    read_logs(
+        LogSelection(
+            teamspace_id=resolved_teamspace.id,
+            job_ids=selected,
+            # Selecting the deployment picks up replicas that start later; a job id list is fixed.
+            deployment_id=None if selected else deployment.id,
+            labels=labels,
+        ),
+        query=query,
+        severity=severity,
+        since=resolve_time(since, "--since"),
+        until=resolve_time(until, "--until"),
+        # A deployment's history can span months of replicas. With no tail and no range asked
+        # for, show the recent tail rather than paging from the beginning of time.
+        tail=_DEFAULT_TAIL if tail is None and since is None and until is None else tail,
+        follow=follow,
+        timestamps=timestamps,
+    )
 
 
-def _resolve_jobs(
+def _ranked_logs(
     api: DeploymentApi,
     teamspace_id: str,
     deployment_id: str,
     job_ids: Sequence[str],
-) -> List[V1Job]:
-    if job_ids:
-        all_jobs = api.list_deployment_jobs(teamspace_id, deployment_id, limit=100)
-        jobs_by_id = {job.id: job for job in all_jobs}
-        return [
-            jobs_by_id.get(job_id) or V1Job(id=job_id, name=job_id, deployment_id=deployment_id) for job_id in job_ids
-        ]
-    return api.list_deployment_jobs(teamspace_id, deployment_id, limit=100)
-
-
-def _print_pages(session: requests.Session, job: V1Job, pages: Iterable[Any], *, prefix: bool) -> int:
-    lines = 0
-    for page in pages:
-        url = getattr(page, "url", None)
-        if not url:
-            continue
-        response = session.get(_absolute_url(url), timeout=60)
-        response.raise_for_status()
-        lines += _print_page_text(job, response.text, prefix=prefix)
-    return lines
-
-
-def _print_page_text(job: V1Job, text: str, *, prefix: bool) -> int:
-    try:
-        payload = json.loads(text)
-    except json.JSONDecodeError:
-        lines = 0
-        for line in text.splitlines():
-            _echo_log_line(job, line, prefix=prefix)
-            lines += 1
-        return lines
-
-    entries = payload if isinstance(payload, list) else [payload]
-    lines = 0
-    for entry in entries:
-        if isinstance(entry, dict):
-            _echo_log_line(job, entry.get("message") or entry.get("Message") or json.dumps(entry), prefix=prefix)
-        else:
-            _echo_log_line(job, str(entry), prefix=prefix)
-        lines += 1
-    return lines
-
-
-def _stream_jobs(
-    teamspace_id: str,
-    jobs: Sequence[tuple[V1Job, Optional[str]]],
-    auth_header: str,
     *,
+    since: Optional[str],
+    until: Optional[str],
+    rank: int,
     follow: bool,
-    idle_timeout: Optional[float],
-    rank: Optional[int],
     tail: Optional[int],
-    prefix: bool,
+    timestamps: bool,
 ) -> None:
-    try:
-        import websocket
-        from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
-    except ImportError as ex:
-        raise click.ClickException("Following logs requires the websocket-client package.") from ex
+    """Read one machine of one replica over the legacy per-job log path.
 
-    stop_event = threading.Event()
-    sockets = []
-    threads = []
-    errors = []
+    --rank selects a machine inside a replica, which the merged logs API has no equivalent for:
+    it returns every machine's lines tagged with the replica instead. Until it does, a ranked
+    read uses the older per-job endpoints, and those serve a single replica at a time.
+    """
+    if len(job_ids) > 1:
+        raise click.ClickException("--rank reads one replica at a time; pass a single --job-id.")
 
-    def worker(job: V1Job, follow_url: Optional[str]) -> None:
-        url = _follow_url(follow_url, teamspace_id, job.id, follow=follow, rank=rank, tail=tail)
-        while not stop_event.is_set():
-            ws = None
-            kwargs = {"header": [f"Authorization: {auth_header}"]}
-            if idle_timeout is not None:
-                kwargs["timeout"] = idle_timeout
-            try:
-                ws = websocket.create_connection(_websocket_url(url), **kwargs)
-                sockets.append(ws)
-                while not stop_event.is_set():
-                    try:
-                        message = ws.recv()
-                    except WebSocketTimeoutException:
-                        if idle_timeout is not None:
-                            stop_event.set()
-                            break
-                        raise
-                    except WebSocketConnectionClosedException:
-                        if idle_timeout is not None:
-                            stop_event.set()
-                        break
-                    _print_websocket_message(job, message, prefix=prefix)
-                if idle_timeout is not None:
-                    break
-            except WebSocketConnectionClosedException:
-                if idle_timeout is not None:
-                    stop_event.set()
-                    break
-            except Exception as ex:
-                if not stop_event.is_set():
-                    errors.append(ex)
-                    stop_event.set()
-            finally:
-                if ws is not None:
-                    with suppress(Exception):
-                        ws.close()
+    if job_ids:
+        job_id = job_ids[0]
+    else:
+        jobs = api.list_deployment_jobs(teamspace_id, deployment_id, limit=100)
+        if not jobs:
+            click.echo("No jobs found for this deployment.")
+            return
+        if len(jobs) > 1:
+            raise click.ClickException("This deployment has several replicas; pass --job-id to pick one for --rank.")
+        job_id = jobs[0].id
 
-            if follow and not stop_event.is_set():
-                time.sleep(1)
+    entries = list(
+        api.iter_job_log_entries(
+            teamspace_id,
+            job_id,
+            deployment_id=deployment_id,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
+            rank=rank,
+        )
+    )
+    if tail is not None:
+        entries = entries[-tail:]
+    for entry in entries:
+        click.echo(entry.format(timestamps=timestamps))
 
-    for job, follow_url in jobs:
-        thread = threading.Thread(target=worker, args=(job, follow_url), daemon=True)
-        thread.start()
-        threads.append(thread)
-
-    try:
-        while any(thread.is_alive() for thread in threads):
-            if errors:
-                for ws in sockets:
-                    ws.close()
-            for thread in threads:
-                thread.join(timeout=0.2)
-    except KeyboardInterrupt:
-        stop_event.set()
-        for ws in sockets:
-            ws.close()
-    if errors:
-        raise click.ClickException(str(errors[0]))
-
-
-def _print_websocket_message(job: V1Job, message: str, *, prefix: bool) -> None:
-    try:
-        payload = json.loads(message)
-    except json.JSONDecodeError:
-        _echo_log_line(job, message, prefix=prefix)
+    if not follow and entries:
         return
 
-    entries = payload if isinstance(payload, list) else [payload]
-    for entry in entries:
-        if isinstance(entry, dict):
-            _echo_log_line(job, entry.get("message") or entry.get("Message") or json.dumps(entry), prefix=prefix)
-        else:
-            _echo_log_line(job, str(entry), prefix=prefix)
-
-
-def _echo_log_line(job: V1Job, line: str, *, prefix: bool) -> None:
-    if prefix:
-        click.echo(f"[{job.name or job.id}] {line}")
-    else:
-        click.echo(line)
-
-
-def _absolute_url(url: str) -> str:
-    if url.startswith(("http://", "https://", "ws://", "wss://")):
-        return url
-    return f"{_get_cloud_url().rstrip('/')}/{url.lstrip('/')}"
-
-
-def _websocket_url(url: str) -> str:
-    absolute = _absolute_url(url)
-    if absolute.startswith("https://"):
-        return "wss://" + absolute[len("https://") :]
-    if absolute.startswith("http://"):
-        return "ws://" + absolute[len("http://") :]
-    return absolute
-
-
-def _follow_url(
-    follow_url: Optional[str],
-    teamspace_id: str,
-    job_id: str,
-    *,
-    follow: bool,
-    rank: Optional[int],
-    tail: Optional[int],
-) -> str:
-    url = follow_url or f"/v1/projects/{teamspace_id}/jobs/{job_id}/logs"
-    parsed = urlparse(url)
-    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query.update({"follow": str(follow).lower(), "direction": "forward"})
-    if rank is not None:
-        query["rank"] = str(rank)
-    if tail is not None:
-        query["tail"] = str(tail)
-    return urlunparse(parsed._replace(query=urlencode(query)))
+    try:
+        for line in JobApiV2().stream_logs(
+            job_id=job_id,
+            teamspace_id=teamspace_id,
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            idle_timeout=None if follow else LIVE_FALLBACK_IDLE_TIMEOUT,
+            timestamps=timestamps,
+        ):
+            click.echo(line)
+    except KeyboardInterrupt:
+        pass
+    except RuntimeError as ex:
+        raise click.ClickException(str(ex)) from ex

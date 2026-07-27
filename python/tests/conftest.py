@@ -33,6 +33,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ExternalCluster,
     V1ExternalClusterSpec,
     V1GetCloudSpaceInstanceStatusResponse,
+    V1GetLogsResponse,
     V1GetUserResponse,
     V1Job,
     V1JobSpec,
@@ -2618,7 +2619,17 @@ def mmt_api_get_job_by_name_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_job_logs_mocker(mocker):
+def internal_get_logs_mocker(mocker):
+    """Serve the logs API with no saved lines, so log reads take the legacy fallback."""
+    return mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_logs",
+        autospec=True,
+        return_value=V1GetLogsResponse(entries=[]),
+    )
+
+
+@pytest.fixture()
+def internal_job_logs_mocker(mocker, internal_get_logs_mocker):
     log_msg = "[2025-01-08T14:15:03.797142418Z] ⚡  ~ echo Hello\n[2025-01-08T14:15:03.803077717Z] Hello\n"
     dummy_url = "http://dummy-url.com/logs"
 
