@@ -79,6 +79,15 @@ class LogEntry:
         parts.append(self.message)
         return " ".join(parts)
 
+    def to_json_dict(self, source: Optional[str] = None) -> "Dict[str, Optional[str]]":
+        """Render the entry as a JSON-serializable object; ``source`` labels the replica/rank."""
+        return {
+            "timestamp": self.timestamp.isoformat() if self.timestamp is not None else None,
+            "severity": self.severity or None,
+            "source": source,
+            "message": self.message,
+        }
+
     @property
     def dedup_key(self) -> Tuple[int, Optional[datetime], str]:
         """Identity used to drop a live line that history already produced.

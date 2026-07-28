@@ -517,6 +517,7 @@ def run_sandbox_command(
     help="Only include lines at or above this severity.",
 )
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 def logs_sandbox_command(
     api_key: str | None,
     sandbox_id: str,
@@ -528,6 +529,7 @@ def logs_sandbox_command(
     query: str | None,
     severity: str | None,
     timestamps: bool,
+    as_json: bool,
 ) -> None:
     """Show logs for a sandbox, merged across its commands.
 
@@ -555,6 +557,7 @@ def logs_sandbox_command(
         follow=follow,
         timestamps=timestamps,
         api_key=api_key,
+        as_json=as_json,
     )
 
 

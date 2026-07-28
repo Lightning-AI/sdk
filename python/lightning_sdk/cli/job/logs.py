@@ -6,7 +6,7 @@ import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import resolve_time
+from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
 from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
 
 
@@ -30,6 +30,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_tea
     default=None,
     help="Only include lines at or above this severity.",
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 def logs_job(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -41,6 +42,7 @@ def logs_job(
     until: Optional[str] = None,
     query: Optional[str] = None,
     severity: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     """Print the logs for a job.
 
@@ -50,6 +52,21 @@ def logs_job(
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job(name, resolved_teamspace)
+
+    if as_json:
+        if rank is not None:
+            raise click.ClickException("--rank is not supported with --json.")
+        read_logs(
+            LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id]),
+            query=query,
+            severity=severity,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
+            tail=tail,
+            follow=follow,
+            as_json=True,
+        )
+        return
 
     try:
         logs = job.logs(
