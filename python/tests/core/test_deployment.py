@@ -66,6 +66,28 @@ def _mock_deployment_dependencies(monkeypatch, auth_instance):
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 @patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
+def test_unstarted_deployment_id_is_none(monkeypatch):
+    _mock_deployment_dependencies(monkeypatch, MagicMock())
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock(return_value=None))
+
+    deployment = deployment_module.Deployment(name="my-deploy", teamspace="org/teamspace")
+
+    assert deployment.id is None
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
+def test_existing_deployment_exposes_id(monkeypatch):
+    _mock_deployment_dependencies(monkeypatch, MagicMock())
+    monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock(return_value=None))
+    deployment = deployment_module.Deployment(name="my-deploy", teamspace="org/teamspace")
+    deployment._deployment = SimpleNamespace(id="dep-123")
+
+    assert deployment.id == "dep-123"
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
 def test_deployment_does_not_authenticate_or_look_up_user_eagerly(monkeypatch):
     """The constructor must not eagerly authenticate or resolve the authenticated user.
 

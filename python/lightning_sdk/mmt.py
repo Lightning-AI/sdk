@@ -446,6 +446,11 @@ class MMT(metaclass=TrackCallsMeta):
         return self._job_api._job_state_to_external(self._latest_job.state)
 
     @property
+    def id(self) -> Optional[str]:
+        """The multi-machine job's unique identifier."""
+        return self._guaranteed_job.id
+
+    @property
     def placement_group_id(self) -> Optional[str]:
         return self._guaranteed_job.spec.placement_group_id
 

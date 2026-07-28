@@ -84,6 +84,7 @@ def test_mmt_exposes_placement_group_id(mmt_api_get_job_by_name_mocker, internal
     job = MMT("test-job", studio.teamspace)
     job._job = V1MultiMachineJob(id="mmt-123", spec=V1JobSpec(placement_group_id="pg-1"))
 
+    assert job.id == "mmt-123"
     assert job.placement_group_id == "pg-1"
 
 

@@ -166,6 +166,7 @@ def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
         spec=V1JobSpec(placement_group_id="pg-1", rank=3),
     )
 
+    assert job.id == "job-123"
     assert job.resource_id == "job-123"
     assert job.private_ip_address == "10.0.0.7"
     assert job.placement_group_id == "pg-1"

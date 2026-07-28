@@ -29,6 +29,13 @@ from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import Studio
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_studio_exposes_id(internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+
+    assert studio.id == "st-abc"
+
+
 def list_cloudspaces_side_effect(existing_studios):
     def _list_cloudspaces_side_effect(*args, **kwargs):
         name = kwargs.get("name")
