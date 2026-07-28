@@ -390,6 +390,7 @@ def test_handle_cloud(
     _,
     mock_litcr,
     temp_script,
+    capsys,
 ):
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
@@ -409,6 +410,7 @@ def test_handle_cloud(
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
+    assert "test-url" in capsys.readouterr().out
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
