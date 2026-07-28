@@ -9,6 +9,7 @@ from rich.console import Console
 
 from lightning_sdk.cli.legacy.generate import _generate_ssh_config
 from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -22,7 +23,9 @@ def _configure_ssh_internal(
 ) -> None:
     """Internal function to configure SSH without Click decorators."""
     auth = Auth()
-    auth.authenticate()
+    require_auth_header()
+    if not auth.api_key and not auth.load():
+        raise click.UsageError("An API key is required. Run `lightning login` first.")
     console = Console()
     ssh_dir = Path.home() / ".ssh"
     ssh_dir.mkdir(parents=True, exist_ok=True)
