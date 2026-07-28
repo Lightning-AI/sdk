@@ -472,6 +472,7 @@ def test_handle_cloud_with_cloud(
         interruptible=True,
         repository=repository,
     )
+    mock_resolve_cluster.assert_called_once_with(resolved_teamspace, cloud, "--cloud")
     container_basename = repository.split("/")[-1]
     registry_url = mock_registry_url.return_value
     suffix = cloud if cloud is not None else "gcp-123"

@@ -43,6 +43,8 @@ def resolve_cluster(
         cloud_account_id=selected,
         teamspace_id=teamspace.id,
     )
+    if resolved is None:
+        raise click.UsageError(f"Could not resolve cloud account '{selected}'. Pass {option_name} ACCOUNT.")
     return None if resolved.spec.cluster_type == V1ClusterType.GLOBAL else resolved.id
 
 

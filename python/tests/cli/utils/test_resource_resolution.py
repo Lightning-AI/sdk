@@ -1,3 +1,4 @@
+from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -58,6 +59,45 @@ def test_resolve_cluster_uses_teamspace_default() -> None:
         api.return_value.get_cloud_account_non_org.return_value = resolved
 
         assert resolve_cluster(teamspace, None, "--cloud-account") == "cluster"
+
+
+@pytest.mark.parametrize(
+    ("cloud_account", "default_cloud_account", "selected"),
+    [("missing", "default", "missing"), (None, "stale", "stale")],
+)
+def test_resolve_cluster_converts_missing_selected_account_to_usage_error(
+    cloud_account: Optional[str],
+    default_cloud_account: str,
+    selected: str,
+) -> None:
+    teamspace = MagicMock(id="ts", default_cloud_account=default_cloud_account)
+
+    with patch("lightning_sdk.cli.utils.resource_resolution.CloudAccountApi") as api:
+        api.return_value.get_cloud_account_non_org.return_value = None
+
+        with pytest.raises(click.UsageError, match="--cloud-account"):
+            resolve_cluster(teamspace, cloud_account, "--cloud-account")
+
+    api.return_value.get_cloud_account_non_org.assert_called_once_with(
+        cloud_account_id=selected,
+        teamspace_id="ts",
+    )
+
+
+def test_resolve_cluster_prefers_explicit_account_and_uses_teamspace_id() -> None:
+    teamspace = MagicMock(id="ts", default_cloud_account="default")
+    resolved = MagicMock(id="explicit-cluster")
+    resolved.spec.cluster_type = "BYOC"
+
+    with patch("lightning_sdk.cli.utils.resource_resolution.CloudAccountApi") as api:
+        api.return_value.get_cloud_account_non_org.return_value = resolved
+
+        assert resolve_cluster(teamspace, "explicit", "--cloud-account") == "explicit-cluster"
+
+    api.return_value.get_cloud_account_non_org.assert_called_once_with(
+        cloud_account_id="explicit",
+        teamspace_id="ts",
+    )
 
 
 def test_resolve_cluster_maps_global_account_to_none() -> None:
