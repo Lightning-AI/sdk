@@ -23,6 +23,9 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     default=None,
     help="The name of the cloud account where containers are stored in.",
 )
-def list_containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
+def list_containers(
+    teamspace: Optional[str] = None, cloud_account: Optional[str] = None, as_json: bool = False
+) -> None:
     """Display the list of available containers."""
-    _list_containers.callback(teamspace=teamspace, cloud_account=cloud_account)
+    _list_containers.callback(teamspace=teamspace, cloud_account=cloud_account, as_json=as_json)
