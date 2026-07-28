@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Protocol, Tuple, TypedDic
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -225,7 +226,6 @@ class MMT(metaclass=TrackCallsMeta):
             ValueError: If required arguments are missing or mutually exclusive arguments are both provided.
             RuntimeError: If image and studio are both provided.
         """
-        from lightning_sdk.lightning_cloud.openapi.rest import ApiException
         from lightning_sdk.studio import Studio
 
         cloud_account = _resolve_default_cloud_account(None)
@@ -471,7 +471,14 @@ class MMT(metaclass=TrackCallsMeta):
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
-            self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            try:
+                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            except ApiException as ex:
+                if ex.status != 404:
+                    raise
+                raise ValueError(
+                    f"Multi-machine job {self._name} does not exist in Teamspace {self._teamspace.name}"
+                ) from ex
             return
 
         self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)
