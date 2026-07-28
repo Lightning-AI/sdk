@@ -31,7 +31,7 @@ from lightning_sdk.studio import Studio
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_exposes_id(internal_studio_init_mocker):
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    studio = Studio(name="st-abc", teamspace="org-abc/ts-abc")
 
     assert studio.id == "st-abc"
 
