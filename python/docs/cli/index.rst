@@ -59,7 +59,8 @@ Common Workflows
 
 * Develop interactively with :doc:`studio`.
 * Submit and inspect training or batch work with :doc:`job` and :doc:`mmt`.
-* Tail, follow, and search the logs of any of them with :doc:`logs`.
+* Tail, follow, and search a run's logs with its own ``logs`` command — see
+  :doc:`job`, :doc:`mmt`, :doc:`deployment`, and :doc:`sandbox`.
 * Build and operate inference services with :doc:`deployment` and :doc:`model`.
 * Move data and artifacts with :doc:`file`, :doc:`folder`, :doc:`container`, and :doc:`cp`.
 * Configure accounts, organizations, teamspaces, cloud accounts, and SSH with
@@ -80,7 +81,6 @@ reference.
    mmt
    machine
    deployment
-   logs
    container
    model
    api-key
