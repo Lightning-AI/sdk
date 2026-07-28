@@ -14,7 +14,8 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// V1DataConnectionOptimizationMode v1 data connection optimization mode
+// V1DataConnectionOptimizationMode  - DATA_CONNECTION_OPTIMIZATION_MODE_PACKED: Packed mode is settable only at creation, on an empty R2 folder, for
+// accounts with the feature enabled. It cannot be changed after creation.
 //
 // swagger:model v1DataConnectionOptimizationMode
 type V1DataConnectionOptimizationMode string
@@ -35,6 +36,9 @@ const (
 
 	// V1DataConnectionOptimizationModeDATACONNECTIONOPTIMIZATIONMODEREADWRITEOPTIMIZED captures enum value "DATA_CONNECTION_OPTIMIZATION_MODE_READ_WRITE_OPTIMIZED"
 	V1DataConnectionOptimizationModeDATACONNECTIONOPTIMIZATIONMODEREADWRITEOPTIMIZED V1DataConnectionOptimizationMode = "DATA_CONNECTION_OPTIMIZATION_MODE_READ_WRITE_OPTIMIZED"
+
+	// V1DataConnectionOptimizationModeDATACONNECTIONOPTIMIZATIONMODEPACKED captures enum value "DATA_CONNECTION_OPTIMIZATION_MODE_PACKED"
+	V1DataConnectionOptimizationModeDATACONNECTIONOPTIMIZATIONMODEPACKED V1DataConnectionOptimizationMode = "DATA_CONNECTION_OPTIMIZATION_MODE_PACKED"
 )
 
 // for schema
@@ -42,7 +46,7 @@ var v1DataConnectionOptimizationModeEnum []any
 
 func init() {
 	var res []V1DataConnectionOptimizationMode
-	if err := json.Unmarshal([]byte(`["DATA_CONNECTION_OPTIMIZATION_MODE_UNSPECIFIED","DATA_CONNECTION_OPTIMIZATION_MODE_READ_WRITE_OPTIMIZED"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["DATA_CONNECTION_OPTIMIZATION_MODE_UNSPECIFIED","DATA_CONNECTION_OPTIMIZATION_MODE_READ_WRITE_OPTIMIZED","DATA_CONNECTION_OPTIMIZATION_MODE_PACKED"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

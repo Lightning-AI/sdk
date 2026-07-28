@@ -22,6 +22,9 @@ type CloudSpaceServiceStartCloudSpaceInstanceBody struct {
 	// compute config
 	ComputeConfig *V1UserRequestedComputeConfig `json:"computeConfig,omitempty"`
 
+	// desired machine Id
+	DesiredMachineID string `json:"desiredMachineId,omitempty"`
+
 	// is forked
 	IsForked bool `json:"isForked,omitempty"`
 }

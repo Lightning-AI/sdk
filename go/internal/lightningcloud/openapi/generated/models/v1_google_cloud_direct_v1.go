@@ -23,6 +23,9 @@ type V1GoogleCloudDirectV1 struct {
 	// Bucket where artifacts are filesystem contents will be stored
 	BucketName string `json:"bucketName,omitempty"`
 
+	// If true, we check on-demand capacity reservation to try instances from them first and on-demand after
+	CheckReservations bool `json:"checkReservations,omitempty"`
+
 	// Role to bind to service accounts for machines, for setting permissions,
 	// to access objects under a defined prefix (teamspace files):
 	ComputeProjectRole string `json:"computeProjectRole,omitempty"`

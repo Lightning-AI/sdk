@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewClusterServiceDrainMachineParams creates a new ClusterServiceDrainMachineParams object,
@@ -69,6 +70,12 @@ type ClusterServiceDrainMachineParams struct {
 
 	// OrgID.
 	OrgID *string
+
+	// ServerIds.
+	ServerIds []string
+
+	// VMIds.
+	VMIds []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -156,6 +163,28 @@ func (o *ClusterServiceDrainMachineParams) SetOrgID(orgID *string) {
 	o.OrgID = orgID
 }
 
+// WithServerIds adds the serverIds to the cluster service drain machine params
+func (o *ClusterServiceDrainMachineParams) WithServerIds(serverIds []string) *ClusterServiceDrainMachineParams {
+	o.SetServerIds(serverIds)
+	return o
+}
+
+// SetServerIds adds the serverIds to the cluster service drain machine params
+func (o *ClusterServiceDrainMachineParams) SetServerIds(serverIds []string) {
+	o.ServerIds = serverIds
+}
+
+// WithVMIds adds the vMIds to the cluster service drain machine params
+func (o *ClusterServiceDrainMachineParams) WithVMIds(vMIds []string) *ClusterServiceDrainMachineParams {
+	o.SetVMIds(vMIds)
+	return o
+}
+
+// SetVMIds adds the vmIds to the cluster service drain machine params
+func (o *ClusterServiceDrainMachineParams) SetVMIds(vMIds []string) {
+	o.VMIds = vMIds
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *ClusterServiceDrainMachineParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -191,8 +220,64 @@ func (o *ClusterServiceDrainMachineParams) WriteToRequest(r runtime.ClientReques
 		}
 	}
 
+	if o.ServerIds != nil {
+
+		// binding items for serverIds
+		joinedServerIds := o.bindParamServerIds(reg)
+
+		// query array param serverIds
+		if err := r.SetQueryParam("serverIds", joinedServerIds...); err != nil {
+			return err
+		}
+	}
+
+	if o.VMIds != nil {
+
+		// binding items for vmIds
+		joinedVMIds := o.bindParamVMIds(reg)
+
+		// query array param vmIds
+		if err := r.SetQueryParam("vmIds", joinedVMIds...); err != nil {
+			return err
+		}
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamClusterServiceDrainMachine binds the parameter serverIds
+func (o *ClusterServiceDrainMachineParams) bindParamServerIds(formats strfmt.Registry) []string {
+	serverIdsIR := o.ServerIds
+
+	var serverIdsIC []string
+	for _, serverIdsIIR := range serverIdsIR { // explode []string
+
+		serverIdsIIV := serverIdsIIR // string as string
+		serverIdsIC = append(serverIdsIC, serverIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	serverIdsIS := swag.JoinByFormat(serverIdsIC, "multi")
+
+	return serverIdsIS
+}
+
+// bindParamClusterServiceDrainMachine binds the parameter vmIds
+func (o *ClusterServiceDrainMachineParams) bindParamVMIds(formats strfmt.Registry) []string {
+	vMIdsIR := o.VMIds
+
+	var vMIdsIC []string
+	for _, vMIdsIIR := range vMIdsIR { // explode []string
+
+		vMIdsIIV := vMIdsIIR // string as string
+		vMIdsIC = append(vMIdsIC, vMIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	vMIdsIS := swag.JoinByFormat(vMIdsIC, "multi")
+
+	return vMIdsIS
 }

@@ -58,6 +58,9 @@ type DataConnectionServiceCreateDataConnectionBody struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// Optimization mode; settable only at creation
+	OptimizationMode *V1DataConnectionOptimizationMode `json:"optimizationMode,omitempty"`
+
 	// R2 data connection
 	R2 *V1R2DataConnection `json:"r2,omitempty"`
 
@@ -70,8 +73,8 @@ type DataConnectionServiceCreateDataConnectionBody struct {
 	// snowflake
 	Snowflake *V1SnowflakeDataConnection `json:"snowflake,omitempty"`
 
-	// Weka data connection
-	Weka *V1WekaDataConnection `json:"weka,omitempty"`
+	// Managed VAST volume (VoltagePark machine clusters)
+	Vast *V1VastDataConnection `json:"vast,omitempty"`
 
 	// If true, allow writing to the data connection folder
 	Writable bool `json:"writable,omitempty"`
@@ -105,6 +108,10 @@ func (m *DataConnectionServiceCreateDataConnectionBody) Validate(formats strfmt.
 		res = append(res, err)
 	}
 
+	if err := m.validateOptimizationMode(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateR2(formats); err != nil {
 		res = append(res, err)
 	}
@@ -117,7 +124,7 @@ func (m *DataConnectionServiceCreateDataConnectionBody) Validate(formats strfmt.
 		res = append(res, err)
 	}
 
-	if err := m.validateWeka(formats); err != nil {
+	if err := m.validateVast(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -265,6 +272,29 @@ func (m *DataConnectionServiceCreateDataConnectionBody) validateLustre(formats s
 	return nil
 }
 
+func (m *DataConnectionServiceCreateDataConnectionBody) validateOptimizationMode(formats strfmt.Registry) error {
+	if swag.IsZero(m.OptimizationMode) { // not required
+		return nil
+	}
+
+	if m.OptimizationMode != nil {
+		if err := m.OptimizationMode.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("optimizationMode")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("optimizationMode")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *DataConnectionServiceCreateDataConnectionBody) validateR2(formats strfmt.Registry) error {
 	if swag.IsZero(m.R2) { // not required
 		return nil
@@ -334,20 +364,20 @@ func (m *DataConnectionServiceCreateDataConnectionBody) validateSnowflake(format
 	return nil
 }
 
-func (m *DataConnectionServiceCreateDataConnectionBody) validateWeka(formats strfmt.Registry) error {
-	if swag.IsZero(m.Weka) { // not required
+func (m *DataConnectionServiceCreateDataConnectionBody) validateVast(formats strfmt.Registry) error {
+	if swag.IsZero(m.Vast) { // not required
 		return nil
 	}
 
-	if m.Weka != nil {
-		if err := m.Weka.Validate(formats); err != nil {
+	if m.Vast != nil {
+		if err := m.Vast.Validate(formats); err != nil {
 			ve := new(errors.Validation)
 			if stderrors.As(err, &ve) {
-				return ve.ValidateName("weka")
+				return ve.ValidateName("vast")
 			}
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
-				return ce.ValidateName("weka")
+				return ce.ValidateName("vast")
 			}
 
 			return err
@@ -385,6 +415,10 @@ func (m *DataConnectionServiceCreateDataConnectionBody) ContextValidate(ctx cont
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateOptimizationMode(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateR2(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -397,7 +431,7 @@ func (m *DataConnectionServiceCreateDataConnectionBody) ContextValidate(ctx cont
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateWeka(ctx, formats); err != nil {
+	if err := m.contextValidateVast(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -557,6 +591,31 @@ func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateLustre(ct
 	return nil
 }
 
+func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateOptimizationMode(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.OptimizationMode != nil {
+
+		if swag.IsZero(m.OptimizationMode) { // not required
+			return nil
+		}
+
+		if err := m.OptimizationMode.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("optimizationMode")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("optimizationMode")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateR2(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.R2 != nil {
@@ -632,22 +691,22 @@ func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateSnowflake
 	return nil
 }
 
-func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateWeka(ctx context.Context, formats strfmt.Registry) error {
+func (m *DataConnectionServiceCreateDataConnectionBody) contextValidateVast(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.Weka != nil {
+	if m.Vast != nil {
 
-		if swag.IsZero(m.Weka) { // not required
+		if swag.IsZero(m.Vast) { // not required
 			return nil
 		}
 
-		if err := m.Weka.ContextValidate(ctx, formats); err != nil {
+		if err := m.Vast.ContextValidate(ctx, formats); err != nil {
 			ve := new(errors.Validation)
 			if stderrors.As(err, &ve) {
-				return ve.ValidateName("weka")
+				return ve.ValidateName("vast")
 			}
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
-				return ce.ValidateName("weka")
+				return ce.ValidateName("vast")
 			}
 
 			return err

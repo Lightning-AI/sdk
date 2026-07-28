@@ -19,9 +19,22 @@ import (
 // swagger:model v1NewFeature
 type V1NewFeature struct {
 
+	// time to stop showing the banner
+	// Format: date-time
+	BannerEndTime strfmt.DateTime `json:"bannerEndTime,omitempty"`
+
+	// text to show in the banner
+	BannerText string `json:"bannerText,omitempty"`
+
+	// url to copy for the banner
+	BannerURLCopy string `json:"bannerUrlCopy,omitempty"`
+
 	// created at
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
+
+	// text to show in the Dialog CTA button
+	CtaText string `json:"ctaText,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -58,6 +71,10 @@ type V1NewFeature struct {
 func (m *V1NewFeature) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateBannerEndTime(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -65,6 +82,18 @@ func (m *V1NewFeature) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1NewFeature) validateBannerEndTime(formats strfmt.Registry) error {
+	if swag.IsZero(m.BannerEndTime) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("bannerEndTime", "body", "date-time", m.BannerEndTime.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

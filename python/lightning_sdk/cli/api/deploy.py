@@ -6,6 +6,7 @@ import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy.serve import api_impl
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import teamspace_option
 
 
 @click.command("deploy", cls=LightningCommand)
@@ -31,15 +32,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 @click.option(
     "--interruptible", is_flag=True, default=False, help="Whether the machine should be interruptible (spot) or not."
 )
-@click.option(
-    "--teamspace",
-    default=None,
-    help="The teamspace the deployment should be associated with. Defaults to the current teamspace.",
-)
-@click.option(
-    "--org", default=None, help="The organization owning the teamspace (if any). Defaults to the current organization."
-)
-@click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
+@teamspace_option
 @click.option("--port", default=None, type=int, help="The port to expose the API on.")
 @click.option("--min_replica", "--min-replica", default=None, type=int, help="Number of replicas to start with.")
 @click.option("--max_replica", "--max-replica", default=None, type=int, help="Number of replicas to scale up to.")

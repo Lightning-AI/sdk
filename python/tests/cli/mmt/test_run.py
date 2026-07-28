@@ -45,7 +45,7 @@ def test_run_mmt_with_cloud(monkeypatch):
 
     mock_mmt = MagicMock()
     monkeypatch.setattr("lightning_sdk.cli.mmt.run.MMT", mock_mmt)
-    monkeypatch.setattr("lightning_sdk.cli.mmt.run.Teamspace", MagicMock(return_value="teamspace"))
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.resolve_teamspace", MagicMock(return_value="teamspace"))
 
     result = CliRunner().invoke(
         run_mmt,
@@ -69,7 +69,7 @@ def test_mmt_run_entrypoint_default(extra_args: list[str], expected_entrypoint: 
     runner = CliRunner()
     args = ["--name", "test-mmt", "--teamspace", "my-ts", *extra_args]
 
-    with patch("lightning_sdk.cli.mmt.run.Teamspace", return_value=MagicMock()), patch(
+    with patch("lightning_sdk.cli.mmt.run.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.mmt.run.MMT.run", return_value=MagicMock()
     ) as mock_run:
         result = runner.invoke(run_mmt, args)

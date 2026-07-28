@@ -40,6 +40,9 @@ type ClusterServiceUpdateMachineBody struct {
 	// org Id
 	OrgID string `json:"orgId,omitempty"`
 
+	// owned by lightning
+	OwnedByLightning bool `json:"ownedByLightning,omitempty"`
+
 	// Workload-class dedication (see Machine.purpose). Must be one of the
 	// values returned by storage.KnownMachinePurposes() — today: "" or
 	// "sandbox". Server returns InvalidArgument otherwise.

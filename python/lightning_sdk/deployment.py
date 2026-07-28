@@ -76,9 +76,11 @@ class Deployment(metaclass=TrackCallsMeta):
 
     Args:
         name: The name or the id of the deployment.
-        teamspace: The teamspace in which you want to deploy.
-        org: The name of the organization owning the :param`teamspace` in case it is owned by an org
-        user: The name of the user owning the :param`teamspace` in case it is owned directly by a user instead of an org
+        teamspace: The teamspace in which you want to deploy. Accepts a bare name or an ``owner/teamspace`` slug.
+        org: The name of the organization owning the :param`teamspace` in case it is owned by an org. Deprecated —
+            pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+        user: The name of the user owning the :param`teamspace` in case it is owned directly by a user instead of
+            an org. Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
 
     Note:
         Since a teamspace can either be owned by an org or by a user directly,
@@ -208,10 +210,6 @@ class Deployment(metaclass=TrackCallsMeta):
             path_mappings: Maps container paths to data-connection paths in the form
                 ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
                 for the root of a connection. Only applicable when deploying docker containers.
-
-        Note:
-            Since a teamspace can either be owned by an org or by a user directly,
-            only one of the arguments can be provided.
 
         """
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)

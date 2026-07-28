@@ -5,6 +5,7 @@ import rich_click as click
 from lightning_sdk.cli.api import APIGroup
 from lightning_sdk.cli.api import register_commands as register_api_commands
 from lightning_sdk.cli.api_key import register_commands as register_api_key_commands
+from lightning_sdk.cli.auth import register_commands as register_auth_commands
 from lightning_sdk.cli.base_studio import register_commands as register_base_studio_commands
 from lightning_sdk.cli.config import register_commands as register_config_commands
 from lightning_sdk.cli.container import register_commands as register_container_commands
@@ -133,6 +134,11 @@ def api_key() -> None:
     """
 
 
+@click.group(name="auth", cls=LightningGroup)
+def auth() -> None:
+    """Identity and access: who you are, and what you're allowed to do."""
+
+
 @click.group(name="file", cls=DeprecatedGroup, replacement="lightning cp")
 def file() -> None:
     """Upload and download files."""
@@ -193,6 +199,7 @@ register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)
 register_api_key_commands(api_key)
+register_auth_commands(auth)
 register_file_commands(file)
 register_folder_commands(folder)
 register_ssh_commands(ssh)

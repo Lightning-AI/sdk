@@ -76,7 +76,6 @@ class V1DataConnection(object):
         'total_size_bytes': 'str',
         'type': 'str',
         'updated_at': 'datetime',
-        'weka': 'V1WekaDataConnection',
         'writable': 'bool'
     }
 
@@ -116,11 +115,10 @@ class V1DataConnection(object):
         'total_size_bytes': 'totalSizeBytes',
         'type': 'type',
         'updated_at': 'updatedAt',
-        'weka': 'weka',
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disk_data_connection: 'V1DiskDataConnection' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, mountable_data_connection: 'V1MountableDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, sshfs: 'V1SshfsDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, accessible: 'bool' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disk_data_connection: 'V1DiskDataConnection' =None, efs: 'V1EfsConfig' =None, error: 'str' =None, filestore: 'V1FilestoreDataConnection' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, index: 'V1Index' =None, is_billable_folder: 'bool' =None, is_cache: 'bool' =None, is_managed: 'bool' =None, is_public: 'bool' =None, lock_out: 'bool' =None, lustre: 'V1LustreDataConnection' =None, mountable_data_connection: 'V1MountableDataConnection' =None, name: 'str' =None, number_of_files: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, project_id: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, sshfs: 'V1SshfsDataConnection' =None, state: 'V1DataConnectionState' =None, total_daily_read_bytes: 'str' =None, total_daily_write_bytes: 'str' =None, total_size_bytes: 'str' =None, type: 'str' =None, updated_at: 'datetime' =None, writable: 'bool' =None):  # noqa: E501
         """V1DataConnection - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._accessible = None
@@ -157,7 +155,6 @@ class V1DataConnection(object):
         self._total_size_bytes = None
         self._type = None
         self._updated_at = None
-        self._weka = None
         self._writable = None
         self.discriminator = None
         if access_cluster_ids is not None:
@@ -230,8 +227,6 @@ class V1DataConnection(object):
             self.type = type
         if updated_at is not None:
             self.updated_at = updated_at
-        if weka is not None:
-            self.weka = weka
         if writable is not None:
             self.writable = writable
 
@@ -975,27 +970,6 @@ class V1DataConnection(object):
         """
 
         self._updated_at = updated_at
-
-    @property
-    def weka(self) -> 'V1WekaDataConnection':
-        """Gets the weka of this V1DataConnection.  # noqa: E501
-
-
-        :return: The weka of this V1DataConnection.  # noqa: E501
-        :rtype: V1WekaDataConnection
-        """
-        return self._weka
-
-    @weka.setter
-    def weka(self, weka: 'V1WekaDataConnection'):
-        """Sets the weka of this V1DataConnection.
-
-
-        :param weka: The weka of this V1DataConnection.  # noqa: E501
-        :type: V1WekaDataConnection
-        """
-
-        self._weka = weka
 
     @property
     def writable(self) -> 'bool':

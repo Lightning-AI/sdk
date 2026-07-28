@@ -80,12 +80,6 @@ type ProjectsServiceUpdateProjectBody struct {
 	// use display_name instead
 	Name string `json:"name,omitempty"`
 
-	// owner Id
-	OwnerID string `json:"ownerId,omitempty"`
-
-	// owner type
-	OwnerType *V1OwnerType `json:"ownerType,omitempty"`
-
 	// preferred cluster
 	PreferredCluster string `json:"preferredCluster,omitempty"`
 
@@ -117,10 +111,6 @@ func (m *ProjectsServiceUpdateProjectBody) Validate(formats strfmt.Registry) err
 	}
 
 	if err := m.validateLayoutConfig(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOwnerType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -194,29 +184,6 @@ func (m *ProjectsServiceUpdateProjectBody) validateLayoutConfig(formats strfmt.R
 	return nil
 }
 
-func (m *ProjectsServiceUpdateProjectBody) validateOwnerType(formats strfmt.Registry) error {
-	if swag.IsZero(m.OwnerType) { // not required
-		return nil
-	}
-
-	if m.OwnerType != nil {
-		if err := m.OwnerType.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("ownerType")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("ownerType")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *ProjectsServiceUpdateProjectBody) validateQuotas(formats strfmt.Registry) error {
 	if swag.IsZero(m.Quotas) { // not required
 		return nil
@@ -249,10 +216,6 @@ func (m *ProjectsServiceUpdateProjectBody) ContextValidate(ctx context.Context, 
 	}
 
 	if err := m.contextValidateLayoutConfig(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateOwnerType(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -319,31 +282,6 @@ func (m *ProjectsServiceUpdateProjectBody) contextValidateLayoutConfig(ctx conte
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *ProjectsServiceUpdateProjectBody) contextValidateOwnerType(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.OwnerType != nil {
-
-		if swag.IsZero(m.OwnerType) { // not required
-			return nil
-		}
-
-		if err := m.OwnerType.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("ownerType")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("ownerType")
-			}
-
-			return err
-		}
 	}
 
 	return nil

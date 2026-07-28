@@ -1,4 +1,5 @@
 import os
+import warnings
 from contextlib import nullcontext
 from pathlib import Path
 from unittest import mock
@@ -202,6 +203,89 @@ def test_teamspace_error_user_and_org():
         ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
     ):
         Teamspace(name="ts-abc", user="foo", org="bar")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_resolves_as_org(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_org = mock_resolve_org.return_value
+    mock_org.id = "org-1"
+    mock_resolve_user.return_value = None
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    ts = Teamspace("my-org/my-ts")
+
+    mock_resolve_org.assert_any_call("my-org")
+    assert mock.call("my-org") not in mock_resolve_user.call_args_list
+    assert ts.owner is mock_org
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_falls_back_to_user_when_owner_is_not_an_org(
+    mock_resolve_org, mock_resolve_user, mock_teamspace_api
+):
+    mock_resolve_org.side_effect = ValueError("Organization 'someone' does not exist or you are not a member of it.")
+    mock_user = mock_resolve_user.return_value
+    mock_user.id = "user-1"
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    ts = Teamspace("someone/my-ts")
+
+    mock_resolve_user.assert_any_call("someone")
+    assert ts.owner is mock_user
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_conflicts_with_explicit_org_raises():
+    with pytest.raises(ValueError, match="specified both as part of 'name'"):
+        Teamspace(name="my-org/my-ts", org="another-org")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_conflicts_with_explicit_user_raises():
+    with pytest.raises(ValueError, match="specified both as part of 'name'"):
+        Teamspace(name="my-org/my-ts", user="another-user")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_org_kwarg_emits_deprecation_warning(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_resolve_user.return_value = None
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
+        Teamspace(name="my-ts", org="my-org")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_user_kwarg_emits_deprecation_warning(mock_resolve_user, mock_teamspace_api):
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
+        Teamspace(name="my-ts", user="my-user")
+
+
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_without_org_or_user_does_not_warn(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+    mock_org = mock_resolve_org.return_value
+    mock_org.id = "org-1"
+    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        Teamspace("my-org/my-ts")
 
 
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
@@ -1242,7 +1326,7 @@ class _FakeRangeResponse:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version(
     mock_lightning_client,
@@ -1252,7 +1336,7 @@ def test_download_dataset_version(
 ):
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
+    from lightning_sdk.api.dataset import _download_dataset_version
 
     mock_list_response = mock.MagicMock()
     mock_list_response.data = json.dumps({"datasets": []})
@@ -1311,7 +1395,7 @@ def test_download_dataset_version(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version_no_token_no_cluster(
     mock_lightning_client,
@@ -1321,7 +1405,7 @@ def test_download_dataset_version_no_token_no_cluster(
 ):
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
+    from lightning_sdk.api.dataset import _download_dataset_version
 
     mock_list_response = mock.MagicMock()
     mock_list_response.data = json.dumps({"datasets": []})
@@ -1368,7 +1452,7 @@ def test_download_dataset_version_no_token_no_cluster(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_dataset_id_and_version(
     mock_lightning_client,
@@ -1378,7 +1462,7 @@ def test_resolve_dataset_id_and_version(
     """One list call returns both the dataset id and the resolved current version."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _resolve_dataset_id_and_version
+    from lightning_sdk.api.dataset import _resolve_dataset_id_and_version
 
     resp = mock.MagicMock()
     resp.data = json.dumps({"datasets": [{"name": "ds-1", "id": "id-123", "defaultVersion": {"version": "v7"}}]})
@@ -1402,7 +1486,7 @@ def test_resolve_dataset_id_and_version(
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
 def test_download_dataset_files_parallel(tmp_path):
     """Files download concurrently via Range GETs, each written to its own path."""
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+    from lightning_sdk.api.dataset import _download_dataset_files
 
     files = [
         {"filepath": "a.bin", "url": "https://x/a", "size": 4},
@@ -1433,7 +1517,7 @@ def test_download_dataset_files_parallel(tmp_path):
 def test_download_dataset_files_chunked(tmp_path):
     """A file larger than part_size is fetched as multiple byte-range parts and
     reassembled correctly at their offsets."""
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+    from lightning_sdk.api.dataset import _download_dataset_files
 
     content = b"ABCDEFGH"  # 8 bytes
     files = [{"filepath": "big.bin", "url": "https://x/big", "size": len(content)}]
@@ -1458,9 +1542,9 @@ def test_download_dataset_files_chunked(tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_new(
     mock_lightning_client,
@@ -1473,7 +1557,7 @@ def test_upload_dataset_new(
     """Upload a brand-new dataset (dataset does not exist yet)."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "data.txt"
     src_file.write_text("hello upload dataset", encoding="utf-8")
@@ -1574,11 +1658,11 @@ class _SyncExecutor:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     """Files upload in parallel: one uploader per file, with the concurrency
     budget split across files x within-file parts."""
-    from lightning_sdk.lightning_cloud.utils import dataset as d
+    from lightning_sdk.api import dataset as d
 
     file_paths, remote_paths = [], []
     for i in range(3):
@@ -1618,11 +1702,11 @@ def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
     """The concurrency budget splits sensibly at the edges: a single large file
     gets all workers within-file; many small files fan out one part-worker each."""
-    from lightning_sdk.lightning_cloud.utils import dataset as d
+    from lightning_sdk.api import dataset as d
 
     def run(n_files, num_workers):
         paths, rels = [], []
@@ -1666,9 +1750,9 @@ def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_existing(
     mock_lightning_client,
@@ -1681,7 +1765,7 @@ def test_upload_dataset_existing(
     """Upload to an existing dataset, auto-incrementing version from v3 to v4."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "data.csv"
     src_file.write_text("col1,col2\n1,2\n", encoding="utf-8")
@@ -1758,9 +1842,9 @@ def test_upload_dataset_existing(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_with_explicit_version(
     mock_lightning_client,
@@ -1773,7 +1857,7 @@ def test_upload_dataset_with_explicit_version(
     """Upload to an existing dataset with an explicit version tag."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "model.pt"
     src_file.write_text("weights", encoding="utf-8")

@@ -17,6 +17,9 @@ import (
 // swagger:model v1VMInstance
 type V1VMInstance struct {
 
+	// config
+	Config string `json:"config,omitempty"`
+
 	// cpus
 	Cpus int32 `json:"cpus,omitempty"`
 

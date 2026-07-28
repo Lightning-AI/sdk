@@ -131,8 +131,10 @@ class MMT(metaclass=TrackCallsMeta):
             name: the name of the job.
             teamspace: the teamspace the job is part of.
             org: the name of the organization owning the ``teamspace`` in case it is owned by an org.
+                Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
             user: the name of the user owning the ``teamspace`` in case it is owned directly by a user instead
-                of an org.
+                of an org. Deprecated — pass the owner as part of ``teamspace`` instead,
+                e.g. ``teamspace="owner/teamspace"``.
 
         Raises:
             ValueError: If the teamspace cannot be resolved from the provided arguments, or if the job is not found
@@ -193,8 +195,11 @@ class MMT(metaclass=TrackCallsMeta):
             studio: The studio env to run the job with. Mutually exclusive with image.
             image: The docker image to run the job with. Mutually exclusive with studio.
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
+                Accepts a bare name or an ``owner/teamspace`` slug.
             org: The organization owning the teamspace, if any. Defaults to the current organization.
+                Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
             user: The user owning the teamspace, if any. Defaults to the current user.
+                Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
             cloud: Cloud provider or cloud account to run the job on.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. Cheaper but can be preempted.

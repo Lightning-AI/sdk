@@ -42,21 +42,26 @@ class V1GCPDirectVPC(object):
     """
     swagger_types = {
         'network_name': 'str',
+        'region': 'str',
         'subnet_name': 'str'
     }
 
     attribute_map = {
         'network_name': 'networkName',
+        'region': 'region',
         'subnet_name': 'subnetName'
     }
 
-    def __init__(self, network_name: 'str' =None, subnet_name: 'str' =None):  # noqa: E501
+    def __init__(self, network_name: 'str' =None, region: 'str' =None, subnet_name: 'str' =None):  # noqa: E501
         """V1GCPDirectVPC - a model defined in Swagger"""  # noqa: E501
         self._network_name = None
+        self._region = None
         self._subnet_name = None
         self.discriminator = None
         if network_name is not None:
             self.network_name = network_name
+        if region is not None:
+            self.region = region
         if subnet_name is not None:
             self.subnet_name = subnet_name
 
@@ -80,6 +85,29 @@ class V1GCPDirectVPC(object):
         """
 
         self._network_name = network_name
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1GCPDirectVPC.  # noqa: E501
+
+        Region this subnet belongs to. When set, this entry is only used for instances created in this region. When empty, the entry applies to any region (backwards-compatible behaviour). This lets a cluster map a differently-named subnet per region.  # noqa: E501
+
+        :return: The region of this V1GCPDirectVPC.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1GCPDirectVPC.
+
+        Region this subnet belongs to. When set, this entry is only used for instances created in this region. When empty, the entry applies to any region (backwards-compatible behaviour). This lets a cluster map a differently-named subnet per region.  # noqa: E501
+
+        :param region: The region of this V1GCPDirectVPC.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def subnet_name(self) -> 'str':

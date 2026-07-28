@@ -23,8 +23,20 @@ type V1MachineDirectV1 struct {
 	// Machine access mode for the cluster: bare metal or virtual machines
 	AccessMode string `json:"accessMode,omitempty"`
 
+	// Baremetal agent version (if set, overrides a global one)
+	AgentVersion string `json:"agentVersion,omitempty"`
+
+	// The cloud to use when there is no capacity left
+	BurstClusterID string `json:"burstClusterId,omitempty"`
+
 	// User to run user-specific setup commands
 	CloudHypervisorUser string `json:"cloudHypervisorUser,omitempty"`
+
+	// Whether we disable CPU VM on GPU VM (apply only when burst cluster is defined)
+	DisableCPUVMOnGpuNode bool `json:"disableCpuVmOnGpuNode,omitempty"`
+
+	// Silence shadow-reservation capacity/IB Slack alerts for this cluster (metrics still emitted); a kill switch if alerting is too noisy
+	DisableReservationAlerts bool `json:"disableReservationAlerts,omitempty"`
 
 	// Set if custom DNS servers need to be used
 	DNSServers []string `json:"dnsServers"`
@@ -67,8 +79,14 @@ type V1MachineDirectV1 struct {
 	// Whether baremetal agent reconciliation is enabled on the cluster's machines
 	UpdateAgent bool `json:"updateAgent,omitempty"`
 
+	// Whether baremetal agent reconciliation is enabled on the sandbox cluster's machines (separate flag to protect them)
+	UpdateAgentsOnSandboxMachines bool `json:"updateAgentsOnSandboxMachines,omitempty"`
+
 	// Prepare NVMe disks on host to for VMs
 	UseNvmeDisks bool `json:"useNvmeDisks,omitempty"`
+
+	// The secret id to access voltage park
+	VoltageParkCredentialsSecretID string `json:"voltageParkCredentialsSecretId,omitempty"`
 }
 
 // Validate validates this v1 machine direct v1

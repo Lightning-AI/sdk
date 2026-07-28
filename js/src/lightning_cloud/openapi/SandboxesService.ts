@@ -251,6 +251,8 @@ rootfs_digest from the manifest.
     id: string,
     query?: {
       organizationId?: string;
+      name?: string;
+      projectId?: string;
     },
     params: RequestParams = {},
   ) =>

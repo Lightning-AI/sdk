@@ -46,7 +46,8 @@ class V1RafayDirectV1(object):
         'credentials_secret_id': 'str',
         'primary_region': 'str',
         'project_id': 'str',
-        'regions': 'list[str]'
+        'regions': 'list[str]',
+        'workspace': 'str'
     }
 
     attribute_map = {
@@ -55,10 +56,11 @@ class V1RafayDirectV1(object):
         'credentials_secret_id': 'credentialsSecretId',
         'primary_region': 'primaryRegion',
         'project_id': 'projectId',
-        'regions': 'regions'
+        'regions': 'regions',
+        'workspace': 'workspace'
     }
 
-    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, credentials_secret_id: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, api_url: 'str' =None, credentials_secret_id: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, regions: 'list[str]' =None, workspace: 'str' =None):  # noqa: E501
         """V1RafayDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._api_url = None
@@ -66,6 +68,7 @@ class V1RafayDirectV1(object):
         self._primary_region = None
         self._project_id = None
         self._regions = None
+        self._workspace = None
         self.discriminator = None
         if api_key is not None:
             self.api_key = api_key
@@ -79,6 +82,8 @@ class V1RafayDirectV1(object):
             self.project_id = project_id
         if regions is not None:
             self.regions = regions
+        if workspace is not None:
+            self.workspace = workspace
 
     @property
     def api_key(self) -> 'str':
@@ -207,6 +212,27 @@ class V1RafayDirectV1(object):
         """
 
         self._regions = regions
+
+    @property
+    def workspace(self) -> 'str':
+        """Gets the workspace of this V1RafayDirectV1.  # noqa: E501
+
+
+        :return: The workspace of this V1RafayDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._workspace
+
+    @workspace.setter
+    def workspace(self, workspace: 'str'):
+        """Sets the workspace of this V1RafayDirectV1.
+
+
+        :param workspace: The workspace of this V1RafayDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._workspace = workspace
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

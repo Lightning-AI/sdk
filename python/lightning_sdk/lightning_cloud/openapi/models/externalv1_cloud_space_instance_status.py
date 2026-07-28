@@ -71,6 +71,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'startup_eta_seconds': 'str',
         'startup_percentage': 'str',
         'startup_phase': 'str',
+        'startup_stages': 'list[V1CloudSpaceStartupStageStatus]',
         'startup_status': 'V1CloudSpaceInstanceStartupStatus',
         'status_message': 'str',
         'switched_at': 'datetime',
@@ -111,6 +112,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'startup_eta_seconds': 'startupEtaSeconds',
         'startup_percentage': 'startupPercentage',
         'startup_phase': 'startupPhase',
+        'startup_stages': 'startupStages',
         'startup_status': 'startupStatus',
         'status_message': 'statusMessage',
         'switched_at': 'switchedAt',
@@ -120,7 +122,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         'vscode_url': 'vscodeUrl'
     }
 
-    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, capacity_reservation_id: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
+    def __init__(self, alerts: 'list[V1ServerAlert]' =None, app_url: 'str' =None, bytes_to_sync: 'str' =None, capacity_reservation_id: 'str' =None, cloud_space_id: 'str' =None, cloud_space_instance_id: 'str' =None, cluster_id: 'str' =None, compute_config: 'V1UserRequestedComputeConfig' =None, creation_timestamp: 'datetime' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, files_to_sync: 'str' =None, free: 'bool' =None, ide: 'str' =None, instance_id: 'str' =None, instance_region: 'str' =None, instance_url: 'str' =None, jupyterlab_url: 'str' =None, phase: 'V1CloudSpaceInstanceState' =None, price: 'float' =None, private_ip_address: 'str' =None, public_ip_address: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, ssh_host: 'str' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, start_timestamp: 'datetime' =None, startup_eta_seconds: 'str' =None, startup_percentage: 'str' =None, startup_phase: 'str' =None, startup_stages: 'list[V1CloudSpaceStartupStageStatus]' =None, startup_status: 'V1CloudSpaceInstanceStartupStatus' =None, status_message: 'str' =None, switched_at: 'datetime' =None, sync_last_updated: 'datetime' =None, termination_time: 'datetime' =None, transfer_metadata: 'V1CloudSpaceTransferMetadata' =None, vscode_url: 'str' =None):  # noqa: E501
         """Externalv1CloudSpaceInstanceStatus - a model defined in Swagger"""  # noqa: E501
         self._alerts = None
         self._app_url = None
@@ -152,6 +154,7 @@ class Externalv1CloudSpaceInstanceStatus(object):
         self._startup_eta_seconds = None
         self._startup_percentage = None
         self._startup_phase = None
+        self._startup_stages = None
         self._startup_status = None
         self._status_message = None
         self._switched_at = None
@@ -220,6 +223,8 @@ class Externalv1CloudSpaceInstanceStatus(object):
             self.startup_percentage = startup_percentage
         if startup_phase is not None:
             self.startup_phase = startup_phase
+        if startup_stages is not None:
+            self.startup_stages = startup_stages
         if startup_status is not None:
             self.startup_status = startup_status
         if status_message is not None:
@@ -866,6 +871,27 @@ class Externalv1CloudSpaceInstanceStatus(object):
         """
 
         self._startup_phase = startup_phase
+
+    @property
+    def startup_stages(self) -> 'list[V1CloudSpaceStartupStageStatus]':
+        """Gets the startup_stages of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+
+
+        :return: The startup_stages of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :rtype: list[V1CloudSpaceStartupStageStatus]
+        """
+        return self._startup_stages
+
+    @startup_stages.setter
+    def startup_stages(self, startup_stages: 'list[V1CloudSpaceStartupStageStatus]'):
+        """Sets the startup_stages of this Externalv1CloudSpaceInstanceStatus.
+
+
+        :param startup_stages: The startup_stages of this Externalv1CloudSpaceInstanceStatus.  # noqa: E501
+        :type: list[V1CloudSpaceStartupStageStatus]
+        """
+
+        self._startup_stages = startup_stages
 
     @property
     def startup_status(self) -> 'V1CloudSpaceInstanceStartupStatus':

@@ -68,6 +68,12 @@ type V1ServerSpec struct {
 	// Set if it's part of a deployment
 	DeploymentID string `json:"deploymentId,omitempty"`
 
+	// desired machine Id
+	DesiredMachineID string `json:"desiredMachineId,omitempty"`
+
+	// dws
+	Dws bool `json:"dws,omitempty"`
+
 	// User requested ports for the server (sandbox, plain VM cloud instance)
 	ForwardPorts []int64 `json:"forwardPorts"`
 
@@ -85,6 +91,11 @@ type V1ServerSpec struct {
 
 	// ib device infos
 	IbDeviceInfos []*V1IBDeviceInfo `json:"ibDeviceInfos"`
+
+	// Per-VM inband /32 (from the host's 10.15.x overlay pool) assigned by the
+	// baremetal-agent. Empty for non-inband instances. Read by the VAST
+	// client-IP registration hooks; not consumed elsewhere.
+	InbandIP string `json:"inbandIp,omitempty"`
 
 	// Managed instance group (MIG) ID used to run the instance (when dynamic workload scheduling is used to run the instance)
 	InstanceManagedGroupID string `json:"instanceManagedGroupId,omitempty"`

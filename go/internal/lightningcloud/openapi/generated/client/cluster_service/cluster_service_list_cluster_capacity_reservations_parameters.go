@@ -91,6 +91,12 @@ type ClusterServiceListClusterCapacityReservationsParams struct {
 	// IncludeAll.
 	IncludeAll *bool
 
+	/* IncludeShadow.
+
+	   include platform-managed shadow reservations; off for user-facing calls
+	*/
+	IncludeShadow *bool
+
 	// InstanceType.
 	InstanceType *string
 
@@ -239,6 +245,17 @@ func (o *ClusterServiceListClusterCapacityReservationsParams) WithIncludeAll(inc
 // SetIncludeAll adds the includeAll to the cluster service list cluster capacity reservations params
 func (o *ClusterServiceListClusterCapacityReservationsParams) SetIncludeAll(includeAll *bool) {
 	o.IncludeAll = includeAll
+}
+
+// WithIncludeShadow adds the includeShadow to the cluster service list cluster capacity reservations params
+func (o *ClusterServiceListClusterCapacityReservationsParams) WithIncludeShadow(includeShadow *bool) *ClusterServiceListClusterCapacityReservationsParams {
+	o.SetIncludeShadow(includeShadow)
+	return o
+}
+
+// SetIncludeShadow adds the includeShadow to the cluster service list cluster capacity reservations params
+func (o *ClusterServiceListClusterCapacityReservationsParams) SetIncludeShadow(includeShadow *bool) {
+	o.IncludeShadow = includeShadow
 }
 
 // WithInstanceType adds the instanceType to the cluster service list cluster capacity reservations params
@@ -417,6 +434,23 @@ func (o *ClusterServiceListClusterCapacityReservationsParams) WriteToRequest(r r
 		if qIncludeAll != "" {
 
 			if err := r.SetQueryParam("includeAll", qIncludeAll); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.IncludeShadow != nil {
+
+		// query param includeShadow
+		var qrIncludeShadow bool
+
+		if o.IncludeShadow != nil {
+			qrIncludeShadow = *o.IncludeShadow
+		}
+		qIncludeShadow := swag.FormatBool(qrIncludeShadow)
+		if qIncludeShadow != "" {
+
+			if err := r.SetQueryParam("includeShadow", qIncludeShadow); err != nil {
 				return err
 			}
 		}

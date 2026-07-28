@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 import rich_click as click
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
-from lightning_sdk.cli.utils.resolve import resolve_teamspace_owner_name_format
 from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
 from lightning_sdk.teamspace import Organization, Teamspace
 from lightning_sdk.user import Owner, User
@@ -75,7 +74,10 @@ class TeamspacesMenu:
 
     def __call__(self, teamspace: Optional[str] = None) -> Teamspace:
         resolved_teamspace = None
-        resolved_teamspace = resolve_teamspace_owner_name_format(teamspace)
+        try:
+            resolved_teamspace = _resolve_teamspace(teamspace, None, None)
+        except Exception:
+            resolved_teamspace = None
         if resolved_teamspace is not None:
             return resolved_teamspace
 

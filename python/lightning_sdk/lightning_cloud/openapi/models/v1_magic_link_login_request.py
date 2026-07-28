@@ -44,9 +44,10 @@ class V1MagicLinkLoginRequest(object):
         'collab_session_id': 'str',
         'email': 'str',
         'experimentation_id': 'str',
-        'guest_user_api_key': 'str',
         'invite_code': 'str',
         'pending_create_deployment': 'V1CreateDeploymentRequest',
+        'pending_fork_cloud_space': 'V1PendingForkCloudSpace',
+        'recaptcha_token': 'str',
         'redirect_url': 'str',
         'referrer_params': 'str',
         'source': 'str'
@@ -56,22 +57,24 @@ class V1MagicLinkLoginRequest(object):
         'collab_session_id': 'collabSessionId',
         'email': 'email',
         'experimentation_id': 'experimentationId',
-        'guest_user_api_key': 'guestUserApiKey',
         'invite_code': 'inviteCode',
         'pending_create_deployment': 'pendingCreateDeployment',
+        'pending_fork_cloud_space': 'pendingForkCloudSpace',
+        'recaptcha_token': 'recaptchaToken',
         'redirect_url': 'redirectUrl',
         'referrer_params': 'referrerParams',
         'source': 'source'
     }
 
-    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, guest_user_api_key: 'str' =None, invite_code: 'str' =None, pending_create_deployment: 'V1CreateDeploymentRequest' =None, redirect_url: 'str' =None, referrer_params: 'str' =None, source: 'str' =None):  # noqa: E501
+    def __init__(self, collab_session_id: 'str' =None, email: 'str' =None, experimentation_id: 'str' =None, invite_code: 'str' =None, pending_create_deployment: 'V1CreateDeploymentRequest' =None, pending_fork_cloud_space: 'V1PendingForkCloudSpace' =None, recaptcha_token: 'str' =None, redirect_url: 'str' =None, referrer_params: 'str' =None, source: 'str' =None):  # noqa: E501
         """V1MagicLinkLoginRequest - a model defined in Swagger"""  # noqa: E501
         self._collab_session_id = None
         self._email = None
         self._experimentation_id = None
-        self._guest_user_api_key = None
         self._invite_code = None
         self._pending_create_deployment = None
+        self._pending_fork_cloud_space = None
+        self._recaptcha_token = None
         self._redirect_url = None
         self._referrer_params = None
         self._source = None
@@ -82,12 +85,14 @@ class V1MagicLinkLoginRequest(object):
             self.email = email
         if experimentation_id is not None:
             self.experimentation_id = experimentation_id
-        if guest_user_api_key is not None:
-            self.guest_user_api_key = guest_user_api_key
         if invite_code is not None:
             self.invite_code = invite_code
         if pending_create_deployment is not None:
             self.pending_create_deployment = pending_create_deployment
+        if pending_fork_cloud_space is not None:
+            self.pending_fork_cloud_space = pending_fork_cloud_space
+        if recaptcha_token is not None:
+            self.recaptcha_token = recaptcha_token
         if redirect_url is not None:
             self.redirect_url = redirect_url
         if referrer_params is not None:
@@ -159,27 +164,6 @@ class V1MagicLinkLoginRequest(object):
         self._experimentation_id = experimentation_id
 
     @property
-    def guest_user_api_key(self) -> 'str':
-        """Gets the guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
-
-
-        :return: The guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._guest_user_api_key
-
-    @guest_user_api_key.setter
-    def guest_user_api_key(self, guest_user_api_key: 'str'):
-        """Sets the guest_user_api_key of this V1MagicLinkLoginRequest.
-
-
-        :param guest_user_api_key: The guest_user_api_key of this V1MagicLinkLoginRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._guest_user_api_key = guest_user_api_key
-
-    @property
     def invite_code(self) -> 'str':
         """Gets the invite_code of this V1MagicLinkLoginRequest.  # noqa: E501
 
@@ -220,6 +204,48 @@ class V1MagicLinkLoginRequest(object):
         """
 
         self._pending_create_deployment = pending_create_deployment
+
+    @property
+    def pending_fork_cloud_space(self) -> 'V1PendingForkCloudSpace':
+        """Gets the pending_fork_cloud_space of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The pending_fork_cloud_space of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: V1PendingForkCloudSpace
+        """
+        return self._pending_fork_cloud_space
+
+    @pending_fork_cloud_space.setter
+    def pending_fork_cloud_space(self, pending_fork_cloud_space: 'V1PendingForkCloudSpace'):
+        """Sets the pending_fork_cloud_space of this V1MagicLinkLoginRequest.
+
+
+        :param pending_fork_cloud_space: The pending_fork_cloud_space of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: V1PendingForkCloudSpace
+        """
+
+        self._pending_fork_cloud_space = pending_fork_cloud_space
+
+    @property
+    def recaptcha_token(self) -> 'str':
+        """Gets the recaptcha_token of this V1MagicLinkLoginRequest.  # noqa: E501
+
+
+        :return: The recaptcha_token of this V1MagicLinkLoginRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._recaptcha_token
+
+    @recaptcha_token.setter
+    def recaptcha_token(self, recaptcha_token: 'str'):
+        """Sets the recaptcha_token of this V1MagicLinkLoginRequest.
+
+
+        :param recaptcha_token: The recaptcha_token of this V1MagicLinkLoginRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._recaptcha_token = recaptcha_token
 
     @property
     def redirect_url(self) -> 'str':

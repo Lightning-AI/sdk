@@ -20,9 +20,11 @@ class LitContainer:
         """List available docker repositories.
 
         Args:
-            teamspace: The teamspace to list containers from.
-            org: The organization to list containers from.
-            user: The user to list the containers from.
+            teamspace: The teamspace to list containers from. Accepts a bare name or an ``owner/teamspace`` slug.
+            org: The organization to list containers from. Deprecated — pass the owner as part of ``teamspace``
+                instead, e.g. ``teamspace="owner/teamspace"``.
+            user: The user to list the containers from. Deprecated — pass the owner as part of ``teamspace``
+                instead, e.g. ``teamspace="owner/teamspace"``.
             cloud_account: The cloud account to list the containers from.
 
         Returns:
@@ -70,9 +72,12 @@ class LitContainer:
 
         Args:
             container: Name of the container to delete.
-            teamspace: The teamspace which contains the container.
-            org: The organization which contains the container.
-            user: The user which contains the container.
+            teamspace: The teamspace which contains the container. Accepts a bare name or an ``owner/teamspace``
+                slug.
+            org: The organization which contains the container. Deprecated — pass the owner as part of
+                ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+            user: The user which contains the container. Deprecated — pass the owner as part of ``teamspace``
+                instead, e.g. ``teamspace="owner/teamspace"``.
         """
         try:
             teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
@@ -100,9 +105,12 @@ class LitContainer:
 
         Args:
             container: The name of the container to upload.
-            teamspace: The teamspace which contains the container.
-            org: The organization which contains the container.
-            user: The user which contains the container.
+            teamspace: The teamspace which contains the container. Accepts a bare name or an ``owner/teamspace``
+                slug.
+            org: The organization which contains the container. Deprecated — pass the owner as part of
+                ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+            user: The user which contains the container. Deprecated — pass the owner as part of ``teamspace``
+                instead, e.g. ``teamspace="owner/teamspace"``.
             tag: The tag to use for the container.
             cloud_account: The cloud account where the container is stored.
             platform: The platform the container is meant to run on.
@@ -140,9 +148,12 @@ class LitContainer:
 
         Args:
             container: The name of the container to download.
-            teamspace: The teamspace which contains the container.
-            org: The organization which contains the container.
-            user: The user which contains the container.
+            teamspace: The teamspace which contains the container. Accepts a bare name or an ``owner/teamspace``
+                slug.
+            org: The organization which contains the container. Deprecated — pass the owner as part of
+                ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
+            user: The user which contains the container. Deprecated — pass the owner as part of ``teamspace``
+                instead, e.g. ``teamspace="owner/teamspace"``.
             tag: The tag to use for the container.
         """
         try:

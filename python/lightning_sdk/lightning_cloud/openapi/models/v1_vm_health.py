@@ -51,6 +51,7 @@ class V1VMHealth(object):
         'filesystems': 'list[V1VMFilesystemUsage]',
         'gpu_status': 'list[V1GPUStatus]',
         'gpus': 'list[str]',
+        'ib_pkeys_info': 'list[V1VMIBPKeyInfo]',
         'ip': 'str',
         'memory': 'V1VMMemoryUsage',
         'name': 'str',
@@ -75,6 +76,7 @@ class V1VMHealth(object):
         'filesystems': 'filesystems',
         'gpu_status': 'gpuStatus',
         'gpus': 'gpus',
+        'ib_pkeys_info': 'ibPkeysInfo',
         'ip': 'ip',
         'memory': 'memory',
         'name': 'name',
@@ -88,7 +90,7 @@ class V1VMHealth(object):
         'xids': 'xids'
     }
 
-    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
+    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
         """V1VMHealth - a model defined in Swagger"""  # noqa: E501
         self._alive = None
         self._ch_log_failures = None
@@ -100,6 +102,7 @@ class V1VMHealth(object):
         self._filesystems = None
         self._gpu_status = None
         self._gpus = None
+        self._ib_pkeys_info = None
         self._ip = None
         self._memory = None
         self._name = None
@@ -132,6 +135,8 @@ class V1VMHealth(object):
             self.gpu_status = gpu_status
         if gpus is not None:
             self.gpus = gpus
+        if ib_pkeys_info is not None:
+            self.ib_pkeys_info = ib_pkeys_info
         if ip is not None:
             self.ip = ip
         if memory is not None:
@@ -366,6 +371,27 @@ class V1VMHealth(object):
         """
 
         self._gpus = gpus
+
+    @property
+    def ib_pkeys_info(self) -> 'list[V1VMIBPKeyInfo]':
+        """Gets the ib_pkeys_info of this V1VMHealth.  # noqa: E501
+
+
+        :return: The ib_pkeys_info of this V1VMHealth.  # noqa: E501
+        :rtype: list[V1VMIBPKeyInfo]
+        """
+        return self._ib_pkeys_info
+
+    @ib_pkeys_info.setter
+    def ib_pkeys_info(self, ib_pkeys_info: 'list[V1VMIBPKeyInfo]'):
+        """Sets the ib_pkeys_info of this V1VMHealth.
+
+
+        :param ib_pkeys_info: The ib_pkeys_info of this V1VMHealth.  # noqa: E501
+        :type: list[V1VMIBPKeyInfo]
+        """
+
+        self._ib_pkeys_info = ib_pkeys_info
 
     @property
     def ip(self) -> 'str':

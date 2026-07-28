@@ -11,7 +11,6 @@ from lightning_sdk.lightning_cloud.openapi.api.cloud_space_environment_template_
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import ClusterServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.data_connection_service_api import DataConnectionServiceApi
-from lightning_sdk.lightning_cloud.openapi.api.dataset_service_api import DatasetServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.deployment_templates_service_api import DeploymentTemplatesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.endpoint_service_api import EndpointServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.experiments_service_api import ExperimentsServiceApi

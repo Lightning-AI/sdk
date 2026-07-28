@@ -68,9 +68,6 @@ type ProjectsServiceListMembershipsParams struct {
 	// FilterByUserID.
 	FilterByUserID *bool
 
-	// Guest.
-	Guest *bool
-
 	// OrganizationID.
 	OrganizationID *string
 
@@ -149,17 +146,6 @@ func (o *ProjectsServiceListMembershipsParams) SetFilterByUserID(filterByUserID 
 	o.FilterByUserID = filterByUserID
 }
 
-// WithGuest adds the guest to the projects service list memberships params
-func (o *ProjectsServiceListMembershipsParams) WithGuest(guest *bool) *ProjectsServiceListMembershipsParams {
-	o.SetGuest(guest)
-	return o
-}
-
-// SetGuest adds the guest to the projects service list memberships params
-func (o *ProjectsServiceListMembershipsParams) SetGuest(guest *bool) {
-	o.Guest = guest
-}
-
 // WithOrganizationID adds the organizationID to the projects service list memberships params
 func (o *ProjectsServiceListMembershipsParams) WithOrganizationID(organizationID *string) *ProjectsServiceListMembershipsParams {
 	o.SetOrganizationID(organizationID)
@@ -208,23 +194,6 @@ func (o *ProjectsServiceListMembershipsParams) WriteToRequest(r runtime.ClientRe
 		if qFilterByUserID != "" {
 
 			if err := r.SetQueryParam("filterByUserId", qFilterByUserID); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.Guest != nil {
-
-		// query param guest
-		var qrGuest bool
-
-		if o.Guest != nil {
-			qrGuest = *o.Guest
-		}
-		qGuest := swag.FormatBool(qrGuest)
-		if qGuest != "" {
-
-			if err := r.SetQueryParam("guest", qGuest); err != nil {
 				return err
 			}
 		}

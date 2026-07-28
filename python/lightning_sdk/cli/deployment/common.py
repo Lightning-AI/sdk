@@ -17,7 +17,7 @@ from lightning_sdk.api.deployment_api import (
     TokenAuth,
 )
 from lightning_sdk.cli.job.run import _resolve_envs, _resolve_path_mapping
-from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
@@ -29,12 +29,6 @@ from lightning_sdk.utils.resolve import _get_authed_user
 MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
 )
-
-
-def resolve_teamspace(teamspace: Optional[str]) -> Teamspace:
-    resolved_teamspace = TeamspacesMenu()(teamspace=teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
-    return resolved_teamspace
 
 
 def iter_teamspaces(teamspace: Optional[str], all_teamspaces: bool) -> Iterable[Teamspace]:

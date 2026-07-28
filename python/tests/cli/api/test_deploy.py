@@ -283,7 +283,7 @@ def test_handle_cloud_no_internet(mock_is_connected):
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
-@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace")
+@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
@@ -328,7 +328,7 @@ def test_handle_cloud_from_onboarding(
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
-@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace")
+@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
@@ -521,7 +521,7 @@ def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_
     mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org=None, user=mock_user_owner)
 
 
-@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace")
+@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @mock_command_logging
 def test_select_teamspace(mock_resolve_teamspace):
     select_teamspace(teamspace="test-teamspace", org="org", user="user")

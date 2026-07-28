@@ -53,6 +53,13 @@ type V1ClusterCapacityReservation struct {
 	// like in-use, this is calculated, only relevant based on aggregate availability
 	InUseAggregate string `json:"inUseAggregate,omitempty"`
 
+	// infiniband_tier selects the fabric locality this reservation is protected
+	// at: the platform co-locates the reserved nodes within one fabric group at
+	// the given tier so a multi-node (MMT) owner can always assemble its committed
+	// node count with the required interconnect. UNSPECIFIED means not IB-aware
+	// (protected as scattered whole nodes). Only meaningful with shadow.
+	InfinibandTier *V1InfinibandTier `json:"infinibandTier,omitempty"`
+
 	// instance type
 	InstanceType string `json:"instanceType,omitempty"`
 
@@ -77,6 +84,13 @@ type V1ClusterCapacityReservation struct {
 	// resources
 	Resources *V1Resources `json:"resources,omitempty"`
 
+	// shadow marks a platform-managed "shadow" reservation. It is both hidden
+	// from user-facing listings and given preemption-right (soft) scheduling
+	// semantics: it blocks foreign on-demand use of the reserved capacity but
+	// lets foreign spot fill it while idle (reclaimed by eviction when the owner
+	// returns). Independent of the end date.
+	Shadow bool `json:"shadow,omitempty"`
+
 	// start time
 	// Format: date-time
 	StartTime strfmt.DateTime `json:"startTime,omitempty"`
@@ -97,6 +111,10 @@ func (m *V1ClusterCapacityReservation) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEndTime(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInfinibandTier(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -137,6 +155,29 @@ func (m *V1ClusterCapacityReservation) validateEndTime(formats strfmt.Registry) 
 
 	if err := validate.FormatOf("endTime", "body", "date-time", m.EndTime.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *V1ClusterCapacityReservation) validateInfinibandTier(formats strfmt.Registry) error {
+	if swag.IsZero(m.InfinibandTier) { // not required
+		return nil
+	}
+
+	if m.InfinibandTier != nil {
+		if err := m.InfinibandTier.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("infinibandTier")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("infinibandTier")
+			}
+
+			return err
+		}
 	}
 
 	return nil
@@ -211,6 +252,10 @@ func (m *V1ClusterCapacityReservation) validateUsedBy(formats strfmt.Registry) e
 func (m *V1ClusterCapacityReservation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateInfinibandTier(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateResources(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -222,6 +267,31 @@ func (m *V1ClusterCapacityReservation) ContextValidate(ctx context.Context, form
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1ClusterCapacityReservation) contextValidateInfinibandTier(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InfinibandTier != nil {
+
+		if swag.IsZero(m.InfinibandTier) { // not required
+			return nil
+		}
+
+		if err := m.InfinibandTier.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("infinibandTier")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("infinibandTier")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

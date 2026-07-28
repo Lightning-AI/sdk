@@ -1,8 +1,9 @@
 import functools
 import logging
 import time
+from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional, Sequence
 
 import urllib3
 
@@ -18,7 +19,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     ClusterServiceApi,
     Configuration,
     DataConnectionServiceApi,
-    DatasetServiceApi,
     DeploymentTemplatesServiceApi,
     EndpointServiceApi,
     GpuTelemetryServiceApi,
@@ -89,7 +89,6 @@ class GridRestClient(
     SecretServiceApi,
     SSHPublicKeyServiceApi,
     DataConnectionServiceApi,
-    DatasetServiceApi,
     OrganizationsServiceApi,
     UserServiceApi,
     BillingServiceApi,
@@ -205,6 +204,53 @@ class LightningClient(GridRestClient):
                             name,
                             _retry_wrapper(self, attribute, max_tries=max_tries),
                         )
+
+    def list_gpu_telemetry(self,
+                           org_id: str,
+                           source_type: Optional[str] = None,
+                           dc: Optional[str] = None,
+                           cluster: Optional[str] = None,
+                           node: Optional[str] = None,
+                           page_size: Optional[int] = None,
+                           page_token: Optional[str] = None,
+                           **kwargs: Any):
+        params = _without_none({
+            "source_type": source_type,
+            "dc": dc,
+            "cluster": cluster,
+            "node": node,
+            "page_size": page_size,
+            "page_token": page_token,
+        })
+        params.update(kwargs)
+        return self.gpu_telemetry_service_list_gpu_telemetry(org_id, **_without_none(params))
+
+    def list_gpu_telemetry_series(self,
+                                  org_id: str,
+                                  node: str,
+                                  source_type: Optional[str] = None,
+                                  dc: Optional[str] = None,
+                                  cluster: Optional[str] = None,
+                                  start_time: Optional[datetime] = None,
+                                  end_time: Optional[datetime] = None,
+                                  num_samples: Optional[int] = None,
+                                  metric_fields: Optional[Sequence[str]] = None,
+                                  **kwargs: Any):
+        params = _without_none({
+            "source_type": source_type,
+            "dc": dc,
+            "cluster": cluster,
+            "start_time": start_time,
+            "end_time": end_time,
+            "num_samples": num_samples,
+            "metric_fields": metric_fields,
+        })
+        params.update(kwargs)
+        return self.gpu_telemetry_service_list_gpu_telemetry_series(org_id, node, **_without_none(params))
+
+
+def _without_none(values: Dict[str, Any]) -> Dict[str, Any]:
+    return {key: value for key, value in values.items() if value is not None}
 
 
 def request_auth_warning_wrapper(func):

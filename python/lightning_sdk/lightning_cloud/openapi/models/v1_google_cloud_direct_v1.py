@@ -42,6 +42,7 @@ class V1GoogleCloudDirectV1(object):
     """
     swagger_types = {
         'bucket_name': 'str',
+        'check_reservations': 'bool',
         'compute_project_role': 'str',
         'compute_service_account_email': 'str',
         'credentials_secret_id': 'str',
@@ -62,6 +63,7 @@ class V1GoogleCloudDirectV1(object):
 
     attribute_map = {
         'bucket_name': 'bucketName',
+        'check_reservations': 'checkReservations',
         'compute_project_role': 'computeProjectRole',
         'compute_service_account_email': 'computeServiceAccountEmail',
         'credentials_secret_id': 'credentialsSecretId',
@@ -80,9 +82,10 @@ class V1GoogleCloudDirectV1(object):
         'vpcs': 'vpcs'
     }
 
-    def __init__(self, bucket_name: 'str' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, filestore_firewall_mode_enabled: 'bool' =None, inventory_dataset: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, check_reservations: 'bool' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, filestore_firewall_mode_enabled: 'bool' =None, inventory_dataset: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
+        self._check_reservations = None
         self._compute_project_role = None
         self._compute_service_account_email = None
         self._credentials_secret_id = None
@@ -102,6 +105,8 @@ class V1GoogleCloudDirectV1(object):
         self.discriminator = None
         if bucket_name is not None:
             self.bucket_name = bucket_name
+        if check_reservations is not None:
+            self.check_reservations = check_reservations
         if compute_project_role is not None:
             self.compute_project_role = compute_project_role
         if compute_service_account_email is not None:
@@ -155,6 +160,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._bucket_name = bucket_name
+
+    @property
+    def check_reservations(self) -> 'bool':
+        """Gets the check_reservations of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The check_reservations of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._check_reservations
+
+    @check_reservations.setter
+    def check_reservations(self, check_reservations: 'bool'):
+        """Sets the check_reservations of this V1GoogleCloudDirectV1.
+
+
+        :param check_reservations: The check_reservations of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._check_reservations = check_reservations
 
     @property
     def compute_project_role(self) -> 'str':

@@ -16,9 +16,9 @@ from lightning_sdk.cli.deployment.common import (
     parse_path_mappings,
     parse_ports,
     resolve_machine,
-    resolve_teamspace,
 )
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 from lightning_sdk.deployment import Deployment
 
 

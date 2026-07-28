@@ -172,6 +172,31 @@ def test_list_cli_shows_keys() -> None:
 
 
 @mock_command_logging
+def test_list_cli_handles_string_created_at() -> None:
+    # created_at may arrive as an ISO string rather than a datetime; listing must not crash.
+    runner = CliRunner()
+    org = _mock_org()
+    key = SimpleNamespace(
+        id="key-1",
+        name="Default",
+        description="",
+        created_at="2026-06-01T22:29:55Z",
+        raw_key=None,
+    )
+
+    with (
+        patch("lightning_sdk.cli.api_key.list.resolve_org", return_value=org),
+        patch("lightning_sdk.cli.api_key.list.ApiKeyApi") as api_cls,
+    ):
+        api_cls.return_value.list.return_value = [key]
+        result = runner.invoke(list_api_keys, [])
+
+    assert result.exit_code == 0, result.output
+    assert "2026-06" in result.output
+    assert "no" in result.output  # raw_key None -> "Secret visible" = no
+
+
+@mock_command_logging
 def test_list_cli_all_users() -> None:
     runner = CliRunner()
     org = _mock_org()

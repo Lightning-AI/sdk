@@ -7,11 +7,11 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.datasets import download_dataset
-from lightning_sdk.lightning_cloud.utils.dataset import (
+from lightning_sdk.api.dataset import (
     _download_dataset_files,
     _download_dataset_version,
 )
+from lightning_sdk.datasets import download_dataset
 
 
 class _RangeResponse:
@@ -59,7 +59,7 @@ def _mock_files_api(files):
     api_client.default_headers = {}
     client = mock.MagicMock()
     client.api_client = api_client
-    return mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient", return_value=client)
+    return mock.patch("lightning_sdk.api.dataset.LightningClient", return_value=client)
 
 
 def _range_get(payloads):
@@ -169,7 +169,7 @@ def test_download_dataset_version_explicit_unzip(tmp_path):
         mock.patch("requests.get", side_effect=_range_get({"https://files/archive": payload})),
         mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
         mock.patch(
-            "lightning_sdk.lightning_cloud.utils.dataset.tempfile.mkdtemp",
+            "lightning_sdk.api.dataset.tempfile.mkdtemp",
             return_value=str(staging),
         ),
     ):
@@ -257,7 +257,7 @@ def test_download_dataset_version_rejects_zip_member_traversal(tmp_path):
         mock.patch("requests.get", side_effect=_range_get({"https://files/archive": payload})),
         mock.patch("concurrent.futures.ThreadPoolExecutor", _SyncExecutor),
         mock.patch(
-            "lightning_sdk.lightning_cloud.utils.dataset.tempfile.mkdtemp",
+            "lightning_sdk.api.dataset.tempfile.mkdtemp",
             return_value=str(staging),
         ),
         pytest.raises(ValueError, match="Unsafe ZIP member path"),

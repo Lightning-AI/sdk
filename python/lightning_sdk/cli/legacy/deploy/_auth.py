@@ -10,12 +10,13 @@ from rich.prompt import Confirm
 
 from lightning_sdk import Organization, Teamspace
 from lightning_sdk.api import UserApi
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace as _resolve_teamspace_option
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
-from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
+from lightning_sdk.utils.resolve import _get_authed_user
 
 LITSERVE_CODE = os.environ.get("LITSERVE_CODE", "j39bzk903h")
 _POLL_TIMEOUT = 120
@@ -82,7 +83,7 @@ def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optiona
                 return Teamspace(name=teamspace_name, org=menu._owner, user=None)
             return Teamspace(name=teamspace_name, org=None, user=menu._owner)
         return menu(teamspace)
-    return _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+    return _resolve_teamspace_option(teamspace=teamspace, org=org, user=user)
 
 
 class _UserStatus(TypedDict):

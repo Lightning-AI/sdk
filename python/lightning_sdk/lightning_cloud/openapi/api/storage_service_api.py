@@ -568,6 +568,107 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def storage_service_delete_shared_artifact(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteSharedArtifactResponse':  # noqa: E501
+        """DeleteSharedArtifact revokes a shared link. The underlying drive object is left in place.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_delete_shared_artifact(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteSharedArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_delete_shared_artifact_with_http_info(project_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_delete_shared_artifact_with_http_info(project_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_delete_shared_artifact_with_http_info(self, project_id: 'str', id: 'str', **kwargs) -> 'V1DeleteSharedArtifactResponse':  # noqa: E501
+        """DeleteSharedArtifact revokes a shared link. The underlying drive object is left in place.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_delete_shared_artifact_with_http_info(project_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :param str id: (required)
+        :return: V1DeleteSharedArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_delete_shared_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `storage_service_delete_shared_artifact`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `storage_service_delete_shared_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/shared-artifacts/{id}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1DeleteSharedArtifactResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def storage_service_get_org_storage_metadata(self, org_id: 'str', **kwargs) -> 'V1GetOrganizationStorageMetadataResponse':  # noqa: E501
         """storage_service_get_org_storage_metadata  # noqa: E501
 
@@ -1299,6 +1400,99 @@ class StorageServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def storage_service_list_shared_artifacts(self, project_id: 'str', **kwargs) -> 'V1ListSharedArtifactsResponse':  # noqa: E501
+        """ListSharedArtifacts returns the project's published shared-artifact links, newest first.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_list_shared_artifacts(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :return: V1ListSharedArtifactsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_list_shared_artifacts_with_http_info(project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_list_shared_artifacts_with_http_info(project_id, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_list_shared_artifacts_with_http_info(self, project_id: 'str', **kwargs) -> 'V1ListSharedArtifactsResponse':  # noqa: E501
+        """ListSharedArtifacts returns the project's published shared-artifact links, newest first.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_list_shared_artifacts_with_http_info(project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str project_id: (required)
+        :return: V1ListSharedArtifactsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_list_shared_artifacts" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `storage_service_list_shared_artifacts`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/shared-artifacts', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListSharedArtifactsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def storage_service_list_storage_transfers(self, project_id: 'str', **kwargs) -> 'V1ListStorageTransfersResponse':  # noqa: E501
         """storage_service_list_storage_transfers  # noqa: E501
 
@@ -1616,6 +1810,111 @@ class StorageServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1PostCloudSpaceArtifactEventsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def storage_service_publish_shared_artifact(self, body: 'StorageServicePublishSharedArtifactBody', project_id: 'str', **kwargs) -> 'V1PublishSharedArtifactResponse':  # noqa: E501
+        """PublishSharedArtifact registers an already-uploaded artifact (under the project's artifacts/ folder) as a durable, publicly shareable link and returns its id and lightning.ai/artifacts/<id> URL. The object must already exist in the drive; upload it via UploadProjectArtifact first.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_publish_shared_artifact(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param StorageServicePublishSharedArtifactBody body: (required)
+        :param str project_id: (required)
+        :return: V1PublishSharedArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.storage_service_publish_shared_artifact_with_http_info(body, project_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.storage_service_publish_shared_artifact_with_http_info(body, project_id, **kwargs)  # noqa: E501
+            return data
+
+    def storage_service_publish_shared_artifact_with_http_info(self, body: 'StorageServicePublishSharedArtifactBody', project_id: 'str', **kwargs) -> 'V1PublishSharedArtifactResponse':  # noqa: E501
+        """PublishSharedArtifact registers an already-uploaded artifact (under the project's artifacts/ folder) as a durable, publicly shareable link and returns its id and lightning.ai/artifacts/<id> URL. The object must already exist in the drive; upload it via UploadProjectArtifact first.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.storage_service_publish_shared_artifact_with_http_info(body, project_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param StorageServicePublishSharedArtifactBody body: (required)
+        :param str project_id: (required)
+        :return: V1PublishSharedArtifactResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method storage_service_publish_shared_artifact" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `storage_service_publish_shared_artifact`")  # noqa: E501
+        # verify the required parameter 'project_id' is set
+        if ('project_id' not in params or
+                params['project_id'] is None):
+            raise ValueError("Missing the required parameter `project_id` when calling `storage_service_publish_shared_artifact`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'project_id' in params:
+            path_params['projectId'] = params['project_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/projects/{projectId}/shared-artifacts', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1PublishSharedArtifactResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

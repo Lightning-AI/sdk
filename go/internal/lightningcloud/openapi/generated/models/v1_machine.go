@@ -64,11 +64,17 @@ type V1Machine struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// This node will schedule only interruptible workloads
+	OnlySpot bool `json:"onlySpot,omitempty"`
+
 	// Whether we want to force an ordering over the machine listing
 	OrderingIndex int32 `json:"orderingIndex,omitempty"`
 
 	// org Id
 	OrgID string `json:"orgId,omitempty"`
+
+	// owned by lightning
+	OwnedByLightning bool `json:"ownedByLightning,omitempty"`
 
 	// private address
 	PrivateAddress string `json:"privateAddress,omitempty"`

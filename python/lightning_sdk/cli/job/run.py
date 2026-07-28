@@ -6,9 +6,9 @@ from typing import Dict, Mapping, Optional, Sequence, Union
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
-from lightning_sdk.teamspace import Teamspace
 
 _MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
@@ -36,17 +36,7 @@ _MACHINE_VALUES = tuple(
 )
 @click.option("--studio", default=None, help="The studio env to run the job with. Mutually exclusive with image.")
 @click.option("--image", default=None, help="The docker image to run the job with. Mutually exclusive with studio.")
-@click.option(
-    "--teamspace",
-    default=None,
-    help="The teamspace the job should be associated with. Defaults to the current teamspace.",
-)
-@click.option(
-    "--org",
-    default=None,
-    help="The organization owning the teamspace (if any). Defaults to the current organization.",
-)
-@click.option("--user", default=None, help="The user owning the teamspace (if any). Defaults to the current user.")
+@teamspace_option
 @click.option(
     "--cloud",
     default=None,
@@ -156,7 +146,7 @@ def run_job(
     except KeyError:
         machine_enum = machine
 
-    resolved_teamspace = Teamspace(name=teamspace, org=org, user=user)
+    resolved_teamspace = resolve_teamspace(teamspace, org, user)
 
     path_mappings_dict = _resolve_path_mapping(path_mappings=path_mappings)
     for mapping in path_mapping:

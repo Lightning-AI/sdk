@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -18,6 +19,9 @@ import (
 //
 // swagger:model v1APIKey
 type V1APIKey struct {
+
+	// Budget config; nil when no budget is set
+	BudgetConfig *V1APIKeyBudget `json:"budgetConfig,omitempty"`
 
 	// created at
 	// Format: date-time
@@ -53,6 +57,10 @@ type V1APIKey struct {
 func (m *V1APIKey) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateBudgetConfig(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -64,6 +72,29 @@ func (m *V1APIKey) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1APIKey) validateBudgetConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.BudgetConfig) { // not required
+		return nil
+	}
+
+	if m.BudgetConfig != nil {
+		if err := m.BudgetConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("budgetConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("budgetConfig")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -91,8 +122,42 @@ func (m *V1APIKey) validateLastUsed(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this v1 API key based on context it is used
+// ContextValidate validate this v1 API key based on the context it is used
 func (m *V1APIKey) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBudgetConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1APIKey) contextValidateBudgetConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.BudgetConfig != nil {
+
+		if swag.IsZero(m.BudgetConfig) { // not required
+			return nil
+		}
+
+		if err := m.BudgetConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("budgetConfig")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("budgetConfig")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
