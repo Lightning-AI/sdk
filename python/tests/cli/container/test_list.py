@@ -6,11 +6,14 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_container_list_help() -> None:
-    assert_help_contains(
+    text = assert_help_contains(
         "lightning container list --help",
         "Usage: lightning container list",
         "Display the list of available containers.",
     )
+    normalized_text = " ".join(text.replace("│", " ").split())
+    assert "Defaults to the configured teamspace." in normalized_text
+    assert "interactive menu" not in normalized_text
 
 
 @mock_command_logging

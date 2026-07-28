@@ -15,8 +15,8 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     default=None,
     help=(
         "The teamspace to delete the container from. "
-        "Should be specified as {owner}/{name} "
-        "If not provided, can be selected in an interactive menu."
+        "Should be specified as {owner}/{name}. "
+        "Defaults to the configured teamspace."
     ),
 )
 def delete_container(name: str, teamspace: Optional[str] = None) -> None:

@@ -34,10 +34,10 @@ class _AuthLitServe(Auth):
 
 
 def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
-    """Authenticate with Lightning AI.
+    """Validate existing Lightning AI credentials.
 
-    This will open a browser window for authentication.
-    If `shall_confirm` is True, it will ask for confirmation before proceeding.
+    Credentials must already be configured. Run ``lightning login`` first when
+    credentials are unavailable.
     """
     auth = _AuthLitServe(mode, shall_confirm)
     auth.authenticate()

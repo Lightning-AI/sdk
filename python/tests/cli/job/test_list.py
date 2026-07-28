@@ -3,7 +3,14 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_job_list_help() -> None:
-    assert_help_contains("lightning job list --help", "Usage: lightning job list", "List jobs for a given teamspace.")
+    text = assert_help_contains(
+        "lightning job list --help",
+        "Usage: lightning job list",
+        "List jobs for a given teamspace.",
+    )
+    normalized_text = " ".join(text.replace("│", " ").split())
+    assert "Defaults to the configured teamspace." in normalized_text
+    assert "interactive menu" not in normalized_text
 
 
 @mock_command_logging
