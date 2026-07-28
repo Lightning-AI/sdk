@@ -7,6 +7,7 @@ import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.ssh.common import generate_ssh_config
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import download_file
@@ -44,7 +45,9 @@ def configure_ssh(name: Optional[str] = None, teamspace: Optional[str] = None, o
     studio = resolve_studio(name, resolved_teamspace)
 
     auth = Auth()
-    auth.authenticate()
+    require_auth_header()
+    if not auth.api_key and not auth.load():
+        raise click.UsageError("An API key is required. Run `lightning login` first.")
     console = Console()
     ssh_dir = Path.home() / ".ssh"
     ssh_dir.mkdir(parents=True, exist_ok=True)

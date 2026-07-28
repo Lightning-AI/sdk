@@ -1,7 +1,6 @@
 import concurrent.futures
 import json
 import os
-import webbrowser
 from pathlib import Path
 from typing import Dict, Generator, List, Literal, Optional
 
@@ -305,8 +304,7 @@ def _print_docker_push(lines: Generator, console: Console, progress: Progress, p
             return
         elif "finish" in line:
             if "url" in line:
-                webbrowser.open(line["url"])
-            console.print(f"Container available at [i]{line['url']}[/i]")
+                console.print(f"Container available at [i]{line['url']}[/i]")
             return
         else:
             console.print(line, style="bright_black")

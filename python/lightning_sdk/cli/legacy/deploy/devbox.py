@@ -1,14 +1,12 @@
 import concurrent.futures
 import os
 import re
-import webbrowser
 from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional
 
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-from rich.prompt import Confirm
 from rich.syntax import Syntax
 
 from lightning_sdk import Machine
@@ -115,7 +113,6 @@ def _handle_devbox(
 
     studio_url = _get_studio_url(studio, turn_on=True)
     pathlib_path = Path(script_path).resolve()
-    browser_opened = False
     studio_path = f"{studio.owner.name}/{studio.teamspace.name}/{studio.name}"
 
     console.print("\n=== Lightning Studio Setup ===")
@@ -123,16 +120,7 @@ def _handle_devbox(
     console.print(f"📁 [bold]Local project:[/bold] {pathlib_path.parent}")
 
     upload_state = lit_devbox.resolve_previous_upload(studio, str(pathlib_path.parent), recovery)
-    if non_interactive:
-        console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-        browser_opened = webbrowser.open(studio_url)
-    elif not from_onboarding:
-        if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
-            console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-            browser_opened = webbrowser.open(studio_url)
-
-    if not browser_opened:
-        console.print(f"🔗 [bold]Access Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
+    console.print(f"🔗 [bold]Studio URL:[/bold] [link={studio_url}]{studio_url}[/link]")
 
     # Start the Studio in the background and return immediately using threading
     console.print("\n⚡ Initializing Studio in the background...")

@@ -1,4 +1,3 @@
-import webbrowser
 from contextlib import suppress
 from pathlib import Path
 from typing import Optional
@@ -69,8 +68,4 @@ def open(path: str = ".", teamspace: Optional[str] = None, cloud: Optional[str] 
     studio_url = _get_studio_url(new_studio, turn_on=True)
 
     console.line()
-    console.print(f"[bold]Opening {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]")
-
-    ok = webbrowser.open(studio_url)
-    if not ok:
-        console.print(f"Open your Studio at: {studio_url}")
+    console.print(f"Studio URL: {studio_url}")

@@ -39,12 +39,12 @@ def test_open_help_redirect() -> None:
 
 
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
+def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
@@ -58,18 +58,16 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, mock_webbr
 
     mock_studio.assert_called_once_with(name="folder", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_called_once()
-    mock_webbrowser.open.assert_called_once_with(
-        "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true"
-    )
+    assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output
 
 
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
+def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
@@ -83,18 +81,16 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrow
     mock_studio.assert_called_once_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
-    mock_webbrowser.open.assert_called_once_with(
-        "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true"
-    )
+    assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output
 
 
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
-@mock.patch("lightning_sdk.cli.legacy.open.webbrowser")
+@mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
 @mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, mock_studio, mock_webbrowser, tmpdir):
+def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
@@ -111,12 +107,10 @@ def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, moc
     mock_studio.assert_called_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
-    mock_webbrowser.open.assert_called_once_with(
-        "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true"
-    )
+    assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output
 
 
-@mock.patch("lightning_sdk.cli.studio.open.webbrowser.open", return_value=True)
+@mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.studio.open.Studio")
 @mock.patch("lightning_sdk.cli.studio.open.resolve_teamspace")
 @mock.patch("lightning_sdk.cli.studio.open._upload_folder")

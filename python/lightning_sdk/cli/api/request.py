@@ -20,8 +20,8 @@ import rich_click as click
 
 from lightning_sdk import __version__
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.lightning_cloud.login import Auth
 
 _CACHE_DIR = Path.home() / ".lightning" / "cache" / "api"
 _DEFAULT_ACCEPT = "application/json"
@@ -284,7 +284,7 @@ def _has_header(headers: dict[str, str], header_name: str) -> bool:
 def _request_headers(user_headers: tuple[str, ...]) -> dict[str, str]:
     headers = dict(_parse_header(header) for header in user_headers)
     if not _has_header(headers, "authorization"):
-        headers["Authorization"] = Auth().authenticate() or ""
+        headers["Authorization"] = require_auth_header()
     if not _has_header(headers, "accept"):
         headers["Accept"] = _DEFAULT_ACCEPT
     if not _has_header(headers, "user-agent"):

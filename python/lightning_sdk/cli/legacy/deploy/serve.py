@@ -1,7 +1,6 @@
 import os
 import socket
 import subprocess
-import webbrowser
 from datetime import datetime
 from pathlib import Path
 from threading import Thread
@@ -456,5 +455,3 @@ def _handle_cloud(
         cloud=deployment_cloud,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
-    if user_status["onboarded"]:
-        webbrowser.open(deployment_status.get("url"))

@@ -1,6 +1,5 @@
 """Studio open command."""
 
-import webbrowser
 from contextlib import suppress
 from pathlib import Path
 from typing import Optional
@@ -67,7 +66,4 @@ def open_studio(
 
     studio_url = _get_studio_url(new_studio, turn_on=True)
     console.line()
-    console.print(f"[bold]Opening {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]")
-    ok = webbrowser.open(studio_url)
-    if not ok:
-        console.print(studio_url)
+    console.print(f"[bold]Studio URL:[/bold] {studio_url}")

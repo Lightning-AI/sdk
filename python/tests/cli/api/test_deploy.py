@@ -376,14 +376,14 @@ def test_handle_cloud_from_onboarding(
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("rich.prompt.Confirm.ask")
-@patch("lightning_sdk.cli.legacy.deploy.serve.webbrowser")
+@patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
 def test_handle_cloud(
     mock_poll_verified_status,
     mock_authenticate,
-    mock_browser,
+    _browser,
     mock_ask,
     mock_ls_deployer,
     mock_resolve_cluster,
@@ -409,7 +409,6 @@ def test_handle_cloud(
     mock_litcr.return_value.list_containers.assert_called_once_with(ANY, cloud_account=None)
     mock_ls_deployer.return_value.push_container.assert_called_once()
     mock_ls_deployer.assert_called_once()
-    mock_browser.open.assert_called_once_with("test-url")
 
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
@@ -724,9 +723,8 @@ def test_detect_port(tmpdir):
 @patch("lightning_sdk.cli.legacy.deploy.devbox.select_teamspace")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.Studio")
 @patch("lightning_sdk.cli.legacy.deploy.devbox._get_studio_url")
-@patch("lightning_sdk.cli.legacy.deploy.devbox.webbrowser")
+@patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @patch("lightning_sdk.cli.legacy.deploy.devbox._LitServeDevbox")
-@patch("lightning_sdk.cli.legacy.deploy.devbox.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.Thread")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.devbox.poll_verified_status")
@@ -735,14 +733,12 @@ def test_handle_devbox(
     mock_poll_verified_status,
     mock_authenticate,
     mock_thread,
-    mock_ask,
     mock_lit_serve_devbox,
-    mock_webbrowser,
+    _webbrowser,
     mock_get_studio_url,
     mock_studio,
     mock_select_teamspace,
 ):
-    mock_ask.return_value = True
     mock_lit_serve_devbox.return_value._detect_port.return_value = 8000
     mock_lit_serve_devbox.return_value.upload_folder = MagicMock()
     mock_get_studio_url.return_value = "https://lightning.ai"
@@ -766,8 +762,7 @@ def test_handle_devbox(
     )
     mock_thread.assert_called_once_with(target=mock_studio.return_value.start, args=(Machine.CPU, False))
     mock_thread.return_value.start.assert_called()
-    mock_webbrowser.open.assert_called_once_with(mock_get_studio_url.return_value)
-    mock_ask.assert_called_once_with("Would you like to open your Studio in the browser?", default=True)
+    assert any(mock_get_studio_url.return_value in str(call) for call in mock_console.print.call_args_list)
     mock_studio.return_value.add_ports.assert_called_once_with(8000)
     mock_studio.return_value.run_and_detach.assert_called_once_with("python test.py", timeout=10)
     mock_console.print.assert_called_with(

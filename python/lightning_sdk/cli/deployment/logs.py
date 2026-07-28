@@ -13,9 +13,9 @@ import rich_click as click
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.deployment.common import resolve_deployment
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1Job
 
 _LIVE_FALLBACK_IDLE_TIMEOUT = 8
@@ -50,7 +50,7 @@ def deployment_logs(
         click.echo("No jobs found for this deployment.")
         return
 
-    auth_header = Auth().authenticate()
+    auth_header = require_auth_header()
     session = requests.Session()
     session.headers.update({"Authorization": auth_header})
 
