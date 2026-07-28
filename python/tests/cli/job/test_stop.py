@@ -7,7 +7,9 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_job_stop_help() -> None:
-    assert_help_contains("lightning job stop --help", "Usage: lightning job stop", "Stop a job.")
+    assert_help_contains(
+        "lightning job stop --help", "Usage: lightning job stop", "Stop a job.", "configured default teamspace"
+    )
 
 
 @mock_command_logging

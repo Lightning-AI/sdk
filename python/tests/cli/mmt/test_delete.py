@@ -7,7 +7,12 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_mmt_delete_help() -> None:
-    assert_help_contains("lightning mmt delete --help", "Usage: lightning mmt delete", "Delete a multi-machine job.")
+    assert_help_contains(
+        "lightning mmt delete --help",
+        "Usage: lightning mmt delete",
+        "Delete a multi-machine job.",
+        "uses the configured",
+    )
 
 
 @mock_command_logging

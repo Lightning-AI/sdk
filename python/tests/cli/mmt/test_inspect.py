@@ -11,6 +11,7 @@ def test_mmt_inspect_help() -> None:
         "lightning mmt inspect --help",
         "Usage: lightning mmt inspect",
         "Inspect a multi-machine job for further details as JSON.",
+        "configured default teamspace",
     )
 
 

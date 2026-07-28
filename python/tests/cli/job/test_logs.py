@@ -15,6 +15,7 @@ def test_job_logs_help() -> None:
         "--tail",
         "--rank",
         "--timestamps",
+        "configured default teamspace",
     )
 
 

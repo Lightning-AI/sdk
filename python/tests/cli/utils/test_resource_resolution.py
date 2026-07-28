@@ -10,6 +10,7 @@ from lightning_sdk.cli.utils.resource_resolution import (
     resolve_studio,
     resolve_teamspace,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
 def test_resolve_teamspace_uses_sdk_defaults() -> None:
@@ -104,6 +105,33 @@ def test_resolve_mmt_converts_not_found_to_usage_error() -> None:
         side_effect=ValueError("missing"),
     ), pytest.raises(click.UsageError, match="distributed"):
         resolve_mmt("distributed", MagicMock())
+
+
+def test_resolve_mmt_converts_real_lookup_not_found_to_usage_error() -> None:
+    teamspace = MagicMock()
+    teamspace.id = "teamspace-id"
+    with patch("lightning_sdk.mmt._resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.mmt.raise_access_error_if_not_allowed"
+    ), patch("lightning_sdk.mmt.CloudAccountApi"), patch(
+        "lightning_sdk.mmt.MMTApiV2.get_job_by_name",
+        side_effect=ApiException(status=404, reason="Not Found"),
+    ), pytest.raises(click.UsageError, match="distributed"):
+        resolve_mmt("distributed", teamspace)
+
+
+def test_resolve_mmt_preserves_real_lookup_permission_error() -> None:
+    teamspace = MagicMock()
+    teamspace.id = "teamspace-id"
+    failure = ApiException(status=403, reason="Forbidden")
+    with patch("lightning_sdk.mmt._resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.mmt.raise_access_error_if_not_allowed"
+    ), patch("lightning_sdk.mmt.CloudAccountApi"), patch(
+        "lightning_sdk.mmt.MMTApiV2.get_job_by_name",
+        side_effect=failure,
+    ), pytest.raises(ApiException) as raised:
+        resolve_mmt("distributed", teamspace)
+
+    assert raised.value is failure
 
 
 def test_join_teamspace_slug_uses_owner_only_when_both_parts_exist() -> None:

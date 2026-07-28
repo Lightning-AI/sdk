@@ -17,7 +17,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_tea
     help=(
         "the name of the teamspace the multi-machine job lives in. "
         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-        "If not specified can be selected interactively."
+        "If not specified, uses the configured default teamspace."
     ),
 )
 def stop_mmt(name: str, teamspace: Optional[str] = None) -> None:

@@ -17,7 +17,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_tea
     help=(
         "The teamspace to delete the job from. "
         "Should be specified as {owner}/{name} "
-        "If not provided, can be selected in an interactive menu."
+        "If not provided, uses the configured default teamspace."
     ),
 )
 def delete_mmt(name: str, teamspace: Optional[str] = None) -> None:

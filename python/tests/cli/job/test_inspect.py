@@ -11,6 +11,7 @@ def test_job_inspect_help() -> None:
         "lightning job inspect --help",
         "Usage: lightning job inspect",
         "Inspect a job for further details as JSON.",
+        "configured default teamspace",
     )
 
 

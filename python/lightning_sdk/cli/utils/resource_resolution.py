@@ -3,6 +3,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.job import Job
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.mmt import MMT
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
@@ -52,6 +53,13 @@ def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:
         raise click.UsageError("Missing multi-machine job name. Pass JOB.")
     try:
         return MMT(name=name, teamspace=teamspace)
+    except ApiException as ex:
+        if ex.status != 404:
+            raise
+        raise click.UsageError(
+            f"Could not resolve multi-machine job '{name}' "
+            f"in teamspace '{teamspace.name}'."
+        ) from ex
     except ValueError as ex:
         raise click.UsageError(
             f"Could not resolve multi-machine job '{name}' "

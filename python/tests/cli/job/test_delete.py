@@ -7,7 +7,9 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_job_delete_help() -> None:
-    assert_help_contains("lightning job delete --help", "Usage: lightning job delete", "Delete a job.")
+    assert_help_contains(
+        "lightning job delete --help", "Usage: lightning job delete", "Delete a job.", "uses the configured"
+    )
 
 
 @mock_command_logging
