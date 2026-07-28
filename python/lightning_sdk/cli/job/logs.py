@@ -4,12 +4,12 @@ from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
-@click.argument("name", required=False)
+@click.argument("name", required=False, help="The job name. Required.")
 @click.option(
     "--teamspace",
     default=None,
@@ -36,7 +36,8 @@ def logs_job(
     Prints a snapshot of the logs available so far. Pass --follow to stream new
     lines from a running job until it finishes or you press Ctrl-C.
     """
-    job = _JobAndMMTAction().job(name=name, teamspace=teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    job = resolve_job(name, resolved_teamspace)
 
     try:
         logs = job.logs(follow=follow, tail=tail, rank=rank, timestamps=timestamps)

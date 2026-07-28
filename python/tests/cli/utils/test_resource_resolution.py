@@ -5,6 +5,8 @@ import rich_click as click
 
 from lightning_sdk.cli.utils.resource_resolution import (
     join_teamspace_slug,
+    resolve_job,
+    resolve_mmt,
     resolve_studio,
     resolve_teamspace,
 )
@@ -54,6 +56,54 @@ def test_resolve_studio_converts_not_found_to_usage_error() -> None:
         side_effect=ValueError("Studio 'missing' does not exist."),
     ), pytest.raises(click.UsageError, match="missing"):
         resolve_studio("missing", MagicMock())
+
+
+def test_resolve_job_requires_name() -> None:
+    with pytest.raises(click.UsageError, match="JOB"):
+        resolve_job(None, MagicMock())
+
+
+def test_resolve_job_fetches_exact_name() -> None:
+    teamspace = MagicMock()
+    resolved = MagicMock()
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Job",
+        return_value=resolved,
+    ) as job:
+        assert resolve_job("train", teamspace) is resolved
+    job.assert_called_once_with(name="train", teamspace=teamspace)
+
+
+def test_resolve_job_converts_not_found_to_usage_error() -> None:
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Job",
+        side_effect=ValueError("missing"),
+    ), pytest.raises(click.UsageError, match="train"):
+        resolve_job("train", MagicMock())
+
+
+def test_resolve_mmt_requires_name() -> None:
+    with pytest.raises(click.UsageError, match="JOB"):
+        resolve_mmt(None, MagicMock())
+
+
+def test_resolve_mmt_fetches_exact_name() -> None:
+    teamspace = MagicMock()
+    resolved = MagicMock()
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.MMT",
+        return_value=resolved,
+    ) as mmt:
+        assert resolve_mmt("distributed", teamspace) is resolved
+    mmt.assert_called_once_with(name="distributed", teamspace=teamspace)
+
+
+def test_resolve_mmt_converts_not_found_to_usage_error() -> None:
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.MMT",
+        side_effect=ValueError("missing"),
+    ), pytest.raises(click.UsageError, match="distributed"):
+        resolve_mmt("distributed", MagicMock())
 
 
 def test_join_teamspace_slug_uses_owner_only_when_both_parts_exist() -> None:

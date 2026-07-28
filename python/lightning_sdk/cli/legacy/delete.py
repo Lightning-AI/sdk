@@ -4,7 +4,6 @@ import click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
-from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.deployment import Deployment
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -38,62 +37,6 @@ def container(name: str, teamspace: Optional[str] = None) -> None:
         Console().print(f"Container {name} deleted successfully.")
     except Exception as e:
         raise StudioCliError(f"Could not delete container {name} from project {resolved_teamspace.name}: {e}") from None
-
-
-@delete.command(name="job")
-@click.argument(
-    "name",
-)
-@click.option(
-    "--teamspace",
-    default=None,
-    help=(
-        "The teamspace to delete the job from. "
-        "Should be specified as {owner}/{name} "
-        "If not provided, can be selected in an interactive menu."
-    ),
-)
-def job(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Delete a job.
-
-    Example:
-      lightning delete job NAME
-
-    NAME: the name of the job to delete.
-    """
-    menu = _JobAndMMTAction()
-    job = menu.job(name=name, teamspace=teamspace)
-
-    job.delete()
-    Console().print(f"Successfully deleted {job.name}!")
-
-
-@delete.command(name="mmt")
-@click.argument(
-    "name",
-)
-@click.option(
-    "--teamspace",
-    default=None,
-    help=(
-        "The teamspace to delete the job from. "
-        "Should be specified as {owner}/{name} "
-        "If not provided, can be selected in an interactive menu."
-    ),
-)
-def mmt(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
-    """Delete a multi-machine job.
-
-    Example:
-      lightning delete mmt NAME
-
-    NAME: the name of the multi-machine job to delete.
-    """
-    menu = _JobAndMMTAction()
-    mmt = menu.mmt(name=name, teamspace=teamspace)
-
-    mmt.delete()
-    Console().print(f"Successfully deleted {mmt.name}!")
 
 
 @delete.command(name="studio")

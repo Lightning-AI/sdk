@@ -2,6 +2,8 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.job import Job
+from lightning_sdk.mmt import MMT
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.resolve import _resolve_teamspace
@@ -32,3 +34,26 @@ def resolve_studio(name: Optional[str], teamspace: Teamspace) -> Studio:
     except ValueError as ex:
         detail = f" '{name}'" if name else ""
         raise click.UsageError(f"Could not resolve studio{detail}. Pass --name STUDIO.") from ex
+
+
+def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
+    if not name:
+        raise click.UsageError("Missing job name. Pass JOB.")
+    try:
+        return Job(name=name, teamspace=teamspace)
+    except ValueError as ex:
+        raise click.UsageError(
+            f"Could not resolve job '{name}' in teamspace '{teamspace.name}'."
+        ) from ex
+
+
+def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:
+    if not name:
+        raise click.UsageError("Missing multi-machine job name. Pass JOB.")
+    try:
+        return MMT(name=name, teamspace=teamspace)
+    except ValueError as ex:
+        raise click.UsageError(
+            f"Could not resolve multi-machine job '{name}' "
+            f"in teamspace '{teamspace.name}'."
+        ) from ex

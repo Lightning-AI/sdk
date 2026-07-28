@@ -5,8 +5,8 @@ from typing import Optional
 import rich_click as click
 from rich.console import Console
 
-from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
 
 @click.command("delete", cls=LightningCommand)
@@ -22,7 +22,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 )
 def delete_mmt(name: str, teamspace: Optional[str] = None) -> None:
     """Delete a multi-machine job."""
-    menu = _JobAndMMTAction()
-    mmt = menu.mmt(name=name, teamspace=teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    mmt = resolve_mmt(name, resolved_teamspace)
     mmt.delete()
     Console().print(f"Successfully deleted {mmt.name}!")

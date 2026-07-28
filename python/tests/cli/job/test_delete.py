@@ -1,3 +1,7 @@
+from unittest.mock import MagicMock, patch
+
+from click.testing import CliRunner
+
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
@@ -32,3 +36,21 @@ def test_delete_job_legacy_help() -> None:
         "Use `lightning job delete` instead of `lightning delete job`.",
         "Usage: lightning delete job [OPTIONS] NAME",
     )
+
+
+@mock_command_logging
+def test_job_delete_resolves_exact_name() -> None:
+    from lightning_sdk.cli.job.delete import delete_job
+
+    teamspace = MagicMock()
+    job = MagicMock()
+    job.name = "train"
+    with patch("lightning_sdk.cli.job.delete.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
+        "lightning_sdk.cli.job.delete.resolve_job", return_value=job
+    ) as resolve_job:
+        result = CliRunner().invoke(delete_job, ["train", "--teamspace", "org/teamspace"])
+
+    assert result.exit_code == 0
+    resolve_teamspace.assert_called_once_with("org/teamspace")
+    resolve_job.assert_called_once_with("train", teamspace)
+    job.delete.assert_called_once_with()
