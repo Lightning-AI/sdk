@@ -104,6 +104,7 @@ def read_logs(
     follow: bool = False,
     timestamps: bool = False,
     tail_anchor: Optional[object] = None,
+    api_key: Optional[str] = None,
 ) -> None:
     """Read and print logs for ``selection``, labelling lines by the resource they came from.
 
@@ -112,7 +113,7 @@ def read_logs(
     """
     printed = 0
     try:
-        entries = LogsApi().stream(
+        entries = LogsApi(api_key=api_key).stream(
             selection.teamspace_id,
             since=since,
             until=until,

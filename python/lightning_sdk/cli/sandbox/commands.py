@@ -11,8 +11,10 @@ from typing import Any
 import rich_click as click
 from rich.table import Table
 
+from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.job.run import _resolve_envs
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.sandbox import RunCommandOpts, Sandbox, SandboxConfig, SandboxInstance, Snapshot
 
@@ -503,52 +505,57 @@ def run_sandbox_command(
 @_with_common_options
 @click.argument("sandbox_id")
 @click.argument("command_id", required=False)
-@click.option("--no-timestamps", is_flag=True, help="Only print log messages.")
-@click.option("--query", default=None, help="Only show lines containing this substring.")
+@click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
+@click.option("--tail", type=int, default=None, help="Only show the last N lines.")
+@click.option("--since", default=None, help='Only include lines at or after this time (e.g. "2h", RFC3339).')
+@click.option("--until", default=None, help='Only include lines at or before this time (e.g. "30m", RFC3339).')
+@click.option("--query", default=None, help="Only include lines containing every whitespace-separated term.")
 @click.option(
     "--severity",
     default=None,
-    type=click.Choice(["debug", "info", "warning", "error"]),
-    help="Only show lines at or above this severity.",
+    type=click.Choice(SEVERITIES),
+    help="Only include lines at or above this severity.",
 )
-@click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 def logs_sandbox_command(
     api_key: str | None,
     sandbox_id: str,
     command_id: str | None,
-    no_timestamps: bool,
+    follow: bool,
+    tail: int | None,
+    since: str | None,
+    until: str | None,
     query: str | None,
     severity: str | None,
-    as_json: bool,
+    timestamps: bool,
 ) -> None:
-    """Show logs for a sandbox command.
+    """Show logs for a sandbox, merged across its commands.
 
-    Omit COMMAND_ID to show the merged logs of every command in the sandbox.
+    Omit COMMAND_ID for the merged logs of every command in the sandbox. Shares the
+    same options as `job`/`mmt`/`deployment logs`.
 
     Example:
-      $ sandbox logs sbx-42 cmd-abc123
-
-      2026-01-01T12:00:00Z start
-
-      2026-01-01T12:00:01Z done
-
-      $ sandbox logs sbx-42   # all commands
-
-      start
-
-      done
+      $ lightning sandbox logs sbx-42 --tail 100
+      $ lightning sandbox logs sbx-42 cmd-abc123 --follow
+      $ lightning sandbox logs sbx-42 --query error --since 2h
     """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
-    logs = sandbox.get_command_logs(command_id, query=query, severity=severity)
-    payload = [{"timestamp": log.timestamp, "message": log.message} for log in logs]
-    if as_json:
-        _echo_json(payload)
-        return
-    for log in logs:
-        if no_timestamps:
-            click.echo(log.message)
-        else:
-            click.echo(f"{log.timestamp} {log.message}".strip())
+    selection = LogSelection(
+        teamspace_id=sandbox.project_id,
+        sandbox_id=None if command_id else sandbox_id,
+        sandbox_command_ids=(command_id,) if command_id else (),
+    )
+    read_logs(
+        selection,
+        query=query,
+        severity=severity,
+        since=resolve_time(since, "--since"),
+        until=resolve_time(until, "--until"),
+        tail=tail,
+        follow=follow,
+        timestamps=timestamps,
+        api_key=api_key,
+    )
 
 
 @click.command("command", cls=LightningCommand)
