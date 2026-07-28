@@ -19,7 +19,7 @@ def test_start_uses_deterministic_resolvers() -> None:
     ) as resolve_teamspace, patch(
         "lightning_sdk.cli.studio.start.resolve_studio",
         return_value=studio,
-    ) as resolve_studio:
+    ) as resolve_studio, patch("lightning_sdk.cli.studio.start.save_studio_to_config"):
         result = runner.invoke(start_studio, ["--name", "dev"])
 
     assert result.exit_code == 0

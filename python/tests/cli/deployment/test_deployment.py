@@ -68,9 +68,8 @@ def test_deployment_delete_requires_yes_without_prompting_or_deleting(monkeypatc
         MagicMock(side_effect=AssertionError("deployment resolution must not start")),
     )
     monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.delete.click.confirm", lambda *_args, **_kwargs: (_ for _ in ()).throw(
-            AssertionError("must not prompt")
-        )
+        "lightning_sdk.cli.deployment.delete.click.confirm",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not prompt")),
     )
 
     result = CliRunner().invoke(delete_deployment, ["api"])

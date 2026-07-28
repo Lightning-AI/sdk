@@ -10,8 +10,8 @@ import rich_click as click
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
+from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException

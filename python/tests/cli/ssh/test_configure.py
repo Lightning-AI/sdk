@@ -15,9 +15,10 @@ def test_legacy_configure_requires_login_without_authentication_fallback() -> No
     with patch(
         "lightning_sdk.cli.legacy.configure.require_auth_header",
         side_effect=click.UsageError("Run `lightning login` first."),
-    ), patch("lightning_sdk.cli.legacy.configure.Auth", return_value=auth):
-        with pytest.raises(click.UsageError, match="lightning login"):
-            _configure_ssh_internal()
+    ), patch("lightning_sdk.cli.legacy.configure.Auth", return_value=auth), pytest.raises(
+        click.UsageError, match="lightning login"
+    ):
+        _configure_ssh_internal()
 
     auth.authenticate.assert_not_called()
 
@@ -39,9 +40,8 @@ def test_legacy_connect_reaches_non_browser_credential_boundary() -> None:
     ), patch("lightning_sdk.cli.legacy.configure.Auth", return_value=auth), patch(
         "lightning_sdk.cli.legacy.connect.subprocess.run",
         side_effect=AssertionError("SSH must not start without credentials"),
-    ):
-        with pytest.raises(click.UsageError, match="lightning login"):
-            studio.callback(name=None, teamspace=None)
+    ), pytest.raises(click.UsageError, match="lightning login"):
+        studio.callback(name=None, teamspace=None)
 
     auth.authenticate.assert_not_called()
 
@@ -62,9 +62,8 @@ def test_configure_resolves_studio_before_authentication() -> None:
     ), patch(
         "lightning_sdk.cli.ssh.configure.resolve_studio",
         side_effect=click.UsageError("Unknown studio"),
-    ), patch("lightning_sdk.cli.ssh.configure.Auth", auth):
-        with pytest.raises(click.UsageError, match="Unknown studio"):
-            configure_ssh.callback(name="missing")
+    ), patch("lightning_sdk.cli.ssh.configure.Auth", auth), pytest.raises(click.UsageError, match="Unknown studio"):
+        configure_ssh.callback(name="missing")
 
     auth.assert_not_called()
 

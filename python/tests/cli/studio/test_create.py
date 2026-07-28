@@ -61,11 +61,11 @@ def test_create_studio_with_studio_type(monkeypatch):
 
     mock_get_base_studio_id = MagicMock(return_value="template-id-123")
 
-    with patch("lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
+    with patch(
+        "lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.create.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id
+    ), patch("lightning_sdk.cli.studio.create.Studio", mock_studio_class):
         result = runner.invoke(create_studio, ["--name", "test-studio", "--studio-type", "python-template"])
 
         if result.exit_code != 0:
@@ -102,11 +102,11 @@ def test_create_studio_without_studio_type(monkeypatch):
 
     mock_get_base_studio_id = MagicMock(return_value="default-template-id")
 
-    with patch("lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
+    with patch(
+        "lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.create.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id
+    ), patch("lightning_sdk.cli.studio.create.Studio", mock_studio_class):
         runner.invoke(create_studio, ["--name", "test-studio"])
 
         mock_get_base_studio_id.assert_called_once_with(None, teamspace="owner/teamspace")
@@ -135,11 +135,11 @@ def test_create_studio_with_cloud(monkeypatch):
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
     mock_studio_class.__qualname__ = "Studio"
 
-    with patch("lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
+    with patch(
+        "lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.create.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.create.Studio", mock_studio_class):
         runner.invoke(create_studio, ["--name", "test-studio", "--cloud", "aws"])
 
         mock_studio_class.assert_called_once()
@@ -165,11 +165,11 @@ def test_create_studio_passes_correct_parameter_name():
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
     mock_studio_class.__qualname__ = "Studio"
 
-    with patch("lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id-xyz"), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
+    with patch(
+        "lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.create.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.create.get_base_studio_id", return_value="template-id-xyz"
+    ), patch("lightning_sdk.cli.studio.create.Studio", mock_studio_class):
         result = runner.invoke(create_studio, ["--name", "test-studio", "--studio-type", "data-science"])
 
         if result.exit_code != 0:
@@ -204,11 +204,11 @@ def test_create_studio_with_all_options():
 
     mock_get_base_studio_id = MagicMock(return_value="ml-template")
 
-    with patch("lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value), patch(
-        "lightning_sdk.cli.studio.create.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id), patch(
-        "lightning_sdk.cli.studio.create.Studio", mock_studio_class
-    ):
+    with patch(
+        "lightning_sdk.cli.studio.create.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.create.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.create.get_base_studio_id", mock_get_base_studio_id
+    ), patch("lightning_sdk.cli.studio.create.Studio", mock_studio_class):
         create_impl(
             name="my-studio",
             teamspace="owner/teamspace",

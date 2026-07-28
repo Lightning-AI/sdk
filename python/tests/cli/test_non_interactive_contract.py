@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 CLI_ROOT = Path(__file__).parents[2] / "lightning_sdk" / "cli"
 FORBIDDEN = (
     "TerminalMenu",

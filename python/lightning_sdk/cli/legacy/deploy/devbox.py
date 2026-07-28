@@ -95,7 +95,6 @@ def _handle_devbox(
         console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
         return
 
-    from_onboarding = False
     authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
     user_status = poll_verified_status()
     if not user_status["verified"]:
@@ -105,7 +104,6 @@ def _handle_devbox(
         console.print("onboarding user")
         onboarding = _Onboarding(console)
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
-        from_onboarding = True
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)

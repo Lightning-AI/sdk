@@ -38,9 +38,7 @@ def test_studio_delete_requires_yes_without_prompting_or_deleting() -> None:
     ), patch(
         "lightning_sdk.cli.studio.delete.resolve_studio",
         side_effect=AssertionError("studio resolution must not start"),
-    ), patch(
-        "lightning_sdk.cli.studio.delete.click.confirm", side_effect=AssertionError("must not prompt")
-    ):
+    ), patch("lightning_sdk.cli.studio.delete.click.confirm", side_effect=AssertionError("must not prompt")):
         result = CliRunner().invoke(delete_studio, ["--name", "dev"])
 
     assert result.exit_code != 0
@@ -62,9 +60,7 @@ def test_studio_delete_yes_deletes_without_prompting() -> None:
     studio.teamspace.name = "platform"
     with patch("lightning_sdk.cli.studio.delete.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.studio.delete.resolve_studio", return_value=studio
-    ), patch(
-        "lightning_sdk.cli.studio.delete.click.confirm", side_effect=AssertionError("must not prompt")
-    ):
+    ), patch("lightning_sdk.cli.studio.delete.click.confirm", side_effect=AssertionError("must not prompt")):
         result = CliRunner().invoke(delete_studio, ["--name", "dev", "--yes"], input="no input")
 
     assert result.exit_code == 0, result.output

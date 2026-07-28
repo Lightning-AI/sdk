@@ -62,9 +62,7 @@ def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
     try:
         return Job(name=name, teamspace=teamspace)
     except ValueError as ex:
-        raise click.UsageError(
-            f"Could not resolve job '{name}' in teamspace '{teamspace.name}'."
-        ) from ex
+        raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
 
 
 def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:
@@ -73,7 +71,4 @@ def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:
     try:
         return MMT(name=name, teamspace=teamspace)
     except ValueError as ex:
-        raise click.UsageError(
-            f"Could not resolve multi-machine job '{name}' "
-            f"in teamspace '{teamspace.name}'."
-        ) from ex
+        raise click.UsageError(f"Could not resolve multi-machine job '{name}' in teamspace '{teamspace.name}'.") from ex

@@ -7,8 +7,8 @@ from rich.table import Table
 
 from lightning_sdk.cli.utils.cloud_account_map import cloud_account_to_display_name
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.richt_print import rich_to_str, studio_name_link
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
+from lightning_sdk.cli.utils.richt_print import rich_to_str, studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user, prevent_refetch_studio

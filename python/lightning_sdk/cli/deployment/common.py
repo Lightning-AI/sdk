@@ -20,8 +20,8 @@ from lightning_sdk.cli.job.run import _resolve_envs, _resolve_path_mapping
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
-from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.models import _list_teamspaces
+from lightning_sdk.teamspace import Teamspace
 
 MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]

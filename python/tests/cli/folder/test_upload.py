@@ -45,9 +45,7 @@ def test_resume_without_state_fails(tmp_path: Path) -> None:
         "lightning_sdk.cli.legacy.upload._upload_state_path",
         return_value=tmp_path / "missing.json",
     ), pytest.raises(click.UsageError, match="nothing to resume"):
-        _resolve_previous_upload_state(
-            MagicMock(), ".", {"b": "remote/b"}, recovery="resume"
-        )
+        _resolve_previous_upload_state(MagicMock(), ".", {"b": "remote/b"}, recovery="resume")
 
 
 def test_resume_uses_existing_state(tmp_path: Path) -> None:
@@ -58,9 +56,9 @@ def test_resume_uses_existing_state(tmp_path: Path) -> None:
         "lightning_sdk.cli.legacy.upload._upload_state_path",
         return_value=state_file,
     ):
-        assert _resolve_previous_upload_state(
-            MagicMock(), ".", {"current": "remote/current"}, recovery="resume"
-        ) == state
+        assert (
+            _resolve_previous_upload_state(MagicMock(), ".", {"current": "remote/current"}, recovery="resume") == state
+        )
 
 
 def test_restart_ignores_existing_state(tmp_path: Path) -> None:
@@ -71,9 +69,7 @@ def test_restart_ignores_existing_state(tmp_path: Path) -> None:
         "lightning_sdk.cli.legacy.upload._upload_state_path",
         return_value=state_file,
     ):
-        assert _resolve_previous_upload_state(
-            MagicMock(), ".", current, recovery="restart"
-        ) == current
+        assert _resolve_previous_upload_state(MagicMock(), ".", current, recovery="restart") == current
 
 
 def test_no_recovery_without_state_uses_current_state(tmp_path: Path) -> None:
@@ -83,9 +79,7 @@ def test_no_recovery_without_state_uses_current_state(tmp_path: Path) -> None:
         "lightning_sdk.cli.legacy.upload._upload_state_path",
         return_value=tmp_path / "missing.json",
     ):
-        assert _resolve_previous_upload_state(
-            MagicMock(), ".", current, recovery=None
-        ) == current
+        assert _resolve_previous_upload_state(MagicMock(), ".", current, recovery=None) == current
 
 
 @mock_command_logging

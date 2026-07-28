@@ -115,9 +115,7 @@ def test_open_file_without_cloud_account(mock_upload_folder, resolve_teamspace, 
 @mock.patch("lightning_sdk.cli.studio.open.resolve_teamspace")
 @mock.patch("lightning_sdk.cli.studio.open._upload_folder")
 @mock_command_logging
-def test_studio_open_passes_resume_policy(
-    upload_folder, resolve_teamspace, studio_cls, _webbrowser, tmp_path
-) -> None:
+def test_studio_open_passes_resume_policy(upload_folder, resolve_teamspace, studio_cls, _webbrowser, tmp_path) -> None:
     studio = studio_cls.return_value
     studio.owner.name = "owner-name"
     studio.teamspace.name = "teamspace-name"

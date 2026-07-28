@@ -192,9 +192,7 @@ def test_resolve_mmt_converts_real_lookup_not_found_to_usage_error() -> None:
 
 def test_resolve_mmt_preserves_pre_lookup_not_found_error() -> None:
     failure = ApiException(status=404, reason="Teamspace Not Found")
-    with patch("lightning_sdk.mmt._resolve_teamspace", side_effect=failure), pytest.raises(
-        ApiException
-    ) as raised:
+    with patch("lightning_sdk.mmt._resolve_teamspace", side_effect=failure), pytest.raises(ApiException) as raised:
         resolve_mmt("distributed", MagicMock())
 
     assert raised.value is failure

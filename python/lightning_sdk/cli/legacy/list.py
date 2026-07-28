@@ -23,8 +23,7 @@ def list_cli() -> None:
     "--teamspace",
     default=None,
     help=(
-        "the teamspace to list studios from. Should be specified as {owner}/{name}"
-        "Defaults to the current teamspace."
+        "the teamspace to list studios from. Should be specified as {owner}/{name}Defaults to the current teamspace."
     ),
 )
 @click.option(
@@ -78,10 +77,7 @@ def studios(
 @click.option(
     "--teamspace",
     default=None,
-    help=(
-        "the teamspace to list jobs from. Should be specified as {owner}/{name}"
-        "Defaults to the current teamspace."
-    ),
+    help=("the teamspace to list jobs from. Should be specified as {owner}/{name}Defaults to the current teamspace."),
 )
 @click.option(
     "--all",

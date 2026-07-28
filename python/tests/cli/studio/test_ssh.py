@@ -20,9 +20,8 @@ def test_ssh_resolves_before_downloading_keys() -> None:
     ), patch(
         "lightning_sdk.cli.studio.ssh.configure_ssh_internal",
         configure,
-    ):
-        with pytest.raises(click.UsageError, match="--name"):
-            ssh_impl(name=None, teamspace=None, option=None)
+    ), pytest.raises(click.UsageError, match="--name"):
+        ssh_impl(name=None, teamspace=None, option=None)
 
     configure.assert_not_called()
 
