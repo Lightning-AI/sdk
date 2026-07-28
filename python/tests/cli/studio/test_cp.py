@@ -97,22 +97,15 @@ def test_cp_upload_successful(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_upload(
@@ -128,7 +121,7 @@ def test_cp_upload_successful(tmp_path: Path):
     test_dir_file.write_text("test content")
 
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_upload(
@@ -145,22 +138,15 @@ def test_cp_download_successful(tmp_path: Path):
     """Test successful file download from Studio."""
     test_file = tmp_path / "test_file.txt"
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.download_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_download(
@@ -177,22 +163,15 @@ def test_cp_upload_without_teamspace(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "default-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "default-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_upload(
@@ -208,22 +187,15 @@ def test_cp_download_without_teamspace(tmp_path: Path):
     """Test that cp_download works when teamspace is not provided in the path."""
     test_file = tmp_path / "test_file.txt"
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "default-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "default-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.download_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_download(
@@ -241,22 +213,15 @@ def test_cp_studio_file_upload_integration(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         result = runner.invoke(
@@ -273,22 +238,15 @@ def test_cp_studio_file_download_integration(tmp_path: Path):
     runner = CliRunner()
     test_file = tmp_path / "test_file.txt"
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.download_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         result = runner.invoke(
@@ -302,47 +260,45 @@ def test_cp_studio_file_download_integration(tmp_path: Path):
 @mock_command_logging
 def test_resolve_studio_with_teamspace():
     """Test that resolve_studio correctly resolves studio with provided owner and teamspace."""
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
+        patch(
+            "lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace
+        ) as mock_resolve_teamspace,
+        patch(
+            "lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance
+        ) as mock_resolve_studio,
     ):
         result = resolve_studio(studio_name="test-studio", teamspace="test-teamspace", owner="test-owner")
 
         assert result == mock_studio_instance
+        mock_resolve_teamspace.assert_called_once_with("test-owner/test-teamspace")
+        mock_resolve_studio.assert_called_once_with("test-studio", mock_teamspace)
 
 
 @mock_command_logging
 def test_resolve_studio_without_teamspace():
     """Test that resolve_studio works when teamspace and owner are None."""
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "default-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "default-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
+        patch(
+            "lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace
+        ) as mock_resolve_teamspace,
+        patch(
+            "lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance
+        ) as mock_resolve_studio,
     ):
         result = resolve_studio(studio_name="test-studio", teamspace=None, owner=None)
 
         assert result == mock_studio_instance
+        mock_resolve_teamspace.assert_called_once_with(None)
+        mock_resolve_studio.assert_called_once_with("test-studio", mock_teamspace)
 
 
 @mock_command_logging
@@ -351,22 +307,15 @@ def test_cp_upload_with_nested_path(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_upload(
@@ -383,22 +332,15 @@ def test_cp_download_with_nested_path(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_download(
@@ -415,22 +357,15 @@ def test_cp_impl_dispatches_to_upload(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_impl(source=str(test_file), destination="lit://test-studio/remote_file.txt")
@@ -444,22 +379,15 @@ def test_cp_impl_dispatches_to_download(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.download_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
@@ -468,22 +396,15 @@ def test_cp_impl_dispatches_to_download(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.download_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
@@ -497,24 +418,17 @@ def test_cp_upload_prints_correct_messages(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):
@@ -540,24 +454,17 @@ def test_cp_download_prints_correct_messages(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):
@@ -581,22 +488,15 @@ def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
     test_file = tmp_path / "test file with spaces.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "test-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "test-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "test-studio"
     mock_studio_instance.teamspace.name = "test-teamspace"
     mock_studio_instance.owner.name = "test-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
     ):
         cp_upload(
@@ -613,24 +513,17 @@ def test_cp_upload_url_construction(tmp_path: Path):
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
 
-    mock_owner_menu = MagicMock()
-    mock_owner_menu.return_value = "my-owner"
+    mock_teamspace = MagicMock()
 
-    mock_teamspace_menu = MagicMock()
-    mock_teamspace_menu.return_value = "my-teamspace"
-
-    mock_studio_menu = MagicMock()
     mock_studio_instance = MagicMock()
     mock_studio_instance.name = "my-studio"
     mock_studio_instance.teamspace.name = "my-teamspace"
     mock_studio_instance.owner.name = "my-owner"
     mock_studio_instance.upload_file = MagicMock()
-    mock_studio_menu.return_value = mock_studio_instance
-
     mock_console = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace_menu),
+        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
         patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
         patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
     ):

@@ -1,11 +1,9 @@
 import os
 from typing import Any, Optional, TypedDict
 
-from lightning_sdk.cli.utils.resource_resolution import (
-    join_teamspace_slug,
-    resolve_studio as resolve_cli_studio,
-    resolve_teamspace as resolve_cli_teamspace,
-)
+from lightning_sdk.cli.utils.resource_resolution import join_teamspace_slug
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio as resolve_cli_studio
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace as resolve_cli_teamspace
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 
