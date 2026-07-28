@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
 
-from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
-from lightning_sdk.lightning_cloud.utils.dataset import (
+from lightning_sdk.api.dataset import (
     _DEFAULT_DOWNLOAD_PART_SIZE,
     _DEFAULT_DOWNLOAD_WORKERS,
     _DEFAULT_UPLOAD_WORKERS,
@@ -18,6 +17,7 @@ from lightning_sdk.lightning_cloud.utils.dataset import (
     _resolve_dataset_id_and_version,
     _upload_dataset,
 )
+from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.models import _get_teamspace
 from lightning_sdk.teamspace import _list_files
 

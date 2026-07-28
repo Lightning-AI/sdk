@@ -1326,7 +1326,7 @@ class _FakeRangeResponse:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version(
     mock_lightning_client,
@@ -1336,7 +1336,7 @@ def test_download_dataset_version(
 ):
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
+    from lightning_sdk.api.dataset import _download_dataset_version
 
     mock_list_response = mock.MagicMock()
     mock_list_response.data = json.dumps({"datasets": []})
@@ -1395,7 +1395,7 @@ def test_download_dataset_version(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version_no_token_no_cluster(
     mock_lightning_client,
@@ -1405,7 +1405,7 @@ def test_download_dataset_version_no_token_no_cluster(
 ):
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_version
+    from lightning_sdk.api.dataset import _download_dataset_version
 
     mock_list_response = mock.MagicMock()
     mock_list_response.data = json.dumps({"datasets": []})
@@ -1452,7 +1452,7 @@ def test_download_dataset_version_no_token_no_cluster(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_dataset_id_and_version(
     mock_lightning_client,
@@ -1462,7 +1462,7 @@ def test_resolve_dataset_id_and_version(
     """One list call returns both the dataset id and the resolved current version."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _resolve_dataset_id_and_version
+    from lightning_sdk.api.dataset import _resolve_dataset_id_and_version
 
     resp = mock.MagicMock()
     resp.data = json.dumps({"datasets": [{"name": "ds-1", "id": "id-123", "defaultVersion": {"version": "v7"}}]})
@@ -1486,7 +1486,7 @@ def test_resolve_dataset_id_and_version(
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
 def test_download_dataset_files_parallel(tmp_path):
     """Files download concurrently via Range GETs, each written to its own path."""
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+    from lightning_sdk.api.dataset import _download_dataset_files
 
     files = [
         {"filepath": "a.bin", "url": "https://x/a", "size": 4},
@@ -1517,7 +1517,7 @@ def test_download_dataset_files_parallel(tmp_path):
 def test_download_dataset_files_chunked(tmp_path):
     """A file larger than part_size is fetched as multiple byte-range parts and
     reassembled correctly at their offsets."""
-    from lightning_sdk.lightning_cloud.utils.dataset import _download_dataset_files
+    from lightning_sdk.api.dataset import _download_dataset_files
 
     content = b"ABCDEFGH"  # 8 bytes
     files = [{"filepath": "big.bin", "url": "https://x/big", "size": len(content)}]
@@ -1542,9 +1542,9 @@ def test_download_dataset_files_chunked(tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_new(
     mock_lightning_client,
@@ -1557,7 +1557,7 @@ def test_upload_dataset_new(
     """Upload a brand-new dataset (dataset does not exist yet)."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "data.txt"
     src_file.write_text("hello upload dataset", encoding="utf-8")
@@ -1658,11 +1658,11 @@ class _SyncExecutor:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     """Files upload in parallel: one uploader per file, with the concurrency
     budget split across files x within-file parts."""
-    from lightning_sdk.lightning_cloud.utils import dataset as d
+    from lightning_sdk.api import dataset as d
 
     file_paths, remote_paths = [], []
     for i in range(3):
@@ -1702,11 +1702,11 @@ def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
     """The concurrency budget splits sensibly at the edges: a single large file
     gets all workers within-file; many small files fan out one part-worker each."""
-    from lightning_sdk.lightning_cloud.utils import dataset as d
+    from lightning_sdk.api import dataset as d
 
     def run(n_files, num_workers):
         paths, rels = [], []
@@ -1750,9 +1750,9 @@ def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_existing(
     mock_lightning_client,
@@ -1765,7 +1765,7 @@ def test_upload_dataset_existing(
     """Upload to an existing dataset, auto-incrementing version from v3 to v4."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "data.csv"
     src_file.write_text("col1,col2\n1,2\n", encoding="utf-8")
@@ -1842,9 +1842,9 @@ def test_upload_dataset_existing(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._complete_dataset_upload")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.lightning_cloud.utils.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
+@mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
+@mock.patch("lightning_sdk.api.dataset.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_with_explicit_version(
     mock_lightning_client,
@@ -1857,7 +1857,7 @@ def test_upload_dataset_with_explicit_version(
     """Upload to an existing dataset with an explicit version tag."""
     import json
 
-    from lightning_sdk.lightning_cloud.utils.dataset import _upload_dataset
+    from lightning_sdk.api.dataset import _upload_dataset
 
     src_file = tmp_path / "model.pt"
     src_file.write_text("weights", encoding="utf-8")
