@@ -17,6 +17,7 @@ from lightning_sdk.cli.deployment.common import (
     parse_ports,
     resolve_machine,
 )
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 from lightning_sdk.deployment import Deployment
@@ -95,6 +96,7 @@ from lightning_sdk.deployment import Deployment
     default=False,
     help="Print the resolved model configuration without creating the deployment.",
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output the created deployment as JSON.")
 def create_deployment(
     name: Optional[str] = None,
     name_option: Optional[str] = None,
@@ -136,6 +138,7 @@ def create_deployment(
     acks: Sequence[str] = (),
     force: bool = False,
     dry_run: bool = False,
+    as_json: bool = False,
 ) -> None:
     """Create a deployment."""
     deployment_name = name_option or name
@@ -218,4 +221,9 @@ def create_deployment(
         return deployment
 
     deployment = create_with_acknowledgement(_create, acks=list(acks), force=force, interactive=sys.stdin.isatty())
+
+    if as_json:
+        echo_json({"id": deployment.id, "name": deployment.name, "urls": deployment.urls})
+        return
+
     click.echo(f"Created deployment {deployment.name}.")

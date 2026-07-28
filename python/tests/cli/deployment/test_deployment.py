@@ -588,3 +588,29 @@ def test_deployment_logs_help() -> None:
         "--tail",
         "--timestamps",
     )
+
+
+def test_create_deployment_json(monkeypatch) -> None:
+    import json
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.deployment.create import create_deployment
+
+    dep = SimpleNamespace(id="dep-1", name="hello-api", urls=["https://80-dep-1-d.cloudspaces.litng.ai"])
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=SimpleNamespace(id="ts"))
+    )
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_machine", MagicMock(return_value=MagicMock()))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.create.create_with_acknowledgement", MagicMock(return_value=dep))
+
+    result = CliRunner().invoke(create_deployment, ["hello-api", "--image", "nginx", "--port", "80", "--json"])
+
+    assert result.exit_code == 0, result.output
+    assert json.loads(result.output) == {
+        "id": "dep-1",
+        "name": "hello-api",
+        "urls": ["https://80-dep-1-d.cloudspaces.litng.ai"],
+    }

@@ -5,6 +5,7 @@ from typing import Dict, Mapping, Optional, Sequence, Union
 
 import rich_click as click
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
 from lightning_sdk.job import Job
@@ -115,6 +116,7 @@ _MACHINE_VALUES = tuple(
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_job(
     name: Optional[str] = None,
     machine: str = "CPU",
@@ -132,6 +134,7 @@ def run_job(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    as_json: bool = False,
 ) -> None:
     """Run async workloads using a docker image or studio."""
     if not name:
@@ -156,7 +159,7 @@ def run_job(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    Job.run(
+    job = Job.run(
         name=name,
         machine=machine_enum,
         command=command,
@@ -173,6 +176,19 @@ def run_job(
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
     )
+
+    if as_json:
+        echo_json(
+            {
+                "id": job.id,
+                "name": job.name,
+                "teamspace": f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}",
+                "link": job.link,
+            }
+        )
+        return
+
+    click.echo(f"Submitted job {job.name}.")
 
 
 def _resolve_path_mapping(path_mappings: str) -> Dict[str, str]:

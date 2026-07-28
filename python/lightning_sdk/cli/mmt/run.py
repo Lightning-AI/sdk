@@ -5,6 +5,7 @@ from typing import Optional, Sequence, Union
 import rich_click as click
 
 from lightning_sdk.cli.job.run import _MACHINE_VALUES, _resolve_envs, _resolve_path_mapping
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
 from lightning_sdk.machine import Machine
@@ -122,6 +123,7 @@ from lightning_sdk.mmt import MMT
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_mmt(
     name: Optional[str] = None,
     num_machines: int = 2,
@@ -140,6 +142,7 @@ def run_mmt(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    as_json: bool = False,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
     if name is None:
@@ -162,7 +165,7 @@ def run_mmt(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    MMT.run(
+    mmt = MMT.run(
         name=name,
         num_machines=num_machines,
         machine=machine_enum,
@@ -180,3 +183,16 @@ def run_mmt(
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
     )
+
+    if as_json:
+        echo_json(
+            {
+                "id": mmt.id,
+                "name": mmt.name,
+                "teamspace": f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}",
+                "link": mmt.link,
+            }
+        )
+        return
+
+    click.echo(f"Submitted multi-machine job {mmt.name}.")

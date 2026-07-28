@@ -19,6 +19,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
         "Defaults to the configured teamspace."
     ),
 )
-def delete_container(name: str, teamspace: Optional[str] = None) -> None:
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
+def delete_container(name: str, teamspace: Optional[str] = None, as_json: bool = False) -> None:
     """Delete the docker container NAME."""
-    _delete_container.callback(name=name, teamspace=teamspace)
+    _delete_container.callback(name=name, teamspace=teamspace, as_json=as_json)
