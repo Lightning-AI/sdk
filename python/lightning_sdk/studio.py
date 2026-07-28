@@ -196,6 +196,11 @@ class Studio(metaclass=TrackCallsMeta):
         self._setup_done = True
 
     @property
+    def id(self) -> str:
+        """The studio's unique identifier."""
+        return self._studio.id
+
+    @property
     def name(self) -> str:
         """Returns the name of the studio.
 

@@ -491,8 +491,13 @@ class Job(metaclass=TrackCallsMeta):
             return None
 
     @property
+    def id(self) -> Optional[str]:
+        """The job's unique identifier."""
+        return self._job.id if self._job is not None else None
+
+    @property
     def resource_id(self) -> Optional[str]:
-        return self._guaranteed_job.id
+        return self.id
 
     @property
     def private_ip_address(self) -> Optional[str]:

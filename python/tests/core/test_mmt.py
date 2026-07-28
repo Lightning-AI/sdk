@@ -85,6 +85,7 @@ def test_mmt_exposes_placement_group_id(mmt_api_get_job_by_name_mocker, internal
     job = MMT("test-job", studio.teamspace)
     job._job = V1MultiMachineJob(id="mmt-123", spec=V1JobSpec(placement_group_id="pg-1"))
 
+    assert job.id == "mmt-123"
     assert job.placement_group_id == "pg-1"
 
 
@@ -94,6 +95,15 @@ def test_mmt_exposes_resource_id(mmt_api_get_job_by_name_mocker, internal_studio
     job._job = V1MultiMachineJob(id="mmt-123")
 
     assert job.resource_id == "mmt-123"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmt_id_is_none_without_backing_model_or_api_request(internal_studio_init_mocker):
+    teamspace = Teamspace("org-abc/ts-abc")
+    job = MMT("test-job", teamspace, _fetch_job=False)
+    job._job_api.get_job_by_name = mock.MagicMock(side_effect=AssertionError("ID access made an API request"))
+
+    assert job.id is None
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

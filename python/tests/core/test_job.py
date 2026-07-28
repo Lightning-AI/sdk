@@ -168,10 +168,21 @@ def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
         spec=V1JobSpec(placement_group_id="pg-1", rank=3),
     )
 
+    assert job.id == "job-123"
     assert job.resource_id == "job-123"
     assert job.private_ip_address == "10.0.0.7"
     assert job.placement_group_id == "pg-1"
     assert job.rank == 3
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_id_is_none_without_backing_model_or_api_request(internal_studio_init_mocker):
+    teamspace = Teamspace("org-abc/ts-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job_api.get_job_by_name = mock.MagicMock(side_effect=AssertionError("ID access made an API request"))
+
+    assert job.id is None
+    assert job.resource_id is None
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
