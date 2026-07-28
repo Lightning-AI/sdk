@@ -84,6 +84,7 @@ class V1RuleResource(object):
     MACHINE = "machine"
     KUBERNETESTEMPLATE = "kubernetesTemplate"
     K8S_JOB = "k8s_job"
+    SANDBOX = "sandbox"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

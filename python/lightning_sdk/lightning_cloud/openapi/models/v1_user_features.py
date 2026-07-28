@@ -91,7 +91,6 @@ class V1UserFeatures(object):
         'f302': 'bool',
         'f303': 'bool',
         'f305': 'bool',
-        'f307': 'bool',
         'f313': 'bool',
         'f314': 'bool',
         'f316': 'bool',
@@ -107,7 +106,6 @@ class V1UserFeatures(object):
         'f331': 'bool',
         'f332': 'bool',
         'f333': 'bool',
-        'f335': 'bool',
         'f336': 'bool',
         'f337': 'bool',
         'f338': 'bool',
@@ -120,6 +118,16 @@ class V1UserFeatures(object):
         'f348': 'bool',
         'f349': 'bool',
         'f350': 'bool',
+        'f351': 'bool',
+        'f352': 'bool',
+        'f353': 'bool',
+        'f354': 'bool',
+        'f355': 'bool',
+        'f356': 'bool',
+        'f357': 'bool',
+        'f358': 'bool',
+        'f359': 'bool',
+        'f360': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'job_artifacts_v2': 'bool',
@@ -154,8 +162,7 @@ class V1UserFeatures(object):
         'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
-        'vultr': 'bool',
-        'weka': 'bool'
+        'vultr': 'bool'
     }
 
     attribute_map = {
@@ -209,7 +216,6 @@ class V1UserFeatures(object):
         'f302': 'f302',
         'f303': 'f303',
         'f305': 'f305',
-        'f307': 'f307',
         'f313': 'f313',
         'f314': 'f314',
         'f316': 'f316',
@@ -225,7 +231,6 @@ class V1UserFeatures(object):
         'f331': 'f331',
         'f332': 'f332',
         'f333': 'f333',
-        'f335': 'f335',
         'f336': 'f336',
         'f337': 'f337',
         'f338': 'f338',
@@ -238,6 +243,16 @@ class V1UserFeatures(object):
         'f348': 'f348',
         'f349': 'f349',
         'f350': 'f350',
+        'f351': 'f351',
+        'f352': 'f352',
+        'f353': 'f353',
+        'f354': 'f354',
+        'f355': 'f355',
+        'f356': 'f356',
+        'f357': 'f357',
+        'f358': 'f358',
+        'f359': 'f359',
+        'f360': 'f360',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'job_artifacts_v2': 'jobArtifactsV2',
@@ -272,11 +287,10 @@ class V1UserFeatures(object):
         'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
-        'vultr': 'vultr',
-        'weka': 'weka'
+        'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f307: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f335: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, f350: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None, weka: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, f350: 'bool' =None, f351: 'bool' =None, f352: 'bool' =None, f353: 'bool' =None, f354: 'bool' =None, f355: 'bool' =None, f356: 'bool' =None, f357: 'bool' =None, f358: 'bool' =None, f359: 'bool' =None, f360: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._ai_hub_monetization = None
@@ -328,7 +342,6 @@ class V1UserFeatures(object):
         self._f302 = None
         self._f303 = None
         self._f305 = None
-        self._f307 = None
         self._f313 = None
         self._f314 = None
         self._f316 = None
@@ -344,7 +357,6 @@ class V1UserFeatures(object):
         self._f331 = None
         self._f332 = None
         self._f333 = None
-        self._f335 = None
         self._f336 = None
         self._f337 = None
         self._f338 = None
@@ -357,6 +369,16 @@ class V1UserFeatures(object):
         self._f348 = None
         self._f349 = None
         self._f350 = None
+        self._f351 = None
+        self._f352 = None
+        self._f353 = None
+        self._f354 = None
+        self._f355 = None
+        self._f356 = None
+        self._f357 = None
+        self._f358 = None
+        self._f359 = None
+        self._f360 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._job_artifacts_v2 = None
@@ -392,7 +414,6 @@ class V1UserFeatures(object):
         self._studio_config = None
         self._studio_version_visibility = None
         self._vultr = None
-        self._weka = None
         self.discriminator = None
         if affiliate_links is not None:
             self.affiliate_links = affiliate_links
@@ -494,8 +515,6 @@ class V1UserFeatures(object):
             self.f303 = f303
         if f305 is not None:
             self.f305 = f305
-        if f307 is not None:
-            self.f307 = f307
         if f313 is not None:
             self.f313 = f313
         if f314 is not None:
@@ -526,8 +545,6 @@ class V1UserFeatures(object):
             self.f332 = f332
         if f333 is not None:
             self.f333 = f333
-        if f335 is not None:
-            self.f335 = f335
         if f336 is not None:
             self.f336 = f336
         if f337 is not None:
@@ -552,6 +569,26 @@ class V1UserFeatures(object):
             self.f349 = f349
         if f350 is not None:
             self.f350 = f350
+        if f351 is not None:
+            self.f351 = f351
+        if f352 is not None:
+            self.f352 = f352
+        if f353 is not None:
+            self.f353 = f353
+        if f354 is not None:
+            self.f354 = f354
+        if f355 is not None:
+            self.f355 = f355
+        if f356 is not None:
+            self.f356 = f356
+        if f357 is not None:
+            self.f357 = f357
+        if f358 is not None:
+            self.f358 = f358
+        if f359 is not None:
+            self.f359 = f359
+        if f360 is not None:
+            self.f360 = f360
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -622,8 +659,6 @@ class V1UserFeatures(object):
             self.studio_version_visibility = studio_version_visibility
         if vultr is not None:
             self.vultr = vultr
-        if weka is not None:
-            self.weka = weka
 
     @property
     def affiliate_links(self) -> 'bool':
@@ -1676,27 +1711,6 @@ class V1UserFeatures(object):
         self._f305 = f305
 
     @property
-    def f307(self) -> 'bool':
-        """Gets the f307 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f307 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f307
-
-    @f307.setter
-    def f307(self, f307: 'bool'):
-        """Sets the f307 of this V1UserFeatures.
-
-
-        :param f307: The f307 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f307 = f307
-
-    @property
     def f313(self) -> 'bool':
         """Gets the f313 of this V1UserFeatures.  # noqa: E501
 
@@ -2012,27 +2026,6 @@ class V1UserFeatures(object):
         self._f333 = f333
 
     @property
-    def f335(self) -> 'bool':
-        """Gets the f335 of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The f335 of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._f335
-
-    @f335.setter
-    def f335(self, f335: 'bool'):
-        """Sets the f335 of this V1UserFeatures.
-
-
-        :param f335: The f335 of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._f335 = f335
-
-    @property
     def f336(self) -> 'bool':
         """Gets the f336 of this V1UserFeatures.  # noqa: E501
 
@@ -2283,6 +2276,216 @@ class V1UserFeatures(object):
         """
 
         self._f350 = f350
+
+    @property
+    def f351(self) -> 'bool':
+        """Gets the f351 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f351 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f351
+
+    @f351.setter
+    def f351(self, f351: 'bool'):
+        """Sets the f351 of this V1UserFeatures.
+
+
+        :param f351: The f351 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f351 = f351
+
+    @property
+    def f352(self) -> 'bool':
+        """Gets the f352 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f352 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f352
+
+    @f352.setter
+    def f352(self, f352: 'bool'):
+        """Sets the f352 of this V1UserFeatures.
+
+
+        :param f352: The f352 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f352 = f352
+
+    @property
+    def f353(self) -> 'bool':
+        """Gets the f353 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f353 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f353
+
+    @f353.setter
+    def f353(self, f353: 'bool'):
+        """Sets the f353 of this V1UserFeatures.
+
+
+        :param f353: The f353 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f353 = f353
+
+    @property
+    def f354(self) -> 'bool':
+        """Gets the f354 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f354 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f354
+
+    @f354.setter
+    def f354(self, f354: 'bool'):
+        """Sets the f354 of this V1UserFeatures.
+
+
+        :param f354: The f354 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f354 = f354
+
+    @property
+    def f355(self) -> 'bool':
+        """Gets the f355 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f355 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f355
+
+    @f355.setter
+    def f355(self, f355: 'bool'):
+        """Sets the f355 of this V1UserFeatures.
+
+
+        :param f355: The f355 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f355 = f355
+
+    @property
+    def f356(self) -> 'bool':
+        """Gets the f356 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f356 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f356
+
+    @f356.setter
+    def f356(self, f356: 'bool'):
+        """Sets the f356 of this V1UserFeatures.
+
+
+        :param f356: The f356 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f356 = f356
+
+    @property
+    def f357(self) -> 'bool':
+        """Gets the f357 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f357 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f357
+
+    @f357.setter
+    def f357(self, f357: 'bool'):
+        """Sets the f357 of this V1UserFeatures.
+
+
+        :param f357: The f357 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f357 = f357
+
+    @property
+    def f358(self) -> 'bool':
+        """Gets the f358 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f358 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f358
+
+    @f358.setter
+    def f358(self, f358: 'bool'):
+        """Sets the f358 of this V1UserFeatures.
+
+
+        :param f358: The f358 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f358 = f358
+
+    @property
+    def f359(self) -> 'bool':
+        """Gets the f359 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f359 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f359
+
+    @f359.setter
+    def f359(self, f359: 'bool'):
+        """Sets the f359 of this V1UserFeatures.
+
+
+        :param f359: The f359 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f359 = f359
+
+    @property
+    def f360(self) -> 'bool':
+        """Gets the f360 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f360 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f360
+
+    @f360.setter
+    def f360(self, f360: 'bool'):
+        """Sets the f360 of this V1UserFeatures.
+
+
+        :param f360: The f360 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f360 = f360
 
     @property
     def fair_share(self) -> 'bool':
@@ -3018,27 +3221,6 @@ class V1UserFeatures(object):
         """
 
         self._vultr = vultr
-
-    @property
-    def weka(self) -> 'bool':
-        """Gets the weka of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The weka of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._weka
-
-    @weka.setter
-    def weka(self, weka: 'bool'):
-        """Sets the weka of this V1UserFeatures.
-
-
-        :param weka: The weka of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._weka = weka
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

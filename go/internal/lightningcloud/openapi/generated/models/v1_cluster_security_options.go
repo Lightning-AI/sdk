@@ -20,6 +20,9 @@ import (
 // swagger:model v1ClusterSecurityOptions
 type V1ClusterSecurityOptions struct {
 
+	// If true, allow studio transfer out of the cluster
+	AllowStudioTransferOut bool `json:"allowStudioTransferOut,omitempty"`
+
 	// Bucket KMS key ARN
 	BucketKmsKey string `json:"bucketKmsKey,omitempty"`
 

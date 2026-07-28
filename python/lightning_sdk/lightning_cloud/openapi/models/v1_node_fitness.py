@@ -46,10 +46,15 @@ class V1NodeFitness(object):
         'collection_posture': 'str',
         'dma_entry_limit': 'V1DMAEntryLimit',
         'dmi': 'V1DMIInfo',
+        'gpu_isolation': 'list[V1DeviceIsolationFitness]',
+        'iommu_collection_state': 'str',
+        'libnvfm': 'V1LibNVFMFitness',
         'nic_firmware': 'list[V1NICFirmware]',
         'nics': 'list[V1NICFitness]',
         'pcie_ports': 'list[V1PciePortFitness]',
-        'per_gpu': 'list[V1GpuFitness]'
+        'per_gpu': 'list[V1GpuFitness]',
+        'pex_switch_fw': 'V1PexSwitchFWFitness',
+        'rail_nic_isolation': 'list[V1DeviceIsolationFitness]'
     }
 
     attribute_map = {
@@ -58,23 +63,33 @@ class V1NodeFitness(object):
         'collection_posture': 'collectionPosture',
         'dma_entry_limit': 'dmaEntryLimit',
         'dmi': 'dmi',
+        'gpu_isolation': 'gpuIsolation',
+        'iommu_collection_state': 'iommuCollectionState',
+        'libnvfm': 'libnvfm',
         'nic_firmware': 'nicFirmware',
         'nics': 'nics',
         'pcie_ports': 'pciePorts',
-        'per_gpu': 'perGpu'
+        'per_gpu': 'perGpu',
+        'pex_switch_fw': 'pexSwitchFw',
+        'rail_nic_isolation': 'railNicIsolation'
     }
 
-    def __init__(self, acs_collection_state: 'str' =None, ats_collection_state: 'str' =None, collection_posture: 'str' =None, dma_entry_limit: 'V1DMAEntryLimit' =None, dmi: 'V1DMIInfo' =None, nic_firmware: 'list[V1NICFirmware]' =None, nics: 'list[V1NICFitness]' =None, pcie_ports: 'list[V1PciePortFitness]' =None, per_gpu: 'list[V1GpuFitness]' =None):  # noqa: E501
+    def __init__(self, acs_collection_state: 'str' =None, ats_collection_state: 'str' =None, collection_posture: 'str' =None, dma_entry_limit: 'V1DMAEntryLimit' =None, dmi: 'V1DMIInfo' =None, gpu_isolation: 'list[V1DeviceIsolationFitness]' =None, iommu_collection_state: 'str' =None, libnvfm: 'V1LibNVFMFitness' =None, nic_firmware: 'list[V1NICFirmware]' =None, nics: 'list[V1NICFitness]' =None, pcie_ports: 'list[V1PciePortFitness]' =None, per_gpu: 'list[V1GpuFitness]' =None, pex_switch_fw: 'V1PexSwitchFWFitness' =None, rail_nic_isolation: 'list[V1DeviceIsolationFitness]' =None):  # noqa: E501
         """V1NodeFitness - a model defined in Swagger"""  # noqa: E501
         self._acs_collection_state = None
         self._ats_collection_state = None
         self._collection_posture = None
         self._dma_entry_limit = None
         self._dmi = None
+        self._gpu_isolation = None
+        self._iommu_collection_state = None
+        self._libnvfm = None
         self._nic_firmware = None
         self._nics = None
         self._pcie_ports = None
         self._per_gpu = None
+        self._pex_switch_fw = None
+        self._rail_nic_isolation = None
         self.discriminator = None
         if acs_collection_state is not None:
             self.acs_collection_state = acs_collection_state
@@ -86,6 +101,12 @@ class V1NodeFitness(object):
             self.dma_entry_limit = dma_entry_limit
         if dmi is not None:
             self.dmi = dmi
+        if gpu_isolation is not None:
+            self.gpu_isolation = gpu_isolation
+        if iommu_collection_state is not None:
+            self.iommu_collection_state = iommu_collection_state
+        if libnvfm is not None:
+            self.libnvfm = libnvfm
         if nic_firmware is not None:
             self.nic_firmware = nic_firmware
         if nics is not None:
@@ -94,6 +115,10 @@ class V1NodeFitness(object):
             self.pcie_ports = pcie_ports
         if per_gpu is not None:
             self.per_gpu = per_gpu
+        if pex_switch_fw is not None:
+            self.pex_switch_fw = pex_switch_fw
+        if rail_nic_isolation is not None:
+            self.rail_nic_isolation = rail_nic_isolation
 
     @property
     def acs_collection_state(self) -> 'str':
@@ -205,6 +230,69 @@ class V1NodeFitness(object):
         self._dmi = dmi
 
     @property
+    def gpu_isolation(self) -> 'list[V1DeviceIsolationFitness]':
+        """Gets the gpu_isolation of this V1NodeFitness.  # noqa: E501
+
+
+        :return: The gpu_isolation of this V1NodeFitness.  # noqa: E501
+        :rtype: list[V1DeviceIsolationFitness]
+        """
+        return self._gpu_isolation
+
+    @gpu_isolation.setter
+    def gpu_isolation(self, gpu_isolation: 'list[V1DeviceIsolationFitness]'):
+        """Sets the gpu_isolation of this V1NodeFitness.
+
+
+        :param gpu_isolation: The gpu_isolation of this V1NodeFitness.  # noqa: E501
+        :type: list[V1DeviceIsolationFitness]
+        """
+
+        self._gpu_isolation = gpu_isolation
+
+    @property
+    def iommu_collection_state(self) -> 'str':
+        """Gets the iommu_collection_state of this V1NodeFitness.  # noqa: E501
+
+
+        :return: The iommu_collection_state of this V1NodeFitness.  # noqa: E501
+        :rtype: str
+        """
+        return self._iommu_collection_state
+
+    @iommu_collection_state.setter
+    def iommu_collection_state(self, iommu_collection_state: 'str'):
+        """Sets the iommu_collection_state of this V1NodeFitness.
+
+
+        :param iommu_collection_state: The iommu_collection_state of this V1NodeFitness.  # noqa: E501
+        :type: str
+        """
+
+        self._iommu_collection_state = iommu_collection_state
+
+    @property
+    def libnvfm(self) -> 'V1LibNVFMFitness':
+        """Gets the libnvfm of this V1NodeFitness.  # noqa: E501
+
+
+        :return: The libnvfm of this V1NodeFitness.  # noqa: E501
+        :rtype: V1LibNVFMFitness
+        """
+        return self._libnvfm
+
+    @libnvfm.setter
+    def libnvfm(self, libnvfm: 'V1LibNVFMFitness'):
+        """Sets the libnvfm of this V1NodeFitness.
+
+
+        :param libnvfm: The libnvfm of this V1NodeFitness.  # noqa: E501
+        :type: V1LibNVFMFitness
+        """
+
+        self._libnvfm = libnvfm
+
+    @property
     def nic_firmware(self) -> 'list[V1NICFirmware]':
         """Gets the nic_firmware of this V1NodeFitness.  # noqa: E501
 
@@ -293,6 +381,48 @@ class V1NodeFitness(object):
         """
 
         self._per_gpu = per_gpu
+
+    @property
+    def pex_switch_fw(self) -> 'V1PexSwitchFWFitness':
+        """Gets the pex_switch_fw of this V1NodeFitness.  # noqa: E501
+
+
+        :return: The pex_switch_fw of this V1NodeFitness.  # noqa: E501
+        :rtype: V1PexSwitchFWFitness
+        """
+        return self._pex_switch_fw
+
+    @pex_switch_fw.setter
+    def pex_switch_fw(self, pex_switch_fw: 'V1PexSwitchFWFitness'):
+        """Sets the pex_switch_fw of this V1NodeFitness.
+
+
+        :param pex_switch_fw: The pex_switch_fw of this V1NodeFitness.  # noqa: E501
+        :type: V1PexSwitchFWFitness
+        """
+
+        self._pex_switch_fw = pex_switch_fw
+
+    @property
+    def rail_nic_isolation(self) -> 'list[V1DeviceIsolationFitness]':
+        """Gets the rail_nic_isolation of this V1NodeFitness.  # noqa: E501
+
+
+        :return: The rail_nic_isolation of this V1NodeFitness.  # noqa: E501
+        :rtype: list[V1DeviceIsolationFitness]
+        """
+        return self._rail_nic_isolation
+
+    @rail_nic_isolation.setter
+    def rail_nic_isolation(self, rail_nic_isolation: 'list[V1DeviceIsolationFitness]'):
+        """Sets the rail_nic_isolation of this V1NodeFitness.
+
+
+        :param rail_nic_isolation: The rail_nic_isolation of this V1NodeFitness.  # noqa: E501
+        :type: list[V1DeviceIsolationFitness]
+        """
+
+        self._rail_nic_isolation = rail_nic_isolation
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -51,6 +51,7 @@ class V1MountableDataConnection(object):
         'remote_path': 'str',
         'server_ip': 'str',
         'source': 'str',
+        'storage_id': 'str',
         'type': 'V1StorageType',
         'username': 'str'
     }
@@ -66,11 +67,12 @@ class V1MountableDataConnection(object):
         'remote_path': 'remotePath',
         'server_ip': 'serverIp',
         'source': 'source',
+        'storage_id': 'storageId',
         'type': 'type',
         'username': 'username'
     }
 
-    def __init__(self, baremetal: 'bool' =None, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, baremetal: 'bool' =None, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, storage_id: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
         """V1MountableDataConnection - a model defined in Swagger"""  # noqa: E501
         self._baremetal = None
         self._mount_opts = None
@@ -82,6 +84,7 @@ class V1MountableDataConnection(object):
         self._remote_path = None
         self._server_ip = None
         self._source = None
+        self._storage_id = None
         self._type = None
         self._username = None
         self.discriminator = None
@@ -105,6 +108,8 @@ class V1MountableDataConnection(object):
             self.server_ip = server_ip
         if source is not None:
             self.source = source
+        if storage_id is not None:
+            self.storage_id = storage_id
         if type is not None:
             self.type = type
         if username is not None:
@@ -321,6 +326,27 @@ class V1MountableDataConnection(object):
         """
 
         self._source = source
+
+    @property
+    def storage_id(self) -> 'str':
+        """Gets the storage_id of this V1MountableDataConnection.  # noqa: E501
+
+
+        :return: The storage_id of this V1MountableDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._storage_id
+
+    @storage_id.setter
+    def storage_id(self, storage_id: 'str'):
+        """Sets the storage_id of this V1MountableDataConnection.
+
+
+        :param storage_id: The storage_id of this V1MountableDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._storage_id = storage_id
 
     @property
     def type(self) -> 'V1StorageType':

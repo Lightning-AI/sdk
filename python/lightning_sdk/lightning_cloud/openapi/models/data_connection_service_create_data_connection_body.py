@@ -54,11 +54,12 @@ class DataConnectionServiceCreateDataConnectionBody(object):
         'id': 'str',
         'lustre': 'V1LustreDataConnection',
         'name': 'str',
+        'optimization_mode': 'V1DataConnectionOptimizationMode',
         'r2': 'V1R2DataConnection',
         'run_cmds': 'list[str]',
         's3_folder': 'V1S3FolderDataConnection',
         'snowflake': 'V1SnowflakeDataConnection',
-        'weka': 'V1WekaDataConnection',
+        'vast': 'V1VastDataConnection',
         'writable': 'bool'
     }
 
@@ -76,15 +77,16 @@ class DataConnectionServiceCreateDataConnectionBody(object):
         'id': 'id',
         'lustre': 'lustre',
         'name': 'name',
+        'optimization_mode': 'optimizationMode',
         'r2': 'r2',
         'run_cmds': 'runCmds',
         's3_folder': 's3Folder',
         'snowflake': 'snowflake',
-        'weka': 'weka',
+        'vast': 'vast',
         'writable': 'writable'
     }
 
-    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, weka: 'V1WekaDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'list[str]' =None, aws: 'V1AwsDataConnection' =None, cluster_id: 'str' =None, create_index: 'bool' =None, create_resources: 'bool' =None, efs: 'V1EfsConfig' =None, filestore: 'V1FilestoreDataConnection' =None, force: 'bool' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, id: 'str' =None, lustre: 'V1LustreDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, vast: 'V1VastDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """DataConnectionServiceCreateDataConnectionBody - a model defined in Swagger"""  # noqa: E501
         self._access_cluster_ids = None
         self._aws = None
@@ -99,11 +101,12 @@ class DataConnectionServiceCreateDataConnectionBody(object):
         self._id = None
         self._lustre = None
         self._name = None
+        self._optimization_mode = None
         self._r2 = None
         self._run_cmds = None
         self._s3_folder = None
         self._snowflake = None
-        self._weka = None
+        self._vast = None
         self._writable = None
         self.discriminator = None
         if access_cluster_ids is not None:
@@ -132,6 +135,8 @@ class DataConnectionServiceCreateDataConnectionBody(object):
             self.lustre = lustre
         if name is not None:
             self.name = name
+        if optimization_mode is not None:
+            self.optimization_mode = optimization_mode
         if r2 is not None:
             self.r2 = r2
         if run_cmds is not None:
@@ -140,8 +145,8 @@ class DataConnectionServiceCreateDataConnectionBody(object):
             self.s3_folder = s3_folder
         if snowflake is not None:
             self.snowflake = snowflake
-        if weka is not None:
-            self.weka = weka
+        if vast is not None:
+            self.vast = vast
         if writable is not None:
             self.writable = writable
 
@@ -419,6 +424,27 @@ class DataConnectionServiceCreateDataConnectionBody(object):
         self._name = name
 
     @property
+    def optimization_mode(self) -> 'V1DataConnectionOptimizationMode':
+        """Gets the optimization_mode of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+
+
+        :return: The optimization_mode of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+        :rtype: V1DataConnectionOptimizationMode
+        """
+        return self._optimization_mode
+
+    @optimization_mode.setter
+    def optimization_mode(self, optimization_mode: 'V1DataConnectionOptimizationMode'):
+        """Sets the optimization_mode of this DataConnectionServiceCreateDataConnectionBody.
+
+
+        :param optimization_mode: The optimization_mode of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+        :type: V1DataConnectionOptimizationMode
+        """
+
+        self._optimization_mode = optimization_mode
+
+    @property
     def r2(self) -> 'V1R2DataConnection':
         """Gets the r2 of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
 
@@ -503,25 +529,25 @@ class DataConnectionServiceCreateDataConnectionBody(object):
         self._snowflake = snowflake
 
     @property
-    def weka(self) -> 'V1WekaDataConnection':
-        """Gets the weka of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+    def vast(self) -> 'V1VastDataConnection':
+        """Gets the vast of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
 
 
-        :return: The weka of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
-        :rtype: V1WekaDataConnection
+        :return: The vast of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+        :rtype: V1VastDataConnection
         """
-        return self._weka
+        return self._vast
 
-    @weka.setter
-    def weka(self, weka: 'V1WekaDataConnection'):
-        """Sets the weka of this DataConnectionServiceCreateDataConnectionBody.
+    @vast.setter
+    def vast(self, vast: 'V1VastDataConnection'):
+        """Sets the vast of this DataConnectionServiceCreateDataConnectionBody.
 
 
-        :param weka: The weka of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
-        :type: V1WekaDataConnection
+        :param vast: The vast of this DataConnectionServiceCreateDataConnectionBody.  # noqa: E501
+        :type: V1VastDataConnection
         """
 
-        self._weka = weka
+        self._vast = vast
 
     @property
     def writable(self) -> 'bool':

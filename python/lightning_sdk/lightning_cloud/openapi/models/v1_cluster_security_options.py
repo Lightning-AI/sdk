@@ -41,6 +41,7 @@ class V1ClusterSecurityOptions(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'allow_studio_transfer_out': 'bool',
         'bucket_kms_key': 'str',
         'cloud_init_boot_cmds': 'list[str]',
         'cloud_init_run_cmds': 'list[str]',
@@ -66,6 +67,7 @@ class V1ClusterSecurityOptions(object):
     }
 
     attribute_map = {
+        'allow_studio_transfer_out': 'allowStudioTransferOut',
         'bucket_kms_key': 'bucketKmsKey',
         'cloud_init_boot_cmds': 'cloudInitBootCmds',
         'cloud_init_run_cmds': 'cloudInitRunCmds',
@@ -90,8 +92,9 @@ class V1ClusterSecurityOptions(object):
         'vpn_route_cidrs': 'vpnRouteCidrs'
     }
 
-    def __init__(self, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, cloudflare_workers_access_enabled: 'bool' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_firewall_rules: 'list[V1FirewallRule]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None, vpn_gateway_ip: 'str' =None, vpn_preshared_key: 'str' =None, vpn_route_cidrs: 'list[str]' =None):  # noqa: E501
+    def __init__(self, allow_studio_transfer_out: 'bool' =None, bucket_kms_key: 'str' =None, cloud_init_boot_cmds: 'list[str]' =None, cloud_init_run_cmds: 'list[str]' =None, cloudflare_workers_access_enabled: 'bool' =None, containers_non_privileged: 'bool' =None, disable_public_ip: 'bool' =None, disabled_services: 'list[str]' =None, encrypt_cluster_bucket: 'bool' =None, encrypt_instance_volumes: 'bool' =None, exposed_ports: 'list[str]' =None, extra_firewall_cidr_ranges: 'list[str]' =None, extra_firewall_rules: 'list[V1FirewallRule]' =None, extra_policy: 'str' =None, extra_sa_scopes: 'list[str]' =None, kms_key_id: 'str' =None, protect_instance_metadata: 'bool' =None, rootless_docker: 'bool' =None, setup_network_load_balancer: 'bool' =None, ssh_disabled: 'bool' =None, vpn_gateway_ip: 'str' =None, vpn_preshared_key: 'str' =None, vpn_route_cidrs: 'list[str]' =None):  # noqa: E501
         """V1ClusterSecurityOptions - a model defined in Swagger"""  # noqa: E501
+        self._allow_studio_transfer_out = None
         self._bucket_kms_key = None
         self._cloud_init_boot_cmds = None
         self._cloud_init_run_cmds = None
@@ -115,6 +118,8 @@ class V1ClusterSecurityOptions(object):
         self._vpn_preshared_key = None
         self._vpn_route_cidrs = None
         self.discriminator = None
+        if allow_studio_transfer_out is not None:
+            self.allow_studio_transfer_out = allow_studio_transfer_out
         if bucket_kms_key is not None:
             self.bucket_kms_key = bucket_kms_key
         if cloud_init_boot_cmds is not None:
@@ -159,6 +164,27 @@ class V1ClusterSecurityOptions(object):
             self.vpn_preshared_key = vpn_preshared_key
         if vpn_route_cidrs is not None:
             self.vpn_route_cidrs = vpn_route_cidrs
+
+    @property
+    def allow_studio_transfer_out(self) -> 'bool':
+        """Gets the allow_studio_transfer_out of this V1ClusterSecurityOptions.  # noqa: E501
+
+
+        :return: The allow_studio_transfer_out of this V1ClusterSecurityOptions.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_studio_transfer_out
+
+    @allow_studio_transfer_out.setter
+    def allow_studio_transfer_out(self, allow_studio_transfer_out: 'bool'):
+        """Sets the allow_studio_transfer_out of this V1ClusterSecurityOptions.
+
+
+        :param allow_studio_transfer_out: The allow_studio_transfer_out of this V1ClusterSecurityOptions.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_studio_transfer_out = allow_studio_transfer_out
 
     @property
     def bucket_kms_key(self) -> 'str':

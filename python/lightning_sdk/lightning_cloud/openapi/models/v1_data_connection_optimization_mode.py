@@ -39,6 +39,7 @@ class V1DataConnectionOptimizationMode(object):
     """
     UNSPECIFIED = "DATA_CONNECTION_OPTIMIZATION_MODE_UNSPECIFIED"
     READ_WRITE_OPTIMIZED = "DATA_CONNECTION_OPTIMIZATION_MODE_READ_WRITE_OPTIMIZED"
+    PACKED = "DATA_CONNECTION_OPTIMIZATION_MODE_PACKED"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

@@ -127,9 +127,6 @@ type V1DataConnection struct {
 	// Format: date-time
 	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 
-	// Weka data connection
-	Weka *V1WekaDataConnection `json:"weka,omitempty"`
-
 	// If true, allow writing to the data connection folder
 	Writable bool `json:"writable,omitempty"`
 }
@@ -203,10 +200,6 @@ func (m *V1DataConnection) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateWeka(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -585,29 +578,6 @@ func (m *V1DataConnection) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *V1DataConnection) validateWeka(formats strfmt.Registry) error {
-	if swag.IsZero(m.Weka) { // not required
-		return nil
-	}
-
-	if m.Weka != nil {
-		if err := m.Weka.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("weka")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("weka")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this v1 data connection based on the context it is used
 func (m *V1DataConnection) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -669,10 +639,6 @@ func (m *V1DataConnection) ContextValidate(ctx context.Context, formats strfmt.R
 	}
 
 	if err := m.contextValidateState(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateWeka(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -1048,31 +1014,6 @@ func (m *V1DataConnection) contextValidateState(ctx context.Context, formats str
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("state")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1DataConnection) contextValidateWeka(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Weka != nil {
-
-		if swag.IsZero(m.Weka) { // not required
-			return nil
-		}
-
-		if err := m.Weka.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("weka")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("weka")
 			}
 
 			return err

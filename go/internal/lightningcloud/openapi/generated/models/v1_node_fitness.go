@@ -56,6 +56,15 @@ type V1NodeFitness struct {
 	// dmi
 	Dmi *V1DMIInfo `json:"dmi,omitempty"`
 
+	// gpu isolation
+	GpuIsolation []*V1DeviceIsolationFitness `json:"gpuIsolation"`
+
+	// iommu collection state
+	IommuCollectionState string `json:"iommuCollectionState,omitempty"`
+
+	// NVIDIA Fabric Manager client library (libnvfm.so.1) posture (fail-closed).
+	Libnvfm *V1LibNVFMFitness `json:"libnvfm,omitempty"`
+
 	// nic firmware
 	NicFirmware []*V1NICFirmware `json:"nicFirmware"`
 
@@ -73,6 +82,12 @@ type V1NodeFitness struct {
 	// GPU even when the value is skipped (e.g. vm posture), so the BDF set is
 	// always visible.
 	PerGpu []*V1GpuFitness `json:"perGpu"`
+
+	// Dell PEX890xx PCIe-switch firmware compliance (fail-open MMT prerequisite).
+	PexSwitchFw *V1PexSwitchFWFitness `json:"pexSwitchFw,omitempty"`
+
+	// rail nic isolation
+	RailNicIsolation []*V1DeviceIsolationFitness `json:"railNicIsolation"`
 }
 
 // Validate validates this v1 node fitness
@@ -84,6 +99,14 @@ func (m *V1NodeFitness) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDmi(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGpuIsolation(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLibnvfm(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,6 +123,14 @@ func (m *V1NodeFitness) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePerGpu(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePexSwitchFw(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRailNicIsolation(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,6 +177,59 @@ func (m *V1NodeFitness) validateDmi(formats strfmt.Registry) error {
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("dmi")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) validateGpuIsolation(formats strfmt.Registry) error {
+	if swag.IsZero(m.GpuIsolation) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.GpuIsolation); i++ {
+		if swag.IsZero(m.GpuIsolation[i]) { // not required
+			continue
+		}
+
+		if m.GpuIsolation[i] != nil {
+			if err := m.GpuIsolation[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("gpuIsolation" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("gpuIsolation" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) validateLibnvfm(formats strfmt.Registry) error {
+	if swag.IsZero(m.Libnvfm) { // not required
+		return nil
+	}
+
+	if m.Libnvfm != nil {
+		if err := m.Libnvfm.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("libnvfm")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("libnvfm")
 			}
 
 			return err
@@ -275,6 +359,59 @@ func (m *V1NodeFitness) validatePerGpu(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1NodeFitness) validatePexSwitchFw(formats strfmt.Registry) error {
+	if swag.IsZero(m.PexSwitchFw) { // not required
+		return nil
+	}
+
+	if m.PexSwitchFw != nil {
+		if err := m.PexSwitchFw.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("pexSwitchFw")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("pexSwitchFw")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) validateRailNicIsolation(formats strfmt.Registry) error {
+	if swag.IsZero(m.RailNicIsolation) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.RailNicIsolation); i++ {
+		if swag.IsZero(m.RailNicIsolation[i]) { // not required
+			continue
+		}
+
+		if m.RailNicIsolation[i] != nil {
+			if err := m.RailNicIsolation[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("railNicIsolation" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("railNicIsolation" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validate this v1 node fitness based on the context it is used
 func (m *V1NodeFitness) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -284,6 +421,14 @@ func (m *V1NodeFitness) ContextValidate(ctx context.Context, formats strfmt.Regi
 	}
 
 	if err := m.contextValidateDmi(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGpuIsolation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLibnvfm(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -300,6 +445,14 @@ func (m *V1NodeFitness) ContextValidate(ctx context.Context, formats strfmt.Regi
 	}
 
 	if err := m.contextValidatePerGpu(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePexSwitchFw(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRailNicIsolation(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -350,6 +503,60 @@ func (m *V1NodeFitness) contextValidateDmi(ctx context.Context, formats strfmt.R
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("dmi")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) contextValidateGpuIsolation(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.GpuIsolation); i++ {
+
+		if m.GpuIsolation[i] != nil {
+
+			if swag.IsZero(m.GpuIsolation[i]) { // not required
+				return nil
+			}
+
+			if err := m.GpuIsolation[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("gpuIsolation" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("gpuIsolation" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) contextValidateLibnvfm(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Libnvfm != nil {
+
+		if swag.IsZero(m.Libnvfm) { // not required
+			return nil
+		}
+
+		if err := m.Libnvfm.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("libnvfm")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("libnvfm")
 			}
 
 			return err
@@ -464,6 +671,60 @@ func (m *V1NodeFitness) contextValidatePerGpu(ctx context.Context, formats strfm
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("perGpu" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) contextValidatePexSwitchFw(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PexSwitchFw != nil {
+
+		if swag.IsZero(m.PexSwitchFw) { // not required
+			return nil
+		}
+
+		if err := m.PexSwitchFw.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("pexSwitchFw")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("pexSwitchFw")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) contextValidateRailNicIsolation(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.RailNicIsolation); i++ {
+
+		if m.RailNicIsolation[i] != nil {
+
+			if swag.IsZero(m.RailNicIsolation[i]) { // not required
+				return nil
+			}
+
+			if err := m.RailNicIsolation[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("railNicIsolation" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("railNicIsolation" + "." + strconv.Itoa(i))
 				}
 
 				return err

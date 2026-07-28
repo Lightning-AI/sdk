@@ -52,6 +52,9 @@ type V1VMHealth struct {
 	// gpus
 	Gpus []string `json:"gpus"`
 
+	// ib pkeys info
+	IbPkeysInfo []*V1VMIBPKeyInfo `json:"ibPkeysInfo"`
+
 	// ip
 	IP string `json:"ip,omitempty"`
 
@@ -100,6 +103,10 @@ func (m *V1VMHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGpuStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIbPkeysInfo(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -186,6 +193,36 @@ func (m *V1VMHealth) validateGpuStatus(formats strfmt.Registry) error {
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("gpuStatus" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1VMHealth) validateIbPkeysInfo(formats strfmt.Registry) error {
+	if swag.IsZero(m.IbPkeysInfo) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.IbPkeysInfo); i++ {
+		if swag.IsZero(m.IbPkeysInfo[i]) { // not required
+			continue
+		}
+
+		if m.IbPkeysInfo[i] != nil {
+			if err := m.IbPkeysInfo[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibPkeysInfo" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibPkeysInfo" + "." + strconv.Itoa(i))
 				}
 
 				return err
@@ -322,6 +359,10 @@ func (m *V1VMHealth) ContextValidate(ctx context.Context, formats strfmt.Registr
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateIbPkeysInfo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateMemory(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -391,6 +432,35 @@ func (m *V1VMHealth) contextValidateGpuStatus(ctx context.Context, formats strfm
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("gpuStatus" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1VMHealth) contextValidateIbPkeysInfo(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.IbPkeysInfo); i++ {
+
+		if m.IbPkeysInfo[i] != nil {
+
+			if swag.IsZero(m.IbPkeysInfo[i]) { // not required
+				return nil
+			}
+
+			if err := m.IbPkeysInfo[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibPkeysInfo" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibPkeysInfo" + "." + strconv.Itoa(i))
 				}
 
 				return err

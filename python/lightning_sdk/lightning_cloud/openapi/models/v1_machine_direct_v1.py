@@ -42,7 +42,11 @@ class V1MachineDirectV1(object):
     """
     swagger_types = {
         'access_mode': 'str',
+        'agent_version': 'str',
+        'burst_cluster_id': 'str',
         'cloud_hypervisor_user': 'str',
+        'disable_cpu_vm_on_gpu_node': 'bool',
+        'disable_reservation_alerts': 'bool',
         'dns_servers': 'list[str]',
         'extra_setup_commands': 'list[str]',
         'machine_architecture': 'V1MachineArchitecture',
@@ -56,12 +60,18 @@ class V1MachineDirectV1(object):
         'storage_overcommit_factor': 'float',
         'tailscale_auth_key_secret_id': 'str',
         'update_agent': 'bool',
-        'use_nvme_disks': 'bool'
+        'update_agents_on_sandbox_machines': 'bool',
+        'use_nvme_disks': 'bool',
+        'voltage_park_credentials_secret_id': 'str'
     }
 
     attribute_map = {
         'access_mode': 'accessMode',
+        'agent_version': 'agentVersion',
+        'burst_cluster_id': 'burstClusterId',
         'cloud_hypervisor_user': 'cloudHypervisorUser',
+        'disable_cpu_vm_on_gpu_node': 'disableCpuVmOnGpuNode',
+        'disable_reservation_alerts': 'disableReservationAlerts',
         'dns_servers': 'dnsServers',
         'extra_setup_commands': 'extraSetupCommands',
         'machine_architecture': 'machineArchitecture',
@@ -75,13 +85,19 @@ class V1MachineDirectV1(object):
         'storage_overcommit_factor': 'storageOvercommitFactor',
         'tailscale_auth_key_secret_id': 'tailscaleAuthKeySecretId',
         'update_agent': 'updateAgent',
-        'use_nvme_disks': 'useNvmeDisks'
+        'update_agents_on_sandbox_machines': 'updateAgentsOnSandboxMachines',
+        'use_nvme_disks': 'useNvmeDisks',
+        'voltage_park_credentials_secret_id': 'voltageParkCredentialsSecretId'
     }
 
-    def __init__(self, access_mode: 'str' =None, cloud_hypervisor_user: 'str' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, use_nvme_disks: 'bool' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, agent_version: 'str' =None, burst_cluster_id: 'str' =None, cloud_hypervisor_user: 'str' =None, disable_cpu_vm_on_gpu_node: 'bool' =None, disable_reservation_alerts: 'bool' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, update_agents_on_sandbox_machines: 'bool' =None, use_nvme_disks: 'bool' =None, voltage_park_credentials_secret_id: 'str' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._access_mode = None
+        self._agent_version = None
+        self._burst_cluster_id = None
         self._cloud_hypervisor_user = None
+        self._disable_cpu_vm_on_gpu_node = None
+        self._disable_reservation_alerts = None
         self._dns_servers = None
         self._extra_setup_commands = None
         self._machine_architecture = None
@@ -95,12 +111,22 @@ class V1MachineDirectV1(object):
         self._storage_overcommit_factor = None
         self._tailscale_auth_key_secret_id = None
         self._update_agent = None
+        self._update_agents_on_sandbox_machines = None
         self._use_nvme_disks = None
+        self._voltage_park_credentials_secret_id = None
         self.discriminator = None
         if access_mode is not None:
             self.access_mode = access_mode
+        if agent_version is not None:
+            self.agent_version = agent_version
+        if burst_cluster_id is not None:
+            self.burst_cluster_id = burst_cluster_id
         if cloud_hypervisor_user is not None:
             self.cloud_hypervisor_user = cloud_hypervisor_user
+        if disable_cpu_vm_on_gpu_node is not None:
+            self.disable_cpu_vm_on_gpu_node = disable_cpu_vm_on_gpu_node
+        if disable_reservation_alerts is not None:
+            self.disable_reservation_alerts = disable_reservation_alerts
         if dns_servers is not None:
             self.dns_servers = dns_servers
         if extra_setup_commands is not None:
@@ -127,8 +153,12 @@ class V1MachineDirectV1(object):
             self.tailscale_auth_key_secret_id = tailscale_auth_key_secret_id
         if update_agent is not None:
             self.update_agent = update_agent
+        if update_agents_on_sandbox_machines is not None:
+            self.update_agents_on_sandbox_machines = update_agents_on_sandbox_machines
         if use_nvme_disks is not None:
             self.use_nvme_disks = use_nvme_disks
+        if voltage_park_credentials_secret_id is not None:
+            self.voltage_park_credentials_secret_id = voltage_park_credentials_secret_id
 
     @property
     def access_mode(self) -> 'str':
@@ -152,6 +182,48 @@ class V1MachineDirectV1(object):
         self._access_mode = access_mode
 
     @property
+    def agent_version(self) -> 'str':
+        """Gets the agent_version of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The agent_version of this V1MachineDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._agent_version
+
+    @agent_version.setter
+    def agent_version(self, agent_version: 'str'):
+        """Sets the agent_version of this V1MachineDirectV1.
+
+
+        :param agent_version: The agent_version of this V1MachineDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._agent_version = agent_version
+
+    @property
+    def burst_cluster_id(self) -> 'str':
+        """Gets the burst_cluster_id of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The burst_cluster_id of this V1MachineDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._burst_cluster_id
+
+    @burst_cluster_id.setter
+    def burst_cluster_id(self, burst_cluster_id: 'str'):
+        """Sets the burst_cluster_id of this V1MachineDirectV1.
+
+
+        :param burst_cluster_id: The burst_cluster_id of this V1MachineDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._burst_cluster_id = burst_cluster_id
+
+    @property
     def cloud_hypervisor_user(self) -> 'str':
         """Gets the cloud_hypervisor_user of this V1MachineDirectV1.  # noqa: E501
 
@@ -171,6 +243,48 @@ class V1MachineDirectV1(object):
         """
 
         self._cloud_hypervisor_user = cloud_hypervisor_user
+
+    @property
+    def disable_cpu_vm_on_gpu_node(self) -> 'bool':
+        """Gets the disable_cpu_vm_on_gpu_node of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The disable_cpu_vm_on_gpu_node of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_cpu_vm_on_gpu_node
+
+    @disable_cpu_vm_on_gpu_node.setter
+    def disable_cpu_vm_on_gpu_node(self, disable_cpu_vm_on_gpu_node: 'bool'):
+        """Sets the disable_cpu_vm_on_gpu_node of this V1MachineDirectV1.
+
+
+        :param disable_cpu_vm_on_gpu_node: The disable_cpu_vm_on_gpu_node of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_cpu_vm_on_gpu_node = disable_cpu_vm_on_gpu_node
+
+    @property
+    def disable_reservation_alerts(self) -> 'bool':
+        """Gets the disable_reservation_alerts of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The disable_reservation_alerts of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_reservation_alerts
+
+    @disable_reservation_alerts.setter
+    def disable_reservation_alerts(self, disable_reservation_alerts: 'bool'):
+        """Sets the disable_reservation_alerts of this V1MachineDirectV1.
+
+
+        :param disable_reservation_alerts: The disable_reservation_alerts of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._disable_reservation_alerts = disable_reservation_alerts
 
     @property
     def dns_servers(self) -> 'list[str]':
@@ -446,6 +560,27 @@ class V1MachineDirectV1(object):
         self._update_agent = update_agent
 
     @property
+    def update_agents_on_sandbox_machines(self) -> 'bool':
+        """Gets the update_agents_on_sandbox_machines of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The update_agents_on_sandbox_machines of this V1MachineDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._update_agents_on_sandbox_machines
+
+    @update_agents_on_sandbox_machines.setter
+    def update_agents_on_sandbox_machines(self, update_agents_on_sandbox_machines: 'bool'):
+        """Sets the update_agents_on_sandbox_machines of this V1MachineDirectV1.
+
+
+        :param update_agents_on_sandbox_machines: The update_agents_on_sandbox_machines of this V1MachineDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._update_agents_on_sandbox_machines = update_agents_on_sandbox_machines
+
+    @property
     def use_nvme_disks(self) -> 'bool':
         """Gets the use_nvme_disks of this V1MachineDirectV1.  # noqa: E501
 
@@ -465,6 +600,27 @@ class V1MachineDirectV1(object):
         """
 
         self._use_nvme_disks = use_nvme_disks
+
+    @property
+    def voltage_park_credentials_secret_id(self) -> 'str':
+        """Gets the voltage_park_credentials_secret_id of this V1MachineDirectV1.  # noqa: E501
+
+
+        :return: The voltage_park_credentials_secret_id of this V1MachineDirectV1.  # noqa: E501
+        :rtype: str
+        """
+        return self._voltage_park_credentials_secret_id
+
+    @voltage_park_credentials_secret_id.setter
+    def voltage_park_credentials_secret_id(self, voltage_park_credentials_secret_id: 'str'):
+        """Sets the voltage_park_credentials_secret_id of this V1MachineDirectV1.
+
+
+        :param voltage_park_credentials_secret_id: The voltage_park_credentials_secret_id of this V1MachineDirectV1.  # noqa: E501
+        :type: str
+        """
+
+        self._voltage_park_credentials_secret_id = voltage_park_credentials_secret_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

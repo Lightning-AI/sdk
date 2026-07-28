@@ -114,6 +114,9 @@ type Externalv1CloudSpaceInstanceStatus struct {
 	// startup phase
 	StartupPhase string `json:"startupPhase,omitempty"`
 
+	// startup stages
+	StartupStages []*V1CloudSpaceStartupStageStatus `json:"startupStages"`
+
 	// startup status
 	StartupStatus *V1CloudSpaceInstanceStartupStatus `json:"startupStatus,omitempty"`
 
@@ -170,6 +173,10 @@ func (m *Externalv1CloudSpaceInstanceStatus) Validate(formats strfmt.Registry) e
 	}
 
 	if err := m.validateStartTimestamp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStartupStages(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -341,6 +348,36 @@ func (m *Externalv1CloudSpaceInstanceStatus) validateStartTimestamp(formats strf
 	return nil
 }
 
+func (m *Externalv1CloudSpaceInstanceStatus) validateStartupStages(formats strfmt.Registry) error {
+	if swag.IsZero(m.StartupStages) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.StartupStages); i++ {
+		if swag.IsZero(m.StartupStages[i]) { // not required
+			continue
+		}
+
+		if m.StartupStages[i] != nil {
+			if err := m.StartupStages[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("startupStages" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("startupStages" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *Externalv1CloudSpaceInstanceStatus) validateStartupStatus(formats strfmt.Registry) error {
 	if swag.IsZero(m.StartupStatus) { // not required
 		return nil
@@ -440,6 +477,10 @@ func (m *Externalv1CloudSpaceInstanceStatus) ContextValidate(ctx context.Context
 	}
 
 	if err := m.contextValidatePhase(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStartupStages(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -560,6 +601,35 @@ func (m *Externalv1CloudSpaceInstanceStatus) contextValidatePhase(ctx context.Co
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Externalv1CloudSpaceInstanceStatus) contextValidateStartupStages(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.StartupStages); i++ {
+
+		if m.StartupStages[i] != nil {
+
+			if swag.IsZero(m.StartupStages[i]) { // not required
+				return nil
+			}
+
+			if err := m.StartupStages[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("startupStages" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("startupStages" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
