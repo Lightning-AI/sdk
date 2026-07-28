@@ -448,7 +448,7 @@ class MMT(metaclass=TrackCallsMeta):
     @property
     def id(self) -> Optional[str]:
         """The multi-machine job's unique identifier."""
-        return self._guaranteed_job.id
+        return self._job.id if self._job is not None else None
 
     @property
     def placement_group_id(self) -> Optional[str]:

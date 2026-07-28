@@ -174,6 +174,16 @@ def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_id_is_none_without_backing_model_or_api_request(internal_studio_init_mocker):
+    teamspace = Teamspace("org-abc/ts-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job_api.get_job_by_name = mock.MagicMock(side_effect=AssertionError("ID access made an API request"))
+
+    assert job.id is None
+    assert job.resource_id is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_job_threads_placement_group_id(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
