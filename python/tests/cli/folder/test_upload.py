@@ -50,6 +50,19 @@ def test_resume_without_state_fails(tmp_path: Path) -> None:
         )
 
 
+def test_resume_uses_existing_state(tmp_path: Path) -> None:
+    state = {"remaining": "remote/remaining"}
+    state_file = create_upload_state(tmp_path, state)
+
+    with patch(
+        "lightning_sdk.cli.legacy.upload._upload_state_path",
+        return_value=state_file,
+    ):
+        assert _resolve_previous_upload_state(
+            MagicMock(), ".", {"current": "remote/current"}, recovery="resume"
+        ) == state
+
+
 def test_restart_ignores_existing_state(tmp_path: Path) -> None:
     current = {"current": "remote/current"}
     state_file = create_upload_state(tmp_path, {"old": "remote/old"})
@@ -60,6 +73,18 @@ def test_restart_ignores_existing_state(tmp_path: Path) -> None:
     ):
         assert _resolve_previous_upload_state(
             MagicMock(), ".", current, recovery="restart"
+        ) == current
+
+
+def test_no_recovery_without_state_uses_current_state(tmp_path: Path) -> None:
+    current = {"current": "remote/current"}
+
+    with patch(
+        "lightning_sdk.cli.legacy.upload._upload_state_path",
+        return_value=tmp_path / "missing.json",
+    ):
+        assert _resolve_previous_upload_state(
+            MagicMock(), ".", current, recovery=None
         ) == current
 
 
