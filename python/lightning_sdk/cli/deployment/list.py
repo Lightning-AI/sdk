@@ -7,6 +7,7 @@ from rich.table import Table
 
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.cli.deployment.common import iter_teamspaces
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
@@ -42,10 +43,12 @@ from lightning_sdk.lightning_cloud.openapi import V1Deployment
     ),
     help="The attribute to sort deployments by.",
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def list_deployments(
     teamspace: Optional[str] = None,
     all_teamspaces: bool = False,
     sort_by: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     """List deployments in a teamspace."""
     api = DeploymentApi()
@@ -53,6 +56,28 @@ def list_deployments(
     for resolved_teamspace in iter_teamspaces(teamspace, all_teamspaces):
         deployments = api.list_deployments(resolved_teamspace.id, limit=100)
         rows.extend((resolved_teamspace, deployment) for deployment in deployments)
+
+    sorted_rows = sorted(rows, key=_sort_key(sort_by))
+
+    if as_json:
+        echo_json(
+            [
+                {
+                    "name": deployment.name or "",
+                    "teamspace": f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}",
+                    "state": _state(deployment),
+                    "replicas": _replicas(deployment),
+                    "machine": _string(
+                        getattr(deployment.spec, "instance_name", None)
+                        or getattr(deployment.spec, "instance_type", None)
+                    ),
+                    "source": _source_label(deployment),
+                    "cloud_account": _string(getattr(deployment.spec, "cluster_id", None)),
+                }
+                for resolved_teamspace, deployment in sorted_rows
+            ]
+        )
+        return
 
     table = Table(pad_edge=True)
     table.add_column("Name", no_wrap=True)
@@ -63,7 +88,7 @@ def list_deployments(
     table.add_column("Source", overflow="fold")
     table.add_column("Cloud account", no_wrap=True)
 
-    for resolved_teamspace, deployment in sorted(rows, key=_sort_key(sort_by)):
+    for resolved_teamspace, deployment in sorted_rows:
         spec = deployment.spec
         table.add_row(
             deployment.name or "",

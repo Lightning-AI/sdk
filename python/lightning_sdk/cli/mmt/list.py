@@ -32,8 +32,14 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     ),
     help="the attribute to sort the multi-machine jobs by.",
 )
-def list_mmts(teamspace: Optional[str] = None, all: bool = False, sort_by: Optional[str] = None) -> None:  # noqa: A002
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
+def list_mmts(
+    teamspace: Optional[str] = None,
+    all: bool = False,  # noqa: A002
+    sort_by: Optional[str] = None,
+    as_json: bool = False,
+) -> None:
     """List multi-machine jobs for a given teamspace."""
     from lightning_sdk.cli.legacy.list import mmts
 
-    mmts.callback(teamspace=teamspace, all=all, sort_by=sort_by)
+    mmts.callback(teamspace=teamspace, all=all, sort_by=sort_by, as_json=as_json)

@@ -12,8 +12,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     "--teamspace",
     default=None,
     help=(
-        "the teamspace to list jobs from. Should be specified as {owner}/{name}. "
-        "Defaults to the configured teamspace."
+        "the teamspace to list jobs from. Should be specified as {owner}/{name}. Defaults to the configured teamspace."
     ),
 )
 @click.option(
@@ -32,8 +31,14 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     ),
     help="the attribute to sort the jobs by.",
 )
-def list_jobs(teamspace: Optional[str] = None, all: bool = False, sort_by: Optional[str] = None) -> None:  # noqa: A002
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
+def list_jobs(
+    teamspace: Optional[str] = None,
+    all: bool = False,  # noqa: A002
+    sort_by: Optional[str] = None,
+    as_json: bool = False,
+) -> None:
     """List jobs for a given teamspace."""
     from lightning_sdk.cli.legacy.list import jobs
 
-    jobs.callback(teamspace=teamspace, all=all, sort_by=sort_by)
+    jobs.callback(teamspace=teamspace, all=all, sort_by=sort_by, as_json=as_json)

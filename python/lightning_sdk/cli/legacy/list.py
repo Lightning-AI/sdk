@@ -7,6 +7,7 @@ from rich.table import Table
 from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.resource_resolution import resolve_cluster, resolve_teamspace
 from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
@@ -99,6 +100,7 @@ def jobs(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
     sort_by: Optional[Literal["name", "teamspace", "status", "studio", "machine", "image", "cloud-account"]] = None,
+    as_json: bool = False,
 ) -> None:
     """List jobs for a given teamspace."""
     jobs = []
@@ -109,6 +111,29 @@ def jobs(
         resolved_teamspace = resolve_teamspace(teamspace)
         jobs = resolved_teamspace.jobs
 
+    rows = []
+    for j in sorted(jobs, key=_sort_jobs_key(sort_by)):
+        # we know we just fetched these, so no need to refetch
+        j._prevent_refetch_latest = True
+
+        studio = j.studio
+        with suppress(RuntimeError):
+            rows.append(
+                {
+                    "name": j.name,
+                    "teamspace": f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                    "studio": studio.name if studio else None,
+                    "image": j.image,
+                    "status": str(j.status) if j.status is not None else None,
+                    "machine": str(j.machine),
+                    "total_cost": round(j.total_cost, 3),
+                }
+            )
+
+    if as_json:
+        echo_json(rows)
+        return
+
     table = Table(pad_edge=True)
     table.add_column("Name")
     table.add_column("Teamspace")
@@ -117,21 +142,16 @@ def jobs(
     table.add_column("Status")
     table.add_column("Machine")
     table.add_column("Total Cost")
-    for j in sorted(jobs, key=_sort_jobs_key(sort_by)):
-        # we know we just fetched these, so no need to refetch
-        j._prevent_refetch_latest = True
-
-        studio = j.studio
-        with suppress(RuntimeError):
-            table.add_row(
-                j.name,
-                f"{j.teamspace.owner.name}/{j.teamspace.name}",
-                studio.name if studio else None,
-                j.image,
-                str(j.status) if j.status is not None else None,
-                str(j.machine),
-                f"{j.total_cost:.3f}",
-            )
+    for row in rows:
+        table.add_row(
+            row["name"],
+            row["teamspace"],
+            row["studio"],
+            row["image"],
+            row["status"],
+            row["machine"],
+            f"{row['total_cost']:.3f}",
+        )
 
     Console().print(table)
 
@@ -165,6 +185,7 @@ def mmts(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
     sort_by: Optional[Literal["name", "teamspace", "studio", "image", "status", "machine", "cloud-account"]] = None,
+    as_json: bool = False,
 ) -> None:
     """List multi-machine jobs for a given teamspace."""
     jobs = []
@@ -175,6 +196,31 @@ def mmts(
         resolved_teamspace = resolve_teamspace(teamspace)
         jobs = resolved_teamspace.multi_machine_jobs
 
+    sorted_jobs = sorted(jobs, key=_sort_mmts_key(sort_by))
+    for j in sorted_jobs:
+        # we know we just fetched these, so no need to refetch
+        j._prevent_refetch_latest = True
+
+    if as_json:
+        rows = []
+        for j in sorted_jobs:
+            studio = j.studio
+            with suppress(RuntimeError):
+                rows.append(
+                    {
+                        "name": j.name,
+                        "teamspace": f"{j.teamspace.owner.name}/{j.teamspace.name}",
+                        "studio": studio.name if studio else None,
+                        "image": j.image,
+                        "status": str(j.status),
+                        "machine": str(j.machine),
+                        "num_machines": j.num_machines,
+                        "total_cost": round(j.total_cost, 3),
+                    }
+                )
+        echo_json(rows)
+        return
+
     table = Table(pad_edge=True)
     table.add_column("Name")
     table.add_column("Teamspace")
@@ -184,10 +230,7 @@ def mmts(
     table.add_column("Machine")
     table.add_column("Num Machines")
     table.add_column("Total Cost")
-    for j in sorted(jobs, key=_sort_mmts_key(sort_by)):
-        # we know we just fetched these, so no need to refetch
-        j._prevent_refetch_latest = True
-
+    for j in sorted_jobs:
         studio = j.studio
         with suppress(RuntimeError):
             table.add_row(
@@ -209,8 +252,7 @@ def mmts(
     "--teamspace",
     default=None,
     help=(
-        "the teamspace to list containers from. Should be specified as {owner}/{name}"
-        "Defaults to the current teamspace."
+        "the teamspace to list containers from. Should be specified as {owner}/{name}Defaults to the current teamspace."
     ),
 )
 @click.option(
@@ -223,7 +265,7 @@ def mmts(
         "use 'lightning-cloud' to specify Lightning AI's default cloud account."
     ),
 )
-def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
+def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None, as_json: bool = False) -> None:
     """Display the list of available containers."""
     api = LitContainer()
     resolved_teamspace = resolve_teamspace(teamspace)
@@ -232,6 +274,20 @@ def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = N
     result = api.list_containers(
         teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name, cloud_account=cloud_account
     )
+
+    if as_json:
+        echo_json(
+            [
+                {
+                    "repository": repo.get("REPOSITORY"),
+                    "cloud_account": repo.get("CLOUD ACCOUNT"),
+                    "latest_tag": repo.get("LATEST TAG"),
+                    "created": repo.get("CREATED"),
+                }
+                for repo in (result or [])
+            ]
+        )
+        return
 
     if not result:
         return

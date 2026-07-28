@@ -1,5 +1,6 @@
 import rich_click as click
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH, Config, DefaultConfigKeys
 
@@ -7,10 +8,14 @@ from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH, Config, Defaul
 @click.command("get", cls=LightningCommand)
 @click.argument("product_name")
 @click.option("--config-file", help="Path to the config file")
-def get_license(product_name: str, config_file: str = _DEFAULT_CONFIG_FILE_PATH) -> None:
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
+def get_license(product_name: str, config_file: str = _DEFAULT_CONFIG_FILE_PATH, as_json: bool = False) -> None:
     """Get a license key for a given product."""
     cfg = Config(config_file)
     license_key = cfg.get(f"{DefaultConfigKeys.license}.{product_name}")
+    if as_json:
+        echo_json({"product_name": product_name, "license_key": license_key or None})
+        return
     if license_key:
         # echo the license key without any additional output to make parsing simpler
         click.echo(license_key)
