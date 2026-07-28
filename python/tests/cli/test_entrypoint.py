@@ -3,13 +3,82 @@ import re
 import subprocess
 from unittest.mock import MagicMock, patch
 
+import pytest
 from click.testing import CliRunner
 
-from lightning_sdk.cli.entrypoint import login
+from lightning_sdk.cli.entrypoint import login, main_cli
+from lightning_sdk.lightning_cloud.login import Auth
 from tests.cli.help import assert_help_contains, mock_command_logging, run_cli
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _BOX_CHARS_RE = re.compile(r"[│╭╰╮─╯]")
+
+
+def _clear_auth(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(Auth, "secrets_file", tmp_path / "credentials.json")
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+
+@pytest.mark.parametrize(
+    ("cli", "args"),
+    [
+        (main_cli, ["job", "list", "--teamspace", "owner/teamspace"]),
+        (main_cli, ["list", "jobs", "--teamspace", "owner/teamspace"]),
+    ],
+)
+def test_resource_commands_never_start_browser_authentication(monkeypatch, tmp_path, cli, args) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    monkeypatch.setattr(
+        Auth,
+        "_run_server",
+        lambda _self: (_ for _ in ()).throw(AssertionError("browser auth reached")),
+    )
+
+    result = CliRunner().invoke(cli, args)
+
+    assert result.exit_code == 1
+    assert "Run `lightning login`" in str(result.exception)
+
+
+def test_explicit_login_can_start_browser_authentication(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    browser_auth_started = False
+
+    def _complete_browser_auth(auth: Auth) -> None:
+        nonlocal browser_auth_started
+        browser_auth_started = True
+        auth.user_id = "user-id"
+        auth.api_key = "api-key"
+
+    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
+
+    result = CliRunner().invoke(main_cli, ["login"])
+
+    assert result.exit_code == 0, result.output
+    assert browser_auth_started
+
+
+def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    browser_auth_starts = 0
+
+    def _complete_browser_auth(auth: Auth) -> None:
+        nonlocal browser_auth_starts
+        browser_auth_starts += 1
+        auth.user_id = "user-id"
+        auth.api_key = "api-key"
+
+    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
+
+    result = CliRunner().invoke(main_cli, ["job", "list", "--teamspace", "owner/teamspace"])
+
+    assert result.exit_code == 1
+    assert "Run `lightning login`" in str(result.exception)
+    assert browser_auth_starts == 0
+    assert Auth().authenticate().startswith("Basic ")
+    assert browser_auth_starts == 1
 
 
 def _help_text() -> str:

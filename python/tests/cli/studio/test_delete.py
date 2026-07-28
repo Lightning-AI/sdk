@@ -18,27 +18,26 @@ def test_delete_invalid_studio_does_not_confirm_or_delete() -> None:
         "lightning_sdk.cli.studio.delete.resolve_studio",
         side_effect=click.UsageError("Unknown studio"),
     ), patch("lightning_sdk.cli.studio.delete.click.confirm", confirm):
-        result = CliRunner().invoke(delete_studio, ["--name", "missing"])
+        result = CliRunner().invoke(delete_studio, ["--name", "missing", "--yes"])
 
     assert result.exit_code != 0
     confirm.assert_not_called()
 
 
 def test_studio_delete_requires_yes_without_prompting_or_deleting() -> None:
-    """Missing ``--yes`` must stop a resolved studio deletion before its side effect."""
-    from unittest.mock import MagicMock, patch
+    """Missing ``--yes`` must stop before resolving a teamspace or studio."""
+    from unittest.mock import patch
 
     from click.testing import CliRunner
 
     from lightning_sdk.cli.studio.delete import delete_studio
 
-    studio = MagicMock()
-    studio._cls_name = "Studio"
-    studio.name = "dev"
-    studio.teamspace.owner.name = "acme"
-    studio.teamspace.name = "platform"
-    with patch("lightning_sdk.cli.studio.delete.resolve_teamspace", return_value=MagicMock()), patch(
-        "lightning_sdk.cli.studio.delete.resolve_studio", return_value=studio
+    with patch(
+        "lightning_sdk.cli.studio.delete.resolve_teamspace",
+        side_effect=AssertionError("teamspace resolution must not start"),
+    ), patch(
+        "lightning_sdk.cli.studio.delete.resolve_studio",
+        side_effect=AssertionError("studio resolution must not start"),
     ), patch(
         "lightning_sdk.cli.studio.delete.click.confirm", side_effect=AssertionError("must not prompt")
     ):
@@ -46,7 +45,6 @@ def test_studio_delete_requires_yes_without_prompting_or_deleting() -> None:
 
     assert result.exit_code != 0
     assert "--yes" in result.output
-    studio.delete.assert_not_called()
 
 
 def test_studio_delete_yes_deletes_without_prompting() -> None:

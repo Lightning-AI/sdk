@@ -1,11 +1,13 @@
 import base64
+from contextlib import contextmanager
+from contextvars import ContextVar
 from enum import Enum
 import json
 import logging
 import os
 import pathlib
 from dataclasses import dataclass
-from typing import Optional, Literal
+from typing import Generator, Optional, Literal
 from urllib.parse import urlencode
 
 import webbrowser
@@ -29,6 +31,19 @@ logger = logging.getLogger(__name__)
 
 # Authentication override types
 AuthOverride = Literal["auth_token", "api_key"]
+
+_BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
+
+
+@contextmanager
+def browser_authentication(allowed: bool) -> Generator[None, None, None]:
+    """Temporarily control whether missing credentials may start browser authentication."""
+    token = _BROWSER_AUTH_ALLOWED.set(allowed)
+    try:
+        yield
+    finally:
+        _BROWSER_AUTH_ALLOWED.reset(token)
+
 
 class Keys(Enum):
     # USERNAME = "LIGHTNING_USERNAME"
@@ -189,8 +204,9 @@ class Auth:
             return self.auth_header
 
         if not self.load():
-            logger.debug(
-                "failed to load credentials, opening browser to get new.")
+            if not _BROWSER_AUTH_ALLOWED.get():
+                raise ValueError("No Lightning credentials are available. Run `lightning login` first.")
+            logger.debug("failed to load credentials, opening browser to get new.")
             self._run_server()
             return self.auth_header
 

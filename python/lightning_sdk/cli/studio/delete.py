@@ -30,12 +30,11 @@ def delete_studio(
 
 
 def delete_impl(name: Optional[str], teamspace: Optional[str], yes: bool) -> None:
+    if not yes:
+        raise click.UsageError("Deleting a studio requires --yes.")
+
     resolved_teamspace = resolve_teamspace(teamspace)
     studio = resolve_studio(name, resolved_teamspace)
-
-    studio_name = f"{studio.teamspace.owner.name}/{studio.teamspace.name}/{studio.name}"
-    if not yes:
-        raise click.UsageError(f"Deleting studio '{studio_name}' requires --yes.")
 
     studio.delete()
 
