@@ -514,7 +514,7 @@ class _DatasetFileUploader:
             f"/lit-datasets/{self._dataset_id}/versions/{self._version}"
         )
 
-    def _request(self, method, url, body=None):
+    def _request(self, method: str, url: str, body: Optional[dict] = None) -> dict:
         api_client: ApiClient = self._client.api_client
         resp = api_client.request(
             method,
@@ -525,7 +525,7 @@ class _DatasetFileUploader:
         )
         return json.loads(resp.data) if resp.data else {}
 
-    def _multipart_upload(self, count):
+    def _multipart_upload(self, count: int) -> None:
         resp = self._request("POST", f"{self._base_url}/uploads", body={"filepath": self._remote_path})
         upload_id = resp.get("uploadId") or resp.get("upload_id")
         if not upload_id:
@@ -550,12 +550,12 @@ class _DatasetFileUploader:
             },
         )
 
-    def _process_upload_batch(self, executor, batch, upload_id):
+    def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> List[dict]:
         urls = self._request_urls(parts=batch, upload_id=upload_id)
         func = partial(self._handle_uploading_single_part, upload_id=upload_id)
         return list(executor.map(func, urls))
 
-    def _request_urls(self, parts, upload_id):
+    def _request_urls(self, parts: List[int], upload_id: str) -> List[dict]:
         resp = self._request(
             "POST",
             f"{self._base_url}/uploads/{upload_id}/parts",
@@ -563,14 +563,14 @@ class _DatasetFileUploader:
         )
         return resp.get("urls", [])
 
-    def _handle_uploading_single_part(self, presigned_url, upload_id):
+    def _handle_uploading_single_part(self, presigned_url: dict, upload_id: str) -> dict:
         try:
             return self._handle_upload_presigned_url(presigned_url)
         except Exception:
             part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
             return self._error_handling_upload(part=int(part_number), upload_id=upload_id)
 
-    def _handle_upload_presigned_url(self, presigned_url):
+    def _handle_upload_presigned_url(self, presigned_url: dict) -> dict:
         part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
         url = presigned_url.get("url")
         with open(self._local_path, "rb") as f:
@@ -583,7 +583,7 @@ class _DatasetFileUploader:
         return {"etag": response.headers.get("ETag"), "part_number": part_number}
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _error_handling_upload(self, part, upload_id):
+    def _error_handling_upload(self, part: int, upload_id: str) -> dict:
         urls = self._request_urls(parts=[part], upload_id=upload_id)
         if len(urls) != 1:
             raise ValueError(f"expected 1 URL, got {len(urls)} for part {part}")
@@ -656,7 +656,7 @@ def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> 
     api_client: ApiClient = client.api_client
     api_client.request(
         "POST",
-        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}" f"/lit-datasets/{dataset_id}/versions/{version}/complete",
+        f"{env.LIGHTNING_CLOUD_URL}/v1/projects/{project_id}/lit-datasets/{dataset_id}/versions/{version}/complete",
         headers=api_client.default_headers,
         body={},
         _preload_content=True,

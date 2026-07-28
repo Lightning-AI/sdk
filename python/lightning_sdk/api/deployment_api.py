@@ -7,12 +7,17 @@ from datetime import datetime
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
 from time import sleep
-from typing import Any, Dict, List, Literal, Optional, Sequence, TextIO, Tuple, Union
+from typing import Any, Dict, Iterator, List, Literal, Optional, Sequence, TextIO, Tuple, Union
+from urllib.parse import urlparse
 
 import requests
 
 from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
-from lightning_sdk.api.utils import _BlobUploader, _machine_to_compute_name, resolve_path_mappings
+from lightning_sdk.api.logs_api import LogEntry, parse_log_entries
+from lightning_sdk.api.utils import _BlobUploader, _get_cloud_url, _machine_to_compute_name, resolve_path_mappings
+
+# `Auth` is the deployment endpoint auth type in this module, so the login client is aliased.
+from lightning_sdk.lightning_cloud.login import Auth as _LoginAuth
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateDeploymentBody,
     JobsServiceReloadDeploymentWeightsBody,
@@ -620,6 +625,54 @@ class DeploymentApi:
         }
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         return self._client.jobs_service_get_job_logs(project_id=teamspace_id, id=job_id, **kwargs)
+
+    def iter_job_log_entries(
+        self,
+        teamspace_id: str,
+        job_id: str,
+        *,
+        deployment_id: Optional[str] = None,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        rank: Optional[int] = None,
+    ) -> Iterator[LogEntry]:
+        """Yield a job's saved log lines from the legacy per-job log pages.
+
+        :meth:`get_job_logs` returns page metadata only, so each page is downloaded from its
+        signed URL and parsed here. Prefer :class:`~lightning_sdk.api.logs_api.LogsApi`, which
+        returns lines inline; this path exists for reads the merged logs API cannot serve yet
+        (currently only ``rank``).
+
+        Args:
+            teamspace_id: The teamspace that owns the job.
+            job_id: The job ID.
+            deployment_id: Optional deployment ID filter.
+            since: Optional start timestamp.
+            until: Optional end timestamp.
+            rank: Optional distributed job rank.
+
+        Yields:
+            LogEntry: The saved log lines, page by page.
+        """
+        logs = self.get_job_logs(
+            teamspace_id,
+            job_id,
+            deployment_id=deployment_id,
+            since=since,
+            until=until,
+            rank=rank,
+        )
+        session = requests.Session()
+        session.headers.update({"Authorization": _LoginAuth().authenticate()})
+        for page in logs.pages or []:
+            url = getattr(page, "url", None)
+            if not url:
+                continue
+            if not urlparse(url).netloc:
+                url = f"{_get_cloud_url().rstrip('/')}/{url.lstrip('/')}"
+            response = session.get(url, timeout=60)
+            response.raise_for_status()
+            yield from parse_log_entries(response.text)
 
     def stop(self, deployment: V1Deployment) -> V1Deployment:
         """Scale a deployment to zero replicas and wait until all replicas have stopped.

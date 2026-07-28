@@ -1,4 +1,4 @@
-"""Job logs command."""
+"""MMT logs command."""
 
 from typing import Optional
 
@@ -7,11 +7,11 @@ import rich_click as click
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import resolve_time
-from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
-@click.argument("name", required=False, help="The job name. Required.")
+@click.argument("name", required=False, help="The multi-machine job name. Required.")
 @click.option(
     "--teamspace",
     default=None,
@@ -19,7 +19,6 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_tea
 )
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, default=None, help="Only show the last N lines.")
-@click.option("--rank", type=int, default=None, help="Distributed job rank to read from (running jobs only).")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--since", default=None, help='Only include lines at or after this time (e.g. "2h", RFC3339).')
 @click.option("--until", default=None, help='Only include lines at or before this time (e.g. "30m", RFC3339).')
@@ -30,32 +29,30 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_tea
     default=None,
     help="Only include lines at or above this severity.",
 )
-def logs_job(
+def logs_mmt(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     follow: bool = False,
     tail: Optional[int] = None,
-    rank: Optional[int] = None,
     timestamps: bool = False,
     since: Optional[str] = None,
     until: Optional[str] = None,
     query: Optional[str] = None,
     severity: Optional[str] = None,
 ) -> None:
-    """Print the logs for a job.
+    """Print the logs for a multi-machine job.
 
-    Prints a snapshot of the logs available so far. Pass --follow to stream new
-    lines from a running job until it finishes or you press Ctrl-C. --query and
-    --severity are applied by the server, to both the snapshot and the stream.
+    Reads every machine, merged into one timeline and labelled with the machine each line came
+    from. Pass --follow to stream new lines until the job finishes or you press Ctrl-C. To read a
+    single machine, use `lightning job logs <machine-name>`.
     """
     resolved_teamspace = resolve_teamspace(teamspace)
-    job = resolve_job(name, resolved_teamspace)
+    mmt = resolve_mmt(name, resolved_teamspace)
 
     try:
-        logs = job.logs(
+        logs = mmt.logs(
             follow=follow,
             tail=tail,
-            rank=rank,
             timestamps=timestamps,
             since=resolve_time(since, "--since"),
             until=resolve_time(until, "--until"),
