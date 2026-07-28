@@ -5,11 +5,13 @@ import rich_click as click
 
 from lightning_sdk.cli.utils.resource_resolution import (
     join_teamspace_slug,
+    resolve_cluster,
     resolve_job,
     resolve_mmt,
     resolve_studio,
     resolve_teamspace,
 )
+from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
@@ -38,6 +40,35 @@ def test_resolve_teamspace_preserves_transport_errors() -> None:
         side_effect=failure,
     ), pytest.raises(RuntimeError, match="service unavailable"):
         resolve_teamspace("owner/teamspace")
+
+
+def test_resolve_cluster_requires_explicit_or_default_account() -> None:
+    teamspace = MagicMock(default_cloud_account=None)
+
+    with pytest.raises(click.UsageError, match="--cloud-account"):
+        resolve_cluster(teamspace, None, "--cloud-account")
+
+
+def test_resolve_cluster_uses_teamspace_default() -> None:
+    teamspace = MagicMock(id="ts", default_cloud_account="account")
+    resolved = MagicMock(id="cluster")
+    resolved.spec.cluster_type = "BYOC"
+
+    with patch("lightning_sdk.cli.utils.resource_resolution.CloudAccountApi") as api:
+        api.return_value.get_cloud_account_non_org.return_value = resolved
+
+        assert resolve_cluster(teamspace, None, "--cloud-account") == "cluster"
+
+
+def test_resolve_cluster_maps_global_account_to_none() -> None:
+    teamspace = MagicMock(id="ts", default_cloud_account="account")
+    resolved = MagicMock()
+    resolved.spec.cluster_type = V1ClusterType.GLOBAL
+
+    with patch("lightning_sdk.cli.utils.resource_resolution.CloudAccountApi") as api:
+        api.return_value.get_cloud_account_non_org.return_value = resolved
+
+        assert resolve_cluster(teamspace, None, "--cloud-account") is None
 
 
 def test_resolve_studio_uses_exact_sdk_lookup() -> None:

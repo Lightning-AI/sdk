@@ -142,14 +142,14 @@ def test_api_with_easy_mode(mock_subprocess, mock_cwd, temp_script):
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
 def test_cloud_deployment(
     mock_poll_verified_status,
     mock_authenticate,
-    mock_cluster_resolver,
+    mock_resolve_cluster,
     mock_docker_build,
     _,
     mock_litcr,
@@ -166,7 +166,7 @@ def test_cloud_deployment(
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
     mock_client.api.push.return_value = [{"status": "Pushing"}]
-    mock_cluster_resolver.return_value = None
+    mock_resolve_cluster.return_value = None
 
     # Mock user confirmations
     mock_confirm.side_effect = [
@@ -202,14 +202,14 @@ def test_cloud_deployment(
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.serve._LitServeDeployer.run_on_cloud")
 @patch("lightning_sdk.serve._LitServeDeployer._docker_build_with_logs")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
 def test_cloud_deployment_non_interactive(
     mock_poll_verified_status,
     mock_authenticate,
-    mock_cluster_resolver,
+    mock_resolve_cluster,
     mock_docker_build,
     _,
     mock_litcr,
@@ -226,7 +226,7 @@ def test_cloud_deployment_non_interactive(
     mock_client.ping.return_value = True
     mock_client.api.build.return_value = [{"stream": "Step 1/10"}]
     mock_client.api.push.return_value = [{"status": "Pushing"}]
-    mock_cluster_resolver.return_value = None
+    mock_resolve_cluster.return_value = None
 
     repo = "test-repo/model"
     tag = "latest"
@@ -284,7 +284,7 @@ def test_handle_cloud_no_internet(mock_is_connected):
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
@@ -299,7 +299,7 @@ def test_handle_cloud_from_onboarding(
     mock_authenticate,
     mock_ask,
     mock_ls_deployer,
-    mock_cluster_resolver,
+    mock_resolve_cluster,
     _,
     mock_litcr,
     temp_script,
@@ -307,7 +307,7 @@ def test_handle_cloud_from_onboarding(
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
     mock_poll_verified_status.return_value = {"onboarded": False, "verified": True}
-    mock_cluster_resolver.return_value = None
+    mock_resolve_cluster.return_value = None
 
     console = rich.console.Console()
     _handle_cloud(
@@ -329,7 +329,7 @@ def test_handle_cloud_from_onboarding(
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.webbrowser")
@@ -342,14 +342,14 @@ def test_handle_cloud(
     mock_browser,
     mock_ask,
     mock_ls_deployer,
-    mock_cluster_resolver,
+    mock_resolve_cluster,
     _,
     mock_litcr,
     temp_script,
 ):
     mock_ask.return_value = True
     mock_ls_deployer.return_value.run_on_cloud.return_value = {"url": "test-url"}
-    mock_cluster_resolver.return_value = None
+    mock_resolve_cluster.return_value = None
 
     console = rich.console.Console()
     _handle_cloud(
@@ -369,6 +369,7 @@ def test_handle_cloud(
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.serve.DeploymentApi")
@@ -381,11 +382,13 @@ def test_handle_byoc_cloud(
     mock_deployment_api,
     mock_ask,
     mock_ls_deployer,
+    mock_resolve_cluster,
     _,
     mock_litcr,
     temp_script,
 ):
     mock_ask.return_value = True
+    mock_resolve_cluster.return_value = "byoc-123"
     mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
     _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud="byoc-123")
@@ -399,18 +402,18 @@ def test_handle_byoc_cloud(
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
 def test_handle_cloud_deployment_api(
-    mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, mock_cluster_resolver, __, ___, temp_script
+    mock_poll_verified_status, mock_authenticate, mock_ask, mock_deployer, mock_resolve_cluster, __, ___, temp_script
 ):
     mock_ask.return_value = True
     mock_deployer.created = True
-    mock_cluster_resolver.return_value = None
+    mock_resolve_cluster.return_value = None
     mock_console = MagicMock()
 
     _handle_cloud(
@@ -429,7 +432,7 @@ def test_handle_cloud_deployment_api(
 
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
-@patch("lightning_sdk.cli.legacy.clusters_menu._ClustersMenu._resolve_cluster")
+@patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
 @patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
@@ -443,7 +446,7 @@ def test_handle_cloud_with_cloud(
     mock_authenticate,
     mock_ask,
     mock_deployer,
-    mock_cluster_resolver,
+    mock_resolve_cluster,
     mock_teamspace,
     ___,
     temp_script,
@@ -456,8 +459,7 @@ def test_handle_cloud_with_cloud(
     repository = "litserve-model"
     resolved_teamspace = MagicMock(default_cloud_account="gcp-123")
 
-    if cloud is None:
-        mock_cluster_resolver.return_value = "gcp-123"
+    mock_resolve_cluster.return_value = cloud or "gcp-123"
 
     mock_teamspace.return_value = resolved_teamspace  # Mock select_teamspace to return our teamspace
     _handle_cloud(

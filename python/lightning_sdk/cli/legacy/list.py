@@ -7,7 +7,7 @@ from rich.table import Table
 from typing_extensions import Literal
 
 from lightning_sdk import Job, Machine, Studio, Teamspace
-from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_cluster, resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
@@ -243,14 +243,8 @@ def mmts(
 def containers(teamspace: Optional[str] = None, cloud_account: Optional[str] = None) -> None:
     """Display the list of available containers."""
     api = LitContainer()
-    menu = TeamspacesMenu()
-    clusters_menu = _ClustersMenu()
-    resolved_teamspace = menu(teamspace=teamspace)
-
-    if not cloud_account:
-        cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
-    if cloud_account == "lightning-cloud":
-        cloud_account = None
+    resolved_teamspace = resolve_teamspace(teamspace)
+    cloud_account = resolve_cluster(resolved_teamspace, cloud_account, "--cloud-account")
 
     result = api.list_containers(
         teamspace=resolved_teamspace.name, org=resolved_teamspace.owner.name, cloud_account=cloud_account

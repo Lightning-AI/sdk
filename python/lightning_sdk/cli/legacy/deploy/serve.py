@@ -15,7 +15,6 @@ from rich.prompt import Confirm
 from lightning_sdk import CloudProvider, Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
-from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
 from lightning_sdk.cli.legacy.deploy._auth import (
     _AuthMode,
     _Onboarding,
@@ -24,6 +23,7 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
+from lightning_sdk.cli.utils.resource_resolution import resolve_cluster
 from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple(
@@ -387,11 +387,10 @@ def _handle_cloud(
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
     deployment_cloud = cloud
-    lightning_containers_cloud_account = str(cloud) if cloud is not None and not _is_cloud_provider(cloud) else None
-    if not lightning_containers_cloud_account and not cloud:
-        clusters_menu = _ClustersMenu()
-        lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
-        deployment_cloud = resolved_teamspace.default_cloud_account
+    lightning_containers_cloud_account = None
+    if not _is_cloud_provider(cloud):
+        lightning_containers_cloud_account = resolve_cluster(resolved_teamspace, cloud, "--cloud")
+        deployment_cloud = cloud or resolved_teamspace.default_cloud_account
 
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
