@@ -22,6 +22,7 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
+from lightning_sdk.cli.legacy.upload import UploadRecovery
 from lightning_sdk.cli.utils.resource_resolution import resolve_cluster
 from lightning_sdk.serve import _LitServeDeployer
 
@@ -199,6 +200,7 @@ def api_impl(
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
+    recovery: UploadRecovery = None,
 ) -> None:
     """Deploy a LitServe model script."""
     deploy_to_cloud, selected_cloud = _normalize_cloud_option(cloud)
@@ -238,6 +240,7 @@ def api_impl(
             teamspace=teamspace,
             org=org,
             user=user,
+            recovery=recovery,
         )
 
     machine = Machine.from_str(machine)

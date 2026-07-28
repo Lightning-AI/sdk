@@ -88,6 +88,39 @@ def test_api_deploy_rejects_legacy_cloud_options(monkeypatch):
 
 
 @mock_command_logging
+def test_api_deploy_passes_resume_policy(monkeypatch, tmp_path) -> None:
+    script = tmp_path / "server.py"
+    script.write_text("print('ok')")
+    api_impl = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.api.deploy.api_impl", api_impl)
+
+    result = CliRunner().invoke(deploy_api, [str(script), "--resume"])
+
+    assert result.exit_code == 0, result.output
+    assert api_impl.call_args.kwargs["recovery"] == "resume"
+
+
+@mock_command_logging
+def test_api_deploy_rejects_both_recovery_flags(monkeypatch) -> None:
+    api_impl = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.api.deploy.api_impl", api_impl)
+
+    result = CliRunner().invoke(deploy_api, ["server.py", "--resume", "--restart"])
+
+    assert result.exit_code != 0
+    assert "mutually exclusive" in result.output
+    api_impl.assert_not_called()
+
+
+@patch("lightning_sdk.cli.legacy.deploy.serve._handle_devbox")
+@mock_command_logging
+def test_devbox_passes_recovery_policy(mock_handle_devbox, temp_script) -> None:
+    serve_api(temp_script, devbox="CPU", name="test-devbox", recovery="restart")
+
+    assert mock_handle_devbox.call_args.kwargs["recovery"] == "restart"
+
+
+@mock_command_logging
 def test_apis_deploy_help():
     assert_help_contains(
         "lightning apis deploy --help", "Usage: lightning apis deploy", "Deploy a LitServe model script."
@@ -766,4 +799,5 @@ def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interrupt
         teamspace="test-teamspace",
         org="test-org",
         user="test-user",
+        recovery=None,
     )
