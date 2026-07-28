@@ -1,9 +1,8 @@
 import concurrent.futures
 import json
 import os
-import webbrowser
 from pathlib import Path
-from typing import Dict, Generator, List, Optional
+from typing import Dict, Generator, List, Literal, Optional
 
 import click
 import rich
@@ -14,16 +13,25 @@ from tqdm import tqdm
 from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.cli.utils.terminal_menu_wrapper import TerminalMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user
 
 _STUDIO_UPLOAD_STATUS_PATH = "~/.lightning/studios/uploads"
+
+UploadRecovery = Optional[Literal["resume", "restart"]]
+
+
+def resolve_upload_recovery(resume: bool, restart: bool) -> UploadRecovery:
+    if resume and restart:
+        raise click.UsageError("--resume and --restart are mutually exclusive.")
+    if resume:
+        return "resume"
+    if restart:
+        return "restart"
+    return None
 
 
 @click.group("upload")
@@ -130,8 +138,7 @@ def upload_container(
     platform: Optional[str] = "linux/amd64",
 ) -> None:
     """Upload a container to Lightning AI's container registry."""
-    menu = TeamspacesMenu()
-    teamspace = menu(teamspace)
+    teamspace = resolve_teamspace(teamspace)
     console = Console()
     with Progress(
         SpinnerColumn(),
@@ -208,14 +215,14 @@ def _folder(path: str, studio: Optional[str] = None, remote_path: Optional[str] 
     console.print(f"See your files at {studio_url}")
 
 
-def _upload_folder(path: str, remote_path: str, studio: Studio) -> None:
+def _upload_folder(path: str, remote_path: str, studio: Studio, recovery: UploadRecovery = None) -> None:
     pairs = {}
     for root, _, files in os.walk(path):
         rel_root = os.path.relpath(root, path)
         for f in files:
             pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
 
-    upload_state = _resolve_previous_upload_state(studio, remote_path, pairs)
+    upload_state = _resolve_previous_upload_state(studio, remote_path, pairs, recovery)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         futures = _start_parallel_upload(executor, studio, upload_state)
@@ -258,27 +265,15 @@ def _file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = 
 
 
 def _resolve_studio(studio: Optional[str]) -> Studio:
-    user = _get_authed_user()
-    menu = _StudiosMenu()
-    possible_studios = menu._get_possible_studios(user)
-
     try:
-        if studio is None:
-            selected_studio = menu._get_studio_from_interactive_menu(possible_studios)
-        else:
-            selected_studio = menu._get_studio_from_name(studio, possible_studios)
+        resolved_teamspace = resolve_teamspace()
+        return resolve_studio(studio, resolved_teamspace)
 
-    except KeyboardInterrupt:
-        raise KeyboardInterrupt from None
-
-    # give user friendlier error message
     except Exception as e:
         raise StudioCliError(
             f"Could not find the given Studio {studio} to upload files to. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
-
-    return Studio(**selected_studio)
 
 
 def _print_docker_push(lines: Generator, console: Console, progress: Progress, push_task: rich.progress.TaskID) -> None:
@@ -294,8 +289,7 @@ def _print_docker_push(lines: Generator, console: Console, progress: Progress, p
             return
         elif "finish" in line:
             if "url" in line:
-                webbrowser.open(line["url"])
-            console.print(f"Container available at [i]{line['url']}[/i]")
+                console.print(f"Container available at [i]{line['url']}[/i]")
             return
         else:
             console.print(line, style="bright_black")
@@ -323,52 +317,54 @@ def _single_file_upload(studio: Studio, local_path: str, remote_path: str, progr
 
 def _dump_current_upload_state(studio: Studio, remote_path: str, state_dict: Dict[str, str]) -> None:
     """Dumps the current upload state so that we can safely resume later."""
-    curr_path = os.path.abspath(
-        os.path.expandvars(
-            os.path.expanduser(os.path.join(_STUDIO_UPLOAD_STATUS_PATH, studio._studio.id, remote_path + ".json"))
-        )
-    )
+    curr_path = _upload_state_path(studio, remote_path)
 
-    dirpath = os.path.dirname(curr_path)
+    dirpath = curr_path.parent
     if state_dict:
-        os.makedirs(os.path.dirname(curr_path), exist_ok=True)
-        with open(curr_path, "w") as f:
-            json.dump(state_dict, f, indent=4)
+        dirpath.mkdir(parents=True, exist_ok=True)
+        curr_path.write_text(json.dumps(state_dict, indent=4))
         return
 
-    if os.path.exists(curr_path):
-        os.remove(curr_path)
-    if os.path.exists(dirpath):
+    if curr_path.exists():
+        curr_path.unlink()
+    if dirpath.exists():
         os.removedirs(dirpath)
 
 
-def _resolve_previous_upload_state(studio: Studio, remote_path: str, state_dict: Dict[str, str]) -> Dict[str, str]:
-    """Resolves potential previous uploads to continue if possible."""
-    curr_path = os.path.abspath(
-        os.path.expandvars(
-            os.path.expanduser(os.path.join(_STUDIO_UPLOAD_STATUS_PATH, studio._studio.id, remote_path + ".json"))
+def _upload_state_path(studio: Studio, remote_path: str) -> Path:
+    return Path(
+        os.path.abspath(
+            os.path.expandvars(
+                os.path.expanduser(
+                    os.path.join(
+                        _STUDIO_UPLOAD_STATUS_PATH,
+                        studio._studio.id,
+                        remote_path + ".json",
+                    )
+                )
+            )
         )
     )
 
-    # no previous download exists
-    if not os.path.isfile(curr_path):
-        return state_dict
 
-    menu = TerminalMenu(
-        [
-            "no, I accept that this may cause overwriting existing files",
-            "yes, continue previous upload",
-        ],
-        title=f"Found an incomplete upload for {studio.teamspace.name}/{studio.name}:{remote_path}. "
-        "Should we resume the previous upload?",
-    )
-    index = menu.show()
-    if index == 0:  # selected to start new upload
+def _resolve_previous_upload_state(
+    studio: Studio,
+    remote_path: str,
+    state_dict: Dict[str, str],
+    recovery: UploadRecovery,
+) -> Dict[str, str]:
+    """Resolves potential previous uploads to continue if possible."""
+    curr_path = _upload_state_path(studio, remote_path)
+    exists = curr_path.is_file()
+    if recovery == "resume":
+        if not exists:
+            raise click.UsageError("There is nothing to resume.")
+        return json.loads(curr_path.read_text())
+    if recovery == "restart":
         return state_dict
-
-    # at this point we know we want to resume the previous upload
-    with open(curr_path) as f:
-        return json.load(f)
+    if exists:
+        raise click.UsageError("An incomplete upload exists. Pass --resume or --restart.")
+    return state_dict
 
 
 def _global_upload_progress(upload_state: Dict[str, str]) -> bool:

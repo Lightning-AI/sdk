@@ -17,14 +17,11 @@ from lightning_sdk.api.deployment_api import (
     TokenAuth,
 )
 from lightning_sdk.cli.job.run import _resolve_envs, _resolve_path_mapping
-from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
-from lightning_sdk.organization import Organization
+from lightning_sdk.models import _list_teamspaces
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _get_authed_user
 
 MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
@@ -36,16 +33,8 @@ def iter_teamspaces(teamspace: Optional[str], all_teamspaces: bool) -> Iterable[
         yield resolve_teamspace(teamspace)
         return
 
-    user = _get_authed_user()
-    menu = TeamspacesMenu()
-    possible_teamspaces = menu._get_possible_teamspaces(user)
-    for teamspace_name in possible_teamspaces.values():
-        owner = menu._owner
-        yield Teamspace(
-            teamspace_name,
-            org=owner if isinstance(owner, Organization) else None,
-            user=owner if isinstance(owner, User) else None,
-        )
+    for teamspace_slug in _list_teamspaces():
+        yield resolve_teamspace(teamspace_slug)
 
 
 def resolve_deployment(api: DeploymentApi, teamspace_id: str, name_or_id: str) -> V1Deployment:

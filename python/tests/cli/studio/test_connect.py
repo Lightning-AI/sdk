@@ -38,13 +38,13 @@ def test_connect_studio_machine_and_gpus_mutually_exclusive(monkeypatch):
     mock_teamspace_menu = MagicMock()
     mock_teamspace_menu.return_value = "owner/teamspace"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio"
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio"), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal"), patch("subprocess.run"):
         result = runner.invoke(connect_studio, ["--machine", "L4", "--gpus", "L4:2"])
         assert result.exit_code != 0
         assert "mutually exclusive" in result.output.lower()
@@ -68,13 +68,15 @@ def test_connect_studio_with_gpus_option(monkeypatch):
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", mock_studio_class), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(connect_studio, ["test-studio", "--gpus", "L4:4"])
 
         mock_studio_instance.start.assert_called_once()
@@ -106,13 +108,15 @@ def test_connect_studio_uses_default_machine(monkeypatch):
             raise ValueError("No current studio")
         return mock_studio_instance
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", side_effect=studio_side_effect
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", side_effect=studio_side_effect), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(connect_studio, ["test-studio"])
 
         mock_studio_instance.start.assert_called_once()
@@ -139,13 +143,15 @@ def test_connect_studio_with_interruptible_flag(monkeypatch):
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", mock_studio_class), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(connect_studio, ["test-studio", "--interruptible"])
 
         mock_studio_instance.start.assert_called_once()
@@ -171,13 +177,15 @@ def test_connect_studio_without_interruptible_flag(monkeypatch):
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", mock_studio_class), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(connect_studio, ["test-studio"])
 
         mock_studio_instance.start.assert_called_once()
@@ -204,13 +212,15 @@ def test_connect_studio_interruptible_with_machine(monkeypatch):
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", mock_studio_class), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(
             connect_studio,
             ["test-studio", "--interruptible"],
@@ -241,13 +251,15 @@ def test_connect_studio_interruptible_with_gpus(monkeypatch):
     mock_studio_instance._studio.id = "studio-123"
     mock_studio_class = MagicMock(return_value=mock_studio_instance)
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", mock_studio_class
-    ), patch("lightning_sdk.cli.studio.connect.save_studio_to_config"), patch(
-        "lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"
-    ), patch("subprocess.run"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", mock_studio_class), patch(
+        "lightning_sdk.cli.studio.connect.save_studio_to_config"
+    ), patch("lightning_sdk.cli.studio.connect.configure_ssh_internal", return_value="/path/to/key"), patch(
+        "subprocess.run"
+    ):
         runner.invoke(connect_studio, ["test-studio", "--gpus", "A100:2", "--interruptible"])
 
         mock_studio_instance.start.assert_called_once()
@@ -269,11 +281,13 @@ def test_parse_args_or_get_from_current_studio_all_args_provided(monkeypatch):
 
     mock_get_base_studio_id = MagicMock(return_value="template-123")
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", mock_get_base_studio_id), patch(
-        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", mock_get_base_studio_id
+    ), patch("lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
             studio_type="python-template",
@@ -308,11 +322,13 @@ def test_parse_args_or_get_from_current_studio_falls_back_to_current_studio(monk
     mock_studio_instance._studio.environment_template_id = "studio-template-id"
     mock_studio_instance.machine = "A100"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None), patch(
-        "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None
+    ), patch("lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace=None,
             studio_type=None,
@@ -342,11 +358,13 @@ def test_parse_args_or_get_from_current_studio_no_current_studio(monkeypatch):
     def mock_studio_init(*args, **kwargs):
         raise ValueError("No current studio")
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", side_effect=mock_studio_init
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", side_effect=mock_studio_init), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="owner/teamspace",
             studio_type="python-template",
@@ -379,11 +397,13 @@ def test_parse_args_or_get_from_current_studio_gpus_preserves_machine(monkeypatc
     mock_studio_instance._studio.environment_template_id = "studio-template-id"
     mock_studio_instance.machine = "A100"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None), patch(
-        "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value=None
+    ), patch("lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace=None,
             studio_type=None,
@@ -410,11 +430,13 @@ def test_parse_args_or_get_from_current_studio_cloud_preserved(monkeypatch):
     mock_teamspace_menu = MagicMock()
     mock_teamspace_menu.return_value = "owner/teamspace"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         for cloud in ["AWS", "GCP", "account-123"]:
             _, resolved_cloud, _, _, _ = _parse_args_or_get_from_current_studio(
                 teamspace="owner/teamspace",
@@ -438,11 +460,11 @@ def test_parse_args_or_get_from_current_studio_name_generation(monkeypatch):
     mock_teamspace_menu = MagicMock()
     mock_teamspace_menu.return_value = "owner/teamspace"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")
-    ), patch(
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="template-123"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", side_effect=ValueError("No current studio")), patch(
         "lightning_sdk.cli.studio.connect.random_unique_name", return_value="generated-unique-name"
     ) as mock_random_name:
         _, _, _, _, name = _parse_args_or_get_from_current_studio(
@@ -474,11 +496,13 @@ def test_parse_args_or_get_from_current_studio_partial_args(monkeypatch):
     mock_studio_instance._studio.environment_template_id = "studio-template-id"
     mock_studio_instance.machine = "A100"
 
-    with patch("lightning_sdk.cli.studio.connect.TeamspacesMenu", return_value=mock_teamspace_menu), patch(
-        "lightning_sdk.cli.studio.connect.save_teamspace_to_config"
-    ), patch("lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="user-template-id"), patch(
-        "lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance
-    ), patch("lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"):
+    with patch(
+        "lightning_sdk.cli.studio.connect.resolve_teamspace", return_value=mock_teamspace_menu.return_value
+    ), patch("lightning_sdk.cli.studio.connect.save_teamspace_to_config"), patch(
+        "lightning_sdk.cli.studio.connect.get_base_studio_id", return_value="user-template-id"
+    ), patch("lightning_sdk.cli.studio.connect.Studio", return_value=mock_studio_instance), patch(
+        "lightning_sdk.cli.studio.connect.random_unique_name", return_value="random-name"
+    ):
         teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
             teamspace="user-teamspace",
             studio_type="user-template",

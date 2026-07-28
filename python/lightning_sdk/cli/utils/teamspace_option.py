@@ -4,10 +4,9 @@ from typing import Callable, Optional, TypeVar
 
 import rich_click as click
 
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace as _resolve_cli_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.utils.resolve import _resolve_teamspace
 
 F = TypeVar("F", bound=Callable)
 
@@ -22,31 +21,9 @@ def resolve_teamspace(
     org: Optional[str] = None,
     user: Optional[str] = None,
 ) -> Teamspace:
-    """Resolve CLI teamspace options into a single Teamspace instance.
-
-    This is the one shared entry point CLI commands use to turn
-    ``--teamspace``/``--org``/``--user`` into a ``Teamspace``. It supports:
-
-    * The modern convention: ``--teamspace`` alone, either a bare name (uses the
-      configured/default owner, or falls back to an interactive picker) or an
-      ``owner/teamspace`` slug (unambiguous, no picker).
-    * The deprecated convention: ``--org``/``--user`` supplied alongside a bare
-      ``--teamspace`` name, preserved for backward compatibility during the
-      deprecation window.
-    """
-    if org is not None or user is not None:
-        if teamspace and "/" in teamspace:
-            raise click.UsageError(
-                "--teamspace was given in 'owner/teamspace' format, which already specifies the "
-                "owner. Remove --org/--user, or drop the 'owner/' prefix from --teamspace and keep "
-                "--org/--user."
-            )
-        resolved_teamspace = _resolve_teamspace(teamspace, org, user)
-    else:
-        resolved_teamspace = TeamspacesMenu()(teamspace=teamspace)
-
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
-    return resolved_teamspace
+    resolved = _resolve_cli_teamspace(teamspace=teamspace, org=org, user=user)
+    save_teamspace_to_config(resolved, overwrite=False)
+    return resolved
 
 
 _TEAMSPACE_OPTIONS = [

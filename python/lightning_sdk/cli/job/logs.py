@@ -5,21 +5,17 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
-from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import resolve_time
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
-@click.argument("name", required=False)
+@click.argument("name", required=False, help="The job name. Required.")
 @click.option(
     "--teamspace",
     default=None,
-    help=(
-        "the name of the teamspace the job lives in. "
-        "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-        "If not specified can be selected interactively."
-    ),
+    help="Teamspace owner/name. Uses the configured default teamspace when omitted.",
 )
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, default=None, help="Only show the last N lines.")
@@ -52,7 +48,8 @@ def logs_job(
     lines from a running job until it finishes or you press Ctrl-C. --query and
     --severity are applied by the server, to both the snapshot and the stream.
     """
-    job = _JobAndMMTAction().job(name=name, teamspace=teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    job = resolve_job(name, resolved_teamspace)
 
     try:
         logs = job.logs(

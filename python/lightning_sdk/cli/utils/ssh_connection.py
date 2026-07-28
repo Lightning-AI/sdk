@@ -4,6 +4,9 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
+import rich_click as click
+
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
 
@@ -11,7 +14,9 @@ from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
 def configure_ssh_internal(force_download: bool = False) -> str:
     """Internal function to configure SSH without Click decorators."""
     auth = Auth()
-    auth.authenticate()
+    require_auth_header()
+    if not auth.api_key and not auth.load():
+        raise click.UsageError("An API key is required. Run `lightning login` first.")
     return download_ssh_keys(auth.api_key, force_download=force_download)
 
 

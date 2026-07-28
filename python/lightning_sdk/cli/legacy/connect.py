@@ -5,7 +5,7 @@ from typing import Optional
 import click
 
 from lightning_sdk.cli.legacy.configure import _configure_ssh_internal
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 
 
 @click.group(name="connect")
@@ -24,8 +24,7 @@ def studio(name: Optional[str], teamspace: Optional[str]) -> None:
     """Connect to a studio via SSH."""
     _configure_ssh_internal(name=name, teamspace=teamspace, overwrite=False)
 
-    menu = _StudiosMenu()
-    studio = menu._get_studio(name=name, teamspace=teamspace)
+    studio = resolve_studio(name, resolve_teamspace(teamspace))
 
     try:
         subprocess.run(["ssh", studio.name])

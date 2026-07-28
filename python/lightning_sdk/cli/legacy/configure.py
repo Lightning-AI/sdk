@@ -8,7 +8,8 @@ import click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.generate import _generate_ssh_config
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.utils.auth import require_auth_header
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -22,7 +23,9 @@ def _configure_ssh_internal(
 ) -> None:
     """Internal function to configure SSH without Click decorators."""
     auth = Auth()
-    auth.authenticate()
+    require_auth_header()
+    if not auth.api_key and not auth.load():
+        raise click.UsageError("An API key is required. Run `lightning login` first.")
     console = Console()
     ssh_dir = Path.home() / ".ssh"
     ssh_dir.mkdir(parents=True, exist_ok=True)
@@ -38,8 +41,7 @@ def _configure_ssh_internal(
         console.print(f"SSH key generated and saved to {key_path}")
 
     # Check if the SSH config already contains the required configuration
-    menu = _StudiosMenu()
-    studio = menu._get_studio(name=name, teamspace=teamspace)
+    studio = resolve_studio(name, resolve_teamspace(teamspace))
     config_content = _generate_ssh_config(key_path=str(key_path), user=f"s_{studio._studio.id}", host=studio.name)
     if config_path.exists():
         with config_path.open("r") as config_file:

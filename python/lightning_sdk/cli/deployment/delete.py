@@ -16,12 +16,12 @@ from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 @click.option("--yes", "-y", is_flag=True, default=False, help="Do not prompt for confirmation.")
 def delete_deployment(name: str, teamspace: Optional[str] = None, yes: bool = False) -> None:
     """Delete a deployment."""
+    if not yes:
+        raise click.UsageError("Deleting a deployment requires --yes.")
+
     resolved_teamspace = resolve_teamspace(teamspace)
     api = DeploymentApi()
     deployment = resolve_deployment(api, resolved_teamspace.id, name)
-
-    if not yes:
-        click.confirm(f"Delete deployment {deployment.name}?", abort=True)
 
     api.delete_deployment(deployment)
     click.echo(f"Deleted deployment {deployment.name}.")

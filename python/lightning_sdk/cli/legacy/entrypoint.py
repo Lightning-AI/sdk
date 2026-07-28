@@ -29,7 +29,7 @@ from lightning_sdk.cli.legacy.stop import stop
 from lightning_sdk.cli.legacy.switch import switch
 from lightning_sdk.cli.legacy.upload import upload
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.login import Auth, browser_authentication
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
@@ -58,9 +58,11 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
 
 @click.group(name="lightning")
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
-def main_cli() -> None:
+@click.pass_context
+def main_cli(ctx: click.Context) -> None:
     """Command line interface (CLI) to interact with/manage Lightning AI Studios."""
     sys.excepthook = _notify_exception
+    ctx.with_resource(browser_authentication(False))
 
 
 # colorful help messages
@@ -74,7 +76,8 @@ def login() -> None:
     auth.clear()
 
     try:
-        auth.authenticate()
+        with browser_authentication(True):
+            auth.authenticate()
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 

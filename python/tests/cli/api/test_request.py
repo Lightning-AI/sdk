@@ -32,12 +32,12 @@ def _run(args: list[str], **kwargs):
     return runner.invoke(main_cli, args, prog_name="lightning", catch_exceptions=False, **kwargs)
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_get_uses_configured_url_and_auth(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Bearer test-token"
+    mock_auth.return_value = "Bearer test-token"
     mock_request.return_value = _response(url="https://lightning.test/v1/me")
 
     result = _run(["api", "/v1/me"])
@@ -46,7 +46,6 @@ def test_api_request_get_uses_configured_url_and_auth(mock_request, mock_auth, m
     assert '"ok": true' in result.output
     mock_request.assert_called_once()
     mock_auth.assert_called_once_with()
-    mock_auth.return_value.authenticate.assert_called_once_with()
     assert mock_request.call_args.args[:2] == ("GET", "https://lightning.test/v1/me")
     headers = mock_request.call_args.kwargs["headers"]
     assert headers["Authorization"] == "Bearer test-token"
@@ -54,7 +53,7 @@ def test_api_request_get_uses_configured_url_and_auth(mock_request, mock_auth, m
     assert headers["User-Agent"].startswith("lightning-sdk/")
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_preserves_explicit_authorization_header(mock_request, mock_auth, monkeypatch) -> None:
@@ -68,12 +67,12 @@ def test_api_request_preserves_explicit_authorization_header(mock_request, mock_
     assert mock_request.call_args.kwargs["headers"]["Authorization"] == "Bearer override-token"
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_accepts_options_before_path(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(url="https://lightning.test/v1/me")
 
     result = _run(["api", "-X", "GET", "-H", "Accept: application/json", "/v1/me"])
@@ -83,12 +82,12 @@ def test_api_request_accepts_options_before_path(mock_request, mock_auth, monkey
     assert mock_request.call_args.kwargs["headers"]["Accept"] == "application/json"
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_accepts_versioned_relative_path(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(url="https://lightning.test/v1/me")
 
     result = _run(["api", "v1/me"])
@@ -115,12 +114,12 @@ def test_api_group_is_hidden_from_top_level_help() -> None:
     assert "\n  api " not in result.output
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_posts_json_fields(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
 
     result = _run(
@@ -142,12 +141,12 @@ def test_api_request_posts_json_fields(mock_request, mock_auth, monkeypatch) -> 
     assert mock_request.call_args.kwargs["data"] == b'{"name": "example", "count": 3, "enabled": true}'
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_accepts_long_field_header_and_method_options(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
 
     result = _run(
@@ -171,12 +170,12 @@ def test_api_request_accepts_long_field_header_and_method_options(mock_request, 
     assert mock_request.call_args.kwargs["data"] == b'{"name": "example", "count": 3}'
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_input_body_does_not_default_content_type(mock_request, mock_auth, monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
     body_file = tmp_path / "payload.txt"
     body_file.write_text("plain text")
@@ -189,12 +188,12 @@ def test_api_request_input_body_does_not_default_content_type(mock_request, mock
     assert mock_request.call_args.kwargs["data"] == b"plain text"
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_input_body_from_stdin(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
 
     result = _run(["api", "/v1/upload", "-X", "POST", "--input", "-"], input=b"stdin body")
@@ -203,12 +202,12 @@ def test_api_request_input_body_from_stdin(mock_request, mock_auth, monkeypatch)
     assert mock_request.call_args.kwargs["data"] == b"stdin body"
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_adds_fields_to_get_query(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
 
     result = _run(["api", "/v1/search", "-X", "GET", "-f", "q=repo:foo", "-F", "limit=10"])
@@ -219,11 +218,11 @@ def test_api_request_adds_fields_to_get_query(mock_request, mock_auth, monkeypat
     assert mock_request.call_args.kwargs["data"] is None
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_uses_hostname_base_url(mock_request, mock_auth) -> None:
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(url="https://api.lightning.test/base/v1/test")
 
     result = _run(["api", "/v1/test", "--hostname", "https://api.lightning.test/base"])
@@ -232,12 +231,12 @@ def test_api_request_uses_hostname_base_url(mock_request, mock_auth) -> None:
     assert mock_request.call_args.args[:2] == ("GET", "https://api.lightning.test/base/v1/test")
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_supports_nested_array_fields(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response()
 
     result = _run(
@@ -264,13 +263,13 @@ def test_api_request_supports_nested_array_fields(mock_request, mock_auth, monke
     )
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request._run_jq")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_filters_with_jq(mock_request, mock_jq, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(b'{"title": "hello"}')
     mock_jq.return_value = "hello\n"
 
@@ -280,13 +279,13 @@ def test_api_request_filters_with_jq(mock_request, mock_jq, mock_auth, monkeypat
     mock_jq.assert_called_once_with(".title", '{"title": "hello"}')
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request._run_jq")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_filters_with_short_jq_option(mock_request, mock_jq, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(b'{"title": "hello"}')
     mock_jq.return_value = "hello\n"
 
@@ -296,12 +295,12 @@ def test_api_request_filters_with_short_jq_option(mock_request, mock_jq, mock_au
     mock_jq.assert_called_once_with(".title", '{"title": "hello"}')
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_include_outputs_response_head(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(
         b'{"created": true}',
         status_code=201,
@@ -317,12 +316,12 @@ def test_api_request_include_outputs_response_head(mock_request, mock_auth, monk
     assert '"created": true' in result.output
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_silent_suppresses_response_body(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(b'{"hidden": true}')
 
     result = _run(["api", "/v1/test", "--silent"])
@@ -331,12 +330,12 @@ def test_api_request_silent_suppresses_response_body(mock_request, mock_auth, mo
     assert result.output == ""
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_verbose_outputs_redacted_request_and_response(mock_request, mock_auth, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
-    mock_auth.return_value.authenticate.return_value = "Bearer secret-token"
+    mock_auth.return_value = "Bearer secret-token"
     mock_request.return_value = _response()
 
     result = _run(["api", "/v1/test", "--verbose", "--silent"])
@@ -348,13 +347,13 @@ def test_api_request_verbose_outputs_redacted_request_and_response(mock_request,
     assert "< HTTP/1.1 200 OK" in result.stderr
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_cache_reuses_successful_response(mock_request, mock_auth, monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
     monkeypatch.setattr("lightning_sdk.cli.api.request._CACHE_DIR", tmp_path)
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.return_value = _response(b'{"cached": true}')
 
     first = _run(["api", "/v1/test", "--cache", "1h"])
@@ -366,13 +365,13 @@ def test_api_request_cache_reuses_successful_response(mock_request, mock_auth, m
     mock_request.assert_called_once()
 
 
-@patch("lightning_sdk.cli.api.request.Auth")
+@patch("lightning_sdk.cli.api.request.require_auth_header")
 @patch("lightning_sdk.cli.api.request.requests.request")
 @mock_command_logging
 def test_api_request_does_not_cache_http_errors(mock_request, mock_auth, monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.test")
     monkeypatch.setattr("lightning_sdk.cli.api.request._CACHE_DIR", tmp_path)
-    mock_auth.return_value.authenticate.return_value = "Basic token"
+    mock_auth.return_value = "Basic token"
     mock_request.side_effect = [
         _response(b'{"error": "temporary"}', status_code=500, reason="Internal Server Error"),
         _response(b'{"ok": true}'),

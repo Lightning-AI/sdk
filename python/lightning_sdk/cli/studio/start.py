@@ -6,10 +6,9 @@ import rich_click as click
 
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
-from lightning_sdk.cli.utils.studio_selection import StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
 
@@ -24,7 +23,7 @@ click.rich_click.OPTION_GROUPS = {
 @click.command("start", cls=LightningCommand)
 @click.option(
     "--name",
-    help="Studio to start. Falls back to config/env, else prompts.",
+    help="Studio to use. Falls back to the current Studio or configured default.",
 )
 @click.option(
     "--teamspace",
@@ -90,19 +89,17 @@ def start_impl(
     interruptible: bool,
     cloud: Optional[str] = None,
 ) -> None:
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace=teamspace)
-
-    if not create:
-        menu = StudiosMenu(resolved_teamspace)
-        studio = menu(studio=name)
-    else:
-        studio = Studio(
+    resolved_teamspace = resolve_teamspace(teamspace)
+    studio = (
+        Studio(
             name=name,
             teamspace=resolved_teamspace,
-            create_ok=create,
+            create_ok=True,
             cloud=cloud,
         )
+        if create
+        else resolve_studio(name, resolved_teamspace)
+    )
 
     machine = handle_machine_and_gpus_args(machine, gpus)
 

@@ -1,7 +1,6 @@
 import os
 import socket
 import subprocess
-import webbrowser
 from datetime import datetime
 from pathlib import Path
 from threading import Thread
@@ -10,12 +9,10 @@ from typing import Optional, Union
 import click
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-from rich.prompt import Confirm
 
 from lightning_sdk import CloudProvider, Machine, Teamspace
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.api.utils import _get_registry_url
-from lightning_sdk.cli.legacy.clusters_menu import _ClustersMenu
 from lightning_sdk.cli.legacy.deploy._auth import (
     _AuthMode,
     _Onboarding,
@@ -24,6 +21,8 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.deploy.devbox import _handle_devbox
+from lightning_sdk.cli.legacy.upload import UploadRecovery
+from lightning_sdk.cli.utils.resource_resolution import resolve_cluster
 from lightning_sdk.serve import _LitServeDeployer
 
 _MACHINE_VALUES = tuple(
@@ -73,12 +72,11 @@ def deploy() -> None:
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
-    "--non-interactive",
-    "--non_interactive",
+    "--yes",
+    "-y",
     is_flag=True,
     default=False,
-    flag_value=True,
-    help="Do not prompt for confirmation",
+    help="Confirm the generated Dockerfile without prompting.",
 )
 @click.option(
     "--machine",
@@ -129,7 +127,7 @@ def api(
     easy: bool,
     cloud: Optional[str],
     name: Optional[str],
-    non_interactive: bool,
+    yes: bool,
     machine: Optional[str],
     devbox: Optional[str],
     interruptible: bool,
@@ -148,7 +146,7 @@ def api(
         easy=easy,
         cloud=cloud,
         name=name,
-        non_interactive=non_interactive,
+        yes=yes,
         machine=machine,
         devbox=devbox,
         interruptible=interruptible,
@@ -189,7 +187,7 @@ def api_impl(
     cloud: Union[bool, str, None] = False,
     name: Optional[str] = None,
     tag: Optional[str] = None,
-    non_interactive: bool = False,
+    yes: bool = False,
     machine: str = "CPU",
     devbox: Optional[str] = None,
     interruptible: bool = False,
@@ -201,6 +199,7 @@ def api_impl(
     max_replica: Optional[int] = 1,
     replicas: Optional[int] = 1,
     include_credentials: Optional[bool] = True,
+    recovery: UploadRecovery = None,
 ) -> None:
     """Deploy a LitServe model script."""
     deploy_to_cloud, selected_cloud = _normalize_cloud_option(cloud)
@@ -231,7 +230,17 @@ def api_impl(
 
     if devbox:
         machine = Machine.from_str(devbox)
-        return _handle_devbox(name, script_path, console, non_interactive, machine, interruptible, teamspace, org, user)
+        return _handle_devbox(
+            name,
+            script_path,
+            console,
+            machine=machine,
+            interruptible=interruptible,
+            teamspace=teamspace,
+            org=org,
+            user=user,
+            recovery=recovery,
+        )
 
     machine = Machine.from_str(machine)
     return _handle_cloud(
@@ -239,7 +248,7 @@ def api_impl(
         console,
         repository=name,
         tag=tag,
-        non_interactive=non_interactive,
+        yes=yes,
         machine=machine,
         interruptible=interruptible,
         teamspace=teamspace,
@@ -300,7 +309,7 @@ def _handle_cloud(
     console: Console,
     repository: str = "litserve-model",
     tag: Optional[str] = None,
-    non_interactive: bool = False,
+    yes: bool = False,
     machine: Machine = "CPU",
     interruptible: bool = False,
     teamspace: Optional[str] = None,
@@ -321,23 +330,13 @@ def _handle_cloud(
     deployment_name = os.path.basename(repository)
     tag = tag if tag else "latest"
 
-    if non_interactive:
-        console.print("[italic]non-interactive[/italic] mode enabled, skipping confirmation prompts", style="blue")
-
     port = port or 8000
     ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=None)
     path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
 
     console.print(f"\n[bold]LitServe generated a Dockerfile at:[/bold]\n[u]{path}[/u]\n")
-    console.print("Please check that it matches your server setup.")
-    correct_dockerfile = (
-        True
-        if non_interactive
-        else Confirm.ask("Have you reviewed the Dockerfile and confirmed it's correct?", default=True)
-    )
-    if not correct_dockerfile:
-        console.print("[red]Dockerfile review canceled. Please update the Dockerfile and try again.[/red]")
-        return
+    if not yes:
+        raise click.UsageError("Review the generated Dockerfile, then rerun with --yes.")
 
     console.print(
         "Building your container image now.\n[cyan bold]Make sure Docker is installed and running.[/cyan bold]\n"
@@ -370,7 +369,7 @@ def _handle_cloud(
     # Push the container to the registry
     console.print("\nPushing container to registry. It may take a while...", style="bold")
     # Authenticate with LitServe affiliate
-    authenticate(_AuthMode.DEPLOY, shall_confirm=not non_interactive)
+    authenticate(_AuthMode.DEPLOY, shall_confirm=True)
     user_status = poll_verified_status()
     cloudspace_id: Optional[str] = None
     from_onboarding = False
@@ -387,11 +386,10 @@ def _handle_cloud(
         resolved_teamspace = select_teamspace(teamspace, org, user)
 
     deployment_cloud = cloud
-    lightning_containers_cloud_account = str(cloud) if cloud is not None and not _is_cloud_provider(cloud) else None
-    if not lightning_containers_cloud_account and not cloud:
-        clusters_menu = _ClustersMenu()
-        lightning_containers_cloud_account = clusters_menu._resolve_cluster(resolved_teamspace)
-        deployment_cloud = resolved_teamspace.default_cloud_account
+    lightning_containers_cloud_account = None
+    if not _is_cloud_provider(cloud):
+        lightning_containers_cloud_account = resolve_cluster(resolved_teamspace, cloud, "--cloud")
+        deployment_cloud = cloud or resolved_teamspace.default_cloud_account
 
     # list containers to create the project if it doesn't exist
     lit_cr = LitContainerApi()
@@ -457,5 +455,3 @@ def _handle_cloud(
         cloud=deployment_cloud,
     )
     console.print(f"🚀 Deployment started, access at [i]{deployment_status.get('url')}[/i]")
-    if user_status["onboarded"]:
-        webbrowser.open(deployment_status.get("url"))

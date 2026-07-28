@@ -1,4 +1,3 @@
-import webbrowser
 from contextlib import suppress
 from pathlib import Path
 from typing import Optional
@@ -7,9 +6,8 @@ import click
 from rich.console import Console
 
 from lightning_sdk.cli.legacy.upload import _upload_folder
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.studio import Studio
-from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.resolve import _get_studio_url
 
 
@@ -41,11 +39,7 @@ def open(path: str = ".", teamspace: Optional[str] = None, cloud: Optional[str] 
 
     pathlib_path = Path(path).resolve()
 
-    try:
-        resolved_teamspace = Teamspace()
-    except ValueError:
-        menu = TeamspacesMenu()
-        resolved_teamspace = menu(teamspace=teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
 
     # default cloud account to current studio's cloud account if run from studio
     # else it will fall back to teamspace default in the backend
@@ -69,8 +63,4 @@ def open(path: str = ".", teamspace: Optional[str] = None, cloud: Optional[str] 
     studio_url = _get_studio_url(new_studio, turn_on=True)
 
     console.line()
-    console.print(f"[bold]Opening {new_studio.owner.name}/{new_studio.teamspace.name}/{new_studio.name}[/bold]")
-
-    ok = webbrowser.open(studio_url)
-    if not ok:
-        console.print(f"Open your Studio at: {studio_url}")
+    console.print(f"Studio URL: {studio_url}")

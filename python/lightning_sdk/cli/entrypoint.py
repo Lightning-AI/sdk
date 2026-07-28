@@ -36,7 +36,7 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_group,
 )
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.login import Auth, browser_authentication
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 click.rich_click.COMMAND_GROUPS = {
@@ -76,9 +76,11 @@ click.rich_click.HEADER_TEXT = (
     cls=CommandLoggingGroup,
 )
 @click.version_option(__version__, message="Lightning CLI version %(version)s")
-def main_cli() -> None:
+@click.pass_context
+def main_cli(ctx: click.Context) -> None:
     """The AI development cloud — build, train, and ship from anywhere."""
     sys.excepthook = logging_excepthook
+    ctx.with_resource(browser_authentication(False))
 
 
 @main_cli.command
@@ -101,7 +103,8 @@ def login() -> None:
 
     auth.clear()
     try:
-        auth.authenticate()
+        with browser_authentication(True):
+            auth.authenticate()
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 

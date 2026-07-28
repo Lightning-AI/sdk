@@ -474,7 +474,16 @@ class MMT(metaclass=TrackCallsMeta):
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
-            self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+
+            try:
+                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            except ApiException as ex:
+                if ex.status != 404:
+                    raise
+                raise ValueError(
+                    f"Multi-machine job {self._name} does not exist in Teamspace {self._teamspace.name}"
+                ) from ex
             return
 
         self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)

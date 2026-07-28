@@ -6,9 +6,9 @@ import rich_click as click
 
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.studio import Studio
 
@@ -50,9 +50,7 @@ def create_impl(
     cloud: Optional[str] = None,
     studio_type: Optional[str] = None,
 ) -> None:
-    menu = TeamspacesMenu()
-
-    resolved_teamspace = menu(teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     cls_name = Studio.__qualname__

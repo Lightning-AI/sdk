@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
@@ -15,6 +15,7 @@ def test_job_logs_help() -> None:
         "--tail",
         "--rank",
         "--timestamps",
+        "configured default teamspace",
         "--query",
         "--severity",
     )
@@ -34,29 +35,21 @@ def test_job_logs_help_shows_positional_name() -> None:
     assert_help_contains("lightning job logs --help", "Usage: lightning job logs [OPTIONS] [NAME]")
 
 
-def _patch_action(monkeypatch, job: MagicMock, captured: dict) -> None:
-    class _FakeJobAndMMTAction:
-        def job(self, name=None, teamspace=None):
-            captured["name"] = name
-            captured["teamspace"] = teamspace
-            return job
-
-    monkeypatch.setattr("lightning_sdk.cli.job.logs._JobAndMMTAction", _FakeJobAndMMTAction)
-
-
 @mock_command_logging
-def test_job_logs_prints_snapshot(monkeypatch) -> None:
+def test_job_logs_prints_snapshot() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    captured: dict = {}
+    teamspace = MagicMock()
     job = MagicMock()
     job.logs.return_value = "hello from the job\n42"
-    _patch_action(monkeypatch, job, captured)
-
-    result = CliRunner().invoke(logs_job, ["my-job", "--teamspace", "org/teamspace"])
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ) as resolve_job:
+        result = CliRunner().invoke(logs_job, ["my-job", "--teamspace", "org/teamspace"])
 
     assert result.exit_code == 0
-    assert captured == {"name": "my-job", "teamspace": "org/teamspace"}
+    resolve_teamspace.assert_called_once_with("org/teamspace")
+    resolve_job.assert_called_once_with("my-job", teamspace)
     assert "hello from the job" in result.output
     assert "42" in result.output
     job.logs.assert_called_once_with(
@@ -65,18 +58,19 @@ def test_job_logs_prints_snapshot(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_job_logs_follows_with_options(monkeypatch) -> None:
+def test_job_logs_follows_with_options() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    captured: dict = {}
+    teamspace = MagicMock()
     job = MagicMock()
     job.logs.return_value = iter(["line 1", "line 2"])
-    _patch_action(monkeypatch, job, captured)
-
-    result = CliRunner().invoke(
-        logs_job,
-        ["my-job", "--follow", "--tail", "10", "--rank", "2", "--timestamps"],
-    )
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(
+            logs_job,
+            ["my-job", "--follow", "--tail", "10", "--rank", "2", "--timestamps"],
+        )
 
     assert result.exit_code == 0
     assert result.output == "line 1\nline 2\n"
@@ -86,15 +80,16 @@ def test_job_logs_follows_with_options(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_job_logs_passes_filters(monkeypatch) -> None:
+def test_job_logs_passes_filters() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    captured: dict = {}
+    teamspace = MagicMock()
     job = MagicMock()
     job.logs.return_value = "boom"
-    _patch_action(monkeypatch, job, captured)
-
-    result = CliRunner().invoke(logs_job, ["my-job", "--query", "boom", "--severity", "error"])
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(logs_job, ["my-job", "--query", "boom", "--severity", "error"])
 
     assert result.exit_code == 0, result.output
     job.logs.assert_called_once_with(
@@ -103,29 +98,44 @@ def test_job_logs_passes_filters(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_job_logs_rejects_unknown_severity(monkeypatch) -> None:
+def test_job_logs_rejects_unknown_severity() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    job = MagicMock()
-    _patch_action(monkeypatch, job, {})
-
-    result = CliRunner().invoke(logs_job, ["my-job", "--severity", "critical"])
+    with patch("lightning_sdk.cli.job.logs.resolve_job") as resolve_job:
+        result = CliRunner().invoke(logs_job, ["my-job", "--severity", "critical"])
 
     assert result.exit_code != 0
-    job.logs.assert_not_called()
+    resolve_job.assert_not_called()
 
 
 @mock_command_logging
-def test_job_logs_reports_sdk_errors_cleanly(monkeypatch) -> None:
+def test_job_logs_reports_sdk_errors_cleanly() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    captured: dict = {}
+    teamspace = MagicMock()
     job = MagicMock()
     job.logs.side_effect = RuntimeError("Logs are not available while the job is Pending.")
-    _patch_action(monkeypatch, job, captured)
-
-    result = CliRunner().invoke(logs_job, ["my-job"])
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(logs_job, ["my-job"])
 
     assert result.exit_code != 0
     assert "Pending" in result.output
     assert not isinstance(result.exception, RuntimeError)
+
+
+@mock_command_logging
+def test_job_logs_requires_name_without_listing_resources() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    teamspace = MagicMock()
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.utils.resource_resolution.Job"
+    ) as job:
+        result = CliRunner().invoke(logs_job)
+
+    assert result.exit_code != 0
+    assert "Missing job name. Pass JOB." in result.output
+    job.assert_not_called()
+    assert teamspace.mock_calls == []

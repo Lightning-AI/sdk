@@ -1,41 +1,26 @@
-import os
 import time
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Optional, TypedDict
-from urllib.parse import urlencode
+from typing import List, Optional, TypedDict
 
+import rich_click as click
 from rich.console import Console
-from rich.prompt import Confirm
 
-from lightning_sdk import Organization, Teamspace
+from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace as _resolve_teamspace_option
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
-from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.utils.resolve import _get_authed_user
 
-LITSERVE_CODE = os.environ.get("LITSERVE_CODE", "j39bzk903h")
 _POLL_TIMEOUT = 120
 
 
 class _AuthMode(Enum):
     DEVBOX = "dev"
     DEPLOY = "deploy"
-
-
-class _AuthServer(AuthServer):
-    def __init__(self, mode: _AuthMode, *args: Any, **kwargs: Any) -> None:
-        self._mode = mode
-        super().__init__(*args, **kwargs)
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "mode": self._mode.value, "okbhrt": LITSERVE_CODE})
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
 class _AuthLitServe(Auth):
@@ -45,44 +30,20 @@ class _AuthLitServe(Auth):
         self._shall_confirm = shall_confirm
 
     def _run_server(self) -> None:
-        if self._shall_confirm:
-            proceed = Confirm.ask(
-                "[bold yellow]LitServe needs to authenticate with Lightning AI to deploy your server.[/bold yellow]\n"
-                "This will open a browser window for login.\n"
-                "Do you want to continue?",
-                default=True,
-            )
-            if not proceed:
-                raise RuntimeError(
-                    "Login cancelled. Please login to Lightning AI to deploy the API. Run `lightning login` to login."
-                )
-        print("Opening browser for authentication...")
-        print("Please come back to the terminal after logging in.")
-        time.sleep(3)
-        _AuthServer(self._mode).login_with_browser(self)
+        raise click.UsageError("No Lightning credentials are available. Run `lightning login` first.")
 
 
 def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
-    """Authenticate with Lightning AI.
+    """Validate existing Lightning AI credentials.
 
-    This will open a browser window for authentication.
-    If `shall_confirm` is True, it will ask for confirmation before proceeding.
+    Credentials must already be configured. Run ``lightning login`` first when
+    credentials are unavailable.
     """
     auth = _AuthLitServe(mode, shall_confirm)
     auth.authenticate()
 
 
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
-    if teamspace is None:
-        menu = TeamspacesMenu()
-        auth_user = _get_authed_user()
-        possible_teamspaces = menu._get_possible_teamspaces(auth_user)
-        if len(possible_teamspaces) == 1:
-            teamspace_name = next(iter(possible_teamspaces.values()))
-            if isinstance(menu._owner, Organization):
-                return Teamspace(name=teamspace_name, org=menu._owner, user=None)
-            return Teamspace(name=teamspace_name, org=None, user=menu._owner)
-        return menu(teamspace)
     return _resolve_teamspace_option(teamspace=teamspace, org=org, user=user)
 
 
@@ -181,18 +142,5 @@ class _Onboarding:
             return select_teamspace(teamspace, org, user)
 
         # Run only when user hasn't completed onboarding yet.
-        menu = TeamspacesMenu()
         self._wait_user_onboarding()
-        # Onboarding has been completed - user already selected organization if they could
-        possible_teamspaces = menu._get_possible_teamspaces(self.user)
-        if len(possible_teamspaces) == 1:
-            # User didn't select any org
-            value = next(iter(possible_teamspaces.values()))
-            return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-
-        for _, value in possible_teamspaces.items():
-            # User select an org
-            # Onboarding teamspace will be the default teamspace in the selected org
-            if value["org"]:
-                return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-        raise RuntimeError("Unable to select teamspace. Visit lightning.ai")
+        return resolve_teamspace(teamspace=teamspace, org=org, user=user)

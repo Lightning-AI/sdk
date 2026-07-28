@@ -47,14 +47,14 @@ def test_roles_marks_the_ones_you_hold() -> None:
     ]
 
     with (
-        patch("lightning_sdk.cli.auth.roles.TeamspacesMenu") as menu_cls,
+        patch("lightning_sdk.cli.auth.roles.resolve_teamspace", return_value=_teamspace()) as resolve_teamspace,
         patch("lightning_sdk.cli.auth.roles.AuthApi", return_value=api),
         patch("lightning_sdk.cli.auth.roles._get_authed_user", return_value=SimpleNamespace(id="u-1")),
     ):
-        menu_cls.return_value.return_value = _teamspace()
         result = CliRunner().invoke(roles, ["--teamspace", "acme/research"])
 
     assert result.exit_code == 0, result.output
+    resolve_teamspace.assert_called_once_with("acme/research")
     assert "Admin" in result.output
     assert "Member" in result.output
     assert "✓" in result.output  # the held role is marked
@@ -70,11 +70,10 @@ def test_roles_json() -> None:
     ]
 
     with (
-        patch("lightning_sdk.cli.auth.roles.TeamspacesMenu") as menu_cls,
+        patch("lightning_sdk.cli.auth.roles.resolve_teamspace", return_value=_teamspace()),
         patch("lightning_sdk.cli.auth.roles.AuthApi", return_value=api),
         patch("lightning_sdk.cli.auth.roles._get_authed_user", return_value=SimpleNamespace(id="u-1")),
     ):
-        menu_cls.return_value.return_value = _teamspace()
         result = CliRunner().invoke(roles, ["--teamspace", "acme/research", "--json"])
 
     assert result.exit_code == 0, result.output
@@ -93,10 +92,9 @@ def test_role_uses_external_facing_resource_names() -> None:
     )
 
     with (
-        patch("lightning_sdk.cli.auth.role.TeamspacesMenu") as menu_cls,
+        patch("lightning_sdk.cli.auth.role.resolve_teamspace", return_value=_teamspace()),
         patch("lightning_sdk.cli.auth.role.AuthApi", return_value=api),
     ):
-        menu_cls.return_value.return_value = _teamspace()
         result = CliRunner().invoke(role, ["r-1", "--teamspace", "acme/research"])
 
     assert result.exit_code == 0, result.output
@@ -120,10 +118,9 @@ def test_role_json_uses_external_names_and_conditions() -> None:
     )
 
     with (
-        patch("lightning_sdk.cli.auth.role.TeamspacesMenu") as menu_cls,
+        patch("lightning_sdk.cli.auth.role.resolve_teamspace", return_value=_teamspace()),
         patch("lightning_sdk.cli.auth.role.AuthApi", return_value=api),
     ):
-        menu_cls.return_value.return_value = _teamspace()
         result = CliRunner().invoke(role, ["r-1", "--teamspace", "acme/research", "--json"])
 
     assert result.exit_code == 0, result.output
@@ -148,10 +145,9 @@ def test_role_hides_unspecified_sentinels() -> None:
     )
 
     with (
-        patch("lightning_sdk.cli.auth.role.TeamspacesMenu") as menu_cls,
+        patch("lightning_sdk.cli.auth.role.resolve_teamspace", return_value=_teamspace()),
         patch("lightning_sdk.cli.auth.role.AuthApi", return_value=api),
     ):
-        menu_cls.return_value.return_value = _teamspace()
         result = CliRunner().invoke(role, ["r-1", "--teamspace", "acme/research", "--json"])
 
     assert result.exit_code == 0, result.output

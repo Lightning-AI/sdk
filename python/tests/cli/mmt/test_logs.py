@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
@@ -16,6 +16,7 @@ def test_mmt_logs_help() -> None:
         "--timestamps",
         "--query",
         "--severity",
+        "configured default teamspace",
     )
 
 
@@ -28,29 +29,21 @@ def test_mmts_logs_help() -> None:
     )
 
 
-def _patch_action(monkeypatch, mmt: MagicMock, captured: dict) -> None:
-    class _FakeJobAndMMTAction:
-        def mmt(self, name=None, teamspace=None):
-            captured["name"] = name
-            captured["teamspace"] = teamspace
-            return mmt
-
-    monkeypatch.setattr("lightning_sdk.cli.mmt.logs._JobAndMMTAction", _FakeJobAndMMTAction)
-
-
 @mock_command_logging
-def test_mmt_logs_prints_merged_snapshot(monkeypatch) -> None:
+def test_mmt_logs_prints_merged_snapshot() -> None:
     from lightning_sdk.cli.mmt.logs import logs_mmt
 
-    captured: dict = {}
+    teamspace = MagicMock()
     mmt = MagicMock()
     mmt.logs.return_value = "[my-mmt-0] rank 0 up\n[my-mmt-1] rank 1 up"
-    _patch_action(monkeypatch, mmt, captured)
-
-    result = CliRunner().invoke(logs_mmt, ["my-mmt", "--teamspace", "org/teamspace"])
+    with patch("lightning_sdk.cli.mmt.logs.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
+        "lightning_sdk.cli.mmt.logs.resolve_mmt", return_value=mmt
+    ) as resolve_mmt:
+        result = CliRunner().invoke(logs_mmt, ["my-mmt", "--teamspace", "org/teamspace"])
 
     assert result.exit_code == 0, result.output
-    assert captured == {"name": "my-mmt", "teamspace": "org/teamspace"}
+    resolve_teamspace.assert_called_once_with("org/teamspace")
+    resolve_mmt.assert_called_once_with("my-mmt", teamspace)
     assert "[my-mmt-0] rank 0 up" in result.output
     assert "[my-mmt-1] rank 1 up" in result.output
     mmt.logs.assert_called_once_with(
@@ -59,18 +52,19 @@ def test_mmt_logs_prints_merged_snapshot(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_mmt_logs_follows_with_options(monkeypatch) -> None:
+def test_mmt_logs_follows_with_options() -> None:
     from lightning_sdk.cli.mmt.logs import logs_mmt
 
-    captured: dict = {}
+    teamspace = MagicMock()
     mmt = MagicMock()
     mmt.logs.return_value = iter(["line 1", "line 2"])
-    _patch_action(monkeypatch, mmt, captured)
-
-    result = CliRunner().invoke(
-        logs_mmt,
-        ["my-mmt", "--follow", "--tail", "10", "--timestamps", "--query", "loss", "--severity", "error"],
-    )
+    with patch("lightning_sdk.cli.mmt.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.mmt.logs.resolve_mmt", return_value=mmt
+    ):
+        result = CliRunner().invoke(
+            logs_mmt,
+            ["my-mmt", "--follow", "--tail", "10", "--timestamps", "--query", "loss", "--severity", "error"],
+        )
 
     assert result.exit_code == 0, result.output
     assert result.output == "line 1\nline 2\n"
@@ -80,15 +74,33 @@ def test_mmt_logs_follows_with_options(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_mmt_logs_reports_sdk_errors_cleanly(monkeypatch) -> None:
+def test_mmt_logs_reports_sdk_errors_cleanly() -> None:
     from lightning_sdk.cli.mmt.logs import logs_mmt
 
+    teamspace = MagicMock()
     mmt = MagicMock()
     mmt.logs.side_effect = RuntimeError("Logs are not available while the job is Pending.")
-    _patch_action(monkeypatch, mmt, {})
-
-    result = CliRunner().invoke(logs_mmt, ["my-mmt"])
+    with patch("lightning_sdk.cli.mmt.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.mmt.logs.resolve_mmt", return_value=mmt
+    ):
+        result = CliRunner().invoke(logs_mmt, ["my-mmt"])
 
     assert result.exit_code != 0
     assert "Pending" in result.output
     assert not isinstance(result.exception, RuntimeError)
+
+
+@mock_command_logging
+def test_mmt_logs_requires_name_without_listing_resources() -> None:
+    from lightning_sdk.cli.mmt.logs import logs_mmt
+
+    teamspace = MagicMock()
+    with patch("lightning_sdk.cli.mmt.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.utils.resource_resolution.MMT"
+    ) as mmt:
+        result = CliRunner().invoke(logs_mmt)
+
+    assert result.exit_code != 0
+    assert "Missing multi-machine job name. Pass JOB." in result.output
+    mmt.assert_not_called()
+    assert teamspace.mock_calls == []

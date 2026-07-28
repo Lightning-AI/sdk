@@ -1,9 +1,19 @@
+from click.testing import CliRunner
+
+from lightning_sdk.cli.legacy.list import jobs
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 @mock_command_logging
 def test_job_list_help() -> None:
-    assert_help_contains("lightning job list --help", "Usage: lightning job list", "List jobs for a given teamspace.")
+    text = assert_help_contains(
+        "lightning job list --help",
+        "Usage: lightning job list",
+        "List jobs for a given teamspace.",
+    )
+    normalized_text = " ".join(text.replace("│", " ").split())
+    assert "Defaults to the configured teamspace." in normalized_text
+    assert "interactive menu" not in normalized_text
 
 
 @mock_command_logging
@@ -19,3 +29,7 @@ def test_list_jobs_legacy_help() -> None:
         "Use `lightning job list` instead of `lightning list jobs`.",
         "Usage: lightning list jobs [OPTIONS]",
     )
+    result = CliRunner().invoke(jobs, ["--help"])
+    assert result.exit_code == 0
+    normalized_text = " ".join(result.output.replace("│", " ").split())
+    assert "Should be specified as {owner}/{name}. Defaults to the current teamspace." in normalized_text

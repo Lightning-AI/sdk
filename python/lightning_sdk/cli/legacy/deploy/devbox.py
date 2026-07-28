@@ -1,14 +1,12 @@
 import concurrent.futures
 import os
 import re
-import webbrowser
 from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional
 
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-from rich.prompt import Confirm
 from rich.syntax import Syntax
 
 from lightning_sdk import Machine
@@ -20,6 +18,7 @@ from lightning_sdk.cli.legacy.deploy._auth import (
     select_teamspace,
 )
 from lightning_sdk.cli.legacy.upload import (
+    UploadRecovery,
     _dump_current_upload_state,
     _resolve_previous_upload_state,
     _single_file_upload,
@@ -33,14 +32,19 @@ from lightning_sdk.utils.resolve import _get_studio_url
 class _LitServeDevbox:
     """Build LitServe API in a Studio."""
 
-    def resolve_previous_upload(self, studio: Studio, folder: str) -> Dict[str, str]:
+    def resolve_previous_upload(
+        self,
+        studio: Studio,
+        folder: str,
+        recovery: UploadRecovery = None,
+    ) -> Dict[str, str]:
         remote_path = "."
         pairs = {}
         for root, _, files in os.walk(folder):
             rel_root = os.path.relpath(root, folder)
             for f in files:
                 pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
-        return _resolve_previous_upload_state(studio, remote_path, pairs)
+        return _resolve_previous_upload_state(studio, remote_path, pairs, recovery)
 
     def upload_folder(self, studio: Studio, folder: str, upload_state: Dict[str, str]) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -85,12 +89,12 @@ def _handle_devbox(
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
     user: Optional[str] = None,
+    recovery: UploadRecovery = None,
 ) -> None:
     if script_path.suffix != ".py":
         console.print("❌ Error: Only Python files (.py) are supported for development servers", style="red")
         return
 
-    from_onboarding = False
     authenticate(_AuthMode.DEVBOX, shall_confirm=not non_interactive)
     user_status = poll_verified_status()
     if not user_status["verified"]:
@@ -100,7 +104,6 @@ def _handle_devbox(
         console.print("onboarding user")
         onboarding = _Onboarding(console)
         resolved_teamspace = onboarding.select_teamspace(teamspace, org, user)
-        from_onboarding = True
     else:
         resolved_teamspace = select_teamspace(teamspace, org, user)
     studio = Studio(name=name, teamspace=resolved_teamspace, source=V1CloudSpaceSourceType.LITSERVE)
@@ -108,24 +111,14 @@ def _handle_devbox(
 
     studio_url = _get_studio_url(studio, turn_on=True)
     pathlib_path = Path(script_path).resolve()
-    browser_opened = False
     studio_path = f"{studio.owner.name}/{studio.teamspace.name}/{studio.name}"
 
     console.print("\n=== Lightning Studio Setup ===")
     console.print(f"🔧 [bold]Setting up Studio:[/bold] {studio_path}")
     console.print(f"📁 [bold]Local project:[/bold] {pathlib_path.parent}")
 
-    upload_state = lit_devbox.resolve_previous_upload(studio, str(pathlib_path.parent))
-    if non_interactive:
-        console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-        browser_opened = webbrowser.open(studio_url)
-    elif not from_onboarding:
-        if Confirm.ask("Would you like to open your Studio in the browser?", default=True):
-            console.print(f"🌐 [bold]Opening Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
-            browser_opened = webbrowser.open(studio_url)
-
-    if not browser_opened:
-        console.print(f"🔗 [bold]Access Studio:[/bold] [link={studio_url}]{studio_url}[/link]")
+    upload_state = lit_devbox.resolve_previous_upload(studio, str(pathlib_path.parent), recovery)
+    console.print(f"🔗 [bold]Studio URL:[/bold] [link={studio_url}]{studio_url}[/link]")
 
     # Start the Studio in the background and return immediately using threading
     console.print("\n⚡ Initializing Studio in the background...")

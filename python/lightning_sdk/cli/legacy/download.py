@@ -1,6 +1,5 @@
 import json
 import os
-import re
 from pathlib import Path
 from typing import Optional
 
@@ -10,8 +9,7 @@ from rich.console import Console
 from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
@@ -145,8 +143,7 @@ def download_container(
     CONTAINER: The name of the container to download.
     """
     console = Console()
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
     with console.status("Downloading container..."):
         api = LitContainerApi()
         api.download_container(container, resolved_teamspace, tag, cloud_account)
@@ -154,45 +151,15 @@ def download_container(
 
 
 def _resolve_studio(studio: Optional[str]) -> Studio:
-    user = _get_authed_user()
-    # if no studio specify suggest/filter only user's studios
-    menu = _StudiosMenu()
-    possible_studios = menu._get_possible_studios(user, is_owner=studio is None)
-
     try:
-        if studio:
-            team_name, studio_name = studio.split("/")
-            options = [st for st in possible_studios if st["teamspace"] == team_name and st["name"] == studio_name]
-            if len(options) == 1:
-                selected_studio = menu._get_studio_from_name(studio, possible_studios)
-            # user can also use the partial studio name as secondary interactive selection
-            else:
-                # filter matching simple reg expressions or start with the team and studio name
-                possible_studios = filter(
-                    lambda st: (re.match(team_name, st["teamspace"]) or team_name in st["teamspace"])
-                    and (re.match(studio_name, st["name"]) or studio_name in st["name"]),
-                    possible_studios,
-                )
-                possible_studios = list(possible_studios)
-                if len(possible_studios) == 0:
-                    raise ValueError(
-                        f"Could not find Studio like '{studio}', please consider update your filtering pattern."
-                    )
-                selected_studio = menu._get_studio_from_interactive_menu(list(possible_studios))
-        else:
-            selected_studio = menu._get_studio_from_interactive_menu(possible_studios)
+        resolved_teamspace = resolve_teamspace()
+        return resolve_studio(studio, resolved_teamspace)
 
-    except KeyboardInterrupt:
-        raise KeyboardInterrupt from None
-
-    # give user friendlier error message
     except Exception as e:
         raise StudioCliError(
             f"Could not find the given Studio {studio} to download files from. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
-
-    return Studio(**selected_studio)
 
 
 @download.command(name="licenses")

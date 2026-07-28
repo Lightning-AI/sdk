@@ -3,9 +3,14 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 
 @mock_command_logging
 def test_container_delete_help() -> None:
-    assert_help_contains(
-        "lightning container delete --help", "Usage: lightning container delete", "Delete the docker container NAME."
+    text = assert_help_contains(
+        "lightning container delete --help",
+        "Usage: lightning container delete",
+        "Delete the docker container NAME.",
     )
+    normalized_text = " ".join(text.replace("│", " ").split())
+    assert "Defaults to the configured teamspace." in normalized_text
+    assert "interactive menu" not in normalized_text
 
 
 @mock_command_logging

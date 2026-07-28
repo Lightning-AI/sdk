@@ -1,9 +1,30 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
 from lightning_sdk.cli.legacy import start as start_cli
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging
+
+
+def test_start_uses_deterministic_resolvers() -> None:
+    """Starting a named studio resolves the teamspace and studio without a menu."""
+    from lightning_sdk.cli.studio.start import start_studio
+
+    teamspace = MagicMock()
+    studio = MagicMock()
+    runner = CliRunner()
+    with patch(
+        "lightning_sdk.cli.studio.start.resolve_teamspace",
+        return_value=teamspace,
+    ) as resolve_teamspace, patch(
+        "lightning_sdk.cli.studio.start.resolve_studio",
+        return_value=studio,
+    ) as resolve_studio, patch("lightning_sdk.cli.studio.start.save_studio_to_config"):
+        result = runner.invoke(start_studio, ["--name", "dev"])
+
+    assert result.exit_code == 0
+    resolve_teamspace.assert_called_once_with(None)
+    resolve_studio.assert_called_once_with("dev", teamspace)
 
 
 @mock_command_logging

@@ -8,8 +8,8 @@ from rich.table import Table
 
 from lightning_sdk.api.auth_api import AuthApi
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.utils.resolve import _get_authed_user
 
 _TEAMSPACE_HELP = "Teamspace to list roles for, as 'owner/teamspace'. Falls back to your default teamspace."
@@ -20,7 +20,7 @@ _TEAMSPACE_HELP = "Teamspace to list roles for, as 'owner/teamspace'. Falls back
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output roles as JSON.")
 def roles(teamspace: Optional[str] = None, as_json: bool = False) -> None:
     """List the roles in a teamspace and mark which ones you hold."""
-    resolved = TeamspacesMenu()(teamspace=teamspace)
+    resolved = resolve_teamspace(teamspace)
     api = AuthApi()
     mine = api.my_role_ids(resolved.id, _get_authed_user().id)
 

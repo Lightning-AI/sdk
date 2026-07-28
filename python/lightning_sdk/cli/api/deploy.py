@@ -5,6 +5,7 @@ from typing import Any
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy.serve import api_impl
+from lightning_sdk.cli.legacy.upload import resolve_upload_recovery
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import teamspace_option
 
@@ -21,7 +22,11 @@ from lightning_sdk.cli.utils.teamspace_option import teamspace_option
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
-    "--non-interactive", "--non_interactive", is_flag=True, default=False, help="Do not prompt for confirmation"
+    "--yes",
+    "-y",
+    is_flag=True,
+    default=False,
+    help="Confirm the generated Dockerfile without prompting.",
 )
 @click.option("--machine", default="CPU", help="Machine type to deploy the API on. Defaults to CPU.")
 @click.option(
@@ -44,7 +49,13 @@ from lightning_sdk.cli.utils.teamspace_option import teamspace_option
     default=False,
     help="Whether to include credentials in the deployment.",
 )
+@click.option("--resume", is_flag=True, help="Resume an incomplete upload.")
+@click.option("--restart", is_flag=True, help="Restart an incomplete upload.")
 def deploy_api(**kwargs: Any) -> None:
     """Deploy a LitServe model script."""
+    kwargs["recovery"] = resolve_upload_recovery(
+        resume=kwargs.pop("resume"),
+        restart=kwargs.pop("restart"),
+    )
     kwargs["include_credentials"] = not kwargs.pop("no_credentials")
     api_impl(**kwargs)

@@ -6,20 +6,15 @@ from typing import List, Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
-from lightning_sdk.cli.utils.studio_selection import StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 
 
 @click.command("ssh", cls=LightningCommand)
 @click.option(
     "--name",
-    help=(
-        "The name of the studio to ssh into. "
-        "If not provided, will try to infer from environment, "
-        "use the default value from the config or prompt for interactive selection."
-    ),
+    help="Studio to use. Falls back to the current Studio or configured default.",
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)", type=click.STRING)
 @click.option(
@@ -39,16 +34,11 @@ def ssh_studio(name: Optional[str] = None, teamspace: Optional[str] = None, opti
 
 
 def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[List[str]]) -> None:
-    ssh_private_key_path = configure_ssh_internal()
-
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace=teamspace)
-
-    menu = StudiosMenu(resolved_teamspace)
-    studio = menu(
-        studio=name,
-    )
+    resolved_teamspace = resolve_teamspace(teamspace)
+    studio = resolve_studio(name, resolved_teamspace)
     save_studio_to_config(studio)
+
+    ssh_private_key_path = configure_ssh_internal()
 
     ssh_options = " -o " + " -o ".join(option) if option else ""
     ssh_command = f"ssh -i {ssh_private_key_path}{ssh_options} s_{studio._studio.id}@ssh.lightning.ai"

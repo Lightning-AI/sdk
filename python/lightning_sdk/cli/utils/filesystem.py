@@ -1,9 +1,9 @@
 import os
 from typing import Any, Optional, TypedDict
 
-from lightning_sdk.cli.utils.owner_selection import OwnerMenu
-from lightning_sdk.cli.utils.studio_selection import StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import join_teamspace_slug
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio as resolve_cli_studio
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace as resolve_cli_teamspace
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 
@@ -97,14 +97,9 @@ def parse_teamspace_uploads_path(teamspace_path: str) -> PathResult:
 
 
 def resolve_teamspace(teamspace: Optional[str], owner: Optional[str]) -> Teamspace:
-    owner_menu = OwnerMenu()
-    resolved_owner = owner_menu(owner=owner)
-
-    teamspace_menu = TeamspacesMenu(resolved_owner)
-    return teamspace_menu(teamspace=teamspace)
+    return resolve_cli_teamspace(join_teamspace_slug(owner, teamspace))
 
 
 def resolve_studio(studio_name: Optional[str], teamspace: Optional[str], owner: Optional[str]) -> Studio:
     resolved_teamspace = resolve_teamspace(teamspace, owner)
-    studio_menu = StudiosMenu(resolved_teamspace)
-    return studio_menu(studio=studio_name)
+    return resolve_cli_studio(studio_name, resolved_teamspace)

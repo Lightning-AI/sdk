@@ -12,8 +12,8 @@ from lightning_sdk.cli.utils.logging import LightningCommand
     "--teamspace",
     default=None,
     help=(
-        "the teamspace to list jobs from. Should be specified as {owner}/{name} "
-        "If not provided, can be selected in an interactive menu."
+        "the teamspace to list jobs from. Should be specified as {owner}/{name}. "
+        "Defaults to the configured teamspace."
     ),
 )
 @click.option(

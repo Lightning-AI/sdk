@@ -5,21 +5,16 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
-from lightning_sdk.cli.utils.studio_selection import StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import Machine
 
 
 @click.command("switch", cls=LightningCommand)
 @click.option(
     "--name",
-    help=(
-        "The name of the studio to switch to a different machine. "
-        "If not provided, will try to infer from environment, "
-        "use the default value from the config or prompt for interactive selection."
-    ),
+    help="Studio to use. Falls back to the current Studio or configured default.",
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option(
@@ -49,11 +44,8 @@ def switch_impl(
     machine: Optional[str],
     interruptible: bool,
 ) -> None:
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace=teamspace)
-
-    menu = StudiosMenu(resolved_teamspace)
-    studio = menu(studio=name)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    studio = resolve_studio(name, resolved_teamspace)
 
     resolved_machine = Machine.from_str(machine)
 

@@ -207,7 +207,6 @@ autodoc_mock_imports = [
     "docker",
     "fastapi",
     "uvicorn",
-    "simple_term_menu",
     "rich",
     "tqdm",
     "backoff",

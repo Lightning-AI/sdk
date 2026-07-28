@@ -16,8 +16,8 @@ from lightning_sdk.cli.auth._labels import (
     resource_label,
 )
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 
 _TEAMSPACE_HELP = "Teamspace the role belongs to, as 'owner/teamspace'. Falls back to your default teamspace."
 
@@ -31,7 +31,7 @@ def role(role_id: str, teamspace: Optional[str] = None, as_json: bool = False) -
 
     ROLE_ID is the id of the role; run `lightning auth roles` to find it.
     """
-    resolved = TeamspacesMenu()(teamspace=teamspace)
+    resolved = resolve_teamspace(teamspace)
     role_obj = AuthApi().get_role(resolved.id, role_id)
 
     # Explode each rule into one row per resource, using user-facing labels.
