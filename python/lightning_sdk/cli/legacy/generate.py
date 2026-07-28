@@ -3,7 +3,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 
 
 @click.group(name="generate")
@@ -31,8 +31,7 @@ def generate() -> None:
 )
 def ssh(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Get SSH config entry for a studio."""
-    menu = _StudiosMenu()
-    studio = menu._get_studio(name=name, teamspace=teamspace)
+    studio = resolve_studio(name, resolve_teamspace(teamspace))
 
     conf = _generate_ssh_config(key_path="~/.ssh/lightning_rsa", user=f"s_{studio._studio.id}", host=studio.name)
     # Print the SSH config

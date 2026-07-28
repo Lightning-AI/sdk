@@ -552,23 +552,11 @@ def test_handle_cloud_with_cloud(
     assert "Deployment started, access at" in mock_console.print.call_args[0][0]
 
 
-@patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
-@patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user")
-@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @mock_command_logging
-def test_select_teamspace_when_only_one_available(mock_ts_menu, mock_get_authed_user, mock_teamspace_cls):
-    from lightning_sdk.user import User
-
-    mock_menu_instance = MagicMock()
-    mock_ts_menu.return_value = mock_menu_instance
-    mock_menu_instance._get_possible_teamspaces.return_value = {"id": "test-teamspace"}
-
-    mock_user_owner = MagicMock(spec=User)
-    mock_menu_instance._owner = mock_user_owner
-
+def test_select_teamspace_uses_resolver_for_default(mock_resolve_teamspace):
     select_teamspace(teamspace=None, org="org", user="user")
-    mock_ts_menu.return_value._get_possible_teamspaces.assert_called_once()
-    mock_teamspace_cls.assert_called_once_with(name="test-teamspace", org=None, user=mock_user_owner)
+    mock_resolve_teamspace.assert_called_once_with(teamspace=None, org="org", user="user")
 
 
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
@@ -605,10 +593,9 @@ def mock_onboarding():
                     )
 
 
-@patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
-@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth.resolve_teamspace")
 @mock_command_logging
-def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onboarding):
+def test_onboarding_select_teamspace_without_org(mock_resolve_teamspace, mock_onboarding):
     (
         onboarding,
         mock_user_api_cls,
@@ -616,9 +603,6 @@ def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onb
         mock_lightning_client,
         mock_select_teamspace,
     ) = mock_onboarding
-    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {
-        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
-    }
     mock_user_api_cls.return_value.get_user.return_value.status.verified = True
     mock_user_api_cls.return_value.get_user.return_value.status.completed_project_onboarding = False
     (
@@ -632,18 +616,12 @@ def test_onboarding_select_teamspace_without_org(mock_ts_menu, mock_ts, mock_onb
     mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
     onboarding.select_teamspace(None, org=None, user=None)
     onboarding._wait_user_onboarding.assert_called_once()
-    mock_ts.assert_called_once_with(name="personal-teamspace", org=None, user="test-user")
-
-    mock_ts_menu.return_value._get_possible_teamspaces.return_value = {
-        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
-        "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
-    }
+    mock_resolve_teamspace.assert_called_once_with(teamspace=None, org=None, user=None)
 
 
-@patch("lightning_sdk.cli.legacy.deploy._auth.Teamspace")
-@patch("lightning_sdk.cli.legacy.deploy._auth.TeamspacesMenu")
+@patch("lightning_sdk.cli.legacy.deploy._auth.resolve_teamspace")
 @mock_command_logging
-def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboarding):
+def test_onboarding_select_teamspace_with_org(mock_resolve_teamspace, mock_onboarding):
     (
         onboarding,
         mock_user_api_cls,
@@ -652,11 +630,6 @@ def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboar
         mock_select_teamspace,
     ) = mock_onboarding
 
-    possible_teamspaces = {
-        "id1": {"name": "personal-teamspace", "org": None, "user": "test-user"},
-        "id2": {"name": "org-teamspace", "org": "test-org", "user": "test-user"},
-    }
-    mock_ts_menu.return_value._get_possible_teamspaces.return_value = possible_teamspaces
     mock_user_api_cls.return_value.get_user.return_value.status.verified = True
     mock_user_api_cls.return_value.get_user.return_value.status.completed_project_onboarding = False
     (
@@ -670,7 +643,7 @@ def test_onboarding_select_teamspace_with_org(mock_ts_menu, mock_ts, mock_onboar
     mock_select_teamspace.assert_not_called(), "select_teamspace shouldn't called when user is onboarding"
     onboarding.select_teamspace(None, org=None, user=None)
     onboarding._wait_user_onboarding.assert_called_once()
-    mock_ts.assert_called_once_with(name="org-teamspace", org="test-org", user="test-user")
+    mock_resolve_teamspace.assert_called_once_with(teamspace=None, org=None, user=None)
 
 
 @mock_command_logging

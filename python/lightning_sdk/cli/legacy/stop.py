@@ -3,9 +3,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.cli.legacy.job_and_mmt_action import _JobAndMMTAction
-from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.studio import Studio
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_mmt, resolve_studio, resolve_teamspace
 
 
 @click.group("stop")
@@ -23,7 +21,7 @@ def stop() -> None:
     help=(
         "the name of the teamspace the job lives in. "
         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-        "If not specified can be selected interactively."
+        "Defaults to the current teamspace."
     ),
 )
 def job(name: str, teamspace: Optional[str] = None) -> None:
@@ -34,8 +32,7 @@ def job(name: str, teamspace: Optional[str] = None) -> None:
 
     NAME: the name of the job to stop.
     """
-    menu = _JobAndMMTAction()
-    job = menu.job(name=name, teamspace=teamspace)
+    job = resolve_job(name, resolve_teamspace(teamspace))
 
     job.stop()
     Console().print(f"Successfully stopped {job.name}!")
@@ -51,7 +48,7 @@ def job(name: str, teamspace: Optional[str] = None) -> None:
     help=(
         "the name of the teamspace the multi-machine job lives in. "
         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-        "If not specified can be selected interactively."
+        "Defaults to the current teamspace."
     ),
 )
 def mmt(name: str, teamspace: Optional[str] = None) -> None:
@@ -62,8 +59,7 @@ def mmt(name: str, teamspace: Optional[str] = None) -> None:
 
     NAME: the name of the multi-machine job to stop.
     """
-    menu = _JobAndMMTAction()
-    mmt = menu.mmt(name=name, teamspace=teamspace)
+    mmt = resolve_mmt(name, resolve_teamspace(teamspace))
 
     mmt.stop()
     Console().print(f"Successfully stopped {mmt.name}!")
@@ -79,7 +75,7 @@ def mmt(name: str, teamspace: Optional[str] = None) -> None:
     help=(
         "the name of the teamspace the studio lives in. "
         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
-        "If not specified can be selected interactively."
+        "Defaults to the current teamspace."
     ),
 )
 def studio(name: str, teamspace: Optional[str] = None) -> None:
@@ -90,18 +86,7 @@ def studio(name: str, teamspace: Optional[str] = None) -> None:
 
     NAME: the name of the studio to stop.
     """
-    if teamspace is not None:
-        ts_splits = teamspace.split("/")
-        if len(ts_splits) != 2:
-            raise ValueError(f"Teamspace should be of format <OWNER>/<TEAMSPACE_NAME> but got {teamspace}")
-        owner, teamspace = ts_splits
-    else:
-        owner, teamspace = None, None
-
-    try:
-        studio = Studio(name=name, teamspace=teamspace, org=owner, user=None, create_ok=False)
-    except (RuntimeError, ValueError, ApiException):
-        studio = Studio(name=name, teamspace=teamspace, org=None, user=owner, create_ok=False)
+    studio = resolve_studio(name, resolve_teamspace(teamspace))
 
     studio.stop()
     Console().print("Studio successfully stopped")

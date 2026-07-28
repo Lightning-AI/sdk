@@ -6,10 +6,10 @@ from typing import List, Optional, TypedDict
 import rich_click as click
 from rich.console import Console
 
-from lightning_sdk import Organization, Teamspace
+from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace as _resolve_teamspace_option
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -44,16 +44,6 @@ def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
 
 
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
-    if teamspace is None:
-        menu = TeamspacesMenu()
-        auth_user = _get_authed_user()
-        possible_teamspaces = menu._get_possible_teamspaces(auth_user)
-        if len(possible_teamspaces) == 1:
-            teamspace_name = next(iter(possible_teamspaces.values()))
-            if isinstance(menu._owner, Organization):
-                return Teamspace(name=teamspace_name, org=menu._owner, user=None)
-            return Teamspace(name=teamspace_name, org=None, user=menu._owner)
-        return menu(teamspace)
     return _resolve_teamspace_option(teamspace=teamspace, org=org, user=user)
 
 
@@ -152,18 +142,5 @@ class _Onboarding:
             return select_teamspace(teamspace, org, user)
 
         # Run only when user hasn't completed onboarding yet.
-        menu = TeamspacesMenu()
         self._wait_user_onboarding()
-        # Onboarding has been completed - user already selected organization if they could
-        possible_teamspaces = menu._get_possible_teamspaces(self.user)
-        if len(possible_teamspaces) == 1:
-            # User didn't select any org
-            value = next(iter(possible_teamspaces.values()))
-            return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-
-        for _, value in possible_teamspaces.items():
-            # User select an org
-            # Onboarding teamspace will be the default teamspace in the selected org
-            if value["org"]:
-                return Teamspace(name=value["name"], org=value["org"], user=value["user"])
-        raise RuntimeError("Unable to select teamspace. Visit lightning.ai")
+        return resolve_teamspace(teamspace=teamspace, org=org, user=user)

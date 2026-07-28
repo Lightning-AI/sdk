@@ -41,10 +41,10 @@ def test_open_help_redirect() -> None:
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
 @mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
-@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open.resolve_teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
+def test_open_folder(mock_upload_folder, resolve_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
@@ -56,7 +56,7 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, _webbrowse
     result = runner.invoke(open, [f"{tmpdir}/folder", "--cloud", "test-cloud"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_once_with(name="folder", teamspace=mock_teamspace(), cloud="test-cloud")
+    mock_studio.assert_called_once_with(name="folder", teamspace=resolve_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_called_once()
     assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output
 
@@ -64,10 +64,10 @@ def test_open_folder(mock_upload_folder, mock_teamspace, mock_studio, _webbrowse
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
 @mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
-@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open.resolve_teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
+def test_open_file(mock_upload_folder, resolve_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
@@ -78,7 +78,7 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser,
     result = runner.invoke(open, [f"{tmpdir}/file.txt", "--cloud", "test-cloud"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_once_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
+    mock_studio.assert_called_once_with(name="file", teamspace=resolve_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
     assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output
@@ -87,24 +87,24 @@ def test_open_file(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser,
 @mock.patch.dict("os.environ", {"LIGHTNING_CLOUD_URL": "lightning.ai:443"}, clear=True)
 @mock.patch("webbrowser.open", side_effect=AssertionError("browser must not open"))
 @mock.patch("lightning_sdk.cli.legacy.open.Studio")
-@mock.patch("lightning_sdk.cli.legacy.open.Teamspace")
+@mock.patch("lightning_sdk.cli.legacy.open.resolve_teamspace")
 @mock.patch("lightning_sdk.cli.legacy.open._upload_folder")
 @mock_command_logging
-def test_open_file_without_cloud_account(mock_upload_folder, mock_teamspace, mock_studio, _webbrowser, tmpdir):
+def test_open_file_without_cloud_account(mock_upload_folder, resolve_teamspace, mock_studio, _webbrowser, tmpdir):
     mock_studio.return_value.owner.name = "owner-name"
     mock_studio.return_value.teamspace.name = "teamspace-name"
     mock_studio.return_value.name = "studio-name"
     mock_studio.return_value.cloud_account = "test-cloud"
-    mock_teamspace.return_value.name = "teamspace-name"
     mock_studio.return_value.teamspace.owner.name = "owner-name"
-    mock_teamspace.return_value.owner.name = "owner-name"
+    resolve_teamspace.return_value.name = "teamspace-name"
+    resolve_teamspace.return_value.owner.name = "owner-name"
     (Path(tmpdir) / "file.txt").touch()
 
     runner = CliRunner()
     result = runner.invoke(open, [f"{tmpdir}/file.txt"])
     assert result.exit_code == 0, result.output
 
-    mock_studio.assert_called_with(name="file", teamspace=mock_teamspace(), cloud="test-cloud")
+    mock_studio.assert_called_with(name="file", teamspace=resolve_teamspace(), cloud="test-cloud")
     mock_upload_folder.assert_not_called()
     mock_studio().upload_file.assert_called_once()
     assert "lightning.ai/owner-name/teamspace-name/studios/studio-name/code?turnOn=true" in result.output

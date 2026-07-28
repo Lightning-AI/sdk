@@ -13,13 +13,11 @@ from tqdm import tqdm
 from lightning_sdk.api.lit_container_api import DockerNotRunningError, LCRAuthFailedError, LitContainerApi
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
-from lightning_sdk.cli.legacy.studios_menu import _StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.constants import _LIGHTNING_DEBUG
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import upload_model as _upload_model
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user
 
 _STUDIO_UPLOAD_STATUS_PATH = "~/.lightning/studios/uploads"
 
@@ -140,8 +138,7 @@ def upload_container(
     platform: Optional[str] = "linux/amd64",
 ) -> None:
     """Upload a container to Lightning AI's container registry."""
-    menu = TeamspacesMenu()
-    teamspace = menu(teamspace)
+    teamspace = resolve_teamspace(teamspace)
     console = Console()
     with Progress(
         SpinnerColumn(),
@@ -268,27 +265,15 @@ def _file(path: str, studio: Optional[str] = None, remote_path: Optional[str] = 
 
 
 def _resolve_studio(studio: Optional[str]) -> Studio:
-    user = _get_authed_user()
-    menu = _StudiosMenu()
-    possible_studios = menu._get_possible_studios(user)
-
     try:
-        if studio is None:
-            selected_studio = menu._get_studio_from_interactive_menu(possible_studios)
-        else:
-            selected_studio = menu._get_studio_from_name(studio, possible_studios)
+        resolved_teamspace = resolve_teamspace()
+        return resolve_studio(studio, resolved_teamspace)
 
-    except KeyboardInterrupt:
-        raise KeyboardInterrupt from None
-
-    # give user friendlier error message
     except Exception as e:
         raise StudioCliError(
             f"Could not find the given Studio {studio} to upload files to. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
-
-    return Studio(**selected_studio)
 
 
 def _print_docker_push(lines: Generator, console: Console, progress: Progress, push_task: rich.progress.TaskID) -> None:

@@ -1,8 +1,8 @@
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningGroup
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.machine import CloudProvider
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
@@ -60,8 +60,7 @@ def set_studio(studio_name: str) -> None:
 @click.argument("teamspace_name")
 def set_teamspace(teamspace_name: str) -> None:
     """Set the default teamspace name in the config."""
-    menu = TeamspacesMenu()
-    teamspace_resolved = menu(teamspace=teamspace_name)
+    teamspace_resolved = resolve_teamspace(teamspace_name)
 
     # explicit user action, so overwrite the config
     save_teamspace_to_config(teamspace_resolved, overwrite=True)
