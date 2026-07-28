@@ -5,18 +5,13 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.studio_selection import StudiosMenu
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 
 
 @click.command("delete", cls=LightningCommand)
 @click.option(
     "--name",
-    help=(
-        "The name of the studio to delete. "
-        "If not provided, will try to infer from environment, "
-        "use the default value from the config or prompt for interactive selection."
-    ),
+    help="Studio to use. Falls back to the current Studio or configured default.",
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 def delete_studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
@@ -30,11 +25,8 @@ def delete_studio(name: Optional[str] = None, teamspace: Optional[str] = None) -
 
 
 def delete_impl(name: Optional[str], teamspace: Optional[str]) -> None:
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace=teamspace)
-
-    menu = StudiosMenu(resolved_teamspace)
-    studio = menu(studio=name)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    studio = resolve_studio(name, resolved_teamspace)
 
     studio_name = f"{studio.teamspace.owner.name}/{studio.teamspace.name}/{studio.name}"
     confirmed = click.confirm(

@@ -1,6 +1,32 @@
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
+def test_ssh_resolves_before_downloading_keys() -> None:
+    """SSH lookup failures occur before key downloads."""
+    from unittest.mock import MagicMock, patch
+
+    import pytest
+    import rich_click as click
+
+    from lightning_sdk.cli.studio.ssh import ssh_impl
+
+    configure = MagicMock()
+    with patch(
+        "lightning_sdk.cli.studio.ssh.resolve_teamspace",
+        return_value=MagicMock(),
+    ), patch(
+        "lightning_sdk.cli.studio.ssh.resolve_studio",
+        side_effect=click.UsageError("Pass --name STUDIO."),
+    ), patch(
+        "lightning_sdk.cli.studio.ssh.configure_ssh_internal",
+        configure,
+    ):
+        with pytest.raises(click.UsageError, match="--name"):
+            ssh_impl(name=None, teamspace=None, option=None)
+
+    configure.assert_not_called()
+
+
 @mock_command_logging
 def test_ssh_studio():
     result_text = command_text("lightning studio ssh --help")

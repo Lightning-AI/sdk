@@ -11,9 +11,9 @@ from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import studio_name_link
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
@@ -29,8 +29,7 @@ def _parse_args_or_get_from_current_studio(
     cloud: Optional[str] = None,
 ) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
     # Parse args provided by user
-    menu = TeamspacesMenu()
-    resolved_teamspace = menu(teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
 
     template_id = get_base_studio_id(studio_type, teamspace=resolved_teamspace)
