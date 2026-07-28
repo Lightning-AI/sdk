@@ -77,7 +77,7 @@ def studios(
 @click.option(
     "--teamspace",
     default=None,
-    help=("the teamspace to list jobs from. Should be specified as {owner}/{name}Defaults to the current teamspace."),
+    help=("the teamspace to list jobs from. Should be specified as {owner}/{name}. Defaults to the current teamspace."),
 )
 @click.option(
     "--all",

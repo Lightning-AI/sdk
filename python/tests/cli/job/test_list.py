@@ -1,3 +1,6 @@
+from click.testing import CliRunner
+
+from lightning_sdk.cli.legacy.list import jobs
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
@@ -26,3 +29,7 @@ def test_list_jobs_legacy_help() -> None:
         "Use `lightning job list` instead of `lightning list jobs`.",
         "Usage: lightning list jobs [OPTIONS]",
     )
+    result = CliRunner().invoke(jobs, ["--help"])
+    assert result.exit_code == 0
+    normalized_text = " ".join(result.output.replace("│", " ").split())
+    assert "Should be specified as {owner}/{name}. Defaults to the current teamspace." in normalized_text
