@@ -1,4 +1,4 @@
-"""Job logs command."""
+"""MMT logs command."""
 
 from typing import Optional
 
@@ -16,14 +16,13 @@ from lightning_sdk.cli.utils.logs import resolve_time
     "--teamspace",
     default=None,
     help=(
-        "the name of the teamspace the job lives in. "
+        "the name of the teamspace the multi-machine job lives in. "
         "Should be specified as {teamspace_owner}/{teamspace_name} (e.g my-org/my-teamspace). "
         "If not specified can be selected interactively."
     ),
 )
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, default=None, help="Only show the last N lines.")
-@click.option("--rank", type=int, default=None, help="Distributed job rank to read from (running jobs only).")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--since", default=None, help='Only include lines at or after this time (e.g. "2h", RFC3339).')
 @click.option("--until", default=None, help='Only include lines at or before this time (e.g. "30m", RFC3339).')
@@ -34,31 +33,29 @@ from lightning_sdk.cli.utils.logs import resolve_time
     default=None,
     help="Only include lines at or above this severity.",
 )
-def logs_job(
+def logs_mmt(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     follow: bool = False,
     tail: Optional[int] = None,
-    rank: Optional[int] = None,
     timestamps: bool = False,
     since: Optional[str] = None,
     until: Optional[str] = None,
     query: Optional[str] = None,
     severity: Optional[str] = None,
 ) -> None:
-    """Print the logs for a job.
+    """Print the logs for a multi-machine job.
 
-    Prints a snapshot of the logs available so far. Pass --follow to stream new
-    lines from a running job until it finishes or you press Ctrl-C. --query and
-    --severity are applied by the server, to both the snapshot and the stream.
+    Reads every machine, merged into one timeline and labelled with the machine each line came
+    from. Pass --follow to stream new lines until the job finishes or you press Ctrl-C. To read a
+    single machine, use `lightning job logs <machine-name>`.
     """
-    job = _JobAndMMTAction().job(name=name, teamspace=teamspace)
+    mmt = _JobAndMMTAction().mmt(name=name, teamspace=teamspace)
 
     try:
-        logs = job.logs(
+        logs = mmt.logs(
             follow=follow,
             tail=tail,
-            rank=rank,
             timestamps=timestamps,
             since=resolve_time(since, "--since"),
             until=resolve_time(until, "--until"),

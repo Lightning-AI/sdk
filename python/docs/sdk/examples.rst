@@ -29,4 +29,5 @@ CLI examples
    examples/mmts-cli
    examples/teamspaces-cli
    examples/sandboxes-cli
+   examples/logs-cli
    examples/api-cli
