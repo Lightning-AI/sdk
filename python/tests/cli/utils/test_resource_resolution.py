@@ -1,0 +1,62 @@
+from unittest.mock import MagicMock, patch
+
+import pytest
+import rich_click as click
+
+from lightning_sdk.cli.utils.resource_resolution import (
+    join_teamspace_slug,
+    resolve_studio,
+    resolve_teamspace,
+)
+
+
+def test_resolve_teamspace_uses_sdk_defaults() -> None:
+    resolved = MagicMock()
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution._resolve_teamspace",
+        return_value=resolved,
+    ) as resolve:
+        assert resolve_teamspace() is resolved
+    resolve.assert_called_once_with(teamspace=None, org=None, user=None)
+
+
+def test_resolve_teamspace_requires_teamspace_when_sdk_has_no_default() -> None:
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution._resolve_teamspace",
+        return_value=None,
+    ), pytest.raises(click.UsageError, match="--teamspace"):
+        resolve_teamspace()
+
+
+def test_resolve_teamspace_preserves_transport_errors() -> None:
+    failure = RuntimeError("service unavailable")
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution._resolve_teamspace",
+        side_effect=failure,
+    ), pytest.raises(RuntimeError, match="service unavailable"):
+        resolve_teamspace("owner/teamspace")
+
+
+def test_resolve_studio_uses_exact_sdk_lookup() -> None:
+    teamspace = MagicMock()
+    resolved = MagicMock()
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Studio",
+        return_value=resolved,
+    ) as studio:
+        assert resolve_studio("dev", teamspace) is resolved
+    studio.assert_called_once_with(name="dev", teamspace=teamspace, create_ok=False)
+
+
+def test_resolve_studio_converts_not_found_to_usage_error() -> None:
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Studio",
+        side_effect=ValueError("Studio 'missing' does not exist."),
+    ), pytest.raises(click.UsageError, match="missing"):
+        resolve_studio("missing", MagicMock())
+
+
+def test_join_teamspace_slug_uses_owner_only_when_both_parts_exist() -> None:
+    assert join_teamspace_slug("owner", "teamspace") == "owner/teamspace"
+    assert join_teamspace_slug(None, "teamspace") == "teamspace"
+    assert join_teamspace_slug("owner", None) is None
