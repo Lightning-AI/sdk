@@ -47,18 +47,28 @@ def test_resolve_force_acks_all():
     assert resolve_acknowledgements(["A", "B"], force=True, interactive=False) == ["A", "B"]
 
 
-def test_resolve_non_interactive_no_force_returns_empty():
-    assert resolve_acknowledgements(["A"], force=False, interactive=False) == []
+def test_resolve_unacknowledged_warnings_never_prompts(monkeypatch):
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment._byom_ack.click.confirm",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not prompt")),
+    )
 
-
-def test_resolve_interactive_accept(monkeypatch):
-    monkeypatch.setattr("lightning_sdk.cli.deployment._byom_ack.click.confirm", lambda *_a, **_k: True)
-    assert resolve_acknowledgements(["A", "B"], force=False, interactive=True) == ["A", "B"]
-
-
-def test_resolve_interactive_decline(monkeypatch):
-    monkeypatch.setattr("lightning_sdk.cli.deployment._byom_ack.click.confirm", lambda *_a, **_k: False)
     assert resolve_acknowledgements(["A"], force=False, interactive=True) == []
+
+
+def test_create_with_unacknowledged_warnings_raises_without_prompting(monkeypatch):
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment._byom_ack.click.confirm",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not prompt")),
+    )
+
+    with pytest.raises(click.UsageError, match="unacknowledged warnings"):
+        create_with_acknowledgement(
+            lambda _acknowledged: (_ for _ in ()).throw(_api_exc("unacknowledged BYOM warnings: BYOM_X")),
+            acks=[],
+            force=False,
+            interactive=True,
+        )
 
 
 def test_create_with_ack_success_first_try():

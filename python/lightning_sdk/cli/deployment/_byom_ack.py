@@ -27,19 +27,12 @@ def extract_unacked_warnings(exc: ApiException) -> List[str]:
 
 
 def resolve_acknowledgements(codes: List[str], *, force: bool, interactive: bool) -> List[str]:
-    """Decide which warning codes to acknowledge. An empty result means 'do not proceed'.
+    """Decide which warning codes to acknowledge without prompting.
 
-    ``force`` acknowledges everything; in interactive mode the user is prompted; in a
-    non-interactive session without ``force`` nothing is acknowledged (the caller errors).
+    ``force`` acknowledges everything. Otherwise the caller-provided ``--ack`` values
+    are the only acknowledgement, and an empty result means 'do not proceed'.
     """
     if force:
-        return list(codes)
-    if not interactive:
-        return []
-    click.echo("Deployment validation produced warnings:", err=True)
-    for code in codes:
-        click.echo(f"  ⚠ {code}", err=True)
-    if click.confirm("Acknowledge these warnings and deploy anyway?", default=False):
         return list(codes)
     return []
 
@@ -55,8 +48,8 @@ def create_with_acknowledgement(
 
     ``create_fn`` takes the list of acknowledged codes and performs the create, raising
     ``ApiException`` on rejection. Returns ``create_fn``'s result on success. Raises
-    ``click.UsageError`` when warnings remain unacknowledged (non-interactive without
-    ``--force``, or the user declined), and re-raises any non-warning error unchanged.
+    ``click.UsageError`` when warnings remain unacknowledged, and re-raises any
+    non-warning error unchanged.
     """
     acknowledged = list(acks)
     while True:

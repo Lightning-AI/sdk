@@ -3,10 +3,11 @@ from datetime import datetime
 from importlib.util import find_spec
 from pathlib import Path
 from unittest import mock
-from unittest.mock import ANY, MagicMock, call, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 import rich
+import rich_click as click
 from click.testing import CliRunner
 
 from lightning_sdk import Machine
@@ -39,9 +40,11 @@ def test_serve_help():
 
 @mock_command_logging
 def test_api_deploy_help():
-    assert_help_contains(
+    text = assert_help_contains(
         "lightning api deploy --help", "Usage: lightning api deploy", "Deploy a LitServe model script."
     )
+    assert "--yes" in text
+    assert "--non-interactive" not in text
 
 
 @mock_command_logging
@@ -168,16 +171,10 @@ def test_cloud_deployment(
     mock_client.api.push.return_value = [{"status": "Pushing"}]
     mock_resolve_cluster.return_value = None
 
-    # Mock user confirmations
-    mock_confirm.side_effect = [
-        True,  # "Would you like to deploy this model to the cloud?"
-        True,  # "Is the Dockerfile correct?"
-    ]
-
     # Test with specific repository tag
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, cloud=True, name=repo, tag=tag)
+    serve_api(temp_script, cloud=True, name=repo, tag=tag, yes=True)
 
     mock_select_teamspace.assert_called_once()
     mock_authenticate.assert_called_once()
@@ -186,9 +183,7 @@ def test_cloud_deployment(
     mock_docker_build.assert_called_once()
     mock_litcr.return_value.upload_container.assert_called_once()
 
-    # Verify user was prompted twice
-    assert mock_confirm.call_count == 1
-    mock_confirm.assert_has_calls([call("Have you reviewed the Dockerfile and confirmed it's correct?", default=True)])
+    mock_confirm.assert_not_called()
 
     # Capture and verify the output
     captured = capsys.readouterr()
@@ -206,7 +201,7 @@ def test_cloud_deployment(
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
-def test_cloud_deployment_non_interactive(
+def test_cloud_deployment_yes(
     mock_poll_verified_status,
     mock_authenticate,
     mock_resolve_cluster,
@@ -230,9 +225,9 @@ def test_cloud_deployment_non_interactive(
 
     repo = "test-repo/model"
     tag = "latest"
-    serve_api(temp_script, cloud=True, name=repo, tag=tag, non_interactive=True)
+    serve_api(temp_script, cloud=True, name=repo, tag=tag, yes=True)
 
-    mock_authenticate.assert_called_once_with(_AuthMode.DEPLOY, shall_confirm=False)
+    mock_authenticate.assert_called_once_with(_AuthMode.DEPLOY, shall_confirm=True)
     mock_poll_verified_status.asssert_called_once()
     mock_select_teamspace.assert_called_once()
     mock_docker_build.assert_called_once()
@@ -282,11 +277,26 @@ def test_handle_cloud_no_internet(mock_is_connected):
     assert console.print.call_args[0][0] == "To run locally instead, use: `lightning serve [SCRIPT | server.py]`"
 
 
+@patch("rich.prompt.Confirm.ask")
+@patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
+@patch("lightning_sdk.cli.legacy.deploy.serve.is_connected", return_value=True)
+def test_handle_cloud_requires_yes_before_build(mock_is_connected, mock_deployer, mock_confirm, temp_script):
+    """A generated Dockerfile must be explicitly confirmed before image building starts."""
+    mock_deployer.return_value.dockerize_api.return_value = "Dockerfile"
+
+    with pytest.raises(click.UsageError, match="rerun with --yes"):
+        _handle_cloud(temp_script, MagicMock(), machine=Machine.from_str("CPU"))
+
+    mock_is_connected.assert_called_once_with()
+    mock_deployer.return_value.build_container.assert_not_called()
+    mock_confirm.assert_not_called()
+
+
 @patch("lightning_sdk.cli.legacy.deploy.serve.LitContainerApi")
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
-@patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
+@patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @patch("lightning_sdk.cli.legacy.deploy.serve._Onboarding")
@@ -315,6 +325,7 @@ def test_handle_cloud_from_onboarding(
         console,
         teamspace="test",
         machine=MagicMock(),
+        yes=True,
     )
     mock_litcr.assert_called_once()
     mock_poll_verified_status.asssert_called_once()
@@ -331,7 +342,7 @@ def test_handle_cloud_from_onboarding(
 @patch("lightning_sdk.cli.legacy.deploy._auth._resolve_teamspace_option")
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
-@patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
+@patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.webbrowser")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
@@ -357,6 +368,7 @@ def test_handle_cloud(
         console,
         teamspace="test",
         machine=MagicMock(),
+        yes=True,
     )
     mock_litcr.assert_called_once()
     mock_poll_verified_status.asssert_called_once()
@@ -371,7 +383,7 @@ def test_handle_cloud(
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
-@patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
+@patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.serve.DeploymentApi")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
@@ -391,7 +403,7 @@ def test_handle_byoc_cloud(
     mock_resolve_cluster.return_value = "byoc-123"
     mock_deployment_api.return_value.get_deployment_by_name.return_value = None
     console = rich.console.Console()
-    _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud="byoc-123")
+    _handle_cloud(temp_script, console, teamspace="test", machine=MagicMock(), cloud="byoc-123", yes=True)
     mock_litcr.assert_called_once()
     mock_poll_verified_status.asssert_called_once()
     mock_authenticate.assert_called_once()
@@ -404,7 +416,7 @@ def test_handle_byoc_cloud(
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
-@patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
+@patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @mock_command_logging
@@ -421,6 +433,7 @@ def test_handle_cloud_deployment_api(
         mock_console,
         teamspace="test",
         machine=MagicMock(),
+        yes=True,
     )
 
     mock_poll_verified_status.asssert_called_once()
@@ -434,7 +447,7 @@ def test_handle_cloud_deployment_api(
 @patch("lightning_sdk.cli.legacy.deploy.serve.select_teamspace")
 @patch("lightning_sdk.cli.legacy.deploy.serve.resolve_cluster")
 @patch("lightning_sdk.cli.legacy.deploy.serve._LitServeDeployer")
-@patch("lightning_sdk.cli.legacy.deploy.serve.Confirm.ask")
+@patch("rich.prompt.Confirm.ask")
 @patch("lightning_sdk.cli.legacy.deploy.serve.authenticate")
 @patch("lightning_sdk.cli.legacy.deploy.serve.poll_verified_status")
 @patch("lightning_sdk.cli.legacy.deploy.serve._get_registry_url")
@@ -468,7 +481,7 @@ def test_handle_cloud_with_cloud(
         teamspace="test-teamspace",  # Pass string, not Teamspace object
         machine=machine,
         cloud=cloud,
-        non_interactive=True,
+        yes=True,
         interruptible=True,
         repository=repository,
     )
@@ -732,15 +745,13 @@ def test_handle_devbox(
 @patch("lightning_sdk.cli.legacy.deploy.serve._handle_devbox")
 @pytest.mark.parametrize("machine", ["CPU", "T4", "A10G_X_4"])
 @pytest.mark.parametrize("interruptible", [True, False])
-@pytest.mark.parametrize("non_interactive", [True, False])
 @mock_command_logging
-def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interruptible, non_interactive):
+def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interruptible):
     serve_api(
         temp_script,
         devbox=machine,
         name="test-devbox",
         interruptible=interruptible,
-        non_interactive=non_interactive,
         teamspace="test-teamspace",
         org="test-org",
         user="test-user",
@@ -750,10 +761,9 @@ def test_devbox_with_machine(mock_handle_devbox, temp_script, machine, interrupt
         "test-devbox",
         temp_script,
         mock.ANY,
-        non_interactive,
-        machine,
-        interruptible,
-        "test-teamspace",
-        "test-org",
-        "test-user",
+        machine=machine,
+        interruptible=interruptible,
+        teamspace="test-teamspace",
+        org="test-org",
+        user="test-user",
     )

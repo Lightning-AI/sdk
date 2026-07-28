@@ -14,28 +14,28 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_
     help="Studio to use. Falls back to the current Studio or configured default.",
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
-def delete_studio(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
+@click.option("--yes", "-y", is_flag=True, default=False, help="Confirm deletion without prompting.")
+def delete_studio(
+    name: Optional[str] = None,
+    teamspace: Optional[str] = None,
+    yes: bool = False,
+) -> None:
     """Delete a Studio.
 
     Example:
       lightning studio delete --name my-studio
 
     """
-    return delete_impl(name=name, teamspace=teamspace)
+    return delete_impl(name=name, teamspace=teamspace, yes=yes)
 
 
-def delete_impl(name: Optional[str], teamspace: Optional[str]) -> None:
+def delete_impl(name: Optional[str], teamspace: Optional[str], yes: bool) -> None:
     resolved_teamspace = resolve_teamspace(teamspace)
     studio = resolve_studio(name, resolved_teamspace)
 
     studio_name = f"{studio.teamspace.owner.name}/{studio.teamspace.name}/{studio.name}"
-    confirmed = click.confirm(
-        f"Are you sure you want to delete {studio._cls_name} '{studio_name}'?",
-        abort=True,
-    )
-    if not confirmed:
-        click.echo(f"{studio._cls_name} deletion cancelled")
-        return
+    if not yes:
+        raise click.UsageError(f"Deleting studio '{studio_name}' requires --yes.")
 
     studio.delete()
 

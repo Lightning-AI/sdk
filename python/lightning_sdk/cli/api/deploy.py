@@ -21,7 +21,11 @@ from lightning_sdk.cli.utils.teamspace_option import teamspace_option
 )
 @click.option("--name", default=None, help="Name of the deployed API (e.g., 'classification-api', 'Llama-api')")
 @click.option(
-    "--non-interactive", "--non_interactive", is_flag=True, default=False, help="Do not prompt for confirmation"
+    "--yes",
+    "-y",
+    is_flag=True,
+    default=False,
+    help="Confirm the generated Dockerfile without prompting.",
 )
 @click.option("--machine", default="CPU", help="Machine type to deploy the API on. Defaults to CPU.")
 @click.option(

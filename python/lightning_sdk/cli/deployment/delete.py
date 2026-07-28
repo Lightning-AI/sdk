@@ -21,7 +21,7 @@ def delete_deployment(name: str, teamspace: Optional[str] = None, yes: bool = Fa
     deployment = resolve_deployment(api, resolved_teamspace.id, name)
 
     if not yes:
-        click.confirm(f"Delete deployment {deployment.name}?", abort=True)
+        raise click.UsageError(f"Deleting deployment '{deployment.name}' requires --yes.")
 
     api.delete_deployment(deployment)
     click.echo(f"Deleted deployment {deployment.name}.")
