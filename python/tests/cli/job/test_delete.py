@@ -56,3 +56,21 @@ def test_job_delete_resolves_exact_name() -> None:
     resolve_teamspace.assert_called_once_with("org/teamspace")
     resolve_job.assert_called_once_with("train", teamspace)
     job.delete.assert_called_once_with()
+
+
+def test_job_delete_json() -> None:
+    import json
+
+    from lightning_sdk.cli.job.delete import delete_job
+
+    teamspace = MagicMock()
+    job = MagicMock()
+    job.name = "train"
+    with patch("lightning_sdk.cli.job.delete.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.delete.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(delete_job, ["train", "--teamspace", "org/teamspace", "--json"])
+
+    assert result.exit_code == 0, result.output
+    job.delete.assert_called_once_with()
+    assert json.loads(result.output) == {"name": "train", "deleted": True}

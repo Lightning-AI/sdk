@@ -5,6 +5,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.get_base_studio import get_base_studio_id
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import studio_name_link
@@ -25,11 +26,13 @@ from lightning_sdk.studio import Studio
     "Defaults to the first available template.",
     type=click.STRING,
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output the created Studio as JSON.")
 def create_studio(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     cloud: Optional[str] = None,
     studio_type: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     """Create a new Studio.
 
@@ -41,6 +44,7 @@ def create_studio(
         teamspace=teamspace,
         cloud=cloud,
         studio_type=studio_type,
+        as_json=as_json,
     )
 
 
@@ -49,6 +53,7 @@ def create_impl(
     teamspace: Optional[str],
     cloud: Optional[str] = None,
     studio_type: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     resolved_teamspace = resolve_teamspace(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
@@ -70,5 +75,9 @@ def create_impl(
         if name:
             raise ValueError(f"Could not create {cls_name}: '{name}'. Does the {cls_name} exist?") from None
         raise ValueError(f"Could not create {cls_name}: '{name}'. Please provide a {cls_name} name") from None
+
+    if as_json:
+        echo_json({"name": studio.name, "teamspace": f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}"})
+        return
 
     click.echo(f"{cls_name} {studio_name_link(studio)} created successfully")

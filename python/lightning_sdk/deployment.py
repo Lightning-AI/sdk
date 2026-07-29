@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
@@ -271,7 +272,8 @@ class Deployment(metaclass=TrackCallsMeta):
             cloud_account = None
 
         if cloud_account is None and self._cloud_account is not None and cloud is None:
-            print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}")
+            # informational -> stderr, so callers reading stdout (e.g. `--json`) get clean output
+            print(f"No cloud account was provided, defaulting to {self._cloud_account.cluster_id}", file=sys.stderr)
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID") or self._cloud_account.cluster_id
 
         resolve_cloud = cloud if cloud_account is None else None

@@ -130,3 +130,31 @@ def test_job_run_entrypoint_default(extra_args: list[str], expected_entrypoint: 
 
     assert result.exit_code == 0, result.output
     assert mock_run.call_args.kwargs["entrypoint"] == expected_entrypoint
+
+
+@mock_command_logging
+def test_run_job_json(monkeypatch) -> None:
+    import json
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.job.run import run_job
+
+    job = SimpleNamespace(id="job-abc", name="test-job", link="https://lightning.ai/acme/ts/jobs/job-abc")
+    mock_job = MagicMock()
+    mock_job.run.return_value = job
+    monkeypatch.setattr("lightning_sdk.cli.job.run.Job", mock_job)
+    ts = SimpleNamespace(name="ts", owner=SimpleNamespace(name="acme"))
+    monkeypatch.setattr("lightning_sdk.cli.job.run.resolve_teamspace", MagicMock(return_value=ts))
+
+    result = CliRunner().invoke(run_job, ["--name", "test-job", "--image", "ubuntu", "--command", "echo hi", "--json"])
+
+    assert result.exit_code == 0, result.output
+    assert json.loads(result.output) == {
+        "id": "job-abc",
+        "name": "test-job",
+        "teamspace": "acme/ts",
+        "link": "https://lightning.ai/acme/ts/jobs/job-abc",
+    }
