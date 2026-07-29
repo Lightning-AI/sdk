@@ -21,5 +21,5 @@ def test_upload_model_legacy_help() -> None:
         "lightning upload model --help",
         "Deprecation warning:",
         "Use `lightning model upload` instead of `lightning upload model`.",
-        "Usage: lightning upload model [OPTIONS] NAME",
+        "Usage: lightning upload model [OPTIONS] ORG-NAME/TEAMSPACE-NAME/MODEL-NAME",
     )

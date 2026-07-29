@@ -180,7 +180,7 @@ def download_model(
 
 def upload_model(
     name: str,
-    path: Union[str, Path, List[Union[str, Path]]] = ".",
+    path: Union[str, Path, List[Union[str, Path]]],
     cloud_account: Optional[str] = None,
     progress_bar: bool = True,
     metadata: Optional[Dict[str, Any]] = None,
@@ -192,7 +192,7 @@ def upload_model(
         name: Fully-qualified model name in the format
             ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>`` or
             ``<ORGANIZATION>/<TEAMSPACE>/<MODEL-NAME>:<VERSION>``.
-        path: Local file or directory to upload.  Defaults to the current directory.
+        path: Local file or directory to upload.
         cloud_account: Cloud account to store the model files in.
             Falls back to the teamspace default when not provided.
         progress_bar: Whether to display an upload progress bar.
