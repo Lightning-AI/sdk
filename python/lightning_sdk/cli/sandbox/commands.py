@@ -490,7 +490,7 @@ def _attach_interactive_shell(
     )
 
     click.echo(
-        f"Connecting to sandbox {sandbox_id} (type 'exit' to close the shell, " "or press Ctrl-] to detach)...",
+        f"Connecting to sandbox {sandbox_id} (type 'exit' to close the shell, or press Ctrl-] to detach)...",
         err=True,
     )
 
