@@ -1,3 +1,4 @@
+from typing import Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -265,3 +266,47 @@ def test_get_cloud_account_provider_distinguishes_lightning_providers(api, clust
     cluster = V1ExternalCluster(id="acc-lightning", spec=cluster_spec)
 
     assert api._get_cloud_account_provider(cluster) == expected_provider
+
+
+def _machine_cluster(cluster_id: str, name: Optional[str] = None) -> V1ExternalCluster:
+    return V1ExternalCluster(
+        id=cluster_id,
+        name=name or cluster_id,
+        spec=V1ExternalClusterSpec(cluster_type=V1ClusterType.GLOBAL, machine_v1=V1MachineDirectV1()),
+    )
+
+
+def test_lightning_provider_prefers_baremetal_over_sched_test_clusters(api):
+    """``--cloud=lightning`` must resolve to Lightning Cloud, not an internal sched-test MACHINE cluster."""
+    sched_test = _machine_cluster(
+        "01ky8n9bdq7jaapk4xx8ww8w51",
+        name="sched-test-cluster-01ky8n9bdq7jaapk4xx8ww8w51",
+    )
+    baremetal = _machine_cluster("lightning-baremetal", name="Lightning Cloud")
+    earlier_sched_test = _machine_cluster(
+        "01ky8n3ttpr9mv9gk2wg6acmx6",
+        name="sched-test-cluster-01ky8n3ttpr9mv9gk2wg6acmx6",
+    )
+
+    # Baremetal in the middle: last-writer-wins would incorrectly pick the final sched-test cluster.
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(
+        clusters=[earlier_sched_test, baremetal, sched_test]
+    )
+
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
+    assert mapping[CloudProvider.LIGHTNING].id == "lightning-baremetal"
+
+    result = api.resolve_cloud_account(teamspace_id="ts", cloud="lightning", default_cloud_account=None)
+    assert result == "lightning-baremetal"
+
+
+def test_lightning_provider_keeps_first_machine_cluster_when_baremetal_missing(api):
+    first = _machine_cluster("01ky8n3ttpr9mv9gk2wg6acmx6", name="sched-test-cluster-a")
+    second = _machine_cluster("01ky8n9bdq7jaapk4xx8ww8w51", name="sched-test-cluster-b")
+
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[first, second])
+
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
+    assert mapping[CloudProvider.LIGHTNING].id == first.id
