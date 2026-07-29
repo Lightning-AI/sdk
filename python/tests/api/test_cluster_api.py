@@ -305,17 +305,6 @@ def test_lightning_provider_prefers_baremetal_over_sched_test_clusters(api):
     assert result == "lightning-baremetal"
 
 
-def test_lightning_provider_keeps_first_machine_cluster_when_baremetal_missing(api):
-    first = _machine_cluster("01ky8n3ttpr9mv9gk2wg6acmx6", name="sched-test-cluster-a")
-    second = _machine_cluster("01ky8n9bdq7jaapk4xx8ww8w51", name="sched-test-cluster-b")
-
-    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
-    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[first, second])
-
-    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
-    assert mapping[CloudProvider.LIGHTNING].id == first.id
-
-
 @pytest.mark.parametrize(
     ("provider", "canonical_id", "other_id", "spec_kwargs"),
     [
@@ -327,6 +316,7 @@ def test_lightning_provider_keeps_first_machine_cluster_when_baremetal_missing(a
             "other-lambda",
             {"lambda_labs_v1": V1LambdaLabsDirectV1()},
         ),
+        (CloudProvider.LIGHTNING, "lightning-baremetal", "other-machine", {"machine_v1": V1MachineDirectV1()}),
         (CloudProvider.NEBIUS, "lightning-nebius-prod", "other-nebius", {"nebius_v1": V1NebiusDirectV1()}),
         (
             CloudProvider.VOLTAGE_PARK,
@@ -359,6 +349,52 @@ def test_global_provider_mapping_prefers_canonical_accounts(api, provider, canon
     api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[canonical, other])
     mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
     assert mapping[provider].id == canonical_id
+
+
+@pytest.mark.parametrize(
+    ("provider", "cloud", "first_id", "second_id", "spec_kwargs"),
+    [
+        (CloudProvider.AWS, "aws", "staging-aws", "dev-aws", {"aws_v1": V1AWSDirectV1()}),
+        (CloudProvider.GCP, "gcp", "staging-gcp", "dev-gcp", {"google_cloud_v1": V1GoogleCloudDirectV1()}),
+        (
+            CloudProvider.LAMBDA_LABS,
+            "lambda_labs",
+            "staging-lambda",
+            "dev-lambda",
+            {"lambda_labs_v1": V1LambdaLabsDirectV1()},
+        ),
+        (CloudProvider.LIGHTNING, "lightning", "staging-machine", "dev-machine", {"machine_v1": V1MachineDirectV1()}),
+        (CloudProvider.NEBIUS, "nebius", "staging-nebius", "dev-nebius", {"nebius_v1": V1NebiusDirectV1()}),
+        (
+            CloudProvider.VOLTAGE_PARK,
+            "voltage_park",
+            "staging-voltagepark",
+            "dev-voltagepark",
+            {"voltage_park_v1": V1VoltageParkDirectV1()},
+        ),
+    ],
+)
+def test_global_provider_mapping_falls_back_when_canonical_missing(
+    api, provider, cloud, first_id, second_id, spec_kwargs
+):
+    """Staging/local: if the prod canonical ID is absent, use the first available account."""
+    first = V1ExternalCluster(
+        id=first_id,
+        spec=V1ExternalClusterSpec(cluster_type=V1ClusterType.GLOBAL, **spec_kwargs),
+    )
+    second = V1ExternalCluster(
+        id=second_id,
+        spec=V1ExternalClusterSpec(cluster_type=V1ClusterType.GLOBAL, **spec_kwargs),
+    )
+
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[first, second])
+
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
+    assert mapping[provider].id == first_id
+
+    result = api.resolve_cloud_account(teamspace_id="ts", cloud=cloud, default_cloud_account=None)
+    assert result == first_id
 
 
 def test_non_global_mapping_prefers_byoc_over_canonical_public(api):
