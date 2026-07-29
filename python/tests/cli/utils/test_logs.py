@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -204,4 +205,6 @@ def test_read_logs_json_rejects_follow(monkeypatch) -> None:
     result = _run(lambda: read_logs(selection, as_json=True, follow=True))
 
     assert result.exit_code != 0
-    assert "--json cannot be combined with --follow" in result.output
+    # rich_click colorizes the --json/--follow tokens, so strip ANSI before matching
+    plain = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", result.output)
+    assert "--json cannot be combined with --follow" in plain
