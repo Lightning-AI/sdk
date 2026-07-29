@@ -401,9 +401,7 @@ def test_non_global_mapping_prefers_byoc_over_canonical_public(api):
     """Data-connection mapping should still prefer private/BYOC accounts over public globals."""
     byoc = V1ExternalCluster(
         id="acc-byoc-aws",
-        spec=V1ExternalClusterSpec(
-            driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()
-        ),
+        spec=V1ExternalClusterSpec(driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()),
     )
     public = V1ExternalCluster(
         id="lightning-public-prod",
