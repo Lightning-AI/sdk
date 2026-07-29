@@ -10,7 +10,11 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
     V1ExternalCluster,
     V1ExternalClusterSpec,
+    V1GoogleCloudDirectV1,
+    V1LambdaLabsDirectV1,
     V1MachineDirectV1,
+    V1NebiusDirectV1,
+    V1VoltageParkDirectV1,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_list_cluster_accelerators_response import (
     V1ListClusterAcceleratorsResponse,
@@ -310,3 +314,72 @@ def test_lightning_provider_keeps_first_machine_cluster_when_baremetal_missing(a
 
     mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
     assert mapping[CloudProvider.LIGHTNING].id == first.id
+
+
+@pytest.mark.parametrize(
+    ("provider", "canonical_id", "other_id", "spec_kwargs"),
+    [
+        (CloudProvider.AWS, "lightning-public-prod", "other-aws", {"aws_v1": V1AWSDirectV1()}),
+        (CloudProvider.GCP, "gcp-lightning-public-prod", "other-gcp", {"google_cloud_v1": V1GoogleCloudDirectV1()}),
+        (
+            CloudProvider.LAMBDA_LABS,
+            "lightning-lambda-prod",
+            "other-lambda",
+            {"lambda_labs_v1": V1LambdaLabsDirectV1()},
+        ),
+        (CloudProvider.NEBIUS, "lightning-nebius-prod", "other-nebius", {"nebius_v1": V1NebiusDirectV1()}),
+        (
+            CloudProvider.VOLTAGE_PARK,
+            "lightning-voltagepark-prod",
+            "other-voltagepark",
+            {"voltage_park_v1": V1VoltageParkDirectV1()},
+        ),
+    ],
+)
+def test_global_provider_mapping_prefers_canonical_accounts(api, provider, canonical_id, other_id, spec_kwargs):
+    other = V1ExternalCluster(
+        id=other_id,
+        spec=V1ExternalClusterSpec(cluster_type=V1ClusterType.GLOBAL, **spec_kwargs),
+    )
+    canonical = V1ExternalCluster(
+        id=canonical_id,
+        spec=V1ExternalClusterSpec(cluster_type=V1ClusterType.GLOBAL, **spec_kwargs),
+    )
+
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(clusters=[])
+
+    # Non-canonical first: last-writer-wins would keep canonical, first-wins would keep other.
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[other, canonical])
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
+    assert mapping[provider].id == canonical_id
+
+    # Reverse order: still canonical.
+    api.list_cloud_accounts.cache_clear()
+    api.list_global_cloud_accounts.cache_clear()
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[canonical, other])
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=True)
+    assert mapping[provider].id == canonical_id
+
+
+def test_non_global_mapping_prefers_byoc_over_canonical_public(api):
+    """Data-connection mapping should still prefer private/BYOC accounts over public globals."""
+    byoc = V1ExternalCluster(
+        id="acc-byoc-aws",
+        spec=V1ExternalClusterSpec(
+            driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.BYOC, aws_v1=V1AWSDirectV1()
+        ),
+    )
+    public = V1ExternalCluster(
+        id="lightning-public-prod",
+        spec=V1ExternalClusterSpec(
+            driver=V1CloudProvider.AWS, cluster_type=V1ClusterType.GLOBAL, aws_v1=V1AWSDirectV1()
+        ),
+    )
+
+    api._client.cluster_service_list_project_clusters.return_value = V1ListProjectClustersResponse(
+        clusters=[public, byoc]
+    )
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(clusters=[])
+
+    mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts", global_only=False)
+    assert mapping[CloudProvider.AWS].id == "acc-byoc-aws"
