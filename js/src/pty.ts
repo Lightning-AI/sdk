@@ -132,10 +132,19 @@ export class PtyHandle {
     this.ws.addEventListener("close", (ev: CloseEvent) => {
       this._connected = false;
       this._closed = true;
+      // The backend sends an explicit close when the session ends: 1000
+      // (normal) or 1005 (no status) is a clean end, and the shell's exit
+      // status is carried as JSON in the close reason. Any other code —
+      // including 1006 (abnormal, no close frame) — means the connection
+      // broke, which is a real error.
       const clean = ev.code === 1000 || ev.code === 1005;
-      this._exitCode = clean ? 0 : -1;
-      if (!clean && ev.reason) this._error = ev.reason;
-      else if (!clean) this._error = `WebSocket closed with code ${ev.code}`;
+      if (clean) {
+        this._exitCode = parseExitCode(ev.reason);
+        this._error = null;
+      } else {
+        this._exitCode = -1;
+        this._error = ev.reason || `WebSocket closed with code ${ev.code}`;
+      }
       closeResolve({ exitCode: this._exitCode, error: this._error });
     });
   }
@@ -276,6 +285,22 @@ export class PtyHandle {
    */
   async wait(): Promise<PtyResult> {
     return this.closePromise;
+  }
+}
+
+/**
+ * Extract the shell exit code from a clean-close reason. The backend encodes
+ * it as JSON, e.g. `{"exitCode":1}`. An absent or unparseable reason (a
+ * signal-terminated shell, or an older backend that didn't send one) defaults
+ * to 0.
+ */
+function parseExitCode(reason: string): number {
+  if (!reason) return 0;
+  try {
+    const payload = JSON.parse(reason) as { exitCode?: unknown };
+    return typeof payload.exitCode === "number" ? payload.exitCode : 0;
+  } catch {
+    return 0;
   }
 }
 
