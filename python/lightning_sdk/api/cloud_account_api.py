@@ -15,6 +15,19 @@ if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider
     from lightning_sdk.teamspace import ConnectionType
 
+# Preferred cloud-account IDs when multiple accounts share a provider alias.
+# Without this, dict insertion order can make ``--cloud=<provider>`` resolve to an
+# arbitrary account of that provider (e.g. a BYOC/test cluster) instead of the
+# public Lightning Cloud account.
+_CANONICAL_PROVIDER_CLOUD_ACCOUNT_IDS = {
+    "AWS": "lightning-public-prod",
+    "GCP": "gcp-lightning-public-prod",
+    "LAMBDA_LABS": "lightning-lambda-prod",
+    "LIGHTNING": "lightning-baremetal",
+    "NEBIUS": "lightning-nebius-prod",
+    "VOLTAGE_PARK": "lightning-voltagepark-prod",
+}
+
 
 class CloudAccountApi:
     """Internal API client for API requests to cluster endpoints."""
@@ -195,14 +208,53 @@ class CloudAccountApi:
         else:
             res = self.list_cloud_accounts(teamspace_id=teamspace_id)
 
-        cloud_accounts = {cloud_account.id: cloud_account for cloud_account in res}
-        providers = {cloud_account.id: self._get_cloud_account_provider(cloud_account) for cloud_account in res}
-
-        mapping = {}
-        for cloud_account_id, provider in providers.items():
-            if provider is not None:
-                mapping[provider] = cloud_accounts[cloud_account_id]
+        mapping: Dict["CloudProvider", V1ExternalCluster] = {}
+        for cloud_account in res:
+            provider = self._get_cloud_account_provider(cloud_account)
+            if provider is None:
+                continue
+            existing = mapping.get(provider)
+            preferred = (
+                cloud_account
+                if existing is None
+                else self._prefer_cloud_account_for_provider(
+                    provider, existing, cloud_account, prefer_canonical=global_only
+                )
+            )
+            mapping[provider] = preferred
         return mapping
+
+    @staticmethod
+    def _prefer_cloud_account_for_provider(
+        provider: "CloudProvider",
+        current: V1ExternalCluster,
+        candidate: V1ExternalCluster,
+        prefer_canonical: bool = True,
+    ) -> V1ExternalCluster:
+        """Choose which cloud account should represent a provider alias.
+
+        Preference order:
+        1. When ``prefer_canonical`` (``--cloud=<provider>`` / global-only mapping): the
+           canonical public account ID for the provider
+        2. When not preferring canonical (e.g. data connections): BYOC/private over GLOBAL
+        3. Keep the first-seen account (stable; avoids last-writer wins)
+        """
+        if prefer_canonical:
+            canonical_id = _CANONICAL_PROVIDER_CLOUD_ACCOUNT_IDS.get(str(provider))
+            if canonical_id is not None:
+                if candidate.id == canonical_id:
+                    return candidate
+                if current.id == canonical_id:
+                    return current
+            return current
+
+        current_is_byoc = bool(current.spec and current.spec.cluster_type == V1ClusterType.BYOC)
+        candidate_is_byoc = bool(candidate.spec and candidate.spec.cluster_type == V1ClusterType.BYOC)
+        if candidate_is_byoc and not current_is_byoc:
+            return candidate
+        if current_is_byoc and not candidate_is_byoc:
+            return current
+        return current
 
     @staticmethod
     def _get_cloud_account_provider(cloud_account: Optional[V1ExternalCluster]) -> Optional["CloudProvider"]:
