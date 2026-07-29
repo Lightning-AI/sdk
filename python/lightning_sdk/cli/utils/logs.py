@@ -17,6 +17,7 @@ from typing import Dict, Optional, Sequence
 import rich_click as click
 
 from lightning_sdk.api.logs_api import LogsApi
+from lightning_sdk.cli.utils.json_output import echo_json
 
 # Lightning brand purple (#a78bfa) as an RGB tuple for truecolor styling.
 _MATCH_COLOR = (167, 139, 250)
@@ -104,15 +105,23 @@ def read_logs(
     follow: bool = False,
     timestamps: bool = False,
     tail_anchor: Optional[object] = None,
+    api_key: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     """Read and print logs for ``selection``, labelling lines by the resource they came from.
 
     The history is paginated automatically, then the live stream is tailed when following.
     ``tail`` searches back in widening windows instead of reading a long history in full.
+    With ``as_json`` the entries are collected and printed as a single JSON array instead of
+    formatted lines; it cannot be combined with ``follow`` (an unbounded stream has no end).
     """
+    if as_json and follow:
+        raise click.ClickException("--json cannot be combined with --follow.")
+
     printed = 0
+    rows = []
     try:
-        entries = LogsApi().stream(
+        entries = LogsApi(api_key=api_key).stream(
             selection.teamspace_id,
             since=since,
             until=until,
@@ -129,6 +138,10 @@ def read_logs(
         )
         for entry in entries:
             label = selection.labels.get(entry.resource_id) if selection.labels else None
+            if as_json:
+                rows.append(entry.to_json_dict(label))
+                printed += 1
+                continue
             # Highlighting the message before formatting keeps the timestamp and label out of it.
             line = replace(entry, message=highlight(entry.message, query)).format(timestamps=timestamps, prefix=label)
             click.echo(line)
@@ -137,6 +150,10 @@ def read_logs(
         pass
     except RuntimeError as ex:
         raise click.ClickException(str(ex)) from ex
+
+    if as_json:
+        echo_json(rows)
+        return
 
     if not printed:
         click.echo("No logs matched.", err=True)

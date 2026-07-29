@@ -40,6 +40,7 @@ _DEFAULT_TAIL = 100
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 def deployment_logs(
     name: str,
     teamspace: Optional[str] = None,
@@ -52,6 +53,7 @@ def deployment_logs(
     follow: bool = False,
     tail: Optional[int] = None,
     timestamps: bool = False,
+    as_json: bool = False,
 ) -> None:
     """Print deployment logs.
 
@@ -63,6 +65,8 @@ def deployment_logs(
     deployment = resolve_deployment(api, resolved_teamspace.id, name)
 
     if rank is not None:
+        if as_json:
+            raise click.ClickException("--json is not supported with --rank (the legacy single-replica path).")
         _ranked_logs(
             api,
             resolved_teamspace.id,
@@ -104,6 +108,7 @@ def deployment_logs(
         tail=_DEFAULT_TAIL if tail is None and since is None and until is None else tail,
         follow=follow,
         timestamps=timestamps,
+        as_json=as_json,
     )
 
 

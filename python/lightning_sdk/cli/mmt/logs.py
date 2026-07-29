@@ -1,12 +1,13 @@
 """MMT logs command."""
 
+from contextlib import suppress
 from typing import Optional
 
 import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import resolve_time
+from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
 from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
 
@@ -29,6 +30,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_tea
     default=None,
     help="Only include lines at or above this severity.",
 )
+@click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 def logs_mmt(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -39,6 +41,7 @@ def logs_mmt(
     until: Optional[str] = None,
     query: Optional[str] = None,
     severity: Optional[str] = None,
+    as_json: bool = False,
 ) -> None:
     """Print the logs for a multi-machine job.
 
@@ -48,6 +51,23 @@ def logs_mmt(
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     mmt = resolve_mmt(name, resolved_teamspace)
+
+    if as_json:
+        labels: dict = {}
+        # Label each line with the machine it came from, mirroring the text output.
+        with suppress(Exception):
+            labels = {machine.resource_id: machine.name for machine in mmt.machines}
+        read_logs(
+            LogSelection(teamspace_id=resolved_teamspace.id, mmt_id=mmt.resource_id, labels=labels),
+            query=query,
+            severity=severity,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
+            tail=tail,
+            follow=follow,
+            as_json=True,
+        )
+        return
 
     try:
         logs = mmt.logs(

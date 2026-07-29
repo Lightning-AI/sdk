@@ -195,10 +195,10 @@ def test_sandbox_command_help_examples() -> None:
     )
     assert_help_contains(
         "lightning sandbox logs --help",
-        "$ sandbox logs sbx-42 cmd-abc123",
-        "all commands",
-        "start",
-        "done",
+        "cmd-abc123 --follow",
+        "Omit COMMAND_ID",
+        "--tail",
+        "--follow",
     )
     assert_help_contains(
         "lightning sandbox command --help",
@@ -384,10 +384,31 @@ def test_sandbox_logs_and_command_status(_mock_log_command, monkeypatch) -> None
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    logs = _invoke(["sandbox", "logs", "sbx-1", "cmd-1", "--no-timestamps"])
-    assert logs.exit_code == 0
-    assert "cmd-1: start" in logs.output
-    assert "cmd-1: done" in logs.output
+    captured: dict = {}
+
+    def fake_read_logs(selection, **kwargs):
+        captured["selection"] = selection
+        captured["kwargs"] = kwargs
+
+    monkeypatch.setattr(sandbox_commands, "read_logs", fake_read_logs)
+
+    # A specific command narrows to sandbox_command_ids and clears sandbox_id.
+    logs = _invoke(["sandbox", "logs", "sbx-1", "cmd-1", "--tail", "50", "--follow", "--query", "error"])
+    assert logs.exit_code == 0, logs.output
+    selection = captured["selection"]
+    assert selection.teamspace_id == "proj-1"
+    assert selection.sandbox_command_ids == ("cmd-1",)
+    assert selection.sandbox_id is None
+    assert captured["kwargs"]["tail"] == 50
+    assert captured["kwargs"]["follow"] is True
+    assert captured["kwargs"]["query"] == "error"
+    assert captured["kwargs"]["api_key"] is None
+
+    # No command id reads the whole sandbox.
+    logs_all = _invoke(["sandbox", "logs", "sbx-1"])
+    assert logs_all.exit_code == 0, logs_all.output
+    assert captured["selection"].sandbox_id == "sbx-1"
+    assert captured["selection"].sandbox_command_ids == ()
 
     status = _invoke(["sandbox", "command", "sbx-1", "cmd-1"])
     assert status.exit_code == 0

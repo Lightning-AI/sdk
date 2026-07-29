@@ -1,3 +1,5 @@
+import json
+import re
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -170,3 +172,39 @@ def test_deployment_replica_labels_only_labels_when_several_replicas(monkeypatch
 
     api.list_deployment_jobs.return_value = [SimpleNamespace(id="job-0", name="replica-0")]
     assert deployment_replica_labels("ts-id", "dep-id") == {}
+
+
+def test_read_logs_json_emits_array(monkeypatch) -> None:
+    ts = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    _patch_api(
+        monkeypatch,
+        [
+            LogEntry(message="ready", severity="info", timestamp=ts, resource_id="job-0"),
+            LogEntry(message="boom", severity="error", resource_id="job-1"),
+        ],
+    )
+    selection = LogSelection(
+        teamspace_id="ts-id",
+        deployment_id="dep-id",
+        labels={"job-0": "replica-0", "job-1": "replica-1"},
+    )
+
+    result = _run(lambda: read_logs(selection, as_json=True))
+
+    assert result.exit_code == 0, result.output
+    assert json.loads(result.output) == [
+        {"timestamp": "2026-01-01T12:00:00+00:00", "severity": "info", "source": "replica-0", "message": "ready"},
+        {"timestamp": None, "severity": "error", "source": "replica-1", "message": "boom"},
+    ]
+
+
+def test_read_logs_json_rejects_follow(monkeypatch) -> None:
+    _patch_api(monkeypatch, [])
+    selection = LogSelection(teamspace_id="ts-id", job_ids=["job-0"])
+
+    result = _run(lambda: read_logs(selection, as_json=True, follow=True))
+
+    assert result.exit_code != 0
+    # rich_click colorizes the --json/--follow tokens, so strip ANSI before matching
+    plain = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", result.output)
+    assert "--json cannot be combined with --follow" in plain

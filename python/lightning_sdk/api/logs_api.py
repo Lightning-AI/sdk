@@ -79,6 +79,15 @@ class LogEntry:
         parts.append(self.message)
         return " ".join(parts)
 
+    def to_json_dict(self, source: Optional[str] = None) -> "Dict[str, Optional[str]]":
+        """Render the entry as a JSON-serializable object; ``source`` labels the replica/rank."""
+        return {
+            "timestamp": self.timestamp.isoformat() if self.timestamp is not None else None,
+            "severity": self.severity or None,
+            "source": source,
+            "message": self.message,
+        }
+
     @property
     def dedup_key(self) -> Tuple[int, Optional[datetime], str]:
         """Identity used to drop a live line that history already produced.
@@ -208,8 +217,14 @@ class _RecentKeys:
 class LogsApi:
     """Read logs for jobs, deployments, multi-machine jobs and sandbox commands."""
 
-    def __init__(self, client: Optional[LightningClient] = None) -> None:
-        self._client = client or LightningClient(max_tries=7)
+    def __init__(self, client: Optional[LightningClient] = None, api_key: Optional[str] = None) -> None:
+        if client is None:
+            # A scoped api key (e.g. a sandbox key) authenticates as a bearer token, which the
+            # ambient Auth() path does not cover, so inject it directly when one is given.
+            client = LightningClient(max_tries=7, with_auth=api_key is None)
+            if api_key:
+                client.api_client.set_default_header("Authorization", f"Bearer {api_key}")
+        self._client = client
 
     def get_page(
         self,
