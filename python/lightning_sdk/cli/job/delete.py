@@ -7,7 +7,7 @@ from rich.console import Console
 
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_job_or_mmt, resolve_teamspace
 
 
 @click.command("delete", cls=LightningCommand)
@@ -25,7 +25,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_tea
 def delete_job(name: str, teamspace: Optional[str] = None, as_json: bool = False) -> None:
     """Delete a job."""
     resolved_teamspace = resolve_teamspace(teamspace)
-    job = resolve_job(name, resolved_teamspace)
+    job = resolve_job_or_mmt(name, resolved_teamspace)
     job.delete()
     if as_json:
         echo_json({"name": job.name, "deleted": True})

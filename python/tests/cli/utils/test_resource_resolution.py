@@ -8,7 +8,9 @@ from lightning_sdk.cli.utils.resource_resolution import (
     join_teamspace_slug,
     resolve_cluster,
     resolve_job,
+    resolve_job_or_mmt,
     resolve_mmt,
+    resolve_mmt_machine,
     resolve_studio,
     resolve_teamspace,
 )
@@ -152,6 +154,31 @@ def test_resolve_job_converts_not_found_to_usage_error() -> None:
         side_effect=ValueError("missing"),
     ), pytest.raises(click.UsageError, match="train"):
         resolve_job("train", MagicMock())
+
+
+def test_resolve_job_or_mmt_falls_back_to_mmt() -> None:
+    teamspace = MagicMock()
+    resolved = MagicMock()
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Job",
+        side_effect=ValueError("missing"),
+    ), patch(
+        "lightning_sdk.cli.utils.resource_resolution.MMT",
+        return_value=resolved,
+    ) as mmt:
+        assert resolve_job_or_mmt("distributed", teamspace) is resolved
+    mmt.assert_called_once_with(name="distributed", teamspace=teamspace)
+
+
+def test_resolve_mmt_machine_uses_rank_suffix() -> None:
+    rank0 = MagicMock(name="rank-0")
+    rank0.name = "distributed-0"
+    rank1 = MagicMock(name="rank-1")
+    rank1.name = "distributed-1"
+    mmt = MagicMock(name="distributed", machines=(rank0, rank1))
+    mmt.name = "distributed"
+
+    assert resolve_mmt_machine(mmt, 1) is rank1
 
 
 def test_resolve_mmt_requires_name() -> None:

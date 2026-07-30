@@ -69,6 +69,27 @@ def test_run_job_with_cloud(monkeypatch):
     assert mock_job.run.call_args.kwargs["cloud"] == "aws"
 
 
+@mock_command_logging
+def test_run_job_with_multiple_machines_uses_mmt() -> None:
+    submitted = MagicMock(name="distributed")
+    submitted.name = "distributed"
+    with patch("lightning_sdk.cli.job.run.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.run.Job.run"
+    ) as run_single, patch(
+        "lightning_sdk.cli.job.run.MMT.run",
+        return_value=submitted,
+    ) as run_mmt:
+        result = CliRunner().invoke(
+            run_job,
+            ["--name", "distributed", "--image", "ubuntu", "--num-machines", "3"],
+        )
+
+    assert result.exit_code == 0, result.output
+    run_single.assert_not_called()
+    assert run_mmt.call_args.kwargs["num_machines"] == 3
+    assert "Submitted job distributed." in result.output
+
+
 @pytest.mark.parametrize(
     ("input_mappings", "expected"),
     [

@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
+from lightning_sdk.mmt import MMT
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
@@ -43,7 +44,7 @@ def test_job_logs_prints_snapshot() -> None:
     job = MagicMock()
     job.logs.return_value = "hello from the job\n42"
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
-        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt", return_value=job
     ) as resolve_job:
         result = CliRunner().invoke(logs_job, ["my-job", "--teamspace", "org/teamspace"])
 
@@ -65,7 +66,7 @@ def test_job_logs_follows_with_options() -> None:
     job = MagicMock()
     job.logs.return_value = iter(["line 1", "line 2"])
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt", return_value=job
     ):
         result = CliRunner().invoke(
             logs_job,
@@ -80,6 +81,50 @@ def test_job_logs_follows_with_options() -> None:
 
 
 @mock_command_logging
+def test_job_logs_selects_mmt_rank() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    mmt = MagicMock(spec=MMT)
+    machine = MagicMock()
+    machine.logs.return_value = "rank one"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt",
+        return_value=mmt,
+    ), patch(
+        "lightning_sdk.cli.job.logs.resolve_mmt_machine",
+        return_value=machine,
+    ) as resolve_rank:
+        result = CliRunner().invoke(logs_job, ["distributed", "--rank", "1"])
+
+    assert result.exit_code == 0
+    assert "rank one" in result.output
+    resolve_rank.assert_called_once_with(mmt, 1)
+    machine.logs.assert_called_once_with(
+        follow=False, tail=None, rank=None, timestamps=False, since=None, until=None, query=None, severity=None
+    )
+
+
+@mock_command_logging
+def test_job_logs_merges_mmt_without_rank() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    mmt = MagicMock(spec=MMT)
+    mmt.logs.return_value = "[distributed-0] zero\n[distributed-1] one"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt",
+        return_value=mmt,
+    ):
+        result = CliRunner().invoke(logs_job, ["distributed"])
+
+    assert result.exit_code == 0
+    assert "distributed-0" in result.output
+    assert "distributed-1" in result.output
+    mmt.logs.assert_called_once_with(
+        follow=False, tail=None, timestamps=False, since=None, until=None, query=None, severity=None
+    )
+
+
+@mock_command_logging
 def test_job_logs_passes_filters() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
@@ -87,7 +132,7 @@ def test_job_logs_passes_filters() -> None:
     job = MagicMock()
     job.logs.return_value = "boom"
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt", return_value=job
     ):
         result = CliRunner().invoke(logs_job, ["my-job", "--query", "boom", "--severity", "error"])
 
@@ -101,7 +146,7 @@ def test_job_logs_passes_filters() -> None:
 def test_job_logs_rejects_unknown_severity() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
-    with patch("lightning_sdk.cli.job.logs.resolve_job") as resolve_job:
+    with patch("lightning_sdk.cli.job.logs.resolve_job_or_mmt") as resolve_job:
         result = CliRunner().invoke(logs_job, ["my-job", "--severity", "critical"])
 
     assert result.exit_code != 0
@@ -116,7 +161,7 @@ def test_job_logs_reports_sdk_errors_cleanly() -> None:
     job = MagicMock()
     job.logs.side_effect = RuntimeError("Logs are not available while the job is Pending.")
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+        "lightning_sdk.cli.job.logs.resolve_job_or_mmt", return_value=job
     ):
         result = CliRunner().invoke(logs_job, ["my-job"])
 

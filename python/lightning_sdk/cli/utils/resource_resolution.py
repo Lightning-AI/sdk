@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import rich_click as click
 
@@ -63,6 +63,44 @@ def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
         return Job(name=name, teamspace=teamspace)
     except ValueError as ex:
         raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
+
+
+def resolve_job_or_mmt(name: Optional[str], teamspace: Teamspace) -> Union[Job, MMT]:
+    """Resolve a single- or multi-machine job by name."""
+    if not name:
+        raise click.UsageError("Missing job name. Pass JOB.")
+
+    try:
+        return Job(name=name, teamspace=teamspace)
+    except ValueError:
+        pass
+
+    try:
+        return MMT(name=name, teamspace=teamspace)
+    except ValueError as ex:
+        raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
+
+
+def resolve_mmt_machine(mmt: MMT, rank: int) -> Job:
+    """Resolve one machine in a multi-machine job by rank."""
+    machines = mmt.machines
+    if not machines:
+        raise click.ClickException(f"Job '{mmt.name}' has no machines.")
+
+    expected = f"{mmt.name}-{rank}"
+    for machine in machines:
+        if machine.name == expected:
+            return machine
+
+    prefix = f"{mmt.name}-"
+    available_ranks = []
+    for machine in machines:
+        if machine.name.startswith(prefix):
+            suffix = machine.name[len(prefix) :]
+            if suffix.isdigit():
+                available_ranks.append(int(suffix))
+    available = ", ".join(str(value) for value in sorted(available_ranks))
+    raise click.ClickException(f"Rank {rank} not found on job '{mmt.name}'. Available ranks: {available or 'none'}.")
 
 
 def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:

@@ -47,7 +47,7 @@ def test_job_stop_resolves_exact_name() -> None:
     job = MagicMock()
     job.name = "train"
     with patch("lightning_sdk.cli.job.stop.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
-        "lightning_sdk.cli.job.stop.resolve_job", return_value=job
+        "lightning_sdk.cli.job.stop.resolve_job_or_mmt", return_value=job
     ) as resolve_job:
         result = CliRunner().invoke(stop_job, ["train", "--teamspace", "org/teamspace"])
 
