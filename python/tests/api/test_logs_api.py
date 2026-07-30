@@ -56,7 +56,7 @@ def test_parse_log_entries_tolerates_missing_timestamp() -> None:
 
 
 def test_log_entry_format() -> None:
-    entry = LogEntry(message="ready", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))
+    entry = LogEntry(message="+ lightning\nready", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))
 
     assert entry.format() == "ready"
     assert entry.format(prefix="replica-0") == "[replica-0] ready"

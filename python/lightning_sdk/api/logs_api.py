@@ -76,8 +76,12 @@ class LogEntry:
             parts.append(self.timestamp.isoformat())
         if prefix:
             parts.append(f"[{prefix}]")
-        parts.append(self.message)
+
+        # strip `+ lightning\n` prefix from the message (sometimes returned from the backend)
+        parts.append(self.message.removeprefix("+ lightning\n"))
+
         return " ".join(parts)
+
 
     def to_json_dict(self, source: Optional[str] = None) -> "Dict[str, Optional[str]]":
         """Render the entry as a JSON-serializable object; ``source`` labels the replica/rank."""
