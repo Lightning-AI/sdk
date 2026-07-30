@@ -7,6 +7,7 @@ from typing import Any, Callable
 
 import rich_click as click
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 
 DeleteAction = Callable[[], None]
@@ -57,8 +58,18 @@ def register_delete_command(
                 abort=True,
             )
         delete()
+        if params["as_json"]:
+            echo_json({identifier: params[identifier], "deleted": True})
+            return
         click.echo(f"{label} deleted")
 
+    callback = click.option(
+        "--json",
+        "as_json",
+        is_flag=True,
+        default=False,
+        help="Output as JSON.",
+    )(callback)
     callback = click.option(
         "--yes",
         "-y",

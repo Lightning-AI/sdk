@@ -1,3 +1,6 @@
+import json
+from unittest.mock import MagicMock, patch
+
 import rich_click as click
 from click.testing import CliRunner
 
@@ -13,6 +16,7 @@ def test_job_delete_help() -> None:
         "Delete a job.",
         "--yes",
         "-y",
+        "--json",
     )
 
 
@@ -26,6 +30,18 @@ def test_delete_job_uses_shared_command() -> None:
     assert result.exit_code == 0
     assert result.output == "Job deleted\n"
     job_cls.assert_called_once_with(name="my-job", teamspace=None)
+    resource.delete.assert_called_once_with()
+
+
+def test_delete_job_json() -> None:
+    resource = MagicMock()
+    with patch("lightning_sdk.job.Job", return_value=resource):
+        group = click.Group()
+        register_commands(group)
+        result = CliRunner().invoke(group, ["delete", "my-job", "-y", "--json"])
+
+    assert result.exit_code == 0
+    assert json.loads(result.output) == {"name": "my-job", "deleted": True}
     resource.delete.assert_called_once_with()
 
 
@@ -63,4 +79,3 @@ def test_delete_job_legacy_help() -> None:
         "--yes",
         "-y",
     )
-

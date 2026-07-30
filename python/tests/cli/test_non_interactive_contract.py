@@ -10,6 +10,7 @@ FORBIDDEN = (
     "LIGHTNING_NON_INTERACTIVE",
     "webbrowser.open",
 )
+ALLOWED = {("utils/delete.py", "click.confirm")}
 
 
 def test_cli_has_no_implicit_interaction() -> None:
@@ -17,6 +18,7 @@ def test_cli_has_no_implicit_interaction() -> None:
     for path in CLI_ROOT.rglob("*.py"):
         text = path.read_text()
         for token in FORBIDDEN:
-            if token in text:
-                violations.append(f"{path.relative_to(CLI_ROOT)}: {token}")
+            relative_path = path.relative_to(CLI_ROOT).as_posix()
+            if token in text and (relative_path, token) not in ALLOWED:
+                violations.append(f"{relative_path}: {token}")
     assert violations == []

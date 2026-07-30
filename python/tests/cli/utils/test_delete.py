@@ -1,3 +1,4 @@
+import json
 from typing import ClassVar, Optional
 
 import rich_click as click
@@ -62,6 +63,15 @@ def test_delete_yes_flag_skips_prompt() -> None:
 
     assert result.exit_code == 0
     assert result.output == "Widget deleted\n"
+    assert FakeResource.instances[-1].deleted is True
+
+
+def test_delete_json_preserves_machine_readable_output() -> None:
+    FakeResource.instances.clear()
+    result = CliRunner().invoke(_group(), ["delete", "demo", "-y", "--json"])
+
+    assert result.exit_code == 0
+    assert json.loads(result.output) == {"name": "demo", "deleted": True}
     assert FakeResource.instances[-1].deleted is True
 
 
