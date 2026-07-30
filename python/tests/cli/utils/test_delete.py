@@ -1,4 +1,3 @@
-import json
 from typing import ClassVar, Optional
 
 import rich_click as click
@@ -66,13 +65,19 @@ def test_delete_yes_flag_skips_prompt() -> None:
     assert FakeResource.instances[-1].deleted is True
 
 
-def test_delete_json_preserves_machine_readable_output() -> None:
+def test_delete_does_not_offer_json_output() -> None:
     FakeResource.instances.clear()
-    result = CliRunner().invoke(_group(), ["delete", "demo", "-y", "--json"])
+    group = _group()
 
-    assert result.exit_code == 0
-    assert json.loads(result.output) == {"name": "demo", "deleted": True}
-    assert FakeResource.instances[-1].deleted is True
+    help_result = CliRunner().invoke(group, ["delete", "--help"])
+    delete_result = CliRunner().invoke(group, ["delete", "demo", "-y", "--json"])
+
+    assert help_result.exit_code == 0
+    assert "--json" not in help_result.output
+    assert delete_result.exit_code == 2
+    assert "No such option" in delete_result.output
+    assert "--json" in delete_result.output
+    assert FakeResource.instances == []
 
 
 def test_delete_uses_registration_local_resolver() -> None:
