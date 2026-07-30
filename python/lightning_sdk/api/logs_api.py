@@ -82,7 +82,6 @@ class LogEntry:
 
         return " ".join(parts)
 
-
     def to_json_dict(self, source: Optional[str] = None) -> "Dict[str, Optional[str]]":
         """Render the entry as a JSON-serializable object; ``source`` labels the replica/rank."""
         return {
