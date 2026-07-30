@@ -7,6 +7,7 @@ def register_commands(group: click.Group) -> None:
     """Register deployment commands with the given group."""
     from lightning_sdk.cli.deployment.create import create_deployment
     from lightning_sdk.cli.deployment.delete import delete_deployment
+    from lightning_sdk.cli.deployment.env import env
     from lightning_sdk.cli.deployment.inspect import inspect_deployment
     from lightning_sdk.cli.deployment.list import list_deployments
     from lightning_sdk.cli.deployment.logs import deployment_logs
@@ -18,5 +19,6 @@ def register_commands(group: click.Group) -> None:
     group.add_command(inspect_deployment, name="inspect")
     group.add_command(update_deployment, name="update")
     group.add_command(delete_deployment, name="delete")
+    group.add_command(env)
     group.add_command(deployment_logs, name="logs")
     group.add_command(reload_weights, name="reload-weights")

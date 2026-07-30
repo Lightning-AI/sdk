@@ -82,8 +82,8 @@ def test_set_secret_update_existing():
     user_api = UserApi()
 
     existing_secrets = [
-        V1Secret(id="secret-1", name="API_KEY"),
-        V1Secret(id="secret-2", name="DATABASE_URL"),
+        V1Secret(id="secret-1", name="API_KEY", type=V1SecretType.UNSPECIFIED),
+        V1Secret(id="secret-2", name="DATABASE_URL", type=V1SecretType.UNSPECIFIED),
     ]
 
     with mock.patch.object(user_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
@@ -92,6 +92,53 @@ def test_set_secret_update_existing():
         user_api.set_secret("API_KEY", "new_secret_value")
 
         mock_update.assert_called_once_with("secret-1", "new_secret_value")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_set_secret_does_not_update_same_name_typed_secret():
+    user_api = UserApi()
+    existing_secrets = [
+        V1Secret(id="docker-secret", name="API_KEY", type=V1SecretType.DOCKER_REGISTRY),
+    ]
+
+    with mock.patch.object(user_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        user_api, "_update_secret"
+    ) as mock_update, mock.patch.object(user_api, "_create_secret") as mock_create:
+        user_api.set_secret("API_KEY", "new_secret_value")
+
+    mock_update.assert_not_called()
+    mock_create.assert_called_once_with("API_KEY", "new_secret_value")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_secret_resolves_generic_secret_id():
+    user_api = UserApi()
+    existing_secrets = [
+        V1Secret(id="docker-secret", name="API_KEY", type=V1SecretType.DOCKER_REGISTRY),
+        V1Secret(id="generic-secret", name="API_KEY", type=V1SecretType.UNSPECIFIED),
+    ]
+
+    with mock.patch.object(user_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        user_api._client, "secret_service_delete_user_secret"
+    ) as mock_delete:
+        user_api.delete_secret("API_KEY")
+
+    mock_delete.assert_called_once_with(id="generic-secret")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_secret_rejects_missing_generic_secret():
+    user_api = UserApi()
+    existing_secrets = [
+        V1Secret(id="docker-secret", name="API_KEY", type=V1SecretType.DOCKER_REGISTRY),
+    ]
+
+    with mock.patch.object(user_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        user_api._client, "secret_service_delete_user_secret"
+    ) as mock_delete, pytest.raises(ValueError, match="Generic user secret 'API_KEY' was not found"):
+        user_api.delete_secret("API_KEY")
+
+    mock_delete.assert_not_called()
 
 
 @mock.patch("lightning_sdk.api.user_api.LightningClient")

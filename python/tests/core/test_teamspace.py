@@ -48,6 +48,7 @@ class MyDummyExperiment:
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
@@ -77,6 +78,7 @@ def test_teamspace_init(
 
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
+@mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init_env(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
@@ -107,7 +109,6 @@ def test_teamspace_init_env(
         org = None
 
     with context, mock.patch.dict(os.environ, new_dict, clear=True):
-        print(user, org)
         Teamspace("ts-abc", user=user, org=org)
 
 
@@ -856,6 +857,35 @@ def test_teamspace_set_secret_invalid_name(
         match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
     ):
         ts.set_secret("123_INVALID", "secret_value")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_delete_secret(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete:
+        ts.delete_secret("OLD_SECRET")
+
+    mock_delete.assert_called_once_with("ts-abc002", "OLD_SECRET")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_delete_secret_invalid_name(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete, pytest.raises(
+        ValueError,
+        match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
+    ):
+        ts.delete_secret("123_INVALID")
+
+    mock_delete.assert_not_called()
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")

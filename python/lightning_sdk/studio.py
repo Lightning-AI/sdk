@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import threading
 import warnings
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
@@ -34,6 +35,11 @@ if TYPE_CHECKING:
     from lightning_sdk.mmt import MMT
 
 _logger = _setup_logger(__name__)
+_ENV_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_ENV_NAME_ERROR = (
+    "Environment variable names must start with a letter or underscore "
+    "and contain only letters, numbers, and underscores."
+)
 
 
 class Studio(metaclass=TrackCallsMeta):
@@ -973,7 +979,30 @@ class Studio(metaclass=TrackCallsMeta):
                 If False, existing environment variables that are not in new_env will be removed.
                 If True, existing environment variables that are not in new_env will be kept.
         """
+        if any(_ENV_NAME_PATTERN.fullmatch(key) is None for key in new_env):
+            raise ValueError(_ENV_NAME_ERROR)
         self._studio_api.set_env(self._studio, self._teamspace.id, new_env, partial=partial)
+
+    def delete_env(self, key: str) -> None:
+        """Delete one directly configured Studio environment variable.
+
+        Args:
+            key: Name of the environment variable to delete.
+
+        Raises:
+            ValueError: If the name is invalid or is not directly configured.
+        """
+        if _ENV_NAME_PATTERN.fullmatch(key) is None:
+            raise ValueError(_ENV_NAME_ERROR)
+        current = self.env
+        if key not in current:
+            raise ValueError(f"Studio environment variable {key!r} was not found.")
+        self._studio_api.set_env(
+            self._studio,
+            self._teamspace.id,
+            {name: value for name, value in current.items() if name != key},
+            partial=False,
+        )
 
     def __eq__(self, other: "Studio") -> bool:
         """Checks for equality with other Studios.

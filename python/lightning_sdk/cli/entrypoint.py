@@ -29,6 +29,8 @@ from lightning_sdk.cli.groups import (
     sandbox,
     ssh,
     studio,
+    teamspace,
+    user,
 )
 from lightning_sdk.cli.legacy_redirects import (
     build_hidden_alias_group,
@@ -44,7 +46,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment"]},
-        {"name": "ACCESS", "commands": ["auth", "api-key", "ssh", "license"]},
+        {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp"]},
     ]
 }
@@ -131,6 +133,8 @@ main_cli.add_command(file)
 main_cli.add_command(folder)
 main_cli.add_command(ssh)
 main_cli.add_command(studio)
+main_cli.add_command(user)
+main_cli.add_command(teamspace)
 main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
 main_cli.add_command(dataset)

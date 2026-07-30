@@ -7,6 +7,7 @@ import rich_click as click
 from lightning_sdk.cli.utils.resource_resolution import (
     join_teamspace_slug,
     resolve_cluster,
+    resolve_deployment,
     resolve_job,
     resolve_mmt,
     resolve_studio,
@@ -128,6 +129,35 @@ def test_resolve_studio_converts_not_found_to_usage_error() -> None:
         side_effect=ValueError("Studio 'missing' does not exist."),
     ), pytest.raises(click.UsageError, match="missing"):
         resolve_studio("missing", MagicMock())
+
+
+def test_resolve_deployment_requires_name() -> None:
+    with pytest.raises(click.UsageError, match="--name"):
+        resolve_deployment(None, MagicMock())
+
+
+def test_resolve_deployment_fetches_existing_deployment() -> None:
+    teamspace = MagicMock()
+    resolved = MagicMock()
+    resolved._is_created = True
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Deployment",
+        return_value=resolved,
+    ) as deployment:
+        assert resolve_deployment("api", teamspace) is resolved
+    deployment.assert_called_once_with(name="api", teamspace=teamspace)
+
+
+def test_resolve_deployment_rejects_uncreated_deployment() -> None:
+    teamspace = MagicMock(name="teamspace")
+    teamspace.name = "research"
+    resolved = MagicMock()
+    resolved._is_created = False
+    with patch(
+        "lightning_sdk.cli.utils.resource_resolution.Deployment",
+        return_value=resolved,
+    ), pytest.raises(click.UsageError, match="api"):
+        resolve_deployment("api", teamspace)
 
 
 def test_resolve_job_requires_name() -> None:

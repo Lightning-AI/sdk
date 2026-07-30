@@ -710,6 +710,52 @@ func TestStudioSetEnvMergesByDefault(t *testing.T) {
 
 }
 
+func TestStudioDeleteEnvValidatesAndPreservesUnrelatedVariables(t *testing.T) {
+	var seen []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seen = append(seen, r.Method+" "+r.URL.RequestURI())
+		w.Header().Set("Content-Type", "application/json")
+		assert.Equal(t, http.MethodPut, r.Method)
+		assert.Equal(t, "/v1/projects/project-1/cloudspaces/studio-1", r.URL.Path)
+
+		var body struct {
+			Env []struct {
+				Name  string `json:"name"`
+				Value string `json:"value"`
+			} `json:"env"`
+		}
+		require.NoError(t, json.NewDecoder(r.Body).Decode(&body))
+		require.Len(t, body.Env, 1)
+		assert.Equal(t, "KEEP", body.Env[0].Name)
+		assert.Equal(t, "yes", body.Env[0].Value)
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "studio-1",
+			"name":      "dev",
+			"projectId": "project-1",
+			"env":       []map[string]any{{"name": "KEEP", "value": "yes"}},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	s, err := lit.GetStudio("dev", lit.StudioOptions{
+		ID:        "studio-1",
+		Teamspace: mustTeamspace(t, "project-1", ""),
+		Env:       map[string]string{"KEEP": "yes", "OLD": "remove"},
+	})
+	require.NoError(t, err)
+
+	require.Error(t, s.SetEnv(map[string]string{"INVALID-NAME": "value"}, true))
+	require.Error(t, s.DeleteEnv("INVALID-NAME"))
+	require.ErrorContains(t, s.DeleteEnv("MISSING"), `studio environment variable "MISSING" was not found`)
+	require.Empty(t, seen)
+
+	require.NoError(t, s.DeleteEnv("OLD"))
+	assert.Equal(t, map[string]string{"KEEP": "yes"}, s.Env())
+	assert.Equal(t, []string{"PUT /v1/projects/project-1/cloudspaces/studio-1"}, seen)
+}
+
 func TestStudioListsPluginsThroughGeneratedRoutes(t *testing.T) {
 	var seen []string
 

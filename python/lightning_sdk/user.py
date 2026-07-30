@@ -68,6 +68,23 @@ class User(Owner):
 
         self._user_api.set_secret(key, value)
 
+    def delete_secret(self, key: str) -> None:
+        """Delete an encrypted secret for the user.
+
+        Args:
+            key: Secret name. Must contain only alphanumeric characters and underscores,
+                and must not start with a digit.
+
+        Raises:
+            ValueError: If the key contains invalid characters or does not exist.
+        """
+        if not self._user_api.verify_secret_name(key):
+            raise ValueError(
+                "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
+            )
+
+        self._user_api.delete_secret(key)
+
     def create_teamspace(self, name: str) -> "Teamspace":
         """Create a new teamspace owned by this user.
 
