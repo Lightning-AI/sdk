@@ -5,6 +5,29 @@ import rich_click as click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.deployment import register_commands
+from tests.cli.help import assert_help_contains, mock_command_logging
+
+
+@mock_command_logging
+def test_delete_deployment_help() -> None:
+    assert_help_contains(
+        "lightning deployment delete --help",
+        "Usage: lightning deployment delete [OPTIONS] NAME",
+        "Delete a deployment.",
+        "--yes",
+        "-y",
+    )
+
+
+@mock_command_logging
+def test_delete_deployments_alias_help() -> None:
+    assert_help_contains(
+        "lightning deployments delete --help",
+        "Usage: lightning deployments delete [OPTIONS] NAME",
+        "Delete a deployment.",
+        "--yes",
+        "-y",
+    )
 
 
 def test_delete_deployment_uses_shared_command() -> None:

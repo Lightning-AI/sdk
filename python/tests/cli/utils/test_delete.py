@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import ClassVar, Optional
 
 import rich_click as click
 from click.testing import CliRunner
@@ -7,7 +7,7 @@ from lightning_sdk.cli.utils.delete import register_delete_command
 
 
 class FakeResource:
-    instances = []
+    instances: ClassVar[list["FakeResource"]] = []
 
     def __init__(self, name: str, teamspace: Optional[str] = None, marker: str = "") -> None:
         self.name = name

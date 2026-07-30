@@ -34,14 +34,24 @@ def test_delete_studio_uses_positional_name_and_yes_flag() -> None:
 
 @mock_command_logging
 def test_studios_delete_help() -> None:
-    assert_help_contains("lightning studios delete --help", "Usage: lightning studios delete", "Delete a Studio.")
+    text = assert_help_contains(
+        "lightning studios delete --help",
+        "Usage: lightning studios delete [OPTIONS] NAME",
+        "Delete a Studio.",
+        "--yes",
+        "-y",
+    )
+    assert "--name" not in text
 
 
 @mock_command_logging
 def test_delete_studio_legacy_help() -> None:
-    assert_help_contains(
+    text = assert_help_contains(
         "lightning delete studio --help",
         "Deprecation warning:",
         "Use `lightning studio delete` instead of `lightning delete studio`.",
-        "Usage: lightning delete studio [OPTIONS]",
+        "Usage: lightning delete studio [OPTIONS] NAME",
+        "--yes",
+        "-y",
     )
+    assert "--name" not in text

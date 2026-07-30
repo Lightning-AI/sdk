@@ -31,7 +31,13 @@ def test_delete_job_uses_shared_command() -> None:
 
 @mock_command_logging
 def test_jobs_delete_help() -> None:
-    assert_help_contains("lightning jobs delete --help", "Usage: lightning jobs delete", "Delete a job.")
+    assert_help_contains(
+        "lightning jobs delete --help",
+        "Usage: lightning jobs delete [OPTIONS] NAME",
+        "Delete a job.",
+        "--yes",
+        "-y",
+    )
 
 
 @mock_command_logging
@@ -54,5 +60,7 @@ def test_delete_job_legacy_help() -> None:
         "Deprecation warning:",
         "Use `lightning job delete` instead of `lightning delete job`.",
         "Usage: lightning delete job [OPTIONS] NAME",
+        "--yes",
+        "-y",
     )
 

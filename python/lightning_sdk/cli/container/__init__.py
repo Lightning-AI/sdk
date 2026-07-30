@@ -19,6 +19,10 @@ def register_commands(group: click.Group) -> None:
         LitContainer,
         label="Container",
         help="Delete the docker container NAME.",
-        context_help="The teamspace to delete the container from.",
+        context_help=(
+            "The teamspace to delete the container from. "
+            "Should be specified as {owner}/{name}. "
+            "Defaults to the configured teamspace."
+        ),
         resolve_delete=resolve_container_delete,
     )

@@ -3,20 +3,20 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable
 
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
 
 DeleteAction = Callable[[], None]
-DeleteResolver = Callable[[Type[Any], str, Optional[str]], DeleteAction]
+DeleteResolver = Callable[[type[Any], str, str | None], DeleteAction]
 
 
 def _default_delete_resolver(
-    resource_cls: Type[Any],
+    resource_cls: type[Any],
     identifier: str,
-    context: Optional[str],
+    context: str | None,
     *,
     context_option: str,
     resource_kwargs: dict[str, Any],
@@ -31,15 +31,15 @@ def _default_delete_resolver(
 
 def register_delete_command(
     group: click.Group,
-    resource_cls: Type[Any],
+    resource_cls: type[Any],
     *,
     label: str,
     help: str,  # noqa: A002
     identifier: str = "name",
     context_option: str = "teamspace",
-    context_help: Optional[str] = None,
-    resolve_delete: Optional[DeleteResolver] = None,
-    resource_kwargs: Optional[dict[str, Any]] = None,
+    context_help: str | None = None,
+    resolve_delete: DeleteResolver | None = None,
+    resource_kwargs: dict[str, Any] | None = None,
 ) -> click.Command:
     """Create and directly attach a resource delete command."""
     resolver = resolve_delete or partial(

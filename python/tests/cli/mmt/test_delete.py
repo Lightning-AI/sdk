@@ -31,7 +31,13 @@ def test_delete_mmt_uses_shared_command() -> None:
 
 @mock_command_logging
 def test_mmts_delete_help() -> None:
-    assert_help_contains("lightning mmts delete --help", "Usage: lightning mmts delete", "Delete a multi-machine job.")
+    assert_help_contains(
+        "lightning mmts delete --help",
+        "Usage: lightning mmts delete [OPTIONS] NAME",
+        "Delete a multi-machine job.",
+        "--yes",
+        "-y",
+    )
 
 
 @mock_command_logging
@@ -41,5 +47,7 @@ def test_delete_mmt_legacy_help() -> None:
         "Deprecation warning:",
         "Use `lightning mmt delete` instead of `lightning delete mmt`.",
         "Usage: lightning delete mmt [OPTIONS] NAME",
+        "--yes",
+        "-y",
     )
 

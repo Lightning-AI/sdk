@@ -12,8 +12,10 @@ from tests.cli.help import assert_help_contains, mock_command_logging
 def test_container_delete_help() -> None:
     text = assert_help_contains(
         "lightning container delete --help",
-        "Usage: lightning container delete",
+        "Usage: lightning container delete [OPTIONS] NAME",
         "Delete the docker container NAME.",
+        "--yes",
+        "-y",
     )
     normalized_text = " ".join(text.replace("│", " ").split())
     assert "Defaults to the configured teamspace." in normalized_text
@@ -23,7 +25,11 @@ def test_container_delete_help() -> None:
 @mock_command_logging
 def test_containers_delete_help() -> None:
     assert_help_contains(
-        "lightning containers delete --help", "Usage: lightning containers delete", "Delete the docker container NAME."
+        "lightning containers delete --help",
+        "Usage: lightning containers delete [OPTIONS] NAME",
+        "Delete the docker container NAME.",
+        "--yes",
+        "-y",
     )
 
 
@@ -34,6 +40,8 @@ def test_delete_container_legacy_help() -> None:
         "Deprecation warning:",
         "Use `lightning container delete` instead of `lightning delete container`.",
         "Usage: lightning delete container [OPTIONS] NAME",
+        "--yes",
+        "-y",
     )
 
 
@@ -47,9 +55,8 @@ def test_delete_container_uses_shared_command() -> None:
     with (
         patch("lightning_sdk.cli.container.delete.LitContainer", return_value=api, create=True) as api_cls,
         patch(
-            "lightning_sdk.cli.container.delete.TeamspacesMenu",
-            return_value=MagicMock(return_value=resolved_teamspace),
-            create=True,
+            "lightning_sdk.cli.container.delete.resolve_teamspace",
+            return_value=resolved_teamspace,
         ),
     ):
         group = click.Group()

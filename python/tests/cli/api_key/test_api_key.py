@@ -59,8 +59,10 @@ def test_api_key_list_help() -> None:
 def test_api_key_delete_help() -> None:
     assert_help_contains(
         "lightning api-key delete --help",
-        "Usage: lightning api-key delete",
+        "Usage: lightning api-key delete [OPTIONS] KEY_ID",
         "Delete an org-scoped API key.",
+        "--yes",
+        "-y",
     )
 
 
