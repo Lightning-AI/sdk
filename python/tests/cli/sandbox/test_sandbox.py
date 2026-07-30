@@ -287,6 +287,7 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
         "runtime": "python",
         "image": None,
         "image_secret_ref": None,
+        "docker": False,
         "spot": True,
         "ports": [8888, "http"],
         "teamspace": "owner/teamspace",
@@ -294,6 +295,21 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
         "persistent": True,
         "timeout": 3600000,
     }
+
+
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_create_docker_flag(_mock_log_command, monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "create", "--name", "cli-sandbox", "--runtime", "node24", "--docker"])
+
+    assert result.exit_code == 0
+    assert client.create_kwargs is not None
+    assert client.create_kwargs["docker"] is True
+    # The CLI forwards the base runtime; the SDK maps it to the -docker variant.
+    assert client.create_kwargs["runtime"] == "node24"
 
 
 @mock.patch("lightning_sdk.cli.utils.logging._log_command")

@@ -1,5 +1,7 @@
 from lightning_sdk.api.sandbox_api import CommandLog, CommandStatus
 from lightning_sdk.sandbox.base import (
+    DEFAULT_DOCKER_RUNTIME,
+    DOCKER_RUNTIMES,
     ListSandboxesResult,
     ListSnapshotsResult,
     RunCommandOpts,
@@ -29,6 +31,8 @@ __all__ = [
     "Command",
     "CommandLog",
     "CommandStatus",
+    "DEFAULT_DOCKER_RUNTIME",
+    "DOCKER_RUNTIMES",
     "ListSandboxesResult",
     "ListSnapshotsResult",
     "NetworkPolicy",

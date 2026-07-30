@@ -149,6 +149,59 @@ def test_create_sandbox_rejects_secret_ref_without_image():
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_sandbox_docker_maps_runtime_to_variant():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(name="n", sandbox_api=api, runtime="node24", docker=True)
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.runtime == "node24-docker"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_sandbox_docker_defaults_runtime():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(name="n", sandbox_api=api, docker=True)
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.runtime == "node24-docker"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_sandbox_docker_does_not_double_suffix():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    mock_sb = mock.MagicMock()
+    running = _v1(id="sb-1", name="n", status="running")
+    with mock.patch.object(api, "sandboxes", return_value=mock_sb):
+        mock_sb.sandboxes_service_create_sandbox.return_value = running
+        create_sandbox(name="n", sandbox_api=api, runtime="python313-docker", docker=True)
+
+    body = mock_sb.sandboxes_service_create_sandbox.call_args[0][0]
+    assert body.runtime == "python313-docker"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_sandbox_docker_rejects_image():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    with pytest.raises(ValueError, match="cannot be combined with 'image'"):
+        create_sandbox(name="n", sandbox_api=api, image="ghcr.io/org/img:latest", docker=True)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_sandbox_docker_rejects_snapshot_id():
+    api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
+    with pytest.raises(ValueError, match="cannot be combined with 'snapshot_id'"):
+        create_sandbox(name="n", sandbox_api=api, snapshot_id="snap-1", docker=True)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
     from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
 
