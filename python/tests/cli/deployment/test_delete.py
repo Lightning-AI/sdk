@@ -36,7 +36,7 @@ def test_delete_deployment_uses_shared_command() -> None:
     deployment = SimpleNamespace(name="demo")
 
     with (
-        patch("lightning_sdk.api.deployment_api.DeploymentApi", return_value=api) as api_cls,
+        patch("lightning_sdk.cli.deployment.delete.DeploymentApi", return_value=api) as api_cls,
         patch("lightning_sdk.cli.deployment.delete.resolve_teamspace", return_value=teamspace),
         patch("lightning_sdk.cli.deployment.delete.resolve_deployment", return_value=deployment) as resolve_deployment,
     ):

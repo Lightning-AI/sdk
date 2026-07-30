@@ -5,7 +5,6 @@ import rich_click as click
 
 def register_commands(group: click.Group) -> None:
     """Register deployment commands with the given group."""
-    from lightning_sdk.api.deployment_api import DeploymentApi
     from lightning_sdk.cli.deployment.create import create_deployment
     from lightning_sdk.cli.deployment.delete import resolve_deployment_delete
     from lightning_sdk.cli.deployment.inspect import inspect_deployment
@@ -21,7 +20,6 @@ def register_commands(group: click.Group) -> None:
     group.add_command(update_deployment, name="update")
     register_delete_command(
         group,
-        DeploymentApi,
         label="Deployment",
         help="Delete a deployment.",
         context_help="Override default teamspace (format: owner/teamspace).",

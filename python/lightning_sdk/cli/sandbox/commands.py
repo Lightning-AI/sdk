@@ -39,7 +39,6 @@ def _sandbox_client(
 
 
 def resolve_sandbox_delete(
-    _resource_cls: type[Sandbox],
     sandbox_id: str,
     api_key: str | None,
 ) -> DeleteAction:
@@ -48,7 +47,6 @@ def resolve_sandbox_delete(
 
 
 def resolve_snapshot_delete(
-    _resource_cls: type[Sandbox],
     snapshot_id: str,
     api_key: str | None,
 ) -> DeleteAction:

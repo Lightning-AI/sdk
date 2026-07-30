@@ -78,14 +78,13 @@ def test_delete_json_preserves_machine_readable_output() -> None:
 def test_delete_uses_registration_local_resolver() -> None:
     calls = []
 
-    def resolve_delete(resource_cls, identifier: str, context: Optional[str]):
-        calls.append((resource_cls, identifier, context))
+    def resolve_delete(identifier: str, context: Optional[str]):
+        calls.append((identifier, context))
         return lambda: calls.append("deleted")
 
     group = click.Group()
     register_delete_command(
         group,
-        FakeResource,
         label="API key",
         help="Delete an API key.",
         identifier="key_id",
@@ -97,4 +96,4 @@ def test_delete_uses_registration_local_resolver() -> None:
 
     assert result.exit_code == 0
     assert result.output == "API key deleted\n"
-    assert calls == [(FakeResource, "key-123", "acme"), "deleted"]
+    assert calls == [("key-123", "acme"), "deleted"]

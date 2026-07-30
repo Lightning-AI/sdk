@@ -9,13 +9,12 @@ from lightning_sdk.lit_container import LitContainer
 
 
 def resolve_container_delete(
-    resource_cls: type[LitContainer],
     name: str,
     teamspace: Optional[str],
 ) -> DeleteAction:
     """Resolve a container deletion and return its bound action."""
     resolved_teamspace = resolve_teamspace(teamspace)
-    api = resource_cls()
+    api = LitContainer()
 
     def delete() -> None:
         try:

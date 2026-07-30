@@ -5,7 +5,7 @@ import rich_click as click
 
 def register_commands(group: click.Group) -> None:
     """Register container commands with the given group."""
-    from lightning_sdk.cli.container.delete import LitContainer, resolve_container_delete
+    from lightning_sdk.cli.container.delete import resolve_container_delete
     from lightning_sdk.cli.container.download import download_container
     from lightning_sdk.cli.container.list import list_containers
     from lightning_sdk.cli.container.upload import upload_container
@@ -16,7 +16,6 @@ def register_commands(group: click.Group) -> None:
     group.add_command(download_container, name="download")
     register_delete_command(
         group,
-        LitContainer,
         label="Container",
         help="Delete the docker container NAME.",
         context_help=(

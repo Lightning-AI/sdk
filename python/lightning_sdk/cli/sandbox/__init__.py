@@ -40,14 +40,12 @@ def register_commands(group: click.Group) -> None:
         update_sandbox,
     )
     from lightning_sdk.cli.utils.delete import register_delete_command
-    from lightning_sdk.sandbox import Sandbox
 
     group.add_command(list_sandboxes, name="list")
     group.add_command(create_sandbox, name="create")
     group.add_command(update_sandbox, name="update")
     register_delete_command(
         group,
-        Sandbox,
         label="Sandbox",
         help="""Delete a sandbox.
 
@@ -73,7 +71,6 @@ def register_commands(group: click.Group) -> None:
     snapshot.add_command(create_snapshot, name="create")
     register_delete_command(
         snapshot,
-        Sandbox,
         label="Snapshot",
         help="""Delete a sandbox snapshot.
 

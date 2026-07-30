@@ -11,7 +11,7 @@ from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 
 DeleteAction = Callable[[], None]
-DeleteResolver = Callable[[type[Any], str, str | None], DeleteAction]
+DeleteResolver = Callable[[str, str | None], DeleteAction]
 
 
 def _default_delete_resolver(
@@ -32,7 +32,7 @@ def _default_delete_resolver(
 
 def register_delete_command(
     group: click.Group,
-    resource_cls: type[Any],
+    resource_cls: type[Any] | None = None,
     *,
     label: str,
     help: str,  # noqa: A002
@@ -43,14 +43,20 @@ def register_delete_command(
     resource_kwargs: dict[str, Any] | None = None,
 ) -> click.Command:
     """Create and directly attach a resource delete command."""
-    resolver = resolve_delete or partial(
-        _default_delete_resolver,
-        context_option=context_option,
-        resource_kwargs=dict(resource_kwargs or {}),
-    )
+    if resolve_delete is not None:
+        resolver = resolve_delete
+    elif resource_cls is not None:
+        resolver = partial(
+            _default_delete_resolver,
+            resource_cls,
+            context_option=context_option,
+            resource_kwargs=dict(resource_kwargs or {}),
+        )
+    else:
+        raise TypeError("resource_cls is required without resolve_delete")
 
     def callback(**params: Any) -> None:
-        delete = resolver(resource_cls, params[identifier], params[context_option])
+        delete = resolver(params[identifier], params[context_option])
         if not params["yes"]:
             click.confirm(
                 "Are you sure you want to delete?",
