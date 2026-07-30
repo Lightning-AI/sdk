@@ -56,7 +56,7 @@ def test_parse_log_entries_tolerates_missing_timestamp() -> None:
 
 
 def test_log_entry_format() -> None:
-    entry = LogEntry(message="+ lightning\nready", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))
+    entry = LogEntry(message="ready", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))
 
     assert entry.format() == "ready"
     assert entry.format(prefix="replica-0") == "[replica-0] ready"
@@ -115,6 +115,19 @@ def test_stream_requires_a_selector() -> None:
 def test_stream_follows_page_tokens() -> None:
     api, client = _api(
         V1GetLogsResponse(entries=[_entry("one")], next_page_token="cursor-1"),
+        V1GetLogsResponse(entries=[_entry("two")], next_page_token=""),
+    )
+
+    entries = list(api.stream("project-id", deployment_id="dep-id"))
+
+    assert [e.message for e in entries] == ["one", "two"]
+    assert client.jobs_service_get_logs.call_count == 2
+    assert client.jobs_service_get_logs.call_args_list[1].kwargs["page_token"] == "cursor-1"
+
+
+def test_stream_filters_lightning_prefix() -> None:
+    api, client = _api(
+        V1GetLogsResponse(entries=[_entry("+ lightning"), _entry("one")], next_page_token="cursor-1"),
         V1GetLogsResponse(entries=[_entry("two")], next_page_token=""),
     )
 
