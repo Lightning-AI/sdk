@@ -66,7 +66,7 @@ def register_delete_command(
         default=False,
         help="Delete without prompting for confirmation.",
     )(callback)
-    callback = click.option(f"--{context_option}", help=context_help)(callback)
+    callback = click.option(f"--{context_option.replace('_', '-')}", help=context_help)(callback)
     callback = click.argument(identifier)(callback)
     command = click.command("delete", cls=LightningCommand, help=help)(callback)
     group.add_command(command)

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Sequence
+from functools import partial
 from typing import Any
 
 import rich_click as click
@@ -13,6 +14,7 @@ from rich.table import Table
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.job.run import _resolve_envs
+from lightning_sdk.cli.utils.delete import DeleteAction
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
 from lightning_sdk.cli.utils.richt_print import rich_to_str
@@ -34,6 +36,24 @@ def _sandbox_client(
     base_url: str | None = None,
 ) -> Sandbox:
     return Sandbox(_sandbox_config(api_key=api_key, base_url=base_url))
+
+
+def resolve_sandbox_delete(
+    _resource_cls: type[Sandbox],
+    sandbox_id: str,
+    api_key: str | None,
+) -> DeleteAction:
+    """Resolve a sandbox and return its bound deletion action."""
+    return _sandbox_client(api_key=api_key).get(sandbox_id).delete
+
+
+def resolve_snapshot_delete(
+    _resource_cls: type[Sandbox],
+    snapshot_id: str,
+    api_key: str | None,
+) -> DeleteAction:
+    """Resolve a sandbox snapshot and return its bound deletion action."""
+    return partial(_sandbox_client(api_key=api_key).delete_snapshot, snapshot_id)
 
 
 def _json_default(value: object) -> str:
@@ -323,22 +343,6 @@ def create_sandbox(
     _echo_sandbox_summary(sandbox)
     if connect:
         _attach_interactive_shell(sandbox)
-
-
-@click.command("delete", cls=LightningCommand)
-@_with_common_options
-@click.argument("sandbox_id")
-def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
-    """Delete a sandbox.
-
-    Example:
-      $ sandbox delete sbx-42
-
-      Deleted sandbox sbx-42
-    """
-    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
-    sandbox.delete()
-    click.echo(f"Deleted sandbox {sandbox_id}")
 
 
 @click.command("stop", cls=LightningCommand)
@@ -936,20 +940,6 @@ def create_snapshot(
         _echo_json(_snapshot_to_dict(snapshot))
         return
     _echo_snapshot_summary(snapshot)
-
-
-@click.command("delete", cls=LightningCommand)
-@_with_common_options
-@click.argument("snapshot_id")
-def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
-    """Delete a sandbox snapshot.
-
-    Example:
-      $ sandbox snapshot delete snap-42
-      Deleted snapshot snap-42
-    """
-    _sandbox_client(api_key=api_key).delete_snapshot(snapshot_id)
-    click.echo(f"Deleted snapshot {snapshot_id}")
 
 
 @click.command("commands", cls=LightningCommand)
