@@ -40,10 +40,13 @@ class PtySize:
 class PtyResult:
     """Result returned when a PTY session terminates.
 
-    The Lightning xterm wire protocol does not currently propagate the SSH
-    command's exit status, so ``exit_code`` is ``0`` for a clean WebSocket
-    close, ``-1`` for an abnormal close, and ``None`` while the session is
-    still running.
+    The backend closes the attach socket when the remote shell exits and carries
+    the shell's exit status in the WebSocket close reason (JSON, e.g.
+    ``{"exitCode":1}``). So ``exit_code`` is the shell's real exit status on a
+    clean close (``0`` when the session ended without a reported status, e.g.
+    some sshd/screen sessions or an older backend), ``-1`` for an abnormal close
+    (the connection broke), and ``None`` while the session is still running. When
+    ``exit_code`` is ``-1``, ``error`` carries the reason.
     """
 
     exit_code: int | None
@@ -273,13 +276,41 @@ class PtyHandle:
     def _on_close(self, code: int, reason: str) -> None:
         self._connected = False
         self._closed = True
-        clean = code in (1000, 1005)
-        self._exit_code = 0 if clean else -1
-        if not clean:
+        # The backend sends an explicit close when the session ends: 1000
+        # (normal) or 1005 (no status) is a clean end, and the shell's exit
+        # status is carried as JSON in the close reason. Any other code —
+        # including 1006 (abnormal, no close frame) — means the connection
+        # broke, which is a real error.
+        if code in (1000, 1005):
+            self._exit_code = _parse_exit_code(reason)
+        else:
+            self._exit_code = -1
             self._error = reason or f"WebSocket closed with code {code}"
         # Unblock both wait_for_connection and wait.
         self._open_event.set()
         self._close_event.set()
+
+
+def _parse_exit_code(reason: str) -> int:
+    """Extract the shell exit code from a clean-close reason.
+
+    The backend encodes it as JSON, e.g. ``{"exitCode":1}``. An absent or
+    unparseable reason (a session that ended without a reported status, or an
+    older backend that didn't send one) defaults to ``0``.
+    """
+    if not reason:
+        return 0
+    import json
+
+    try:
+        payload = json.loads(reason)
+    except (ValueError, TypeError):
+        return 0
+    if isinstance(payload, dict):
+        code = payload.get("exitCode")
+        if isinstance(code, int):
+            return code
+    return 0
 
 
 def _to_bytes(data: str | bytes | bytearray | memoryview | None) -> bytes | None:

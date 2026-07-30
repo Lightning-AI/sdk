@@ -321,6 +321,30 @@ test("PtyHandle.sendInput forwards text frames; resize sends the JSON control fr
   }
 });
 
+test("PtyHandle parses the exit code from a clean close reason", async () => {
+  installFakeWebSocket();
+  try {
+    const ws = new FakeWebSocket("wss://test/ignored");
+    const handle = new PtyHandle({
+      id: "x",
+      ws: ws as unknown as WebSocket,
+      cols: 80,
+      rows: 24,
+    });
+
+    ws.fireOpen();
+    await handle.waitForConnection();
+    // Backend carries the shell's exit status in the close reason as JSON.
+    ws.fireClose(1000, '{"exitCode":1}');
+
+    const result = await handle.wait();
+    assert.equal(result.exitCode, 1);
+    assert.equal(result.error, null);
+  } finally {
+    uninstallFakeWebSocket();
+  }
+});
+
 test("PtyHandle reports abnormal close as exitCode=-1 with a populated error", async () => {
   installFakeWebSocket();
   try {

@@ -24,6 +24,7 @@ def register_commands(group: click.Group) -> None:
     """Register sandbox commands with the given group."""
     from lightning_sdk.cli.sandbox.commands import (
         command_status,
+        connect_sandbox,
         create_sandbox,
         create_snapshot,
         delete_sandbox,
@@ -45,6 +46,7 @@ def register_commands(group: click.Group) -> None:
     group.add_command(delete_sandbox, name="delete")
     group.add_command(stop_sandbox, name="stop")
     group.add_command(start_sandbox, name="start")
+    group.add_command(connect_sandbox, name="connect")
     group.add_command(run_sandbox_command, name="run")
     group.add_command(logs_sandbox_command, name="logs")
     group.add_command(command_status, name="command")
