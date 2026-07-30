@@ -10,11 +10,7 @@ from lightning_sdk.models import upload_model as _upload_model
 
 @click.command("upload", cls=LightningCommand)
 @click.argument("name", metavar="ORG-NAME/TEAMSPACE-NAME/MODEL-NAME")
-@click.option(
-    "--path",
-    required=True,
-    help="The path to the file or directory you want to upload.",
-)
+@click.argument("path")
 @click.option(
     "--cloud-account", "--cloud_account", default=None, help="The name of the cloud account to store the Model in."
 )

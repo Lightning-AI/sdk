@@ -41,11 +41,7 @@ def upload() -> None:
 
 @upload.command("model")
 @click.argument("name", metavar="ORG-NAME/TEAMSPACE-NAME/MODEL-NAME")
-@click.option(
-    "--path",
-    required=True,
-    help="The path to the file or directory you want to upload.",
-)
+@click.argument("path")
 @click.option(
     "--cloud-account",
     "--cloud_account",
