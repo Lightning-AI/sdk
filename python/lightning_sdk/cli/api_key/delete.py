@@ -1,20 +1,19 @@
-"""Delete an org-scoped API key."""
+"""API-key deletion resolver."""
 
+from functools import partial
 from typing import Optional
 
-import rich_click as click
-
 from lightning_sdk.api.api_key_api import ApiKeyApi
-from lightning_sdk.cli.api_key.common import ORG_OPTION_HELP, resolve_org
-from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.api_key.common import resolve_org
+from lightning_sdk.cli.utils.delete import DeleteAction
 
 
-@click.command("delete", cls=LightningCommand)
-@click.argument("key_id")
-@click.option("--org", help=ORG_OPTION_HELP)
-def delete_api_key(key_id: str, org: Optional[str]) -> None:
-    """Delete an org-scoped API key."""
-    organization = resolve_org(org)
-    api = ApiKeyApi()
-    api.delete(organization.id, key_id)
-    click.echo(f"Deleted API key {key_id}.")
+def resolve_api_key_delete(
+    resource_cls: type[ApiKeyApi],
+    key_id: str,
+    org_name: Optional[str],
+) -> DeleteAction:
+    """Resolve an API key and return its bound deletion action."""
+    organization = resolve_org(org_name)
+    api = resource_cls()
+    return partial(api.delete, organization.id, key_id)
