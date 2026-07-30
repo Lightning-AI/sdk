@@ -16,7 +16,7 @@ def test_model_upload_help() -> None:
 def test_models_upload_help() -> None:
     assert_help_contains(
         "lightning models upload --help",
-	"Usage: ",
+        "Usage: ",
         "lightning models upload",
         "ORG-NAME/TEAMSPACE-NAME/MODEL-NAME PATH",
         "Upload a model to a teamspace.",
