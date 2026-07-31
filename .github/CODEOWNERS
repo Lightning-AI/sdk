@@ -3,7 +3,7 @@
 /.github/ @justusschock @ethanwharris @owbone
 
 /python/ @justusschock @ethanwharris @k223kim
-/python/docs/ @justusschock @dhedey
+/python/docs/ @justusschock @dhedey @ethanwharris @owbone
 /python/examples/ @justusschock @k223kim
 
 /python/lightning_sdk/api/ @justusschock @ethanwharris @k223kim
@@ -32,4 +32,4 @@
 /python/lightning_sdk/user.py @justusschock @ethanwharris @k223kim
 
 /js/ @k223kim @rusenask
-/go/ @justusschock @owbone
+/go/ @justusschock @owbone @ethanwharris
