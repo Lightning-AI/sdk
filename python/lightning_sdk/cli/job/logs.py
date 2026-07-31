@@ -8,12 +8,7 @@ import rich_click as click
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
-from lightning_sdk.cli.utils.resource_resolution import (
-    resolve_job_or_mmt,
-    resolve_mmt_machine,
-    resolve_teamspace,
-)
-from lightning_sdk.mmt import MMT
+from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_job_or_mmt, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
@@ -55,17 +50,19 @@ def logs_job(
     Prints a snapshot of the logs available so far. Pass --follow to stream new
     lines from a running job until it finishes or you press Ctrl-C. --query and
     --severity are applied by the server, to both the snapshot and the stream.
-    Multi-machine logs are merged unless --rank selects one machine.
+    Multi-machine logs are merged unless --rank selects one machine, which opens
+    that machine's per-job websocket (same path as a single-machine job with
+    --rank).
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     resource = resolve_job_or_mmt(name, resolved_teamspace)
-    selected_rank = isinstance(resource, MMT) and rank is not None
-    job = resolve_mmt_machine(resource, rank) if selected_rank else resource
+    selected_rank = resource.is_multi_machine is True and rank is not None
+    job = resolve_job_machine(resource, rank) if selected_rank else resource
 
     if as_json:
         if rank is not None and not selected_rank:
             raise click.ClickException("--rank is not supported with --json.")
-        if isinstance(job, MMT):
+        if job.is_multi_machine is True:
             labels: dict = {}
             with suppress(Exception):
                 labels = {machine.resource_id: machine.name for machine in job.machines}
@@ -98,8 +95,10 @@ def logs_job(
             "query": query,
             "severity": severity,
         }
-        if not isinstance(job, MMT):
-            log_options["rank"] = None if selected_rank else rank
+        if job.is_multi_machine is not True:
+            # Any non-None rank routes Job through the legacy per-job websocket (server-side
+            # tail). For a selected MMT machine the process rank on that node is 0.
+            log_options["rank"] = 0 if selected_rank else rank
         logs = job.logs(**log_options)
         if follow:
             for line in logs:

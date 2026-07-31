@@ -207,6 +207,7 @@ class JobStep:
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        num_machines: int = 1,
     ) -> None:
         """Configure a job step in a pipeline.
 
@@ -231,8 +232,11 @@ class JobStep:
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
             placement_group_id: Optional placement group identifier for colocating the job.
+            num_machines: Number of machines to allocate. Defaults to one.
 
         """
+        if num_machines < 1:
+            raise ValueError("A job needs to run on at least one machine")
         self.name = name
         self.machine = machine or Machine.CPU
         self.command = command
@@ -254,6 +258,7 @@ class JobStep:
         self.reuse_snapshot = reuse_snapshot
         self.scratch_disks = scratch_disks
         self.placement_group_id = placement_group_id
+        self.num_machines = num_machines
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -286,26 +291,36 @@ class JobStep:
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
 
-        body = JobApiV2._create_job_body(
-            name=self.name,
-            command=self.command,
-            cloud_account=resolved_cloud_account or cloud_account,
-            studio_id=studio._studio.id if isinstance(studio, Studio) else None,
-            image=self.image,
-            machine=self.machine,
-            interruptible=self.interruptible,
-            env=self.env,
-            image_credentials=self.image_credentials,
-            cloud_account_auth=self.cloud_account_auth,
-            entrypoint=self.entrypoint,
-            path_mappings=self.path_mappings,
-            max_runtime=self.max_runtime,
-            machine_image_version=machine_image_version,
-            reuse_snapshot=self.reuse_snapshot,
-            scratch_disks=self.scratch_disks,
-            placement_group_id=self.placement_group_id,
-        )
+        body_kwargs = {
+            "name": self.name,
+            "command": self.command,
+            "cloud_account": resolved_cloud_account or cloud_account,
+            "studio_id": studio._studio.id if isinstance(studio, Studio) else None,
+            "image": self.image,
+            "machine": self.machine,
+            "interruptible": self.interruptible,
+            "env": self.env,
+            "image_credentials": self.image_credentials,
+            "cloud_account_auth": self.cloud_account_auth,
+            "entrypoint": self.entrypoint,
+            "path_mappings": self.path_mappings,
+            "max_runtime": self.max_runtime,
+            "machine_image_version": machine_image_version,
+            "reuse_snapshot": self.reuse_snapshot,
+            "placement_group_id": self.placement_group_id,
+        }
+        if self.num_machines > 1:
+            if self.scratch_disks:
+                raise ValueError("scratch_disks are not supported for multi-machine jobs")
+            body = MMTApiV2._create_mmt_body(num_machines=self.num_machines, **body_kwargs)
+            return V1PipelineStep(
+                name=self.name,
+                type=V1PipelineStepType.MMT,
+                wait_for=_to_wait_for(self.wait_for),
+                mmt=body,
+            )
 
+        body = JobApiV2._create_job_body(scratch_disks=self.scratch_disks, **body_kwargs)
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,

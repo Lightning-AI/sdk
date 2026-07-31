@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 import rich_click as click
 
@@ -65,34 +65,23 @@ def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
         raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
 
 
-def resolve_job_or_mmt(name: Optional[str], teamspace: Teamspace) -> Union[Job, MMT]:
+def resolve_job_or_mmt(name: Optional[str], teamspace: Teamspace) -> Job:
     """Resolve a single- or multi-machine job by name."""
-    if not name:
-        raise click.UsageError("Missing job name. Pass JOB.")
-
-    try:
-        return Job(name=name, teamspace=teamspace)
-    except ValueError:
-        pass
-
-    try:
-        return MMT(name=name, teamspace=teamspace)
-    except ValueError as ex:
-        raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
+    return resolve_job(name, teamspace)
 
 
-def resolve_mmt_machine(mmt: MMT, rank: int) -> Job:
+def resolve_job_machine(job: Job, rank: int) -> Job:
     """Resolve one machine in a multi-machine job by rank."""
-    machines = mmt.machines
+    machines = job.machines
     if not machines:
-        raise click.ClickException(f"Job '{mmt.name}' has no machines.")
+        raise click.ClickException(f"Job '{job.name}' has no machines.")
 
-    expected = f"{mmt.name}-{rank}"
+    expected = f"{job.name}-{rank}"
     for machine in machines:
         if machine.name == expected:
             return machine
 
-    prefix = f"{mmt.name}-"
+    prefix = f"{job.name}-"
     available_ranks = []
     for machine in machines:
         if machine.name.startswith(prefix):
@@ -100,7 +89,12 @@ def resolve_mmt_machine(mmt: MMT, rank: int) -> Job:
             if suffix.isdigit():
                 available_ranks.append(int(suffix))
     available = ", ".join(str(value) for value in sorted(available_ranks))
-    raise click.ClickException(f"Rank {rank} not found on job '{mmt.name}'. Available ranks: {available or 'none'}.")
+    raise click.ClickException(f"Rank {rank} not found on job '{job.name}'. Available ranks: {available or 'none'}.")
+
+
+def resolve_mmt_machine(mmt: MMT, rank: int) -> Job:
+    """Compatibility alias for resolving a machine by rank."""
+    return resolve_job_machine(mmt, rank)
 
 
 def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:

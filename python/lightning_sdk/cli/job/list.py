@@ -53,28 +53,25 @@ def list_jobs(
         for teamspace_slug in _list_teamspaces():
             resolved = resolve_teamspace(teamspace_slug)
             resources.extend(resolved.jobs)
-            resources.extend(resolved.multi_machine_jobs)
     else:
         resolved = resolve_teamspace(teamspace)
         resources.extend(resolved.jobs)
-        resources.extend(resolved.multi_machine_jobs)
 
     rows = []
     for job in resources:
         job._prevent_refetch_latest = True
         with suppress(RuntimeError):
-            studio = job.studio
             rows.append(
                 {
                     "name": job.name,
                     "teamspace": f"{job.teamspace.owner.name}/{job.teamspace.name}",
-                    "studio": studio.name if studio else None,
+                    "studio": job.studio_name,
                     "image": job.image,
                     "status": str(job.status) if job.status is not None else None,
                     "machine": str(job.machine),
                     "num_machines": getattr(job, "num_machines", 1),
                     "total_cost": round(job.total_cost, 3),
-                    "_cloud_account": str(job.cloud_account),
+                    "_cloud_account": str(getattr(job, "cloud_account", "") or ""),
                 }
             )
 

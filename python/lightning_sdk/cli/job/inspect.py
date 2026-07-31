@@ -6,12 +6,7 @@ import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import (
-    resolve_job_or_mmt,
-    resolve_mmt_machine,
-    resolve_teamspace,
-)
-from lightning_sdk.mmt import MMT
+from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_job_or_mmt, resolve_teamspace
 
 
 @click.command("inspect", cls=LightningCommand)
@@ -36,8 +31,8 @@ def inspect_job(
     """Inspect a job for further details as JSON."""
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job_or_mmt(name, resolved_teamspace)
-    if isinstance(job, MMT) and rank is not None:
-        job = resolve_mmt_machine(job, rank)
+    if job.is_multi_machine is True and rank is not None:
+        job = resolve_job_machine(job, rank)
     elif rank is not None:
         raise click.UsageError("--rank is only supported for multi-machine jobs.")
     Console().print(job.json())

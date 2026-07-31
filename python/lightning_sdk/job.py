@@ -1,10 +1,11 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple, TypedDict, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.logs_api import LogsApi
+from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
@@ -121,7 +122,7 @@ class JobDict(TypedDict):
 
 
 class Job(metaclass=TrackCallsMeta):
-    """Submit and manage single-machine jobs on the Lightning AI Platform."""
+    """Submit and manage jobs on the Lightning AI Platform."""
 
     def __init__(
         self,
@@ -131,6 +132,7 @@ class Job(metaclass=TrackCallsMeta):
         user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
+        _resource_kind: Optional[str] = None,
     ) -> None:
         """Fetch already existing jobs.
 
@@ -162,7 +164,12 @@ class Job(metaclass=TrackCallsMeta):
         self._job = None
         self._prevent_refetch_latest = False
         self._cloud_account_api = CloudAccountApi()
-        self._job_api = JobApiV2()
+        self._standalone_job_api = JobApiV2()
+        self._mmt_job_api: Optional[MMTApiV2] = None
+        self._resource_kind = _resource_kind or "standalone"
+        self._job_api: Union[JobApiV2, MMTApiV2] = self._standalone_job_api
+        if self._resource_kind == "multi":
+            self._set_resource_kind("multi")
         self._logs_api = LogsApi()
 
         if _fetch_job:
@@ -174,6 +181,17 @@ class Job(metaclass=TrackCallsMeta):
                 if ex.status == 404:
                     raise ValueError(f"Job {name} does not exist in Teamspace {teamspace.name}") from None
                 raise
+
+    def _set_resource_kind(self, kind: str) -> None:
+        if kind not in ("standalone", "multi"):
+            raise ValueError(f"Unknown job resource kind: {kind}")
+        self._resource_kind = kind
+        if kind == "multi":
+            if self._mmt_job_api is None:
+                self._mmt_job_api = MMTApiV2()
+            self._job_api = self._mmt_job_api
+        else:
+            self._job_api = self._standalone_job_api
 
     @classmethod
     def run(
@@ -197,12 +215,14 @@ class Job(metaclass=TrackCallsMeta):
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        num_machines: int = 1,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
         Args:
             name: The name of the job. Needs to be unique within the teamspace.
             machine: The machine type to run the job on.
+            num_machines: The number of machines to run on. Defaults to one.
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
             studio: The studio env to run the job with. Mutually exclusive with image.
@@ -248,6 +268,10 @@ class Job(metaclass=TrackCallsMeta):
 
         if not name:
             raise ValueError("A job needs to have a name!")
+        if num_machines < 1:
+            raise ValueError("A job needs to run on at least one machine")
+        if num_machines > 1 and scratch_disks:
+            raise ValueError("scratch_disks are not supported for multi-machine jobs")
 
         if image is None:
             if not isinstance(studio, Studio):
@@ -308,9 +332,11 @@ class Job(metaclass=TrackCallsMeta):
                 entrypoint = None
 
         job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
+        job._set_resource_kind("multi" if num_machines > 1 else "standalone")
         submit_cloud = cloud if cloud_account is None else None
 
         job._submit(
+            num_machines=num_machines,
             machine=machine,
             cloud=submit_cloud,
             command=command,
@@ -350,7 +376,15 @@ class Job(metaclass=TrackCallsMeta):
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        num_machines: int = 1,
     ) -> "Job":
+        if num_machines < 1:
+            raise ValueError("A job needs to run on at least one machine")
+        if self.is_multi_machine and num_machines <= 1:
+            raise ValueError("Multi-machine jobs need to run on at least two machines")
+        if self.is_multi_machine and scratch_disks:
+            raise ValueError("scratch_disks are not supported for multi-machine jobs")
+
         if studio is not None:
             studio_id = studio._studio.id
             if image is not None:
@@ -391,26 +425,29 @@ class Job(metaclass=TrackCallsMeta):
                 if ".." in path.parts:
                     raise ValueError("scratch_disk path cannot contain '..'")
 
-        submitted = self._job_api.submit_job(
-            name=self.name,
-            command=command,
-            cloud_account=cloud_account,
-            teamspace_id=self._teamspace.id,
-            studio_id=studio_id,
-            image=image,
-            machine=machine,
-            interruptible=interruptible,
-            env=env,
-            image_credentials=image_credentials,
-            cloud_account_auth=cloud_account_auth,
-            entrypoint=entrypoint,
-            path_mappings=path_mappings,
-            max_runtime=max_runtime,
-            reuse_snapshot=reuse_snapshot,
-            scratch_disks=scratch_disks,
-            placement_group_id=placement_group_id,
-        )
-        if submitted.name != self._name:
+        submit_kwargs = {
+            "name": self.name,
+            "command": command,
+            "cloud_account": cloud_account,
+            "teamspace_id": self._teamspace.id,
+            "studio_id": studio_id,
+            "image": image,
+            "machine": machine,
+            "interruptible": interruptible,
+            "env": env,
+            "image_credentials": image_credentials,
+            "cloud_account_auth": cloud_account_auth,
+            "entrypoint": entrypoint,
+            "path_mappings": path_mappings,
+            "max_runtime": max_runtime,
+            "reuse_snapshot": reuse_snapshot,
+            "placement_group_id": placement_group_id,
+        }
+        if self.is_multi_machine:
+            submitted = self._job_api.submit_job(num_machines=num_machines, **submit_kwargs)
+        else:
+            submitted = self._job_api.submit_job(scratch_disks=scratch_disks, **submit_kwargs)
+        if not self.is_multi_machine and submitted.name != self._name:
             warnings.warn(
                 f"Job name '{self._name}' was already taken in this teamspace; "
                 f"the job was created as '{submitted.name}' instead.",
@@ -428,11 +465,14 @@ class Job(metaclass=TrackCallsMeta):
         self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
 
     def delete(self) -> None:
-        self._job_api.delete_job(
-            job_id=self._guaranteed_job.id,
-            teamspace_id=self._teamspace.id,
-            cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
-        )
+        if self.is_multi_machine:
+            self._job_api.delete_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
+        else:
+            self._job_api.delete_job(
+                job_id=self._guaranteed_job.id,
+                teamspace_id=self._teamspace.id,
+                cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
+            )
 
     def wait(self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False) -> None:
         import time
@@ -485,6 +525,8 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def public_ip(self) -> Optional[str]:
+        if self.is_multi_machine:
+            return None
         try:
             return self._job.public_ip_address
         except AttributeError:
@@ -501,6 +543,8 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def private_ip_address(self) -> Optional[str]:
+        if self.is_multi_machine:
+            return None
         return self._guaranteed_job.private_ip_address
 
     @property
@@ -509,10 +553,43 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def rank(self) -> Optional[int]:
+        if self.is_multi_machine:
+            return None
         return self._guaranteed_job.spec.rank
 
     @property
+    def is_multi_machine(self) -> bool:
+        """Whether this object represents a multi-machine parent job."""
+        return self._resource_kind == "multi"
+
+    @property
+    def num_machines(self) -> int:
+        """The number of machines allocated to this job."""
+        if not self.is_multi_machine:
+            return 1
+        return self._job_api.get_num_machines(self._guaranteed_job)
+
+    @property
+    def machines(self) -> Tuple["Job", ...]:
+        """The rank-ordered machines in this job."""
+        if not self.is_multi_machine:
+            return (self,)
+
+        subjobs = sorted(
+            self._job_api.list_mmt_subjobs(self._guaranteed_job.id, self.teamspace.id),
+            key=lambda job: job.spec.rank,
+        )
+        machines = []
+        for subjob in subjobs:
+            job = Job(name=subjob.name, teamspace=self.teamspace, _fetch_job=False)
+            job._job = subjob
+            machines.append(job)
+        return tuple(machines)
+
+    @property
     def artifact_path(self) -> Optional[str]:
+        if self.is_multi_machine:
+            raise NotImplementedError
         if self._guaranteed_job.spec.image != "":
             if self._guaranteed_job.spec.artifacts_destination:
                 (
@@ -527,12 +604,16 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def snapshot_path(self) -> Optional[str]:
+        if self.is_multi_machine:
+            raise NotImplementedError
         if self._guaranteed_job.spec.image != "":
             return None
         return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
+        if self.is_multi_machine:
+            return None
         raise NotImplementedError("Not implemented yet")
 
     @property
@@ -579,6 +660,18 @@ class Job(metaclass=TrackCallsMeta):
         severity: Optional[str] = None,
     ) -> Union[str, Iterator[str]]:
         """Fetch the logs, dispatching on job state. See :attr:`logs` for the public API."""
+        if self.is_multi_machine:
+            return self._compute_multi_machine_logs(
+                follow=follow,
+                tail=tail,
+                rank=rank,
+                timestamps=timestamps,
+                since=since,
+                until=until,
+                query=query,
+                severity=severity,
+            )
+
         status = self.status
 
         if rank is not None:
@@ -608,6 +701,72 @@ class Job(metaclass=TrackCallsMeta):
         # `follow` on an already-finished job returns the saved lines as an iterator (and stops),
         # keeping the return type consistent with the live-follow path.
         return iter(lines) if follow else "\n".join(lines)
+
+    def _compute_multi_machine_logs(
+        self,
+        *,
+        follow: bool,
+        tail: Optional[int],
+        rank: Optional[int],
+        timestamps: bool,
+        since: Optional[str],
+        until: Optional[str],
+        query: Optional[str],
+        severity: Optional[str],
+    ) -> Union[str, Iterator[str]]:
+        if rank is not None:
+            raise ValueError(
+                "`rank` is not supported on a multi-machine parent; "
+                "read a single machine with `job.machines[rank].logs` "
+                "(or `mmt.machines[rank].logs` through the compatibility API)."
+            )
+
+        status = self.status
+        if status not in (Status.Running, Status.Failed, Status.Completed, Status.Stopped):
+            raise RuntimeError(f"Logs are not available while the job is {status}.")
+
+        lines = self._stream_multi_machine_entries(
+            follow=follow and status == Status.Running,
+            tail=tail,
+            timestamps=timestamps,
+            since=since,
+            until=until,
+            query=query,
+            severity=severity,
+        )
+        if follow and status == Status.Running:
+            return lines
+        collected = list(lines)
+        return iter(collected) if follow else "\n".join(collected)
+
+    def _stream_multi_machine_entries(
+        self,
+        *,
+        follow: bool,
+        tail: Optional[int],
+        timestamps: bool,
+        since: Optional[str],
+        until: Optional[str],
+        query: Optional[str],
+        severity: Optional[str],
+    ) -> Iterator[str]:
+        names = {machine._guaranteed_job.id: machine.name for machine in self.machines}
+        entries = self._logs_api.stream(
+            self.teamspace.id,
+            mmt_id=self._guaranteed_job.id,
+            since=since,
+            until=until,
+            query=query,
+            severity=severity,
+            follow=follow,
+            tail=tail,
+            tail_anchor=getattr(self._guaranteed_job, "stopped_at", None),
+            idle_timeout=None if follow else _RUNNING_LOGS_IDLE_TIMEOUT,
+            fallback_to_live=not follow,
+            stop=lambda: self.status in (Status.Stopped, Status.Completed, Status.Failed),
+        )
+        for entry in entries:
+            yield entry.format(timestamps=timestamps, prefix=names.get(entry.resource_id, entry.resource_id))
 
     def _compute_logs_ranked(
         self,
@@ -706,6 +865,12 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def link(self) -> str:
+        if self.is_multi_machine:
+            return (
+                f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/"
+                f"jobs/{self.name}?app_id=mmt"
+            )
+
         mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
 
         if self._job_api.get_image_name(self._guaranteed_job):
@@ -729,6 +894,11 @@ class Job(metaclass=TrackCallsMeta):
         return self._job_api.get_image_name(self._guaranteed_job)
 
     @property
+    def studio_name(self) -> Optional[str]:
+        """The name of the studio this job runs in, without instantiating the Studio."""
+        return self._job_api.get_studio_name(self._guaranteed_job)
+
+    @property
     def studio(self) -> Optional["Studio"]:
         from lightning_sdk.studio import Studio
 
@@ -743,7 +913,21 @@ class Job(metaclass=TrackCallsMeta):
 
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
-            self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+            if self.is_multi_machine:
+                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+                return
+
+            from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+
+            try:
+                self._job = self._standalone_job_api.get_job_by_name(
+                    name=self._name, teamspace_id=self._teamspace.id
+                )
+            except ApiException as ex:
+                if ex.status != 404:
+                    raise
+                self._set_resource_kind("multi")
+                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
             return
 
         self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)

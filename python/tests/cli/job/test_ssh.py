@@ -91,6 +91,7 @@ def test_ssh_runs_against_job_gateway_user() -> None:
 
 def test_ssh_selects_mmt_rank() -> None:
     mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
     machine = MagicMock()
     machine.name = "distributed-1"
     machine.status = Status.Running
@@ -100,7 +101,7 @@ def test_ssh_selects_mmt_rank() -> None:
         "lightning_sdk.cli.job.ssh.resolve_job_or_mmt",
         return_value=mmt,
     ), patch(
-        "lightning_sdk.cli.job.ssh.resolve_mmt_machine",
+        "lightning_sdk.cli.job.ssh.resolve_job_machine",
         return_value=machine,
     ) as resolve_rank, patch(
         "lightning_sdk.cli.job.ssh.configure_ssh_internal",

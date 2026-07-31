@@ -6,13 +6,8 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import (
-    resolve_job_or_mmt,
-    resolve_mmt_machine,
-    resolve_teamspace,
-)
+from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_job_or_mmt, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
-from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
 
 _SSH_HOST = "ssh.lightning.ai"
@@ -60,8 +55,8 @@ def ssh_impl(
 
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job_or_mmt(name, resolved_teamspace)
-    if isinstance(job, MMT):
-        job = resolve_mmt_machine(job, rank if rank is not None else 0)
+    if job.is_multi_machine is True:
+        job = resolve_job_machine(job, rank if rank is not None else 0)
     elif rank is not None:
         raise click.UsageError("--rank is only supported for multi-machine jobs.")
 

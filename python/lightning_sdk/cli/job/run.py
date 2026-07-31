@@ -10,7 +10,6 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
 from lightning_sdk.job import Job
 from lightning_sdk.machine import Machine
-from lightning_sdk.mmt import MMT
 
 _MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
@@ -172,7 +171,6 @@ def run_job(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    job_type = MMT if num_machines > 1 else Job
     run_kwargs = {
         "name": name,
         "machine": machine_enum,
@@ -189,10 +187,9 @@ def run_job(
         "cloud_account_auth": cloud_account_auth,
         "entrypoint": entrypoint,
         "path_mappings": path_mappings_dict,
+        "num_machines": num_machines,
     }
-    if job_type is MMT:
-        run_kwargs["num_machines"] = num_machines
-    job = job_type.run(**run_kwargs)
+    job = Job.run(**run_kwargs)
 
     if as_json:
         echo_json(

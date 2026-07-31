@@ -244,7 +244,7 @@ def test_job_init_raises_error_when_jobs_disabled(mock_teamspace_api, mock_resol
 
 
 # MMT class permission tests
-@mock.patch("lightning_sdk.mmt._resolve_teamspace")
+@mock.patch("lightning_sdk.job._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
 @pytest.mark.project_permission_test()
 def test_mmt_init_raises_error_when_jobs_disabled(mock_teamspace_api, mock_resolve_teamspace):

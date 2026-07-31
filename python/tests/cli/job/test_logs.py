@@ -85,13 +85,14 @@ def test_job_logs_selects_mmt_rank() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
     mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
     machine = MagicMock()
     machine.logs.return_value = "rank one"
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.job.logs.resolve_job_or_mmt",
         return_value=mmt,
     ), patch(
-        "lightning_sdk.cli.job.logs.resolve_mmt_machine",
+        "lightning_sdk.cli.job.logs.resolve_job_machine",
         return_value=machine,
     ) as resolve_rank:
         result = CliRunner().invoke(logs_job, ["distributed", "--rank", "1"])
@@ -100,7 +101,7 @@ def test_job_logs_selects_mmt_rank() -> None:
     assert "rank one" in result.output
     resolve_rank.assert_called_once_with(mmt, 1)
     machine.logs.assert_called_once_with(
-        follow=False, tail=None, rank=None, timestamps=False, since=None, until=None, query=None, severity=None
+        follow=False, tail=None, rank=0, timestamps=False, since=None, until=None, query=None, severity=None
     )
 
 
@@ -109,6 +110,7 @@ def test_job_logs_merges_mmt_without_rank() -> None:
     from lightning_sdk.cli.job.logs import logs_job
 
     mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
     mmt.logs.return_value = "[distributed-0] zero\n[distributed-1] one"
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.job.logs.resolve_job_or_mmt",
