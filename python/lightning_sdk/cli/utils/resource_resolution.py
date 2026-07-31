@@ -3,6 +3,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.deployment import Deployment
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.mmt import MMT
@@ -54,6 +55,18 @@ def resolve_studio(name: Optional[str], teamspace: Teamspace) -> Studio:
     except ValueError as ex:
         detail = f" '{name}'" if name else ""
         raise click.UsageError(f"Could not resolve studio{detail}. Pass --name STUDIO.") from ex
+
+
+def resolve_deployment(name: Optional[str], teamspace: Teamspace) -> Deployment:
+    if not name:
+        raise click.UsageError("Missing deployment name. Pass --name DEPLOYMENT.")
+    try:
+        deployment = Deployment(name=name, teamspace=teamspace)
+    except ValueError as ex:
+        raise click.UsageError(f"Could not resolve deployment {name!r} in teamspace {teamspace.name!r}.") from ex
+    if not deployment._is_created:
+        raise click.UsageError(f"Could not resolve deployment {name!r} in teamspace {teamspace.name!r}.")
+    return deployment
 
 
 def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:

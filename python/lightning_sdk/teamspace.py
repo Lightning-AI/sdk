@@ -362,6 +362,23 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         self._teamspace_api.set_secret(self.id, key, value, secret_type=secret_type)
 
+    def delete_secret(self, key: str) -> None:
+        """Delete a generic encrypted secret from the teamspace.
+
+        Args:
+            key: Secret name. Must start with a letter or underscore and contain only
+                alphanumeric characters and underscores.
+
+        Raises:
+            ValueError: If the key is invalid or no generic secret with that name exists.
+        """
+        if not self._teamspace_api.verify_secret_name(key):
+            raise ValueError(
+                "Secret keys must only contain alphanumeric characters and underscores and not begin with a number."
+            )
+
+        self._teamspace_api.delete_secret(self.id, key)
+
     def list_machines(self, cloud_account: Optional[str] = None, machine: Optional[str] = None) -> List[Machine]:
         """List available machines across cloud accounts.
 

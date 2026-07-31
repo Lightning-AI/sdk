@@ -879,6 +879,11 @@ func (s *Studio) SetEnv(newEnv map[string]string, partial bool) error {
 	if s == nil || s.teamspaceID == "" || s.id == "" {
 		return errors.New("studio set env requires teamspace ID and studio ID")
 	}
+	for key := range newEnv {
+		if !validSecretName(key) {
+			return errors.New("environment variable names must start with a letter or underscore and contain only letters, numbers, and underscores")
+		}
+	}
 	updatedEnv := map[string]string{}
 	if partial {
 		for key, value := range s.env {
@@ -917,6 +922,26 @@ func (s *Studio) SetEnv(newEnv map[string]string, partial bool) error {
 		*s = *updated
 	}
 	return nil
+}
+
+// DeleteEnv deletes one directly configured Studio environment variable.
+func (s *Studio) DeleteEnv(key string) error {
+	if s == nil || s.teamspaceID == "" || s.id == "" {
+		return errors.New("studio delete env requires teamspace ID and studio ID")
+	}
+	if !validSecretName(key) {
+		return errors.New("environment variable names must start with a letter or underscore and contain only letters, numbers, and underscores")
+	}
+	if _, ok := s.env[key]; !ok {
+		return fmt.Errorf("studio environment variable %q was not found", key)
+	}
+	updated := make(map[string]string, len(s.env)-1)
+	for name, value := range s.env {
+		if name != key {
+			updated[name] = value
+		}
+	}
+	return s.SetEnv(updated, false)
 }
 
 // AvailablePlugins lists plugins available for installation.

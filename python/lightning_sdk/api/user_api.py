@@ -19,6 +19,10 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_secret_type import V1Secret
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
+def _is_generic_secret(secret: V1Secret) -> bool:
+    return secret.type in (None, V1SecretType.UNSPECIFIED)
+
+
 class UserApi:
     """Internal API Client for user requests (mainly http requests)."""
 
@@ -144,7 +148,7 @@ class UserApi:
         # this returns encrypted values for security. It doesn't make sense to show them,
         # so we just return a placeholder
         # not a security issue to replace in the client as we get the encrypted values from the server.
-        return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
+        return {secret.name: "***REDACTED***" for secret in secrets if _is_generic_secret(secret)}
 
     def set_secret(self, key: str, value: str) -> None:
         """Create or replace an encrypted secret for the authenticated user.
@@ -155,9 +159,26 @@ class UserApi:
         """
         secrets = self._get_secrets()
         for secret in secrets:
-            if secret.name == key:
+            if secret.name == key and _is_generic_secret(secret):
                 return self._update_secret(secret.id, value)
         return self._create_secret(key, value)
+
+    def delete_secret(self, key: str) -> None:
+        """Delete a generic secret for the authenticated user.
+
+        Args:
+            key: The generic secret name.
+
+        Raises:
+            ValueError: If no generic secret with the given name exists.
+        """
+        secret = next(
+            (secret for secret in self._get_secrets() if secret.name == key and _is_generic_secret(secret)),
+            None,
+        )
+        if secret is None:
+            raise ValueError(f"Generic user secret {key!r} was not found.")
+        self._client.secret_service_delete_user_secret(id=secret.id)
 
     def _get_secrets(self) -> List[V1Secret]:
         """Fetch all raw secret objects for the authenticated user.

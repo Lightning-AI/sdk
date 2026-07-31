@@ -1404,7 +1404,7 @@ def restore_env(env: List[V1EnvVar]) -> List[Union[Secret, Env]]:
 
 
 def to_env(env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None) -> Optional[List[V1EnvVar]]:
-    if not env:
+    if env is None:
         return None
 
     env_list = []
