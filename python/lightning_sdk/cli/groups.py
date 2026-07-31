@@ -23,12 +23,24 @@ from lightning_sdk.cli.model import register_commands as register_model_commands
 from lightning_sdk.cli.sandbox import register_commands as register_sandbox_commands
 from lightning_sdk.cli.ssh import register_commands as register_ssh_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
+from lightning_sdk.cli.teamspace import register_commands as register_teamspace_commands
+from lightning_sdk.cli.user import register_commands as register_user_commands
 from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
 
 
 @click.group(name="studio", cls=LightningGroup)
 def studio() -> None:
     """Persistent GPU dev workspaces."""
+
+
+@click.group(name="user", cls=LightningGroup)
+def user() -> None:
+    """Manage the authenticated user."""
+
+
+@click.group(name="teamspace", cls=LightningGroup)
+def teamspace() -> None:
+    """Manage Lightning teamspaces."""
 
 
 @click.group(name="job", cls=LightningGroup)
@@ -192,6 +204,8 @@ register_job_commands(job)
 register_mmt_commands(mmt)
 register_machine_commands(machine)
 register_studio_commands(studio)
+register_user_commands(user)
+register_teamspace_commands(teamspace)
 register_config_commands(config)
 register_api_commands(api)
 register_deployment_commands(deployment)

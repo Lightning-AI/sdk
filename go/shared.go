@@ -115,10 +115,15 @@ func validSecretName(name string) bool {
 	return secretNamePattern.MatchString(name)
 }
 
+func isGenericSecret(secret *models.V1Secret) bool {
+	return secret != nil &&
+		(secret.Type == nil || *secret.Type == models.V1SecretTypeSECRETTYPEUNSPECIFIED)
+}
+
 func redactedSecrets(secrets []*models.V1Secret) map[string]string {
 	result := map[string]string{}
 	for _, secret := range secrets {
-		if secret == nil || secret.Type == nil || *secret.Type != models.V1SecretTypeSECRETTYPEUNSPECIFIED {
+		if !isGenericSecret(secret) {
 			continue
 		}
 		result[secret.Name] = "***REDACTED***"

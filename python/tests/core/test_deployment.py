@@ -1,6 +1,6 @@
 import re
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -62,6 +62,100 @@ def _mock_deployment_dependencies(monkeypatch, auth_instance):
     deployment_api.get_deployment_by_name.return_value = None
     monkeypatch.setattr(deployment_module, "DeploymentApi", MagicMock(return_value=deployment_api))
     return teamspace_mock
+
+
+def _assert_env_entries(entries, expected):
+    actual = [
+        ("secret", entry.name, None) if isinstance(entry, Secret) else ("literal", entry.name, entry.value)
+        for entry in entries
+    ]
+    assert actual == expected
+
+
+def test_deployment_set_env_partial_preserves_unrelated_entries():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+    current = [Env("KEEP", "yes"), Env("CHANGE", "old"), Secret("TOKEN")]
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.set_env({"CHANGE": "new", "EMPTY": ""})
+
+    entries = deployment.update.call_args.kwargs["env"]
+    _assert_env_entries(
+        entries,
+        [
+            ("literal", "KEEP", "yes"),
+            ("secret", "TOKEN", None),
+            ("literal", "CHANGE", "new"),
+            ("literal", "EMPTY", ""),
+        ],
+    )
+
+
+def test_deployment_set_env_replacement_preserves_only_unshadowed_secret_references():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+    current = [Env("OLD", "value"), Secret("KEEP_SECRET"), Secret("SHADOWED")]
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.set_env({"SHADOWED": "literal"}, partial=False)
+
+    entries = deployment.update.call_args.kwargs["env"]
+    _assert_env_entries(
+        entries,
+        [
+            ("secret", "KEEP_SECRET", None),
+            ("literal", "SHADOWED", "literal"),
+        ],
+    )
+
+
+def test_deployment_delete_env_removes_only_literal_and_can_clear_final_entry():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+
+    current = [Env("TOKEN", "literal"), Secret("TOKEN"), Secret("OTHER")]
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.delete_env("TOKEN")
+    entries = deployment.update.call_args.kwargs["env"]
+    _assert_env_entries(entries, [("secret", "TOKEN", None), ("secret", "OTHER", None)])
+
+    deployment.update.reset_mock()
+    with patch.object(
+        deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=[Env("ONLY", "value")]
+    ):
+        deployment.delete_env("ONLY")
+    deployment.update.assert_called_once_with(env=[])
+
+
+def test_deployment_env_mutations_reject_missing_invalid_and_uncreated():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+
+    with patch.object(
+        deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=[Secret("TOKEN")]
+    ), pytest.raises(ValueError, match="Deployment environment variable 'TOKEN' was not found"):
+        deployment.delete_env("TOKEN")
+
+    with patch.object(
+        deployment_module.Deployment,
+        "env",
+        new_callable=PropertyMock,
+        side_effect=AssertionError("environment should not be read"),
+    ):
+        for invalid_name in ("", "2_NAME", "INVALID-NAME"):
+            with pytest.raises(ValueError, match="Environment variable names must start"):
+                deployment.set_env({invalid_name: "value"})
+            with pytest.raises(ValueError, match="Environment variable names must start"):
+                deployment.delete_env(invalid_name)
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=None):
+        with pytest.raises(ValueError, match="Deployment must exist before its environment can be changed"):
+            deployment.set_env({"TOKEN": "value"})
+        with pytest.raises(ValueError, match="Deployment must exist before its environment can be changed"):
+            deployment.delete_env("TOKEN")
+
+    deployment.update.assert_not_called()
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
@@ -363,6 +457,11 @@ def test_to_env():
 
     env = deployment_api_module.to_env([Env("key", "value"), Secret("secret")])
     assert env == [V1EnvVar(name="key", value="value"), V1EnvVar(from_secret="secret")]
+
+
+def test_to_env_distinguishes_no_change_from_clear():
+    assert deployment_api_module.to_env(None) is None
+    assert deployment_api_module.to_env([]) == []
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())

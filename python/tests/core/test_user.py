@@ -97,6 +97,29 @@ def test_user_set_secret_invalid_name(internal_user_api_mocker):
         user.set_secret("123_INVALID", "secret_value")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_user_delete_secret(internal_user_api_mocker):
+    user = User("my-user-name")
+
+    with mock.patch.object(user._user_api, "delete_secret") as mock_delete:
+        user.delete_secret("OLD_SECRET")
+
+    mock_delete.assert_called_once_with("OLD_SECRET")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_user_delete_secret_invalid_name(internal_user_api_mocker):
+    user = User("my-user-name")
+
+    with mock.patch.object(user._user_api, "delete_secret") as mock_delete, pytest.raises(
+        ValueError,
+        match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
+    ):
+        user.delete_secret("123_INVALID")
+
+    mock_delete.assert_not_called()
+
+
 @mock.patch("lightning_sdk.teamspace.Teamspace.__init__", return_value=None)
 @mock.patch("lightning_sdk.user._get_authed_user")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

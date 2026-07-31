@@ -184,7 +184,7 @@ func (u *User) SetSecret(key, value string) error {
 		return err
 	}
 	for _, secret := range secrets {
-		if secret != nil && secret.Name == key {
+		if isGenericSecret(secret) && secret.Name == key {
 			_, err := api.SecretService.SecretServiceUpdateUserSecret(
 				secret_service.NewSecretServiceUpdateUserSecretParamsWithContext(context.Background()).
 					WithID(secret.ID).
@@ -198,6 +198,35 @@ func (u *User) SetSecret(key, value string) error {
 			WithBody(&models.V1CreateUserSecretRequest{Name: key, Value: value}),
 	)
 	return err
+}
+
+// DeleteSecret deletes a generic user secret by name.
+func (u *User) DeleteSecret(key string) error {
+	if u == nil {
+		return errors.New("user delete secret requires user")
+	}
+	if !validSecretName(key) {
+		return errors.New("secret keys must only contain alphanumeric characters and underscores and not begin with a number")
+	}
+	secrets, err := u.listSecrets()
+	if err != nil {
+		return err
+	}
+	for _, secret := range secrets {
+		if !isGenericSecret(secret) || secret.Name != key {
+			continue
+		}
+		api, err := sdkclient.New()
+		if err != nil {
+			return err
+		}
+		_, err = api.SecretService.SecretServiceDeleteUserSecret(
+			secret_service.NewSecretServiceDeleteUserSecretParamsWithContext(context.Background()).
+				WithID(secret.ID),
+		)
+		return err
+	}
+	return fmt.Errorf("generic user secret %q was not found", key)
 }
 
 func (u *User) listSecrets() ([]*models.V1Secret, error) {

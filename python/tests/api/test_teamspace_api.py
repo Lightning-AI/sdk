@@ -975,8 +975,8 @@ def test_set_secret_update_existing():
     teamspace_api = TeamspaceApi()
 
     existing_secrets = [
-        V1Secret(id="secret-1", name="API_KEY"),
-        V1Secret(id="secret-2", name="DATABASE_URL"),
+        V1Secret(id="secret-1", name="API_KEY", type=V1SecretType.UNSPECIFIED),
+        V1Secret(id="secret-2", name="DATABASE_URL", type=V1SecretType.UNSPECIFIED),
     ]
 
     with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
@@ -985,6 +985,53 @@ def test_set_secret_update_existing():
         teamspace_api.set_secret("ts-abc", "API_KEY", "new_secret_value")
 
         mock_update.assert_called_once_with("ts-abc", "secret-1", "new_secret_value")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_set_generic_secret_does_not_update_same_name_typed_secret():
+    teamspace_api = TeamspaceApi()
+    existing_secrets = [
+        V1Secret(id="hf-secret", name="API_KEY", type=V1SecretType.HF_TOKEN),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        teamspace_api, "_update_secret"
+    ) as mock_update, mock.patch.object(teamspace_api, "_create_secret") as mock_create:
+        teamspace_api.set_secret("ts-abc", "API_KEY", "new_secret_value")
+
+    mock_update.assert_not_called()
+    mock_create.assert_called_once_with("ts-abc", "API_KEY", "new_secret_value", secret_type=V1SecretType.UNSPECIFIED)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_secret_resolves_generic_secret_id():
+    teamspace_api = TeamspaceApi()
+    existing_secrets = [
+        V1Secret(id="hf-secret", name="API_KEY", type=V1SecretType.HF_TOKEN),
+        V1Secret(id="generic-secret", name="API_KEY", type=V1SecretType.UNSPECIFIED),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        teamspace_api._client, "secret_service_delete_secret"
+    ) as mock_delete:
+        teamspace_api.delete_secret("ts-abc", "API_KEY")
+
+    mock_delete.assert_called_once_with(project_id="ts-abc", id="generic-secret")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_delete_secret_rejects_missing_generic_secret():
+    teamspace_api = TeamspaceApi()
+    existing_secrets = [
+        V1Secret(id="hf-secret", name="API_KEY", type=V1SecretType.HF_TOKEN),
+    ]
+
+    with mock.patch.object(teamspace_api, "_get_secrets", return_value=existing_secrets), mock.patch.object(
+        teamspace_api._client, "secret_service_delete_secret"
+    ) as mock_delete, pytest.raises(ValueError, match="Generic teamspace secret 'API_KEY' was not found"):
+        teamspace_api.delete_secret("ts-abc", "API_KEY")
+
+    mock_delete.assert_not_called()
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")

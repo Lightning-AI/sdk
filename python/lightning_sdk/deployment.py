@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
@@ -67,6 +68,17 @@ __all__ = [
     "Secret",
     "TokenAuth",
 ]
+
+_ENV_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_ENV_NAME_ERROR = (
+    "Environment variable names must start with a letter or underscore "
+    "and contain only letters, numbers, and underscores."
+)
+
+
+def _validate_env_names(env: Dict[str, str]) -> None:
+    if any(_ENV_NAME_PATTERN.fullmatch(name) is None for name in env):
+        raise ValueError(_ENV_NAME_ERROR)
 
 
 class Deployment(metaclass=TrackCallsMeta):
@@ -631,6 +643,47 @@ class Deployment(metaclass=TrackCallsMeta):
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_env(self._deployment.spec.env)
         return None
+
+    def set_env(self, new_env: Dict[str, str], partial: bool = True) -> None:
+        """Set directly configured literal Deployment environment variables.
+
+        Args:
+            new_env: Literal environment variable names and values.
+            partial: Preserve unrelated literal variables when ``True``. Secret references
+                are preserved unless shadowed by a new literal in either mode.
+
+        Raises:
+            ValueError: If a name is invalid or the Deployment does not exist.
+        """
+        _validate_env_names(new_env)
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+
+        names = set(new_env)
+        if partial:
+            kept = [entry for entry in current if entry.name not in names]
+        else:
+            kept = [entry for entry in current if isinstance(entry, Secret) and entry.name not in names]
+        self.update(env=[*kept, *(Env(name=name, value=value) for name, value in new_env.items())])
+
+    def delete_env(self, key: str) -> None:
+        """Delete one directly configured literal Deployment environment variable.
+
+        Args:
+            key: Name of the literal environment variable to delete.
+
+        Raises:
+            ValueError: If the name is invalid, the Deployment does not exist, or the
+                literal variable is not directly configured.
+        """
+        _validate_env_names({key: ""})
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+        if not any(isinstance(entry, Env) and entry.name == key for entry in current):
+            raise ValueError(f"Deployment environment variable {key!r} was not found.")
+        self.update(env=[entry for entry in current if not (isinstance(entry, Env) and entry.name == key)])
 
     @property
     def urls(self) -> Optional[List[str]]:

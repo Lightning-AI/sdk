@@ -96,6 +96,12 @@ def _resolve_secret_type(secret_type: Union[str, SecretType]) -> V1SecretType:
     return _SECRET_TYPE_TO_API[resolved]
 
 
+def _secret_matches_type(secret: V1Secret, secret_type: V1SecretType) -> bool:
+    if secret_type == V1SecretType.UNSPECIFIED:
+        return secret.type in (None, V1SecretType.UNSPECIFIED)
+    return secret.type == secret_type
+
+
 class TeamspaceApi:
     """Internal API client for Teamspace requests (mainly http requests)."""
 
@@ -941,7 +947,11 @@ class TeamspaceApi:
         # this returns encrypted values for security. It doesn't make sense to show them,
         # so we just return a placeholder
         # not a security issue to replace in the client as we get the encrypted values from the server.
-        return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
+        return {
+            secret.name: "***REDACTED***"
+            for secret in secrets
+            if _secret_matches_type(secret, V1SecretType.UNSPECIFIED)
+        }
 
     def set_secret(
         self,
@@ -965,9 +975,31 @@ class TeamspaceApi:
         resolved_type = _resolve_secret_type(secret_type)
         secrets = self._get_secrets(teamspace_id)
         for secret in secrets:
-            if secret.name == key:
+            if secret.name == key and _secret_matches_type(secret, resolved_type):
                 return self._update_secret(teamspace_id, secret.id, value)
         return self._create_secret(teamspace_id, key, value, secret_type=resolved_type)
+
+    def delete_secret(self, teamspace_id: str, key: str) -> None:
+        """Delete a generic secret from a teamspace.
+
+        Args:
+            teamspace_id: ID of the teamspace that owns the secret.
+            key: The generic secret name.
+
+        Raises:
+            ValueError: If no generic secret with the given name exists.
+        """
+        secret = next(
+            (
+                secret
+                for secret in self._get_secrets(teamspace_id)
+                if secret.name == key and _secret_matches_type(secret, V1SecretType.UNSPECIFIED)
+            ),
+            None,
+        )
+        if secret is None:
+            raise ValueError(f"Generic teamspace secret {key!r} was not found.")
+        self._client.secret_service_delete_secret(project_id=teamspace_id, id=secret.id)
 
     def _get_secrets(self, teamspace_id: str) -> List[V1Secret]:
         """Fetch all raw secret objects for the teamspace.
