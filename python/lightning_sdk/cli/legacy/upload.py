@@ -40,19 +40,15 @@ def upload() -> None:
 
 
 @upload.command("model")
-@click.argument("name")
-@click.option(
-    "--path",
-    default=".",
-    help="The path to the file or directory you want to upload. Defaults to the current directory.",
-)
+@click.argument("name", metavar="ORG-NAME/TEAMSPACE-NAME/MODEL-NAME")
+@click.argument("path")
 @click.option(
     "--cloud-account",
     "--cloud_account",
     default=None,
     help="The name of the cloud account to store the Model in.",
 )
-def model(name: str, path: str = ".", cloud_account: Optional[str] = None) -> None:
+def model(name: str, path: str, cloud_account: Optional[str] = None) -> None:
     """Upload a model a teamspace.
 
     Example:

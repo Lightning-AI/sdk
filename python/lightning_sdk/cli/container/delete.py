@@ -1,25 +1,31 @@
-"""Container delete command."""
+"""Container deletion resolver."""
 
 from typing import Optional
 
-import rich_click as click
+from lightning_sdk.cli.legacy.exceptions import StudioCliError
+from lightning_sdk.cli.utils.delete import DeleteAction
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
+from lightning_sdk.lit_container import LitContainer
 
-from lightning_sdk.cli.legacy.delete import container as _delete_container
-from lightning_sdk.cli.utils.logging import LightningCommand
 
+def resolve_container_delete(
+    name: str,
+    teamspace: Optional[str],
+) -> DeleteAction:
+    """Resolve a container deletion and return its bound action."""
+    resolved_teamspace = resolve_teamspace(teamspace)
+    api = LitContainer()
 
-@click.command("delete", cls=LightningCommand)
-@click.argument("name")
-@click.option(
-    "--teamspace",
-    default=None,
-    help=(
-        "The teamspace to delete the container from. "
-        "Should be specified as {owner}/{name}. "
-        "Defaults to the configured teamspace."
-    ),
-)
-@click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
-def delete_container(name: str, teamspace: Optional[str] = None, as_json: bool = False) -> None:
-    """Delete the docker container NAME."""
-    _delete_container.callback(name=name, teamspace=teamspace, as_json=as_json)
+    def delete() -> None:
+        try:
+            api.delete_container(
+                name,
+                resolved_teamspace.name,
+                resolved_teamspace.owner.name,
+            )
+        except Exception as ex:
+            raise StudioCliError(
+                f"Could not delete container {name} from project {resolved_teamspace.name}: {ex}"
+            ) from None
+
+    return delete

@@ -125,6 +125,19 @@ def test_stream_follows_page_tokens() -> None:
     assert client.jobs_service_get_logs.call_args_list[1].kwargs["page_token"] == "cursor-1"
 
 
+def test_stream_filters_lightning_prefix() -> None:
+    api, client = _api(
+        V1GetLogsResponse(entries=[_entry("+ lightning"), _entry("one")], next_page_token="cursor-1"),
+        V1GetLogsResponse(entries=[_entry("two")], next_page_token=""),
+    )
+
+    entries = list(api.stream("project-id", deployment_id="dep-id"))
+
+    assert [e.message for e in entries] == ["one", "two"]
+    assert client.jobs_service_get_logs.call_count == 2
+    assert client.jobs_service_get_logs.call_args_list[1].kwargs["page_token"] == "cursor-1"
+
+
 def test_stream_tail_keeps_the_last_lines_across_pages() -> None:
     api, _ = _api(
         V1GetLogsResponse(entries=[_entry("a"), _entry("b")], next_page_token="cursor-1"),

@@ -24,27 +24,44 @@ def register_commands(group: click.Group) -> None:
     """Register sandbox commands with the given group."""
     from lightning_sdk.cli.sandbox.commands import (
         command_status,
+        connect_sandbox,
         create_sandbox,
         create_snapshot,
-        delete_sandbox,
-        delete_snapshot,
         get_snapshot,
         list_sandbox_commands,
         list_sandboxes,
         list_snapshots,
         logs_sandbox_command,
+        resolve_sandbox_delete,
+        resolve_snapshot_delete,
         run_sandbox_command,
         start_sandbox,
         stop_sandbox,
         update_sandbox,
     )
+    from lightning_sdk.cli.utils.delete import register_delete_command
 
     group.add_command(list_sandboxes, name="list")
     group.add_command(create_sandbox, name="create")
     group.add_command(update_sandbox, name="update")
-    group.add_command(delete_sandbox, name="delete")
+    register_delete_command(
+        group,
+        label="Sandbox",
+        help="""Delete a sandbox.
+
+        Example:
+          $ sandbox delete sbx-42
+
+          Sandbox deleted
+        """,
+        identifier="sandbox_id",
+        context_option="api_key",
+        context_help="Sandbox API key.",
+        resolve_delete=resolve_sandbox_delete,
+    )
     group.add_command(stop_sandbox, name="stop")
     group.add_command(start_sandbox, name="start")
+    group.add_command(connect_sandbox, name="connect")
     group.add_command(run_sandbox_command, name="run")
     group.add_command(logs_sandbox_command, name="logs")
     group.add_command(command_status, name="command")
@@ -52,6 +69,20 @@ def register_commands(group: click.Group) -> None:
     snapshot.add_command(list_snapshots, name="list")
     snapshot.add_command(get_snapshot, name="get")
     snapshot.add_command(create_snapshot, name="create")
-    snapshot.add_command(delete_snapshot, name="delete")
+    register_delete_command(
+        snapshot,
+        label="Snapshot",
+        help="""Delete a sandbox snapshot.
+
+        Example:
+          $ sandbox snapshot delete snap-42
+
+          Snapshot deleted
+        """,
+        identifier="snapshot_id",
+        context_option="api_key",
+        context_help="Sandbox API key.",
+        resolve_delete=resolve_snapshot_delete,
+    )
     group.add_command(snapshot, name="snapshot")
     group.add_command(list_sandbox_commands, name="commands")

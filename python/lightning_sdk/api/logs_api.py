@@ -76,7 +76,9 @@ class LogEntry:
             parts.append(self.timestamp.isoformat())
         if prefix:
             parts.append(f"[{prefix}]")
+
         parts.append(self.message)
+
         return " ".join(parts)
 
     def to_json_dict(self, source: Optional[str] = None) -> "Dict[str, Optional[str]]":
@@ -289,8 +291,14 @@ class LogsApi:
             kwargs["page_token"] = page_token
 
         response = self._client.jobs_service_get_logs(project_id=teamspace_id, **kwargs)
+
+        raw_entries = list(getattr(response, "entries", None) or [])
+        # if it's the first page, trim leading "+ lightning" from the output
+        if not page_token and raw_entries and getattr(raw_entries[0], "message", "") == "+ lightning":
+            raw_entries = raw_entries[1:]
+
         return LogsPage(
-            entries=[_entry_from_model(entry) for entry in (getattr(response, "entries", None) or [])],
+            entries=[_entry_from_model(entry) for entry in raw_entries],
             next_page_token=getattr(response, "next_page_token", None) or None,
             follow_url=getattr(response, "follow_url", None) or None,
         )

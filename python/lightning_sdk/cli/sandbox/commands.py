@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Sequence
+from functools import partial
 from typing import Any
 
 import rich_click as click
@@ -13,6 +14,7 @@ from rich.table import Table
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.job.run import _resolve_envs
+from lightning_sdk.cli.utils.delete import DeleteAction
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
 from lightning_sdk.cli.utils.richt_print import rich_to_str
@@ -34,6 +36,22 @@ def _sandbox_client(
     base_url: str | None = None,
 ) -> Sandbox:
     return Sandbox(_sandbox_config(api_key=api_key, base_url=base_url))
+
+
+def resolve_sandbox_delete(
+    sandbox_id: str,
+    api_key: str | None,
+) -> DeleteAction:
+    """Resolve a sandbox and return its bound deletion action."""
+    return _sandbox_client(api_key=api_key).get(sandbox_id).delete
+
+
+def resolve_snapshot_delete(
+    snapshot_id: str,
+    api_key: str | None,
+) -> DeleteAction:
+    """Resolve a sandbox snapshot and return its bound deletion action."""
+    return partial(_sandbox_client(api_key=api_key).delete_snapshot, snapshot_id)
 
 
 def _json_default(value: object) -> str:
@@ -74,14 +92,12 @@ def _echo_sandbox_summary(sandbox: SandboxInstance) -> None:
     table.add_column("Status", no_wrap=True)
     table.add_column("Instance type", no_wrap=True)
     table.add_column("Persistent", no_wrap=True)
-    table.add_column("Cluster", no_wrap=True)
     table.add_row(
         sandbox.sandbox_id,
         sandbox.name,
         sandbox.status,
         sandbox.instance_type,
         "yes" if sandbox.persistent else "no",
-        sandbox.cluster_id,
     )
     click.echo(rich_to_str(table), color=True)
 
@@ -252,6 +268,12 @@ def list_sandboxes(
     help="Maximum sandbox lifetime in milliseconds, after which it is auto-stopped (note: this is ms, "
     "unlike `run --timeout` which is seconds).",
 )
+@click.option(
+    "--connect",
+    "connect",
+    is_flag=True,
+    help="After the sandbox is running, open an interactive shell in it (requires a TTY).",
+)
 @click.option("--json", "as_json", is_flag=True, help="Print JSON output.")
 def create_sandbox(
     api_key: str | None,
@@ -266,9 +288,13 @@ def create_sandbox(
     snapshot_id: str | None,
     persistent: bool | None,
     timeout: int | None,
+    connect: bool,
     as_json: bool,
 ) -> None:
     """Create a sandbox and wait until it is running.
+
+    Pass --connect to drop straight into an interactive shell once the sandbox
+    is running (mutually exclusive with --json).
 
     Example:
       $ sandbox create --name devbox
@@ -279,12 +305,23 @@ def create_sandbox(
 
       devbox
 
+      $ sandbox create --name devbox --connect
+
+      (interactive shell)
+
       $ sandbox create --name devbox --teamspace owner/teamspace --json
 
       {
         "persistent": true
       }
     """
+    if connect and as_json:
+        raise click.UsageError("--connect cannot be combined with --json.")
+    # Validate the local terminal before provisioning so we don't create a
+    # sandbox we can't attach to.
+    if connect:
+        _check_interactive_shell_support()
+
     sandbox = _sandbox_client(api_key=api_key).create(
         name=name,
         instance_type=instance_type,
@@ -302,22 +339,8 @@ def create_sandbox(
         _echo_json(_sandbox_to_dict(sandbox))
         return
     _echo_sandbox_summary(sandbox)
-
-
-@click.command("delete", cls=LightningCommand)
-@_with_common_options
-@click.argument("sandbox_id")
-def delete_sandbox(api_key: str | None, sandbox_id: str) -> None:
-    """Delete a sandbox.
-
-    Example:
-      $ sandbox delete sbx-42
-
-      Deleted sandbox sbx-42
-    """
-    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
-    sandbox.delete()
-    click.echo(f"Deleted sandbox {sandbox_id}")
+    if connect:
+        _attach_interactive_shell(sandbox)
 
 
 @click.command("stop", cls=LightningCommand)
@@ -410,6 +433,184 @@ def update_sandbox(
         _echo_json(_sandbox_to_dict(sandbox))
         return
     _echo_sandbox_summary(sandbox)
+
+
+def _check_interactive_shell_support() -> None:
+    """Validate the local environment can host an interactive PTY shell.
+
+    Shared by `sandbox connect` and `sandbox create --connect` so both fail the
+    same way (and, for create, before any sandbox is provisioned).
+    """
+    import sys
+
+    if not (sys.stdin.isatty() and sys.stdout.isatty()):
+        raise click.UsageError("An interactive shell requires an interactive terminal (TTY).")
+    try:
+        import select  # noqa: F401
+        import signal  # noqa: F401
+        import termios  # noqa: F401
+        import tty  # noqa: F401
+    except ImportError as exc:  # pragma: no cover - non-Unix platforms
+        raise click.UsageError("An interactive shell is only supported on Unix-like systems.") from exc
+
+
+def _attach_interactive_shell(
+    sandbox: SandboxInstance,
+    *,
+    cwd: str | None = None,
+    envs: dict[str, str] | None = None,
+    session_name: str | None = None,
+) -> None:
+    """Stream a raw-TTY PTY session on ``sandbox`` to the local terminal.
+
+    Call :func:`_check_interactive_shell_support` first. Blocks until the user
+    disconnects (``exit`` / Ctrl-D) or the remote shell exits.
+    """
+    import contextlib
+    import os
+    import select
+    import shutil
+    import signal
+    import sys
+    import termios
+    import threading
+    import time
+    import tty
+
+    from lightning_sdk.sandbox import PtyCreateOpts
+
+    sandbox_id = sandbox.sandbox_id
+    stdin_fd = sys.stdin.fileno()
+    size = shutil.get_terminal_size(fallback=(80, 24))
+
+    pty = sandbox.process.create_pty(
+        PtyCreateOpts(
+            session_name=session_name or f"connect-{int(time.time())}",
+            cwd=cwd,
+            envs=envs or None,
+            cols=size.columns,
+            rows=size.lines,
+        )
+    )
+
+    click.echo(
+        f"Connecting to sandbox {sandbox_id} (type 'exit' to close the shell, or press Ctrl-] to detach)...",
+        err=True,
+    )
+
+    stop_event = threading.Event()
+    # Local detach key (Ctrl-]), telnet-style. In raw mode every other key
+    # (including Ctrl-C / Ctrl-D) is forwarded to the remote shell, so this is
+    # the one guaranteed way to bail out even if the server keeps the socket
+    # open after the shell exits.
+    detach_byte = b"\x1d"
+
+    def _forward_stdin() -> None:
+        while not stop_event.is_set():
+            try:
+                ready, _, _ = select.select([stdin_fd], [], [], 0.2)
+            except (OSError, ValueError):
+                break
+            if stdin_fd not in ready:
+                continue
+            try:
+                data = os.read(stdin_fd, 4096)
+            except OSError:
+                break
+            if not data:
+                # Ctrl-D / EOF on our local stdin: forward once so the remote
+                # shell can exit, then stop reading.
+                with contextlib.suppress(Exception):
+                    pty.send_input(b"\x04")
+                break
+            idx = data.find(detach_byte)
+            if idx != -1:
+                # Forward anything typed before the detach key, then bail out
+                # locally by closing the WebSocket (unblocks pty.wait()).
+                if idx > 0:
+                    with contextlib.suppress(Exception):
+                        pty.send_input(data[:idx])
+                with contextlib.suppress(Exception):
+                    pty.disconnect()
+                break
+            with contextlib.suppress(Exception):
+                pty.send_input(data)
+
+    def _on_resize(_signum: int, _frame: object) -> None:
+        new_size = shutil.get_terminal_size(fallback=(80, 24))
+        with contextlib.suppress(Exception):
+            pty.resize(new_size.columns, new_size.lines)
+
+    old_term = termios.tcgetattr(stdin_fd)
+    previous_winch = signal.getsignal(signal.SIGWINCH)
+    reader = threading.Thread(target=_forward_stdin, daemon=True)
+    try:
+        tty.setraw(stdin_fd)
+        signal.signal(signal.SIGWINCH, _on_resize)
+        try:
+            pty.wait_for_connection(timeout=30)
+        except (TimeoutError, RuntimeError) as exc:
+            raise click.ClickException(f"Failed to connect to sandbox {sandbox_id}: {exc}") from exc
+        reader.start()
+        # Blocks until the session ends: the user detaches (Ctrl-]) or the
+        # remote shell exits and the backend closes the attach socket. Either
+        # way it's a normal end-of-session, so we just report a clean
+        # disconnect below (PtyHandle treats a post-open close as clean).
+        pty.wait()
+    finally:
+        stop_event.set()
+        with contextlib.suppress(Exception):
+            signal.signal(signal.SIGWINCH, previous_winch)
+        termios.tcsetattr(stdin_fd, termios.TCSADRAIN, old_term)
+        with contextlib.suppress(Exception):
+            pty.disconnect()
+        reader.join(timeout=1.0)
+
+    click.echo(f"\nDisconnected from sandbox {sandbox_id}.", err=True)
+
+
+@click.command("connect", cls=LightningCommand)
+@_with_common_options
+@click.argument("sandbox_id")
+@click.option("--workdir", "cwd", help="Working directory for the shell inside the sandbox.")
+@click.option(
+    "--env",
+    "env",
+    multiple=True,
+    default=[""],
+    help="Environment variable in KEY=VALUE or JSON format. Can be passed multiple times.",
+)
+@click.option(
+    "--session-name",
+    default=None,
+    help="PTY session name. Defaults to a unique per-invocation name.",
+)
+def connect_sandbox(
+    api_key: str | None,
+    sandbox_id: str,
+    cwd: str | None,
+    env: Sequence[str],
+    session_name: str | None,
+) -> None:
+    """Open an interactive shell in a sandbox.
+
+    Streams a PTY session to your local terminal. Type ``exit`` or press Ctrl-D
+    to disconnect. Requires an interactive terminal (a TTY) and is only
+    supported on Unix-like systems.
+
+    Example:
+      $ sandbox connect sbx-42
+
+      $ sandbox connect sbx-42 --workdir /workspace --env MODE=dev
+    """
+    _check_interactive_shell_support()
+    sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
+    _attach_interactive_shell(
+        sandbox,
+        cwd=cwd,
+        envs=_parse_env(env),
+        session_name=session_name,
+    )
 
 
 @click.command(
@@ -737,20 +938,6 @@ def create_snapshot(
         _echo_json(_snapshot_to_dict(snapshot))
         return
     _echo_snapshot_summary(snapshot)
-
-
-@click.command("delete", cls=LightningCommand)
-@_with_common_options
-@click.argument("snapshot_id")
-def delete_snapshot(api_key: str | None, snapshot_id: str) -> None:
-    """Delete a sandbox snapshot.
-
-    Example:
-      $ sandbox snapshot delete snap-42
-      Deleted snapshot snap-42
-    """
-    _sandbox_client(api_key=api_key).delete_snapshot(snapshot_id)
-    click.echo(f"Deleted snapshot {snapshot_id}")
 
 
 @click.command("commands", cls=LightningCommand)

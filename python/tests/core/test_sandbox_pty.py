@@ -373,6 +373,30 @@ def test_pty_handle_reports_abnormal_close_as_exit_code_minus_one_with_a_populat
     assert handle.error == "remote dropped"
 
 
+def test_pty_handle_parses_exit_code_from_clean_close_reason() -> None:
+    handle, _sent, _closed = _make_handle()
+    handle._on_open()
+    handle.wait_for_connection()
+    # Backend carries the shell's exit status in the close reason as JSON.
+    handle._on_close(1000, '{"exitCode":1}')
+
+    result = handle.wait()
+    assert result.exit_code == 1
+    assert result.error is None
+
+
+def test_pty_handle_clean_close_without_reason_defaults_exit_code_zero() -> None:
+    handle, _sent, _closed = _make_handle()
+    handle._on_open()
+    handle.wait_for_connection()
+    # Signal-terminated shell / older backend: no exit code in the reason.
+    handle._on_close(1000, "")
+
+    result = handle.wait()
+    assert result.exit_code == 0
+    assert result.error is None
+
+
 def test_pty_handle_flushes_envs_and_cwd_as_initial_input_lines() -> None:
     handle, sent, _closed = _make_handle(
         initial_input=["export FOO='bar baz'\n", "cd '/work dir' && clear\n"],
