@@ -160,3 +160,61 @@ def test_monthly_summary_future_after_pivot_naive(mock_client):
 
     with pytest.raises(ValueError, match="must not be in the future"):
         org_api.get_monthly_summary("org-123", pivot=future, pivot_direction="AFTER")
+
+
+# ---- get_monthly_summary: 2-year duration limit --------------------------
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_rejects_range_over_two_years(mock_client):
+    org_api = OrgApi()
+    start = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    end = start + timedelta(days=731)  # just over 2 years
+
+    with pytest.raises(ValueError, match="not be longer than 2 years"):
+        org_api.get_monthly_summary("org-123", range_start=start, range_end=end)
+
+    mock_client().billing_service_get_monthly_summary.assert_not_called()
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_allows_range_exactly_two_years(mock_client):
+    org_api = OrgApi()
+    start = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    end = start + timedelta(days=730)  # exactly 2 years
+
+    org_api.get_monthly_summary("org-123", range_start=start, range_end=end)
+
+    mock_client().billing_service_get_monthly_summary.assert_called_once()
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_rejects_after_pivot_over_two_years(mock_client):
+    org_api = OrgApi()
+    pivot = datetime.now(timezone.utc) - timedelta(days=731)  # just over 2 years ago
+
+    with pytest.raises(ValueError, match="more than 2 years in the past"):
+        org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="AFTER")
+
+    mock_client().billing_service_get_monthly_summary.assert_not_called()
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_allows_after_pivot_within_two_years(mock_client):
+    org_api = OrgApi()
+    pivot = datetime.now(timezone.utc) - timedelta(days=700)  # within 2 years
+
+    org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="AFTER")
+
+    mock_client().billing_service_get_monthly_summary.assert_called_once()
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_before_pivot_not_limited_by_two_years(mock_client):
+    """The 2-year limit only applies to AFTER pivots; a far-past BEFORE pivot is fine."""
+    org_api = OrgApi()
+    pivot = datetime(2000, 1, 1, tzinfo=timezone.utc)  # decades ago
+
+    org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="BEFORE")
+
+    mock_client().billing_service_get_monthly_summary.assert_called_once()
