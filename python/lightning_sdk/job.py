@@ -866,9 +866,7 @@ class Job(metaclass=TrackCallsMeta):
     @property
     def link(self) -> str:
         if self.is_multi_machine:
-            return (
-                f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/" f"jobs/{self.name}?app_id=mmt"
-            )
+            return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=mmt"
 
         mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
 

@@ -610,9 +610,10 @@ def test_submit_jobv2_studio_resolve(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
-
-    Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
+    with mock.patch.object(Job, "_submit", submit_mock):
+        Job.run(
+            "test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc"
+        )
 
     submit_mock.assert_called_once_with(
         command="echo hello",
@@ -691,11 +692,10 @@ def test_submit_job_v2_image_from_studio(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.dict(
         os.environ,
         {
             "LIGHTNING_CLOUD_SPACE_ID": "st-abc",
@@ -747,17 +747,16 @@ def test_run_job_with_cloud_provider(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
-
-    Job.run(
-        "test-job",
-        machine=Machine.CPU,
-        command="echo hello",
-        image="nginx",
-        teamspace="ts-abc",
-        org="org-abc",
-        cloud="nebius",
-    )
+    with mock.patch.object(Job, "_submit", submit_mock):
+        Job.run(
+            "test-job",
+            machine=Machine.CPU,
+            command="echo hello",
+            image="nginx",
+            teamspace="ts-abc",
+            org="org-abc",
+            cloud="nebius",
+        )
 
     submit_mock.assert_called_once_with(
         command="echo hello",
@@ -952,11 +951,10 @@ def test_submit_job_from_running_studio(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.dict(
         os.environ,
         {
             "LIGHTNING_CLOUD_SPACE_ID": "st-abc",
