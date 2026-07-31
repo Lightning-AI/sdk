@@ -198,11 +198,26 @@ def test_resolve_job_or_mmt_uses_unified_job() -> None:
     job.assert_called_once_with(name="distributed", teamspace=teamspace)
 
 
-def test_resolve_mmt_machine_uses_rank_suffix() -> None:
+def test_resolve_mmt_machine_prefers_rank_attribute() -> None:
+    rank0 = MagicMock(name="odd-name-0")
+    rank0.name = "odd-name-0"
+    rank0.rank = 0
+    rank1 = MagicMock(name="odd-name-1")
+    rank1.name = "odd-name-1"
+    rank1.rank = 1
+    mmt = MagicMock(name="distributed", machines=(rank0, rank1))
+    mmt.name = "distributed"
+
+    assert resolve_job_machine(mmt, 1) is rank1
+
+
+def test_resolve_mmt_machine_falls_back_to_name_suffix() -> None:
     rank0 = MagicMock(name="rank-0")
     rank0.name = "distributed-0"
+    rank0.rank = None
     rank1 = MagicMock(name="rank-1")
     rank1.name = "distributed-1"
+    rank1.rank = None
     mmt = MagicMock(name="distributed", machines=(rank0, rank1))
     mmt.name = "distributed"
 

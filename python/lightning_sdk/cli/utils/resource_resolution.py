@@ -89,18 +89,26 @@ def resolve_job_machine(job: Job, rank: int) -> Job:
     if not machines:
         raise click.ClickException(f"Job '{job.name}' has no machines.")
 
+    for machine in machines:
+        if machine.rank == rank:
+            return machine
+
+    # Fallback for older naming when rank is missing on the machine object.
     expected = f"{job.name}-{rank}"
     for machine in machines:
         if machine.name == expected:
             return machine
 
+    available_ranks: set[int] = set()
     prefix = f"{job.name}-"
-    available_ranks = []
     for machine in machines:
+        if machine.rank is not None:
+            available_ranks.add(machine.rank)
+            continue
         if machine.name.startswith(prefix):
             suffix = machine.name[len(prefix) :]
             if suffix.isdigit():
-                available_ranks.append(int(suffix))
+                available_ranks.add(int(suffix))
     available = ", ".join(str(value) for value in sorted(available_ranks))
     raise click.ClickException(f"Rank {rank} not found on job '{job.name}'. Available ranks: {available or 'none'}.")
 

@@ -43,9 +43,9 @@ def test_job_init_error(
         studio = Studio("st-abc", "ts-abc", org="org-abc")
         Job("xyz", studio.teamspace)
 
-    with mock.patch(
-        "lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)
-    ), pytest.raises(ValueError, match="Job xyz does not exist in Teamspace ts-abc"):
+    with mock.patch("lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)), pytest.raises(
+        ValueError, match="Job xyz does not exist in Teamspace ts-abc"
+    ):
         init_job_error()
 
 
@@ -112,9 +112,9 @@ def test_delete_job(
     with pytest.raises(RuntimeError, match="Job j-abc does not exist in Teamspace ts-abc. Did you delete it?"):
         job.status  # noqa: B018
 
-    with mock.patch(
-        "lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)
-    ), pytest.raises(ValueError, match="Job j-abc does not exist in Teamspace ts-abc"):
+    with mock.patch("lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)), pytest.raises(
+        ValueError, match="Job j-abc does not exist in Teamspace ts-abc"
+    ):
         Job("j-abc", studio.teamspace)
 
 

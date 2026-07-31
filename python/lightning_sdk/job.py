@@ -867,8 +867,7 @@ class Job(metaclass=TrackCallsMeta):
     def link(self) -> str:
         if self.is_multi_machine:
             return (
-                f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/"
-                f"jobs/{self.name}?app_id=mmt"
+                f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/" f"jobs/{self.name}?app_id=mmt"
             )
 
         mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
@@ -920,9 +919,7 @@ class Job(metaclass=TrackCallsMeta):
             from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
             try:
-                self._job = self._standalone_job_api.get_job_by_name(
-                    name=self._name, teamspace_id=self._teamspace.id
-                )
+                self._job = self._standalone_job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
             except ApiException as ex:
                 if ex.status != 404:
                     raise

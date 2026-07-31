@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import V1Job, V1JobSpec, V1MultiMachineJob
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -56,9 +58,7 @@ def test_job_lookup_prefers_standalone_on_name_collision() -> None:
 def test_job_run_routes_multi_machine_submission() -> None:
     teamspace = _teamspace()
     multi_api = MagicMock()
-    multi_api.submit_job.return_value = V1MultiMachineJob(
-        id="mmt-id", name="distributed", machines=3, spec=V1JobSpec()
-    )
+    multi_api.submit_job.return_value = V1MultiMachineJob(id="mmt-id", name="distributed", machines=3, spec=V1JobSpec())
     multi_api.get_num_machines.return_value = 3
     cloud_api = MagicMock()
     cloud_api.resolve_cloud_account.return_value = "cloud-id"
@@ -86,9 +86,7 @@ def test_job_run_routes_multi_machine_submission() -> None:
 def test_mmt_run_returns_compatibility_subclass() -> None:
     teamspace = _teamspace()
     multi_api = MagicMock()
-    multi_api.submit_job.return_value = V1MultiMachineJob(
-        id="mmt-id", name="distributed", machines=2, spec=V1JobSpec()
-    )
+    multi_api.submit_job.return_value = V1MultiMachineJob(id="mmt-id", name="distributed", machines=2, spec=V1JobSpec())
     cloud_api = MagicMock()
     cloud_api.resolve_cloud_account.return_value = "cloud-id"
 
@@ -127,3 +125,23 @@ def test_mmt_lookup_skips_standalone_api() -> None:
     assert job.is_multi_machine
     standalone_api.return_value.get_job_by_name.assert_not_called()
     multi_api.get_job_by_name.assert_called_once()
+
+
+def test_mmt_lookup_rewrites_only_not_found_errors() -> None:
+    teamspace = _teamspace()
+    multi_api = MagicMock()
+    multi_api.get_job_by_name.side_effect = ApiException(status=404)
+
+    with patch("lightning_sdk.job._resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.job.JobApiV2"
+    ), patch("lightning_sdk.job.MMTApiV2", return_value=multi_api), pytest.raises(
+        ValueError, match="Multi-machine job distributed does not exist in Teamspace teamspace"
+    ):
+        MMT("distributed", teamspace)
+
+
+def test_mmt_lookup_propagates_teamspace_resolution_errors() -> None:
+    with patch("lightning_sdk.job._resolve_teamspace", return_value=None), pytest.raises(
+        ValueError, match="Cannot resolve the teamspace"
+    ):
+        MMT("distributed", "owner/teamspace")
