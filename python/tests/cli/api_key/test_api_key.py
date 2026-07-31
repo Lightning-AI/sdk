@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 import click
 from click.testing import CliRunner
 
+from lightning_sdk.cli.api_key import register_commands
 from lightning_sdk.cli.api_key.create import create_api_key
-from lightning_sdk.cli.api_key.delete import delete_api_key
 from lightning_sdk.cli.api_key.get import get_api_key
 from lightning_sdk.cli.api_key.list import list_api_keys
 from tests.cli.help import assert_help_contains, mock_command_logging
@@ -59,8 +59,10 @@ def test_api_key_list_help() -> None:
 def test_api_key_delete_help() -> None:
     assert_help_contains(
         "lightning api-key delete --help",
-        "Usage: lightning api-key delete",
+        "Usage: lightning api-key delete [OPTIONS] KEY_ID",
         "Delete an org-scoped API key.",
+        "--yes",
+        "-y",
     )
 
 
@@ -213,7 +215,7 @@ def test_list_cli_all_users() -> None:
 
 
 @mock_command_logging
-def test_delete_cli_prints_confirmation() -> None:
+def test_delete_cli_uses_shared_command() -> None:
     runner = CliRunner()
     org = _mock_org()
 
@@ -221,8 +223,11 @@ def test_delete_cli_prints_confirmation() -> None:
         patch("lightning_sdk.cli.api_key.delete.resolve_org", return_value=org),
         patch("lightning_sdk.cli.api_key.delete.ApiKeyApi") as api_cls,
     ):
-        result = runner.invoke(delete_api_key, ["key-123"])
+        group = click.Group()
+        register_commands(group)
+        result = runner.invoke(group, ["delete", "key-123", "--org", "test-org", "-y"])
 
     assert result.exit_code == 0
-    assert result.output.strip() == "Deleted API key key-123."
+    assert result.output == "API key deleted\n"
+    api_cls.assert_called_once_with()
     api_cls.return_value.delete.assert_called_once_with("org-1", "key-123")
