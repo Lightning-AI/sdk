@@ -32,19 +32,24 @@ def _group() -> click.Group:
     return group
 
 
-def test_delete_prompts_with_default_yes_and_prints_success() -> None:
+def test_delete_enter_aborts_without_deleting() -> None:
     FakeResource.instances.clear()
     result = CliRunner().invoke(_group(), ["delete", "demo"], input="\n")
 
-    assert result.exit_code == 0
-    assert result.output == "Are you sure you want to delete? [Y/n]: \nWidget deleted\n"
+    assert result.exit_code == 1
+    assert result.output == "Are you sure you want to delete? [y/N]: \nAborted!\n"
     resource = FakeResource.instances[-1]
-    assert (resource.name, resource.teamspace, resource.marker, resource.deleted) == (
-        "demo",
-        None,
-        "registered",
-        True,
-    )
+    assert (resource.name, resource.teamspace, resource.marker) == ("demo", None, "registered")
+    assert resource.deleted is False
+
+
+def test_delete_yes_confirms_and_prints_success() -> None:
+    FakeResource.instances.clear()
+    result = CliRunner().invoke(_group(), ["delete", "demo"], input="y\n")
+
+    assert result.exit_code == 0
+    assert result.output == "Are you sure you want to delete? [y/N]: y\nWidget deleted\n"
+    assert FakeResource.instances[-1].deleted is True
 
 
 def test_delete_no_aborts_without_deleting() -> None:

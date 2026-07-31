@@ -416,10 +416,10 @@ def test_sandbox_delete_prompts_by_default(_mock_log_command, monkeypatch) -> No
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = _invoke(["sandbox", "delete", "sbx-1"], input="\n")
+    result = _invoke(["sandbox", "delete", "sbx-1"], input="y\n")
 
     assert result.exit_code == 0
-    assert result.output == "Are you sure you want to delete? [Y/n]: \nSandbox deleted\n"
+    assert result.output == "Are you sure you want to delete? [y/N]: y\nSandbox deleted\n"
     assert instance.deleted is True
 
 

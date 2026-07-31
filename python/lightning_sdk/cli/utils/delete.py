@@ -59,7 +59,7 @@ def register_delete_command(
         if not params["yes"]:
             click.confirm(
                 "Are you sure you want to delete?",
-                default=True,
+                default=False,
                 abort=True,
             )
         delete()
