@@ -1,3 +1,5 @@
+from datetime import datetime
+import typing
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
@@ -49,3 +51,54 @@ class OrgApi:
         self._client.projects_service_create_project(
             body=V1CreateProjectRequest(name=name, organization_id=organization_id, display_name=name)
         )
+    
+    def get_monthly_summary(
+        self,
+        organization_id: str,
+        range_start: typing.Optional[datetime] = None,
+        range_end: typing.Optional[datetime] = None,
+        pivot: typing.Optional[datetime] = None,
+        pivot_direction: typing.Optional[str] = None,  # "BEFORE" | "AFTER"
+    ) -> dict:
+        """Get the monthly billing summary of an organization.
+
+        Exactly one filter mode must be supplied (the API rejects a missing or
+        empty TimeFilter):
+        - a range: pass both ``range_start`` and ``range_end``
+        - a pivot: pass ``pivot`` and ``pivot_direction`` ("BEFORE" or "AFTER")
+
+        Args:
+            organization_id: ID of the organization to summarize.
+            range_start: Start of the time range (use with ``range_end``).
+            range_end: End of the time range (use with ``range_start``).
+            pivot: Pivot timestamp (use with ``pivot_direction``).
+            pivot_direction: "BEFORE" or "AFTER" the pivot.
+
+        Returns:
+            dict: The monthly summary as a plain dictionary.
+
+        Raises:
+            ValueError: If not exactly one valid filter mode is provided.
+        """
+        has_range = range_start is not None and range_end is not None
+        has_pivot = pivot is not None and pivot_direction is not None
+
+        if has_range == has_pivot:
+            raise ValueError("Provide exactly one of a time range or a pivot, not both/neither.")
+
+        kwargs = {"org_id": organization_id}
+
+        if has_range:
+            if range_start is None or range_end is None:
+                raise ValueError("A range requires both range_start and range_end.")
+            kwargs["time_filter_range_filter_range_start"] = range_start
+            kwargs["time_filter_range_filter_range_end"] = range_end
+        else:
+            if pivot is None or pivot_direction is None:
+                raise ValueError("A pivot requires both pivot and pivot_direction.")
+            if pivot_direction not in ("BEFORE", "AFTER"):
+                raise ValueError('pivot_direction must be "BEFORE" or "AFTER".')
+            kwargs["time_filter_pivot_filter_pivot"] = pivot
+            kwargs["time_filter_pivot_filter_pivot_direction"] = pivot_direction
+
+        return self._client.billing_service_get_monthly_summary(**kwargs).to_dict()

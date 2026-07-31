@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from lightning_sdk.api import OrgApi
@@ -65,6 +66,25 @@ class Organization(Owner):
 
         self._org_api.create_teamspace(name, self.id)
         return Teamspace(name=name, org=self)
+    
+    def get_monthly_summary(
+        self,
+        range_start: Optional[datetime] = None,
+        range_end: Optional[datetime] = None,
+        pivot: Optional[datetime] = None,
+        pivot_direction: Optional[str] = None,  # "BEFORE" | "AFTER"
+    ) -> dict:
+        """Returns a monthly summary of credits purchased, used, and remaining
+
+
+        """
+        return self._org_api.get_monthly_summary(
+            self.id,
+            range_start=range_start,
+            range_end=range_end,
+            pivot=pivot,
+            pivot_direction=pivot_direction,
+        )
 
     def __repr__(self) -> str:
         """Returns reader friendly representation."""
