@@ -191,6 +191,51 @@ describe("Sandbox", () => {
       assert.equal(sb.phaseDurations, undefined);
     });
 
+    it("maps runtime to its -docker variant when docker is true", async () => {
+      let body: Record<string, unknown> = {};
+      globalThis.fetch = ((_input, init) => {
+        if (init?.body) body = JSON.parse(String(init.body));
+        return Promise.resolve(jsonResponse(sampleV1({ status: "running" })));
+      }) as typeof fetch;
+      await Sandbox.create({ instanceType: "cpu-2", runtime: "python313", docker: true });
+      assert.equal(body.runtime, "python313-docker");
+    });
+
+    it("defaults to node24-docker when docker is true and no runtime is given", async () => {
+      let body: Record<string, unknown> = {};
+      globalThis.fetch = ((_input, init) => {
+        if (init?.body) body = JSON.parse(String(init.body));
+        return Promise.resolve(jsonResponse(sampleV1({ status: "running" })));
+      }) as typeof fetch;
+      await Sandbox.create({ instanceType: "cpu-2", docker: true });
+      assert.equal(body.runtime, "node24-docker");
+    });
+
+    it("does not double-suffix an already -docker runtime", async () => {
+      let body: Record<string, unknown> = {};
+      globalThis.fetch = ((_input, init) => {
+        if (init?.body) body = JSON.parse(String(init.body));
+        return Promise.resolve(jsonResponse(sampleV1({ status: "running" })));
+      }) as typeof fetch;
+      await Sandbox.create({ instanceType: "cpu-2", runtime: "node24-docker", docker: true });
+      assert.equal(body.runtime, "node24-docker");
+    });
+
+    it("rejects docker combined with image", async () => {
+      await assert.rejects(
+        () =>
+          Sandbox.create({ instanceType: "cpu-2", image: "ghcr.io/org/img:tag", docker: true }),
+        /cannot be combined with 'image'/,
+      );
+    });
+
+    it("rejects docker combined with snapshotId", async () => {
+      await assert.rejects(
+        () => Sandbox.create({ instanceType: "cpu-2", snapshotId: "snap-1", docker: true }),
+        /cannot be combined with 'snapshotId'/,
+      );
+    });
+
     it("preserves create-only phaseDurations across the readiness poll", async () => {
       // Create response carries phaseDurations; the get() poll does not.
       enqueueJson(

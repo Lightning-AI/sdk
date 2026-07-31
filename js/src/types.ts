@@ -102,6 +102,18 @@ export interface CreateSandboxParams {
    */
   imageSecretRef?: string;
   /**
+   * Provision a sandbox that can build and run Docker containers (`docker` /
+   * `docker compose`): a rootful Docker daemon is started for you at boot, so
+   * no `dockerd` bring-up is needed inside the sandbox. Selects the
+   * Docker-in-gVisor variant of the runtime (e.g. `"node24"` →
+   * `"node24-docker"`), defaulting to `node24-docker` when no `runtime` is
+   * given. Cannot be combined with `image` (a custom image opts into Docker via
+   * its own `ai.lightning.sandbox.docker=true` OCI label) or `snapshotId` (the
+   * runtime is inherited from the snapshot). Because dockerd runs with
+   * `--bridge=none`, containers should use host networking (`--network=host`).
+   */
+  docker?: boolean;
+  /**
    * Egress firewall policy, applied at create time only. Omit for open egress
    * (`"allow-all"`), pass `"deny-all"`, or a {@link NetworkPolicy} CIDR
    * allowlist.

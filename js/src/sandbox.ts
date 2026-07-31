@@ -46,6 +46,38 @@ import { FileSystem } from "./filesystem.js";
 import { SandboxProcess } from "./process.js";
 import { NetworkPolicy, fromV1NetworkPolicy, toV1NetworkPolicy } from "./network-policy.js";
 
+/**
+ * Suffix identifying the Docker-in-gVisor variant of a curated runtime. Their
+ * images carry the `ai.lightning.sandbox.docker=true` OCI label, which is what
+ * the control plane / node agent gate Docker enablement on.
+ */
+export const DOCKER_RUNTIME_SUFFIX = "-docker";
+
+/** Runtime used when `docker: true` is requested without an explicit `runtime`. */
+export const DEFAULT_DOCKER_RUNTIME = `node24${DOCKER_RUNTIME_SUFFIX}`;
+
+/**
+ * Curated runtimes that ship Docker. Informational only: the backend owns the
+ * authoritative list, so a valid `docker: true` runtime is not restricted to
+ * these.
+ */
+export const DOCKER_RUNTIMES = [
+  `node22${DOCKER_RUNTIME_SUFFIX}`,
+  `node24${DOCKER_RUNTIME_SUFFIX}`,
+  `python313${DOCKER_RUNTIME_SUFFIX}`,
+] as const;
+
+/**
+ * Map a curated runtime to its Docker-in-gVisor variant. `undefined` resolves
+ * to {@link DEFAULT_DOCKER_RUNTIME}; a runtime that already ends in
+ * {@link DOCKER_RUNTIME_SUFFIX} is returned unchanged.
+ */
+function dockerRuntime(runtime?: string): string {
+  if (!runtime) return DEFAULT_DOCKER_RUNTIME;
+  if (runtime.endsWith(DOCKER_RUNTIME_SUFFIX)) return runtime;
+  return `${runtime}${DOCKER_RUNTIME_SUFFIX}`;
+}
+
 function buildQuery(params: Record<string, string | undefined>): string {
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -299,6 +331,21 @@ export class Sandbox {
     if (params.imageSecretRef && !params.image) {
       throw new Error("'imageSecretRef' is only valid together with 'image'.");
     }
+    let runtime = params.runtime;
+    if (params.docker) {
+      if (params.image) {
+        throw new Error(
+          "'docker' cannot be combined with 'image'. A custom image enables Docker by carrying " +
+            "the ai.lightning.sandbox.docker=true OCI label; build it in and drop 'docker'.",
+        );
+      }
+      if (params.snapshotId) {
+        throw new Error(
+          "'docker' cannot be combined with 'snapshotId' (the runtime is inherited from the snapshot).",
+        );
+      }
+      runtime = dockerRuntime(params.runtime);
+    }
 
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
@@ -310,7 +357,7 @@ export class Sandbox {
       spot: params.spot ?? false,
       ports: (params.ports ?? []).map(String),
     };
-    if (params.runtime) body.runtime = params.runtime;
+    if (runtime) body.runtime = runtime;
     if (params.image) body.image = params.image;
     if (params.imageSecretRef) body.imageSecretRef = params.imageSecretRef;
     if (params.persistent !== undefined) body.persistent = params.persistent;

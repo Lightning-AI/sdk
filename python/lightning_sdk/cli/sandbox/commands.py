@@ -257,6 +257,13 @@ def list_sandboxes(
     "--image-secret-ref",
     help="Name of a project Docker-registry Secret used to pull a private --image.",
 )
+@click.option(
+    "--docker",
+    is_flag=True,
+    default=False,
+    help="Provision a Docker-enabled sandbox (starts dockerd at boot; selects the "
+    "runtime's -docker variant). Mutually exclusive with --image and --snapshot-id.",
+)
 @click.option("--spot/--no-spot", default=False, help="Create the sandbox on spot capacity.")
 @click.option("--port", "ports", multiple=True, help="Port to expose. Can be passed multiple times.")
 @click.option("--teamspace", help="Teamspace to own persistent sandbox state (format: owner/teamspace).")
@@ -282,6 +289,7 @@ def create_sandbox(
     runtime: str | None,
     image: str | None,
     image_secret_ref: str | None,
+    docker: bool,
     spot: bool,
     ports: Sequence[str],
     teamspace: str | None,
@@ -296,12 +304,19 @@ def create_sandbox(
     Pass --connect to drop straight into an interactive shell once the sandbox
     is running (mutually exclusive with --json).
 
+    Pass --docker for a sandbox that can build and run containers (docker /
+    docker compose); the daemon is started for you at boot.
+
     Example:
       $ sandbox create --name devbox
 
       devbox
 
       $ sandbox create --name devbox --teamspace owner/teamspace --persistent
+
+      devbox
+
+      $ sandbox create --name devbox --docker
 
       devbox
 
@@ -328,6 +343,7 @@ def create_sandbox(
         runtime=runtime,
         image=image,
         image_secret_ref=image_secret_ref,
+        docker=docker,
         spot=spot,
         ports=_parse_ports(ports),
         teamspace=teamspace,
