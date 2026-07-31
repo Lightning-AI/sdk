@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import typing
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
@@ -6,6 +6,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Organization,
 )
 
+# The billing summary API only supports querying up to 2 years of history.
+_MAX_DURATION = timedelta(days=730)
 
 class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
@@ -78,7 +80,9 @@ class OrgApi:
             dict: The monthly summary as a plain dictionary.
 
         Raises:
-            ValueError: If not exactly one valid filter mode is provided.
+            ValueError: If not exactly one valid filter mode is provided, if the
+                range start is after the range end, or if an "AFTER" pivot is in
+                the future.
         """
         has_range = range_start is not None and range_end is not None
         has_pivot = pivot is not None and pivot_direction is not None
@@ -89,15 +93,23 @@ class OrgApi:
         kwargs = {"org_id": organization_id}
 
         if has_range:
-            if range_start is None or range_end is None:
-                raise ValueError("A range requires both range_start and range_end.")
+            if range_start > range_end:
+                raise ValueError("range_start must not be after range_end.")
+            if range_end - range_start > _MAX_DURATION:
+                raise ValueError("the time range must not be longer than 2 years.")
             kwargs["time_filter_range_filter_range_start"] = range_start
             kwargs["time_filter_range_filter_range_end"] = range_end
         else:
-            if pivot is None or pivot_direction is None:
-                raise ValueError("A pivot requires both pivot and pivot_direction.")
             if pivot_direction not in ("BEFORE", "AFTER"):
                 raise ValueError('pivot_direction must be "BEFORE" or "AFTER".')
+            if pivot_direction == "AFTER":
+                # An "AFTER" pivot selects [pivot, now]; it must be in the past
+                # and no more than 2 years back.
+                now = datetime.now(pivot.tzinfo) if pivot.tzinfo is not None else datetime.now()
+                if pivot > now:
+                    raise ValueError("pivot must not be in the future when pivot_direction is AFTER.")
+                if now - pivot > _MAX_DURATION:
+                    raise ValueError("an AFTER pivot must not be more than 2 years in the past.")
             kwargs["time_filter_pivot_filter_pivot"] = pivot
             kwargs["time_filter_pivot_filter_pivot_direction"] = pivot_direction
 
