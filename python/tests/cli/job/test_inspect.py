@@ -55,7 +55,7 @@ def test_job_inspect_uses_positional_name() -> None:
     job.json.return_value = '{"name":"my-job"}'
 
     with patch("lightning_sdk.cli.job.inspect.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
-        "lightning_sdk.cli.job.inspect.resolve_job_or_mmt", return_value=job
+        "lightning_sdk.cli.job.inspect.resolve_job", return_value=job
     ) as resolve_job:
         result = CliRunner().invoke(inspect_job, ["my-job", "--teamspace", "org/teamspace"])
 
@@ -76,7 +76,7 @@ def test_job_inspect_selects_mmt_rank() -> None:
     machine = MagicMock()
     machine.json.return_value = '{"name":"distributed-1"}'
     with patch("lightning_sdk.cli.job.inspect.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.inspect.resolve_job_or_mmt",
+        "lightning_sdk.cli.job.inspect.resolve_job",
         return_value=mmt,
     ), patch(
         "lightning_sdk.cli.job.inspect.resolve_job_machine",

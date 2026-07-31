@@ -6,7 +6,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_job_or_mmt, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.status import Status
 
@@ -54,7 +54,7 @@ def ssh_impl(
         raise click.UsageError("Missing job name. Pass NAME.")
 
     resolved_teamspace = resolve_teamspace(teamspace)
-    job = resolve_job_or_mmt(name, resolved_teamspace)
+    job = resolve_job(name, resolved_teamspace)
     if job.is_multi_machine is True:
         job = resolve_job_machine(job, rank if rank is not None else 0)
     elif rank is not None:

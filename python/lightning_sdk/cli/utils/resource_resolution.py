@@ -78,11 +78,6 @@ def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
         raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
 
 
-def resolve_job_or_mmt(name: Optional[str], teamspace: Teamspace) -> Job:
-    """Resolve a single- or multi-machine job by name."""
-    return resolve_job(name, teamspace)
-
-
 def resolve_job_machine(job: Job, rank: int) -> Job:
     """Resolve one machine in a multi-machine job by rank."""
     machines = job.machines
@@ -111,11 +106,6 @@ def resolve_job_machine(job: Job, rank: int) -> Job:
                 available_ranks.add(int(suffix))
     available = ", ".join(str(value) for value in sorted(available_ranks))
     raise click.ClickException(f"Rank {rank} not found on job '{job.name}'. Available ranks: {available or 'none'}.")
-
-
-def resolve_mmt_machine(mmt: MMT, rank: int) -> Job:
-    """Compatibility alias for resolving a machine by rank."""
-    return resolve_job_machine(mmt, rank)
 
 
 def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:

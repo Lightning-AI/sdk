@@ -43,7 +43,7 @@ def test_ssh_resolves_before_downloading_keys() -> None:
         "lightning_sdk.cli.job.ssh.resolve_teamspace",
         return_value=MagicMock(name="coding-model-training"),
     ), patch(
-        "lightning_sdk.cli.job.ssh.resolve_job_or_mmt",
+        "lightning_sdk.cli.job.ssh.resolve_job",
         side_effect=click.UsageError("Could not resolve job 'missing'."),
     ), patch(
         "lightning_sdk.cli.job.ssh.configure_ssh_internal",
@@ -61,7 +61,7 @@ def test_ssh_rejects_non_running_job() -> None:
     job.id = "job_01abc"
 
     with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=MagicMock()), patch(
-        "lightning_sdk.cli.job.ssh.resolve_job_or_mmt", return_value=job
+        "lightning_sdk.cli.job.ssh.resolve_job", return_value=job
     ), patch("lightning_sdk.cli.job.ssh.configure_ssh_internal") as configure, pytest.raises(
         click.ClickException, match="not Running"
     ):
@@ -78,7 +78,7 @@ def test_ssh_runs_against_job_gateway_user() -> None:
     job.id = "job_01jj4hvvjj4zx1t1esm5az3zt7"
 
     with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.ssh.resolve_job_or_mmt", return_value=job
+        "lightning_sdk.cli.job.ssh.resolve_job", return_value=job
     ) as resolve_job, patch(
         "lightning_sdk.cli.job.ssh.configure_ssh_internal", return_value="/tmp/lightning_rsa"
     ), patch("lightning_sdk.cli.job.ssh.subprocess.run") as run:
@@ -98,7 +98,7 @@ def test_ssh_selects_mmt_rank() -> None:
     machine.id = "job_rank1"
 
     with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=MagicMock()), patch(
-        "lightning_sdk.cli.job.ssh.resolve_job_or_mmt",
+        "lightning_sdk.cli.job.ssh.resolve_job",
         return_value=mmt,
     ), patch(
         "lightning_sdk.cli.job.ssh.resolve_job_machine",
@@ -123,7 +123,7 @@ def test_ssh_retries_with_fresh_keys_on_failure() -> None:
     run = MagicMock(side_effect=[OSError("ssh missing"), None])
 
     with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=MagicMock()), patch(
-        "lightning_sdk.cli.job.ssh.resolve_job_or_mmt", return_value=job
+        "lightning_sdk.cli.job.ssh.resolve_job", return_value=job
     ), patch("lightning_sdk.cli.job.ssh.configure_ssh_internal", configure), patch(
         "lightning_sdk.cli.job.ssh.subprocess.run", run
     ):

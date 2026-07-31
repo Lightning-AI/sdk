@@ -8,7 +8,7 @@ import rich_click as click
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
-from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_job_or_mmt, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
@@ -55,7 +55,7 @@ def logs_job(
     --rank).
     """
     resolved_teamspace = resolve_teamspace(teamspace)
-    resource = resolve_job_or_mmt(name, resolved_teamspace)
+    resource = resolve_job(name, resolved_teamspace)
     selected_rank = resource.is_multi_machine is True and rank is not None
     job = resolve_job_machine(resource, rank) if selected_rank else resource
 

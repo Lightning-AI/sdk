@@ -10,9 +10,7 @@ from lightning_sdk.cli.utils.resource_resolution import (
     resolve_deployment,
     resolve_job,
     resolve_job_machine,
-    resolve_job_or_mmt,
     resolve_mmt,
-    resolve_mmt_machine,
     resolve_studio,
     resolve_teamspace,
 )
@@ -187,18 +185,7 @@ def test_resolve_job_converts_not_found_to_usage_error() -> None:
         resolve_job("train", MagicMock())
 
 
-def test_resolve_job_or_mmt_uses_unified_job() -> None:
-    teamspace = MagicMock()
-    resolved = MagicMock()
-    with patch(
-        "lightning_sdk.cli.utils.resource_resolution.Job",
-        return_value=resolved,
-    ) as job:
-        assert resolve_job_or_mmt("distributed", teamspace) is resolved
-    job.assert_called_once_with(name="distributed", teamspace=teamspace)
-
-
-def test_resolve_mmt_machine_prefers_rank_attribute() -> None:
+def test_resolve_job_machine_prefers_rank_attribute() -> None:
     rank0 = MagicMock(name="odd-name-0")
     rank0.name = "odd-name-0"
     rank0.rank = 0
@@ -211,7 +198,7 @@ def test_resolve_mmt_machine_prefers_rank_attribute() -> None:
     assert resolve_job_machine(mmt, 1) is rank1
 
 
-def test_resolve_mmt_machine_falls_back_to_name_suffix() -> None:
+def test_resolve_job_machine_falls_back_to_name_suffix() -> None:
     rank0 = MagicMock(name="rank-0")
     rank0.name = "distributed-0"
     rank0.rank = None
@@ -221,7 +208,6 @@ def test_resolve_mmt_machine_falls_back_to_name_suffix() -> None:
     mmt = MagicMock(name="distributed", machines=(rank0, rank1))
     mmt.name = "distributed"
 
-    assert resolve_mmt_machine(mmt, 1) is rank1
     assert resolve_job_machine(mmt, 1) is rank1
 
 
