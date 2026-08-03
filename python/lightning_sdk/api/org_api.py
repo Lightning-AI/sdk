@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import typing
+from datetime import datetime, timedelta
 
 # The billing summary API only supports querying up to 2 years of history.
 _MAX_DURATION = timedelta(days=730)
@@ -54,7 +54,7 @@ class OrgApi:
         self._client.projects_service_create_project(
             body=V1CreateProjectRequest(name=name, organization_id=organization_id, display_name=name)
         )
-    
+
     def get_monthly_summary(
         self,
         organization_id: str,

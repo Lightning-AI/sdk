@@ -123,9 +123,7 @@ def test_monthly_summary_rejects_bad_pivot_direction(mock_client):
     org_api = OrgApi()
 
     with pytest.raises(ValueError, match='"BEFORE" or "AFTER"'):
-        org_api.get_monthly_summary(
-            "org-123", pivot=datetime(2026, 1, 1), pivot_direction="SIDEWAYS"
-        )
+        org_api.get_monthly_summary("org-123", pivot=datetime(2026, 1, 1), pivot_direction="SIDEWAYS")
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
 
