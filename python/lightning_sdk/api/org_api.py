@@ -1,6 +1,5 @@
 import typing
 from datetime import datetime, timedelta
-import typing
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
