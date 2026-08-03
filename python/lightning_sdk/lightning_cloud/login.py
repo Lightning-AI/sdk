@@ -158,22 +158,26 @@ class Auth:
             return f"Bearer {self.auth_token}"
         
         elif override == "api_key":
-            if not self.api_key or not self.user_id:
+            if not self.api_key:
                 raise ValueError(
-                    "API key override requested but no API key or user ID available. "
-                    "Please set LIGHTNING_API_KEY and LIGHTNING_USER_ID environment variables "
+                    "API key override requested but no API key available. "
+                    "Please set LIGHTNING_API_KEY environment variable "
                     "or use authenticate() method."
                 )
-            token = f"{self.user_id}:{self.api_key}"
-            return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+            if self.user_id:
+                token = f"{self.user_id}:{self.api_key}"
+                return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+            return f"Bearer {self.api_key}"
         
         elif override is None:
             # Use the original automatic selection logic (default behavior)
             if self.auth_token:
                 return f"Bearer {self.auth_token}"
             elif self.api_key:
-                token = f"{self.user_id}:{self.api_key}"
-                return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+                if self.user_id:
+                    token = f"{self.user_id}:{self.api_key}"
+                    return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+                return f"Bearer {self.api_key}"
             else:
                 raise ValueError(
                     "No authentication credentials available. Please authenticate first using "
@@ -212,7 +216,7 @@ class Auth:
 
         elif self.auth_token:
             return self.auth_header
-        elif self.user_id and self.api_key:
+        elif self.api_key:
             return self.auth_header
 
         raise ValueError(
