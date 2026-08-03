@@ -70,6 +70,7 @@ class MMT(Job):
         user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
+        _num_machines: int = 2,
     ) -> None:
         try:
             super().__init__(
@@ -78,7 +79,8 @@ class MMT(Job):
                 org=org,
                 user=user,
                 _fetch_job=_fetch_job,
-                _resource_kind="multi",
+                # Default 2 forces the multi-machine API for lookup; real count is synced after fetch/attach.
+                _num_machines=_num_machines,
             )
         except ValueError as ex:
             # Job.__init__ raises "Job {name} does not exist…" on 404; keep the MMT-specific

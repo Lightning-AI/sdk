@@ -57,6 +57,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         max_runtime=None,
         reuse_snapshot=True,
         placement_group_id=None,
+        scratch_disks=None,
     )
 
 
@@ -172,6 +173,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         max_runtime=None,
         reuse_snapshot=True,
         placement_group_id=None,
+        scratch_disks=None,
     )
 
 
@@ -473,7 +475,7 @@ def test_mmtv2_delete(mmt_api_get_job_by_name_mocker, internal_studio_init_mocke
 
     job.delete()
 
-    delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001")
+    delete_job_mock.assert_called_once_with(job_id="test-job-id", teamspace_id="ts-abc001", cloudspace_id=None)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

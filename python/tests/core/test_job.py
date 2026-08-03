@@ -159,6 +159,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 
@@ -245,6 +246,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 

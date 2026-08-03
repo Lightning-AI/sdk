@@ -143,6 +143,7 @@ class JobApiV2:
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        num_machines: int = 1,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -164,10 +165,13 @@ class JobApiV2:
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
+            num_machines: Must be 1 for single-machine jobs. Kept for parity with ``MMTApiV2.submit_job``.
 
         Returns:
             The newly created ``V1Job`` object.
         """
+        if num_machines != 1:
+            raise ValueError("JobApiV2 only supports single-machine jobs (num_machines=1)")
         if scratch_disks is not None:
             sanitized_scratch_disks = {}
             for k, v in scratch_disks.items():
@@ -342,7 +346,7 @@ class JobApiV2:
                 break
             time.sleep(1)
 
-    def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str]) -> None:
+    def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str] = None) -> None:
         """Permanently delete a v2 job.
 
         Args:
@@ -622,3 +626,14 @@ class JobApiV2:
             The total cost incurred by the job, expressed in US dollars.
         """
         return job.total_cost
+
+    def get_num_machines(self, job: V1Job) -> int:
+        """Return the number of machines for this job.
+
+        Single-machine jobs always report 1. Kept for parity with ``MMTApiV2.get_num_machines``.
+        """
+        return 1
+
+    def list_mmt_subjobs(self, job_id: str, teamspace_id: str) -> List[V1Job]:
+        """Single-machine jobs have no sub-jobs. Kept for parity with ``MMTApiV2.list_mmt_subjobs``."""
+        return []

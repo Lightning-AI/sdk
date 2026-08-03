@@ -52,7 +52,7 @@ def test_job_lookup_prefers_standalone_on_name_collision() -> None:
     assert not job.is_multi_machine
     assert job.num_machines == 1
     assert job.machines == (job,)
-    multi_api.assert_not_called()
+    multi_api.return_value.get_job_by_name.assert_not_called()
 
 
 def test_job_run_routes_multi_machine_submission() -> None:

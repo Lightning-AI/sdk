@@ -132,7 +132,7 @@ class Job(metaclass=TrackCallsMeta):
         user: Union[str, "User", None] = None,
         *,
         _fetch_job: bool = True,
-        _resource_kind: Optional[str] = None,
+        _num_machines: int = 1,
     ) -> None:
         """Fetch already existing jobs.
 
@@ -150,6 +150,9 @@ class Job(metaclass=TrackCallsMeta):
                 when ``_fetch_job=True``.
             PermissionError: If the user does not have access to jobs in the given teamspace.
         """
+        if _num_machines < 1:
+            raise ValueError("A job needs to run on at least one machine")
+
         teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if teamspace is None:
             raise ValueError(
@@ -165,11 +168,8 @@ class Job(metaclass=TrackCallsMeta):
         self._prevent_refetch_latest = False
         self._cloud_account_api = CloudAccountApi()
         self._standalone_job_api = JobApiV2()
-        self._mmt_job_api: Optional[MMTApiV2] = None
-        self._resource_kind = _resource_kind or "standalone"
-        self._job_api: Union[JobApiV2, MMTApiV2] = self._standalone_job_api
-        if self._resource_kind == "multi":
-            self._set_resource_kind("multi")
+        self._mmt_job_api = MMTApiV2()
+        self._num_machines = _num_machines
         self._logs_api = LogsApi()
 
         if _fetch_job:
@@ -182,16 +182,20 @@ class Job(metaclass=TrackCallsMeta):
                     raise ValueError(f"Job {name} does not exist in Teamspace {teamspace.name}") from None
                 raise
 
-    def _set_resource_kind(self, kind: str) -> None:
-        if kind not in ("standalone", "multi"):
-            raise ValueError(f"Unknown job resource kind: {kind}")
-        self._resource_kind = kind
-        if kind == "multi":
-            if self._mmt_job_api is None:
-                self._mmt_job_api = MMTApiV2()
-            self._job_api = self._mmt_job_api
-        else:
-            self._job_api = self._standalone_job_api
+    @property
+    def _job_api(self) -> Union[JobApiV2, MMTApiV2]:
+        return self._mmt_job_api if self._num_machines > 1 else self._standalone_job_api
+
+    def _attach_job(self, job: Any) -> None:
+        """Bind a fetched job payload and sync ``num_machines`` from it."""
+        from lightning_sdk.lightning_cloud.openapi import V1Job, V1MultiMachineJob
+
+        self._job = job
+        # Only a known payload type changes the machine count; anything else keeps the current one.
+        if isinstance(job, V1MultiMachineJob):
+            self._num_machines = job.machines if job.machines and job.machines > 1 else max(self._num_machines, 2)
+        elif isinstance(job, V1Job):
+            self._num_machines = 1
 
     @classmethod
     def run(
@@ -331,8 +335,7 @@ class Job(metaclass=TrackCallsMeta):
             elif entrypoint == "" or entrypoint is None:
                 entrypoint = None
 
-        job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False)
-        job._set_resource_kind("multi" if num_machines > 1 else "standalone")
+        job = cls(name=name, teamspace=teamspace, org=org, user=user, _fetch_job=False, _num_machines=num_machines)
         submit_cloud = cloud if cloud_account is None else None
 
         job._submit(
@@ -380,9 +383,7 @@ class Job(metaclass=TrackCallsMeta):
     ) -> "Job":
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
-        if self.is_multi_machine and num_machines <= 1:
-            raise ValueError("Multi-machine jobs need to run on at least two machines")
-        if self.is_multi_machine and scratch_disks:
+        if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
 
         if studio is not None:
@@ -425,36 +426,35 @@ class Job(metaclass=TrackCallsMeta):
                 if ".." in path.parts:
                     raise ValueError("scratch_disk path cannot contain '..'")
 
-        submit_kwargs = {
-            "name": self.name,
-            "command": command,
-            "cloud_account": cloud_account,
-            "teamspace_id": self._teamspace.id,
-            "studio_id": studio_id,
-            "image": image,
-            "machine": machine,
-            "interruptible": interruptible,
-            "env": env,
-            "image_credentials": image_credentials,
-            "cloud_account_auth": cloud_account_auth,
-            "entrypoint": entrypoint,
-            "path_mappings": path_mappings,
-            "max_runtime": max_runtime,
-            "reuse_snapshot": reuse_snapshot,
-            "placement_group_id": placement_group_id,
-        }
-        if self.is_multi_machine:
-            submitted = self._job_api.submit_job(num_machines=num_machines, **submit_kwargs)
-        else:
-            submitted = self._job_api.submit_job(scratch_disks=scratch_disks, **submit_kwargs)
-        if not self.is_multi_machine and submitted.name != self._name:
+        self._num_machines = num_machines
+        submitted = self._job_api.submit_job(
+            name=self.name,
+            command=command,
+            cloud_account=cloud_account,
+            teamspace_id=self._teamspace.id,
+            studio_id=studio_id,
+            image=image,
+            machine=machine,
+            interruptible=interruptible,
+            env=env,
+            image_credentials=image_credentials,
+            cloud_account_auth=cloud_account_auth,
+            entrypoint=entrypoint,
+            path_mappings=path_mappings,
+            max_runtime=max_runtime,
+            reuse_snapshot=reuse_snapshot,
+            placement_group_id=placement_group_id,
+            num_machines=num_machines,
+            scratch_disks=scratch_disks,
+        )
+        if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
                 f"Job name '{self._name}' was already taken in this teamspace; "
                 f"the job was created as '{submitted.name}' instead.",
                 stacklevel=2,
             )
 
-        self._job = submitted
+        self._attach_job(submitted)
         self._name = submitted.name
         return self
 
@@ -465,14 +465,12 @@ class Job(metaclass=TrackCallsMeta):
         self._job_api.stop_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
 
     def delete(self) -> None:
-        if self.is_multi_machine:
-            self._job_api.delete_job(job_id=self._guaranteed_job.id, teamspace_id=self._teamspace.id)
-        else:
-            self._job_api.delete_job(
-                job_id=self._guaranteed_job.id,
-                teamspace_id=self._teamspace.id,
-                cloudspace_id=self._guaranteed_job.spec.cloudspace_id,
-            )
+        cloudspace_id = None if self.is_multi_machine else self._guaranteed_job.spec.cloudspace_id
+        self._job_api.delete_job(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            cloudspace_id=cloudspace_id,
+        )
 
     def wait(self, interval: float = 5.0, timeout: Optional[float] = None, stop_on_timeout: bool = False) -> None:
         import time
@@ -560,14 +558,12 @@ class Job(metaclass=TrackCallsMeta):
     @property
     def is_multi_machine(self) -> bool:
         """Whether this object represents a multi-machine parent job."""
-        return self._resource_kind == "multi"
+        return self._num_machines > 1
 
     @property
     def num_machines(self) -> int:
         """The number of machines allocated to this job."""
-        if not self.is_multi_machine:
-            return 1
-        return self._job_api.get_num_machines(self._guaranteed_job)
+        return self._num_machines
 
     @property
     def machines(self) -> Tuple["Job", ...]:
@@ -581,8 +577,8 @@ class Job(metaclass=TrackCallsMeta):
         )
         machines = []
         for subjob in subjobs:
-            job = Job(name=subjob.name, teamspace=self.teamspace, _fetch_job=False)
-            job._job = subjob
+            job = Job(name=subjob.name, teamspace=self.teamspace, _fetch_job=False, _num_machines=1)
+            job._attach_job(subjob)
             machines.append(job)
         return tuple(machines)
 
@@ -911,21 +907,24 @@ class Job(metaclass=TrackCallsMeta):
     def _update_internal_job(self) -> None:
         if getattr(self, "_job", None) is None:
             if self.is_multi_machine:
-                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+                self._attach_job(self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id))
                 return
 
             from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
             try:
-                self._job = self._standalone_job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+                self._attach_job(
+                    self._standalone_job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+                )
             except ApiException as ex:
                 if ex.status != 404:
                     raise
-                self._set_resource_kind("multi")
-                self._job = self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id)
+                # Switch to the multi-machine API, then sync the real machine count from the payload.
+                self._num_machines = 2
+                self._attach_job(self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id))
             return
 
-        self._job = self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id)
+        self._attach_job(self._job_api.get_job(job_id=self._job.id, teamspace_id=self._teamspace.id))
 
     @property
     def name(self) -> str:
