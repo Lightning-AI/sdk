@@ -1,3 +1,4 @@
+import typing
 from datetime import datetime, timedelta
 import typing
 from lightning_sdk.api.utils import cached_lightning_client
@@ -53,7 +54,7 @@ class OrgApi:
         self._client.projects_service_create_project(
             body=V1CreateProjectRequest(name=name, organization_id=organization_id, display_name=name)
         )
-    
+
     def get_monthly_summary(
         self,
         organization_id: str,
