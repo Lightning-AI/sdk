@@ -1,13 +1,14 @@
 import typing
 from datetime import datetime, timedelta
 
-# The billing summary API only supports querying up to 2 years of history.
-_MAX_DURATION = timedelta(days=730)
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
     V1Organization,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
+
+# The billing summary API only supports querying up to 2 years of history.
+_MAX_DURATION = timedelta(days=730)
 
 
 class OrgApi:

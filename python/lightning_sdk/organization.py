@@ -74,7 +74,7 @@ class Organization(Owner):
         pivot: Optional[datetime] = None,
         pivot_direction: Optional[str] = None,  # "BEFORE" | "AFTER"
     ) -> dict:
-        """Returns a monthly summary of credits purchased, used, and remaining"""
+        """Returns a monthly summary of credits purchased, used, and remaining."""
         return self._org_api.get_monthly_summary(
             self.id,
             range_start=range_start,
