@@ -1,0 +1,32 @@
+name: Check vendored cloud files
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, synchronize, edited, labeled, unlabeled]
+    paths:
+      - ".github/workflows/check-vendored-cloud.yaml"
+      - "python/lightning_sdk/lightning_cloud/**"
+      - "js/src/lightning_cloud/openapi/**"
+      - "go/internal/lightningcloud/openapi/generated/**"
+
+permissions: {}
+
+jobs:
+  check-vendored-cloud-files:
+    name: Check vendored cloud files
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Reject direct edits to vendored cloud files
+        if: >-
+          github.event.pull_request.title != 'Vendor cloud changes' &&
+          !contains(github.event.pull_request.labels.*.name, 'vendoring')
+        run: |
+          echo "::error::This PR edits vendored Cloud files. Make the change in Grid and use the generated 'Vendor cloud changes' PR, or apply the 'vendoring' label for an intentional manual vendoring update."
+          exit 1
+
+      - name: Confirm vendoring pull request
+        if: >-
+          github.event.pull_request.title == 'Vendor cloud changes' ||
+          contains(github.event.pull_request.labels.*.name, 'vendoring')
+        run: echo "Vendored Cloud file changes are allowed for this PR."
