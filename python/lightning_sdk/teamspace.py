@@ -278,7 +278,7 @@ class Teamspace(metaclass=TrackCallsMeta):
 
     @property
     def jobs(self) -> Tuple["Job", ...]:
-        """All single-machine jobs in this teamspace.
+        """All standalone and multi-machine jobs in this teamspace.
 
         Returns:
             tuple[Job, ...]: Every Job belonging to this teamspace.
@@ -294,7 +294,11 @@ class Teamspace(metaclass=TrackCallsMeta):
         for j2 in self._teamspace_api.list_jobs(teamspace_id=self.id):
             # _fetch_job = False to prevent refetching on init since we already got it
             job = Job(name=j2.name, teamspace=self, _fetch_job=False)
-            job._job = j2
+            job._attach_job(j2)
+            jobs.append(job)
+        for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id):
+            job = Job(name=m2.name, teamspace=self, _fetch_job=False)
+            job._attach_job(m2)
             jobs.append(job)
 
         return tuple(jobs)
@@ -317,7 +321,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id):
             # _fetch_job = False to prevent refetching on init since we already got it
             mmt = MMT(name=m2.name, teamspace=self, _fetch_job=False)
-            mmt._job = m2
+            mmt._attach_job(m2)
             mmts.append(mmt)
 
         return tuple(mmts)

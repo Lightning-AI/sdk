@@ -19,6 +19,14 @@ _MACHINE_VALUES = tuple(
 @click.command("run", cls=LightningCommand)
 @click.option("--name", default=None, help="The name of the job. Needs to be unique within the teamspace.")
 @click.option(
+    "--num-machines",
+    "--num_machines",
+    default=1,
+    show_default=True,
+    type=click.IntRange(min=1),
+    help="The number of machines to run on.",
+)
+@click.option(
     "--machine",
     default="CPU",
     show_default=True,
@@ -119,6 +127,7 @@ _MACHINE_VALUES = tuple(
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_job(
     name: Optional[str] = None,
+    num_machines: int = 1,
     machine: str = "CPU",
     command: Optional[str] = None,
     studio: Optional[str] = None,
@@ -136,7 +145,10 @@ def run_job(
     path_mappings: str = "",
     as_json: bool = False,
 ) -> None:
-    """Run async workloads using a docker image or studio."""
+    """Run async workloads using a docker image or studio.
+
+    Pass --num-machines greater than 1 to run a multi-machine job.
+    """
     if not name:
         from datetime import datetime
 
@@ -159,23 +171,25 @@ def run_job(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    job = Job.run(
-        name=name,
-        machine=machine_enum,
-        command=command,
-        studio=studio,
-        image=image,
-        teamspace=resolved_teamspace,
-        org=org,
-        user=user,
-        cloud=cloud,
-        env=env_dict,
-        interruptible=interruptible,
-        image_credentials=image_credentials,
-        cloud_account_auth=cloud_account_auth,
-        entrypoint=entrypoint,
-        path_mappings=path_mappings_dict,
-    )
+    run_kwargs = {
+        "name": name,
+        "machine": machine_enum,
+        "command": command,
+        "studio": studio,
+        "image": image,
+        "teamspace": resolved_teamspace,
+        "org": org,
+        "user": user,
+        "cloud": cloud,
+        "env": env_dict,
+        "interruptible": interruptible,
+        "image_credentials": image_credentials,
+        "cloud_account_auth": cloud_account_auth,
+        "entrypoint": entrypoint,
+        "path_mappings": path_mappings_dict,
+        "num_machines": num_machines,
+    }
+    job = Job.run(**run_kwargs)
 
     if as_json:
         echo_json(

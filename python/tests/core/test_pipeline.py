@@ -171,6 +171,15 @@ def test_job_step_threads_placement_group_id():
     assert proto.job.spec.placement_group_id == "pg-1"
 
 
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_job_step_supports_multiple_machines():
+    job = JobStep(name="job-0", machine=Machine.CPU, num_machines=3)
+    proto = job.to_proto(MagicMock(), "", False)
+
+    assert proto.type == V1PipelineStepType.MMT
+    assert proto.mmt.machines == 3
+
+
 @pytest.mark.parametrize("interruption_retries", [0, 3])
 @patch.object(teamspace, "TeamspaceApi", new=MagicMock())
 @patch.object(pipeline_module, "_get_cluster", new=MagicMock())

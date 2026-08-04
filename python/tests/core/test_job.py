@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Job,
     V1JobSpec,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
@@ -42,7 +43,9 @@ def test_job_init_error(
         studio = Studio("st-abc", "ts-abc", org="org-abc")
         Job("xyz", studio.teamspace)
 
-    with pytest.raises(ValueError, match="Job xyz does not exist in Teamspace ts-abc"):
+    with mock.patch("lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)), pytest.raises(
+        ValueError, match="Job xyz does not exist in Teamspace ts-abc"
+    ):
         init_job_error()
 
 
@@ -109,7 +112,9 @@ def test_delete_job(
     with pytest.raises(RuntimeError, match="Job j-abc does not exist in Teamspace ts-abc. Did you delete it?"):
         job.status  # noqa: B018
 
-    with pytest.raises(ValueError, match="Job j-abc does not exist in Teamspace ts-abc"):
+    with mock.patch("lightning_sdk.job.MMTApiV2.get_job_by_name", side_effect=ApiException(status=404)), pytest.raises(
+        ValueError, match="Job j-abc does not exist in Teamspace ts-abc"
+    ):
         Job("j-abc", studio.teamspace)
 
 
@@ -154,6 +159,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 
@@ -240,6 +246,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 
@@ -605,9 +612,10 @@ def test_submit_jobv2_studio_resolve(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
-
-    Job.run("test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc")
+    with mock.patch.object(Job, "_submit", submit_mock):
+        Job.run(
+            "test-job", machine=Machine.CPU, command="echo hello", studio="st-abc", teamspace="ts-abc", org="org-abc"
+        )
 
     submit_mock.assert_called_once_with(
         command="echo hello",
@@ -626,6 +634,7 @@ def test_submit_jobv2_studio_resolve(
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 
@@ -685,11 +694,10 @@ def test_submit_job_v2_image_from_studio(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.dict(
         os.environ,
         {
             "LIGHTNING_CLOUD_SPACE_ID": "st-abc",
@@ -724,6 +732,7 @@ def test_submit_job_v2_image_from_studio(
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -740,17 +749,16 @@ def test_run_job_with_cloud_provider(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
-
-    Job.run(
-        "test-job",
-        machine=Machine.CPU,
-        command="echo hello",
-        image="nginx",
-        teamspace="ts-abc",
-        org="org-abc",
-        cloud="nebius",
-    )
+    with mock.patch.object(Job, "_submit", submit_mock):
+        Job.run(
+            "test-job",
+            machine=Machine.CPU,
+            command="echo hello",
+            image="nginx",
+            teamspace="ts-abc",
+            org="org-abc",
+            cloud="nebius",
+        )
 
     submit_mock.assert_called_once_with(
         command="echo hello",
@@ -769,6 +777,7 @@ def test_run_job_with_cloud_provider(
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
+        num_machines=1,
     )
 
 
@@ -944,11 +953,10 @@ def test_submit_job_from_running_studio(
     from lightning_sdk.job import Job
 
     submit_mock = mock.MagicMock()
-    Job._submit = submit_mock
     keeping_alive_mock = mock.MagicMock()
     StudioApi.start_keeping_alive = keeping_alive_mock
 
-    with mock.patch.dict(
+    with mock.patch.object(Job, "_submit", submit_mock), mock.patch.dict(
         os.environ,
         {
             "LIGHTNING_CLOUD_SPACE_ID": "st-abc",

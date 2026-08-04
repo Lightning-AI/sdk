@@ -5,6 +5,7 @@ import rich_click as click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.job.ssh import _ssh_user_for_job_id, ssh_impl, ssh_job
+from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
@@ -27,7 +28,7 @@ def test_job_ssh_help() -> None:
     assert "Usage: lightning job ssh [OPTIONS] NAME" in result_text
     assert "SSH into a running job." in result_text
     assert "--teamspace" in result_text
-    assert "--rank" not in result_text
+    assert "--rank" in result_text
 
 
 @mock_command_logging
@@ -86,6 +87,30 @@ def test_ssh_runs_against_job_gateway_user() -> None:
     assert result.exit_code == 0, result.output
     resolve_job.assert_called_once_with("train", teamspace)
     run.assert_called_once_with(["ssh", "-i", "/tmp/lightning_rsa", "j_01jj4hvvjj4zx1t1esm5az3zt7@ssh.lightning.ai"])
+
+
+def test_ssh_selects_mmt_rank() -> None:
+    mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
+    machine = MagicMock()
+    machine.name = "distributed-1"
+    machine.status = Status.Running
+    machine.id = "job_rank1"
+
+    with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.ssh.resolve_job",
+        return_value=mmt,
+    ), patch(
+        "lightning_sdk.cli.job.ssh.resolve_job_machine",
+        return_value=machine,
+    ) as resolve_rank, patch(
+        "lightning_sdk.cli.job.ssh.configure_ssh_internal",
+        return_value="/tmp/lightning_rsa",
+    ), patch("lightning_sdk.cli.job.ssh.subprocess.run") as run:
+        ssh_impl(name="distributed", teamspace=None, rank=1)
+
+    resolve_rank.assert_called_once_with(mmt, 1)
+    run.assert_called_once_with(["ssh", "-i", "/tmp/lightning_rsa", "j_rank1@ssh.lightning.ai"])
 
 
 def test_ssh_retries_with_fresh_keys_on_failure() -> None:

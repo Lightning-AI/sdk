@@ -554,30 +554,39 @@ def test_download_model_version(
     )
 
 
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_jobs(
     list_jobs_mock,
+    list_mmts_mock,
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
     internal_user_api_mocker,
 ):
     jobs = [V1Job(name="jobv2-1"), V1Job(name="jobv2-2"), V1Job(name="jobv2-3")]
+    mmts = [V1MultiMachineJob(name="mmtv2-1")]
     ts = Teamspace("ts-abc", org="org-abc")
 
     list_jobs_mock.return_value = jobs
+    list_mmts_mock.return_value = mmts
 
     # it's important that there are no additional calls to fetch individual jobs here.
     # they'd raise API Errors since we only mock the teamspace APIs listing
     # and not individual fetch requests
     listed_jobs = ts.jobs
 
-    assert len(listed_jobs) == 3
+    assert len(listed_jobs) == 4
     assert all(isinstance(j, Job) for j in listed_jobs)
 
     for lj, jj in zip(listed_jobs, jobs):
         assert lj.name == jj.name
         assert lj._job is jj
+        assert not lj.is_multi_machine
+
+    assert listed_jobs[-1].name == "mmtv2-1"
+    assert listed_jobs[-1]._job is mmts[0]
+    assert listed_jobs[-1].is_multi_machine
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
