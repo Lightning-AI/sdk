@@ -9,7 +9,6 @@ from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
     _BlobUploader,
     _download_model_files,
-    _download_teamspace_files,
     _FileDownloader,
     _local_file_matches_size,
     _machine_to_compute_name,
@@ -20,9 +19,7 @@ from lightning_sdk.api.utils import (
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
-    V1ListProjectArtifactsResponse,
     V1PathMapping,
-    V1ProjectArtifact,
     V1SignedUrl,
 )
 from lightning_sdk.machine import Machine
@@ -418,77 +415,6 @@ def test_download_model_files_forwards_skip_if_exists_false(
         version="latest",
         download_dir=tmp_path,
         progress_bar=False,
-        skip_if_exists=False,
-    )
-
-    assert file_downloader_mock.call_count == 1
-    assert file_downloader_mock.call_args.kwargs["skip_if_exists"] is False
-
-
-@mock.patch("lightning_sdk.api.utils._FileDownloader")
-@mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_teamspace_files(wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch):
-    tqdm_mock = MagicMock()
-    monkeypatch.setattr(utils, "tqdm", tqdm_mock)
-    client = Mock()
-
-    client.storage_service_list_project_artifacts.return_value = V1ListProjectArtifactsResponse(
-        artifacts=[
-            V1ProjectArtifact(filename="file1", url="http://example.com/file1", size_bytes="10"),
-            V1ProjectArtifact(filename="file2", url="http://example.com/file2", size_bytes="20"),
-        ],
-        next_page_token="",
-    )
-
-    _download_teamspace_files(
-        client=client,
-        teamspace_id="test-project-id",
-        cluster_id="test-cluster-id",
-        prefix="test-prefix",
-        download_dir=tmp_path,
-        progress_bar=True,
-    )
-
-    client.storage_service_list_project_artifacts.assert_called_once_with(
-        project_id="test-project-id",
-        cluster_id="test-cluster-id",
-        page_token="",
-        include_download_url=True,
-        prefix="test-prefix",
-        page_size=1000,
-    )
-
-    assert file_downloader_mock.call_count == 2
-    assert wait_mock.call_count == 1
-
-    # By default, skip_if_exists is forwarded as True to every _FileDownloader instantiation
-    for call in file_downloader_mock.call_args_list:
-        assert call.kwargs["skip_if_exists"] is True
-
-
-@mock.patch("lightning_sdk.api.utils._FileDownloader")
-@mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_teamspace_files_forwards_skip_if_exists_false(
-    wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch
-):
-    tqdm_mock = MagicMock()
-    monkeypatch.setattr(utils, "tqdm", tqdm_mock)
-    client = Mock()
-
-    client.storage_service_list_project_artifacts.return_value = V1ListProjectArtifactsResponse(
-        artifacts=[V1ProjectArtifact(filename="file1", url="http://example.com/file1", size_bytes="10")],
-        next_page_token="",
-    )
-
-    _download_teamspace_files(
-        client=client,
-        teamspace_id="test-project-id",
-        cluster_id="test-cluster-id",
-        prefix="test-prefix",
-        download_dir=tmp_path,
-        progress_bar=True,
         skip_if_exists=False,
     )
 
