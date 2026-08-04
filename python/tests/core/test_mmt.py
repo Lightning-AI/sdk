@@ -24,7 +24,7 @@ def test_mmt_emits_deprecation_warning() -> None:
     with mock.patch("lightning_sdk.job._resolve_teamspace", return_value=teamspace), mock.patch(
         "lightning_sdk.job.JobApiV2"
     ), mock.patch("lightning_sdk.job.MMTApiV2") as multi_api, pytest.warns(
-        DeprecationWarning, match="lightning_sdk.MMT will be deprecated"
+        DeprecationWarning, match="lightning_sdk.MMT is deprecated"
     ):
         multi_api.return_value.get_job_by_name.return_value = V1MultiMachineJob(
             id="mmt-id", name="test-job", machines=2, spec=V1JobSpec()
@@ -47,7 +47,7 @@ def test_mmt_run_emits_deprecation_warning() -> None:
     ), mock.patch("lightning_sdk.job.CloudAccountApi", return_value=cloud_api), mock.patch(
         "lightning_sdk.job.MMTApiV2", return_value=multi_api
     ), mock.patch.object(MMT, "_submit", return_value=None), pytest.warns(
-        DeprecationWarning, match="Prefer lightning_sdk.Job"
+        DeprecationWarning, match="Use lightning_sdk.Job instead"
     ):
         MMT.run(
             name="test-job",

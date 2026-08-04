@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 __all__ = ["MMT", "MMTMachine"]
 
 _MMT_DEPRECATION_MESSAGE = (
-    "lightning_sdk.MMT will be deprecated in a future release. "
-    "Prefer lightning_sdk.Job (use Job.run(..., num_machines=N) for multi-machine jobs)."
+    "lightning_sdk.MMT is deprecated. Use lightning_sdk.Job instead "
+    "(Job.run(..., num_machines=N) for multi-machine jobs)."
 )
 
 
@@ -66,7 +66,7 @@ class MMT(Job):
     """Compatibility interface for multi-machine jobs.
 
     Multi-machine functionality is implemented by :class:`lightning_sdk.job.Job`.
-    ``MMT`` will be deprecated in a future release; prefer ``Job``.
+    ``MMT`` is deprecated; use ``Job`` instead.
     """
 
     def __init__(
