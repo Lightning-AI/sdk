@@ -48,7 +48,7 @@ def job() -> None:
     """Run batch jobs and sweeps."""
 
 
-@click.group(name="mmt", cls=LightningGroup)
+@click.group(name="mmt", cls=DeprecatedGroup, hidden=False, replacement="lightning job")
 def mmt() -> None:
     """Multi-node distributed training."""
 

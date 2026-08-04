@@ -16,6 +16,48 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import Teamspace
 
 
+def test_mmt_emits_deprecation_warning() -> None:
+    teamspace = mock.MagicMock()
+    teamspace.id = "teamspace-id"
+    teamspace.name = "teamspace"
+    teamspace.owner = mock.MagicMock(name="owner")
+    with mock.patch("lightning_sdk.job._resolve_teamspace", return_value=teamspace), mock.patch(
+        "lightning_sdk.job.JobApiV2"
+    ), mock.patch("lightning_sdk.job.MMTApiV2") as multi_api, pytest.warns(
+        DeprecationWarning, match="lightning_sdk.MMT will be deprecated"
+    ):
+        multi_api.return_value.get_job_by_name.return_value = V1MultiMachineJob(
+            id="mmt-id", name="test-job", machines=2, spec=V1JobSpec()
+        )
+        MMT("test-job", teamspace)
+
+
+def test_mmt_run_emits_deprecation_warning() -> None:
+    teamspace = mock.MagicMock()
+    teamspace.id = "teamspace-id"
+    teamspace.name = "teamspace"
+    teamspace.owner = mock.MagicMock(name="owner")
+    teamspace.default_cloud_account = "default-cloud"
+    cloud_api = mock.MagicMock()
+    cloud_api.resolve_cloud_account.return_value = "cloud-id"
+    multi_api = mock.MagicMock()
+
+    with mock.patch("lightning_sdk.job._resolve_teamspace", return_value=teamspace), mock.patch(
+        "lightning_sdk.job._resolve_default_cloud_account", return_value=None
+    ), mock.patch("lightning_sdk.job.CloudAccountApi", return_value=cloud_api), mock.patch(
+        "lightning_sdk.job.MMTApiV2", return_value=multi_api
+    ), mock.patch.object(MMT, "_submit", return_value=None), pytest.warns(
+        DeprecationWarning, match="Prefer lightning_sdk.Job"
+    ):
+        MMT.run(
+            name="test-job",
+            num_machines=2,
+            machine=Machine.CPU,
+            image="ubuntu",
+            teamspace=teamspace,
+        )
+
+
 @pytest.mark.parametrize("machine", [Machine.CPU, Machine.T4_X_4])
 @pytest.mark.parametrize("command", [None, "echo hello"])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])

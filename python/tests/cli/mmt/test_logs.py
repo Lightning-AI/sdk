@@ -67,7 +67,7 @@ def test_mmt_logs_follows_with_options() -> None:
         )
 
     assert result.exit_code == 0, result.output
-    assert result.output == "line 1\nline 2\n"
+    assert "line 1\nline 2\n" in result.output
     mmt.logs.assert_called_once_with(
         follow=True, tail=10, timestamps=True, since=None, until=None, query="loss", severity="error"
     )
