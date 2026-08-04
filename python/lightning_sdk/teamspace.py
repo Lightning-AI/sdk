@@ -726,11 +726,16 @@ class Teamspace(metaclass=TrackCallsMeta):
             )
             cloud_account = self.default_cloud_account
 
+        # The drive backend expects POSIX-style ("/") remote paths. os.path.normpath
+        # emits "\" separators on Windows, which the backend rejects, so normalize any
+        # backslash separators back to "/".
+        remote_path = os.path.normpath(remote_path).replace("\\", "/")
+
         self._teamspace_api.upload_file(
             teamspace_id=self._teamspace.id,
             cloud_account=cloud_account,
             file_path=file_path,
-            remote_path=os.path.normpath(remote_path),
+            remote_path=remote_path,
             progress_bar=progress_bar,
         )
 
