@@ -59,60 +59,61 @@ class OrgApi:
     def get_monthly_summary(
         self,
         organization_id: str,
-        range_start: typing.Optional[datetime] = None,
-        range_end: typing.Optional[datetime] = None,
-        pivot: typing.Optional[datetime] = None,
-        pivot_direction: typing.Optional[str] = None,  # "BEFORE" | "AFTER"
+        start: typing.Optional[datetime] = None,
+        end: typing.Optional[datetime] = None,
     ) -> dict:
         """Get the monthly billing summary of an organization.
 
-        Exactly one filter mode must be supplied (the API rejects a missing or
-        empty TimeFilter):
-        - a range: pass both ``range_start`` and ``range_end``
-        - a pivot: pass ``pivot`` and ``pivot_direction`` ("BEFORE" or "AFTER")
+        Exactly one of ``start`` and ``end`` must be supplied,
+        or both together:
+        - only ``start``: translated to a pivot filter with
+          ``pivot_direction="AFTER"`` and ``pivot=start``.
+        - only ``end``: translated to a pivot filter with
+          ``pivot_direction="BEFORE"`` and ``pivot=end``.
+        - both ``start`` and ``end``: translated to a normal
+          range filter.
 
         Args:
             organization_id: ID of the organization to summarize.
-            range_start: Start of the time range (use with ``range_end``).
-            range_end: End of the time range (use with ``range_start``).
-            pivot: Pivot timestamp (use with ``pivot_direction``).
-            pivot_direction: "BEFORE" or "AFTER" the pivot.
+            start: Start of the time range. If given without
+                ``end``, acts as an "AFTER" pivot.
+            end: End of the time range. If given without
+                ``start``, acts as a "BEFORE" pivot.
 
         Returns:
             dict: The monthly summary as a plain dictionary.
 
         Raises:
-            ValueError: If not exactly one valid filter mode is provided, if the
-                range start is after the range end, or if an "AFTER" pivot is in
+            ValueError: If neither ``start`` nor ``end`` is
+                provided, if ``start`` is after ``end``, or if
+                an "AFTER" pivot (derived from a lone ``start``) is in
                 the future.
         """
-        has_range = range_start is not None and range_end is not None
-        has_pivot = pivot is not None and pivot_direction is not None
-
-        if has_range == has_pivot:
-            raise ValueError("Provide exactly one of a time range or a pivot, not both/neither.")
+        if start is None and end is None:
+            raise ValueError("Provide at least one of start or end.")
 
         kwargs = {"org_id": organization_id}
 
-        if has_range:
-            if range_start > range_end:
-                raise ValueError("range_start must not be after range_end.")
-            if range_end - range_start > _MAX_DURATION:
+        if start is not None and end is not None:
+            if start > end:
+                raise ValueError("start must not be after end.")
+            if end - start > _MAX_DURATION:
                 raise ValueError("the time range must not be longer than 2 years.")
-            kwargs["time_filter_range_filter_range_start"] = range_start
-            kwargs["time_filter_range_filter_range_end"] = range_end
-        else:
-            if pivot_direction not in ("BEFORE", "AFTER"):
-                raise ValueError('pivot_direction must be "BEFORE" or "AFTER".')
-            if pivot_direction == "AFTER":
-                # An "AFTER" pivot selects [pivot, now]; it must be in the past
-                # and no more than 2 years back.
-                now = datetime.now(pivot.tzinfo) if pivot.tzinfo is not None else datetime.now()
-                if pivot > now:
-                    raise ValueError("pivot must not be in the future when pivot_direction is AFTER.")
-                if now - pivot > _MAX_DURATION:
-                    raise ValueError("an AFTER pivot must not be more than 2 years in the past.")
+            kwargs["time_filter_range_filter_range_start"] = start
+            kwargs["time_filter_range_filter_range_end"] = end
+        elif start is not None:
+            pivot = start
+            # An "AFTER" pivot selects [pivot, now]; it must be in the past
+            # and no more than 2 years back.
+            now = datetime.now(pivot.tzinfo) if pivot.tzinfo is not None else datetime.now()
+            if pivot > now:
+                raise ValueError("start must not be in the future.")
+            if now - pivot > _MAX_DURATION:
+                raise ValueError("start must not be more than 2 years in the past.")
             kwargs["time_filter_pivot_filter_pivot"] = pivot
-            kwargs["time_filter_pivot_filter_pivot_direction"] = pivot_direction
+            kwargs["time_filter_pivot_filter_pivot_direction"] = "AFTER"
+        else:
+            kwargs["time_filter_pivot_filter_pivot"] = end
+            kwargs["time_filter_pivot_filter_pivot_direction"] = "BEFORE"
 
         return self._client.billing_service_get_monthly_summary(**kwargs).to_dict()
