@@ -74,7 +74,27 @@ class Organization(Owner):
         pivot: Optional[datetime] = None,
         pivot_direction: Optional[str] = None,  # "BEFORE" | "AFTER"
     ) -> dict:
-        """Returns a monthly summary of credits purchased, used, and remaining."""
+        """Returns a monthly summary of credits purchased, used, and remaining.
+        
+        Exactly one filter mode must be supplied:
+        - a range: pass both ``range_start`` and ``range_end``
+        - a pivot: pass ``pivot`` and ``pivot_direction`` ("BEFORE" or "AFTER")
+
+        Args:
+            organization_id: ID of the organization to summarize.
+            range_start: Start of the time range (use with ``range_end``).
+            range_end: End of the time range (use with ``range_start``).
+            pivot: Pivot timestamp (use with ``pivot_direction``).
+            pivot_direction: "BEFORE" or "AFTER" the pivot.
+
+        Returns:
+            dict: The monthly summary as a plain dictionary.
+
+        Raises:
+            ValueError: If not exactly one valid filter mode is provided, if the
+                range start is after the range end, or if an "AFTER" pivot is in
+                the future.
+        """
         return self._org_api.get_monthly_summary(
             self.id,
             range_start=range_start,
