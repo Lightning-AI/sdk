@@ -45,7 +45,7 @@ def test_monthly_summary_range_forwards_bounds(mock_client):
     start = datetime(2026, 1, 1, tzinfo=timezone.utc)
     end = datetime(2026, 2, 1, tzinfo=timezone.utc)
 
-    org_api.get_monthly_summary("org-123", range_start=start, range_end=end)
+    org_api.get_monthly_summary("org-123", start=start, end=end)
 
     call_args = mock_client().billing_service_get_monthly_summary.call_args[1]
     assert call_args["org_id"] == "org-123"
@@ -54,42 +54,35 @@ def test_monthly_summary_range_forwards_bounds(mock_client):
 
 
 @mock.patch("lightning_sdk.api.org_api.LightningClient")
-def test_monthly_summary_pivot_forwards_bounds(mock_client):
+def test_monthly_summary_only_start_forwards_after_pivot(mock_client):
     org_api = OrgApi()
-    pivot = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    start = datetime(2026, 1, 1, tzinfo=timezone.utc)
 
-    org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="BEFORE")
+    org_api.get_monthly_summary("org-123", start=start)
 
     call_args = mock_client().billing_service_get_monthly_summary.call_args[1]
-    assert call_args["time_filter_pivot_filter_pivot"] == pivot
+    assert call_args["time_filter_pivot_filter_pivot"] == start
+    assert call_args["time_filter_pivot_filter_pivot_direction"] == "AFTER"
+
+
+@mock.patch("lightning_sdk.api.org_api.LightningClient")
+def test_monthly_summary_only_end_forwards_before_pivot(mock_client):
+    org_api = OrgApi()
+    end = datetime(2026, 1, 1, tzinfo=timezone.utc)
+
+    org_api.get_monthly_summary("org-123", end=end)
+
+    call_args = mock_client().billing_service_get_monthly_summary.call_args[1]
+    assert call_args["time_filter_pivot_filter_pivot"] == end
     assert call_args["time_filter_pivot_filter_pivot_direction"] == "BEFORE"
 
 
 @mock.patch("lightning_sdk.api.org_api.LightningClient")
-def test_monthly_summary_requires_exactly_one_filter(mock_client):
+def test_monthly_summary_requires_at_least_one_bound(mock_client):
     org_api = OrgApi()
 
-    # neither
-    with pytest.raises(ValueError, match="exactly one"):
+    with pytest.raises(ValueError, match="at least one"):
         org_api.get_monthly_summary("org-123")
-
-    # both
-    with pytest.raises(ValueError, match="exactly one"):
-        org_api.get_monthly_summary(
-            "org-123",
-            range_start=datetime(2026, 1, 1),
-            range_end=datetime(2026, 2, 1),
-            pivot=datetime(2026, 1, 1),
-            pivot_direction="BEFORE",
-        )
-
-    # partial range is treated as "no valid filter"
-    with pytest.raises(ValueError, match="exactly one"):
-        org_api.get_monthly_summary("org-123", range_start=datetime(2026, 1, 1))
-
-    # partial pivot is treated as "no valid filter"
-    with pytest.raises(ValueError, match="exactly one"):
-        org_api.get_monthly_summary("org-123", pivot=datetime(2026, 1, 1))
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
 
@@ -98,11 +91,11 @@ def test_monthly_summary_requires_exactly_one_filter(mock_client):
 def test_monthly_summary_rejects_reversed_range(mock_client):
     org_api = OrgApi()
 
-    with pytest.raises(ValueError, match="range_start must not be after range_end"):
+    with pytest.raises(ValueError, match="start must not be after end"):
         org_api.get_monthly_summary(
             "org-123",
-            range_start=datetime(2026, 2, 1, tzinfo=timezone.utc),
-            range_end=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            start=datetime(2026, 2, 1, tzinfo=timezone.utc),
+            end=datetime(2026, 1, 1, tzinfo=timezone.utc),
         )
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
@@ -113,19 +106,9 @@ def test_monthly_summary_allows_equal_range_bounds(mock_client):
     org_api = OrgApi()
     same = datetime(2026, 1, 1, tzinfo=timezone.utc)
 
-    org_api.get_monthly_summary("org-123", range_start=same, range_end=same)
+    org_api.get_monthly_summary("org-123", start=same, end=same)
 
     mock_client().billing_service_get_monthly_summary.assert_called_once()
-
-
-@mock.patch("lightning_sdk.api.org_api.LightningClient")
-def test_monthly_summary_rejects_bad_pivot_direction(mock_client):
-    org_api = OrgApi()
-
-    with pytest.raises(ValueError, match='"BEFORE" or "AFTER"'):
-        org_api.get_monthly_summary("org-123", pivot=datetime(2026, 1, 1), pivot_direction="SIDEWAYS")
-
-    mock_client().billing_service_get_monthly_summary.assert_not_called()
 
 
 @mock.patch("lightning_sdk.api.org_api.LightningClient")
@@ -134,7 +117,7 @@ def test_monthly_summary_rejects_future_after_pivot(mock_client):
     future = datetime.now(timezone.utc) + timedelta(days=1)
 
     with pytest.raises(ValueError, match="must not be in the future"):
-        org_api.get_monthly_summary("org-123", pivot=future, pivot_direction="AFTER")
+        org_api.get_monthly_summary("org-123", start=future)
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
 
@@ -145,7 +128,7 @@ def test_monthly_summary_allows_future_before_pivot(mock_client):
     org_api = OrgApi()
     future = datetime.now(timezone.utc) + timedelta(days=1)
 
-    org_api.get_monthly_summary("org-123", pivot=future, pivot_direction="BEFORE")
+    org_api.get_monthly_summary("org-123", end=future)
 
     mock_client().billing_service_get_monthly_summary.assert_called_once()
 
@@ -157,7 +140,7 @@ def test_monthly_summary_future_after_pivot_naive(mock_client):
     future = datetime.now() + timedelta(days=1)
 
     with pytest.raises(ValueError, match="must not be in the future"):
-        org_api.get_monthly_summary("org-123", pivot=future, pivot_direction="AFTER")
+        org_api.get_monthly_summary("org-123", start=future)
 
 
 # ---- get_monthly_summary: 2-year duration limit --------------------------
@@ -170,7 +153,7 @@ def test_monthly_summary_rejects_range_over_two_years(mock_client):
     end = start + timedelta(days=731)  # just over 2 years
 
     with pytest.raises(ValueError, match="not be longer than 2 years"):
-        org_api.get_monthly_summary("org-123", range_start=start, range_end=end)
+        org_api.get_monthly_summary("org-123", start=start, end=end)
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
 
@@ -181,7 +164,7 @@ def test_monthly_summary_allows_range_exactly_two_years(mock_client):
     start = datetime(2024, 1, 1, tzinfo=timezone.utc)
     end = start + timedelta(days=730)  # exactly 2 years
 
-    org_api.get_monthly_summary("org-123", range_start=start, range_end=end)
+    org_api.get_monthly_summary("org-123", start=start, end=end)
 
     mock_client().billing_service_get_monthly_summary.assert_called_once()
 
@@ -189,10 +172,10 @@ def test_monthly_summary_allows_range_exactly_two_years(mock_client):
 @mock.patch("lightning_sdk.api.org_api.LightningClient")
 def test_monthly_summary_rejects_after_pivot_over_two_years(mock_client):
     org_api = OrgApi()
-    pivot = datetime.now(timezone.utc) - timedelta(days=731)  # just over 2 years ago
+    start = datetime.now(timezone.utc) - timedelta(days=731)  # just over 2 years ago
 
     with pytest.raises(ValueError, match="more than 2 years in the past"):
-        org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="AFTER")
+        org_api.get_monthly_summary("org-123", start=start)
 
     mock_client().billing_service_get_monthly_summary.assert_not_called()
 
@@ -200,9 +183,9 @@ def test_monthly_summary_rejects_after_pivot_over_two_years(mock_client):
 @mock.patch("lightning_sdk.api.org_api.LightningClient")
 def test_monthly_summary_allows_after_pivot_within_two_years(mock_client):
     org_api = OrgApi()
-    pivot = datetime.now(timezone.utc) - timedelta(days=700)  # within 2 years
+    start = datetime.now(timezone.utc) - timedelta(days=700)  # within 2 years
 
-    org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="AFTER")
+    org_api.get_monthly_summary("org-123", start=start)
 
     mock_client().billing_service_get_monthly_summary.assert_called_once()
 
@@ -211,8 +194,8 @@ def test_monthly_summary_allows_after_pivot_within_two_years(mock_client):
 def test_monthly_summary_before_pivot_not_limited_by_two_years(mock_client):
     """The 2-year limit only applies to AFTER pivots; a far-past BEFORE pivot is fine."""
     org_api = OrgApi()
-    pivot = datetime(2000, 1, 1, tzinfo=timezone.utc)  # decades ago
+    end = datetime(2000, 1, 1, tzinfo=timezone.utc)  # decades ago
 
-    org_api.get_monthly_summary("org-123", pivot=pivot, pivot_direction="BEFORE")
+    org_api.get_monthly_summary("org-123", end=end)
 
     mock_client().billing_service_get_monthly_summary.assert_called_once()

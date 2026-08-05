@@ -69,38 +69,36 @@ class Organization(Owner):
 
     def get_monthly_summary(
         self,
-        range_start: Optional[datetime] = None,
-        range_end: Optional[datetime] = None,
-        pivot: Optional[datetime] = None,
-        pivot_direction: Optional[str] = None,  # "BEFORE" | "AFTER"
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
     ) -> dict:
         """Returns a monthly summary of credits purchased, used, and remaining.
-        
-        Exactly one filter mode must be supplied:
-        - a range: pass both ``range_start`` and ``range_end``
-        - a pivot: pass ``pivot`` and ``pivot_direction`` ("BEFORE" or "AFTER")
+
+        Exactly one of ``start`` and ``end`` must be supplied,
+        or both together:
+        - only ``start``: grabs monthly summaries for months after ``pivot=start``.
+        - only ``end``:  grabs monthly summaries for months before ``pivot=end``.
+        - both ``start`` and ``end``: acts as a normal range.
 
         Args:
-            organization_id: ID of the organization to summarize.
-            range_start: Start of the time range (use with ``range_end``).
-            range_end: End of the time range (use with ``range_start``).
-            pivot: Pivot timestamp (use with ``pivot_direction``).
-            pivot_direction: "BEFORE" or "AFTER" the pivot.
+            start: Start of the time range. If given without
+                ``end``, acts as an "AFTER" pivot.
+            end: End of the time range. If given without
+                ``start``, acts as a "BEFORE" pivot.
 
         Returns:
             dict: The monthly summary as a plain dictionary.
 
         Raises:
-            ValueError: If not exactly one valid filter mode is provided, if the
-                range start is after the range end, or if an "AFTER" pivot is in
+            ValueError: If neither ``start`` nor ``end`` is
+                provided, if ``start`` is after ``end``, or if
+                an "AFTER" pivot (derived from a lone ``start``) is in
                 the future.
         """
         return self._org_api.get_monthly_summary(
             self.id,
-            range_start=range_start,
-            range_end=range_end,
-            pivot=pivot,
-            pivot_direction=pivot_direction,
+            start=start,
+            end=end,
         )
 
     def __repr__(self) -> str:
