@@ -1,3 +1,4 @@
+import warnings
 from typing import TYPE_CHECKING, Dict, Optional, Protocol, Union
 
 from lightning_sdk.job import Job, JobDict
@@ -11,6 +12,11 @@ if TYPE_CHECKING:
     from lightning_sdk.user import User
 
 __all__ = ["MMT", "MMTMachine"]
+
+_MMT_DEPRECATION_MESSAGE = (
+    "lightning_sdk.MMT is deprecated. Use lightning_sdk.Job instead "
+    "(Job.run(..., num_machines=N) for multi-machine jobs)."
+)
 
 
 class MMTMachine(Protocol):
@@ -60,6 +66,7 @@ class MMT(Job):
     """Compatibility interface for multi-machine jobs.
 
     Multi-machine functionality is implemented by :class:`lightning_sdk.job.Job`.
+    ``MMT`` is deprecated; use ``Job`` instead.
     """
 
     def __init__(
@@ -72,6 +79,7 @@ class MMT(Job):
         _fetch_job: bool = True,
         _num_machines: int = 2,
     ) -> None:
+        warnings.warn(_MMT_DEPRECATION_MESSAGE, DeprecationWarning, stacklevel=3)
         try:
             super().__init__(
                 name=name,
