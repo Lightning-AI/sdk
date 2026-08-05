@@ -33,6 +33,12 @@ _FOLLOW_POLL_INTERVAL = 5.0
 # Budget for the websocket handshake, which can take longer than a read poll.
 _CONNECT_TIMEOUT = 30.0
 
+# Reconnect backoff bounds: reconnect after ``_MIN`` secs, up to ``_MAX``
+_MIN_RECONNECT_BACKOFF = 1.0
+_MAX_RECONNECT_BACKOFF = 30.0
+# During reconnect backoff, poll ``stop`` at this cadence so a quit is honored promptly
+_RECONNECT_STOP_POLL = 0.5
+
 # Look-back windows tried, newest first, when serving a `tail` without an explicit `since`. A
 # long-lived resource (a deployment with months of replicas) would otherwise have its whole
 # history paged just to keep the last few lines, so start narrow and widen only if needed.
@@ -466,6 +472,7 @@ class LogsApi:
         idle_timeout: Optional[float] = None,
         stop: Optional[Callable[[], bool]] = None,
         reconnect: bool = True,
+        on_socket: Optional[Callable[[Any], None]] = None,
     ) -> Iterator[LogEntry]:
         """Yield log lines from a ``follow_url`` websocket as they arrive.
 
@@ -480,6 +487,9 @@ class LogsApi:
             idle_timeout: Stop after this many seconds without a line.
             stop: Called while the socket is quiet; return ``True`` to end the stream.
             reconnect: Re-establish the socket after a transient drop.
+            on_socket: Called with the live websocket right after it connects, and with ``None``
+                once it closes. Lets a caller on another thread interrupt a blocked ``recv()``
+                immediately (e.g. ``sock.shutdown()`` on quit) instead of waiting out the poll.
 
         Yields:
             LogEntry: Live entries in arrival order.
@@ -488,6 +498,7 @@ class LogsApi:
             import websocket
             from websocket import (
                 WebSocketConnectionClosedException,
+                WebSocketException,
                 WebSocketTimeoutException,
             )
         except ImportError as ex:
@@ -506,6 +517,7 @@ class LogsApi:
             recv_timeout = min(idle_timeout, _FOLLOW_POLL_INTERVAL)
         last_line_at = time.monotonic()
 
+        backoff = _MIN_RECONNECT_BACKOFF
         while True:
             ws = None
             try:
@@ -514,6 +526,10 @@ class LogsApi:
                     url, header=[f"Authorization: {auth_header}"], timeout=_CONNECT_TIMEOUT
                 )
                 ws.settimeout(recv_timeout)
+                if on_socket is not None:
+                    on_socket(ws)
+                # Connected cleanly: reset the backoff so the next blip recovers fast
+                backoff = _MIN_RECONNECT_BACKOFF
                 while True:
                     try:
                         message = ws.recv()
@@ -523,7 +539,7 @@ class LogsApi:
                         if stop is not None and stop():
                             return
                         continue
-                    except WebSocketConnectionClosedException:
+                    except (WebSocketConnectionClosedException, OSError):
                         break  # fall through to the reconnect decision
                     if message == "":
                         break
@@ -536,13 +552,26 @@ class LogsApi:
                                 continue
                             recent.add(entry)
                         yield entry
+            except (WebSocketException, OSError):
+                if not reconnect or idle_timeout is not None:
+                    raise
             finally:
+                if on_socket is not None:
+                    on_socket(None)
                 if ws is not None:
                     with suppress(Exception):
                         ws.close()
 
             if not reconnect or idle_timeout is not None:
                 return
-            if stop is not None and stop():
-                return
-            time.sleep(1)  # brief backoff, then reconnect and keep tailing
+            # back off before reconnecting, but poll ``stop`` in short steps to honor quits
+            waited = 0.0
+            while True:
+                if stop is not None and stop():
+                    return
+                if waited >= backoff:
+                    break
+                step = min(_RECONNECT_STOP_POLL, backoff - waited)
+                time.sleep(step)
+                waited += step
+            backoff = min(backoff * 2, _MAX_RECONNECT_BACKOFF)

@@ -263,11 +263,15 @@ class _FakeSocket:
         self.closed = True
 
 
-class _FakeTimeoutError(Exception):
+class _FakeWebSocketError(Exception):
     pass
 
 
-class _FakeClosedError(Exception):
+class _FakeTimeoutError(_FakeWebSocketError):
+    pass
+
+
+class _FakeClosedError(_FakeWebSocketError):
     pass
 
 
@@ -275,6 +279,7 @@ class _FakeClosedError(Exception):
 def fake_websocket(monkeypatch):
     """Stand in for the websocket-client module used by ``LogsApi.follow``."""
     module = mock.MagicMock()
+    module.WebSocketException = _FakeWebSocketError
     module.WebSocketTimeoutException = _FakeTimeoutError
     module.WebSocketConnectionClosedException = _FakeClosedError
     monkeypatch.setitem(__import__("sys").modules, "websocket", module)
@@ -348,13 +353,35 @@ def test_follow_reconnects_after_a_drop(fake_websocket) -> None:
         _FakeSocket(['[{"message":"after"}]']),
     ]
     fake_websocket.create_connection.side_effect = sockets
-    stop = mock.MagicMock(side_effect=[False, True])
+    stop = mock.MagicMock(
+        side_effect=lambda: fake_websocket.create_connection.call_count >= 2 and not sockets[1]._frames
+    )
 
     with mock.patch("lightning_sdk.api.logs_api.time.sleep"):
         entries = list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", stop=stop))
 
     assert [e.message for e in entries] == ["before", "after"]
     assert fake_websocket.create_connection.call_count == 2
+
+
+def test_follow_reconnects_after_a_failed_handshake(fake_websocket) -> None:
+    before = _FakeSocket(['[{"message":"before"}]', _FakeClosedError()])
+    after = _FakeSocket(['[{"message":"after"}]'])
+    fake_websocket.create_connection.side_effect = [before, OSError("connection refused"), after]
+    stop = mock.MagicMock(side_effect=lambda: fake_websocket.create_connection.call_count >= 3 and not after._frames)
+
+    with mock.patch("lightning_sdk.api.logs_api.time.sleep"):
+        entries = list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", stop=stop))
+
+    assert [e.message for e in entries] == ["before", "after"]
+    assert fake_websocket.create_connection.call_count == 3
+
+
+def test_follow_does_not_swallow_a_failed_handshake_without_reconnect(fake_websocket) -> None:
+    fake_websocket.create_connection.side_effect = OSError("connection refused")
+
+    with pytest.raises(OSError, match="connection refused"):
+        list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", reconnect=False))
 
 
 def test_follow_requires_websocket_client(monkeypatch) -> None:

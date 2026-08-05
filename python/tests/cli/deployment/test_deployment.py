@@ -528,6 +528,68 @@ def test_deployment_logs_rank_needs_a_single_replica(monkeypatch) -> None:
     api.iter_job_log_entries.assert_not_called()
 
 
+def _patch_tui_command(monkeypatch, api):
+    teamspace = SimpleNamespace(id="project-id", name="test", owner=SimpleNamespace(name="ecorp"))
+    monkeypatch.setattr(
+        "lightning_sdk.cli.deployment.logs.resolve_teamspace",
+        MagicMock(return_value=teamspace),
+    )
+    monkeypatch.setattr("lightning_sdk.cli.deployment.logs.DeploymentApi", MagicMock(return_value=api))
+    run_tui = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.logs_tui.run_tui", run_tui)
+    return run_tui
+
+
+def _deployment_api_with_specced_replicas(*specs):
+    """Build a deployment API whose replicas carry the given ``(name, quantity)`` job specs."""
+    api = MagicMock()
+    api.get_deployment_by_name.return_value = V1Deployment(name="my-deployment", id="dep-id", project_id="project-id")
+    api.list_deployment_jobs.return_value = [
+        V1Job(id=f"job-{i}", name=name, deployment_id="dep-id", spec=V1JobSpec(quantity=quantity))
+        for i, (name, quantity) in enumerate(specs)
+    ]
+    return api
+
+
+@mock_command_logging
+def test_deployment_logs_tui_opens_for_multi_node_replica(monkeypatch) -> None:
+    api = _deployment_api_with_specced_replicas(("replica-0", 2))
+    run_tui = _patch_tui_command(monkeypatch, api)
+
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui"])
+
+    assert result.exit_code == 0, result.output
+    run_tui.assert_called_once()
+
+
+@mock_command_logging
+def test_deployment_logs_tui_rejects_rank(monkeypatch) -> None:
+    api = _deployment_api_with_specced_replicas(("replica-0", 1))
+    run_tui = _patch_tui_command(monkeypatch, api)
+
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui", "--rank", "1"])
+
+    assert result.exit_code != 0
+    assert "TUI view does not support --rank" in result.output
+    assert "lightning deployment logs my-deployment --rank 1" in result.output
+    assert "--tui" not in result.output
+    run_tui.assert_not_called()
+
+
+@mock_command_logging
+def test_deployment_logs_tui_launches_for_single_node_replicas(monkeypatch) -> None:
+    api = _deployment_api_with_specced_replicas(("replica-0", 1), ("replica-1", 1))
+    run_tui = _patch_tui_command(monkeypatch, api)
+
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui"])
+
+    assert result.exit_code == 0, result.output
+    run_tui.assert_called_once()
+    selection = run_tui.call_args.args[0]
+    assert selection.deployment_id == "dep-id"
+    assert selection.labels == {"job-0": "replica-0", "job-1": "replica-1"}
+
+
 @mock_command_logging
 def test_reload_weights_calls_api_and_prints_version(monkeypatch) -> None:
     teamspace = SimpleNamespace(id="project-id")
