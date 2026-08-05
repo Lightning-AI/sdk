@@ -365,6 +365,34 @@ def test_upload_model_single_file(
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_normalizes_remote_path_to_posix(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    """Remote paths must be POSIX-style; os.path.normpath yields "\\" on Windows (rejected by the backend)."""
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    file_path = tmp_path / "config.yaml"
+    file_path.touch()
+
+    ts._teamspace_api.upload_file = mock.Mock()
+
+    # A remote path with OS-native (backslash) separators must be normalized to "/".
+    ts.upload_file(
+        file_path=str(file_path),
+        remote_path="experiments\\my-run\\config.yaml",
+        progress_bar=False,
+        cloud_account="test-cluster-id",
+    )
+
+    _, kwargs = ts._teamspace_api.upload_file.call_args
+    assert kwargs["remote_path"] == "experiments/my-run/config.yaml"
+    assert "\\" not in kwargs["remote_path"]
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_single_file_experiment(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
