@@ -5,7 +5,6 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.api import studio_api as studio_api_module
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceCreateCloudSpaceBody,
@@ -922,7 +921,9 @@ def test_create_job_with_service_id(monkeypatch):
     monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
     mock_client = mock.MagicMock()
 
-    monkeypatch.setattr(studio_api_module, "LightningClient", mock.MagicMock(return_value=mock_client))
+    monkeypatch.setattr(
+        "lightning_sdk.lightning_cloud.rest_client.LightningClient", mock.MagicMock(return_value=mock_client)
+    )
     studio_api = StudioApi()
 
     studio_api.create_job("my-entry-point", "fancy-job-name", Machine.L4, "st-abc", "ts-abc", "cluster-abc", False)

@@ -91,6 +91,16 @@ def _clean_studio_thread_local_state():
     Studio._skip_setup.value = original_skip_setup
 
 
+@pytest.fixture(autouse=True)
+def _clear_cached_lightning_client():
+    """cached_lightning_client is process-global -- clear it so one test's mocked/unmocked client can't leak."""
+    from lightning_sdk.lightning_cloud.rest_client import cached_lightning_client
+
+    cached_lightning_client.cache_clear()
+    yield
+    cached_lightning_client.cache_clear()
+
+
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
 _END_OUTPUT_TOKEN = "LIGHTNING_END_OUTPUT"
 

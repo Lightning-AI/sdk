@@ -56,7 +56,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import cached_lightning_client
 from lightning_sdk.machine import Machine
 
 
@@ -65,7 +65,7 @@ class StudioApi:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
         self._keep_alive_threads: Mapping[str, Thread] = {}
         self._keep_alive_events: Mapping[str, Event] = {}
 

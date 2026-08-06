@@ -86,8 +86,8 @@ class Studio(metaclass=TrackCallsMeta):
         disable_secrets: bool = False,
         studio_type: Optional[str] = None,  # for base studio templates
     ) -> None:
-        self.__studio_api = None
-        self.__cloud_account_api = None
+        self._studio_api = StudioApi()
+        self._cloud_account_api = CloudAccountApi()
 
         self._prevent_refetch = False
         self._teamspace = None
@@ -200,28 +200,6 @@ class Studio(metaclass=TrackCallsMeta):
 
         self._studio_api.start_keeping_alive(teamspace_id=self._teamspace.id, studio_id=self._studio.id)
         self._setup_done = True
-
-    @property
-    def _studio_api(self) -> StudioApi:
-        # Lazy: LightningClient.__init__ wraps ~1000+ methods with retry logic, which is significant
-        # overhead when many throwaway Studios are constructed just to render a list.
-        if self.__studio_api is None:
-            self.__studio_api = StudioApi()
-        return self.__studio_api
-
-    @_studio_api.setter
-    def _studio_api(self, value: StudioApi) -> None:
-        self.__studio_api = value
-
-    @property
-    def _cloud_account_api(self) -> CloudAccountApi:
-        if self.__cloud_account_api is None:
-            self.__cloud_account_api = CloudAccountApi()
-        return self.__cloud_account_api
-
-    @_cloud_account_api.setter
-    def _cloud_account_api(self, value: CloudAccountApi) -> None:
-        self.__cloud_account_api = value
 
     @property
     def id(self) -> str:

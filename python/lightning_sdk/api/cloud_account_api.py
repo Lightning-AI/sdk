@@ -9,7 +9,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListClusterAcceleratorsResponse,
     V1ListDefaultClusterAcceleratorsResponse,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import cached_lightning_client
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider
@@ -33,7 +33,7 @@ class CloudAccountApi:
     """Internal API client for API requests to cluster endpoints."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def get_cloud_account(self, cloud_account_id: str, teamspace_id: str, org_id: str) -> Externalv1Cluster:
         """Return a cloud account by ID.
