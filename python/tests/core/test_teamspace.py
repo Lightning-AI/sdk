@@ -130,8 +130,8 @@ def test_teamspace_list_clusters_studios_user(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -152,8 +152,8 @@ def test_teamspace_list_clusters_studios_org(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @pytest.mark.parametrize(

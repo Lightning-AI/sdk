@@ -5,7 +5,8 @@ from typing import Callable, Optional
 import rich_click as click
 from rich.table import Table
 
-from lightning_sdk.cli.utils.cloud_account_map import cloud_account_to_display_name
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.cli.utils.cloud_account_map import cloud_account_display_name_from_list
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
@@ -52,22 +53,28 @@ def list_impl(teamspace: Optional[str], all: bool, sort_by: Optional[str], as_js
 
     user = _get_authed_user()
 
+    # Fetched once and reused below -- refetching per Studio here is what made this command slow.
+    global_cloud_accounts = CloudAccountApi().list_global_cloud_accounts(teamspace_id=teamspace_resolved.id)
+
     studios = sorted(
         filter(lambda s: all or s._studio.user_id == user.id, teamspace_resolved.studios),
-        key=_sort_studios_key(sort_by),
+        key=_sort_studios_key(sort_by, global_cloud_accounts),
     )
 
     if as_json:
         rows = []
         for studio in studios:
             with prevent_refetch_studio(studio):
+                machine = studio.machine  # uncached property -- read once, not per branch below
                 rows.append(
                     {
                         "name": studio.name,
                         "teamspace": f"{studio.teamspace.owner.name}/{studio.teamspace.name}",
                         "status": str(studio.status),
-                        "machine": str(studio.machine) if studio.machine is not None else None,
-                        "cloud_account": str(cloud_account_to_display_name(studio.cloud_account, studio.teamspace.id)),
+                        "machine": str(machine) if machine is not None else None,
+                        "cloud_account": str(
+                            cloud_account_display_name_from_list(studio.cloud_account, global_cloud_accounts)
+                        ),
                     }
                 )
         echo_json(rows)
@@ -84,26 +91,38 @@ def list_impl(teamspace: Optional[str], all: bool, sort_by: Optional[str], as_js
 
     for studio in studios:
         with prevent_refetch_studio(studio):
+            machine = studio.machine  # uncached property -- read once, not per branch below
             table.add_row(
                 # cannot convert to ascii here, as the final rich table has to be converted to ascii
                 # otherwise the lack of support for linking in some terminals causes formatting issues.
                 studio_name_link(studio, to_ascii=False),
                 f"{studio.teamspace.owner.name}/{studio.teamspace.name}",
                 str(studio.status),
-                str(studio.machine) if studio.machine is not None else None,  # when None the cell is empty
-                str(cloud_account_to_display_name(studio.cloud_account, studio.teamspace.id)),
+                str(machine) if machine is not None else None,  # when None the cell is empty
+                str(cloud_account_display_name_from_list(studio.cloud_account, global_cloud_accounts)),
             )
 
     click.echo(rich_to_str(table), color=True)
 
 
-def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
-    """Return a key function to sort studios by a given attribute."""
+def _sort_studios_key(sort_by: str, global_cloud_accounts: list) -> Callable[[Studio], str]:
+    """Return a key function to sort studios by a given attribute.
+
+    Status/machine/cloud-account keys run under ``prevent_refetch_studio`` so sorting by one of them
+    doesn't force a live per-Studio refetch ahead of the (already-cached) row-rendering pass below.
+    """
+
+    def _cached(s: Studio, attr: str) -> str:
+        with prevent_refetch_studio(s):
+            return str(getattr(s, attr) or "")
+
     sort_key_map = {
         "name": lambda s: str(s.name or ""),
         "teamspace": lambda s: str(s.teamspace.name or ""),
-        "status": lambda s: str(s.status or ""),
-        "machine": lambda s: str(s.machine or ""),
-        "cloud-account": lambda s: str(cloud_account_to_display_name(s.cloud_account or "", s.teamspace.id)),
+        "status": lambda s: _cached(s, "status"),
+        "machine": lambda s: _cached(s, "machine"),
+        "cloud-account": lambda s: (
+            cloud_account_display_name_from_list(s.cloud_account or "", global_cloud_accounts)
+        ),
     }
     return sort_key_map.get(sort_by, lambda s: s.name)

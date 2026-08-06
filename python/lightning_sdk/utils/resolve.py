@@ -325,9 +325,10 @@ def prevent_refetch_studio(studio: "Studio") -> Generator[None, None, None]:
     prev_prevent_refetch_state = getattr(studio, "_prevent_refetch", False)
     studio._prevent_refetch = True
 
-    yield
-
-    studio._prevent_refetch = prev_prevent_refetch_state
+    try:
+        yield
+    finally:
+        studio._prevent_refetch = prev_prevent_refetch_state
 
 
 def _parse_model_and_version(name: str) -> Tuple[str, Optional[str]]:

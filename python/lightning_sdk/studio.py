@@ -86,8 +86,8 @@ class Studio(metaclass=TrackCallsMeta):
         disable_secrets: bool = False,
         studio_type: Optional[str] = None,  # for base studio templates
     ) -> None:
-        self._studio_api = StudioApi()
-        self._cloud_account_api = CloudAccountApi()
+        self.__studio_api = None
+        self.__cloud_account_api = None
 
         self._prevent_refetch = False
         self._teamspace = None
@@ -202,6 +202,28 @@ class Studio(metaclass=TrackCallsMeta):
         self._setup_done = True
 
     @property
+    def _studio_api(self) -> StudioApi:
+        # Lazy: LightningClient.__init__ wraps ~1000+ methods with retry logic, which is significant
+        # overhead when many throwaway Studios are constructed just to render a list.
+        if self.__studio_api is None:
+            self.__studio_api = StudioApi()
+        return self.__studio_api
+
+    @_studio_api.setter
+    def _studio_api(self, value: StudioApi) -> None:
+        self.__studio_api = value
+
+    @property
+    def _cloud_account_api(self) -> CloudAccountApi:
+        if self.__cloud_account_api is None:
+            self.__cloud_account_api = CloudAccountApi()
+        return self.__cloud_account_api
+
+    @_cloud_account_api.setter
+    def _cloud_account_api(self, value: CloudAccountApi) -> None:
+        self.__cloud_account_api = value
+
+    @property
     def id(self) -> str:
         """The studio's unique identifier."""
         return self._studio.id
@@ -224,7 +246,10 @@ class Studio(metaclass=TrackCallsMeta):
         Returns:
             Status: The current :class:`~lightning_sdk.status.Status` of the Studio.
         """
-        internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        if self._prevent_refetch and self._studio.code_status is not None:
+            internal_status = self._studio.code_status.in_use
+        else:
+            internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
         return _internal_status_to_external_status(
             internal_status.phase if internal_status is not None else internal_status
         )
@@ -256,6 +281,16 @@ class Studio(metaclass=TrackCallsMeta):
         """
         if self.status != Status.Running:
             return None
+
+        cached_in_use = self._studio.code_status.in_use if self._prevent_refetch and self._studio.code_status else None
+        if cached_in_use is not None and cached_in_use.compute_config is not None:
+            return self._studio_api.machine_from_compute_config(
+                cached_in_use.compute_config,
+                self._teamspace.id,
+                self.cloud_account,
+                _get_org_id(self._teamspace),
+            )
+
         return self._studio_api.get_machine(
             self._studio.id,
             self._teamspace.id,
