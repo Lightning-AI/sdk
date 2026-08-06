@@ -230,6 +230,9 @@ class Job(metaclass=TrackCallsMeta):
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
             studio: The studio env to run the job with. Mutually exclusive with image.
+                If both ``studio`` and ``image`` are left unset and this code is running inside a Studio
+                (detected via the ``LIGHTNING_CLOUD_SPACE_ID`` env var), defaults to that Studio, provided
+                its teamspace matches the resolved ``teamspace``.
             image: The docker image to run the job with. Mutually exclusive with studio.
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
                 Accepts a bare name or an ``owner/teamspace`` slug.

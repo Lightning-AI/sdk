@@ -43,7 +43,15 @@ _MACHINE_VALUES = tuple(
         "If not provided for images, will run the container entrypoint and default command."
     ),
 )
-@click.option("--studio", default=None, help="The studio env to run the job with. Mutually exclusive with image.")
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The studio env to run the job with. Mutually exclusive with image. "
+        "If both --studio and --image are omitted while running inside a Studio, defaults to that Studio "
+        "(if its teamspace matches --teamspace)."
+    ),
+)
 @click.option("--image", default=None, help="The docker image to run the job with. Mutually exclusive with studio.")
 @teamspace_option
 @click.option(
