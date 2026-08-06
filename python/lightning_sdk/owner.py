@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, cast
 
 from lightning_sdk.api import TeamspaceApi
 from lightning_sdk.utils.logging import TrackCallsABCMeta
 
 if TYPE_CHECKING:
+    from lightning_sdk.organization import Organization
     from lightning_sdk.teamspace import Teamspace
 
 
@@ -51,14 +52,14 @@ class Owner(ABC, metaclass=TrackCallsABCMeta):
             org = None
         else:
             user = None
-            org = self
+            org = cast("Organization", self)
 
         _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
         return [Teamspace(name=t.name, user=user, org=org) for t in _teamspaces]
 
-    def __eq__(self, o: "Owner") -> bool:
+    def __eq__(self, o: object) -> bool:
         """Checks for equality with provided object."""
-        return type(o) is type(self) and self.id == o.id and self.name == o.name
+        return isinstance(o, Owner) and type(o) is type(self) and self.id == o.id and self.name == o.name
 
     def __str__(self) -> str:
         """Returns reader friendly representation."""

@@ -17,7 +17,7 @@ always returns a :class:`NetworkPolicy`.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, cast
 
 from lightning_sdk.lightning_cloud.openapi.models import V1NetworkPolicy
 
@@ -86,4 +86,4 @@ def from_v1_network_policy(
     cidrs = list(getattr(policy, "allowed_cidrs", None) or [])
     if mode not in ("allow-all", "deny-all", "default-deny"):
         mode = "default-deny" if cidrs else "allow-all"
-    return NetworkPolicy(mode=mode, allow_cidrs=cidrs)
+    return NetworkPolicy(mode=cast(NetworkPolicyMode, mode), allow_cidrs=cidrs)

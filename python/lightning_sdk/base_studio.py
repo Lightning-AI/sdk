@@ -39,13 +39,11 @@ class BaseStudio:
         Raises:
             ConnectionError: If there is an issue with the authentication process.
         """
-        self._teamspace = None
-
         _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if _teamspace is None:
             raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
-        self._teamspace = _teamspace
+        self._teamspace: Teamspace = _teamspace
 
         # self._auth = login.Auth()
         # self._user = None

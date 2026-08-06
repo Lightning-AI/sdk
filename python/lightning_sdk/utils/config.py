@@ -198,7 +198,7 @@ class Config:
 
 
 def _unflatten_dict(flat_dict: Dict[str, Any]) -> Dict[str, Any]:
-    unflattened_dict = {}
+    unflattened_dict: Dict[str, Any] = {}
     for key, value in flat_dict.items():
         keys = key.split(".")
         curr = unflattened_dict
