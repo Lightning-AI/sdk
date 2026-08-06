@@ -77,6 +77,7 @@ class Organization(Owner):
 
         Exactly one of ``start`` and ``end`` must be supplied,
         or both together:
+
         - only ``start``: grabs monthly summaries for months after ``pivot=start``.
         - only ``end``:  grabs monthly summaries for months before ``pivot=end``.
         - both ``start`` and ``end``: acts as a normal range.
@@ -88,20 +89,21 @@ class Organization(Owner):
                 ``start``, acts as a "BEFORE" pivot.
 
         Returns:
-            MonthlySummaryResponse: A dict with the following shape:
-            {
-                "org_id": str,
-                "monthly_summaries": [
-                    {
-                        "period_start": datetime,
-                        "period_end": datetime,
-                        "total_credits_consumed": float,
-                        "total_credits_remaining": float,
-                        "total_credits_purchased": float,
-                    },
-                    ...
-                ],
-            }
+            MonthlySummaryResponse: A dict with the following shape::
+
+                {
+                    "org_id": str,
+                    "monthly_summaries": [
+                        {
+                            "period_start": datetime,
+                            "period_end": datetime,
+                            "total_credits_consumed": float,
+                            "total_credits_remaining": float,
+                            "total_credits_purchased": float,
+                        },
+                        ...
+                    ],
+                }
 
         Raises:
             ValueError: If neither ``start`` nor ``end`` is
