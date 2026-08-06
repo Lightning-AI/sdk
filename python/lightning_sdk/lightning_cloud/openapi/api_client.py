@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 """
     external/v1/auth_service.proto
 

@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -42,21 +46,31 @@ class JobsServiceUpdateJobBody(object):
     """
     swagger_types = {
         'cloudspace_id': 'str',
+        'name': 'str',
+        'replace_requested': 'bool',
         'state': 'str'
     }
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
+        'name': 'name',
+        'replace_requested': 'replaceRequested',
         'state': 'state'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, name: 'str' =None, replace_requested: 'bool' =None, state: 'str' =None):  # noqa: E501
         """JobsServiceUpdateJobBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
+        self._name = None
+        self._replace_requested = None
         self._state = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if name is not None:
+            self.name = name
+        if replace_requested is not None:
+            self.replace_requested = replace_requested
         if state is not None:
             self.state = state
 
@@ -80,6 +94,52 @@ class JobsServiceUpdateJobBody(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def name(self) -> 'str':
+        """Gets the name of this JobsServiceUpdateJobBody.  # noqa: E501
+
+        Optional, new name for the job. Collisions are resolved server-side.  # noqa: E501
+
+        :return: The name of this JobsServiceUpdateJobBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._name
+
+    @name.setter
+    def name(self, name: 'str'):
+        """Sets the name of this JobsServiceUpdateJobBody.
+
+        Optional, new name for the job. Collisions are resolved server-side.  # noqa: E501
+
+        :param name: The name of this JobsServiceUpdateJobBody.  # noqa: E501
+        :type: str
+        """
+
+        self._name = name
+
+    @property
+    def replace_requested(self) -> 'bool':
+        """Gets the replace_requested of this JobsServiceUpdateJobBody.  # noqa: E501
+
+        Optional. When true, request a graceful surge-replace of this deployment replica (spin up a replacement, then drain this job). Deployment jobs only.  # noqa: E501
+
+        :return: The replace_requested of this JobsServiceUpdateJobBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._replace_requested
+
+    @replace_requested.setter
+    def replace_requested(self, replace_requested: 'bool'):
+        """Sets the replace_requested of this JobsServiceUpdateJobBody.
+
+        Optional. When true, request a graceful surge-replace of this deployment replica (spin up a replacement, then drain this job). Deployment jobs only.  # noqa: E501
+
+        :param replace_requested: The replace_requested of this JobsServiceUpdateJobBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._replace_requested = replace_requested
 
     @property
     def state(self) -> 'str':

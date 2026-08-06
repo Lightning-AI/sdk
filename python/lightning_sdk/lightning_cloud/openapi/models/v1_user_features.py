@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -128,6 +132,10 @@ class V1UserFeatures(object):
         'f358': 'bool',
         'f359': 'bool',
         'f360': 'bool',
+        'f361': 'bool',
+        'f362': 'bool',
+        'f363': 'bool',
+        'f364': 'bool',
         'fair_share': 'bool',
         'featured_studios_admin': 'bool',
         'job_artifacts_v2': 'bool',
@@ -159,7 +167,6 @@ class V1UserFeatures(object):
         'show_dev_admin': 'bool',
         'slurm': 'bool',
         'specialised_studios': 'bool',
-        'storage_overuse_deletion': 'bool',
         'studio_config': 'bool',
         'studio_version_visibility': 'bool',
         'vultr': 'bool'
@@ -253,6 +260,10 @@ class V1UserFeatures(object):
         'f358': 'f358',
         'f359': 'f359',
         'f360': 'f360',
+        'f361': 'f361',
+        'f362': 'f362',
+        'f363': 'f363',
+        'f364': 'f364',
         'fair_share': 'fairShare',
         'featured_studios_admin': 'featuredStudiosAdmin',
         'job_artifacts_v2': 'jobArtifactsV2',
@@ -284,13 +295,12 @@ class V1UserFeatures(object):
         'show_dev_admin': 'showDevAdmin',
         'slurm': 'slurm',
         'specialised_studios': 'specialisedStudios',
-        'storage_overuse_deletion': 'storageOveruseDeletion',
         'studio_config': 'studioConfig',
         'studio_version_visibility': 'studioVersionVisibility',
         'vultr': 'vultr'
     }
 
-    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, f350: 'bool' =None, f351: 'bool' =None, f352: 'bool' =None, f353: 'bool' =None, f354: 'bool' =None, f355: 'bool' =None, f356: 'bool' =None, f357: 'bool' =None, f358: 'bool' =None, f359: 'bool' =None, f360: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, storage_overuse_deletion: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
+    def __init__(self, affiliate_links: 'bool' =None, ai_hub_monetization: 'bool' =None, auto_fast_load: 'bool' =None, b2c_experience: 'bool' =None, byo_machine_type: 'bool' =None, cap_add: 'list[str]' =None, cap_drop: 'list[str]' =None, capacity_reservation_byoc: 'bool' =None, capacity_reservation_dry_run: 'bool' =None, chat_models: 'bool' =None, cloudspace_schedules: 'bool' =None, code_tab: 'bool' =None, collab_screen_sharing: 'bool' =None, control_center_monitoring: 'bool' =None, cost_attribution_settings: 'bool' =None, datasets: 'bool' =None, default_one_cluster: 'bool' =None, enterprise_compute_admin: 'bool' =None, f234: 'bool' =None, f236: 'bool' =None, f240: 'bool' =None, f241: 'bool' =None, f243: 'bool' =None, f245: 'bool' =None, f247: 'bool' =None, f250: 'bool' =None, f252: 'bool' =None, f253: 'bool' =None, f254: 'bool' =None, f258: 'bool' =None, f259: 'bool' =None, f266: 'bool' =None, f268: 'bool' =None, f270: 'bool' =None, f271: 'bool' =None, f272: 'bool' =None, f279: 'bool' =None, f281: 'bool' =None, f283: 'bool' =None, f287: 'bool' =None, f288: 'bool' =None, f293: 'bool' =None, f294: 'bool' =None, f297: 'bool' =None, f298: 'bool' =None, f299: 'bool' =None, f300: 'bool' =None, f302: 'bool' =None, f303: 'bool' =None, f305: 'bool' =None, f313: 'bool' =None, f314: 'bool' =None, f316: 'bool' =None, f317: 'bool' =None, f321: 'bool' =None, f322: 'bool' =None, f323: 'bool' =None, f324: 'bool' =None, f326: 'bool' =None, f327: 'bool' =None, f328: 'bool' =None, f329: 'bool' =None, f331: 'bool' =None, f332: 'bool' =None, f333: 'bool' =None, f336: 'bool' =None, f337: 'bool' =None, f338: 'bool' =None, f339: 'bool' =None, f340: 'bool' =None, f341: 'bool' =None, f345: 'bool' =None, f346: 'bool' =None, f347: 'bool' =None, f348: 'bool' =None, f349: 'bool' =None, f350: 'bool' =None, f351: 'bool' =None, f352: 'bool' =None, f353: 'bool' =None, f354: 'bool' =None, f355: 'bool' =None, f356: 'bool' =None, f357: 'bool' =None, f358: 'bool' =None, f359: 'bool' =None, f360: 'bool' =None, f361: 'bool' =None, f362: 'bool' =None, f363: 'bool' =None, f364: 'bool' =None, fair_share: 'bool' =None, featured_studios_admin: 'bool' =None, job_artifacts_v2: 'bool' =None, kubernetes_cluster_ui: 'bool' =None, kubernetes_clusters: 'bool' =None, landing_studios: 'bool' =None, marketplace: 'bool' =None, mmt_fault_tolerance: 'bool' =None, mmt_strategy_selector: 'bool' =None, multiple_studio_versions: 'bool' =None, nerf_fs_nonpaying: 'bool' =None, org_level_member_permissions: 'bool' =None, org_usage_limits: 'bool' =None, persistent_disk: 'bool' =None, plugin_distributed: 'bool' =None, plugin_inference: 'bool' =None, plugin_label_studio: 'bool' =None, plugin_langflow: 'bool' =None, plugin_python_profiler: 'bool' =None, plugin_sweeps: 'bool' =None, product_generator: 'bool' =None, product_license: 'bool' =None, project_selector: 'bool' =None, publish_pipelines: 'bool' =None, reserved_machines_tab: 'bool' =None, restartable_jobs: 'bool' =None, runnable_public_studio_page: 'bool' =None, security_docs: 'bool' =None, show_dev_admin: 'bool' =None, slurm: 'bool' =None, specialised_studios: 'bool' =None, studio_config: 'bool' =None, studio_version_visibility: 'bool' =None, vultr: 'bool' =None):  # noqa: E501
         """V1UserFeatures - a model defined in Swagger"""  # noqa: E501
         self._affiliate_links = None
         self._ai_hub_monetization = None
@@ -379,6 +389,10 @@ class V1UserFeatures(object):
         self._f358 = None
         self._f359 = None
         self._f360 = None
+        self._f361 = None
+        self._f362 = None
+        self._f363 = None
+        self._f364 = None
         self._fair_share = None
         self._featured_studios_admin = None
         self._job_artifacts_v2 = None
@@ -410,7 +424,6 @@ class V1UserFeatures(object):
         self._show_dev_admin = None
         self._slurm = None
         self._specialised_studios = None
-        self._storage_overuse_deletion = None
         self._studio_config = None
         self._studio_version_visibility = None
         self._vultr = None
@@ -589,6 +602,14 @@ class V1UserFeatures(object):
             self.f359 = f359
         if f360 is not None:
             self.f360 = f360
+        if f361 is not None:
+            self.f361 = f361
+        if f362 is not None:
+            self.f362 = f362
+        if f363 is not None:
+            self.f363 = f363
+        if f364 is not None:
+            self.f364 = f364
         if fair_share is not None:
             self.fair_share = fair_share
         if featured_studios_admin is not None:
@@ -651,8 +672,6 @@ class V1UserFeatures(object):
             self.slurm = slurm
         if specialised_studios is not None:
             self.specialised_studios = specialised_studios
-        if storage_overuse_deletion is not None:
-            self.storage_overuse_deletion = storage_overuse_deletion
         if studio_config is not None:
             self.studio_config = studio_config
         if studio_version_visibility is not None:
@@ -2488,6 +2507,90 @@ class V1UserFeatures(object):
         self._f360 = f360
 
     @property
+    def f361(self) -> 'bool':
+        """Gets the f361 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f361 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f361
+
+    @f361.setter
+    def f361(self, f361: 'bool'):
+        """Sets the f361 of this V1UserFeatures.
+
+
+        :param f361: The f361 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f361 = f361
+
+    @property
+    def f362(self) -> 'bool':
+        """Gets the f362 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f362 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f362
+
+    @f362.setter
+    def f362(self, f362: 'bool'):
+        """Sets the f362 of this V1UserFeatures.
+
+
+        :param f362: The f362 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f362 = f362
+
+    @property
+    def f363(self) -> 'bool':
+        """Gets the f363 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f363 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f363
+
+    @f363.setter
+    def f363(self, f363: 'bool'):
+        """Sets the f363 of this V1UserFeatures.
+
+
+        :param f363: The f363 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f363 = f363
+
+    @property
+    def f364(self) -> 'bool':
+        """Gets the f364 of this V1UserFeatures.  # noqa: E501
+
+
+        :return: The f364 of this V1UserFeatures.  # noqa: E501
+        :rtype: bool
+        """
+        return self._f364
+
+    @f364.setter
+    def f364(self, f364: 'bool'):
+        """Sets the f364 of this V1UserFeatures.
+
+
+        :param f364: The f364 of this V1UserFeatures.  # noqa: E501
+        :type: bool
+        """
+
+        self._f364 = f364
+
+    @property
     def fair_share(self) -> 'bool':
         """Gets the fair_share of this V1UserFeatures.  # noqa: E501
 
@@ -3137,27 +3240,6 @@ class V1UserFeatures(object):
         """
 
         self._specialised_studios = specialised_studios
-
-    @property
-    def storage_overuse_deletion(self) -> 'bool':
-        """Gets the storage_overuse_deletion of this V1UserFeatures.  # noqa: E501
-
-
-        :return: The storage_overuse_deletion of this V1UserFeatures.  # noqa: E501
-        :rtype: bool
-        """
-        return self._storage_overuse_deletion
-
-    @storage_overuse_deletion.setter
-    def storage_overuse_deletion(self, storage_overuse_deletion: 'bool'):
-        """Sets the storage_overuse_deletion of this V1UserFeatures.
-
-
-        :param storage_overuse_deletion: The storage_overuse_deletion of this V1UserFeatures.  # noqa: E501
-        :type: bool
-        """
-
-        self._storage_overuse_deletion = storage_overuse_deletion
 
     @property
     def studio_config(self) -> 'bool':
