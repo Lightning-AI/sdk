@@ -138,6 +138,25 @@ def test_route_cp_uploads_download_recursive():
         )
 
 
+def test_route_cp_uploads_download_only_rewrites_the_resource_type_segment():
+    """Test that a file below uploads/ keeps its name when it also contains uploads."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="lit://my-org/my-teamspace/uploads/my_uploads/uploads.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace/Uploads/my_uploads/uploads.ckpt",
+            destination="/local/model.ckpt",
+            recursive=False,
+            progress_bar=True,
+        )
+
+
 def test_route_cp_download_does_not_rewrite_non_uploads_paths_with_uploads_segment():
     """Test that only uploads downloads apply the Uploads/ path rewrite."""
     mock_fs = MagicMock()
