@@ -216,8 +216,8 @@ class LitContainerApi:
         container: str,
         teamspace: Teamspace,
         tag: str,
-        cloud_account: str,
-        platform: str,
+        cloud_account: Optional[str],
+        platform: Optional[str],
         return_final_dict: bool = False,
     ) -> Generator[dict, None, None]:
         """Upload container will push the container to LitCR.

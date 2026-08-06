@@ -97,7 +97,7 @@ def list_impl(teamspace: Optional[str], all: bool, sort_by: Optional[str], as_js
     click.echo(rich_to_str(table), color=True)
 
 
-def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
+def _sort_studios_key(sort_by: Optional[str]) -> Callable[[Studio], str]:
     """Return a key function to sort studios by a given attribute."""
     sort_key_map = {
         "name": lambda s: str(s.name or ""),
@@ -106,4 +106,4 @@ def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
         "machine": lambda s: str(s.machine or ""),
         "cloud-account": lambda s: str(cloud_account_to_display_name(s.cloud_account or "", s.teamspace.id)),
     }
-    return sort_key_map.get(sort_by, lambda s: s.name)
+    return sort_key_map.get(sort_by or "", lambda s: s.name)

@@ -28,4 +28,6 @@ def list_containers(
     teamspace: Optional[str] = None, cloud_account: Optional[str] = None, as_json: bool = False
 ) -> None:
     """Display the list of available containers."""
-    _list_containers.callback(teamspace=teamspace, cloud_account=cloud_account, as_json=as_json)
+    callback = _list_containers.callback
+    assert callback is not None
+    callback(teamspace=teamspace, cloud_account=cloud_account, as_json=as_json)

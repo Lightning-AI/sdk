@@ -35,4 +35,6 @@ def download_file(
     path: str = "", studio: Optional[str] = None, teamspace: Optional[str] = None, local_path: str = "."
 ) -> None:
     """Download a file from a Studio or Teamspace drive file."""
-    _download_file.callback(path=path, studio=studio, teamspace=teamspace, local_path=local_path)
+    callback = _download_file.callback
+    assert callback is not None
+    callback(path=path, studio=studio, teamspace=teamspace, local_path=local_path)

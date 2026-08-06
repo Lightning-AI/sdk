@@ -22,4 +22,6 @@ def download_container(
     container: str, teamspace: Optional[str] = None, tag: str = "latest", cloud_account: Optional[str] = None
 ) -> None:
     """Download a docker container from a teamspace."""
-    _download_container.callback(container=container, teamspace=teamspace, tag=tag, cloud_account=cloud_account)
+    callback = _download_container.callback
+    assert callback is not None
+    callback(container=container, teamspace=teamspace, tag=tag, cloud_account=cloud_account)

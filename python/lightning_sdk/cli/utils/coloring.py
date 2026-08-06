@@ -1,4 +1,5 @@
-from typing import Optional, Sequence, Tuple
+from collections.abc import Iterable
+from typing import Optional
 
 from click.formatting import HelpFormatter, term_len, wrap_text
 from click.termui import style
@@ -49,7 +50,7 @@ class CustomHelpFormatter(HelpFormatter):
 
     def write_dl(
         self,
-        rows: Sequence[Tuple[str, str]],
+        rows: Iterable[tuple[str, str]],
         col_max: int = 30,
         col_spacing: int = 2,
     ) -> None:

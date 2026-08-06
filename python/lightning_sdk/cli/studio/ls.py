@@ -26,12 +26,13 @@ def ls_impl(path: str) -> None:
         raise ValueError("Path must be a Studio path starting with 'lit://'.")
 
     studio_path_result = parse_studio_path(path)
+    destination = studio_path_result["destination"] or ""
     selected_studio = resolve_studio(
         studio_path_result["studio"], studio_path_result["teamspace"], studio_path_result["owner"]
     )
 
     path_info = selected_studio._studio_api.get_path_info(
-        selected_studio._studio.id, selected_studio._teamspace.id, path=studio_path_result["destination"]
+        selected_studio._studio.id, selected_studio._teamspace.id, path=destination
     )
 
     if not path_info["exists"]:
@@ -42,11 +43,11 @@ def ls_impl(path: str) -> None:
 
     if path_info["type"] == "file":
         # print the file name if it's a file (bash-like behavior)
-        print(studio_path_result["destination"])
+        print(destination)
         return
 
     tree = selected_studio._studio_api.get_tree(
-        selected_studio._studio.id, selected_studio._teamspace.id, path=studio_path_result["destination"]
+        selected_studio._studio.id, selected_studio._teamspace.id, path=destination
     )
 
     tree_items = tree.get("tree", [])

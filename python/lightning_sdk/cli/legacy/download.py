@@ -6,11 +6,11 @@ from typing import Optional
 import click
 from rich.console import Console
 
-from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.lit_container_api import LitContainerApi
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
+from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -171,15 +171,15 @@ def download_licenses() -> None:
 
     """
     user = _get_authed_user()
-    api = LicenseApi()
-    licenses = api.list_user_licenses(user.id)
+    response = LightningClient().product_license_service_list_licenses(owner_id=user.id)
+    licenses = response.licenses or []
 
     user_home = Path.home()
     lit_dir = user_home / ".lightning"
     lit_dir.mkdir(parents=True, exist_ok=True)
     licenses_file = lit_dir / "licenses.json"
 
-    licenses_short = {ll.product_name: ll.license_key for ll in licenses if ll.is_valid}
+    licenses_short = {product_license.product_id: product_license.license_key for product_license in licenses}
     with licenses_file.open("w") as fp:
         json.dump(licenses_short, fp, indent=4)
     Console().print(f"Licenses downloaded to {licenses_file}", style="green")
@@ -196,9 +196,9 @@ def download_license(name: str) -> None:
     NAME: The name of the product/package to download the license for.
     """
     user = _get_authed_user()
-    api = LicenseApi()
-    licenses = api.list_user_licenses(user.id)
-    licenses_short = {ll.product_name: ll.license_key for ll in licenses if ll.is_valid}
+    response = LightningClient().product_license_service_list_licenses(owner_id=user.id)
+    licenses = response.licenses or []
+    licenses_short = {product_license.product_id: product_license.license_key for product_license in licenses}
 
     if name not in licenses_short:
         Console().print(f"Missing valid license for {name}", style="red")

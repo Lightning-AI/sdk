@@ -126,7 +126,7 @@ def _handle_devbox(
     studio_thread.start()
 
     console.print("📤 Syncing project files to Studio...")
-    lit_devbox.upload_folder(studio, pathlib_path.parent, upload_state)
+    lit_devbox.upload_folder(studio, str(pathlib_path.parent), upload_state)
 
     # Wait for the Studio to start
     console.print("⚡ Waiting for Studio to start...")

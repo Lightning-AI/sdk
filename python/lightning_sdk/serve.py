@@ -219,7 +219,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         tag: str,
         teamspace: Teamspace,
         lit_cr: LitContainerApi,
-        cloud_account: str,
+        cloud_account: Optional[str],
     ) -> Generator[dict, None, None]:
         """Authenticate, push the container to LitCR, and yield status dicts.
 
