@@ -1100,15 +1100,42 @@ def test_job_logs_finished_tail(job_api_get_job_by_name_mocker, internal_studio_
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_rank_warns_when_finished(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_rank_resolves_machine(job_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
+    machine = mock.MagicMock()
+    machine.name = "test-job-1"
+    machine.rank = 1
+    machine._compute_logs.return_value = "rank one"
+    monkeypatch.setattr(type(job), "is_multi_machine", mock.PropertyMock(return_value=True))
+    monkeypatch.setattr(type(job), "machines", mock.PropertyMock(return_value=(machine,)))
 
-    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    job._job_api.get_logs_finished = mock.MagicMock(return_value="done")
+    assert job.logs(rank=1, tail=10, timestamps=True) == "rank one"
+    machine._compute_logs.assert_called_once_with(
+        follow=False,
+        tail=10,
+        timestamps=True,
+        since=None,
+        until=None,
+        query=None,
+        severity=None,
+    )
 
-    with pytest.warns(UserWarning, match="rank"):
-        _ = job.logs(rank=1)
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_rank_rejects_missing_machine(
+    job_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch
+):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+    machine = mock.MagicMock()
+    machine.name = "test-job-0"
+    machine.rank = 0
+    monkeypatch.setattr(type(job), "is_multi_machine", mock.PropertyMock(return_value=True))
+    monkeypatch.setattr(type(job), "machines", mock.PropertyMock(return_value=(machine,)))
+
+    with pytest.raises(ValueError, match="Rank 2 not found.*Available ranks: 0"):
+        job.logs(rank=2)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1163,23 +1190,20 @@ def test_job_logs_follow_on_finished_returns_saved_lines(job_api_get_job_by_name
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_follow_delegates_to_api(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_iter_log_entries_yields_structured_rows(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
-    stream_mock = mock.MagicMock(return_value=iter(["line-1", "line-2"]))
-    job._job_api.stream_logs = stream_mock
+    stream_mock = _stub_logs_api(job, [LogEntry(message="line-1"), LogEntry(message="line-2")])
+    legacy = mock.MagicMock()
+    job._job_api.stream_logs = legacy
 
-    result = list(job.logs(follow=True, tail=10, rank=1, timestamps=True))
+    entries = list(job.iter_log_entries(follow=True, tail=10))
 
-    assert result == ["line-1", "line-2"]
-    stream_mock.assert_called_once_with(
-        job_id="test-job-id",
-        teamspace_id=job.teamspace.id,
-        follow=True,
-        tail=10,
-        rank=1,
-        idle_timeout=None,
-        timestamps=True,
-    )
+    assert [entry.message for entry in entries] == ["line-1", "line-2"]
+    legacy.assert_not_called()
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["follow"] is True
+    assert kwargs["tail"] == 10
+    assert kwargs["job_ids"] == ["test-job-id"]

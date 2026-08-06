@@ -1,14 +1,14 @@
 """Job logs command."""
 
 from contextlib import suppress
-from typing import Optional
+from typing import Dict, Optional
 
 import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
-from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
+from lightning_sdk.cli.utils.logs import print_log_entries, resolve_time
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
 
 
 @click.command("logs", cls=LightningCommand)
@@ -50,62 +50,37 @@ def logs_job(
     Prints a snapshot of the logs available so far. Pass --follow to stream new
     lines from a running job until it finishes or you press Ctrl-C. --query and
     --severity are applied by the server, to both the snapshot and the stream.
-    Multi-machine logs are merged unless --rank selects one machine, which opens
-    that machine's per-job websocket (same path as a single-machine job with
-    --rank).
+    Multi-machine logs are merged unless --rank selects one machine (same LogsApi
+    path as reading that machine by name).
     """
     resolved_teamspace = resolve_teamspace(teamspace)
-    resource = resolve_job(name, resolved_teamspace)
-    selected_rank = resource.is_multi_machine is True and rank is not None
-    job = resolve_job_machine(resource, rank) if selected_rank else resource
+    job = resolve_job(name, resolved_teamspace)
 
-    if as_json:
-        if rank is not None and not selected_rank:
-            raise click.ClickException("--rank is not supported with --json.")
-        if job.is_multi_machine is True:
-            labels: dict = {}
-            with suppress(Exception):
-                labels = {machine.resource_id: machine.name for machine in job.machines}
-            selection = LogSelection(
-                teamspace_id=resolved_teamspace.id,
-                mmt_id=job.resource_id,
-                labels=labels,
-            )
-        else:
-            selection = LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id])
-        read_logs(
-            selection,
-            query=query,
-            severity=severity,
-            since=resolve_time(since, "--since"),
-            until=resolve_time(until, "--until"),
-            tail=tail,
-            follow=follow,
-            as_json=True,
-        )
-        return
+    labels: Optional[Dict[str, str]] = None
+    if job.is_multi_machine is True and rank is None:
+        labels = {}
+        with suppress(Exception):
+            labels = {machine.resource_id: machine.name for machine in job.machines}
 
     try:
-        log_options = {
-            "follow": follow,
-            "tail": tail,
-            "timestamps": timestamps,
-            "since": resolve_time(since, "--since"),
-            "until": resolve_time(until, "--until"),
-            "query": query,
-            "severity": severity,
-        }
-        if job.is_multi_machine is not True:
-            # Any non-None rank routes Job through the legacy per-job websocket (server-side
-            # tail). For a selected MMT machine the process rank on that node is 0.
-            log_options["rank"] = 0 if selected_rank else rank
-        logs = job.logs(**log_options)
-        if follow:
-            for line in logs:
-                click.echo(line)
-        elif logs:
-            click.echo(logs)
+        entries = job.iter_log_entries(
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
+            query=query,
+            severity=severity,
+        )
+        print_log_entries(
+            entries,
+            query=query,
+            timestamps=timestamps,
+            as_json=as_json,
+            follow=follow,
+            labels=labels,
+        )
     except KeyboardInterrupt:
         pass
-    except RuntimeError as ex:
+    except (RuntimeError, ValueError) as ex:
         raise click.ClickException(str(ex)) from ex

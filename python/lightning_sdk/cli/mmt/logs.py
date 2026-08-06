@@ -1,13 +1,13 @@
 """MMT logs command."""
 
 from contextlib import suppress
-from typing import Optional
+from typing import Dict, Optional
 
 import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
+from lightning_sdk.cli.utils.logs import print_log_entries, resolve_time
 from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
 
@@ -47,43 +47,33 @@ def logs_mmt(
 
     Reads every machine, merged into one timeline and labelled with the machine each line came
     from. Pass --follow to stream new lines until the job finishes or you press Ctrl-C. To read a
-    single machine, use `lightning job logs <machine-name>`.
+    single machine, use `lightning job logs <machine-name>` or `lightning job logs --rank N`.
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     mmt = resolve_mmt(name, resolved_teamspace)
 
-    if as_json:
-        labels: dict = {}
-        # Label each line with the machine it came from, mirroring the text output.
-        with suppress(Exception):
-            labels = {machine.resource_id: machine.name for machine in mmt.machines}
-        read_logs(
-            LogSelection(teamspace_id=resolved_teamspace.id, mmt_id=mmt.resource_id, labels=labels),
-            query=query,
-            severity=severity,
-            since=resolve_time(since, "--since"),
-            until=resolve_time(until, "--until"),
-            tail=tail,
-            follow=follow,
-            as_json=True,
-        )
-        return
+    labels: Dict[str, str] = {}
+    # Label each line with the machine it came from, mirroring Job.logs text output.
+    with suppress(Exception):
+        labels = {machine.resource_id: machine.name for machine in mmt.machines}
 
     try:
-        logs = mmt.logs(
+        entries = mmt.iter_log_entries(
             follow=follow,
             tail=tail,
-            timestamps=timestamps,
             since=resolve_time(since, "--since"),
             until=resolve_time(until, "--until"),
             query=query,
             severity=severity,
         )
-        if follow:
-            for line in logs:
-                click.echo(line)
-        elif logs:
-            click.echo(logs)
+        print_log_entries(
+            entries,
+            query=query,
+            timestamps=timestamps,
+            as_json=as_json,
+            follow=follow,
+            labels=labels,
+        )
     except KeyboardInterrupt:
         pass
     except RuntimeError as ex:

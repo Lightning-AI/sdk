@@ -2,21 +2,22 @@
 
 Logs are read one resource at a time — ``lightning job logs``, ``lightning mmt logs``,
 ``lightning deployment logs``, ``lightning sandbox logs`` — and this module holds what more than
-one of them needs: time-bound parsing, query highlighting, and the read-and-print loop for a
-command that merges several resources into one stream.
+one of them needs: time-bound parsing, query highlighting, print helpers for SDK-sourced
+entries, and the read-and-print loop for commands that still call LogsApi directly
+(deployment/sandbox; those move to the SDK in a follow-up).
 
-The client itself is :class:`~lightning_sdk.api.logs_api.LogsApi`, and single-resource commands
-go through their SDK object (``Job.logs``, ``MMT.logs``) rather than this reader.
+Job and MMT log commands go through their SDK object (``Job.iter_log_entries`` /
+``Job.logs``) and only use :func:`print_log_entries` for display.
 """
 
 import re
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Optional, Sequence
+from typing import Dict, Iterable, Optional, Sequence
 
 import rich_click as click
 
-from lightning_sdk.api.logs_api import LogsApi
+from lightning_sdk.api.logs_api import LogEntry, LogsApi
 from lightning_sdk.cli.utils.json_output import echo_json
 
 # Lightning brand purple (#a78bfa) as an RGB tuple for truecolor styling.
@@ -94,6 +95,52 @@ class LogSelection:
         }
 
 
+def print_log_entries(
+    entries: Iterable[LogEntry],
+    *,
+    query: Optional[str] = None,
+    timestamps: bool = False,
+    as_json: bool = False,
+    follow: bool = False,
+    labels: Optional[Dict[str, str]] = None,
+) -> None:
+    """Print SDK-sourced log entries (no HTTP). Used by job/MMT CLI log commands.
+
+    With ``as_json`` the entries are collected and printed as a single JSON array; that cannot
+    be combined with ``follow``. Text output highlights ``query`` matches and labels lines when
+    ``labels`` maps resource ids to display names (multi-machine merges).
+    """
+    if as_json and follow:
+        raise click.ClickException("--json cannot be combined with --follow.")
+
+    printed = 0
+    rows = []
+    try:
+        for entry in entries:
+            label = None
+            if labels is not None:
+                label = labels.get(entry.resource_id, entry.resource_id)
+            if as_json:
+                rows.append(entry.to_json_dict(label))
+                printed += 1
+                continue
+            # Highlighting the message before formatting keeps the timestamp and label out of it.
+            line = replace(entry, message=highlight(entry.message, query)).format(timestamps=timestamps, prefix=label)
+            click.echo(line)
+            printed += 1
+    except KeyboardInterrupt:
+        pass
+    except RuntimeError as ex:
+        raise click.ClickException(str(ex)) from ex
+
+    if as_json:
+        echo_json(rows)
+        return
+
+    if not printed:
+        click.echo("No logs matched.", err=True)
+
+
 def read_logs(
     selection: LogSelection,
     *,
@@ -114,12 +161,13 @@ def read_logs(
     ``tail`` searches back in widening windows instead of reading a long history in full.
     With ``as_json`` the entries are collected and printed as a single JSON array instead of
     formatted lines; it cannot be combined with ``follow`` (an unbounded stream has no end).
+
+    Prefer :func:`print_log_entries` with an SDK iterator for job/MMT; this path still talks to
+    LogsApi for deployment/sandbox until those commands move to the SDK.
     """
     if as_json and follow:
         raise click.ClickException("--json cannot be combined with --follow.")
 
-    printed = 0
-    rows = []
     try:
         entries = LogsApi(api_key=api_key).stream(
             selection.teamspace_id,
@@ -136,27 +184,18 @@ def read_logs(
             fallback_to_live=not follow,
             **selection.selectors(),
         )
-        for entry in entries:
-            label = selection.labels.get(entry.resource_id) if selection.labels else None
-            if as_json:
-                rows.append(entry.to_json_dict(label))
-                printed += 1
-                continue
-            # Highlighting the message before formatting keeps the timestamp and label out of it.
-            line = replace(entry, message=highlight(entry.message, query)).format(timestamps=timestamps, prefix=label)
-            click.echo(line)
-            printed += 1
+        print_log_entries(
+            entries,
+            query=query,
+            timestamps=timestamps,
+            as_json=as_json,
+            follow=follow,
+            labels=selection.labels or None,
+        )
     except KeyboardInterrupt:
         pass
     except RuntimeError as ex:
         raise click.ClickException(str(ex)) from ex
-
-    if as_json:
-        echo_json(rows)
-        return
-
-    if not printed:
-        click.echo("No logs matched.", err=True)
 
 
 def deployment_replica_labels(teamspace_id: str, deployment_id: str) -> Dict[str, str]:

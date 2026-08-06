@@ -565,12 +565,16 @@ def test_mmtv2_logs_follow_and_filters(mmt_api_get_job_by_name_mocker, internal_
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_mmtv2_logs_rejects_rank(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+def test_mmtv2_logs_resolves_rank(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace)
+    machine = mock.MagicMock()
+    machine.rank = 1
+    machine._compute_logs.return_value = "rank one"
+    monkeypatch.setattr(type(job), "machines", mock.PropertyMock(return_value=(machine,)))
 
-    with pytest.raises(ValueError, match="mmt.machines"):
-        job.logs(rank=1)
+    assert job.logs(rank=1) == "rank one"
+    machine._compute_logs.assert_called_once()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
