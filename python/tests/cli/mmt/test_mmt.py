@@ -22,7 +22,7 @@ def test_mmts_list_help_shows_deprecation() -> None:
     assert_help_contains(
         "lightning mmts list --help",
         "Deprecation warning:",
-        "Use `lightning job` instead of `lightning mmts list`.",
+        "Use `lightning job list` instead of `lightning mmts list`.",
         "Usage: lightning mmts list",
     )
 
@@ -33,6 +33,6 @@ def test_mmt_deprecation_propagates_to_subcommands(subcommand: str) -> None:
     assert_help_contains(
         f"lightning mmt {subcommand} --help",
         "Deprecation warning:",
-        f"Use `lightning job` instead of `lightning mmt {subcommand}`.",
+        f"Use `lightning job {subcommand}` instead of `lightning mmt {subcommand}`.",
         f"Usage: lightning mmt {subcommand}",
     )

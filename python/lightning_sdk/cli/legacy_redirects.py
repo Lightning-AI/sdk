@@ -108,33 +108,48 @@ class HiddenAliasGroup(LightningGroup):
 class DeprecatedGroup(LightningGroup):
     """A hidden group whose subcommands show deprecation warnings pointing to a replacement."""
 
-    def __init__(self, *args: object, replacement: str, **kwargs: object) -> None:
+    def __init__(
+        self,
+        *args: object,
+        replacement: str,
+        replacement_group: click.Group | None = None,
+        **kwargs: object,
+    ) -> None:
         kwargs.setdefault("hidden", True)
         super().__init__(*args, **kwargs)
         self._replacement = replacement
+        self._replacement_group = replacement_group
 
     def get_help(self, ctx: click.Context) -> str:
         return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n{super().get_help(ctx)}"
 
     def add_command(self, cmd: click.Command, name: str | None = None) -> None:
-        cmd.invoke = self._make_deprecated_invoke(cmd.invoke)
-        cmd.get_help = self._make_deprecated_get_help(cmd.get_help)
+        cmd_name = name or cmd.name
+        cmd.invoke = self._make_deprecated_invoke(cmd.invoke, cmd_name)
+        cmd.get_help = self._make_deprecated_get_help(cmd.get_help, cmd_name)
         super().add_command(cmd, name)
 
+    def _replacement_for(self, cmd_name: str | None) -> str:
+        # Resolved lazily: the replacement group may gain its commands after this group is built.
+        if self._replacement_group is None or cmd_name not in self._replacement_group.commands:
+            return self._replacement
+        return f"{self._replacement} {cmd_name}"
+
     def _make_deprecated_invoke(
-        self, original_invoke: Callable[[click.Context], object]
+        self, original_invoke: Callable[[click.Context], object], cmd_name: str | None
     ) -> Callable[[click.Context], object]:
         def _deprecated_invoke(ctx: click.Context) -> object:
-            _echo_deprecation_warning(ctx.command_path, self._replacement)
+            _echo_deprecation_warning(ctx.command_path, self._replacement_for(cmd_name))
             return original_invoke(ctx)
 
         return _deprecated_invoke
 
     def _make_deprecated_get_help(
-        self, original_get_help: Callable[[click.Context], str]
+        self, original_get_help: Callable[[click.Context], str], cmd_name: str | None
     ) -> Callable[[click.Context], str]:
         def _deprecated_get_help(ctx: click.Context) -> str:
-            return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n" + original_get_help(ctx)
+            warning = _format_deprecation_warning(ctx.command_path, self._replacement_for(cmd_name))
+            return f"{warning}\n\n" + original_get_help(ctx)
 
         return _deprecated_get_help
 
