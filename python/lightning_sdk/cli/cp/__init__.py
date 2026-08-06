@@ -21,12 +21,17 @@ def parse_lit_url(url: str) -> str:
     return path[2].lower()
 
 
-def _canonicalize_lit_resource_type(url: str) -> str:
-    """Normalize the lit:// resource type segment to its canonical lowercase form."""
+def _set_lit_resource_type(url: str, resource_type: str) -> str:
+    """Return ``url`` with its resource type segment replaced by ``resource_type``."""
     parse_lit_url(url)
     path = url.split("://", maxsplit=1)[-1].split("/")
-    path[2] = path[2].lower()
+    path[2] = resource_type
     return "lit://" + "/".join(path)
+
+
+def _canonicalize_lit_resource_type(url: str) -> str:
+    """Normalize the lit:// resource type segment to its canonical lowercase form."""
+    return _set_lit_resource_type(url, parse_lit_url(url))
 
 
 def route_cp_operation(source: str, destination: Optional[str], **options: Any) -> None:
@@ -63,7 +68,10 @@ def route_cp_operation(source: str, destination: Optional[str], **options: Any) 
         ):
             fs = Filesystem()
             if resource_type == "uploads":
-                source = source.replace("uploads/", "Uploads/")
+                # The server addresses this namespace by its Uploads/ storage
+                # prefix. Rename only the resource type segment: a directory
+                # below it may legitimately be called uploads as well.
+                source = _set_lit_resource_type(source, "Uploads")
             return fs.copy(
                 source=source,
                 destination=destination,
