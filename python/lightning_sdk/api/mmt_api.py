@@ -70,7 +70,9 @@ class MMTApiV2:
             cloud_account_auth: Whether to pass cloud-account credentials into the container.
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
             scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
@@ -139,7 +141,9 @@ class MMTApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
 
