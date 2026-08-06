@@ -57,7 +57,7 @@ def test_browser_authentication_blocks_subclass_callback_server() -> None:
         def _run_server(self) -> None:
             self.browser_started = True
 
-    auth = CustomAuth()
+    auth = CustomAuth(user_id="", api_key="", auth_token="")
 
     with browser_authentication(False), pytest.raises(ValueError, match="lightning login"):
         auth.authenticate()
