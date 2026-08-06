@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -96,6 +100,7 @@ class V1Organization(object):
         'storage_overuse_notification_count': 'int',
         'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
+        'timezone': 'str',
         'twitter_username': 'str',
         'updated_at': 'datetime',
         'workload_max_run_duration': 'str'
@@ -157,12 +162,13 @@ class V1Organization(object):
         'storage_overuse_notification_count': 'storageOveruseNotificationCount',
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
+        'timezone': 'timezone',
         'twitter_username': 'twitterUsername',
         'updated_at': 'updatedAt',
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -219,6 +225,7 @@ class V1Organization(object):
         self._storage_overuse_notification_count = None
         self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
+        self._timezone = None
         self._twitter_username = None
         self._updated_at = None
         self._workload_max_run_duration = None
@@ -333,6 +340,8 @@ class V1Organization(object):
             self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
             self.teamspace_default_credits = teamspace_default_credits
+        if timezone is not None:
+            self.timezone = timezone
         if twitter_username is not None:
             self.twitter_username = twitter_username
         if updated_at is not None:
@@ -1496,6 +1505,27 @@ class V1Organization(object):
         """
 
         self._teamspace_default_credits = teamspace_default_credits
+
+    @property
+    def timezone(self) -> 'str':
+        """Gets the timezone of this V1Organization.  # noqa: E501
+
+
+        :return: The timezone of this V1Organization.  # noqa: E501
+        :rtype: str
+        """
+        return self._timezone
+
+    @timezone.setter
+    def timezone(self, timezone: 'str'):
+        """Sets the timezone of this V1Organization.
+
+
+        :param timezone: The timezone of this V1Organization.  # noqa: E501
+        :type: str
+        """
+
+        self._timezone = timezone
 
     @property
     def twitter_username(self) -> 'str':

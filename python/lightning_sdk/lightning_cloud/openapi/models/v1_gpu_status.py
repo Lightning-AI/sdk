@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -42,42 +46,62 @@ class V1GPUStatus(object):
     """
     swagger_types = {
         'ecc_uncorrectable': 'str',
+        'gpu_recovery_action': 'str',
         'host_pci_addr': 'str',
         'index': 'int',
         'pci_bus_id': 'str',
         'power_draw_w': 'float',
+        'recovery_action_collection_state': 'str',
         'remapped_rows_uncorrectable': 'str',
+        'row_remap_collection_state': 'str',
+        'row_remap_failure': 'bool',
+        'row_remap_pending': 'bool',
         'serial': 'str',
         'temperature_c': 'int',
-        'throttle_reasons': 'str'
+        'throttle_reasons': 'str',
+        'uuid': 'str'
     }
 
     attribute_map = {
         'ecc_uncorrectable': 'eccUncorrectable',
+        'gpu_recovery_action': 'gpuRecoveryAction',
         'host_pci_addr': 'hostPciAddr',
         'index': 'index',
         'pci_bus_id': 'pciBusId',
         'power_draw_w': 'powerDrawW',
+        'recovery_action_collection_state': 'recoveryActionCollectionState',
         'remapped_rows_uncorrectable': 'remappedRowsUncorrectable',
+        'row_remap_collection_state': 'rowRemapCollectionState',
+        'row_remap_failure': 'rowRemapFailure',
+        'row_remap_pending': 'rowRemapPending',
         'serial': 'serial',
         'temperature_c': 'temperatureC',
-        'throttle_reasons': 'throttleReasons'
+        'throttle_reasons': 'throttleReasons',
+        'uuid': 'uuid'
     }
 
-    def __init__(self, ecc_uncorrectable: 'str' =None, host_pci_addr: 'str' =None, index: 'int' =None, pci_bus_id: 'str' =None, power_draw_w: 'float' =None, remapped_rows_uncorrectable: 'str' =None, serial: 'str' =None, temperature_c: 'int' =None, throttle_reasons: 'str' =None):  # noqa: E501
+    def __init__(self, ecc_uncorrectable: 'str' =None, gpu_recovery_action: 'str' =None, host_pci_addr: 'str' =None, index: 'int' =None, pci_bus_id: 'str' =None, power_draw_w: 'float' =None, recovery_action_collection_state: 'str' =None, remapped_rows_uncorrectable: 'str' =None, row_remap_collection_state: 'str' =None, row_remap_failure: 'bool' =None, row_remap_pending: 'bool' =None, serial: 'str' =None, temperature_c: 'int' =None, throttle_reasons: 'str' =None, uuid: 'str' =None):  # noqa: E501
         """V1GPUStatus - a model defined in Swagger"""  # noqa: E501
         self._ecc_uncorrectable = None
+        self._gpu_recovery_action = None
         self._host_pci_addr = None
         self._index = None
         self._pci_bus_id = None
         self._power_draw_w = None
+        self._recovery_action_collection_state = None
         self._remapped_rows_uncorrectable = None
+        self._row_remap_collection_state = None
+        self._row_remap_failure = None
+        self._row_remap_pending = None
         self._serial = None
         self._temperature_c = None
         self._throttle_reasons = None
+        self._uuid = None
         self.discriminator = None
         if ecc_uncorrectable is not None:
             self.ecc_uncorrectable = ecc_uncorrectable
+        if gpu_recovery_action is not None:
+            self.gpu_recovery_action = gpu_recovery_action
         if host_pci_addr is not None:
             self.host_pci_addr = host_pci_addr
         if index is not None:
@@ -86,14 +110,24 @@ class V1GPUStatus(object):
             self.pci_bus_id = pci_bus_id
         if power_draw_w is not None:
             self.power_draw_w = power_draw_w
+        if recovery_action_collection_state is not None:
+            self.recovery_action_collection_state = recovery_action_collection_state
         if remapped_rows_uncorrectable is not None:
             self.remapped_rows_uncorrectable = remapped_rows_uncorrectable
+        if row_remap_collection_state is not None:
+            self.row_remap_collection_state = row_remap_collection_state
+        if row_remap_failure is not None:
+            self.row_remap_failure = row_remap_failure
+        if row_remap_pending is not None:
+            self.row_remap_pending = row_remap_pending
         if serial is not None:
             self.serial = serial
         if temperature_c is not None:
             self.temperature_c = temperature_c
         if throttle_reasons is not None:
             self.throttle_reasons = throttle_reasons
+        if uuid is not None:
+            self.uuid = uuid
 
     @property
     def ecc_uncorrectable(self) -> 'str':
@@ -115,6 +149,29 @@ class V1GPUStatus(object):
         """
 
         self._ecc_uncorrectable = ecc_uncorrectable
+
+    @property
+    def gpu_recovery_action(self) -> 'str':
+        """Gets the gpu_recovery_action of this V1GPUStatus.  # noqa: E501
+
+        Raw nvidia-smi gpu_recovery_action value (for example \"None\", \"Reset\", or \"Drain and Reset\"). Read with recovery_action_collection_state.  # noqa: E501
+
+        :return: The gpu_recovery_action of this V1GPUStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._gpu_recovery_action
+
+    @gpu_recovery_action.setter
+    def gpu_recovery_action(self, gpu_recovery_action: 'str'):
+        """Sets the gpu_recovery_action of this V1GPUStatus.
+
+        Raw nvidia-smi gpu_recovery_action value (for example \"None\", \"Reset\", or \"Drain and Reset\"). Read with recovery_action_collection_state.  # noqa: E501
+
+        :param gpu_recovery_action: The gpu_recovery_action of this V1GPUStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._gpu_recovery_action = gpu_recovery_action
 
     @property
     def host_pci_addr(self) -> 'str':
@@ -203,6 +260,29 @@ class V1GPUStatus(object):
         self._power_draw_w = power_draw_w
 
     @property
+    def recovery_action_collection_state(self) -> 'str':
+        """Gets the recovery_action_collection_state of this V1GPUStatus.  # noqa: E501
+
+        Collection state for gpu_recovery_action. \"collected\" means the value is authoritative, \"unsupported\" means the guest driver does not expose the field, and \"error\" means collection failed. Empty is retained for older agents.  # noqa: E501
+
+        :return: The recovery_action_collection_state of this V1GPUStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._recovery_action_collection_state
+
+    @recovery_action_collection_state.setter
+    def recovery_action_collection_state(self, recovery_action_collection_state: 'str'):
+        """Sets the recovery_action_collection_state of this V1GPUStatus.
+
+        Collection state for gpu_recovery_action. \"collected\" means the value is authoritative, \"unsupported\" means the guest driver does not expose the field, and \"error\" means collection failed. Empty is retained for older agents.  # noqa: E501
+
+        :param recovery_action_collection_state: The recovery_action_collection_state of this V1GPUStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._recovery_action_collection_state = recovery_action_collection_state
+
+    @property
     def remapped_rows_uncorrectable(self) -> 'str':
         """Gets the remapped_rows_uncorrectable of this V1GPUStatus.  # noqa: E501
 
@@ -222,6 +302,75 @@ class V1GPUStatus(object):
         """
 
         self._remapped_rows_uncorrectable = remapped_rows_uncorrectable
+
+    @property
+    def row_remap_collection_state(self) -> 'str':
+        """Gets the row_remap_collection_state of this V1GPUStatus.  # noqa: E501
+
+        Collection state for row_remap_pending and row_remap_failure. \"collected\" means the values are authoritative, \"unsupported\" means the guest driver does not expose them, and \"error\" means collection failed. Empty is retained for older agents.  # noqa: E501
+
+        :return: The row_remap_collection_state of this V1GPUStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._row_remap_collection_state
+
+    @row_remap_collection_state.setter
+    def row_remap_collection_state(self, row_remap_collection_state: 'str'):
+        """Sets the row_remap_collection_state of this V1GPUStatus.
+
+        Collection state for row_remap_pending and row_remap_failure. \"collected\" means the values are authoritative, \"unsupported\" means the guest driver does not expose them, and \"error\" means collection failed. Empty is retained for older agents.  # noqa: E501
+
+        :param row_remap_collection_state: The row_remap_collection_state of this V1GPUStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._row_remap_collection_state = row_remap_collection_state
+
+    @property
+    def row_remap_failure(self) -> 'bool':
+        """Gets the row_remap_failure of this V1GPUStatus.  # noqa: E501
+
+        Active row-remap failure signal. Read with row_remap_collection_state.  # noqa: E501
+
+        :return: The row_remap_failure of this V1GPUStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._row_remap_failure
+
+    @row_remap_failure.setter
+    def row_remap_failure(self, row_remap_failure: 'bool'):
+        """Sets the row_remap_failure of this V1GPUStatus.
+
+        Active row-remap failure signal. Read with row_remap_collection_state.  # noqa: E501
+
+        :param row_remap_failure: The row_remap_failure of this V1GPUStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._row_remap_failure = row_remap_failure
+
+    @property
+    def row_remap_pending(self) -> 'bool':
+        """Gets the row_remap_pending of this V1GPUStatus.  # noqa: E501
+
+        Active row-remap pending signal. remapped_rows_uncorrectable is a durable historical count and must not be interpreted as an active failure by itself. Read with row_remap_collection_state.  # noqa: E501
+
+        :return: The row_remap_pending of this V1GPUStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._row_remap_pending
+
+    @row_remap_pending.setter
+    def row_remap_pending(self, row_remap_pending: 'bool'):
+        """Sets the row_remap_pending of this V1GPUStatus.
+
+        Active row-remap pending signal. remapped_rows_uncorrectable is a durable historical count and must not be interpreted as an active failure by itself. Read with row_remap_collection_state.  # noqa: E501
+
+        :param row_remap_pending: The row_remap_pending of this V1GPUStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._row_remap_pending = row_remap_pending
 
     @property
     def serial(self) -> 'str':
@@ -285,6 +434,29 @@ class V1GPUStatus(object):
         """
 
         self._throttle_reasons = throttle_reasons
+
+    @property
+    def uuid(self) -> 'str':
+        """Gets the uuid of this V1GPUStatus.  # noqa: E501
+
+        Stable NVIDIA GPU UUID. Appended for compatibility and used as an identity fallback when host/guest PCI addresses or serial numbers are unavailable.  # noqa: E501
+
+        :return: The uuid of this V1GPUStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, uuid: 'str'):
+        """Sets the uuid of this V1GPUStatus.
+
+        Stable NVIDIA GPU UUID. Appended for compatibility and used as an identity fallback when host/guest PCI addresses or serial numbers are unavailable.  # noqa: E501
+
+        :param uuid: The uuid of this V1GPUStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._uuid = uuid
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

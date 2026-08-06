@@ -1,3 +1,7 @@
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 import os
 from time import sleep, time
 from lightning_sdk.lightning_cloud import rest_client

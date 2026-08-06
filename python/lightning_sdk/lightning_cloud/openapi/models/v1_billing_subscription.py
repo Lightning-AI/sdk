@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -45,6 +49,7 @@ class V1BillingSubscription(object):
         'canceled_at': 'datetime',
         'card_last4': 'str',
         'card_type': 'str',
+        'card_verification_error': 'str',
         'card_verified': 'bool',
         'features': 'list[V1BillingFeature]',
         'name': 'str',
@@ -60,6 +65,7 @@ class V1BillingSubscription(object):
         'canceled_at': 'canceledAt',
         'card_last4': 'cardLast4',
         'card_type': 'cardType',
+        'card_verification_error': 'cardVerificationError',
         'card_verified': 'cardVerified',
         'features': 'features',
         'name': 'name',
@@ -70,12 +76,13 @@ class V1BillingSubscription(object):
         'stripe_managed': 'stripeManaged'
     }
 
-    def __init__(self, amount: 'int' =None, canceled_at: 'datetime' =None, card_last4: 'str' =None, card_type: 'str' =None, card_verified: 'bool' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
+    def __init__(self, amount: 'int' =None, canceled_at: 'datetime' =None, card_last4: 'str' =None, card_type: 'str' =None, card_verification_error: 'str' =None, card_verified: 'bool' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
         """V1BillingSubscription - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._canceled_at = None
         self._card_last4 = None
         self._card_type = None
+        self._card_verification_error = None
         self._card_verified = None
         self._features = None
         self._name = None
@@ -93,6 +100,8 @@ class V1BillingSubscription(object):
             self.card_last4 = card_last4
         if card_type is not None:
             self.card_type = card_type
+        if card_verification_error is not None:
+            self.card_verification_error = card_verification_error
         if card_verified is not None:
             self.card_verified = card_verified
         if features is not None:
@@ -193,6 +202,27 @@ class V1BillingSubscription(object):
         """
 
         self._card_type = card_type
+
+    @property
+    def card_verification_error(self) -> 'str':
+        """Gets the card_verification_error of this V1BillingSubscription.  # noqa: E501
+
+
+        :return: The card_verification_error of this V1BillingSubscription.  # noqa: E501
+        :rtype: str
+        """
+        return self._card_verification_error
+
+    @card_verification_error.setter
+    def card_verification_error(self, card_verification_error: 'str'):
+        """Sets the card_verification_error of this V1BillingSubscription.
+
+
+        :param card_verification_error: The card_verification_error of this V1BillingSubscription.  # noqa: E501
+        :type: str
+        """
+
+        self._card_verification_error = card_verification_error
 
     @property
     def card_verified(self) -> 'bool':
