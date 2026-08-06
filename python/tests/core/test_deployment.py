@@ -449,6 +449,26 @@ def test_to_autoscaling():
     assert second_metric.target == "75"
 
 
+def test_to_autoscaling_uses_replicas_for_missing_bounds():
+    autoscaling = deployment_api_module.to_autoscaling(
+        AutoScaleConfig(metric="CPU", threshold=50),
+        replicas=3,
+    )
+
+    assert autoscaling.min_replicas == 3
+    assert autoscaling.max_replicas == 3
+
+
+def test_restore_autoscale_returns_one_config():
+    restored = deployment_api_module.restore_autoscale(
+        V1AutoscalingSpec(min_replicas=1, max_replicas=3, target_metric=[])
+    )
+
+    assert isinstance(restored, AutoScaleConfig)
+    assert restored.min_replicas == 1
+    assert restored.max_replicas == 3
+
+
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 @patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
 def test_to_env():

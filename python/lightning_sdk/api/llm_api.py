@@ -141,7 +141,7 @@ class LLMApi:
                 usage=result_data.get("usage"),
             )
         except json.JSONDecodeError:
-            warnings.warn("Error decoding JSON:", decoded_line)
+            warnings.warn(f"Error decoding JSON: {decoded_line}")
             return None
 
     def _stream_chat_response(
@@ -368,7 +368,7 @@ class LLMApi:
         loop = asyncio.get_event_loop()
         response = await asyncio.to_thread(thread.get)
 
-        queue = asyncio.Queue()
+        queue: asyncio.Queue[V1ConversationResponseChunk | None] = asyncio.Queue()
 
         def enqueue() -> None:
             try:

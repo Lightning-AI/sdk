@@ -42,8 +42,8 @@ class Experiment(Protocol):
 
 class _DummyBody:
     def __init__(self) -> None:
-        self.swagger_types = {}
-        self.attribute_map = {}
+        self.swagger_types: dict[str, Any] = {}
+        self.attribute_map: dict[str, str] = {}
 
 
 _BYTES_PER_KB = 1024
@@ -132,7 +132,7 @@ class _BlobUploader:
         self.extra_headers = extra_headers
         self.notify_completion = notify_completion
         self.show_progress = progress_bar
-        self.progress_bar = None
+        self.progress_bar: Optional[tqdm] = None
 
         self.filesize = os.path.getsize(file_path)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -396,6 +396,7 @@ class _ModelFileUploader:
 
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
+        self.progress_bar: Optional[tqdm]
         if progress_bar:
             self.progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(file_path)[1]}",
@@ -417,7 +418,7 @@ class _ModelFileUploader:
     def __call__(self) -> None:
         """Does the actual uploading."""
         count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
-        return self._multipart_upload(count=count)
+        self._multipart_upload(count=count)
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload.
@@ -452,7 +453,9 @@ class _ModelFileUploader:
             upload_id=resp.upload_id,
         )
 
-    def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
+    def _process_upload_batch(
+        self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str
+    ) -> Iterator[V1CompletedPart]:
         """Uploads a single batch of chunks in parallel.
 
         Args:
@@ -626,10 +629,12 @@ class _FileDownloader:
 
     @property
     def url(self) -> str:
+        assert self._url is not None
         return self._url
 
     @property
     def size(self) -> int:
+        assert self._size is not None
         return self._size
 
     def update_progress(self, n: int) -> None:
@@ -643,7 +648,7 @@ class _FileDownloader:
         self.progress_bar.set_description(f"{(desc[:72] + '...') if len(desc) > 75 else desc:<75.75}")
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _download_chunk(self, filename: str, start_end: Tuple[int]) -> None:
+    def _download_chunk(self, filename: str, start_end: Tuple[int, int]) -> None:
         start, end = start_end
         headers = {"Range": f"bytes={start}-{end}"}
 
@@ -697,14 +702,16 @@ class _FileDownloader:
     def download(self) -> None:
         # Fast path: if size is already known and the local file matches, skip without hitting the API.
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
-        if self.url is None:
+        if self._url is None:
             self.refresh()
 
         # Re-check after refresh in case size was previously unknown (e.g. model files flow).
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
@@ -736,7 +743,9 @@ class _FileDownloader:
         os.rename(tmp_filename, self.local_path)
 
 
-def _get_model_version(client: LightningClient, teamspace_id: str, name: str, version: str) -> V1ModelVersionArchive:
+def _get_model_version(
+    client: LightningClient, teamspace_id: str, name: str, version: Optional[str]
+) -> V1ModelVersionArchive:
     models = client.models_store_list_models(project_id=teamspace_id, name=name).models
     if not models:
         raise ValueError(f"Model `{name}` does not exist")
@@ -805,7 +814,7 @@ def _download_model_files(
                 num_workers=num_workers,
                 progress_bar=pbar,
                 executor=part_executor,
-                refresh_fn=lambda f=filepath: refresh_fn(f),
+                refresh_fn=partial(refresh_fn, filepath),
                 skip_if_exists=skip_if_exists,
             )
 
