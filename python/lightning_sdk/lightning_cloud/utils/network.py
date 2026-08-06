@@ -1,3 +1,7 @@
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 # from lightning.utilities.network import find_free_network_port
 import socket
 

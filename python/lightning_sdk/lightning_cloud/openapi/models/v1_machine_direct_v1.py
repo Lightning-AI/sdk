@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -45,6 +49,7 @@ class V1MachineDirectV1(object):
         'agent_version': 'str',
         'burst_cluster_id': 'str',
         'cloud_hypervisor_user': 'str',
+        'customer_networks': 'list[V1CustomerNetwork]',
         'disable_cpu_vm_on_gpu_node': 'bool',
         'disable_reservation_alerts': 'bool',
         'dns_servers': 'list[str]',
@@ -70,6 +75,7 @@ class V1MachineDirectV1(object):
         'agent_version': 'agentVersion',
         'burst_cluster_id': 'burstClusterId',
         'cloud_hypervisor_user': 'cloudHypervisorUser',
+        'customer_networks': 'customerNetworks',
         'disable_cpu_vm_on_gpu_node': 'disableCpuVmOnGpuNode',
         'disable_reservation_alerts': 'disableReservationAlerts',
         'dns_servers': 'dnsServers',
@@ -90,12 +96,13 @@ class V1MachineDirectV1(object):
         'voltage_park_credentials_secret_id': 'voltageParkCredentialsSecretId'
     }
 
-    def __init__(self, access_mode: 'str' =None, agent_version: 'str' =None, burst_cluster_id: 'str' =None, cloud_hypervisor_user: 'str' =None, disable_cpu_vm_on_gpu_node: 'bool' =None, disable_reservation_alerts: 'bool' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, update_agents_on_sandbox_machines: 'bool' =None, use_nvme_disks: 'bool' =None, voltage_park_credentials_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, agent_version: 'str' =None, burst_cluster_id: 'str' =None, cloud_hypervisor_user: 'str' =None, customer_networks: 'list[V1CustomerNetwork]' =None, disable_cpu_vm_on_gpu_node: 'bool' =None, disable_reservation_alerts: 'bool' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, update_agents_on_sandbox_machines: 'bool' =None, use_nvme_disks: 'bool' =None, voltage_park_credentials_secret_id: 'str' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._access_mode = None
         self._agent_version = None
         self._burst_cluster_id = None
         self._cloud_hypervisor_user = None
+        self._customer_networks = None
         self._disable_cpu_vm_on_gpu_node = None
         self._disable_reservation_alerts = None
         self._dns_servers = None
@@ -123,6 +130,8 @@ class V1MachineDirectV1(object):
             self.burst_cluster_id = burst_cluster_id
         if cloud_hypervisor_user is not None:
             self.cloud_hypervisor_user = cloud_hypervisor_user
+        if customer_networks is not None:
+            self.customer_networks = customer_networks
         if disable_cpu_vm_on_gpu_node is not None:
             self.disable_cpu_vm_on_gpu_node = disable_cpu_vm_on_gpu_node
         if disable_reservation_alerts is not None:
@@ -243,6 +252,29 @@ class V1MachineDirectV1(object):
         """
 
         self._cloud_hypervisor_user = cloud_hypervisor_user
+
+    @property
+    def customer_networks(self) -> 'list[V1CustomerNetwork]':
+        """Gets the customer_networks of this V1MachineDirectV1.  # noqa: E501
+
+        Customer-internal networks reachable from this cluster's VMs through VPN gateways. Per-VM access is granted separately; empty means the feature is off. Supports multiple customers (one gateway + CIDR set each).  # noqa: E501
+
+        :return: The customer_networks of this V1MachineDirectV1.  # noqa: E501
+        :rtype: list[V1CustomerNetwork]
+        """
+        return self._customer_networks
+
+    @customer_networks.setter
+    def customer_networks(self, customer_networks: 'list[V1CustomerNetwork]'):
+        """Sets the customer_networks of this V1MachineDirectV1.
+
+        Customer-internal networks reachable from this cluster's VMs through VPN gateways. Per-VM access is granted separately; empty means the feature is off. Supports multiple customers (one gateway + CIDR set each).  # noqa: E501
+
+        :param customer_networks: The customer_networks of this V1MachineDirectV1.  # noqa: E501
+        :type: list[V1CustomerNetwork]
+        """
+
+        self._customer_networks = customer_networks
 
     @property
     def disable_cpu_vm_on_gpu_node(self) -> 'bool':

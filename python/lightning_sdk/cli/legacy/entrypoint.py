@@ -28,8 +28,9 @@ from lightning_sdk.cli.legacy.stop import stop
 from lightning_sdk.cli.legacy.switch import switch
 from lightning_sdk.cli.legacy.upload import upload
 from lightning_sdk.cli.utils.coloring import CustomHelpFormatter
+from lightning_sdk.cli.utils.auth import browser_authentication
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.login import Auth, browser_authentication
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:

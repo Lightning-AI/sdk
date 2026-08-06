@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -909,6 +913,111 @@ class BillingServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetInferenceRateLimitResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def billing_service_get_monthly_summary(self, **kwargs) -> 'V1GetMonthlySummaryResponse':  # noqa: E501
+        """billing_service_get_monthly_summary  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_monthly_summary(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: string since GetBillingSubscriptionRequest uses a string for org_id
+        :param str time_filter_pivot_filter_pivot_direction:
+        :param datetime time_filter_pivot_filter_pivot:
+        :param datetime time_filter_range_filter_range_start:
+        :param datetime time_filter_range_filter_range_end:
+        :return: V1GetMonthlySummaryResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_monthly_summary_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_monthly_summary_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_monthly_summary_with_http_info(self, **kwargs) -> 'V1GetMonthlySummaryResponse':  # noqa: E501
+        """billing_service_get_monthly_summary  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_monthly_summary_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: string since GetBillingSubscriptionRequest uses a string for org_id
+        :param str time_filter_pivot_filter_pivot_direction:
+        :param datetime time_filter_pivot_filter_pivot:
+        :param datetime time_filter_range_filter_range_start:
+        :param datetime time_filter_range_filter_range_end:
+        :return: V1GetMonthlySummaryResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'time_filter_pivot_filter_pivot_direction', 'time_filter_pivot_filter_pivot', 'time_filter_range_filter_range_start', 'time_filter_range_filter_range_end']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_monthly_summary" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'time_filter_pivot_filter_pivot_direction' in params:
+            query_params.append(('timeFilter.pivotFilter.pivotDirection', params['time_filter_pivot_filter_pivot_direction']))  # noqa: E501
+        if 'time_filter_pivot_filter_pivot' in params:
+            query_params.append(('timeFilter.pivotFilter.pivot', params['time_filter_pivot_filter_pivot']))  # noqa: E501
+        if 'time_filter_range_filter_range_start' in params:
+            query_params.append(('timeFilter.rangeFilter.rangeStart', params['time_filter_range_filter_range_start']))  # noqa: E501
+        if 'time_filter_range_filter_range_end' in params:
+            query_params.append(('timeFilter.rangeFilter.rangeEnd', params['time_filter_range_filter_range_end']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/monthly-summary', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetMonthlySummaryResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

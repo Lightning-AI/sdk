@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -42,6 +46,7 @@ class V1VMIBPKeyInfo(object):
     """
     swagger_types = {
         'all_pkeys': 'list[str]',
+        'assigned_device': 'V1IBDeviceInfo',
         'collection_state': 'str',
         'device': 'str',
         'error': 'str',
@@ -50,12 +55,14 @@ class V1VMIBPKeyInfo(object):
         'link_layer': 'str',
         'physical_state': 'str',
         'pkey': 'str',
+        'pkey_table_format': 'str',
         'port': 'str',
         'state': 'str'
     }
 
     attribute_map = {
         'all_pkeys': 'allPkeys',
+        'assigned_device': 'assignedDevice',
         'collection_state': 'collectionState',
         'device': 'device',
         'error': 'error',
@@ -64,13 +71,15 @@ class V1VMIBPKeyInfo(object):
         'link_layer': 'linkLayer',
         'physical_state': 'physicalState',
         'pkey': 'pkey',
+        'pkey_table_format': 'pkeyTableFormat',
         'port': 'port',
         'state': 'state'
     }
 
-    def __init__(self, all_pkeys: 'list[str]' =None, collection_state: 'str' =None, device: 'str' =None, error: 'str' =None, guid: 'str' =None, lid: 'str' =None, link_layer: 'str' =None, physical_state: 'str' =None, pkey: 'str' =None, port: 'str' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, all_pkeys: 'list[str]' =None, collection_state: 'str' =None, device: 'str' =None, error: 'str' =None, guid: 'str' =None, lid: 'str' =None, link_layer: 'str' =None, physical_state: 'str' =None, pkey: 'str' =None, port: 'str' =None, state: 'str' =None, assigned_device: 'V1IBDeviceInfo' =None, pkey_table_format: 'str' =None):  # noqa: E501
         """V1VMIBPKeyInfo - a model defined in Swagger"""  # noqa: E501
         self._all_pkeys = None
+        self._assigned_device = None
         self._collection_state = None
         self._device = None
         self._error = None
@@ -79,11 +88,14 @@ class V1VMIBPKeyInfo(object):
         self._link_layer = None
         self._physical_state = None
         self._pkey = None
+        self._pkey_table_format = None
         self._port = None
         self._state = None
         self.discriminator = None
         if all_pkeys is not None:
             self.all_pkeys = all_pkeys
+        if assigned_device is not None:
+            self.assigned_device = assigned_device
         if collection_state is not None:
             self.collection_state = collection_state
         if device is not None:
@@ -100,6 +112,8 @@ class V1VMIBPKeyInfo(object):
             self.physical_state = physical_state
         if pkey is not None:
             self.pkey = pkey
+        if pkey_table_format is not None:
+            self.pkey_table_format = pkey_table_format
         if port is not None:
             self.port = port
         if state is not None:
@@ -109,7 +123,7 @@ class V1VMIBPKeyInfo(object):
     def all_pkeys(self) -> 'list[str]':
         """Gets the all_pkeys of this V1VMIBPKeyInfo.  # noqa: E501
 
-        Raw table entries for debugging, including 0x0000/0xffff.  # noqa: E501
+        P_Key values reported by the guest. Interpret all_pkeys[n] as table index n only when pkey_table_format is \"indexed-v1\". An empty format identifies legacy agents, which emitted a sorted, de-duplicated set instead.  # noqa: E501
 
         :return: The all_pkeys of this V1VMIBPKeyInfo.  # noqa: E501
         :rtype: list[str]
@@ -120,13 +134,34 @@ class V1VMIBPKeyInfo(object):
     def all_pkeys(self, all_pkeys: 'list[str]'):
         """Sets the all_pkeys of this V1VMIBPKeyInfo.
 
-        Raw table entries for debugging, including 0x0000/0xffff.  # noqa: E501
+        P_Key values reported by the guest. Interpret all_pkeys[n] as table index n only when pkey_table_format is \"indexed-v1\". An empty format identifies legacy agents, which emitted a sorted, de-duplicated set instead.  # noqa: E501
 
         :param all_pkeys: The all_pkeys of this V1VMIBPKeyInfo.  # noqa: E501
         :type: list[str]
         """
 
         self._all_pkeys = all_pkeys
+
+    @property
+    def assigned_device(self) -> 'V1IBDeviceInfo':
+        """Gets the assigned_device of this V1VMIBPKeyInfo.  # noqa: E501
+
+
+        :return: The assigned_device of this V1VMIBPKeyInfo.  # noqa: E501
+        :rtype: V1IBDeviceInfo
+        """
+        return self._assigned_device
+
+    @assigned_device.setter
+    def assigned_device(self, assigned_device: 'V1IBDeviceInfo'):
+        """Sets the assigned_device of this V1VMIBPKeyInfo.
+
+
+        :param assigned_device: The assigned_device of this V1VMIBPKeyInfo.  # noqa: E501
+        :type: V1IBDeviceInfo
+        """
+
+        self._assigned_device = assigned_device
 
     @property
     def collection_state(self) -> 'str':
@@ -297,6 +332,29 @@ class V1VMIBPKeyInfo(object):
         """
 
         self._pkey = pkey
+
+    @property
+    def pkey_table_format(self) -> 'str':
+        """Gets the pkey_table_format of this V1VMIBPKeyInfo.  # noqa: E501
+
+        Encoding contract for all_pkeys. Currently empty (legacy set) or indexed-v1.  # noqa: E501
+
+        :return: The pkey_table_format of this V1VMIBPKeyInfo.  # noqa: E501
+        :rtype: str
+        """
+        return self._pkey_table_format
+
+    @pkey_table_format.setter
+    def pkey_table_format(self, pkey_table_format: 'str'):
+        """Sets the pkey_table_format of this V1VMIBPKeyInfo.
+
+        Encoding contract for all_pkeys. Currently empty (legacy set) or indexed-v1.  # noqa: E501
+
+        :param pkey_table_format: The pkey_table_format of this V1VMIBPKeyInfo.  # noqa: E501
+        :type: str
+        """
+
+        self._pkey_table_format = pkey_table_format
 
     @property
     def port(self) -> 'str':

@@ -37,8 +37,9 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_command,
     build_legacy_forward_group,
 )
+from lightning_sdk.cli.utils.auth import browser_authentication
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
-from lightning_sdk.lightning_cloud.login import Auth, browser_authentication
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 click.rich_click.COMMAND_GROUPS = {
