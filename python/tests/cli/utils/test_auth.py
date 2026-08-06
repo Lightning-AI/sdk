@@ -4,7 +4,8 @@ import pytest
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy._auth import _AuthLitServe, _AuthMode
-from lightning_sdk.cli.utils.auth import require_auth_header
+from lightning_sdk.cli.utils.auth import browser_authentication, require_auth_header
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 def test_require_auth_header_uses_environment_credentials() -> None:
@@ -42,6 +43,26 @@ def test_require_auth_header_instructs_login_without_opening_browser() -> None:
         require_auth_header()
 
     auth.authenticate.assert_not_called()
+
+
+def test_browser_authentication_blocks_subclass_callback_server() -> None:
+    """The guard must also block SDK auth subclasses with custom callback servers."""
+
+    class CustomAuth(Auth):
+        browser_started = False
+
+        def load(self) -> bool:
+            return False
+
+        def _run_server(self) -> None:
+            self.browser_started = True
+
+    auth = CustomAuth()
+
+    with browser_authentication(False), pytest.raises(ValueError, match="lightning login"):
+        auth.authenticate()
+
+    assert not auth.browser_started
 
 
 def test_litserve_auth_uses_saved_credentials_without_starting_callback_server() -> None:
