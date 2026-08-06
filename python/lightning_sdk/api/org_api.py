@@ -1,4 +1,4 @@
-import typing
+from typing import List, Optional, TypedDict
 from datetime import datetime, timedelta
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
@@ -8,6 +8,20 @@ from lightning_sdk.lightning_cloud.openapi import (
 
 # The billing summary API only supports querying up to 2 years of history.
 _MAX_DURATION = timedelta(days=730)
+
+
+class MonthlySummary(TypedDict):
+    period_start: datetime
+    period_end: datetime
+    total_credits_consumed: float
+    total_credits_remaining: float
+    total_credits_purchased: float
+
+
+class MonthlySummaryResponse(TypedDict):
+    org_id: str
+    monthly_summaries: List[MonthlySummary]
+
 
 class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
@@ -57,9 +71,9 @@ class OrgApi:
     def get_monthly_summary(
         self,
         organization_id: str,
-        start: typing.Optional[datetime] = None,
-        end: typing.Optional[datetime] = None,
-    ) -> dict:
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> MonthlySummaryResponse:
         """Get the monthly billing summary of an organization.
 
         Exactly one of ``start`` and ``end`` must be supplied,
@@ -79,7 +93,20 @@ class OrgApi:
                 ``start``, acts as a "BEFORE" pivot.
 
         Returns:
-            dict: The monthly summary as a plain dictionary.
+            MonthlySummaryResponse: A dict with the following shape:
+            {
+                "org_id": str,
+                "monthly_summaries": [
+                    {
+                        "period_start": datetime,
+                        "period_end": datetime,
+                        "total_credits_consumed": float,
+                        "total_credits_remaining": float,
+                        "total_credits_purchased": float,
+                    },
+                    ...
+                ],
+            }
 
         Raises:
             ValueError: If neither ``start`` nor ``end`` is

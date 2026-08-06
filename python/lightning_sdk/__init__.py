@@ -8,7 +8,7 @@ from lightning_sdk.job import Job
 from lightning_sdk.k8s_cluster import K8sCluster
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.mmt import MMT
-from lightning_sdk.organization import Organization
+from lightning_sdk.organization import Organization, MonthlySummary, MonthlySummaryResponse
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
