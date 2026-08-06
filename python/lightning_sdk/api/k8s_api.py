@@ -73,7 +73,7 @@ class K8sClusterApi:
         except Exception:
             return str(e.reason)
 
-    def get_billing_usage(self, print_data: bool = False, **kwargs: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def get_billing_usage(self, print_data: bool = False, **kwargs: Any) -> List[Dict[str, Any]]:
         """Gets the k8s usage metrics.
 
         Args:

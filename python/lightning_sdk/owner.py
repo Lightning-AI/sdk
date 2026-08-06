@@ -46,15 +46,14 @@ class Owner(ABC, metaclass=TrackCallsABCMeta):
         from lightning_sdk.teamspace import Teamspace
         from lightning_sdk.user import User
 
-        is_user = isinstance(self, User)
-        if is_user:
+        if isinstance(self, User):
             user = self
             org = None
         else:
             user = None
             org = cast("Organization", self)
 
-        _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None)
+        _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None) or []
         return [Teamspace(name=t.name, user=user, org=org) for t in _teamspaces]
 
     def __eq__(self, o: object) -> bool:

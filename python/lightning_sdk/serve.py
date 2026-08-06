@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 from pathlib import Path
-from typing import Generator, List, Optional, Union
+from typing import Generator, List, Literal, Optional, Union, cast
 
 import docker
 from rich.console import Console
@@ -25,21 +25,25 @@ class _LitServeDeployer:
         self.name = name
         self.teamspace = teamspace
         self._console = Console()
-        self._client = None
+        self._client: Optional[docker.DockerClient] = None
 
     @property
     def client(self) -> docker.DockerClient:
         if self._client is None:
             try:
                 os.environ["DOCKER_BUILDKIT"] = "1"
-                self._client = docker.from_env()
-                self._client.ping()
+                client = docker.from_env()
+                client.ping()
+                self._client = client
             except docker.errors.DockerException:
                 raise RuntimeError(_DOCKER_NOT_RUNNING_MSG) from None
         return self._client
 
     @property
     def created(self) -> bool:
+        assert self.teamspace is not None
+        if self.name is None:
+            return False
         return DeploymentApi().get_deployment_by_name(self.name, self.teamspace.id) is not None
 
     def dockerize_api(
@@ -169,10 +173,12 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             text=True,
             bufsize=1,  # Line buffered
         )
+        assert proc.stdout is not None
+        stdout = proc.stdout
 
         def log_generator() -> Generator[str, None, None]:
             while True:
-                line = proc.stdout.readline()
+                line = stdout.readline()
                 if not line and proc.poll() is not None:
                     break
                 yield line.strip()
@@ -214,7 +220,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         teamspace: Teamspace,
         lit_cr: LitContainerApi,
         cloud_account: str,
-    ) -> Generator[dict, None, dict]:
+    ) -> Generator[dict, None, None]:
         """Authenticate, push the container to LitCR, and yield status dicts.
 
         Args:
@@ -285,7 +291,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             port: Port to expose on the replicas.
             include_credentials: Whether to inject SDK auth env vars.
         """
-        return deployment.update(
+        deployment.update(
             machine=machine,
             image=image,
             entrypoint=entrypoint,
@@ -296,7 +302,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             replicas=replicas,
             spot=spot,
             cloud=cloud,
-            ports=[port],
+            ports=[port] if port is not None else None,
             include_credentials=include_credentials,
         )
 
@@ -340,7 +346,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
         """
         url = f"{_get_cloud_url()}/{teamspace.owner.name}/{teamspace.name}/jobs/{deployment_name}"
         machine = machine or Machine.CPU
-        metric = metric or ("CPU" if machine.is_cpu() else "GPU")
+        resolved_metric = cast(Literal["CPU", "GPU", "RPM"], metric or ("CPU" if machine.is_cpu() else "GPU"))
         deployment = Deployment(deployment_name, teamspace)
         if deployment.is_started:
             self._console.print(f"Deployment with name {deployment_name} already running. Updating the deployment.")
@@ -357,7 +363,9 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
                 include_credentials=include_credentials,
             )
             return {"deployment": deployment, "url": url, "updated": True}
-        autoscale = AutoScaleConfig(min_replicas=min_replica, max_replicas=max_replica, metric=metric, threshold=0.95)
+        autoscale = AutoScaleConfig(
+            min_replicas=min_replica, max_replicas=max_replica, metric=resolved_metric, threshold=0.95
+        )
         deployment.start(
             machine=machine,
             image=image,
@@ -365,7 +373,7 @@ Check out [blue][link=https://lightning.ai/docs/litserve/features]the docs[/link
             spot=spot,
             replicas=replicas,
             cloud=cloud,
-            ports=[port],
+            ports=[port] if port is not None else None,
             include_credentials=include_credentials,
             cloudspace_id=cloudspace_id,
             from_litserve=True,

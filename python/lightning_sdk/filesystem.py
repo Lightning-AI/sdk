@@ -38,10 +38,9 @@ class Filesystem(metaclass=TrackCallsMeta):
             List[str]: Basenames of the entries directly inside the given directory.
         """
         path_result = parse_lit_url(uri)
+        remote_path = path_result["destination"] or ""
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
-        output = self._filesystem_api.list_files(
-            teamspace_id=selected_teamspace.id, path=path_result["destination"], recursive=False
-        )
+        output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=False)
         return [os.path.basename(item["path"]) for item in output]
 
     def walk(self, url: str) -> Generator[Tuple[str, List[str], List[str]], None, None]:
@@ -56,10 +55,9 @@ class Filesystem(metaclass=TrackCallsMeta):
             its immediate file names — mirroring the behaviour of :func:`os.walk`.
         """
         path_result = parse_lit_url(url)
+        remote_path = path_result["destination"] or ""
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
-        output = self._filesystem_api.list_files(
-            teamspace_id=selected_teamspace.id, path=path_result["destination"], recursive=True
-        )
+        output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=True)
 
         dirs: dict[str, list[str]] = {}
         files: dict[str, list[str]] = {}
@@ -116,12 +114,12 @@ class Filesystem(metaclass=TrackCallsMeta):
             raise ValueError("At least one path must be a lit://")
 
         path_result = parse_lit_url(source if source_is_lit else destination)
+        remote_path = path_result["destination"] or ""
         local_path = destination if source_is_lit else source
 
         selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
         if source_is_lit:
             # download
-            remote_path = path_result["destination"]
             parent = os.path.dirname(remote_path.strip("/"))
             entries = self._filesystem_api.list_files(selected_teamspace.id, parent, recursive=False)
             found = False
@@ -148,22 +146,18 @@ class Filesystem(metaclass=TrackCallsMeta):
                     target_path = os.path.join(local_path, local_folder_name)
                 else:
                     target_path = local_path
-                self._filesystem_api.download_folder(
-                    path_result["destination"], target_path, selected_teamspace.id, progress_bar
-                )
+                self._filesystem_api.download_folder(remote_path, target_path, selected_teamspace.id, progress_bar)
             else:
                 if os.path.isdir(local_path) or local_path.endswith(("/", "\\")):
                     # if local_path ends with / or \ or is a directory, treat it as a directory
-                    file_name = os.path.basename(path_result["destination"])
+                    file_name = os.path.basename(remote_path)
                     target_path = os.path.join(local_path, file_name)
                 else:
                     target_path = local_path
-                self._filesystem_api.download_file(
-                    path_result["destination"], target_path, selected_teamspace.id, progress_bar
-                )
+                self._filesystem_api.download_file(remote_path, target_path, selected_teamspace.id, progress_bar)
         else:
             # upload
-            if not _is_lightning_storage_destination(path_result["destination"] or ""):
+            if not _is_lightning_storage_destination(remote_path):
                 raise NotImplementedError("Filesystem upload is not implemented.")
             lightning_storage_upload_api.copy_local_path_to_lightning_storage(
                 client=self._filesystem_api.client,

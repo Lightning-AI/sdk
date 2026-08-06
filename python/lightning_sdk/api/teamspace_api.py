@@ -564,15 +564,20 @@ class TeamspaceApi:
                         if not machine:
                             matched_accelerators.append(cluster_machine)
                             continue
+                        machine_family = (machine.family or "").lower()
                         if (
-                            cluster_machine.resources.gpu == machine.accelerator_count
-                            or cluster_machine.resources.cpu == machine.accelerator_count
-                        ) and any(
-                            machine.family.lower() in s
-                            for s in (
-                                cluster_machine.slug,
-                                cluster_machine.slug_multi_cloud,
-                                cluster_machine.instance_id,
+                            machine_family
+                            and (
+                                cluster_machine.resources.gpu == machine.accelerator_count
+                                or cluster_machine.resources.cpu == machine.accelerator_count
+                            )
+                            and any(
+                                machine_family in s
+                                for s in (
+                                    cluster_machine.slug,
+                                    cluster_machine.slug_multi_cloud,
+                                    cluster_machine.instance_id,
+                                )
                             )
                         ):
                             matched_accelerators.append(cluster_machine)
@@ -638,9 +643,7 @@ class TeamspaceApi:
         response = self._client.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
 
-    def get_tree(
-        self, teamspace_id: str, path: str, query_params: Optional[Dict[str, str]] = None
-    ) -> Dict[str, Any]:
+    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
         """Fetch the directory tree at ``path`` from the teamspace artifact REST API.
 
         Args:

@@ -90,7 +90,8 @@ class BaseStudio:
             setup_script_text: Shell script executed when the studio is first created.
         """
         org_id = self._teamspace._org.id if self._teamspace._org is not None else None
-        # TODO: if not in an org, can't update them
+        if org_id is None:
+            raise RuntimeError("Base Studios can only be updated in organization-owned teamspaces")
         self._base_studio = self._base_studio_api.update_base_studio(
             self._base_studio.id,
             org_id,

@@ -1463,7 +1463,9 @@ class StudioApi:
             interruptible=interruptible,
         )
 
-    def add_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> V1Endpoint:
+    def add_port(
+        self, teamspace_id: str, studio_id: str, name: Optional[str], port: int, auto_start: bool = False
+    ) -> V1Endpoint:
         """Starts a new port to the given Studio.
 
         Args:

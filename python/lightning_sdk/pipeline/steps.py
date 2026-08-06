@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Union, cast
 
 from lightning_sdk.api.deployment_api import (
     AutoScaleConfig,
@@ -91,7 +91,7 @@ class DeploymentStep:
 
         self.machine = machine or Machine.CPU
         self.image = image
-        autoscaling_metric_name = (
+        autoscaling_metric_name: Literal["CPU", "GPU"] = (
             ("CPU" if self.machine.is_cpu() else "GPU") if isinstance(self.machine, Machine) else "CPU"
         )
         self.autoscale = autoscale or AutoScaleConfig(
@@ -149,8 +149,10 @@ class DeploymentStep:
                 default_cloud_account=teamspace.default_cloud_account,
                 cloud=None,
             )
+        resolved_cloud_account = resolved_cloud_account or cloud_account
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
+        ports = [self.ports] if isinstance(self.ports, float) else self.ports
 
         return V1PipelineStep(
             name=self.name,
@@ -158,12 +160,12 @@ class DeploymentStep:
             wait_for=_to_wait_for(self.wait_for),
             deployment=V1CreateDeploymentRequest(
                 autoscaling=to_autoscaling(self.autoscale, self.replicas),
-                endpoint=to_endpoint(self.ports, self.auth, self.custom_domain),
-                name=self.name,
+                endpoint=to_endpoint(ports, self.auth, self.custom_domain),
+                name=cast(str, self.name),
                 project_id=teamspace.id,
                 replicas=self.replicas,
                 spec=to_spec(
-                    cloud_account=resolved_cloud_account or cloud_account,
+                    cloud_account=resolved_cloud_account,
                     command=self.command,
                     entrypoint=self.entrypoint,
                     env=self.env,
@@ -172,7 +174,7 @@ class DeploymentStep:
                     machine=self.machine,
                     health_check=self.health_check,
                     quantity=self.quantity,
-                    cloudspace_id=self.studio._studio.id if self.studio else None,
+                    cloudspace_id=studio._studio.id if isinstance(studio, Studio) else None,
                     include_credentials=self.include_credentials,
                     max_runtime=self.max_runtime,
                     machine_image_version=machine_image_version,
@@ -288,31 +290,32 @@ class JobStep:
                 default_cloud_account=teamspace.default_cloud_account,
                 cloud=None,
             )
+        resolved_cloud_account = resolved_cloud_account or cloud_account
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
 
-        body_kwargs = {
-            "name": self.name,
-            "command": self.command,
-            "cloud_account": resolved_cloud_account or cloud_account,
-            "studio_id": studio._studio.id if isinstance(studio, Studio) else None,
-            "image": self.image,
-            "machine": self.machine,
-            "interruptible": self.interruptible,
-            "env": self.env,
-            "image_credentials": self.image_credentials,
-            "cloud_account_auth": self.cloud_account_auth,
-            "entrypoint": self.entrypoint,
-            "path_mappings": self.path_mappings,
-            "max_runtime": self.max_runtime,
-            "machine_image_version": machine_image_version,
-            "reuse_snapshot": self.reuse_snapshot,
-            "placement_group_id": self.placement_group_id,
-        }
         if self.num_machines > 1:
             if self.scratch_disks:
                 raise ValueError("scratch_disks are not supported for multi-machine jobs")
-            body = MMTApiV2._create_mmt_body(num_machines=self.num_machines, **body_kwargs)
+            body = MMTApiV2._create_mmt_body(
+                name=cast(str, self.name),
+                num_machines=self.num_machines,
+                command=self.command,
+                cloud_account=resolved_cloud_account,
+                studio_id=studio._studio.id if isinstance(studio, Studio) else None,
+                image=self.image,
+                machine=self.machine,
+                interruptible=self.interruptible,
+                env=self.env,
+                image_credentials=self.image_credentials,
+                cloud_account_auth=self.cloud_account_auth,
+                entrypoint=self.entrypoint,
+                path_mappings=self.path_mappings,
+                max_runtime=self.max_runtime,
+                machine_image_version=machine_image_version,
+                reuse_snapshot=self.reuse_snapshot,
+                placement_group_id=self.placement_group_id,
+            )
             return V1PipelineStep(
                 name=self.name,
                 type=V1PipelineStepType.MMT,
@@ -320,7 +323,25 @@ class JobStep:
                 mmt=body,
             )
 
-        body = JobApiV2._create_job_body(scratch_disks=self.scratch_disks, **body_kwargs)
+        body = JobApiV2._create_job_body(
+            name=cast(str, self.name),
+            command=self.command,
+            cloud_account=resolved_cloud_account,
+            studio_id=studio._studio.id if isinstance(studio, Studio) else None,
+            image=self.image,
+            machine=self.machine,
+            interruptible=self.interruptible,
+            env=self.env,
+            image_credentials=self.image_credentials,
+            cloud_account_auth=self.cloud_account_auth,
+            entrypoint=self.entrypoint,
+            path_mappings=self.path_mappings,
+            max_runtime=self.max_runtime,
+            machine_image_version=machine_image_version,
+            reuse_snapshot=self.reuse_snapshot,
+            scratch_disks=self.scratch_disks,
+            placement_group_id=self.placement_group_id,
+        )
         return V1PipelineStep(
             name=self.name,
             type=V1PipelineStepType.JOB,
@@ -381,7 +402,7 @@ class MMTStep:
 
         """
         self.machine = machine or Machine.CPU
-        self.num_machines = num_machines
+        self.num_machines = num_machines or 2
         self.name = name
         self.command = command
         self.studio = _get_studio(studio)
@@ -429,6 +450,7 @@ class MMTStep:
                 default_cloud_account=teamspace.default_cloud_account,
                 cloud=None,
             )
+        resolved_cloud_account = resolved_cloud_account or cloud_account
 
         _validate_cloud_account(cloud_account, resolved_cloud_account, shared_filesystem)
 
@@ -436,7 +458,7 @@ class MMTStep:
             name=self.name,
             num_machines=self.num_machines,
             command=self.command,
-            cloud_account=resolved_cloud_account or cloud_account,
+            cloud_account=resolved_cloud_account,
             studio_id=studio._studio.id if isinstance(studio, Studio) else None,
             image=self.image,
             machine=self.machine,
