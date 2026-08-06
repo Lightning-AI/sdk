@@ -21,7 +21,7 @@ from lightning_sdk.cli.legacy.download import download
 from lightning_sdk.cli.legacy.generate import generate
 from lightning_sdk.cli.legacy.inspection import inspect
 from lightning_sdk.cli.legacy.list import list_cli
-from lightning_sdk.cli.legacy.open import open  # noqa: A004
+from lightning_sdk.cli.legacy.open import open
 from lightning_sdk.cli.legacy.run import run
 from lightning_sdk.cli.legacy.start import start
 from lightning_sdk.cli.legacy.stop import stop

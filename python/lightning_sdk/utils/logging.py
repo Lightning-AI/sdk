@@ -69,9 +69,7 @@ class TrackCallsMeta(type):
     other than ``__init__`` and ``__call__`` are left untouched.
     """
 
-    def __new__(
-        cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any], **kwargs: Any
-    ) -> "TrackCallsMeta":
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any], **kwargs: Any) -> "TrackCallsMeta":
         for attr_name, attr_value in attrs.items():
             if attr_name.startswith("__") and attr_name not in ("__init__", "__call__"):
                 attrs[attr_name] = attr_value
