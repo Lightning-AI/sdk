@@ -20,6 +20,7 @@ from lightning_sdk.utils.resolve import (
     _resolve_user,
     _resolve_user_name,
     in_studio,
+    prevent_refetch_studio,
     skip_studio_init,
 )
 
@@ -441,6 +442,26 @@ def test_skip_studio_init_context_manager():
     with skip_studio_init():
         assert getattr(Studio._skip_init, "value", False) is True
     assert getattr(Studio._skip_init, "value", False) is True
+
+
+def test_prevent_refetch_studio_restores_state_on_exception():
+    """The flag must be restored even if the wrapped block raises, not left stuck serving stale data."""
+
+    class _FakeStudio:
+        pass
+
+    studio = _FakeStudio()
+    studio._prevent_refetch = False
+
+    def _raise_while_prevented():
+        with prevent_refetch_studio(studio):
+            assert studio._prevent_refetch is True
+            raise RuntimeError("boom")
+
+    with pytest.raises(RuntimeError, match="boom"):
+        _raise_while_prevented()
+
+    assert studio._prevent_refetch is False
 
 
 def test_skip_studio_init_prevents_resolution():

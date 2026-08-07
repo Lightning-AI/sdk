@@ -940,6 +940,12 @@ class AccessibleResource(Enum):
         return hash(self.value)
 
 
+@lru_cache(maxsize=None)
+def cached_lightning_client(max_tries: Optional[int] = None) -> LightningClient:
+    """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
+    return LightningClient(max_tries=max_tries)
+
+
 @lru_cache
 def allowed_resource_access(resource_type: AccessibleResource, teamspace_id: str) -> bool:
     # TODO: change this to proper API

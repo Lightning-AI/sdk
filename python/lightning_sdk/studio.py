@@ -224,7 +224,10 @@ class Studio(metaclass=TrackCallsMeta):
         Returns:
             Status: The current :class:`~lightning_sdk.status.Status` of the Studio.
         """
-        internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        if self._prevent_refetch and self._studio.code_status is not None:
+            internal_status = self._studio.code_status.in_use
+        else:
+            internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
         return _internal_status_to_external_status(
             internal_status.phase if internal_status is not None else internal_status
         )
@@ -256,6 +259,16 @@ class Studio(metaclass=TrackCallsMeta):
         """
         if self.status != Status.Running:
             return None
+
+        cached_in_use = self._studio.code_status.in_use if self._prevent_refetch and self._studio.code_status else None
+        if cached_in_use is not None and cached_in_use.compute_config is not None:
+            return self._studio_api.machine_from_compute_config(
+                cached_in_use.compute_config,
+                self._teamspace.id,
+                self.cloud_account,
+                _get_org_id(self._teamspace),
+            )
+
         return self._studio_api.get_machine(
             self._studio.id,
             self._teamspace.id,

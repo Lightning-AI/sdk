@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1Cluster,
     V1CloudProvider,
@@ -9,7 +10,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListClusterAcceleratorsResponse,
     V1ListDefaultClusterAcceleratorsResponse,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider
@@ -33,7 +33,7 @@ class CloudAccountApi:
     """Internal API client for API requests to cluster endpoints."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def get_cloud_account(self, cloud_account_id: str, teamspace_id: str, org_id: str) -> Externalv1Cluster:
         """Return a cloud account by ID.
@@ -208,7 +208,7 @@ class CloudAccountApi:
         else:
             res = self.list_cloud_accounts(teamspace_id=teamspace_id)
 
-        mapping: Dict["CloudProvider", V1ExternalCluster] = {}
+        mapping: Dict[CloudProvider, V1ExternalCluster] = {}
         for cloud_account in res:
             provider = self._get_cloud_account_provider(cloud_account)
             if provider is None:
