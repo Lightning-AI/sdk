@@ -14,7 +14,7 @@ _LIGHTNING_DEBUG = {
 
 class Store:
     def __init__(self) -> None:
-        self._d = {}
+        self._d: dict[str, str] = {}
         # This is needed to ensure the ids are the same within created threads and processes.
         self._list = [str(uuid4().hex) for _ in range(500)]
 

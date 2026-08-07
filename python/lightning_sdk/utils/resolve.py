@@ -101,10 +101,9 @@ def _get_cluster(
 
     if not allow_neoclouds:
         cluster_objs = client.cluster_service_list_clusters(project_id=project_id)
-        valid_clusters = filter(
-            lambda c: c.spec.aws_v1 is not None or c.spec.google_cloud_v1 is not None, cluster_objs.clusters
-        )
-        valid_clusters = {c.id for c in valid_clusters}
+        valid_clusters = {
+            c.id for c in cluster_objs.clusters if c.spec.aws_v1 is not None or c.spec.google_cloud_v1 is not None
+        }
 
         if len(valid_clusters):
             clusters.clusters = list(filter(lambda c: c.cluster_id in valid_clusters, clusters.clusters))

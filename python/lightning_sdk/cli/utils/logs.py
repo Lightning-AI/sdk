@@ -12,7 +12,7 @@ go through their SDK object (``Job.logs``, ``MMT.logs``) rather than this reader
 import re
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional, Sequence, Union
 
 import rich_click as click
 
@@ -104,7 +104,7 @@ def read_logs(
     tail: Optional[int] = None,
     follow: bool = False,
     timestamps: bool = False,
-    tail_anchor: Optional[object] = None,
+    tail_anchor: Optional[Union[datetime, str]] = None,
     api_key: Optional[str] = None,
     as_json: bool = False,
 ) -> None:
@@ -134,7 +134,11 @@ def read_logs(
             # Nothing saved yet for a running resource: tail its live stream so a snapshot still
             # shows something.
             fallback_to_live=not follow,
-            **selection.selectors(),
+            job_ids=selection.job_ids,
+            deployment_id=selection.deployment_id,
+            mmt_id=selection.mmt_id,
+            sandbox_id=selection.sandbox_id,
+            sandbox_command_ids=selection.sandbox_command_ids,
         )
         for entry in entries:
             label = selection.labels.get(entry.resource_id) if selection.labels else None

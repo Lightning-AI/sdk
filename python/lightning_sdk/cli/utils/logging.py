@@ -4,7 +4,7 @@ import traceback
 from contextlib import suppress
 from time import time
 from types import TracebackType
-from typing import Optional, Type
+from typing import Any, Optional, Type, cast
 
 import rich_click
 import rich_click as click
@@ -68,7 +68,7 @@ def _log_command(message: str = "", duration: int = 0, error: Optional[str] = No
         client.s_dk_command_history_service_create_sdk_command_history(body=body)
 
 
-def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
+def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:
     """CLI won't show tracebacks, just print the exception message."""
     message = str(value.args[0]) if value.args else str(value) or "An unknown error occurred"
 
@@ -76,7 +76,7 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     error_text.append(f"{exception_type.__name__}: ", style="bold red")
     error_text.append(message, style="white")
 
-    renderables = [error_text]
+    renderables: list[Any] = [error_text]
 
     if _LIGHTNING_DEBUG:
         tb_text = "".join(traceback.format_exception(exception_type, value, tb))
@@ -91,7 +91,7 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     click.echo(text, color=True)
 
 
-def logging_excepthook(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
+def logging_excepthook(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:
     try:
         tb_str = "".join(traceback.format_exception(exception_type, value, tb))
         ctx = click.get_current_context(silent=True)
@@ -126,34 +126,36 @@ class _GradientHelpMixin:
     def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         from rich.padding import Padding
 
-        config = formatter.config
+        rich_formatter = cast(Any, formatter)
+        config = rich_formatter.config
 
         if config.header_text:
-            formatter.write(
+            rich_formatter.write(
                 Padding(
-                    formatter.rich_text(config.header_text, config.style_header_text),
+                    rich_formatter.rich_text(config.header_text, config.style_header_text),
                     config.padding_header_text,
                     style=config.style_padding_usage,
                 )
             )
-            formatter.write("")
-            formatter.write(_gradient_rule(formatter.console.width))
+            rich_formatter.write("")
+            rich_formatter.write(_gradient_rule(rich_formatter.console.width))
 
         saved_header = config.header_text
         config.header_text = ""
-        self.format_usage(ctx, formatter)
+        dynamic_self = cast(Any, self)
+        dynamic_self.format_usage(ctx, formatter)
         config.header_text = saved_header
 
-        self.format_help_text(ctx, formatter)
-        self.format_options(ctx, formatter)
-        self.format_epilog(ctx, formatter)
+        dynamic_self.format_help_text(ctx, formatter)
+        dynamic_self.format_options(ctx, formatter)
+        dynamic_self.format_epilog(ctx, formatter)
 
 
 class LightningCommand(_GradientHelpMixin, rich_click.RichCommand):
     """RichCommand with the gradient rule after the header."""
 
 
-class LightningGroup(_GradientHelpMixin, rich_click.RichGroup):
+class LightningGroup(_GradientHelpMixin, rich_click.RichGroup):  # type: ignore[misc]
     """RichGroup with the gradient rule after the header."""
 
     command_class = LightningCommand
@@ -165,10 +167,11 @@ class CommandLoggingGroup(rich_click.RichGroup):
         from rich.table import Table
         from rich.text import Text
 
-        config = formatter.config  # type: ignore[union-attr]
+        rich_formatter = cast(Any, formatter)
+        config = rich_formatter.config
 
         if config.header_text:
-            left = formatter.rich_text(config.header_text, config.style_header_text)  # type: ignore[union-attr]
+            left = rich_formatter.rich_text(config.header_text, config.style_header_text)
             right = Text.from_markup(f"[bold #a78bfa]v{__version__}[/bold #a78bfa]")
 
             grid = Table.grid(expand=True)
@@ -176,12 +179,10 @@ class CommandLoggingGroup(rich_click.RichGroup):
             grid.add_column(justify="right")
             grid.add_row(left, right)
 
-            formatter.write(  # type: ignore[arg-type]
-                Padding(grid, config.padding_header_text, style=config.style_padding_usage)
-            )
-            formatter.write("")  # type: ignore[arg-type]
-            width = getattr(getattr(formatter, "console", None), "width", 80)
-            formatter.write(_gradient_rule(width))  # type: ignore[arg-type]
+            rich_formatter.write(Padding(grid, config.padding_header_text, style=config.style_padding_usage))
+            rich_formatter.write("")
+            width = getattr(getattr(rich_formatter, "console", None), "width", 80)
+            rich_formatter.write(_gradient_rule(width))
 
         saved_header = config.header_text
         config.header_text = ""
@@ -211,7 +212,7 @@ class CommandLoggingGroup(rich_click.RichGroup):
         grid.add_column(justify="right")
         grid.add_row(left, right)
 
-        formatter.write(grid)  # type: ignore[arg-type]
+        cast(Any, formatter).write(grid)
 
     def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         pieces = self.collect_usage_pieces(ctx)
@@ -224,13 +225,13 @@ class CommandLoggingGroup(rich_click.RichGroup):
         from rich.table import Table
         from rich_click.rich_panel import RichCommandPanel, construct_panels
 
-        panels = construct_panels(self, ctx, formatter)  # type: ignore[arg-type]
+        panels = construct_panels(self, cast(Any, ctx), cast(Any, formatter))
 
         option_renderables = []
         command_renderables = []
 
         for panel in panels:
-            p = panel.render(self, ctx, formatter)  # type: ignore[arg-type]
+            p = panel.render(self, cast(Any, ctx), cast(Any, formatter))
             if isinstance(p.renderable, Table) and len(p.renderable.rows) == 0:
                 continue
             if isinstance(panel, RichCommandPanel):
@@ -249,10 +250,10 @@ class CommandLoggingGroup(rich_click.RichGroup):
             grid.add_column(ratio=1)
             grid.add_column(ratio=1)
             grid.add_row(RenderableGroup(*left), RenderableGroup(*right))
-            formatter.write(grid)  # type: ignore[arg-type]
+            cast(Any, formatter).write(grid)
         else:
             for p in left:
-                formatter.write(p)  # type: ignore[arg-type]
+                cast(Any, formatter).write(p)
 
     def _format_ctx(self, ctx: click.Context) -> str:
         parts = []
@@ -269,7 +270,7 @@ class CommandLoggingGroup(rich_click.RichGroup):
             f"""Commands: {ctx.command_path} | Subcommand: {ctx.invoked_subcommand} | Params: {params} | Args:{args}"""
         )
 
-    def invoke(self, ctx: click.Context) -> any:
+    def invoke(self, ctx: click.Context) -> Any:
         """Overrides the default invoke to wrap command execution with tracking."""
         start_time = time()
         error_message = None

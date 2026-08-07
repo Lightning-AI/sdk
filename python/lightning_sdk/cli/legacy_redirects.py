@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Mapping
+from collections.abc import Callable, Iterable
+from typing import Any, Mapping, cast
 
 import click
 
@@ -25,7 +25,7 @@ def _echo_deprecation_warning(old_command: str, replacement: str) -> None:
 class DeprecatedForwardCommand(click.Command):
     """A hidden deprecated command alias that forwards to the replacement command."""
 
-    def __init__(self, *args: object, replacement: str, target_command: click.Command, **kwargs: object) -> None:
+    def __init__(self, *args: Any, replacement: str, target_command: click.Command, **kwargs: Any) -> None:
         kwargs.setdefault("hidden", True)
         kwargs.setdefault("help", target_command.help)
         kwargs.setdefault("short_help", target_command.short_help)
@@ -50,9 +50,9 @@ class LegacyForwardGroup(click.Group):
 
     def __init__(
         self,
-        *args: object,
+        *args: Any,
         replacements: Mapping[str, tuple[str, click.Command]],
-        **kwargs: object,
+        **kwargs: Any,
     ) -> None:
         kwargs.setdefault("hidden", True)
         kwargs.setdefault("add_help_option", False)
@@ -92,7 +92,7 @@ def build_legacy_forward_command(
 class HiddenAliasGroup(LightningGroup):
     """A hidden plural alias that forwards to another noun-first group."""
 
-    def __init__(self, *args: object, target_group: click.Group, **kwargs: object) -> None:
+    def __init__(self, *args: Any, target_group: click.Group, **kwargs: Any) -> None:
         kwargs.setdefault("hidden", True)
         kwargs.setdefault("help", target_group.help)
         super().__init__(*args, **kwargs)
@@ -110,10 +110,10 @@ class DeprecatedGroup(LightningGroup):
 
     def __init__(
         self,
-        *args: object,
+        *args: Any,
         replacement: str,
         replacement_group: click.Group | None = None,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> None:
         kwargs.setdefault("hidden", True)
         super().__init__(*args, **kwargs)
@@ -123,11 +123,18 @@ class DeprecatedGroup(LightningGroup):
     def get_help(self, ctx: click.Context) -> str:
         return f"{_format_deprecation_warning(ctx.command_path, self._replacement)}\n\n{super().get_help(ctx)}"
 
-    def add_command(self, cmd: click.Command, name: str | None = None) -> None:
+    def add_command(
+        self,
+        cmd: click.Command,
+        name: str | None = None,
+        aliases: Iterable[str] | None = None,
+        panel: str | None = None,
+    ) -> None:
         cmd_name = name or cmd.name
-        cmd.invoke = self._make_deprecated_invoke(cmd.invoke, cmd_name)
-        cmd.get_help = self._make_deprecated_get_help(cmd.get_help, cmd_name)
-        super().add_command(cmd, name)
+        dynamic_cmd = cast(Any, cmd)
+        dynamic_cmd.invoke = self._make_deprecated_invoke(cmd.invoke, cmd_name)
+        dynamic_cmd.get_help = self._make_deprecated_get_help(cmd.get_help, cmd_name)
+        super().add_command(cmd, name, aliases=aliases, panel=panel)
 
     def _replacement_for(self, cmd_name: str | None) -> str:
         # Resolved lazily: the replacement group may gain its commands after this group is built.

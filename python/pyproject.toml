@@ -58,6 +58,13 @@ docs = [
     "jinja2<3.2.0",
     "pydata-sphinx-theme>=0.15",
 ]
+typing = [
+    "mypy==2.3.0",
+    "types-docker==7.2.0.20260806",
+    "types-PyYAML==6.0.12.20260724",
+    "types-requests==2.33.0.20260712",
+    "types-tqdm==4.70.0.20260805",
+]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"
@@ -77,6 +84,24 @@ exclude = ["tests*", "examples*", "demo*", "docs*"]
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.mypy]
+python_version = "3.11"
+files = ["lightning_sdk"]
+exclude = ["^lightning_sdk/lightning_cloud/"]
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = ["lightning_sdk.lightning_cloud.*"]
+follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = ["litserve", "litserve.*"]
+ignore_missing_imports = true
 
 [tool.black]
 # https://github.com/psf/black

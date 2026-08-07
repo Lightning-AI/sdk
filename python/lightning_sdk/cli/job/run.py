@@ -179,25 +179,24 @@ def run_job(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    run_kwargs = {
-        "name": name,
-        "machine": machine_enum,
-        "command": command,
-        "studio": studio,
-        "image": image,
-        "teamspace": resolved_teamspace,
-        "org": org,
-        "user": user,
-        "cloud": cloud,
-        "env": env_dict,
-        "interruptible": interruptible,
-        "image_credentials": image_credentials,
-        "cloud_account_auth": cloud_account_auth,
-        "entrypoint": entrypoint,
-        "path_mappings": path_mappings_dict,
-        "num_machines": num_machines,
-    }
-    job = Job.run(**run_kwargs)
+    job = Job.run(
+        name=name,
+        machine=machine_enum,
+        command=command,
+        studio=studio,
+        image=image,
+        teamspace=resolved_teamspace,
+        org=org,
+        user=user,
+        cloud=cloud,
+        env=env_dict,
+        interruptible=interruptible,
+        image_credentials=image_credentials,
+        cloud_account_auth=cloud_account_auth,
+        entrypoint=entrypoint,
+        path_mappings=path_mappings_dict,
+        num_machines=num_machines,
+    )
 
     if as_json:
         echo_json(

@@ -10,6 +10,7 @@ from rich.table import Table
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
+from lightning_sdk.job import Job
 from lightning_sdk.models import _list_teamspaces
 
 
@@ -48,7 +49,7 @@ def list_jobs(
 
     Includes both single- and multi-machine jobs.
     """
-    resources = []
+    resources: list[Job] = []
     if all and not teamspace:
         for teamspace_slug in _list_teamspaces():
             resolved = resolve_teamspace(teamspace_slug)
@@ -86,12 +87,12 @@ def list_jobs(
         table.add_column(column)
     for row in rows:
         table.add_row(
-            row["name"],
-            row["teamspace"],
-            row["studio"],
-            row["image"],
-            row["status"],
-            row["machine"],
+            str(row["name"] or ""),
+            str(row["teamspace"] or ""),
+            str(row["studio"] or ""),
+            str(row["image"] or ""),
+            str(row["status"] or ""),
+            str(row["machine"] or ""),
             str(row["num_machines"]),
             f"{row['total_cost']:.3f}",
         )

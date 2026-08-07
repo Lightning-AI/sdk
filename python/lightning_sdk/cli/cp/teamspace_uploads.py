@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Any
 
 from rich.console import Console
 
@@ -10,11 +11,11 @@ from lightning_sdk.cli.utils.filesystem import parse_teamspace_uploads_path, pat
 def cp_upload(
     local_file_path: str,
     teamspace_path: str,
-    options: dict[str, any],
+    options: dict[str, Any],
 ) -> None:
     console = Console()
     recursive = options.get("recursive", False)
-    cloud_account = options.get("cloud_account", None)
+    cloud_account = options.get("cloud_account")
     if not Path(local_file_path).exists():
         raise FileNotFoundError(f"The provided path does not exist: {local_file_path}")
 

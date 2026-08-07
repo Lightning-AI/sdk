@@ -134,7 +134,8 @@ def upload_container(
     platform: Optional[str] = "linux/amd64",
 ) -> None:
     """Upload a container to Lightning AI's container registry."""
-    teamspace = resolve_teamspace(teamspace)
+    resolved_teamspace = resolve_teamspace(teamspace)
+    platform = platform or "linux/amd64"
     console = Console()
     with Progress(
         SpinnerColumn(),
@@ -158,7 +159,9 @@ def upload_container(
                 # let the push with retry take control of auth moving forward
                 pass
 
-            lines = api.upload_container(container, teamspace, tag, cloud_account, platform, return_final_dict=True)
+            lines = api.upload_container(
+                container, resolved_teamspace, tag, cloud_account, platform, return_final_dict=True
+            )
             _print_docker_push(lines, console, progress, push_task)
         except DockerNotRunningError as e:
             e.print_help()
@@ -168,7 +171,7 @@ def upload_container(
             if not api.authenticate(reauth=True):
                 raise StudioCliError("Failed to authenticate with Lightning Container Registry") from None
             console.print("Authenticated with Lightning Container Registry", style="green")
-            lines = api.upload_container(container, teamspace, tag, cloud_account, platform)
+            lines = api.upload_container(container, resolved_teamspace, tag, cloud_account, platform)
             _print_docker_push(lines, console, progress, push_task)
         except Exception as e:
             if _LIGHTNING_DEBUG:
@@ -215,8 +218,8 @@ def _upload_folder(path: str, remote_path: str, studio: Studio, recovery: Upload
     pairs = {}
     for root, _, files in os.walk(path):
         rel_root = os.path.relpath(root, path)
-        for f in files:
-            pairs[os.path.join(root, f)] = os.path.join(remote_path, rel_root, f)
+        for file_name in files:
+            pairs[os.path.join(root, file_name)] = os.path.join(remote_path, rel_root, file_name)
 
     upload_state = _resolve_previous_upload_state(studio, remote_path, pairs, recovery)
 
@@ -225,8 +228,8 @@ def _upload_folder(path: str, remote_path: str, studio: Studio, recovery: Upload
 
         update_fn = tqdm(total=len(upload_state)).update if _global_upload_progress(upload_state) else lambda x: None
 
-        for f in concurrent.futures.as_completed(futures):
-            upload_state.pop(f.result())
+        for future in concurrent.futures.as_completed(futures):
+            upload_state.pop(future.result())
             _dump_current_upload_state(studio, remote_path, upload_state)
             update_fn(1)
 

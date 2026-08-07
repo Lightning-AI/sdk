@@ -11,6 +11,7 @@ from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
 from lightning_sdk.lightning_cloud.openapi import V1Deployment
+from lightning_sdk.teamspace import Teamspace
 
 
 @click.command("list", cls=LightningCommand)
@@ -52,7 +53,7 @@ def list_deployments(
 ) -> None:
     """List deployments in a teamspace."""
     api = DeploymentApi()
-    rows = []
+    rows: list[tuple[Teamspace, V1Deployment]] = []
     for resolved_teamspace in iter_teamspaces(teamspace, all_teamspaces):
         deployments = api.list_deployments(resolved_teamspace.id, limit=100)
         rows.extend((resolved_teamspace, deployment) for deployment in deployments)
@@ -116,7 +117,7 @@ def _sort_key(sort_by: Optional[str]) -> Callable:
         "source": lambda item: _source_label(item[1]),
         "cloud-account": lambda item: str(getattr(item[1].spec, "cluster_id", None) or ""),
     }
-    return sort_key_map.get(sort_by, lambda item: str(item[1].name or ""))
+    return sort_key_map.get(sort_by or "", lambda item: str(item[1].name or ""))
 
 
 def _source_label(deployment: V1Deployment) -> str:

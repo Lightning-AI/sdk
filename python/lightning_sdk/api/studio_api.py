@@ -6,7 +6,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, Dict, Generator, List, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 import backoff
 import requests
@@ -66,8 +66,8 @@ class StudioApi:
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
         self._client = cached_lightning_client(max_tries=7)
-        self._keep_alive_threads: Mapping[str, Thread] = {}
-        self._keep_alive_events: Mapping[str, Event] = {}
+        self._keep_alive_threads: Dict[str, Thread] = {}
+        self._keep_alive_events: Dict[str, Event] = {}
 
     def start_keeping_alive(self, teamspace_id: str, studio_id: str) -> None:
         """Starts keeping the studio alive.
@@ -103,7 +103,7 @@ class StudioApi:
             teamspace_id: ID of the owning teamspace.
             studio_id: Studio (cloud space) ID to send keepalives for.
         """
-        keep_alive_freq = os.environ.get("LIGHTNING_KEEPALIVE_FREQUENCY", 30)
+        keep_alive_freq = float(os.environ.get("LIGHTNING_KEEPALIVE_FREQUENCY", 30))
         key = f"{teamspace_id}-{studio_id}"
         while not self._keep_alive_events[key].is_set():
             self._client.cloud_space_service_keep_alive_cloud_space_instance(
@@ -938,7 +938,13 @@ class StudioApi:
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
         self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
 
-    def get_tree(self, studio_id: str, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+    def get_tree(
+        self,
+        studio_id: str,
+        teamspace_id: str,
+        path: str,
+        query_params: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, Any]:
         """Fetch the directory tree at ``path`` inside a Studio from the artifact REST API.
 
         Args:
@@ -1097,6 +1103,7 @@ class StudioApi:
 
         total_length = int(r.headers.get("content-length", 0))
 
+        pbar: Optional[tqdm] = None
         if progress_bar:
             pbar = tqdm(
                 desc=f"Downloading {os.path.split(path)[1]}",
@@ -1106,17 +1113,14 @@ class StudioApi:
                 unit_divisor=1024,
             )
 
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
-
         target_dir = os.path.split(target_path)[0]
         if target_dir:
             os.makedirs(target_dir, exist_ok=True)
         with open(target_path, "wb") as f:
             for chunk in r.iter_content(chunk_size=4096 * 8):
                 f.write(chunk)
-                pbar_update(len(chunk))
+                if pbar is not None:
+                    pbar.update(len(chunk))
 
     def _download_single_studio_file(
         self,
@@ -1185,7 +1189,7 @@ class StudioApi:
         # TODO: implement resumable downloads
 
         if num_workers is None:
-            num_workers = os.cpu_count() * 4
+            num_workers = (os.cpu_count() or 1) * 4
 
         # Normalize the path
         path = path.strip("/")
@@ -1478,7 +1482,9 @@ class StudioApi:
             interruptible=interruptible,
         )
 
-    def add_port(self, teamspace_id: str, studio_id: str, name: str, port: int, auto_start: bool = False) -> V1Endpoint:
+    def add_port(
+        self, teamspace_id: str, studio_id: str, name: Optional[str], port: int, auto_start: bool = False
+    ) -> V1Endpoint:
         """Starts a new port to the given Studio.
 
         Args:
@@ -1504,7 +1510,7 @@ class StudioApi:
 
     def get_port_url(
         self, teamspace_id: str, studio_id: str, port: Optional[int] = None, name: Optional[str] = None
-    ) -> str:
+    ) -> Optional[str]:
         """Return the public URL for an exposed endpoint, looked up by port number or endpoint name.
 
         Args:

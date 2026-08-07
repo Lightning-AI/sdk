@@ -105,7 +105,7 @@ def list_impl(teamspace: Optional[str], all: bool, sort_by: Optional[str], as_js
     click.echo(rich_to_str(table), color=True)
 
 
-def _sort_studios_key(sort_by: str, global_cloud_accounts: list) -> Callable[[Studio], str]:
+def _sort_studios_key(sort_by: Optional[str], global_cloud_accounts: list) -> Callable[[Studio], str]:
     """Return a key function to sort studios by a given attribute.
 
     Status/machine/cloud-account keys run under ``prevent_refetch_studio`` so sorting by one of them
@@ -123,4 +123,4 @@ def _sort_studios_key(sort_by: str, global_cloud_accounts: list) -> Callable[[St
         "machine": lambda s: _cached(s, "machine"),
         "cloud-account": lambda s: cloud_account_display_name_from_list(s.cloud_account or "", global_cloud_accounts),
     }
-    return sort_key_map.get(sort_by, lambda s: s.name)
+    return sort_key_map.get(sort_by or "", lambda s: s.name)

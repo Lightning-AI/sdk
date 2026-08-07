@@ -234,4 +234,7 @@ def list_dataset_versions(name: str) -> list:
     ds = _get_dataset_by_name(project_id=project_id, dataset_name=dataset_name)
     if ds is None:
         raise ValueError(f"Dataset '{dataset_name}' not found.")
-    return _list_dataset_versions(project_id=project_id, dataset_id=ds.get("id"))
+    dataset_id = ds.get("id")
+    if not isinstance(dataset_id, str):
+        raise ValueError(f"Dataset '{dataset_name}' has no valid ID.")
+    return _list_dataset_versions(project_id=project_id, dataset_id=dataset_id)

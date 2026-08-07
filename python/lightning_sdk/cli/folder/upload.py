@@ -31,4 +31,6 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 )
 def upload_folder(path: str, studio: Optional[str], remote_path: Optional[str]) -> None:
     """Upload a folder to a Studio."""
-    _upload_folder.callback(path=path, studio=studio, remote_path=remote_path)
+    callback = _upload_folder.callback
+    assert callback is not None
+    callback(path=path, studio=studio, remote_path=remote_path)

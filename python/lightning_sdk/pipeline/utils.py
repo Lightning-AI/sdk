@@ -8,7 +8,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
 )
 from lightning_sdk.studio import Studio
 
-DEFAULT = "DEFAULT"
+DEFAULT: Literal["DEFAULT"] = "DEFAULT"
 
 
 def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
@@ -38,7 +38,7 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
 
         if current_step.wait_for == DEFAULT:
             prev_step_idx = current_step_idx - 1
-            wait_for = []
+            wait_for: List[str] = []
             while prev_step_idx > -1:
                 prev_step = steps[prev_step_idx]
                 wait_for.insert(0, steps[prev_step_idx].name)
@@ -115,7 +115,7 @@ def _to_wait_for(wait_for: Optional[Union[str, List[str]]]) -> Optional[Union[Li
         a single-element list when a bare string is given, or the ``DEFAULT`` sentinel.
     """
     if wait_for == DEFAULT:
-        return wait_for
+        return DEFAULT
 
     if wait_for is None:
         return []

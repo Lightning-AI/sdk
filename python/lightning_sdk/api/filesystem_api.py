@@ -147,7 +147,7 @@ class FilesystemApi:
         files = [e for e in entries if e.get("type") == "blob"]
 
         if num_workers is None:
-            num_workers = os.cpu_count() * 4
+            num_workers = (os.cpu_count() or 1) * 4
 
         download_dir = Path(target_path)
         download_dir.mkdir(parents=True, exist_ok=True)

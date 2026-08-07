@@ -186,7 +186,7 @@ def dataset() -> None:
 @click.argument("destination", required=False)
 @click.option("--recursive", "-r", is_flag=True, help="Copy directories recursively")
 @click.pass_context
-def cp() -> None:
+def cp(_ctx: click.Context) -> None:
     """Copy between local, Studios, Drive.
 
     URL formats:

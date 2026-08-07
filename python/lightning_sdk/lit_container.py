@@ -32,13 +32,16 @@ class LitContainer:
         """
         console = Console()
         try:
-            teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+            resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception:
             console.print(f"[bold red]Could not resolve teamspace: {teamspace}[/bold red]")
             return []
+        if resolved_teamspace is None:
+            console.print(f"[bold red]Could not resolve teamspace: {teamspace}[/bold red]")
+            return []
 
-        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
-        project_id = teamspace.id
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, resolved_teamspace.id)
+        project_id = resolved_teamspace.id
         repositories = self._api.list_containers(project_id, cloud_account=cloud_account)
         table = []
         for repo in repositories:
@@ -80,12 +83,14 @@ class LitContainer:
                 instead, e.g. ``teamspace="owner/teamspace"``.
         """
         try:
-            teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+            resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError("Could not resolve teamspace") from e
+        if resolved_teamspace is None:
+            raise ValueError("Could not resolve teamspace")
 
-        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
-        project_id = teamspace.id
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, resolved_teamspace.id)
+        project_id = resolved_teamspace.id
         if digest is not None:
             return self._api.delete_container_by_digest(project_id, container, digest)
         return self._api.delete_container(project_id, container)
@@ -117,14 +122,16 @@ class LitContainer:
             return_final_dict: Instructs function to return metadata about container location in platform.
         """
         try:
-            teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+            resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
+        if resolved_teamspace is None:
+            raise ValueError(f"Could not resolve teamspace: {teamspace}")
 
-        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, resolved_teamspace.id)
 
         resp = self._api.upload_container(
-            container, teamspace, tag, cloud_account, platform=platform, return_final_dict=return_final_dict
+            container, resolved_teamspace, tag, cloud_account, platform=platform, return_final_dict=return_final_dict
         )
 
         final_dict = None
@@ -157,10 +164,12 @@ class LitContainer:
             tag: The tag to use for the container.
         """
         try:
-            teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+            resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         except Exception as e:
             raise ValueError(f"Could not resolve teamspace: {e}") from e
+        if resolved_teamspace is None:
+            raise ValueError(f"Could not resolve teamspace: {teamspace}")
 
-        raise_access_error_if_not_allowed(AccessibleResource.Containers, teamspace.id)
+        raise_access_error_if_not_allowed(AccessibleResource.Containers, resolved_teamspace.id)
 
-        return self._api.download_container(container, teamspace, tag, cloud_account)
+        return self._api.download_container(container, resolved_teamspace, tag, cloud_account)

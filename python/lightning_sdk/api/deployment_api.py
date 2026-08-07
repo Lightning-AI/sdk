@@ -106,7 +106,7 @@ class MissingRequestContentError(RuntimeError):
 class Env:
     """The Env describes an environnement variable."""
 
-    def __init__(self, name: str, value: str) -> str:
+    def __init__(self, name: str, value: str) -> None:
         self.name = name
         self.value = value
 
@@ -114,7 +114,7 @@ class Env:
 class Secret:
     """The Secret describes a protected environnement variable."""
 
-    def __init__(self, name: str) -> str:
+    def __init__(self, name: str) -> None:
         self.name = name
 
 
@@ -353,7 +353,7 @@ class DeploymentApi:
         Returns:
             List[V1Deployment]: All matching deployments.
         """
-        deployments = []
+        deployments: List[V1Deployment] = []
         page_token = None
 
         while True:
@@ -419,7 +419,7 @@ class DeploymentApi:
         image: Optional[str] = None,
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
-        env: Optional[List[Union[Env, Secret]]] = None,
+        env: Union[List[Union[Env, Secret]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         cloud_account: Optional[str] = None,
         min_replicas: Optional[int] = None,
@@ -429,7 +429,7 @@ class DeploymentApi:
         release_strategy: Optional[ReleaseStrategy] = None,
         replicas: Optional[int] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
-        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
+        auth: Optional[Auth] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
@@ -570,7 +570,7 @@ class DeploymentApi:
         Returns:
             List[V1Job]: All matching jobs.
         """
-        jobs = []
+        jobs: List[V1Job] = []
         page_token = None
 
         while True:
@@ -838,7 +838,7 @@ def _export_deployment_request_captures(
             csv_writer.writeheader()
 
             while max_pages is None or pages_fetched < max_pages:
-                query_kwargs = {
+                query_kwargs: Dict[str, Any] = {
                     "project_id": teamspace_id,
                     "id": deployment_id,
                     "start": start,
@@ -899,6 +899,7 @@ def _export_deployment_request_captures(
 
     uploaded_artifacts = None
     if planned_upload_target is not None:
+        assert remote_path is not None
         uploaded_artifacts = {
             "csv": planned_upload_target.absolute_artifact_path(csv_path.name),
             "jsonl": planned_upload_target.absolute_artifact_path(jsonl_path.name),
@@ -907,6 +908,7 @@ def _export_deployment_request_captures(
         upload_target = _resolve_lightning_storage_upload_target(
             client=client,
             teamspace_id=teamspace_id,
+            # A planned upload target is only created when a remote path was supplied.
             remote_path=remote_path,
         )
         partial_uploaded_artifacts = {}
@@ -1387,16 +1389,14 @@ def restore_auth(auth: Optional[V1EndpointAuth] = None) -> Optional[Auth]:
 
 
 def restore_autoscale(autoscaling: V1AutoscalingSpec) -> AutoScaleConfig:
-    return [
-        AutoScaleConfig(
-            min_replicas=autoscaling.min_replicas,
-            max_replicas=autoscaling.max_replicas,
-            target_metrics=autoscaling.target_metric,
-            idle_threshold_seconds=autoscaling.idle_threshold_seconds,
-            scale_down_cooldown_seconds=autoscaling.scale_down_cooldown_seconds,
-            scale_up_cooldown_seconds=autoscaling.scale_up_cooldown_seconds,
-        )
-    ]
+    return AutoScaleConfig(
+        min_replicas=autoscaling.min_replicas,
+        max_replicas=autoscaling.max_replicas,
+        target_metrics=autoscaling.target_metric,
+        idle_threshold_seconds=autoscaling.idle_threshold_seconds,
+        scale_down_cooldown_seconds=autoscaling.scale_down_cooldown_seconds,
+        scale_up_cooldown_seconds=autoscaling.scale_up_cooldown_seconds,
+    )
 
 
 def restore_env(env: List[V1EnvVar]) -> List[Union[Secret, Env]]:
@@ -1407,7 +1407,7 @@ def to_env(env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None) ->
     if env is None:
         return None
 
-    env_list = []
+    env_list: List[Union[Secret, Env]] = []
 
     if isinstance(env, dict):
         for k, v in env.items():
@@ -1445,6 +1445,7 @@ def to_autoscaling(
     if min_replicas is None:
         if isinstance(replicas, int):
             print(f"The `min_replicas` wasn't provided. Defaulting to replicas: {replicas}.")
+            min_replicas = replicas
         else:
             print("The `min_replicas` wasn't provided. Defaulting to 0.")
             min_replicas = 0
@@ -1452,6 +1453,7 @@ def to_autoscaling(
     if max_replicas is None:
         if isinstance(replicas, int):
             print(f"The `max_replicas` wasn't provided. Defaulting to replicas: {replicas}.")
+            max_replicas = replicas
         else:
             print("The `max_replicas` wasn't provided. Defaulting to 1.")
             max_replicas = 1
@@ -1465,30 +1467,22 @@ def to_autoscaling(
     if (metric is not None or threshold is not None) and target_metrics is not None:
         raise ValueError("Either metric and threshold, or target_metrics (for multiple) can be provided.")
 
-    if target_metrics is None and (metric is None or (isinstance(metric, str) and metric not in _METRICS)):
-        raise ValueError(f"The autoscaling metric is required. Currently supported metrics are {_METRICS}")
-
-    if target_metrics is None and threshold is None:
-        raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
-
-    if target_metrics is None and (threshold < 0 or threshold > 100):
-        raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
-
-    if target_metrics is not None and len(target_metrics) == 0 and metric is None:
-        raise ValueError("The target_metrics must be provided.")
-
-    if target_metrics is not None:
+    if target_metrics is None:
+        if metric is None or metric not in _METRICS:
+            raise ValueError(f"The autoscaling metric is required. Currently supported metrics are {_METRICS}")
+        if threshold is None or threshold < 0 or threshold > 100:
+            raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
+    else:
+        if len(target_metrics) == 0 and metric is None:
+            raise ValueError("The target_metrics must be provided.")
         for target_metric in target_metrics:
             if target_metric.name is None or target_metric.name not in _METRICS:
                 raise ValueError(f"The autoscaling metric is required. Currently supported metrics are {_METRICS}")
             if target_metric.target is None or target_metric.target < 0 or target_metric.target > 100:
                 raise ValueError("The autoscaling threshold should be defined between 0 and 100.")
 
-            # convert to string after validation
-            target_metric.target = str(target_metric.target)
-
     metrics = (
-        [V1AutoscalingTargetMetric(name=t.name, target=t.target) for t in target_metrics]
+        [V1AutoscalingTargetMetric(name=t.name, target=str(t.target)) for t in target_metrics]
         if target_metrics is not None
         else [V1AutoscalingTargetMetric(name=metric, target=str(threshold))]
     )
@@ -1630,7 +1624,7 @@ def to_spec(
     )
 
 
-def to_strategy(strategy: Optional[ReleaseStrategy]) -> None:
+def to_strategy(strategy: Optional[ReleaseStrategy]) -> Optional[V1DeploymentStrategy]:
     if isinstance(strategy, RollingUpdateReleaseStrategy):
         return V1DeploymentStrategy(
             rolling_update=V1RollingUpdateStrategy(

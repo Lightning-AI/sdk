@@ -39,13 +39,11 @@ class BaseStudio:
         Raises:
             ConnectionError: If there is an issue with the authentication process.
         """
-        self._teamspace = None
-
         _teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
         if _teamspace is None:
             raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
 
-        self._teamspace = _teamspace
+        self._teamspace: Teamspace = _teamspace
 
         # self._auth = login.Auth()
         # self._user = None
@@ -92,7 +90,8 @@ class BaseStudio:
             setup_script_text: Shell script executed when the studio is first created.
         """
         org_id = self._teamspace._org.id if self._teamspace._org is not None else None
-        # TODO: if not in an org, can't update them
+        if org_id is None:
+            raise RuntimeError("Base Studios can only be updated in organization-owned teamspaces")
         self._base_studio = self._base_studio_api.update_base_studio(
             self._base_studio.id,
             org_id,

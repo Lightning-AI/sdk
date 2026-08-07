@@ -173,7 +173,7 @@ def _split_nested_key(key: str) -> list[str]:
         return [key]
 
     parts: list[str] = []
-    current = []
+    current: list[str] = []
     index = 0
     while index < len(key):
         char = key[index]

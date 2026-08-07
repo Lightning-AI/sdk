@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple, TypedDict, Union, cast
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
@@ -77,7 +77,7 @@ class _Logs:
 
     def _text(self) -> str:
         if self._cached is None:
-            self._cached = self._fetch(follow=False)  # type: ignore[assignment]
+            self._cached = cast(str, self._fetch(follow=False))
         return self._cached
 
     def __str__(self) -> str:
@@ -93,7 +93,7 @@ class _Logs:
         return len(self._text())
 
     def __contains__(self, item: object) -> bool:
-        return item in self._text()
+        return self._text().__contains__(cast(Any, item))
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, _Logs):
@@ -153,18 +153,18 @@ class Job(metaclass=TrackCallsMeta):
         if _num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
 
-        teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        if teamspace is None:
+        resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if resolved_teamspace is None:
             raise ValueError(
                 "Cannot resolve the teamspace from provided arguments."
-                f" Got teamspace={teamspace}, org={org}, user={user}."
+                f" Got teamspace={resolved_teamspace}, org={org}, user={user}."
             )
+        raise_access_error_if_not_allowed(AccessibleResource.Jobs, resolved_teamspace.id)
 
-        raise_access_error_if_not_allowed(AccessibleResource.Jobs, teamspace.id)
-
-        self._teamspace = teamspace
+        self._teamspace = resolved_teamspace
         self._name = name
-        self._job = None
+        # Job payloads come from generated clients and may represent either job kind.
+        self._job: Any = None
         self._prevent_refetch_latest = False
         self._cloud_account_api = CloudAccountApi()
         self._standalone_job_api = JobApiV2()
@@ -179,7 +179,7 @@ class Job(metaclass=TrackCallsMeta):
                 self._update_internal_job()
             except ApiException as ex:
                 if ex.status == 404:
-                    raise ValueError(f"Job {name} does not exist in Teamspace {teamspace.name}") from None
+                    raise ValueError(f"Job {name} does not exist in Teamspace {resolved_teamspace.name}") from None
                 raise
 
     @property
@@ -704,7 +704,9 @@ class Job(metaclass=TrackCallsMeta):
         )
         if not lines and status != Status.Running and query is None and severity is None:
             # Nothing in the current log format for this job: fall back to the saved log file.
-            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+            text = self._standalone_job_api.get_logs_finished(
+                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id
+            )
             if tail is not None:
                 text = "\n".join(text.splitlines()[-tail:])
             return iter(text.splitlines()) if follow else text
@@ -794,7 +796,9 @@ class Job(metaclass=TrackCallsMeta):
                 "`rank` is only supported for running jobs; ignoring it for finished-job logs.",
                 stacklevel=3,
             )
-            text = self._job_api.get_logs_finished(job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id)
+            text = self._standalone_job_api.get_logs_finished(
+                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id
+            )
             if tail is not None:
                 text = "\n".join(text.splitlines()[-tail:])
             return iter(text.splitlines()) if follow else text
@@ -849,7 +853,7 @@ class Job(metaclass=TrackCallsMeta):
             # A running job whose logs are not in the current storage format yet has no saved
             # history; tail its live stream so a snapshot still shows something.
             fallback_to_live=not follow,
-            stop=lambda: self._job_api._is_job_finished(job_id, self.teamspace.id),
+            stop=lambda: self._standalone_job_api._is_job_finished(job_id, self.teamspace.id),
         )
         for entry in entries:
             yield entry.format(timestamps=timestamps)
@@ -864,7 +868,7 @@ class Job(metaclass=TrackCallsMeta):
         timestamps: bool = False,
     ) -> Iterator[str]:
         """Stream the job's logs live over the websocket (internal; see :attr:`logs`)."""
-        return self._job_api.stream_logs(
+        return self._standalone_job_api.stream_logs(
             job_id=self._guaranteed_job.id,
             teamspace_id=self.teamspace.id,
             follow=follow,
@@ -879,7 +883,7 @@ class Job(metaclass=TrackCallsMeta):
         if self.is_multi_machine:
             return f"{_get_cloud_url()}/{self.teamspace.owner.name}/{self.teamspace.name}/jobs/{self.name}?app_id=mmt"
 
-        mmt_name = self._job_api.get_mmt_name(self._guaranteed_job)
+        mmt_name = self._standalone_job_api.get_mmt_name(self._guaranteed_job)
 
         if self._job_api.get_image_name(self._guaranteed_job):
             if mmt_name:

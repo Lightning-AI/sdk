@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Dict, Optional, Protocol, Union
+from typing import TYPE_CHECKING, Dict, Optional, Protocol, Union, cast
 
 from lightning_sdk.job import Job, JobDict
 from lightning_sdk.status import Status
@@ -100,7 +100,7 @@ class MMT(Job):
             raise ValueError(f"Multi-machine job {name} does not exist in Teamspace {teamspace_name}") from ex
 
     @classmethod
-    def run(
+    def run(  # type: ignore[override]
         cls,
         name: str,
         num_machines: int,
@@ -125,24 +125,27 @@ class MMT(Job):
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
 
-        return super().run(
-            name=name,
-            machine=machine,
-            cloud=cloud,
-            command=command,
-            studio=studio,
-            image=image,
-            teamspace=teamspace,
-            org=org,
-            user=user,
-            env=env,
-            interruptible=interruptible,
-            image_credentials=image_credentials,
-            cloud_account_auth=cloud_account_auth,
-            entrypoint=entrypoint,
-            path_mappings=path_mappings,
-            max_runtime=max_runtime,
-            reuse_snapshot=reuse_snapshot,
-            placement_group_id=placement_group_id,
-            num_machines=num_machines,
+        return cast(
+            "MMT",
+            super().run(
+                name=name,
+                machine=machine,
+                cloud=cloud,
+                command=command,
+                studio=studio,
+                image=image,
+                teamspace=teamspace,
+                org=org,
+                user=user,
+                env=env,
+                interruptible=interruptible,
+                image_credentials=image_credentials,
+                cloud_account_auth=cloud_account_auth,
+                entrypoint=entrypoint,
+                path_mappings=path_mappings,
+                max_runtime=max_runtime,
+                reuse_snapshot=reuse_snapshot,
+                placement_group_id=placement_group_id,
+                num_machines=num_machines,
+            ),
         )
