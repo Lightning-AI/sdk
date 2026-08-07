@@ -535,11 +535,6 @@ def test_deployment_start_first_time(monkeypatch):
     resolve_user_mock = MagicMock()
     monkeypatch.setattr(deployment_module, "_resolve_user", resolve_user_mock)
 
-    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
-
-    organization = organization_module.Organization(name="toto")
-    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
-
     client = MagicMock()
 
     def fn(*_, **__):
@@ -547,6 +542,11 @@ def test_deployment_start_first_time(monkeypatch):
 
     client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
 
     deployment = deployment_module.Deployment(name="ollama")
     with pytest.raises(ValueError, match="At least one port is required to reach your deployment."):
@@ -626,11 +626,6 @@ def test_deployment_start_with_cloud(monkeypatch):
     # Patch the CloudAccountApi to return your mock
     monkeypatch.setattr(deployment_module, "CloudAccountApi", MagicMock(return_value=mock_cloud_account_api))
 
-    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
-
-    organization = organization_module.Organization(name="toto")
-    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
-
     client = MagicMock()
 
     def fn(*_, **__):
@@ -638,6 +633,11 @@ def test_deployment_start_with_cloud(monkeypatch):
 
     client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -1146,11 +1146,6 @@ def test_deployment_start_with_path_mappings(monkeypatch):
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
     monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
 
-    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
-
-    organization = organization_module.Organization(name="toto")
-    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
-
     client = MagicMock()
 
     def fn(*_, **__):
@@ -1158,6 +1153,11 @@ def test_deployment_start_with_path_mappings(monkeypatch):
 
     client.jobs_service_get_deployment_by_name = fn
     monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+
+    organization = organization_module.Organization(name="toto")
+    monkeypatch.setattr(deployment_module, "_resolve_org", MagicMock(return_value=organization))
 
     deployment = deployment_module.Deployment(name="test-deployment")
 
@@ -1223,14 +1223,15 @@ def test_deployment_start_byom_builds_spec(monkeypatch):
     teamspace_mock.id = "project_id"
     monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
     monkeypatch.setattr(deployment_module, "_resolve_user", MagicMock())
-    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
-    monkeypatch.setattr(
-        deployment_module, "_resolve_org", MagicMock(return_value=organization_module.Organization(name="toto"))
-    )
 
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.side_effect = ApiException(status=400, reason="Reason: Not Found")
     monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
+
+    monkeypatch.setattr(organization_module, "OrgApi", MagicMock())
+    monkeypatch.setattr(
+        deployment_module, "_resolve_org", MagicMock(return_value=organization_module.Organization(name="toto"))
+    )
 
     deployment = deployment_module.Deployment(name="llama")
     deployment.start(
