@@ -56,13 +56,24 @@ type V1VMHealth struct {
 	// gpus
 	Gpus []string `json:"gpus"`
 
+	// Why the channel went unused, or how it failed part way through the checks.
+	GuestChannelError string `json:"guestChannelError,omitempty"`
+
+	// The in-guest agent answered over vsock. Set with ssh_reachable false, it means
+	// the guest is alive and only sshd or its network is broken.
+	GuestChannelReachable bool `json:"guestChannelReachable,omitempty"`
+
+	// Primary transport for general in-guest checks, "vsock" or "ssh", while
+	// guest-channel health use is enabled. Empty otherwise or when the guest was never reached.
+	GuestTransport string `json:"guestTransport,omitempty"`
+
 	// ib pkeys info
 	IbPkeysInfo []*V1VMIBPKeyInfo `json:"ibPkeysInfo"`
 
 	// ip
 	IP string `json:"ip,omitempty"`
 
-	// Live VM-side resource usage (only populated when SSH succeeded).
+	// Live VM-side resource usage, populated over the selected guest transport.
 	Memory *V1VMMemoryUsage `json:"memory,omitempty"`
 
 	// name
@@ -81,7 +92,8 @@ type V1VMHealth struct {
 	// ssh error
 	SSHError string `json:"sshError,omitempty"`
 
-	// In-guest checks (only populated when SSH succeeded).
+	// In-guest checks. ssh_reachable stays literal sshd reachability, which is a
+	// health signal in its own right rather than a statement about what was collected.
 	SSHReachable bool `json:"sshReachable,omitempty"`
 
 	// status details

@@ -55,6 +55,9 @@ class V1VMHealth(object):
         'filesystems': 'list[V1VMFilesystemUsage]',
         'gpu_status': 'list[V1GPUStatus]',
         'gpus': 'list[str]',
+        'guest_channel_error': 'str',
+        'guest_channel_reachable': 'bool',
+        'guest_transport': 'str',
         'ib_pkeys_info': 'list[V1VMIBPKeyInfo]',
         'ip': 'str',
         'memory': 'V1VMMemoryUsage',
@@ -80,6 +83,9 @@ class V1VMHealth(object):
         'filesystems': 'filesystems',
         'gpu_status': 'gpuStatus',
         'gpus': 'gpus',
+        'guest_channel_error': 'guestChannelError',
+        'guest_channel_reachable': 'guestChannelReachable',
+        'guest_transport': 'guestTransport',
         'ib_pkeys_info': 'ibPkeysInfo',
         'ip': 'ip',
         'memory': 'memory',
@@ -94,7 +100,7 @@ class V1VMHealth(object):
         'xids': 'xids'
     }
 
-    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
+    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, guest_channel_error: 'str' =None, guest_channel_reachable: 'bool' =None, guest_transport: 'str' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
         """V1VMHealth - a model defined in Swagger"""  # noqa: E501
         self._alive = None
         self._ch_log_failures = None
@@ -106,6 +112,9 @@ class V1VMHealth(object):
         self._filesystems = None
         self._gpu_status = None
         self._gpus = None
+        self._guest_channel_error = None
+        self._guest_channel_reachable = None
+        self._guest_transport = None
         self._ib_pkeys_info = None
         self._ip = None
         self._memory = None
@@ -139,6 +148,12 @@ class V1VMHealth(object):
             self.gpu_status = gpu_status
         if gpus is not None:
             self.gpus = gpus
+        if guest_channel_error is not None:
+            self.guest_channel_error = guest_channel_error
+        if guest_channel_reachable is not None:
+            self.guest_channel_reachable = guest_channel_reachable
+        if guest_transport is not None:
+            self.guest_transport = guest_transport
         if ib_pkeys_info is not None:
             self.ib_pkeys_info = ib_pkeys_info
         if ip is not None:
@@ -377,6 +392,75 @@ class V1VMHealth(object):
         self._gpus = gpus
 
     @property
+    def guest_channel_error(self) -> 'str':
+        """Gets the guest_channel_error of this V1VMHealth.  # noqa: E501
+
+        Why the channel went unused, or how it failed part way through the checks.  # noqa: E501
+
+        :return: The guest_channel_error of this V1VMHealth.  # noqa: E501
+        :rtype: str
+        """
+        return self._guest_channel_error
+
+    @guest_channel_error.setter
+    def guest_channel_error(self, guest_channel_error: 'str'):
+        """Sets the guest_channel_error of this V1VMHealth.
+
+        Why the channel went unused, or how it failed part way through the checks.  # noqa: E501
+
+        :param guest_channel_error: The guest_channel_error of this V1VMHealth.  # noqa: E501
+        :type: str
+        """
+
+        self._guest_channel_error = guest_channel_error
+
+    @property
+    def guest_channel_reachable(self) -> 'bool':
+        """Gets the guest_channel_reachable of this V1VMHealth.  # noqa: E501
+
+        The in-guest agent answered over vsock. Set with ssh_reachable false, it means the guest is alive and only sshd or its network is broken.  # noqa: E501
+
+        :return: The guest_channel_reachable of this V1VMHealth.  # noqa: E501
+        :rtype: bool
+        """
+        return self._guest_channel_reachable
+
+    @guest_channel_reachable.setter
+    def guest_channel_reachable(self, guest_channel_reachable: 'bool'):
+        """Sets the guest_channel_reachable of this V1VMHealth.
+
+        The in-guest agent answered over vsock. Set with ssh_reachable false, it means the guest is alive and only sshd or its network is broken.  # noqa: E501
+
+        :param guest_channel_reachable: The guest_channel_reachable of this V1VMHealth.  # noqa: E501
+        :type: bool
+        """
+
+        self._guest_channel_reachable = guest_channel_reachable
+
+    @property
+    def guest_transport(self) -> 'str':
+        """Gets the guest_transport of this V1VMHealth.  # noqa: E501
+
+        Primary transport for general in-guest checks, \"vsock\" or \"ssh\", while guest-channel health use is enabled. Empty otherwise or when the guest was never reached.  # noqa: E501
+
+        :return: The guest_transport of this V1VMHealth.  # noqa: E501
+        :rtype: str
+        """
+        return self._guest_transport
+
+    @guest_transport.setter
+    def guest_transport(self, guest_transport: 'str'):
+        """Sets the guest_transport of this V1VMHealth.
+
+        Primary transport for general in-guest checks, \"vsock\" or \"ssh\", while guest-channel health use is enabled. Empty otherwise or when the guest was never reached.  # noqa: E501
+
+        :param guest_transport: The guest_transport of this V1VMHealth.  # noqa: E501
+        :type: str
+        """
+
+        self._guest_transport = guest_transport
+
+    @property
     def ib_pkeys_info(self) -> 'list[V1VMIBPKeyInfo]':
         """Gets the ib_pkeys_info of this V1VMHealth.  # noqa: E501
 
@@ -552,7 +636,7 @@ class V1VMHealth(object):
     def ssh_reachable(self) -> 'bool':
         """Gets the ssh_reachable of this V1VMHealth.  # noqa: E501
 
-        In-guest checks (only populated when SSH succeeded).  # noqa: E501
+        In-guest checks. ssh_reachable stays literal sshd reachability, which is a health signal in its own right rather than a statement about what was collected.  # noqa: E501
 
         :return: The ssh_reachable of this V1VMHealth.  # noqa: E501
         :rtype: bool
@@ -563,7 +647,7 @@ class V1VMHealth(object):
     def ssh_reachable(self, ssh_reachable: 'bool'):
         """Sets the ssh_reachable of this V1VMHealth.
 
-        In-guest checks (only populated when SSH succeeded).  # noqa: E501
+        In-guest checks. ssh_reachable stays literal sshd reachability, which is a health signal in its own right rather than a statement about what was collected.  # noqa: E501
 
         :param ssh_reachable: The ssh_reachable of this V1VMHealth.  # noqa: E501
         :type: bool

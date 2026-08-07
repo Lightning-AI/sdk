@@ -17,7 +17,7 @@ import (
 )
 
 // V1ComputeApp ComputeApp represents a process actively using a GPU inside a VM.
-// Collected via `nvidia-smi --query-compute-apps` over SSH and used by
+// Collected via `nvidia-smi --query-compute-apps` over the selected guest transport and used by
 // the agent to decide whether the fabric is actively in use (which gates
 // fabric manager auto-restart).
 //
