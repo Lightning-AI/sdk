@@ -21,6 +21,10 @@ import (
 // swagger:model v1GcpDataConnection
 type V1GcpDataConnection struct {
 
+	// When true, mount on non-GCP Studios via a downscoped token for the teamspace
+	// service account. Default false (GCP-only).
+	AvailableInNonGcpProviders bool `json:"availableInNonGcpProviders,omitempty"`
+
 	// source
 	Source string `json:"source,omitempty"`
 }

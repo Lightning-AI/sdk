@@ -45,19 +45,47 @@ class V1GcpDataConnection(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'available_in_non_gcp_providers': 'bool',
         'source': 'str'
     }
 
     attribute_map = {
+        'available_in_non_gcp_providers': 'availableInNonGcpProviders',
         'source': 'source'
     }
 
-    def __init__(self, source: 'str' =None):  # noqa: E501
+    def __init__(self, available_in_non_gcp_providers: 'bool' =None, source: 'str' =None):  # noqa: E501
         """V1GcpDataConnection - a model defined in Swagger"""  # noqa: E501
+        self._available_in_non_gcp_providers = None
         self._source = None
         self.discriminator = None
+        if available_in_non_gcp_providers is not None:
+            self.available_in_non_gcp_providers = available_in_non_gcp_providers
         if source is not None:
             self.source = source
+
+    @property
+    def available_in_non_gcp_providers(self) -> 'bool':
+        """Gets the available_in_non_gcp_providers of this V1GcpDataConnection.  # noqa: E501
+
+        When true, mount on non-GCP Studios via a downscoped token for the teamspace service account. Default false (GCP-only).  # noqa: E501
+
+        :return: The available_in_non_gcp_providers of this V1GcpDataConnection.  # noqa: E501
+        :rtype: bool
+        """
+        return self._available_in_non_gcp_providers
+
+    @available_in_non_gcp_providers.setter
+    def available_in_non_gcp_providers(self, available_in_non_gcp_providers: 'bool'):
+        """Sets the available_in_non_gcp_providers of this V1GcpDataConnection.
+
+        When true, mount on non-GCP Studios via a downscoped token for the teamspace service account. Default false (GCP-only).  # noqa: E501
+
+        :param available_in_non_gcp_providers: The available_in_non_gcp_providers of this V1GcpDataConnection.  # noqa: E501
+        :type: bool
+        """
+
+        self._available_in_non_gcp_providers = available_in_non_gcp_providers
 
     @property
     def source(self) -> 'str':

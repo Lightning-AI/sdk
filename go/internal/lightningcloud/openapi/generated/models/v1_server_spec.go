@@ -66,6 +66,10 @@ type V1ServerSpec struct {
 	// cluster Id
 	ClusterID string `json:"clusterId,omitempty"`
 
+	// Customer network agent ids this VM may reach over the VPN. Granted by the
+	// baremetal agent at create; empty means no customer access.
+	CustomerNetworkIds []string `json:"customerNetworkIds"`
+
 	// Prevents the server from being deleted, used for debugging
 	DeleteProtection bool `json:"deleteProtection,omitempty"`
 
