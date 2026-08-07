@@ -570,9 +570,10 @@ def test_deployment_logs_tui_rejects_rank(monkeypatch) -> None:
     result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui", "--rank", "1"])
 
     assert result.exit_code != 0
-    assert "TUI view does not support --rank" in result.output
-    assert "lightning deployment logs my-deployment --rank 1" in result.output
-    assert "--tui" not in result.output
+    output = click.unstyle(result.output)
+    assert "TUI view does not support --rank" in output
+    assert "lightning deployment logs my-deployment --rank 1" in output
+    assert "--tui" not in output
     run_tui.assert_not_called()
 
 
