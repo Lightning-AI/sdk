@@ -49,8 +49,14 @@ def command_text(command: str) -> str:
     return text.rstrip() + "\n"
 
 
+def _normalize_help(text: str) -> str:
+    """Flatten rich's wrapping so multi-word snippets match regardless of layout."""
+    return re.sub(r"\s+", " ", text.replace("│", " "))
+
+
 def assert_help_contains(command: str, *snippets: str) -> str:
     text = command_text(command)
+    normalized = _normalize_help(text)
     for snippet in snippets:
-        assert snippet in text
+        assert _normalize_help(snippet) in normalized, f"{snippet!r} not found in:\n{text}"
     return text
