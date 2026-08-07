@@ -115,3 +115,10 @@ repos:
         pass_filenames: false
         entry: bash -c 'cd js && npm ci && npm run build && npm test'
         files: ^js/.*\.(json|ts)$
+
+      - id: mypy
+        name: mypy
+        language: system
+        pass_filenames: false
+        entry: bash -c 'cd python && uv run --group typing --extra serve mypy'
+        files: ^python/.*\.py$
