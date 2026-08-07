@@ -12,7 +12,7 @@
 /python/lightning_sdk/base_studio.py @justusschock @ethanwharris @vivequeramji
 /python/lightning_sdk/deployment.py @justusschock @ethanwharris @tchaton
 /python/lightning_sdk/filesystem.py @justusschock @ethanwharris @k223kim @owbone
-/python/lightning_sdk/serve.py @justusschock @ethanwharris @tchaton
+/python/lightning_sdk/serve.py @justusschock @ethanwharris @k223kim @tchaton
 
 /js/ @k223kim @rusenask
 /go/ @justusschock @owbone @ethanwharris
