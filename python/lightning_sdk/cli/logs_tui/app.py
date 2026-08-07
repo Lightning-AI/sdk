@@ -358,7 +358,6 @@ class LogsTUI(App[None]):
         self._update_status_bar()
 
     def _fetch_tail(self, api: LogsApi, *, until: datetime | None = None) -> tuple[list[LogEntry], str | None]:
-        selectors = self._selection.selectors()
         user_since = self._resolve_time(self._since)
         until_iso = until.isoformat() if until is not None else self._resolve_time(self._until)
         anchor = until if until is not None else datetime.now(timezone.utc)
