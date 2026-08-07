@@ -4,6 +4,7 @@ Reads every replica of a deployment, merged into one timeline. The reading and r
 in :mod:`lightning_sdk.cli.utils.logs`, shared with the other per-resource log commands.
 """
 
+import shlex
 from typing import Optional, Sequence
 
 import rich_click as click
@@ -24,6 +25,52 @@ from lightning_sdk.cli.utils.logs import (
 _DEFAULT_TAIL = 100
 
 
+def _command_without_tui(
+    name: str,
+    *,
+    teamspace: Optional[str],
+    job_ids: Sequence[str],
+    since: Optional[str],
+    until: Optional[str],
+    query: Optional[str],
+    severity: Optional[str],
+    rank: Optional[int],
+    tail: Optional[int],
+    follow: bool,
+    timestamps: bool,
+    as_json: bool,
+) -> str:
+    """Reconstruct the invoked ``deployment logs`` command with ``--interactive`` dropped.
+
+    Only the options actually passed are re-emitted, each shell-quoted, so the string is safe to
+    copy-paste back verbatim.
+    """
+    parts = ["lightning", "deployment", "logs", name]
+    if teamspace:
+        parts += ["--teamspace", teamspace]
+    for job_id in job_ids:
+        parts += ["--job-id", job_id]
+    if since:
+        parts += ["--since", since]
+    if until:
+        parts += ["--until", until]
+    if query:
+        parts += ["--query", query]
+    if severity:
+        parts += ["--severity", severity]
+    if rank is not None:
+        parts += ["--rank", str(rank)]
+    if tail is not None:
+        parts += ["--tail", str(tail)]
+    if follow:
+        parts.append("--follow")
+    if timestamps:
+        parts.append("--timestamps")
+    if as_json:
+        parts.append("--json")
+    return " ".join(shlex.quote(part) for part in parts)
+
+
 @click.command("logs", cls=LightningCommand)
 @click.argument("name")
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
@@ -41,6 +88,7 @@ _DEFAULT_TAIL = 100
 @click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def deployment_logs(
     name: str,
     teamspace: Optional[str] = None,
@@ -54,6 +102,7 @@ def deployment_logs(
     tail: Optional[int] = None,
     timestamps: bool = False,
     as_json: bool = False,
+    tui: bool = False,
 ) -> None:
     """Print deployment logs.
 
@@ -63,6 +112,49 @@ def deployment_logs(
     resolved_teamspace = resolve_teamspace(teamspace)
     api = DeploymentApi()
     deployment = resolve_deployment(api, resolved_teamspace.id, name)
+
+    if tui:
+        from lightning_sdk.cli.logs_tui import run_tui
+
+        # TUI reads merged stream, incompatible with --rank
+        if rank is not None:
+            without_tui = _command_without_tui(
+                name,
+                teamspace=teamspace,
+                job_ids=job_ids,
+                since=since,
+                until=until,
+                query=query,
+                severity=severity,
+                rank=rank,
+                tail=tail,
+                follow=follow,
+                timestamps=timestamps,
+                as_json=as_json,
+            )
+            raise click.ClickException(f"TUI view does not support --rank. Instead, use:\n    {without_tui}")
+
+        selected = list(job_ids)
+        jobs = api.list_deployment_jobs(resolved_teamspace.id, deployment.id, limit=100)
+        replicas = [job for job in jobs if job.id in selected] if selected else jobs
+        labels = {job.id: job.name or job.id for job in replicas} if len(replicas) > 1 else {}
+
+        run_tui(
+            LogSelection(
+                teamspace_id=resolved_teamspace.id,
+                job_ids=selected,
+                deployment_id=None if selected else deployment.id,
+                labels=labels,
+            ),
+            follow=(follow or (since is None and until is None)),
+            tail=tail,
+            show_timestamps=True,
+            since=since,
+            until=until,
+            query=query,
+            title=f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{deployment.name} logs",
+        )
+        return
 
     if rank is not None:
         if as_json:

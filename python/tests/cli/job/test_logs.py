@@ -186,3 +186,38 @@ def test_job_logs_requires_name_without_listing_resources() -> None:
     assert "Missing job name. Pass JOB." in result.output
     job.assert_not_called()
     assert teamspace.mock_calls == []
+
+
+def _invoke_tui(argv: list) -> MagicMock:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    job = MagicMock()
+    job.resource_id = "job-1"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ), patch("lightning_sdk.cli.logs_tui.run_tui") as run_tui:
+        result = CliRunner().invoke(logs_job, ["my-job", "--interactive", *argv])
+
+    assert result.exit_code == 0, result.output
+    run_tui.assert_called_once()
+    return run_tui
+
+
+@mock_command_logging
+def test_job_logs_tui_defaults_to_live() -> None:
+    assert _invoke_tui([]).call_args.kwargs["follow"] is True
+
+
+@mock_command_logging
+def test_job_logs_tui_since_starts_paused() -> None:
+    assert _invoke_tui(["--since", "2h"]).call_args.kwargs["follow"] is False
+
+
+@mock_command_logging
+def test_job_logs_tui_until_starts_paused() -> None:
+    assert _invoke_tui(["--until", "30m"]).call_args.kwargs["follow"] is False
+
+
+@mock_command_logging
+def test_job_logs_tui_follow_flag_overrides_since() -> None:
+    assert _invoke_tui(["--since", "2h", "--follow"]).call_args.kwargs["follow"] is True

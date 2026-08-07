@@ -32,6 +32,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job
     help="Only include lines at or above this severity.",
 )
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def logs_job(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -44,6 +45,7 @@ def logs_job(
     query: Optional[str] = None,
     severity: Optional[str] = None,
     as_json: bool = False,
+    tui: bool = False,
 ) -> None:
     """Print the logs for a job.
 
@@ -62,6 +64,22 @@ def logs_job(
         job = resolve_job_machine(resource, rank)
     else:
         job = resource
+
+    if tui:
+        from lightning_sdk.cli.logs_tui import run_tui
+
+        assert job.resource_id is not None, "job must have a resource_id"
+        run_tui(
+            LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id]),
+            follow=(follow or (since is None and until is None)),
+            tail=tail,
+            show_timestamps=True,
+            since=since,
+            until=until,
+            query=query,
+            title=f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}/{job.name} logs",
+        )
+        return
 
     if as_json:
         if rank is not None and not selected_rank:

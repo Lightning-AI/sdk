@@ -737,6 +737,7 @@ def run_sandbox_command(
 )
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def logs_sandbox_command(
     api_key: str | None,
     sandbox_id: str,
@@ -749,6 +750,7 @@ def logs_sandbox_command(
     severity: str | None,
     timestamps: bool,
     as_json: bool,
+    tui: bool = False,
 ) -> None:
     """Show logs for a sandbox, merged across its commands.
 
@@ -761,6 +763,27 @@ def logs_sandbox_command(
       $ lightning sandbox logs sbx-42 --query error --since 2h
     """
     sandbox = _sandbox_client(api_key=api_key).get(sandbox_id)
+
+    if tui:
+        from lightning_sdk.cli.logs_tui import run_tui
+
+        run_tui(
+            LogSelection(
+                teamspace_id=sandbox.project_id,
+                sandbox_id=None if command_id else sandbox_id,
+                sandbox_command_ids=(command_id,) if command_id else (),
+            ),
+            follow=(follow or (since is None and until is None)),
+            tail=tail,
+            show_timestamps=True,
+            since=since,
+            until=until,
+            query=query,
+            api_key=api_key,
+            title=f"{sandbox.name}/{command_id} logs" if command_id else f"{sandbox.name} logs",
+        )
+        return
+
     selection = LogSelection(
         teamspace_id=sandbox.project_id,
         sandbox_id=None if command_id else sandbox_id,
