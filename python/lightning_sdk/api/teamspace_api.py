@@ -20,6 +20,7 @@ from lightning_sdk.api.utils import (
     _ModelFileUploader,
     _raise_for_download_status,
     _stream_download_to_file,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -49,7 +50,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SecretType,
     V1UpstreamOpenAI,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 __all__ = ["SecretType", "TeamspaceApi"]
@@ -108,7 +108,7 @@ class TeamspaceApi:
     """Internal API client for Teamspace requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner.

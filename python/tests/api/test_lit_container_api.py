@@ -40,7 +40,7 @@ def test_retry_on_lcr_auth_failure():
     api.authenticate.assert_called_once()
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()
@@ -53,7 +53,7 @@ def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_clien
     )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_delete_container_by_digest_raises_on_error(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()

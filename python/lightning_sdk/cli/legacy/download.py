@@ -7,10 +7,10 @@ import click
 from rich.console import Console
 
 from lightning_sdk.api.lit_container_api import LitContainerApi
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
 from lightning_sdk.utils.resolve import _get_authed_user
@@ -171,7 +171,7 @@ def download_licenses() -> None:
 
     """
     user = _get_authed_user()
-    response = LightningClient().product_license_service_list_licenses(owner_id=user.id)
+    response = cached_lightning_client().product_license_service_list_licenses(owner_id=user.id)
     licenses = response.licenses or []
 
     user_home = Path.home()
@@ -196,7 +196,7 @@ def download_license(name: str) -> None:
     NAME: The name of the product/package to download the license for.
     """
     user = _get_authed_user()
-    response = LightningClient().product_license_service_list_licenses(owner_id=user.id)
+    response = cached_lightning_client().product_license_service_list_licenses(owner_id=user.id)
     licenses = response.licenses or []
     licenses_short = {product_license.product_id: product_license.license_key for product_license in licenses}
 

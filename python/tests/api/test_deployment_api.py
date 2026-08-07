@@ -42,7 +42,7 @@ def test_restore_auth():
 
 
 def test_create_deployment_threads_byom_spec_and_acks(monkeypatch):
-    monkeypatch.setattr("lightning_sdk.api.deployment_api.LightningClient", MagicMock())
+    monkeypatch.setattr("lightning_sdk.api.utils.LightningClient", MagicMock())
     api = DeploymentApi()
     byom = V1BYOMSpec(served_model_name="meta-llama/Llama-3-8B")
     deployment = V1Deployment(

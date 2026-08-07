@@ -30,16 +30,16 @@ def _build_pipeline_api(mock_client_cls):
 
 
 @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-@patch("lightning_sdk.api.pipeline_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_init(mock_client_cls, _mock_cloud_account_api):
     """Test that the LightningClient is initialized with the correct arguments."""
     PipelineApi()
-    mock_client_cls.assert_called_once_with(retry=False, max_tries=0)
+    mock_client_cls.assert_called_once_with(max_tries=0, retry=False, with_auth=True)
 
 
 class TestGetPipelineById:
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_get_by_id_success(self, mock_client_cls, _mock_cloud_account_api):
         """Test successful retrieval when a pipeline ID is provided."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -55,7 +55,7 @@ class TestGetPipelineById:
         assert result == mock_pipeline
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_get_by_name_success(self, mock_client_cls, _mock_cloud_account_api):
         """Test successful retrieval when a pipeline name is provided."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -71,7 +71,7 @@ class TestGetPipelineById:
         assert result == mock_pipeline
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_get_by_id_not_found(self, mock_client_cls, _mock_cloud_account_api):
         """Test retrieval by ID when the pipeline is not found."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -81,7 +81,7 @@ class TestGetPipelineById:
         assert result is None
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_get_by_name_not_found(self, mock_client_cls, _mock_cloud_account_api):
         """Test retrieval by name when the pipeline is not found."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -91,7 +91,7 @@ class TestGetPipelineById:
         assert result is None
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_get_by_id_other_api_error(self, mock_client_cls, _mock_cloud_account_api):
         """Test that other ApiException errors are re-raised."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -103,7 +103,7 @@ class TestGetPipelineById:
 
 class TestCreatePipeline:
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_simple(self, mock_client_cls, _mock_cloud_account_api):
         """Test creating a pipeline without schedules or a parent."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -148,7 +148,7 @@ class TestCreatePipeline:
         [(True, False), (False, True)],
     )
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_stop_on_failure(
         self, mock_client_cls, _mock_cloud_account_api, stop_on_failure, expected_continue_on_step_failure
     ):
@@ -176,7 +176,7 @@ class TestCreatePipeline:
         assert body.continue_on_step_failure is expected_continue_on_step_failure
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_default_interruption_retries(self, mock_client_cls, _mock_cloud_account_api):
         """Test that interruption_retry_limit defaults to 0 on the body."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -202,7 +202,7 @@ class TestCreatePipeline:
 
     @pytest.mark.parametrize("interruption_retries", [0, 1, 5])
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_interruption_retries(self, mock_client_cls, _mock_cloud_account_api, interruption_retries):
         """Test that interruption_retries is mapped to interruption_retry_limit on the body."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -228,7 +228,7 @@ class TestCreatePipeline:
         assert body.interruption_retry_limit == interruption_retries
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_with_schedules(self, mock_client_cls, _mock_cloud_account_api):
         """Test creating a pipeline with new schedules."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -282,7 +282,7 @@ class TestCreatePipeline:
         ],
     )
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_schedule_uses_parent_resource_id_for_hierarchy(
         self,
         mock_client_cls,
@@ -317,7 +317,7 @@ class TestCreatePipeline:
         assert body.parent_resource_id == expected_parent_resource_id
 
     @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-    @patch("lightning_sdk.api.pipeline_api.LightningClient")
+    @patch("lightning_sdk.api.utils.LightningClient")
     def test_create_with_parent_pipeline(self, mock_client_cls, _mock_cloud_account_api):
         """Test creating a pipeline that replaces a parent, deleting old schedules."""
         pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -365,7 +365,7 @@ class TestCreatePipeline:
 
 
 @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-@patch("lightning_sdk.api.pipeline_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_stop(mock_client_cls, _mock_cloud_account_api):
     """Test the stop method."""
     pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)
@@ -393,7 +393,7 @@ def test_stop(mock_client_cls, _mock_cloud_account_api):
 
 
 @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
-@patch("lightning_sdk.api.pipeline_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_delete(mock_client_cls, _mock_cloud_account_api):
     """Test the delete method."""
     pipeline_api, mock_lightning_client = _build_pipeline_api(mock_client_cls)

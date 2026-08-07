@@ -1,13 +1,13 @@
 from typing import Any, Optional
 
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.api.utils import cached_lightning_client
 
 
 class GpuTelemetryApi:
     """Internal API client for source-aware GPU telemetry requests."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def list_gpu_telemetry(
         self,

@@ -2,15 +2,15 @@
 
 from typing import List, Set
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import V1Role, V1WhoamiResponse
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class AuthApi:
     """API client for identity and authorization introspection."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def whoami(self) -> V1WhoamiResponse:
         """Return the authenticated caller's identity.

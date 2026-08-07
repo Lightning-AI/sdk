@@ -5,6 +5,7 @@ from lightning_sdk.api.job_api import V1ClusterAccelerator
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
+    cached_lightning_client,
     resolve_path_mappings,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
@@ -18,7 +19,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
     V1MultiMachineJobState,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class MMTApiV2:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def submit_job(
         self,

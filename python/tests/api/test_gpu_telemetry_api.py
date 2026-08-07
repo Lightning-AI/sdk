@@ -5,7 +5,7 @@ import pytest
 from lightning_sdk.api.gpu_telemetry_api import GpuTelemetryApi
 
 
-@patch("lightning_sdk.api.gpu_telemetry_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_gpu_telemetry_api_forwards_only_set_filters(mock_client):
     expected = object()
     mock_client.return_value.gpu_telemetry_service_list_gpu_telemetry.return_value = expected
@@ -26,7 +26,7 @@ def test_gpu_telemetry_api_forwards_only_set_filters(mock_client):
     )
 
 
-@patch("lightning_sdk.api.gpu_telemetry_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_gpu_telemetry_api_forwards_all_filters(mock_client):
     expected = object()
     mock_client.return_value.gpu_telemetry_service_list_gpu_telemetry.return_value = expected
@@ -53,7 +53,7 @@ def test_gpu_telemetry_api_forwards_all_filters(mock_client):
     )
 
 
-@patch("lightning_sdk.api.gpu_telemetry_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_gpu_telemetry_api_raises_clear_error_before_generated_client_is_vendored(mock_client):
     mock_client.return_value = object()
 

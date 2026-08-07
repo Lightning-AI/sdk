@@ -8,6 +8,7 @@ from lightning_sdk import CloudProvider, teamspace, user
 from lightning_sdk import deployment as deployment_module
 from lightning_sdk import organization as organization_module
 from lightning_sdk.api import deployment_api as deployment_api_module
+from lightning_sdk.api import utils as api_utils_module
 from lightning_sdk.api.deployment_api import apply_change, to_env, to_health_check
 from lightning_sdk.deployment import AutoScaleConfig, Env, HttpHealthCheck, Secret
 from lightning_sdk.lightning_cloud.openapi import (
@@ -545,7 +546,7 @@ def test_deployment_start_first_time(monkeypatch):
         raise ApiException(status=400, reason="Reason: Not Found")
 
     client.jobs_service_get_deployment_by_name = fn
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
     with pytest.raises(ValueError, match="At least one port is required to reach your deployment."):
@@ -636,7 +637,7 @@ def test_deployment_start_with_cloud(monkeypatch):
         raise ApiException(status=400, reason="Reason: Not Found")
 
     client.jobs_service_get_deployment_by_name = fn
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -721,7 +722,7 @@ def test_deployment_start_already_exist(monkeypatch):
         spec=V1JobSpec(),
         endpoint=V1Endpoint(),
     )
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
     client.jobs_service_update_deployment = MagicMock()
@@ -751,7 +752,7 @@ def test_deployment_update(monkeypatch):
         release_id="release-id",
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -814,7 +815,7 @@ def test_deployment_update_name(monkeypatch):
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.return_value = V1Deployment(name="ollama", spec=V1JobSpec())
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -839,7 +840,7 @@ def test_deployment_update_replicas(monkeypatch):
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.return_value = V1Deployment(replicas=1, spec=V1JobSpec())
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -866,7 +867,7 @@ def test_deployment_update_strategy(monkeypatch):
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.return_value = V1Deployment(spec=V1JobSpec())
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -913,7 +914,7 @@ def test_deployment_stop(monkeypatch):
         return deployment_spec
 
     client.jobs_service_get_deployment_by_name = fn
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     def update(*_, body, **__):
         return body
@@ -960,7 +961,7 @@ def test_deployment_get(monkeypatch):
         strategy=None,
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -995,7 +996,7 @@ def test_deployment_post(monkeypatch):
         strategy=None,
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -1031,7 +1032,7 @@ def test_deployment_put(monkeypatch):
         strategy=None,
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -1066,7 +1067,7 @@ def test_deployment_delete(monkeypatch):
         strategy=None,
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="ollama")
 
@@ -1156,7 +1157,7 @@ def test_deployment_start_with_path_mappings(monkeypatch):
         raise ApiException(status=400, reason="Reason: Not Found")
 
     client.jobs_service_get_deployment_by_name = fn
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="test-deployment")
 
@@ -1195,7 +1196,7 @@ def test_deployment_update_with_path_mappings(monkeypatch):
         release_id="release-id",
     )
 
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="test-deployment")
 
@@ -1229,7 +1230,7 @@ def test_deployment_start_byom_builds_spec(monkeypatch):
 
     client = MagicMock()
     client.jobs_service_get_deployment_by_name.side_effect = ApiException(status=400, reason="Reason: Not Found")
-    monkeypatch.setattr(deployment_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     deployment = deployment_module.Deployment(name="llama")
     deployment.start(

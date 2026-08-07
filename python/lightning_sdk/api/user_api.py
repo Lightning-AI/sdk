@@ -1,6 +1,7 @@
 import re
 from typing import Dict, List, Optional, Union
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     SecretServiceUpdateUserSecretBody,
@@ -16,7 +17,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UserFeatures,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_secret_type import V1SecretType
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 def _is_generic_secret(secret: V1Secret) -> bool:
@@ -27,7 +27,7 @@ class UserApi:
     """Internal API Client for user requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def get_user(self, name: str) -> Union[V1SearchUser, V1GetUserResponse]:
         """Fetch a user by username, returning the authenticated user object if it matches.

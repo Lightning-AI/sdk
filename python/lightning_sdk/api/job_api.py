@@ -10,6 +10,7 @@ from urllib.request import urlopen
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
+    cached_lightning_client,
     remove_datetime_prefix,
     resolve_path_mappings,
 )
@@ -26,7 +27,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1Volume,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -123,7 +123,7 @@ class JobApiV2:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def submit_job(
         self,

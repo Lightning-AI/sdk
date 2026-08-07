@@ -13,7 +13,7 @@ def _member_role() -> SimpleNamespace:
 
 @pytest.fixture()
 def mock_client() -> MagicMock:
-    with patch("lightning_sdk.api.api_key_api.LightningClient") as client_cls:
+    with patch("lightning_sdk.api.utils.LightningClient") as client_cls:
         client = MagicMock()
         client_cls.return_value = client
         yield client

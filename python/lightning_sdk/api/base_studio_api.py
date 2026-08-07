@@ -1,5 +1,6 @@
 from typing import Any, List, Optional
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceEnvironmentTemplateServiceUpdateCloudSpaceEnvironmentTemplateBody as BaseStudioUpdateBody,
 )
@@ -10,14 +11,13 @@ from lightning_sdk.lightning_cloud.openapi import (
 from lightning_sdk.lightning_cloud.openapi.models.v1_cloud_space_environment_template import (
     V1CloudSpaceEnvironmentTemplate,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class BaseStudioApi:
     """Internal API client for base studio (environment template) operations."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(retry=False, max_tries=0)
+        self._client = cached_lightning_client(retry=False, max_tries=0)
 
     def get_base_studio(self, base_studio_id: str, org_id: Optional[str] = None) -> V1CloudSpaceEnvironmentTemplate:
         """Retrieve the base studio by its ID.

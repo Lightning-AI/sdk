@@ -14,7 +14,13 @@ import requests
 
 from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
 from lightning_sdk.api.logs_api import LogEntry, parse_log_entries
-from lightning_sdk.api.utils import _BlobUploader, _get_cloud_url, _machine_to_compute_name, resolve_path_mappings
+from lightning_sdk.api.utils import (
+    _BlobUploader,
+    _get_cloud_url,
+    _machine_to_compute_name,
+    cached_lightning_client,
+    resolve_path_mappings,
+)
 
 # `Auth` is the deployment endpoint auth type in this module, so the login client is aliased.
 from lightning_sdk.lightning_cloud.login import Auth as _LoginAuth
@@ -40,7 +46,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1WeightSource,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 from lightning_sdk.utils.filesystem import parse_lit_url
 
@@ -285,7 +290,7 @@ class DeploymentApi:
     """Internal API client for Deployment requests (mainly http requests)."""
 
     def __init__(self, wait_on_stop: int = 5) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
         self._wait_on_stop = wait_on_stop
 
     def get_deployment_by_name(self, name: str, teamspace_id: str) -> Optional[V1Deployment]:

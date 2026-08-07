@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import V1APIKey, V1CreateAPIKeyRequest
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 if TYPE_CHECKING:
     from lightning_sdk.organization import Organization
@@ -14,7 +14,7 @@ class ApiKeyApi:
     """API client for org-scoped API keys used with public model endpoints."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
 
     def _try_resolve_org_by_name(self, name: Optional[str]) -> Optional["Organization"]:
         if not name:
