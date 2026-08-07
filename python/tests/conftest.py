@@ -94,7 +94,7 @@ def _clean_studio_thread_local_state():
 @pytest.fixture(autouse=True)
 def _clear_cached_lightning_client():
     """cached_lightning_client is process-global -- clear it so one test's mocked/unmocked client can't leak."""
-    from lightning_sdk.lightning_cloud.rest_client import cached_lightning_client
+    from lightning_sdk.api.utils import cached_lightning_client
 
     cached_lightning_client.cache_clear()
     yield

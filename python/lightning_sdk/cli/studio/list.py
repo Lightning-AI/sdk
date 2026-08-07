@@ -121,8 +121,6 @@ def _sort_studios_key(sort_by: str, global_cloud_accounts: list) -> Callable[[St
         "teamspace": lambda s: str(s.teamspace.name or ""),
         "status": lambda s: _cached(s, "status"),
         "machine": lambda s: _cached(s, "machine"),
-        "cloud-account": lambda s: (
-            cloud_account_display_name_from_list(s.cloud_account or "", global_cloud_accounts)
-        ),
+        "cloud-account": lambda s: cloud_account_display_name_from_list(s.cloud_account or "", global_cloud_accounts),
     }
     return sort_key_map.get(sort_by, lambda s: s.name)

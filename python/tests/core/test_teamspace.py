@@ -926,7 +926,7 @@ def test_teamspace_delete_secret_invalid_name(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_agnostic(
     mock_cloud_account_client,
@@ -984,7 +984,7 @@ def test_new_folder_agnostic(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_byoc(
     mock_cloud_account_client,
@@ -1051,7 +1051,7 @@ def test_new_folder_byoc(
 
 @pytest.mark.parametrize("writable", [True, False])
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, internal_user_api_mocker, writable):
     mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(

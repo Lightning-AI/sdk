@@ -20,6 +20,7 @@ from lightning_sdk.api.utils import (
     _DummyResponse,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
+    cached_lightning_client,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -56,7 +57,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.rest_client import cached_lightning_client
 from lightning_sdk.machine import Machine
 
 

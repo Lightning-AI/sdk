@@ -253,12 +253,6 @@ class LightningClient(GridRestClient):
         return self.gpu_telemetry_service_list_gpu_telemetry_series(org_id, node, **_without_none(params))
 
 
-@functools.lru_cache(maxsize=None)
-def cached_lightning_client(max_tries: Optional[int] = None) -> "LightningClient":
-    """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
-    return LightningClient(max_tries=max_tries)
-
-
 def _without_none(values: Dict[str, Any]) -> Dict[str, Any]:
     return {key: value for key, value in values.items() if value is not None}
 

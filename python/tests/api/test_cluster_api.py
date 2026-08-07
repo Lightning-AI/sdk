@@ -58,7 +58,7 @@ def accelerator_response():
     )
 
 
-@patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_list_cloud_account_accelerators(mock_client, accelerator_response):
     # Create a mock cloud account that matches the test-cluster id
     mock_cloud_account = V1ExternalCluster(
@@ -86,7 +86,7 @@ def test_list_cloud_account_accelerators(mock_client, accelerator_response):
     )
 
 
-@patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_list_default_lightning_accelerators_uses_machine_provider(mock_client, accelerator_response):
     mock_cloud_account = V1ExternalCluster(
         id="test-cluster",
@@ -112,7 +112,7 @@ def test_list_default_lightning_accelerators_uses_machine_provider(mock_client, 
     )
 
 
-@patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_list_cloud_accounts(mock_client):
     cloud_account_api = CloudAccountApi()
     cloud_account_api.list_cloud_accounts("test-project")
@@ -129,7 +129,7 @@ def make_cluster(id_, driver=None, **kwargs):
 
 @pytest.fixture()
 def api(mocker):
-    mocker.patch("lightning_sdk.lightning_cloud.rest_client.LightningClient")
+    mocker.patch("lightning_sdk.api.utils.LightningClient")
     return CloudAccountApi()
 
 
