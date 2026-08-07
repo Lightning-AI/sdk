@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from lightning_sdk.api import OrgApi
+from lightning_sdk.api.org_api import MonthlySummary, MonthlySummaryResponse  # noqa: F401
 from lightning_sdk.owner import Owner
 from lightning_sdk.utils.resolve import _resolve_org_name
 
@@ -65,6 +67,55 @@ class Organization(Owner):
 
         self._org_api.create_teamspace(name, self.id)
         return Teamspace(name=name, org=self)
+
+    def get_monthly_summary(
+        self,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> MonthlySummaryResponse:
+        """Returns a monthly summary of credits purchased, used, and remaining.
+
+        Exactly one of ``start`` and ``end`` must be supplied,
+        or both together:
+
+        - only ``start``: grabs monthly summaries for months after ``pivot=start``.
+        - only ``end``:  grabs monthly summaries for months before ``pivot=end``.
+        - both ``start`` and ``end``: acts as a normal range.
+
+        Args:
+            start: Start of the time range. If given without
+                ``end``, acts as an "AFTER" pivot.
+            end: End of the time range. If given without
+                ``start``, acts as a "BEFORE" pivot.
+
+        Returns:
+            MonthlySummaryResponse: A dict with the following shape::
+
+                {
+                    "org_id": str,
+                    "monthly_summaries": [
+                        {
+                            "period_start": datetime,
+                            "period_end": datetime,
+                            "total_credits_consumed": float,
+                            "total_credits_remaining": float,
+                            "total_credits_purchased": float,
+                        },
+                        ...
+                    ],
+                }
+
+        Raises:
+            ValueError: If neither ``start`` nor ``end`` is
+                provided, if ``start`` is after ``end``, or if
+                an "AFTER" pivot (derived from a lone ``start``) is in
+                the future.
+        """
+        return self._org_api.get_monthly_summary(
+            self.id,
+            start=start,
+            end=end,
+        )
 
     def __repr__(self) -> str:
         """Returns reader friendly representation."""
