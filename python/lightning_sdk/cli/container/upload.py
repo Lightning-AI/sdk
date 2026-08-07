@@ -39,7 +39,9 @@ def upload_container(
     platform: Optional[str] = "linux/amd64",
 ) -> None:
     """Upload a container to Lightning AI's container registry."""
-    _upload_container.callback(
+    callback = _upload_container.callback
+    assert callback is not None
+    callback(
         container=container,
         tag=tag,
         teamspace=teamspace,

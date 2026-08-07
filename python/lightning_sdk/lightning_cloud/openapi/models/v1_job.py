@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -60,6 +64,8 @@ class V1Job(object):
         'public_ip_address': 'str',
         'ready_at': 'datetime',
         'release_id': 'str',
+        'replace_requested': 'bool',
+        'replace_requested_at': 'datetime',
         'requires_maintenance': 'bool',
         'restart_count': 'int',
         'restart_timings': 'list[V1RestartTiming]',
@@ -98,6 +104,8 @@ class V1Job(object):
         'public_ip_address': 'publicIpAddress',
         'ready_at': 'readyAt',
         'release_id': 'releaseId',
+        'replace_requested': 'replaceRequested',
+        'replace_requested_at': 'replaceRequestedAt',
         'requires_maintenance': 'requiresMaintenance',
         'restart_count': 'restartCount',
         'restart_timings': 'restartTimings',
@@ -116,7 +124,7 @@ class V1Job(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, requires_maintenance: 'bool' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, replace_requested: 'bool' =None, replace_requested_at: 'datetime' =None, requires_maintenance: 'bool' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_id = None
         self._created_at = None
@@ -137,6 +145,8 @@ class V1Job(object):
         self._public_ip_address = None
         self._ready_at = None
         self._release_id = None
+        self._replace_requested = None
+        self._replace_requested_at = None
         self._requires_maintenance = None
         self._restart_count = None
         self._restart_timings = None
@@ -192,6 +202,10 @@ class V1Job(object):
             self.ready_at = ready_at
         if release_id is not None:
             self.release_id = release_id
+        if replace_requested is not None:
+            self.replace_requested = replace_requested
+        if replace_requested_at is not None:
+            self.replace_requested_at = replace_requested_at
         if requires_maintenance is not None:
             self.requires_maintenance = requires_maintenance
         if restart_count is not None:
@@ -625,6 +639,50 @@ class V1Job(object):
         """
 
         self._release_id = release_id
+
+    @property
+    def replace_requested(self) -> 'bool':
+        """Gets the replace_requested of this V1Job.  # noqa: E501
+
+        Set when a user asks to gracefully replace this replica (e.g. its machine requires maintenance). The deployment reconciler surges a replacement and drains this job once the replacement is ready.  # noqa: E501
+
+        :return: The replace_requested of this V1Job.  # noqa: E501
+        :rtype: bool
+        """
+        return self._replace_requested
+
+    @replace_requested.setter
+    def replace_requested(self, replace_requested: 'bool'):
+        """Sets the replace_requested of this V1Job.
+
+        Set when a user asks to gracefully replace this replica (e.g. its machine requires maintenance). The deployment reconciler surges a replacement and drains this job once the replacement is ready.  # noqa: E501
+
+        :param replace_requested: The replace_requested of this V1Job.  # noqa: E501
+        :type: bool
+        """
+
+        self._replace_requested = replace_requested
+
+    @property
+    def replace_requested_at(self) -> 'datetime':
+        """Gets the replace_requested_at of this V1Job.  # noqa: E501
+
+
+        :return: The replace_requested_at of this V1Job.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._replace_requested_at
+
+    @replace_requested_at.setter
+    def replace_requested_at(self, replace_requested_at: 'datetime'):
+        """Sets the replace_requested_at of this V1Job.
+
+
+        :param replace_requested_at: The replace_requested_at of this V1Job.  # noqa: E501
+        :type: datetime
+        """
+
+        self._replace_requested_at = replace_requested_at
 
     @property
     def requires_maintenance(self) -> 'bool':

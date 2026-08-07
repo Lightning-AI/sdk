@@ -145,9 +145,9 @@ class FakeSandboxClient:
         self.deleted_snapshot_ids.append(snapshot_id)
 
 
-def _invoke(args: list[str]) -> SimpleNamespace:
+def _invoke(args: list[str], input: str | None = None) -> SimpleNamespace:
     runner = CliRunner()
-    result = runner.invoke(main_cli, args, catch_exceptions=False)
+    result = runner.invoke(main_cli, args, input=input, catch_exceptions=False)
     return SimpleNamespace(exit_code=result.exit_code, output=result.output)
 
 
@@ -213,7 +213,7 @@ def test_sandbox_command_help_examples() -> None:
     )
     assert_help_contains("lightning sandbox start --help", "$ sandbox start sbx-42", "devbox")
     assert_help_contains("lightning sandbox update --help", "$ sandbox update sbx-42 --resume", "devbox")
-    assert_help_contains("lightning sandbox delete --help", "$ sandbox delete sbx-42", "Deleted sandbox sbx-42")
+    assert_help_contains("lightning sandbox delete --help", "$ sandbox delete sbx-42", "Sandbox deleted")
     assert_help_contains(
         "lightning sandbox connect --help",
         "$ sandbox connect sbx-42",
@@ -287,6 +287,7 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
         "runtime": "python",
         "image": None,
         "image_secret_ref": None,
+        "docker": False,
         "spot": True,
         "ports": [8888, "http"],
         "teamspace": "owner/teamspace",
@@ -294,6 +295,21 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
         "persistent": True,
         "timeout": 3600000,
     }
+
+
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_create_docker_flag(_mock_log_command, monkeypatch) -> None:
+    client = FakeSandboxClient()
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "create", "--name", "cli-sandbox", "--runtime", "node24", "--docker"])
+
+    assert result.exit_code == 0
+    assert client.create_kwargs is not None
+    assert client.create_kwargs["docker"] is True
+    # The CLI forwards the base runtime; the SDK maps it to the -docker variant.
+    assert client.create_kwargs["runtime"] == "node24"
 
 
 @mock.patch("lightning_sdk.cli.utils.logging._log_command")
@@ -401,9 +417,26 @@ def test_sandbox_lifecycle_commands(_mock_log_command, monkeypatch) -> None:
     assert _invoke(["sandbox", "start", "sbx-1"]).exit_code == 0
     assert instance.resumed is True
 
-    assert _invoke(["sandbox", "delete", "sbx-1"]).exit_code == 0
+    result = _invoke(["sandbox", "delete", "sbx-1", "-y"])
+
+    assert result.exit_code == 0
+    assert result.output == "Sandbox deleted\n"
     assert instance.deleted is True
     assert client.get_ids == ["sbx-1", "sbx-1", "sbx-1"]
+
+
+@mock.patch("lightning_sdk.cli.utils.logging._log_command")
+@mock_command_logging
+def test_sandbox_delete_prompts_by_default(_mock_log_command, monkeypatch) -> None:
+    instance = FakeSandboxInstance()
+    client = FakeSandboxClient(instance)
+    monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
+
+    result = _invoke(["sandbox", "delete", "sbx-1"], input="y\n")
+
+    assert result.exit_code == 0
+    assert result.output == "Are you sure you want to delete? [y/N]: y\nSandbox deleted\n"
+    assert instance.deleted is True
 
 
 @mock.patch("lightning_sdk.cli.utils.logging._log_command")
@@ -600,8 +633,8 @@ def test_sandbox_snapshot_delete(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = _invoke(["sandbox", "snapshot", "delete", "snap-9"])
+    result = _invoke(["sandbox", "snapshot", "delete", "snap-9", "-y"])
 
     assert result.exit_code == 0
-    assert "Deleted snapshot snap-9" in result.output
+    assert result.output == "Snapshot deleted\n"
     assert client.deleted_snapshot_ids == ["snap-9"]

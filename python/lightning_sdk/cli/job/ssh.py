@@ -6,7 +6,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.status import Status
 
@@ -31,27 +31,34 @@ def _ssh_user_for_job_id(job_id: str) -> str:
         "If not specified, uses the configured default teamspace."
     ),
 )
+@click.option("--rank", type=int, default=None, help="Machine rank for a multi-machine job. Defaults to 0.")
 def ssh_job(
     name: str,
     teamspace: Optional[str] = None,
+    rank: Optional[int] = None,
 ) -> None:
     """SSH into a running job.
 
     Example:
         lightning job ssh my-job
     """
-    ssh_impl(name=name, teamspace=teamspace)
+    ssh_impl(name=name, teamspace=teamspace, rank=rank)
 
 
 def ssh_impl(
     name: Optional[str],
     teamspace: Optional[str],
+    rank: Optional[int] = None,
 ) -> None:
     if not name:
         raise click.UsageError("Missing job name. Pass NAME.")
 
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job(name, resolved_teamspace)
+    if job.is_multi_machine is True:
+        job = resolve_job_machine(job, rank if rank is not None else 0)
+    elif rank is not None:
+        raise click.UsageError("--rank is only supported for multi-machine jobs.")
 
     if job.status != Status.Running:
         raise click.ClickException(

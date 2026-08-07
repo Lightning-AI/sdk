@@ -1,20 +1,46 @@
 from unittest.mock import MagicMock, patch
 
+import rich_click as click
 from click.testing import CliRunner
 
+from lightning_sdk.cli.job import register_commands
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 @mock_command_logging
 def test_job_delete_help() -> None:
-    assert_help_contains(
-        "lightning job delete --help", "Usage: lightning job delete", "Delete a job.", "uses the configured"
+    text = assert_help_contains(
+        "lightning job delete --help",
+        "Usage: lightning job delete [OPTIONS] NAME",
+        "Delete a job.",
+        "--yes",
+        "-y",
     )
+    assert "--json" not in text
+
+
+def test_delete_job_uses_shared_command() -> None:
+    resource = MagicMock()
+    with patch("lightning_sdk.job.Job", return_value=resource) as job_cls:
+        group = click.Group()
+        register_commands(group)
+        result = CliRunner().invoke(group, ["delete", "my-job", "-y"])
+
+    assert result.exit_code == 0
+    assert result.output == "Job deleted\n"
+    job_cls.assert_called_once_with(name="my-job", teamspace=None)
+    resource.delete.assert_called_once_with()
 
 
 @mock_command_logging
 def test_jobs_delete_help() -> None:
-    assert_help_contains("lightning jobs delete --help", "Usage: lightning jobs delete", "Delete a job.")
+    assert_help_contains(
+        "lightning jobs delete --help",
+        "Usage: lightning jobs delete [OPTIONS] NAME",
+        "Delete a job.",
+        "--yes",
+        "-y",
+    )
 
 
 @mock_command_logging
@@ -37,40 +63,6 @@ def test_delete_job_legacy_help() -> None:
         "Deprecation warning:",
         "Use `lightning job delete` instead of `lightning delete job`.",
         "Usage: lightning delete job [OPTIONS] NAME",
+        "--yes",
+        "-y",
     )
-
-
-@mock_command_logging
-def test_job_delete_resolves_exact_name() -> None:
-    from lightning_sdk.cli.job.delete import delete_job
-
-    teamspace = MagicMock()
-    job = MagicMock()
-    job.name = "train"
-    with patch("lightning_sdk.cli.job.delete.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
-        "lightning_sdk.cli.job.delete.resolve_job", return_value=job
-    ) as resolve_job:
-        result = CliRunner().invoke(delete_job, ["train", "--teamspace", "org/teamspace"])
-
-    assert result.exit_code == 0
-    resolve_teamspace.assert_called_once_with("org/teamspace")
-    resolve_job.assert_called_once_with("train", teamspace)
-    job.delete.assert_called_once_with()
-
-
-def test_job_delete_json() -> None:
-    import json
-
-    from lightning_sdk.cli.job.delete import delete_job
-
-    teamspace = MagicMock()
-    job = MagicMock()
-    job.name = "train"
-    with patch("lightning_sdk.cli.job.delete.resolve_teamspace", return_value=teamspace), patch(
-        "lightning_sdk.cli.job.delete.resolve_job", return_value=job
-    ):
-        result = CliRunner().invoke(delete_job, ["train", "--teamspace", "org/teamspace", "--json"])
-
-    assert result.exit_code == 0, result.output
-    job.delete.assert_called_once_with()
-    assert json.loads(result.output) == {"name": "train", "deleted": True}

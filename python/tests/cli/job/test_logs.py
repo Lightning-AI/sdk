@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
+from lightning_sdk.mmt import MMT
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
@@ -76,6 +77,52 @@ def test_job_logs_follows_with_options() -> None:
     assert result.output == "line 1\nline 2\n"
     job.logs.assert_called_once_with(
         follow=True, tail=10, rank=2, timestamps=True, since=None, until=None, query=None, severity=None
+    )
+
+
+@mock_command_logging
+def test_job_logs_selects_mmt_rank() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
+    machine = MagicMock()
+    machine.logs.return_value = "rank one"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job",
+        return_value=mmt,
+    ), patch(
+        "lightning_sdk.cli.job.logs.resolve_job_machine",
+        return_value=machine,
+    ) as resolve_rank:
+        result = CliRunner().invoke(logs_job, ["distributed", "--rank", "1"])
+
+    assert result.exit_code == 0
+    assert "rank one" in result.output
+    resolve_rank.assert_called_once_with(mmt, 1)
+    machine.logs.assert_called_once_with(
+        follow=False, tail=None, rank=0, timestamps=False, since=None, until=None, query=None, severity=None
+    )
+
+
+@mock_command_logging
+def test_job_logs_merges_mmt_without_rank() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
+    mmt.logs.return_value = "[distributed-0] zero\n[distributed-1] one"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job",
+        return_value=mmt,
+    ):
+        result = CliRunner().invoke(logs_job, ["distributed"])
+
+    assert result.exit_code == 0
+    assert "distributed-0" in result.output
+    assert "distributed-1" in result.output
+    mmt.logs.assert_called_once_with(
+        follow=False, tail=None, timestamps=False, since=None, until=None, query=None, severity=None
     )
 
 

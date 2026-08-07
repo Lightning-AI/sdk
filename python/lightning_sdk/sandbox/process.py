@@ -132,7 +132,7 @@ def _default_ws_factory(
     :meth:`PtyHandle.wait_for_connection`.
     """
     try:
-        import websocket  # type: ignore[import-not-found]
+        import websocket
     except ImportError as e:
         raise RuntimeError(
             "PTY support requires the 'websocket-client' package. Install with: pip install websocket-client"

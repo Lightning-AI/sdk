@@ -5,7 +5,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -94,6 +94,12 @@ def _resolve_secret_type(secret_type: Union[str, SecretType]) -> V1SecretType:
         valid = ", ".join(repr(member.value) for member in SecretType)
         raise ValueError(f"Invalid secret_type {secret_type!r}. Must be one of: {valid}.") from None
     return _SECRET_TYPE_TO_API[resolved]
+
+
+def _secret_matches_type(secret: V1Secret, secret_type: V1SecretType) -> bool:
+    if secret_type == V1SecretType.UNSPECIFIED:
+        return secret.type in (None, V1SecretType.UNSPECIFIED)
+    return secret.type == secret_type
 
 
 class TeamspaceApi:
@@ -558,15 +564,20 @@ class TeamspaceApi:
                         if not machine:
                             matched_accelerators.append(cluster_machine)
                             continue
+                        machine_family = (machine.family or "").lower()
                         if (
-                            cluster_machine.resources.gpu == machine.accelerator_count
-                            or cluster_machine.resources.cpu == machine.accelerator_count
-                        ) and any(
-                            machine.family.lower() in s
-                            for s in (
-                                cluster_machine.slug,
-                                cluster_machine.slug_multi_cloud,
-                                cluster_machine.instance_id,
+                            machine_family
+                            and (
+                                cluster_machine.resources.gpu == machine.accelerator_count
+                                or cluster_machine.resources.cpu == machine.accelerator_count
+                            )
+                            and any(
+                                machine_family in s
+                                for s in (
+                                    cluster_machine.slug,
+                                    cluster_machine.slug_multi_cloud,
+                                    cluster_machine.instance_id,
+                                )
                             )
                         ):
                             matched_accelerators.append(cluster_machine)
@@ -632,7 +643,7 @@ class TeamspaceApi:
         response = self._client.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
 
-    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
         """Fetch the directory tree at ``path`` from the teamspace artifact REST API.
 
         Args:
@@ -792,6 +803,7 @@ class TeamspaceApi:
         )
         total_length = int(r.headers.get("content-length", 0))
 
+        pbar: Optional[tqdm] = None
         if progress_bar:
             pbar = tqdm(
                 desc=f"Downloading {os.path.split(path)[1]}",
@@ -801,17 +813,14 @@ class TeamspaceApi:
                 unit_divisor=1024,
             )
 
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
-
         target_dir = os.path.split(target_path)[0]
         if target_dir:
             os.makedirs(target_dir, exist_ok=True)
         with open(target_path, "wb") as f:
             for chunk in r.iter_content(chunk_size=4096 * 8):
                 f.write(chunk)
-                pbar_update(len(chunk))
+                if pbar is not None:
+                    pbar.update(len(chunk))
 
     def _download_single_file(
         self,
@@ -821,7 +830,7 @@ class TeamspaceApi:
         teamspace_id: str,
         token: str,
         cloud_account: Optional[str] = None,
-        pbar: Optional[tqdm] = True,
+        pbar: Optional[tqdm] = None,
     ) -> None:
         """Download a single file from Teamspace drive with progress tracking.
 
@@ -879,7 +888,7 @@ class TeamspaceApi:
         """
         # TODO: Update this endpoint to permit basic auth
         if num_workers is None:
-            num_workers = os.cpu_count() * 4
+            num_workers = (os.cpu_count() or 1) * 4
 
         # Normalize the path
         path = path.strip("/")
@@ -941,7 +950,11 @@ class TeamspaceApi:
         # this returns encrypted values for security. It doesn't make sense to show them,
         # so we just return a placeholder
         # not a security issue to replace in the client as we get the encrypted values from the server.
-        return {secret.name: "***REDACTED***" for secret in secrets if secret.type == V1SecretType.UNSPECIFIED}
+        return {
+            secret.name: "***REDACTED***"
+            for secret in secrets
+            if _secret_matches_type(secret, V1SecretType.UNSPECIFIED)
+        }
 
     def set_secret(
         self,
@@ -965,9 +978,31 @@ class TeamspaceApi:
         resolved_type = _resolve_secret_type(secret_type)
         secrets = self._get_secrets(teamspace_id)
         for secret in secrets:
-            if secret.name == key:
+            if secret.name == key and _secret_matches_type(secret, resolved_type):
                 return self._update_secret(teamspace_id, secret.id, value)
         return self._create_secret(teamspace_id, key, value, secret_type=resolved_type)
+
+    def delete_secret(self, teamspace_id: str, key: str) -> None:
+        """Delete a generic secret from a teamspace.
+
+        Args:
+            teamspace_id: ID of the teamspace that owns the secret.
+            key: The generic secret name.
+
+        Raises:
+            ValueError: If no generic secret with the given name exists.
+        """
+        secret = next(
+            (
+                secret
+                for secret in self._get_secrets(teamspace_id)
+                if secret.name == key and _secret_matches_type(secret, V1SecretType.UNSPECIFIED)
+            ),
+            None,
+        )
+        if secret is None:
+            raise ValueError(f"Generic teamspace secret {key!r} was not found.")
+        self._client.secret_service_delete_secret(project_id=teamspace_id, id=secret.id)
 
     def _get_secrets(self, teamspace_id: str) -> List[V1Secret]:
         """Fetch all raw secret objects for the teamspace.

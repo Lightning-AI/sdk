@@ -51,13 +51,14 @@ class Pipeline:
         self._stop_on_failure = stop_on_failure
         self._interruption_retries = interruption_retries
 
-        self._teamspace = _resolve_teamspace(
+        resolved_teamspace = _resolve_teamspace(
             teamspace=teamspace,
             org=org,
             user=user,
         )
-        if self._teamspace is None:
+        if resolved_teamspace is None:
             raise RuntimeError("Could not resolve teamspace")
+        self._teamspace = resolved_teamspace
 
         raise_access_error_if_not_allowed(AccessibleResource.Pipelines, self._teamspace.id)
 

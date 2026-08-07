@@ -6,10 +6,8 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
+from lightning_sdk.cli.utils.resource_resolution import resolve_job_machine, resolve_mmt, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
-from lightning_sdk.job import Job
-from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
 
 _SSH_HOST = "ssh.lightning.ai"
@@ -20,30 +18,6 @@ def _ssh_user_for_job_id(job_id: str) -> str:
     """Map a stored job id (``job_<ulid>``) to the SSH gateway user (``j_<ulid>``)."""
     suffix = job_id[len(_JOB_ID_PREFIX) :] if job_id.startswith(_JOB_ID_PREFIX) else job_id
     return f"j_{suffix}"
-
-
-def _machine_for_rank(mmt: MMT, rank: int) -> Job:
-    machines = mmt.machines
-    if not machines:
-        raise click.ClickException(f"Multi-machine job '{mmt.name}' has no machines to SSH into.")
-
-    expected = f"{mmt.name}-{rank}"
-    for machine in machines:
-        if machine.name == expected:
-            return machine
-
-    prefix = f"{mmt.name}-"
-    available_ranks = []
-    for machine in machines:
-        if not machine.name.startswith(prefix):
-            continue
-        suffix = machine.name[len(prefix) :]
-        if suffix.isdigit():
-            available_ranks.append(int(suffix))
-    available = ", ".join(str(r) for r in sorted(available_ranks))
-    raise click.ClickException(
-        f"Rank {rank} not found on multi-machine job '{mmt.name}'. Available ranks: {available or 'none'}."
-    )
 
 
 @click.command("ssh", cls=LightningCommand)
@@ -84,7 +58,7 @@ def ssh_impl(
 ) -> None:
     resolved_teamspace = resolve_teamspace(teamspace)
     mmt = resolve_mmt(name, resolved_teamspace)
-    job = _machine_for_rank(mmt, rank)
+    job = resolve_job_machine(mmt, rank)
 
     if job.status != Status.Running:
         raise click.ClickException(

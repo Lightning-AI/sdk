@@ -1,6 +1,19 @@
 import os
 from dataclasses import dataclass
-from typing import Any, AsyncGenerator, ClassVar, Dict, Generator, List, Literal, Optional, Tuple, Union
+from typing import (
+    Any,
+    AsyncGenerator,
+    ClassVar,
+    Coroutine,
+    Dict,
+    Generator,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 from lightning_sdk.api import TeamspaceApi, UserApi
 from lightning_sdk.api.llm_api import LLMApi, authenticate
@@ -44,7 +57,7 @@ Status: {self.status}
 Context Length: {self.context_length:,} tokens
 Pricing: ${self.prompt_price:.2e}/prompt token, ${self.completion_price:.2e}/completion token
 Performance: {self.throughput:.1f} tokens/sec, {self.time_to_first_token:.1f}ms TTFT
-Capabilities: Images={self.capabilities.get('images', False)}, Files={self.capabilities.get('files', False)}
+Capabilities: Images={self.capabilities.get("images", False)}, Files={self.capabilities.get("files", False)}
         """.strip()
 
 
@@ -100,10 +113,10 @@ class LLM:
             LLM._llm_api_cache[teamspace] = LLMApi()
         self._llm_api = LLM._llm_api_cache[teamspace]
 
-        self._context_length = None
+        self._context_length: Optional[int] = None
         self._model_id = self._get_model_id()
-        self._conversations = {}
-        self._metadata = None
+        self._conversations: Dict[str, str] = {}
+        self._metadata: Optional[ModelMetadata] = None
 
     @property
     def name(self) -> str:
@@ -170,12 +183,14 @@ class LLM:
         Raises:
             ValueError: If the model metadata cannot be retrieved.
         """
-        context_info = self._public_assistants.get(model)
+        model_key = model or f"{self._model_provider}/{self._model_name}"
+        context_info = (self._public_assistants or {}).get(model_key)
         if context_info and "context_length" in context_info:
             return int(context_info["context_length"])
 
         try:
-            temp_metadata = self._llm_api.get_model_metadata(self._teamspace_id, model)
+            metadata_name = model.split("/", maxsplit=1)[-1] if model else self._model_name
+            temp_metadata = self._llm_api.get_model_metadata(self._teamspace_id, metadata_name)
             return int(temp_metadata.context_length)
         except Exception as e:
             raise ValueError(f"Cannot access context length of model '{model}': {e}") from e
@@ -209,7 +224,8 @@ class LLM:
                             f"Teamspace {teamspace_owner}/{teamspace_name} not found."
                             "Please verify owner name (username or organization) and the teamspace name are correct."
                         ) from err
-
+                    if t is None:
+                        raise ValueError(f"Teamspace {teamspace_owner}/{teamspace_name} not found.") from None
                     os.environ["LIGHTNING_TEAMSPACE"] = t.name
                     os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
 
@@ -217,8 +233,11 @@ class LLM:
                 # if only org name is given, use the default teamspace
                 try:
                     org = _resolve_org(teamspace_name)
+                    if org is None:
+                        raise ValueError(f"Organization {teamspace_name} not found.")
                     teamspace_api = TeamspaceApi()
-                    teamspace = teamspace_api.list_teamspaces(org.id)[0]
+                    teamspaces = teamspace_api.list_teamspaces(org.id) or []
+                    teamspace = teamspaces[0]
 
                 except Exception as err:
                     raise ValueError(
@@ -239,7 +258,8 @@ class LLM:
                         teamspace_api = TeamspaceApi()
                         user_api = UserApi()
                         authed_user = user_api._client.auth_service_get_user()
-                        default_teamspace = teamspace_api.list_teamspaces(owner_id=authed_user.id)[0]
+                        teamspaces = teamspace_api.list_teamspaces(owner_id=authed_user.id) or []
+                        default_teamspace = teamspaces[0]
                         teamspace_name = default_teamspace.name
                         teamspace_id = default_teamspace.id
                         os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = teamspace_id
@@ -267,7 +287,10 @@ class LLM:
                 LLM._public_assistants = PUBLIC_MODELS
         # Always assign to the current instance
         self._teamspace_name = LLM._cached_auth_info["teamspace_name"]
-        self._teamspace_id = LLM._cached_auth_info["teamspace_id"]
+        teamspace_id = LLM._cached_auth_info["teamspace_id"]
+        if teamspace_id is None:
+            raise ValueError("Teamspace ID is missing from the resolved authentication information.")
+        self._teamspace_id = teamspace_id
         self._user_name = LLM._cached_auth_info["user_name"]
         self._user_id = LLM._cached_auth_info["user_id"]
         self._org_name = LLM._cached_auth_info["org_name"]
@@ -402,7 +425,9 @@ class LLM:
             else:
                 yield line.choices[0].delta.content
 
-    async def _async_stream_text(self, output: str, full_response: bool = False) -> AsyncGenerator[str, None]:
+    async def _async_stream_text(
+        self, output: AsyncGenerator[V1ConversationResponseChunk, None], full_response: bool = False
+    ) -> AsyncGenerator[Any, None]:
         async for chunk in output:
             if chunk.choices and chunk.choices[0].delta:
                 if full_response:
@@ -422,13 +447,14 @@ class LLM:
         full_response: bool = False,
         reasoning_effort: Optional[Literal["none", "low", "medium", "high"]] = None,
         **kwargs: Any,
-    ) -> Union[str, AsyncGenerator[str, None]]:
+    ) -> Union[str, V1ConversationResponseChunk, AsyncGenerator[Any, None]]:
+        normalized_images = [images] if isinstance(images, str) else images
         conversation_id = self._conversations.get(conversation) if conversation else None
         output = await self._llm_api.async_start_conversation(
             prompt=prompt,
             system_prompt=system_prompt,
             max_completion_tokens=max_completion_tokens,
-            images=images,
+            images=normalized_images,
             assistant_id=self._model_id,
             conversation_id=conversation_id,
             billing_project_id=self._teamspace_id,
@@ -438,12 +464,13 @@ class LLM:
             **kwargs,
         )
         if not stream:
+            response = cast(V1ConversationResponseChunk, output)
             if conversation and not conversation_id:
-                self._conversations[conversation] = output.conversation_id
+                self._conversations[conversation] = response.conversation_id
             if full_response:
-                return output
-            return output.choices[0].delta.content
-        return self._async_stream_text(output, full_response)
+                return response
+            return response.choices[0].delta.content
+        return self._async_stream_text(cast(AsyncGenerator[V1ConversationResponseChunk, None], output), full_response)
 
     def chat(
         self,
@@ -459,7 +486,11 @@ class LLM:
         reasoning_effort: Optional[Literal["none", "low", "medium", "high"]] = None,
         **kwargs: Any,
     ) -> Union[
-        V1ConversationResponseChunk, Generator[V1ConversationResponseChunk, None, None], str, Generator[str, None, None]
+        V1ConversationResponseChunk,
+        Generator[V1ConversationResponseChunk, None, None],
+        str,
+        Generator[str, None, None],
+        Coroutine[Any, Any, Union[str, V1ConversationResponseChunk, AsyncGenerator[Any, None]]],
     ]:
         if reasoning_effort is not None and reasoning_effort not in ["none", "low", "medium", "high"]:
             raise ValueError("reasoning_effort must be 'none', 'low', 'medium', 'high', or None")
@@ -467,10 +498,9 @@ class LLM:
         if conversation and conversation not in self._conversations:
             self._get_conversations()
 
-        if images:
-            if isinstance(images, str):
-                images = [images]
-            for image in images:
+        normalized_images = [images] if isinstance(images, str) else images
+        if normalized_images:
+            for image in normalized_images:
                 if not isinstance(image, str):
                     raise NotImplementedError(f"Image type {type(image)} are not supported yet.")
 
@@ -481,7 +511,7 @@ class LLM:
                 prompt,
                 system_prompt,
                 max_completion_tokens,
-                images,
+                normalized_images,
                 conversation,
                 metadata,
                 stream,
@@ -494,7 +524,7 @@ class LLM:
             prompt=prompt,
             system_prompt=system_prompt,
             max_completion_tokens=max_completion_tokens,
-            images=images,
+            images=normalized_images,
             assistant_id=self._model_id,
             conversation_id=conversation_id,
             billing_project_id=self._teamspace_id,
@@ -506,34 +536,39 @@ class LLM:
             **kwargs,
         )
         if not stream:
+            response = cast(V1ConversationResponseChunk, output)
             if conversation and not conversation_id:
-                self._conversations[conversation] = output.conversation_id
+                self._conversations[conversation] = response.conversation_id
             if full_response:
-                return output
-            return output.choices[0].delta.content
-        return self._stream_chat_response(output, conversation=conversation, full_response=full_response)
+                return response
+            return response.choices[0].delta.content
+        return self._stream_chat_response(
+            cast(Generator[V1ConversationResponseChunk, None, None], output),
+            conversation=conversation,
+            full_response=full_response,
+        )
 
-    def list_conversations(self) -> List[Dict]:
+    def list_conversations(self) -> List[str]:
         """Return the names of all conversations for this model.
 
         Returns:
-            List[Dict]: Conversation names tracked for the current model instance.
+            List[str]: Conversation names tracked for the current model instance.
         """
         self._get_conversations()
         return list(self._conversations.keys())
 
-    def _get_conversation_messages(self, conversation_id: str) -> Optional[str]:
+    def _get_conversation_messages(self, conversation_id: str) -> List[Any]:
         """Fetch the raw message list for a conversation by its ID.
 
         Args:
             conversation_id: The API-level ID of the conversation to retrieve.
 
         Returns:
-            Optional[str]: The conversation messages as returned by the LLM API.
+            List[Any]: The conversation messages as returned by the LLM API.
         """
         return self._llm_api.get_conversation(assistant_id=self._model_id, conversation_id=conversation_id)
 
-    def get_history(self, conversation: str) -> Optional[List[Dict]]:
+    def get_history(self, conversation: str) -> List[Dict[str, Any]]:
         """Return the message history of a named conversation as a list of role/content dicts.
 
         Args:

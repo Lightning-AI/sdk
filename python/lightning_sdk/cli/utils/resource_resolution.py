@@ -3,6 +3,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
+from lightning_sdk.deployment import Deployment
 from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType
 from lightning_sdk.mmt import MMT
@@ -56,6 +57,18 @@ def resolve_studio(name: Optional[str], teamspace: Teamspace) -> Studio:
         raise click.UsageError(f"Could not resolve studio{detail}. Pass --name STUDIO.") from ex
 
 
+def resolve_deployment(name: Optional[str], teamspace: Teamspace) -> Deployment:
+    if not name:
+        raise click.UsageError("Missing deployment name. Pass --name DEPLOYMENT.")
+    try:
+        deployment = Deployment(name=name, teamspace=teamspace)
+    except ValueError as ex:
+        raise click.UsageError(f"Could not resolve deployment {name!r} in teamspace {teamspace.name!r}.") from ex
+    if not deployment._is_created:
+        raise click.UsageError(f"Could not resolve deployment {name!r} in teamspace {teamspace.name!r}.")
+    return deployment
+
+
 def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
     if not name:
         raise click.UsageError("Missing job name. Pass JOB.")
@@ -63,6 +76,36 @@ def resolve_job(name: Optional[str], teamspace: Teamspace) -> Job:
         return Job(name=name, teamspace=teamspace)
     except ValueError as ex:
         raise click.UsageError(f"Could not resolve job '{name}' in teamspace '{teamspace.name}'.") from ex
+
+
+def resolve_job_machine(job: Job, rank: int) -> Job:
+    """Resolve one machine in a multi-machine job by rank."""
+    machines = job.machines
+    if not machines:
+        raise click.ClickException(f"Job '{job.name}' has no machines.")
+
+    for machine in machines:
+        if machine.rank == rank:
+            return machine
+
+    # Fallback for older naming when rank is missing on the machine object.
+    expected = f"{job.name}-{rank}"
+    for machine in machines:
+        if machine.name == expected:
+            return machine
+
+    available_ranks: set[int] = set()
+    prefix = f"{job.name}-"
+    for machine in machines:
+        if machine.rank is not None:
+            available_ranks.add(machine.rank)
+            continue
+        if machine.name.startswith(prefix):
+            suffix = machine.name[len(prefix) :]
+            if suffix.isdigit():
+                available_ranks.add(int(suffix))
+    available = ", ".join(str(value) for value in sorted(available_ranks))
+    raise click.ClickException(f"Rank {rank} not found on job '{job.name}'. Available ranks: {available or 'none'}.")
 
 
 def resolve_mmt(name: Optional[str], teamspace: Teamspace) -> MMT:

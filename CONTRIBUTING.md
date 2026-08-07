@@ -26,6 +26,14 @@ cd python/tests
 pytest . -vv -s
 ```
 
+Type-check the handwritten Python SDK and CLI code (the generated cloud client
+is excluded):
+
+```bash
+cd python
+uv run --group typing --extra serve mypy
+```
+
 Build and test the TypeScript package:
 
 ```bash

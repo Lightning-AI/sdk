@@ -79,10 +79,10 @@ def condition_label(condition: object) -> Optional[str]:
     parts = []
     if getattr(condition, "resource_owner", None):
         parts.append("own resources only")
-    if getattr(condition, "resource_id", None):
-        parts.append(f"resource {condition.resource_id}")
-    if getattr(condition, "cloudspace_id", None):
-        parts.append(f"studio {condition.cloudspace_id}")
-    if getattr(condition, "project_id", None):
-        parts.append(f"teamspace {condition.project_id}")
+    if resource_id := getattr(condition, "resource_id", None):
+        parts.append(f"resource {resource_id}")
+    if cloudspace_id := getattr(condition, "cloudspace_id", None):
+        parts.append(f"studio {cloudspace_id}")
+    if project_id := getattr(condition, "project_id", None):
+        parts.append(f"teamspace {project_id}")
     return ", ".join(parts) or None

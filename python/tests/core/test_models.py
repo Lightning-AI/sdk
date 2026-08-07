@@ -235,7 +235,7 @@ def test_upload_model_in_studio_with_org(
     mock_ts = mock.MagicMock()
     mock_get_teamspace.return_value = mock_ts
 
-    upload_model("model_name")
+    upload_model("model_name", path=".")
     mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
     mock_ts.upload_model.assert_called_once_with(
         cloud_account=None,
@@ -265,7 +265,7 @@ def test_upload_model_in_studio_with_org_and_experiment(
 
     experiment = MyDummyExperiment(id="abc")
 
-    upload_model("model_name", experiment=experiment)
+    upload_model("model_name", path=".", experiment=experiment)
     mock_parse_org_teamspace_model_version.assert_called_once_with("org-abc/ts-abc/model_name")
     mock_ts.upload_model.assert_called_once_with(
         cloud_account=None,
@@ -293,7 +293,7 @@ def test_upload_model_in_studio_with_user(
     mock_ts = mock.MagicMock()
     mock_get_teamspace.return_value = mock_ts
 
-    upload_model("model_name")
+    upload_model("model_name", path=".")
     mock_parse_org_teamspace_model_version.assert_called_once_with("user-abc/ts-abc/model_name")
     mock_ts.upload_model.assert_called_once_with(
         cloud_account=None,

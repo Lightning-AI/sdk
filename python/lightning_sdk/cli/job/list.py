@@ -1,10 +1,17 @@
 """Job list command."""
 
+from contextlib import suppress
 from typing import Optional
 
 import rich_click as click
+from rich.console import Console
+from rich.table import Table
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
+from lightning_sdk.job import Job
+from lightning_sdk.models import _list_teamspaces
 
 
 @click.command("list", cls=LightningCommand)
@@ -38,7 +45,55 @@ def list_jobs(
     sort_by: Optional[str] = None,
     as_json: bool = False,
 ) -> None:
-    """List jobs for a given teamspace."""
-    from lightning_sdk.cli.legacy.list import jobs
+    """List jobs for a given teamspace.
 
-    jobs.callback(teamspace=teamspace, all=all, sort_by=sort_by, as_json=as_json)
+    Includes both single- and multi-machine jobs.
+    """
+    resources: list[Job] = []
+    if all and not teamspace:
+        for teamspace_slug in _list_teamspaces():
+            resolved = resolve_teamspace(teamspace_slug)
+            resources.extend(resolved.jobs)
+    else:
+        resolved = resolve_teamspace(teamspace)
+        resources.extend(resolved.jobs)
+
+    rows = []
+    for job in resources:
+        job._prevent_refetch_latest = True
+        with suppress(RuntimeError):
+            rows.append(
+                {
+                    "name": job.name,
+                    "teamspace": f"{job.teamspace.owner.name}/{job.teamspace.name}",
+                    "studio": job.studio_name,
+                    "image": job.image,
+                    "status": str(job.status) if job.status is not None else None,
+                    "machine": str(job.machine),
+                    "num_machines": getattr(job, "num_machines", 1),
+                    "total_cost": round(job.total_cost, 3),
+                    "_cloud_account": str(getattr(job, "cloud_account", "") or ""),
+                }
+            )
+
+    sort_key = "_cloud_account" if sort_by == "cloud-account" else sort_by or "name"
+    rows.sort(key=lambda row: str(row.get(sort_key) or ""))
+    if as_json:
+        echo_json([{key: value for key, value in row.items() if not key.startswith("_")} for row in rows])
+        return
+
+    table = Table(pad_edge=True)
+    for column in ("Name", "Teamspace", "Studio", "Image", "Status", "Machine", "Num Machines", "Total Cost"):
+        table.add_column(column)
+    for row in rows:
+        table.add_row(
+            str(row["name"] or ""),
+            str(row["teamspace"] or ""),
+            str(row["studio"] or ""),
+            str(row["image"] or ""),
+            str(row["status"] or ""),
+            str(row["machine"] or ""),
+            str(row["num_machines"]),
+            f"{row['total_cost']:.3f}",
+        )
+    Console().print(table)

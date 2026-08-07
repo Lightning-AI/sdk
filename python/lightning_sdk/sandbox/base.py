@@ -41,6 +41,36 @@ _sandbox_config: dict[str, Any] = {}
 _sandbox_config.update(SandboxConfig.from_env().to_api_dict())
 _api = SandboxApi(_sandbox_config)
 
+#: Suffix identifying the Docker-in-gVisor variant of a curated runtime. Their
+#: images carry the ``ai.lightning.sandbox.docker=true`` OCI label, which is what
+#: the control plane / node agent gate Docker enablement on.
+DOCKER_RUNTIME_SUFFIX = "-docker"
+
+#: Runtime used when ``docker=True`` is requested without an explicit ``runtime``.
+DEFAULT_DOCKER_RUNTIME = "node24" + DOCKER_RUNTIME_SUFFIX
+
+#: Curated runtimes that ship Docker. Informational: the backend owns the
+#: authoritative list (``GRID_CLUSTER_BAREMETAL_MACHINE_IMAGE_SANDBOX_RUNTIMES``),
+#: so a valid ``docker=True`` runtime is not restricted to these.
+DOCKER_RUNTIMES = (
+    "node22" + DOCKER_RUNTIME_SUFFIX,
+    "node24" + DOCKER_RUNTIME_SUFFIX,
+    "python313" + DOCKER_RUNTIME_SUFFIX,
+)
+
+
+def _docker_runtime(runtime: str | None) -> str:
+    """Map a curated runtime to its Docker-in-gVisor variant.
+
+    ``None`` resolves to :data:`DEFAULT_DOCKER_RUNTIME`; a runtime that already
+    ends in :data:`DOCKER_RUNTIME_SUFFIX` is returned unchanged.
+    """
+    if not runtime:
+        return DEFAULT_DOCKER_RUNTIME
+    if runtime.endswith(DOCKER_RUNTIME_SUFFIX):
+        return runtime
+    return runtime + DOCKER_RUNTIME_SUFFIX
+
 
 def _resolve_sandbox_api(
     *,
@@ -118,6 +148,7 @@ def create_sandbox(
     runtime: str | None = None,
     image: str | None = None,
     image_secret_ref: str | None = None,
+    docker: bool = False,
     spot: bool = False,
     ports: list[int | str] | None = None,
     project_id: str | None = None,
@@ -145,6 +176,16 @@ def create_sandbox(
     ``image_secret_ref`` — the name of a project-scoped Docker-registry Secret the
     control plane resolves to pull credentials; leave it unset for public images.
 
+    ``docker=True`` provisions a sandbox that can build and run Docker containers
+    (``docker`` / ``docker compose``): a rootful Docker daemon is started for you
+    at boot, so no ``dockerd`` bring-up is needed inside the sandbox. It selects
+    the Docker-in-gVisor variant of the runtime (e.g. ``"node24"`` →
+    ``"node24-docker"``), defaulting to :data:`DEFAULT_DOCKER_RUNTIME` when no
+    ``runtime`` is given. It cannot be combined with ``image`` (a custom image
+    opts into Docker via its own ``ai.lightning.sandbox.docker=true`` OCI label)
+    or with ``snapshot_id`` (the runtime is inherited from the snapshot). Because
+    dockerd runs with ``--bridge=none``, containers should use ``--network=host``.
+
     ``network_policy`` is create-time only: omit for open egress (``allow-all``),
     pass ``"deny-all"``, or a :class:`~lightning_sdk.sandbox.network_policy.NetworkPolicy`
     CIDR allowlist. Restored snapshots inherit the source policy unless overridden.
@@ -157,6 +198,17 @@ def create_sandbox(
         raise ValueError("Pass only one of 'runtime' and 'image' (they are mutually exclusive).")
     if image_secret_ref and not image:
         raise ValueError("'image_secret_ref' is only valid together with 'image'.")
+    if docker:
+        if image:
+            raise ValueError(
+                "'docker=True' cannot be combined with 'image'. A custom image enables Docker "
+                "by carrying the ai.lightning.sandbox.docker=true OCI label; build it in and drop 'docker'."
+            )
+        if snapshot_id:
+            raise ValueError(
+                "'docker=True' cannot be combined with 'snapshot_id' (the runtime is inherited from the snapshot)."
+            )
+        runtime = _docker_runtime(runtime)
     if name is None:
         name = f"sandbox-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
     if instance_type is not None:

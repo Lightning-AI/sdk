@@ -10,4 +10,6 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 @click.argument("name")
 def download_license(name: str) -> None:
     """Download license for specific products/packages."""
-    _download_license.callback(name=name)
+    callback = _download_license.callback
+    assert callback is not None
+    callback(name=name)

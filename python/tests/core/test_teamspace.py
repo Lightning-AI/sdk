@@ -48,6 +48,7 @@ class MyDummyExperiment:
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
 @mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
@@ -77,6 +78,7 @@ def test_teamspace_init(
 
 @pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
+@mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_init_env(
     internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
@@ -107,7 +109,6 @@ def test_teamspace_init_env(
         org = None
 
     with context, mock.patch.dict(os.environ, new_dict, clear=True):
-        print(user, org)
         Teamspace("ts-abc", user=user, org=org)
 
 
@@ -129,8 +130,8 @@ def test_teamspace_list_clusters_studios_user(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -151,8 +152,8 @@ def test_teamspace_list_clusters_studios_org(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @pytest.mark.parametrize(
@@ -364,6 +365,34 @@ def test_upload_model_single_file(
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_file_normalizes_remote_path_to_posix(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    """Remote paths must be POSIX-style; os.path.normpath yields "\\" on Windows (rejected by the backend)."""
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    file_path = tmp_path / "config.yaml"
+    file_path.touch()
+
+    ts._teamspace_api.upload_file = mock.Mock()
+
+    # A remote path with OS-native (backslash) separators must be normalized to "/".
+    ts.upload_file(
+        file_path=str(file_path),
+        remote_path="experiments\\my-run\\config.yaml",
+        progress_bar=False,
+        cloud_account="test-cluster-id",
+    )
+
+    _, kwargs = ts._teamspace_api.upload_file.call_args
+    assert kwargs["remote_path"] == "experiments/my-run/config.yaml"
+    assert "\\" not in kwargs["remote_path"]
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_model_single_file_experiment(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
@@ -553,30 +582,39 @@ def test_download_model_version(
     )
 
 
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_jobs(
     list_jobs_mock,
+    list_mmts_mock,
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
     internal_user_api_mocker,
 ):
     jobs = [V1Job(name="jobv2-1"), V1Job(name="jobv2-2"), V1Job(name="jobv2-3")]
+    mmts = [V1MultiMachineJob(name="mmtv2-1")]
     ts = Teamspace("ts-abc", org="org-abc")
 
     list_jobs_mock.return_value = jobs
+    list_mmts_mock.return_value = mmts
 
     # it's important that there are no additional calls to fetch individual jobs here.
     # they'd raise API Errors since we only mock the teamspace APIs listing
     # and not individual fetch requests
     listed_jobs = ts.jobs
 
-    assert len(listed_jobs) == 3
+    assert len(listed_jobs) == 4
     assert all(isinstance(j, Job) for j in listed_jobs)
 
     for lj, jj in zip(listed_jobs, jobs):
         assert lj.name == jj.name
         assert lj._job is jj
+        assert not lj.is_multi_machine
+
+    assert listed_jobs[-1].name == "mmtv2-1"
+    assert listed_jobs[-1]._job is mmts[0]
+    assert listed_jobs[-1].is_multi_machine
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
@@ -858,8 +896,37 @@ def test_teamspace_set_secret_invalid_name(
         ts.set_secret("123_INVALID", "secret_value")
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_delete_secret(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete:
+        ts.delete_secret("OLD_SECRET")
+
+    mock_delete.assert_called_once_with("ts-abc002", "OLD_SECRET")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_delete_secret_invalid_name(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+
+    with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete, pytest.raises(
+        ValueError,
+        match="Secret keys must only contain alphanumeric characters and underscores and not begin with a number.",
+    ):
+        ts.delete_secret("123_INVALID")
+
+    mock_delete.assert_not_called()
+
+
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_agnostic(
     mock_cloud_account_client,
@@ -917,7 +984,7 @@ def test_new_folder_agnostic(
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_byoc(
     mock_cloud_account_client,
@@ -984,7 +1051,7 @@ def test_new_folder_byoc(
 
 @pytest.mark.parametrize("writable", [True, False])
 @mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, internal_user_api_mocker, writable):
     mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(

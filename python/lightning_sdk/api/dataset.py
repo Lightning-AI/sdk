@@ -8,7 +8,7 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Sequence, Union, cast
 
 import backoff
 import requests
@@ -372,6 +372,7 @@ def _download_dataset_version(
             files_list, dest_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
         )
         if unzip:
+            assert zip_relative_path is not None
             archive_path = _safe_destination_path(dest_dir, zip_relative_path, "dataset filepath")
             _extract_zip_safely(str(archive_path), target_path)
     finally:
@@ -417,7 +418,7 @@ def _create_dataset(
 def _create_dataset_version(
     project_id: str,
     dataset_id: str,
-    cluster_id: str,
+    cluster_id: Optional[str],
     version: Optional[str] = None,
 ) -> dict:
     """Create a new version of a Lightning Dataset via the API.
@@ -487,6 +488,7 @@ class _DatasetFileUploader:
         # When a shared (aggregate) progress bar is provided, update it instead of
         # creating per-file/per-chunk bars (which get messy under parallel uploads).
         self._shared_progress = shared_progress
+        self._progress_bar: Optional[tqdm]
         if shared_progress is not None:
             self._progress_bar = shared_progress
         elif progress_bar:
@@ -566,13 +568,17 @@ class _DatasetFileUploader:
     def _handle_uploading_single_part(self, presigned_url: dict, upload_id: str) -> dict:
         try:
             return self._handle_upload_presigned_url(presigned_url)
-        except Exception:
+        except Exception as e:
             part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
+            if part_number is None:
+                raise ValueError("Upload URL response did not include a part number") from e
             return self._error_handling_upload(part=int(part_number), upload_id=upload_id)
 
     def _handle_upload_presigned_url(self, presigned_url: dict) -> dict:
         part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
         url = presigned_url.get("url")
+        if part_number is None or url is None:
+            raise ValueError("Upload URL response did not include a URL and part number")
         with open(self._local_path, "rb") as f:
             f.seek((int(part_number) - 1) * self._chunk_size)
             data = f.read(self._chunk_size)
@@ -594,7 +600,7 @@ def _upload_dataset_files(
     project_id: str,
     dataset_id: str,
     version: str,
-    file_paths: List[Union[str, Path]],
+    file_paths: Sequence[Union[str, Path]],
     remote_paths: List[str],
     progress_bar: bool = True,
     num_workers: int = _DEFAULT_UPLOAD_WORKERS,
@@ -717,7 +723,7 @@ def _upload_dataset(
     """
     existing = _get_dataset_by_name(project_id=project_id, dataset_name=name)
     if existing:
-        dataset_id = existing.get("id")
+        dataset_id = cast(str, existing.get("id"))
         # compute the next version number from existing versions
         if version is None:
             versions = _list_dataset_versions(project_id=project_id, dataset_id=dataset_id)
@@ -737,7 +743,7 @@ def _upload_dataset(
             name=name,
             cluster_id=cluster_id,
         )
-        dataset_id = ds.get("id")
+        dataset_id = cast(str, ds.get("id"))
 
     # CreateLitDataset only creates the dataset record; a version must be
     # created explicitly before the version-scoped upload endpoints exist.
@@ -747,7 +753,7 @@ def _upload_dataset(
         cluster_id=cluster_id,
         version=version,
     )
-    ds_version = ver.get("version")
+    ds_version = cast(str, ver.get("version"))
 
     _upload_dataset_files(
         project_id=project_id,

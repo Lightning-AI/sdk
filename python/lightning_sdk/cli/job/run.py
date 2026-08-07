@@ -19,6 +19,14 @@ _MACHINE_VALUES = tuple(
 @click.command("run", cls=LightningCommand)
 @click.option("--name", default=None, help="The name of the job. Needs to be unique within the teamspace.")
 @click.option(
+    "--num-machines",
+    "--num_machines",
+    default=1,
+    show_default=True,
+    type=click.IntRange(min=1),
+    help="The number of machines to run on.",
+)
+@click.option(
     "--machine",
     default="CPU",
     show_default=True,
@@ -35,7 +43,15 @@ _MACHINE_VALUES = tuple(
         "If not provided for images, will run the container entrypoint and default command."
     ),
 )
-@click.option("--studio", default=None, help="The studio env to run the job with. Mutually exclusive with image.")
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The studio env to run the job with. Mutually exclusive with image. "
+        "If both --studio and --image are omitted while running inside a Studio, defaults to that Studio "
+        "(if its teamspace matches --teamspace)."
+    ),
+)
 @click.option("--image", default=None, help="The docker image to run the job with. Mutually exclusive with studio.")
 @teamspace_option
 @click.option(
@@ -119,6 +135,7 @@ _MACHINE_VALUES = tuple(
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_job(
     name: Optional[str] = None,
+    num_machines: int = 1,
     machine: str = "CPU",
     command: Optional[str] = None,
     studio: Optional[str] = None,
@@ -136,7 +153,10 @@ def run_job(
     path_mappings: str = "",
     as_json: bool = False,
 ) -> None:
-    """Run async workloads using a docker image or studio."""
+    """Run async workloads using a docker image or studio.
+
+    Pass --num-machines greater than 1 to run a multi-machine job.
+    """
     if not name:
         from datetime import datetime
 
@@ -175,6 +195,7 @@ def run_job(
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
+        num_machines=num_machines,
     )
 
     if as_json:

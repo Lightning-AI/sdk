@@ -149,7 +149,8 @@ def _parse_get_logs_response(resp: Any) -> list[CommandLog]:
     parsed: list[CommandLog] = []
     for e in entries:
         ts = getattr(e, "timestamp", None)
-        timestamp = ts.isoformat() if hasattr(ts, "isoformat") else (str(ts) if ts else "")
+        isoformat = getattr(ts, "isoformat", None)
+        timestamp = isoformat() if callable(isoformat) else (str(ts) if ts else "")
         parsed.append(CommandLog(timestamp=timestamp, message=str(getattr(e, "message", "") or "")))
     return parsed
 
@@ -202,7 +203,7 @@ class SandboxApi:
     def config_get(self, key: str) -> Any:
         return self._config.get(key)
 
-    def _org_query_kwargs(self, organization_id: str | None = None) -> dict[str, str]:
+    def _org_query_kwargs(self, organization_id: str | None = None) -> dict[str, Any]:
         if organization_id is not None:
             return {"organization_id": organization_id}
         return {}
@@ -367,7 +368,7 @@ class SandboxApi:
         cwd: str | None = None,
         env: dict[str, str] | None = None,
         detached: bool | None = None,
-    ) -> dict[str, Any]:
+    ) -> CommandResult:
         """Run a command in the sandbox via :meth:`SandboxesServiceApi.sandboxes_service_run_sandbox_command`.
 
         The JSON body is built from :meth:`_create_run_sandbox_command_body` so only fields defined on
@@ -458,7 +459,7 @@ class SandboxApi:
         except ApiException as e:
             raise_sandbox_api_error(e)
 
-    def get_command(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> dict[str, Any]:
+    def get_command(self, sandbox_id: str, cmd_id: str, organization_id: str | None = None) -> CommandStatus:
         """Fetch command status via :meth:`SandboxesServiceApi.sandboxes_service_get_sandbox_command`."""
         api = self.sandboxes()
         try:

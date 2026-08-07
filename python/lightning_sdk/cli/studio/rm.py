@@ -31,6 +31,7 @@ def rm_impl(path: str, recursive: bool = False, force: bool = False) -> None:
 
     console = Console()
     studio_path_result = parse_studio_path(path)
+    destination = studio_path_result["destination"] or ""
 
     selected_studio = resolve_studio(
         studio_path_result["studio"], studio_path_result["teamspace"], studio_path_result["owner"]
@@ -38,7 +39,7 @@ def rm_impl(path: str, recursive: bool = False, force: bool = False) -> None:
 
     # check if file/folder exists
     path_info = selected_studio._studio_api.get_path_info(
-        selected_studio._studio.id, selected_studio._teamspace.id, path=studio_path_result["destination"]
+        selected_studio._studio.id, selected_studio._teamspace.id, path=destination
     )
 
     if not path_info["exists"]:
@@ -57,9 +58,9 @@ def rm_impl(path: str, recursive: bool = False, force: bool = False) -> None:
             raise ValueError(
                 f"'{studio_path_result['destination']}' is a directory. Use -r flag to remove directories recursively."
             )
-        rm_folder(selected_studio=selected_studio, path=studio_path_result["destination"], console=console)
+        rm_folder(selected_studio=selected_studio, path=destination, console=console)
     else:
-        rm_file(selected_studio=selected_studio, path=studio_path_result["destination"], console=console)
+        rm_file(selected_studio=selected_studio, path=destination, console=console)
 
 
 def rm_file(selected_studio: Studio, path: str, console: Console) -> None:

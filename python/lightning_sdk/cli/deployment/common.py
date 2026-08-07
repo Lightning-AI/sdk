@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
+from typing import Any, Dict, Iterable, List, Literal, Optional, Sequence, Union, cast
 
 import rich_click as click
 
@@ -124,7 +124,7 @@ def build_autoscale(
     return AutoScaleConfig(
         min_replicas=min_replicas,
         max_replicas=max_replicas,
-        metric=metric,
+        metric=cast(Literal["GPU", "CPU", "RPM"], metric),
         threshold=threshold,
     )
 

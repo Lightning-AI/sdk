@@ -1,7 +1,8 @@
 import os
+import re
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import requests
 
@@ -68,6 +69,17 @@ __all__ = [
     "TokenAuth",
 ]
 
+_ENV_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_ENV_NAME_ERROR = (
+    "Environment variable names must start with a letter or underscore "
+    "and contain only letters, numbers, and underscores."
+)
+
+
+def _validate_env_names(env: Dict[str, str]) -> None:
+    if any(_ENV_NAME_PATTERN.fullmatch(name) is None for name in env):
+        raise ValueError(_ENV_NAME_ERROR)
+
 
 class Deployment(metaclass=TrackCallsMeta):
     """The Lightning AI Deployment.
@@ -96,7 +108,7 @@ class Deployment(metaclass=TrackCallsMeta):
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
     ) -> None:
-        self._request_session = None
+        self._request_session: Optional[requests.Session] = None
         self._cloud_account_api = CloudAccountApi()
 
         # Auth is applied automatically on every API request, so there is no need to
@@ -112,17 +124,18 @@ class Deployment(metaclass=TrackCallsMeta):
         self._user = _resolve_user(user)
         self._org = _resolve_org(org)
 
-        self._teamspace = _resolve_teamspace(
+        resolved_teamspace = _resolve_teamspace(
             teamspace=teamspace,
             org=org,
             user=user,
         )
-        if self._teamspace is None:
+        if resolved_teamspace is None:
             raise ValueError(
                 "Could not determine the teamspace for your deployment. Pass a teamspace as "
                 "'owner/teamspace', set one of LIGHTNING_TEAMSPACE / LIGHTNING_ORG (or LIGHTNING_USERNAME), "
                 "or configure a default with 'lightning config set teamspace'."
             )
+        self._teamspace = resolved_teamspace
 
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
 
@@ -135,6 +148,8 @@ class Deployment(metaclass=TrackCallsMeta):
         else:
             deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
 
+        # Deployment payloads are generated API models and remain opaque here.
+        self._deployment: Any
         if deployment:
             self._name = deployment.name
             self._is_created = True
@@ -298,7 +313,9 @@ class Deployment(metaclass=TrackCallsMeta):
         if commands is not None:
             command = compose_commands(commands)
 
-        autoscaling_metric_name = ("CPU" if machine.is_cpu() else "GPU") if isinstance(machine, Machine) else "CPU"
+        autoscaling_metric_name: Literal["CPU", "GPU"] = (
+            ("CPU" if machine.is_cpu() else "GPU") if isinstance(machine, Machine) else "CPU"
+        )
 
         if autoscale is None:
             autoscale = AutoScaleConfig(
@@ -365,7 +382,7 @@ class Deployment(metaclass=TrackCallsMeta):
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
         commands: Optional[List[str]] = None,
-        env: Optional[List[Union[Env, Secret]]] = None,
+        env: Union[List[Union[Env, Secret]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
         # Changing those arguments don't create a new release
@@ -375,7 +392,7 @@ class Deployment(metaclass=TrackCallsMeta):
         ports: Optional[List[float]] = None,
         release_strategy: Optional[ReleaseStrategy] = None,
         replicas: Optional[int] = None,
-        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
+        auth: Optional[Auth] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
@@ -560,11 +577,11 @@ class Deployment(metaclass=TrackCallsMeta):
         return None
 
     @property
-    def ports(self) -> Optional[int]:
+    def ports(self) -> Optional[List[int]]:
         """The exposed ports on which you can reach your deployment.
 
         Returns:
-            Optional[int]: List of exposed port numbers, or ``None`` if not started.
+            Optional[List[int]]: List of exposed port numbers, or ``None`` if not started.
         """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
@@ -631,6 +648,47 @@ class Deployment(metaclass=TrackCallsMeta):
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
             return restore_env(self._deployment.spec.env)
         return None
+
+    def set_env(self, new_env: Dict[str, str], partial: bool = True) -> None:
+        """Set directly configured literal Deployment environment variables.
+
+        Args:
+            new_env: Literal environment variable names and values.
+            partial: Preserve unrelated literal variables when ``True``. Secret references
+                are preserved unless shadowed by a new literal in either mode.
+
+        Raises:
+            ValueError: If a name is invalid or the Deployment does not exist.
+        """
+        _validate_env_names(new_env)
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+
+        names = set(new_env)
+        if partial:
+            kept = [entry for entry in current if entry.name not in names]
+        else:
+            kept = [entry for entry in current if isinstance(entry, Secret) and entry.name not in names]
+        self.update(env=[*kept, *(Env(name=name, value=value) for name, value in new_env.items())])
+
+    def delete_env(self, key: str) -> None:
+        """Delete one directly configured literal Deployment environment variable.
+
+        Args:
+            key: Name of the literal environment variable to delete.
+
+        Raises:
+            ValueError: If the name is invalid, the Deployment does not exist, or the
+                literal variable is not directly configured.
+        """
+        _validate_env_names({key: ""})
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+        if not any(isinstance(entry, Env) and entry.name == key for entry in current):
+            raise ValueError(f"Deployment environment variable {key!r} was not found.")
+        self.update(env=[entry for entry in current if not (isinstance(entry, Env) and entry.name == key)])
 
     @property
     def urls(self) -> Optional[List[str]]:
@@ -726,7 +784,7 @@ class Deployment(metaclass=TrackCallsMeta):
         return self._user
 
     @property
-    def teamspace(self) -> Optional[Teamspace]:
+    def teamspace(self) -> Teamspace:
         """The teamspace of the deployment."""
         return self._teamspace
 
@@ -765,8 +823,9 @@ class Deployment(metaclass=TrackCallsMeta):
     @property
     def _session(self) -> Any:
         if self._request_session is None:
-            self._request_session = requests.Session()
-            self._request_session.headers.update(**self._get_auth_headers())
+            session = requests.Session()
+            session.headers.update(**self._get_auth_headers())
+            self._request_session = session
         return self._request_session
 
     def _get_auth_headers(self) -> Dict:

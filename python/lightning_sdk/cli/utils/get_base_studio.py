@@ -8,8 +8,8 @@ def get_base_studio_id(
     studio_type: Optional[str],
     teamspace: Optional[Union[str, Teamspace]] = None,
 ) -> Optional[str]:
-    base_studios = BaseStudio(teamspace=teamspace)
-    base_studios = base_studios.list()
+    base_studio = BaseStudio(teamspace=teamspace)
+    base_studios = base_studio.list()
     template_id = None
 
     if base_studios and len(base_studios):

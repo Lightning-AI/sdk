@@ -1,7 +1,7 @@
 import sys
 import traceback
 from types import TracebackType
-from typing import Type
+from typing import Any, Optional, Type
 
 import click
 from rich.console import Console, Group
@@ -11,7 +11,6 @@ from rich.text import Text
 
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
-from lightning_sdk.cli.legacy.coloring import CustomHelpFormatter
 from lightning_sdk.cli.legacy.configure import configure
 from lightning_sdk.cli.legacy.connect import connect
 from lightning_sdk.cli.legacy.create import create
@@ -28,11 +27,13 @@ from lightning_sdk.cli.legacy.start import start
 from lightning_sdk.cli.legacy.stop import stop
 from lightning_sdk.cli.legacy.switch import switch
 from lightning_sdk.cli.legacy.upload import upload
+from lightning_sdk.cli.utils.auth import browser_authentication
+from lightning_sdk.cli.utils.coloring import CustomHelpFormatter
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.login import Auth, browser_authentication
+from lightning_sdk.lightning_cloud.login import Auth
 
 
-def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: TracebackType) -> None:
+def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:
     """CLI won't show tracebacks, just print the exception message."""
     console = Console()
 
@@ -42,7 +43,7 @@ def _notify_exception(exception_type: Type[BaseException], value: BaseException,
     error_text.append(f"{exception_type.__name__}: ", style="bold red")
     error_text.append(message, style="white")
 
-    renderables = [error_text]
+    renderables: list[Any] = [error_text]
 
     if _LIGHTNING_DEBUG:
         tb_text = "".join(traceback.format_exception(exception_type, value, tb))

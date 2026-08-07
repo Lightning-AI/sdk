@@ -46,11 +46,12 @@ class MMTApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         max_runtime: Optional[int],
         reuse_snapshot: bool,
         placement_group_id: Optional[str] = None,
+        scratch_disks: Optional[Dict[str, int]] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -69,13 +70,18 @@ class MMTApiV2:
             cloud_account_auth: Whether to pass cloud-account credentials into the container.
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
+            scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
         """
+        if scratch_disks:
+            raise ValueError("scratch_disks are not supported for multi-machine jobs")
         body = self._create_mmt_body(
             name=name,
             num_machines=num_machines,
@@ -111,7 +117,7 @@ class MMTApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
@@ -135,7 +141,9 @@ class MMTApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
 
@@ -242,12 +250,13 @@ class MMTApiV2:
                 break
             time.sleep(1)
 
-    def delete_job(self, job_id: str, teamspace_id: str) -> None:
+    def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str] = None) -> None:
         """Permanently delete a multi-machine job.
 
         Args:
             job_id: The unique identifier of the multi-machine job to delete.
             teamspace_id: The ID of the teamspace that owns the job.
+            cloudspace_id: Ignored. Kept for parity with ``JobApiV2.delete_job``.
         """
         self._client.jobs_service_delete_multi_machine_job(project_id=teamspace_id, id=job_id)
 

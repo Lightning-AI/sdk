@@ -42,8 +42,8 @@ class Experiment(Protocol):
 
 class _DummyBody:
     def __init__(self) -> None:
-        self.swagger_types = {}
-        self.attribute_map = {}
+        self.swagger_types: dict[str, Any] = {}
+        self.attribute_map: dict[str, str] = {}
 
 
 _BYTES_PER_KB = 1024
@@ -132,7 +132,7 @@ class _BlobUploader:
         self.extra_headers = extra_headers
         self.notify_completion = notify_completion
         self.show_progress = progress_bar
-        self.progress_bar = None
+        self.progress_bar: Optional[tqdm] = None
 
         self.filesize = os.path.getsize(file_path)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -396,6 +396,7 @@ class _ModelFileUploader:
 
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
+        self.progress_bar: Optional[tqdm]
         if progress_bar:
             self.progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(file_path)[1]}",
@@ -417,7 +418,7 @@ class _ModelFileUploader:
     def __call__(self) -> None:
         """Does the actual uploading."""
         count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
-        return self._multipart_upload(count=count)
+        self._multipart_upload(count=count)
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload.
@@ -452,7 +453,9 @@ class _ModelFileUploader:
             upload_id=resp.upload_id,
         )
 
-    def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
+    def _process_upload_batch(
+        self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str
+    ) -> Iterator[V1CompletedPart]:
         """Uploads a single batch of chunks in parallel.
 
         Args:
@@ -626,10 +629,12 @@ class _FileDownloader:
 
     @property
     def url(self) -> str:
+        assert self._url is not None
         return self._url
 
     @property
     def size(self) -> int:
+        assert self._size is not None
         return self._size
 
     def update_progress(self, n: int) -> None:
@@ -643,7 +648,7 @@ class _FileDownloader:
         self.progress_bar.set_description(f"{(desc[:72] + '...') if len(desc) > 75 else desc:<75.75}")
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _download_chunk(self, filename: str, start_end: Tuple[int]) -> None:
+    def _download_chunk(self, filename: str, start_end: Tuple[int, int]) -> None:
         start, end = start_end
         headers = {"Range": f"bytes={start}-{end}"}
 
@@ -697,14 +702,16 @@ class _FileDownloader:
     def download(self) -> None:
         # Fast path: if size is already known and the local file matches, skip without hitting the API.
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
-        if self.url is None:
+        if self._url is None:
             self.refresh()
 
         # Re-check after refresh in case size was previously unknown (e.g. model files flow).
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
@@ -736,7 +743,9 @@ class _FileDownloader:
         os.rename(tmp_filename, self.local_path)
 
 
-def _get_model_version(client: LightningClient, teamspace_id: str, name: str, version: str) -> V1ModelVersionArchive:
+def _get_model_version(
+    client: LightningClient, teamspace_id: str, name: str, version: Optional[str]
+) -> V1ModelVersionArchive:
     models = client.models_store_list_models(project_id=teamspace_id, name=name).models
     if not models:
         raise ValueError(f"Model `{name}` does not exist")
@@ -805,7 +814,7 @@ def _download_model_files(
                 num_workers=num_workers,
                 progress_bar=pbar,
                 executor=part_executor,
-                refresh_fn=lambda f=filepath: refresh_fn(f),
+                refresh_fn=partial(refresh_fn, filepath),
                 skip_if_exists=skip_if_exists,
             )
 
@@ -815,79 +824,6 @@ def _download_model_files(
         concurrent.futures.wait(futures)
 
         return response.filepaths
-
-
-def _download_teamspace_files(
-    client: LightningClient,
-    teamspace_id: str,
-    cluster_id: str,
-    prefix: str,
-    download_dir: Path,
-    progress_bar: bool,
-    num_workers: int = os.cpu_count() * 4,
-    skip_if_exists: bool = True,
-) -> None:
-    response = None
-
-    pbar = None
-    if progress_bar:
-        pbar = tqdm(
-            desc="Downloading files",
-            unit="B",
-            unit_scale=True,
-            unit_divisor=1024,
-            position=-1,
-            mininterval=1,
-        )
-
-    def refresh_fn(filename: str) -> _RefreshResponse:
-        resp = client.storage_service_list_project_artifacts(
-            project_id=teamspace_id,
-            cluster_id=cluster_id,
-            page_token="",
-            include_download_url=True,
-            prefix=prefix + filename,
-            page_size=1,
-        )
-        return {"url": resp.artifacts[0].url, "size": int(resp.artifacts[0].size_bytes)}
-
-    with ThreadPoolExecutor(max_workers=num_workers) as file_executor, ThreadPoolExecutor(
-        max_workers=num_workers
-    ) as part_executor:
-        while response is None or (response is not None and response.next_page_token != ""):
-            response = client.storage_service_list_project_artifacts(
-                project_id=teamspace_id,
-                cluster_id=cluster_id,
-                page_token=response.next_page_token if response is not None else "",
-                include_download_url=True,
-                prefix=prefix,
-                page_size=1000,
-            )
-
-            page_futures = []
-            for file in response.artifacts:
-                local_file = download_dir / file.filename
-                local_file.parent.mkdir(parents=True, exist_ok=True)
-
-                file_downloader = _FileDownloader(
-                    teamspace_id=teamspace_id,
-                    remote_path=file.filename,
-                    file_path=str(local_file),
-                    num_workers=num_workers,
-                    progress_bar=pbar,
-                    executor=part_executor,
-                    url=file.url,
-                    size=int(file.size_bytes),
-                    refresh_fn=lambda f=file: refresh_fn(f.filename),
-                    skip_if_exists=skip_if_exists,
-                )
-
-                page_futures.append(file_executor.submit(file_downloader.download))
-
-            if page_futures:
-                concurrent.futures.wait(page_futures)
-
-            pbar.set_description("Download complete")
 
 
 def _create_app(
@@ -1011,6 +947,12 @@ class AccessibleResource(Enum):
             int: Hash of the resource type's string value.
         """
         return hash(self.value)
+
+
+@lru_cache(maxsize=None)
+def cached_lightning_client(max_tries: Optional[int] = None) -> LightningClient:
+    """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
+    return LightningClient(max_tries=max_tries)
 
 
 @lru_cache

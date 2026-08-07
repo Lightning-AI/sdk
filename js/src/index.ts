@@ -1,4 +1,9 @@
-export { Sandbox } from "./sandbox.js";
+export {
+  Sandbox,
+  DOCKER_RUNTIME_SUFFIX,
+  DEFAULT_DOCKER_RUNTIME,
+  DOCKER_RUNTIMES,
+} from "./sandbox.js";
 export { FileSystem } from "./filesystem.js";
 export { Command } from "./command.js";
 export { SandboxProcess } from "./process.js";

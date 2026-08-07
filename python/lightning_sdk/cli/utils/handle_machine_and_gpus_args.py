@@ -29,7 +29,7 @@ def _construct_available_gpus(machine_options: Dict[str, str]) -> Set[str]:
     return available_gpus
 
 
-def _get_machine_from_gpus(gpus: str) -> Machine:
+def _get_machine_from_gpus(gpus: str) -> str:
     machine_name = gpus
     machine_num = 1
 

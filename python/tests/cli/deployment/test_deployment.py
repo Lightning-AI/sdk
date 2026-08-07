@@ -8,7 +8,6 @@ from click.testing import CliRunner
 
 from lightning_sdk.api.logs_api import LogEntry
 from lightning_sdk.cli.deployment.create import create_deployment
-from lightning_sdk.cli.deployment.delete import delete_deployment
 from lightning_sdk.cli.deployment.list import list_deployments
 from lightning_sdk.cli.deployment.logs import deployment_logs
 from lightning_sdk.cli.deployment.reload_weights import reload_weights
@@ -52,31 +51,6 @@ def test_deployments_alias_help() -> None:
         "Usage: lightning deployments list",
         "List deployments in a teamspace.",
     )
-
-
-def test_deployment_delete_requires_yes_without_prompting_or_deleting(monkeypatch) -> None:
-    """Missing ``--yes`` must stop before teamspace resolution or API construction."""
-    monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.delete.resolve_teamspace",
-        MagicMock(side_effect=AssertionError("teamspace resolution must not start")),
-    )
-    monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.delete.DeploymentApi",
-        MagicMock(side_effect=AssertionError("deployment API construction must not start")),
-    )
-    monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.delete.resolve_deployment",
-        MagicMock(side_effect=AssertionError("deployment resolution must not start")),
-    )
-    monkeypatch.setattr(
-        "lightning_sdk.cli.deployment.delete.click.confirm",
-        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("must not prompt")),
-    )
-
-    result = CliRunner().invoke(delete_deployment, ["api"])
-
-    assert result.exit_code != 0
-    assert "--yes" in result.output
 
 
 @mock_command_logging

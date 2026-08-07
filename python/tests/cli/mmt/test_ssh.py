@@ -60,6 +60,7 @@ def test_ssh_resolves_before_downloading_keys() -> None:
 def test_ssh_rejects_non_running_machine() -> None:
     rank0 = MagicMock()
     rank0.name = "train-0"
+    rank0.rank = 0
     rank0.status = Status.Completed
     rank0.id = "job_01abc"
 
@@ -81,11 +82,13 @@ def test_ssh_defaults_to_rank_zero() -> None:
     teamspace = MagicMock()
     rank0 = MagicMock()
     rank0.name = "train-0"
+    rank0.rank = 0
     rank0.status = Status.Running
     rank0.id = "job_rank0"
 
     rank1 = MagicMock()
     rank1.name = "train-1"
+    rank1.rank = 1
     rank1.status = Status.Running
     rank1.id = "job_rank1"
 
@@ -109,11 +112,13 @@ def test_ssh_selects_requested_rank() -> None:
     teamspace = MagicMock()
     rank0 = MagicMock()
     rank0.name = "olmo3-7b-think-sft-full-0"
+    rank0.rank = 0
     rank0.status = Status.Running
     rank0.id = "job_r0"
 
     rank1 = MagicMock()
     rank1.name = "olmo3-7b-think-sft-full-1"
+    rank1.rank = 1
     rank1.status = Status.Running
     rank1.id = "job_r1"
 
@@ -135,6 +140,7 @@ def test_ssh_selects_requested_rank() -> None:
 def test_ssh_rejects_unknown_rank() -> None:
     rank0 = MagicMock()
     rank0.name = "train-0"
+    rank0.rank = 0
 
     mmt = MagicMock()
     mmt.name = "train"
@@ -142,13 +148,42 @@ def test_ssh_rejects_unknown_rank() -> None:
 
     with patch("lightning_sdk.cli.mmt.ssh.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.mmt.ssh.resolve_mmt", return_value=mmt
-    ), pytest.raises(click.ClickException, match="Rank 3 not found"):
+    ), pytest.raises(click.ClickException, match="Rank 3 not found.*Available ranks: 0"):
         ssh_impl(name="train", teamspace=None, rank=3)
+
+
+def test_ssh_selects_rank_when_names_lack_rank_suffix() -> None:
+    """Machines are matched on their rank, not on a ``{job}-{rank}`` name convention."""
+    rank0 = MagicMock()
+    rank0.name = "worker-alpha"
+    rank0.rank = 0
+    rank0.status = Status.Running
+    rank0.id = "job_r0"
+
+    rank1 = MagicMock()
+    rank1.name = "worker-beta"
+    rank1.rank = 1
+    rank1.status = Status.Running
+    rank1.id = "job_r1"
+
+    mmt = MagicMock()
+    mmt.name = "train"
+    mmt.machines = (rank0, rank1)
+
+    with patch("lightning_sdk.cli.mmt.ssh.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.mmt.ssh.resolve_mmt", return_value=mmt
+    ), patch("lightning_sdk.cli.mmt.ssh.configure_ssh_internal", return_value="/tmp/lightning_rsa"), patch(
+        "lightning_sdk.cli.mmt.ssh.subprocess.run"
+    ) as run:
+        ssh_impl(name="train", teamspace=None, rank=1)
+
+    run.assert_called_once_with(["ssh", "-i", "/tmp/lightning_rsa", "j_r1@ssh.lightning.ai"])
 
 
 def test_ssh_retries_with_fresh_keys_on_failure() -> None:
     rank0 = MagicMock()
     rank0.name = "train-0"
+    rank0.rank = 0
     rank0.status = Status.Running
     rank0.id = "job_01abc"
 

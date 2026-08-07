@@ -542,7 +542,7 @@ func (t *Teamspace) SetSecret(key, value string) error {
 		return err
 	}
 	for _, secret := range secrets {
-		if secret != nil && secret.Name == key {
+		if isGenericSecret(secret) && secret.Name == key {
 			_, err := api.SecretService.SecretServiceUpdateSecret(
 				secret_service.NewSecretServiceUpdateSecretParamsWithContext(context.Background()).
 					WithProjectID(id).
@@ -559,6 +559,37 @@ func (t *Teamspace) SetSecret(key, value string) error {
 			WithBody(&models.SecretServiceCreateSecretBody{Name: key, Type: &secretType, Value: value}),
 	)
 	return err
+}
+
+// DeleteSecret deletes a generic teamspace secret by name.
+func (t *Teamspace) DeleteSecret(key string) error {
+	if !validSecretName(key) {
+		return errors.New("secret keys must only contain alphanumeric characters and underscores and not begin with a number")
+	}
+	id, err := t.requireID("delete secret")
+	if err != nil {
+		return err
+	}
+	secrets, err := t.listSecrets()
+	if err != nil {
+		return err
+	}
+	for _, secret := range secrets {
+		if !isGenericSecret(secret) || secret.Name != key {
+			continue
+		}
+		api, err := sdkclient.New()
+		if err != nil {
+			return err
+		}
+		_, err = api.SecretService.SecretServiceDeleteSecret(
+			secret_service.NewSecretServiceDeleteSecretParamsWithContext(context.Background()).
+				WithProjectID(id).
+				WithID(secret.ID),
+		)
+		return err
+	}
+	return fmt.Errorf("generic teamspace secret %q was not found", key)
 }
 
 // NewFolder creates a managed folder in the teamspace.

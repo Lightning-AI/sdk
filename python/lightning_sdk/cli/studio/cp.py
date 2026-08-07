@@ -54,6 +54,7 @@ def cp_upload(
         raise FileNotFoundError(f"The provided path does not exist: {local_file_path}")
 
     studio_path_result = parse_studio_path(studio_file_path)
+    destination = studio_path_result["destination"] or ""
 
     selected_studio = resolve_studio(
         studio_path_result["studio"], studio_path_result["teamspace"], studio_path_result["owner"]
@@ -63,13 +64,13 @@ def cp_upload(
     if Path(local_file_path).is_dir():
         if not recursive:
             raise ValueError(f"'{local_file_path}' is a directory. Use -r flag to copy directories recursively.")
-        selected_studio.upload_folder(local_file_path, studio_path_result["destination"])
+        selected_studio.upload_folder(local_file_path, destination)
     else:
         if studio_file_path.endswith(("/", "\\")):
             # if destination ends with / or \, treat it as a directory
             file_name = os.path.basename(local_file_path)
-            studio_path_result["destination"] = os.path.join(studio_path_result["destination"], file_name)
-        selected_studio.upload_file(local_file_path, studio_path_result["destination"])
+            destination = os.path.join(destination, file_name)
+        selected_studio.upload_file(local_file_path, destination)
 
     studio_url = (
         _get_cloud_url().replace(":443", "")
@@ -90,6 +91,7 @@ def cp_download(
 ) -> None:
     console = Console()
     studio_path_result = parse_studio_path(studio_path)
+    destination = studio_path_result["destination"] or ""
 
     selected_studio = resolve_studio(
         studio_path_result["studio"], studio_path_result["teamspace"], studio_path_result["owner"]
@@ -97,7 +99,7 @@ def cp_download(
 
     # check if file/folder exists
     path_info = selected_studio._studio_api.get_path_info(
-        selected_studio._studio.id, selected_studio._teamspace.id, path=studio_path_result["destination"]
+        selected_studio._studio.id, selected_studio._teamspace.id, path=destination
     )
     if not path_info["exists"]:
         raise FileNotFoundError(
@@ -111,7 +113,7 @@ def cp_download(
             raise ValueError(
                 f"'{studio_path_result['destination']}' is a directory. Use -r flag to copy directories recursively."
             )
-        folder_name = os.path.basename(studio_path_result["destination"].rstrip("/"))
+        folder_name = os.path.basename(destination.rstrip("/"))
         if local_path in ("./", "."):
             if folder_name == "":
                 # handle root directory case (e.g. lit://lightning-ai/gpt-oss/studios/manual-lime-ylu2/)
@@ -120,15 +122,15 @@ def cp_download(
         else:
             target_path = local_path
 
-        selected_studio.download_folder(studio_path_result["destination"], target_path)
+        selected_studio.download_folder(destination, target_path)
         console.print(f"See your folder at {target_path}")
     else:
         if os.path.isdir(local_path) or local_path.endswith(("/", "\\")):
             # if local_path ends with / or \ or is a directory, treat it as a directory
-            file_name = os.path.basename(studio_path_result["destination"])
+            file_name = os.path.basename(destination)
             target_path = os.path.join(local_path, file_name)
         else:
             target_path = local_path
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
-        selected_studio.download_file(studio_path_result["destination"], target_path)
+        selected_studio.download_file(destination, target_path)
         console.print(f"See your file at {target_path}")

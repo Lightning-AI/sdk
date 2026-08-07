@@ -11,6 +11,7 @@ from lightning_sdk.api.job_api import (
     _decode_log_messages,
     _format_log_timestamp,
     _job_logs_ws_url,
+    _match_accelerator,
 )
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateJobBody,
@@ -441,3 +442,102 @@ def test_stream_logs_follow_keeps_waiting_while_running(mocker, mocker_auth):
     assert lines == ["l1", "l2"]
     assert module.create_connection.call_count == 1
     assert job_api.get_job.call_count == 2
+
+
+def test_match_accelerator_by_slug():
+    accelerator = mock.MagicMock(
+        slug="cpu-4",
+        slug_multi_cloud="cpu-4",
+        instance_id="m5.xlarge",
+        secondary_instance_id=None,
+    )
+    assert _match_accelerator(Machine.CPU, [accelerator]) is accelerator
+    assert _match_accelerator("gpu-unknown", [accelerator]) is None
+
+
+def test_warn_if_max_runtime_noop_skips_when_unset():
+    import warnings
+
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock()
+    with warnings.catch_warnings(record=True) as recorded:
+        warnings.simplefilter("always")
+        job_api.warn_if_max_runtime_noop(
+            max_runtime=None,
+            machine=Machine.CPU,
+            interruptible=False,
+            teamspace_id="ts",
+            cloud_account_id="c",
+            org_id="org",
+        )
+    assert recorded == []
+    job_api._get_machines_for_cloud_account.assert_not_called()
+
+
+def test_warn_if_max_runtime_noop_on_spot():
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock()
+    with pytest.warns(UserWarning, match="interruptible"):
+        job_api.warn_if_max_runtime_noop(
+            max_runtime=3600,
+            machine=Machine.CPU,
+            interruptible=True,
+            teamspace_id="ts",
+            cloud_account_id="c",
+            org_id="org",
+        )
+    job_api._get_machines_for_cloud_account.assert_not_called()
+
+
+def test_warn_if_max_runtime_noop_on_non_dws_machine():
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock(
+        return_value=[
+            mock.MagicMock(
+                slug="cpu-4",
+                slug_multi_cloud="cpu-4",
+                instance_id="m5.xlarge",
+                secondary_instance_id=None,
+                dws_supported=False,
+                dws_only=False,
+            )
+        ]
+    )
+    with pytest.warns(UserWarning, match="no effect on machine"):
+        job_api.warn_if_max_runtime_noop(
+            max_runtime=3600,
+            machine=Machine.CPU,
+            interruptible=False,
+            teamspace_id="ts",
+            cloud_account_id="c",
+            org_id="org",
+        )
+
+
+def test_warn_if_max_runtime_noop_silent_for_dws_machine():
+    import warnings
+
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock(
+        return_value=[
+            mock.MagicMock(
+                slug="h100",
+                slug_multi_cloud="h100",
+                instance_id="a3-highgpu-1g",
+                secondary_instance_id=None,
+                dws_supported=True,
+                dws_only=False,
+            )
+        ]
+    )
+    with warnings.catch_warnings(record=True) as recorded:
+        warnings.simplefilter("always")
+        job_api.warn_if_max_runtime_noop(
+            max_runtime=3600,
+            machine="h100",
+            interruptible=False,
+            teamspace_id="ts",
+            cloud_account_id="c",
+            org_id="org",
+        )
+    assert recorded == []
