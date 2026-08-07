@@ -73,6 +73,28 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
 @pytest.fixture(autouse=True)
+def _clear_lightning_env_vars(monkeypatch):
+    """Reset ambient LIGHTNING_* env vars to CI's baseline so the suite is hermetic in a Studio.
+
+    A Studio exports real credentials and context (LIGHTNING_API_KEY, LIGHTNING_USER_ID,
+    LIGHTNING_CLOUD_SPACE_ID, LIGHTNING_ORG, LIGHTNING_TEAMSPACE, ...). Tests are written
+    assuming CI's environment, which sets none of that except two dummy values (see
+    .github/workflows/unittest.yaml) -- just enough for ``Auth`` to short-circuit on
+    ``_with_env_var`` without ever needing real credentials or a browser. Left ambient, the
+    real vars leak the actual account into Auth() and the org/teamspace/user resolution
+    fallbacks, letting API calls intended to hit a mock escape to the real backend instead;
+    stripped entirely (including the two Auth relies on), a handful of tests that construct
+    an API class without mocking Auth hang trying to open a browser for login. Tests that
+    want a var set to something else can still do so themselves via ``monkeypatch.setenv``.
+    """
+    for name in list(os.environ):
+        if name.startswith("LIGHTNING_"):
+            monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("LIGHTNING_USER_ID", "dummy-user-id")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "dummy-api-key")
+
+
+@pytest.fixture(autouse=True)
 def _clean_studio_thread_local_state():
     """Automatically ensure clean Studio thread-local state for every test."""
     from lightning_sdk.studio import Studio
