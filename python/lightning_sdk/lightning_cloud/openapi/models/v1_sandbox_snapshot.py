@@ -59,6 +59,7 @@ class V1SandboxSnapshot(object):
         'source_sandbox_name': 'str',
         'source_sandbox_network_policy': 'V1NetworkPolicy',
         'source_sandbox_persistent': 'bool',
+        'source_sandbox_purpose': 'V1SandboxPurpose',
         'status': 'str',
         'tar_excludes': 'list[str]',
         'updated_at': 'datetime'
@@ -79,12 +80,13 @@ class V1SandboxSnapshot(object):
         'source_sandbox_name': 'sourceSandboxName',
         'source_sandbox_network_policy': 'sourceSandboxNetworkPolicy',
         'source_sandbox_persistent': 'sourceSandboxPersistent',
+        'source_sandbox_purpose': 'sourceSandboxPurpose',
         'status': 'status',
         'tar_excludes': 'tarExcludes',
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1SandboxSnapshot - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._expires_at = None
@@ -100,6 +102,7 @@ class V1SandboxSnapshot(object):
         self._source_sandbox_name = None
         self._source_sandbox_network_policy = None
         self._source_sandbox_persistent = None
+        self._source_sandbox_purpose = None
         self._status = None
         self._tar_excludes = None
         self._updated_at = None
@@ -132,6 +135,8 @@ class V1SandboxSnapshot(object):
             self.source_sandbox_network_policy = source_sandbox_network_policy
         if source_sandbox_persistent is not None:
             self.source_sandbox_persistent = source_sandbox_persistent
+        if source_sandbox_purpose is not None:
+            self.source_sandbox_purpose = source_sandbox_purpose
         if status is not None:
             self.status = status
         if tar_excludes is not None:
@@ -438,6 +443,27 @@ class V1SandboxSnapshot(object):
         """
 
         self._source_sandbox_persistent = source_sandbox_persistent
+
+    @property
+    def source_sandbox_purpose(self) -> 'V1SandboxPurpose':
+        """Gets the source_sandbox_purpose of this V1SandboxSnapshot.  # noqa: E501
+
+
+        :return: The source_sandbox_purpose of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: V1SandboxPurpose
+        """
+        return self._source_sandbox_purpose
+
+    @source_sandbox_purpose.setter
+    def source_sandbox_purpose(self, source_sandbox_purpose: 'V1SandboxPurpose'):
+        """Sets the source_sandbox_purpose of this V1SandboxSnapshot.
+
+
+        :param source_sandbox_purpose: The source_sandbox_purpose of this V1SandboxSnapshot.  # noqa: E501
+        :type: V1SandboxPurpose
+        """
+
+        self._source_sandbox_purpose = source_sandbox_purpose
 
     @property
     def status(self) -> 'str':

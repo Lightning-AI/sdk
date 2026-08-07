@@ -95,6 +95,10 @@ type V1MachineDirectV1 struct {
 	// Prepare NVMe disks on host to for VMs
 	UseNvmeDisks bool `json:"useNvmeDisks,omitempty"`
 
+	// Regions where this machine cluster offers VAST (a cluster may mix VAST and
+	// non-VAST infra). Empty means VAST is not offered on the cluster.
+	VastSupportedRegions []string `json:"vastSupportedRegions"`
+
 	// The secret id to access voltage park
 	VoltageParkCredentialsSecretID string `json:"voltageParkCredentialsSecretId,omitempty"`
 }

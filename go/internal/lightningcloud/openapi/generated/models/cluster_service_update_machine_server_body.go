@@ -29,6 +29,9 @@ type ClusterServiceUpdateMachineServerBody struct {
 
 	// memory zones
 	MemoryZones []*V1MemoryZone `json:"memoryZones"`
+
+	// Shared-NVSwitch FM binding. Nil skips the column; non-nil replaces it.
+	NvlinkFmPartition *V1NvlinkFMPartitionBinding `json:"nvlinkFmPartition,omitempty"`
 }
 
 // Validate validates this cluster service update machine server body
@@ -40,6 +43,10 @@ func (m *ClusterServiceUpdateMachineServerBody) Validate(formats strfmt.Registry
 	}
 
 	if err := m.validateMemoryZones(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNvlinkFmPartition(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -109,6 +116,29 @@ func (m *ClusterServiceUpdateMachineServerBody) validateMemoryZones(formats strf
 	return nil
 }
 
+func (m *ClusterServiceUpdateMachineServerBody) validateNvlinkFmPartition(formats strfmt.Registry) error {
+	if swag.IsZero(m.NvlinkFmPartition) { // not required
+		return nil
+	}
+
+	if m.NvlinkFmPartition != nil {
+		if err := m.NvlinkFmPartition.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmPartition")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmPartition")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this cluster service update machine server body based on the context it is used
 func (m *ClusterServiceUpdateMachineServerBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -118,6 +148,10 @@ func (m *ClusterServiceUpdateMachineServerBody) ContextValidate(ctx context.Cont
 	}
 
 	if err := m.contextValidateMemoryZones(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNvlinkFmPartition(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -180,6 +214,31 @@ func (m *ClusterServiceUpdateMachineServerBody) contextValidateMemoryZones(ctx c
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ClusterServiceUpdateMachineServerBody) contextValidateNvlinkFmPartition(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NvlinkFmPartition != nil {
+
+		if swag.IsZero(m.NvlinkFmPartition) { // not required
+			return nil
+		}
+
+		if err := m.NvlinkFmPartition.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmPartition")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmPartition")
+			}
+
+			return err
+		}
 	}
 
 	return nil

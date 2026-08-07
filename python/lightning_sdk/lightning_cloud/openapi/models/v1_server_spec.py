@@ -82,6 +82,7 @@ class V1ServerSpec(object):
         'memory_zones': 'list[V1MemoryZone]',
         'multi_machine_job_id': 'str',
         'network_interfaces': 'list[V1NetworkInterface]',
+        'nvlink_fm_partition': 'V1NvlinkFMPartitionBinding',
         'parent_resource_id': 'str',
         'parent_server_id': 'str',
         'persistent_disk_id': 'str',
@@ -104,10 +105,12 @@ class V1ServerSpec(object):
         'server_type': 'V1ServerType',
         'skip_graceful_shutdown': 'bool',
         'spot': 'bool',
+        'ssh_public_keys': 'list[str]',
         'state': 'V1ServerState',
         'termination_time': 'datetime',
         'tls_cert': 'str',
         'tls_key': 'str',
+        'user_cloud_init': 'str',
         'user_id': 'str',
         'volume_size': 'str',
         'volume_type': 'str',
@@ -153,6 +156,7 @@ class V1ServerSpec(object):
         'memory_zones': 'memoryZones',
         'multi_machine_job_id': 'multiMachineJobId',
         'network_interfaces': 'networkInterfaces',
+        'nvlink_fm_partition': 'nvlinkFmPartition',
         'parent_resource_id': 'parentResourceId',
         'parent_server_id': 'parentServerId',
         'persistent_disk_id': 'persistentDiskId',
@@ -175,10 +179,12 @@ class V1ServerSpec(object):
         'server_type': 'serverType',
         'skip_graceful_shutdown': 'skipGracefulShutdown',
         'spot': 'spot',
+        'ssh_public_keys': 'sshPublicKeys',
         'state': 'state',
         'termination_time': 'terminationTime',
         'tls_cert': 'tlsCert',
         'tls_key': 'tlsKey',
+        'user_cloud_init': 'userCloudInit',
         'user_id': 'userId',
         'volume_size': 'volumeSize',
         'volume_type': 'volumeType',
@@ -186,7 +192,7 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, customer_network_ids: 'list[str]' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, customer_network_ids: 'list[str]' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, ssh_public_keys: 'list[str]' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_cloud_init: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
@@ -225,6 +231,7 @@ class V1ServerSpec(object):
         self._memory_zones = None
         self._multi_machine_job_id = None
         self._network_interfaces = None
+        self._nvlink_fm_partition = None
         self._parent_resource_id = None
         self._parent_server_id = None
         self._persistent_disk_id = None
@@ -247,10 +254,12 @@ class V1ServerSpec(object):
         self._server_type = None
         self._skip_graceful_shutdown = None
         self._spot = None
+        self._ssh_public_keys = None
         self._state = None
         self._termination_time = None
         self._tls_cert = None
         self._tls_key = None
+        self._user_cloud_init = None
         self._user_id = None
         self._volume_size = None
         self._volume_type = None
@@ -331,6 +340,8 @@ class V1ServerSpec(object):
             self.multi_machine_job_id = multi_machine_job_id
         if network_interfaces is not None:
             self.network_interfaces = network_interfaces
+        if nvlink_fm_partition is not None:
+            self.nvlink_fm_partition = nvlink_fm_partition
         if parent_resource_id is not None:
             self.parent_resource_id = parent_resource_id
         if parent_server_id is not None:
@@ -375,6 +386,8 @@ class V1ServerSpec(object):
             self.skip_graceful_shutdown = skip_graceful_shutdown
         if spot is not None:
             self.spot = spot
+        if ssh_public_keys is not None:
+            self.ssh_public_keys = ssh_public_keys
         if state is not None:
             self.state = state
         if termination_time is not None:
@@ -383,6 +396,8 @@ class V1ServerSpec(object):
             self.tls_cert = tls_cert
         if tls_key is not None:
             self.tls_key = tls_key
+        if user_cloud_init is not None:
+            self.user_cloud_init = user_cloud_init
         if user_id is not None:
             self.user_id = user_id
         if volume_size is not None:
@@ -1178,6 +1193,27 @@ class V1ServerSpec(object):
         self._network_interfaces = network_interfaces
 
     @property
+    def nvlink_fm_partition(self) -> 'V1NvlinkFMPartitionBinding':
+        """Gets the nvlink_fm_partition of this V1ServerSpec.  # noqa: E501
+
+
+        :return: The nvlink_fm_partition of this V1ServerSpec.  # noqa: E501
+        :rtype: V1NvlinkFMPartitionBinding
+        """
+        return self._nvlink_fm_partition
+
+    @nvlink_fm_partition.setter
+    def nvlink_fm_partition(self, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding'):
+        """Sets the nvlink_fm_partition of this V1ServerSpec.
+
+
+        :param nvlink_fm_partition: The nvlink_fm_partition of this V1ServerSpec.  # noqa: E501
+        :type: V1NvlinkFMPartitionBinding
+        """
+
+        self._nvlink_fm_partition = nvlink_fm_partition
+
+    @property
     def parent_resource_id(self) -> 'str':
         """Gets the parent_resource_id of this V1ServerSpec.  # noqa: E501
 
@@ -1642,6 +1678,29 @@ class V1ServerSpec(object):
         self._spot = spot
 
     @property
+    def ssh_public_keys(self) -> 'list[str]':
+        """Gets the ssh_public_keys of this V1ServerSpec.  # noqa: E501
+
+        User SSH public keys to authorize on the instance (ResourceInstance only).  # noqa: E501
+
+        :return: The ssh_public_keys of this V1ServerSpec.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._ssh_public_keys
+
+    @ssh_public_keys.setter
+    def ssh_public_keys(self, ssh_public_keys: 'list[str]'):
+        """Sets the ssh_public_keys of this V1ServerSpec.
+
+        User SSH public keys to authorize on the instance (ResourceInstance only).  # noqa: E501
+
+        :param ssh_public_keys: The ssh_public_keys of this V1ServerSpec.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._ssh_public_keys = ssh_public_keys
+
+    @property
     def state(self) -> 'V1ServerState':
         """Gets the state of this V1ServerSpec.  # noqa: E501
 
@@ -1724,6 +1783,29 @@ class V1ServerSpec(object):
         """
 
         self._tls_key = tls_key
+
+    @property
+    def user_cloud_init(self) -> 'str':
+        """Gets the user_cloud_init of this V1ServerSpec.  # noqa: E501
+
+        Raw user-supplied #cloud-config for plain cloud instances (ResourceInstance only).  # noqa: E501
+
+        :return: The user_cloud_init of this V1ServerSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_cloud_init
+
+    @user_cloud_init.setter
+    def user_cloud_init(self, user_cloud_init: 'str'):
+        """Sets the user_cloud_init of this V1ServerSpec.
+
+        Raw user-supplied #cloud-config for plain cloud instances (ResourceInstance only).  # noqa: E501
+
+        :param user_cloud_init: The user_cloud_init of this V1ServerSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._user_cloud_init = user_cloud_init
 
     @property
     def user_id(self) -> 'str':
