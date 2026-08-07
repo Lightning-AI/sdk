@@ -118,7 +118,7 @@ class FilterScreen(ModalScreen[Optional[Dict[str, Any]]]):
     }
     """
 
-    BINDINGS: ClassVar[list[Binding]] = [
+    BINDINGS: ClassVar[list[Binding | tuple[str, str] | tuple[str, str, str]]] = [
         Binding("escape", "dismiss(None)", "Cancel", key_display="Esc"),
         Binding("enter", "apply", "Apply"),
         Binding("ctrl+c", "dismiss_all_and_quit", "Quit"),
@@ -184,7 +184,7 @@ class FilterScreen(ModalScreen[Optional[Dict[str, Any]]]):
 class HelpScreen(ModalScreen[None]):
     """Keyboard shortcut reference."""
 
-    BINDINGS: ClassVar[list[Binding]] = [
+    BINDINGS: ClassVar[list[Binding | tuple[str, str] | tuple[str, str, str]]] = [
         Binding("escape", "dismiss", "Close"),
         Binding("ctrl+c", "dismiss_all_and_quit", "Quit"),
     ]
@@ -226,7 +226,7 @@ class LogsTUI(App[None]):
                           border: solid $primary; padding: 1 2; margin: 2 4; }
     """
 
-    BINDINGS: ClassVar[list[Binding]] = [
+    BINDINGS: ClassVar[list[Binding | tuple[str, str] | tuple[str, str, str]]] = [
         Binding("/", "toggle_filter", "Filter"),
         Binding("l", "toggle_follow", "Live"),
         Binding("t", "toggle_timestamps", "Timestamps"),
@@ -381,7 +381,11 @@ class LogsTUI(App[None]):
                     until=until_iso,
                     query=self._query,
                     page_token=page_token,
-                    **selectors,
+                    job_ids=self._selection.job_ids,
+                    deployment_id=self._selection.deployment_id,
+                    mmt_id=self._selection.mmt_id,
+                    sandbox_id=self._selection.sandbox_id,
+                    sandbox_command_ids=self._selection.sandbox_command_ids,
                 )
                 if page_token is None:
                     window_follow_url = page.follow_url
@@ -450,7 +454,11 @@ class LogsTUI(App[None]):
                 self._selection.teamspace_id,
                 query=self._query,
                 page_size=self._page_lines,
-                **self._selection.selectors(),
+                job_ids=self._selection.job_ids,
+                deployment_id=self._selection.deployment_id,
+                mmt_id=self._selection.mmt_id,
+                sandbox_id=self._selection.sandbox_id,
+                sandbox_command_ids=self._selection.sandbox_command_ids,
             )
             entries = page.entries
         except (RuntimeError, ConnectionError, OSError):
@@ -497,7 +505,11 @@ class LogsTUI(App[None]):
                     self._selection.teamspace_id,
                     query=self._query,
                     page_size=1,
-                    **self._selection.selectors(),
+                    job_ids=self._selection.job_ids,
+                    deployment_id=self._selection.deployment_id,
+                    mmt_id=self._selection.mmt_id,
+                    sandbox_id=self._selection.sandbox_id,
+                    sandbox_command_ids=self._selection.sandbox_command_ids,
                 )
                 follow_url = page.follow_url
                 self._follow_url = follow_url

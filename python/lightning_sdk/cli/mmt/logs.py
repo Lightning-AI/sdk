@@ -74,7 +74,7 @@ def logs_mmt(
         return
 
     if as_json:
-        labels: dict = {}
+        labels = {}
         # Label each line with the machine it came from, mirroring the text output.
         with suppress(Exception):
             labels = {machine.resource_id: machine.name for machine in mmt.machines}

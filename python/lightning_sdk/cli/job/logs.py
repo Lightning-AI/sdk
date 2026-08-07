@@ -68,6 +68,7 @@ def logs_job(
     if tui:
         from lightning_sdk.cli.logs_tui import run_tui
 
+        assert job.resource_id is not None, "job must have a resource_id"
         run_tui(
             LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id]),
             follow=(follow or (since is None and until is None)),
