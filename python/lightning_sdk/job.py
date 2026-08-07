@@ -230,6 +230,9 @@ class Job(metaclass=TrackCallsMeta):
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
             studio: The studio env to run the job with. Mutually exclusive with image.
+                If both ``studio`` and ``image`` are left unset and this code is running inside a Studio
+                (detected via the ``LIGHTNING_CLOUD_SPACE_ID`` env var), defaults to that Studio, provided
+                its teamspace matches the resolved ``teamspace``.
             image: The docker image to run the job with. Mutually exclusive with studio.
             teamspace: The teamspace the job should be associated with. Defaults to the current teamspace.
                 Accepts a bare name or an ``owner/teamspace`` slug.
@@ -249,8 +252,9 @@ class Job(metaclass=TrackCallsMeta):
             path_mappings: Maps container paths to data-connection paths in the form
                 ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
                 for the root of a connection. Only applicable when submitting docker jobs.
-            max_runtime: Duration in seconds to allocate the machine. Required for some top-end GCP machines.
-                Defaults to 3 hours.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
@@ -404,6 +408,17 @@ class Job(metaclass=TrackCallsMeta):
             cloud=cloud or cloud_account,
             default_cloud_account=self._teamspace.default_cloud_account,
         )
+
+        if max_runtime:
+            self._standalone_job_api.warn_if_max_runtime_noop(
+                max_runtime=max_runtime,
+                machine=machine,
+                interruptible=interruptible,
+                teamspace_id=self._teamspace.id,
+                cloud_account_id=cloud_account,
+                org_id=_get_org_id(self._teamspace),
+                stacklevel=4,
+            )
 
         if scratch_disks:
             if studio is None:

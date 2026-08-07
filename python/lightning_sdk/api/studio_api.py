@@ -20,6 +20,7 @@ from lightning_sdk.api.utils import (
     _DummyResponse,
     _machine_to_compute_name,
     _sanitize_studio_remote_path,
+    cached_lightning_client,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -56,7 +57,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 
@@ -65,7 +65,7 @@ class StudioApi:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client(max_tries=7)
         self._keep_alive_threads: Dict[str, Thread] = {}
         self._keep_alive_events: Dict[str, Event] = {}
 
@@ -619,19 +619,38 @@ class StudioApi:
         response: V1CloudSpaceInstanceConfig = self._client.cloud_space_service_get_cloud_space_instance_config(
             project_id=teamspace_id, id=studio_id
         )
+        return self.machine_from_compute_config(response.compute_config, teamspace_id, cloud_account_id, org_id)
+
+    def machine_from_compute_config(
+        self, compute_config: V1UserRequestedComputeConfig, teamspace_id: str, cloud_account_id: str, org_id: str
+    ) -> Machine:
+        """Resolve a Machine from an already-known compute config, without fetching the instance config again.
+
+        Callers that already have a compute config on hand (e.g. from a previously listed Studio) should use
+        this instead of ``get_machine`` to avoid an extra per-Studio API call.
+
+        Args:
+            compute_config: The compute config to resolve into a ``Machine``.
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to look up accelerator details.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            The ``Machine`` instance corresponding to the given compute config.
+        """
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
         )
 
         for accelerator in accelerators:
-            if response.compute_config.name in (
+            if compute_config.name in (
                 accelerator.slug,
                 accelerator.slug_multi_cloud,
                 accelerator.instance_id,
             ):
                 return Machine._from_accelerator(accelerator)
 
-        return Machine.from_str(response.compute_config.name)
+        return Machine.from_str(compute_config.name)
 
     def get_interruptible(self, studio_id: str, teamspace_id: str) -> bool:
         """Get whether the Studio is running on a interruptible instance.

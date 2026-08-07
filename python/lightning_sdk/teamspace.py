@@ -209,16 +209,17 @@ class Teamspace(metaclass=TrackCallsMeta):
         return self._get_studios(Studio)
 
     def _get_studios(self, target_cls: type) -> List["Studio"]:
+        # An unfiltered call already returns every Studio across every cloud account (paginated
+        # internally), so there's no need to loop per cloud_account and pay one round trip per
+        # account even when it has zero Studios.
         studios = []
-        cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
-        for cl in cloud_accounts:
-            _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
-            for s in _studios:
-                with skip_studio_init():
-                    studio = target_cls(name=s.name, teamspace=self, create_ok=False)
-                    studio._studio = s
-                    studio._teamspace = self
-                    studios.append(studio)
+        _studios = self._teamspace_api.list_studios(teamspace_id=self.id)
+        for s in _studios:
+            with skip_studio_init():
+                studio = target_cls(name=s.name, teamspace=self, create_ok=False)
+                studio._studio = s
+                studio._teamspace = self
+                studios.append(studio)
 
         return studios
 

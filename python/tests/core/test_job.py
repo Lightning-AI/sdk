@@ -163,6 +163,36 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
     )
 
 
+@mock.patch("lightning_sdk.job._get_org_id", return_value="org-abc")
+def test_submit_calls_max_runtime_noop_warning(_get_org_id_mock):
+    job = Job.__new__(Job)
+    job._name = "test-job"
+    job._teamspace = mock.MagicMock(id="ts-abc", default_cloud_account="c-abc")
+    job._cloud_account_api = mock.MagicMock()
+    job._cloud_account_api.resolve_cloud_account.return_value = "c-abc"
+    job._standalone_job_api = mock.MagicMock()
+    job._standalone_job_api.submit_job.return_value = V1Job(name="test-job", spec=V1JobSpec())
+    job._mmt_job_api = mock.MagicMock()
+    job._num_machines = 1
+    job._attach_job = mock.MagicMock()
+
+    job._submit(machine=Machine.CPU, image="ubuntu", cloud_account="c-abc", max_runtime=3600)
+
+    job._standalone_job_api.warn_if_max_runtime_noop.assert_called_once_with(
+        max_runtime=3600,
+        machine=Machine.CPU,
+        interruptible=False,
+        teamspace_id="ts-abc",
+        cloud_account_id="c-abc",
+        org_id="org-abc",
+        stacklevel=4,
+    )
+    job._standalone_job_api.warn_if_max_runtime_noop.reset_mock()
+
+    job._submit(machine=Machine.CPU, image="ubuntu", cloud_account="c-abc")
+    job._standalone_job_api.warn_if_max_runtime_noop.assert_not_called()
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
