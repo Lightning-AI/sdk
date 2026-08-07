@@ -26,6 +26,7 @@ from lightning_sdk.cli.groups import (
     machine,
     mmt,
     model,
+    pipeline,
     sandbox,
     ssh,
     studio,
@@ -46,7 +47,7 @@ click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
-        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment"]},
+        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp"]},
     ]
@@ -128,6 +129,7 @@ main_cli.add_command(api)
 main_cli.add_command(deployment)
 main_cli.add_command(container)
 main_cli.add_command(model)
+main_cli.add_command(pipeline)
 main_cli.add_command(api_key)
 main_cli.add_command(auth)
 main_cli.add_command(file)
