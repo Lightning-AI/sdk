@@ -141,6 +141,11 @@ type V1ServerSpec struct {
 	// Network interfaces of the server
 	NetworkInterfaces []*V1NetworkInterface `json:"networkInterfaces"`
 
+	// Shared-NVSwitch FM GPU binding posted by the baremetal agent after allocate.
+	// Scheduling key is gpu_pci_addresses; partition_id is debug/ops only (FM-version-
+	// dependent — never use as a placement key). Nil when unset / cleared on teardown.
+	NvlinkFmPartition *V1NvlinkFMPartitionBinding `json:"nvlinkFmPartition,omitempty"`
+
 	// To track ID of parent resource to the resource for what the server is created: flow for work servers, cloudspace for cloudspace instances
 	ParentResourceID string `json:"parentResourceId,omitempty"`
 
@@ -212,6 +217,9 @@ type V1ServerSpec struct {
 	// spot
 	Spot bool `json:"spot,omitempty"`
 
+	// User SSH public keys to authorize on the instance (ResourceInstance only).
+	SSHPublicKeys []string `json:"sshPublicKeys"`
+
 	// pending/created/etc
 	State *V1ServerState `json:"state,omitempty"`
 
@@ -226,6 +234,9 @@ type V1ServerSpec struct {
 	// tls key
 	// Format: byte
 	TLSKey strfmt.Base64 `json:"tlsKey,omitempty"`
+
+	// Raw user-supplied #cloud-config for plain cloud instances (ResourceInstance only).
+	UserCloudInit string `json:"userCloudInit,omitempty"`
 
 	// user Id
 	UserID string `json:"userId,omitempty"`
@@ -264,6 +275,10 @@ func (m *V1ServerSpec) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNetworkInterfaces(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNvlinkFmPartition(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -440,6 +455,29 @@ func (m *V1ServerSpec) validateNetworkInterfaces(formats strfmt.Registry) error 
 	return nil
 }
 
+func (m *V1ServerSpec) validateNvlinkFmPartition(formats strfmt.Registry) error {
+	if swag.IsZero(m.NvlinkFmPartition) { // not required
+		return nil
+	}
+
+	if m.NvlinkFmPartition != nil {
+		if err := m.NvlinkFmPartition.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmPartition")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmPartition")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1ServerSpec) validatePortForwardingRules(formats strfmt.Registry) error {
 	if swag.IsZero(m.PortForwardingRules) { // not required
 		return nil
@@ -605,6 +643,10 @@ func (m *V1ServerSpec) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateNvlinkFmPartition(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidatePortForwardingRules(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -767,6 +809,31 @@ func (m *V1ServerSpec) contextValidateNetworkInterfaces(ctx context.Context, for
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) contextValidateNvlinkFmPartition(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NvlinkFmPartition != nil {
+
+		if swag.IsZero(m.NvlinkFmPartition) { // not required
+			return nil
+		}
+
+		if err := m.NvlinkFmPartition.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmPartition")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmPartition")
+			}
+
+			return err
+		}
 	}
 
 	return nil

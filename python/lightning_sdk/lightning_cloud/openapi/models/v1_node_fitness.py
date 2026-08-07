@@ -58,6 +58,7 @@ class V1NodeFitness(object):
         'pcie_ports': 'list[V1PciePortFitness]',
         'per_gpu': 'list[V1GpuFitness]',
         'pex_switch_fw': 'V1PexSwitchFWFitness',
+        'quarantined_gpus': 'list[str]',
         'rail_nic_isolation': 'list[V1DeviceIsolationFitness]'
     }
 
@@ -75,10 +76,11 @@ class V1NodeFitness(object):
         'pcie_ports': 'pciePorts',
         'per_gpu': 'perGpu',
         'pex_switch_fw': 'pexSwitchFw',
+        'quarantined_gpus': 'quarantinedGpus',
         'rail_nic_isolation': 'railNicIsolation'
     }
 
-    def __init__(self, acs_collection_state: 'str' =None, ats_collection_state: 'str' =None, collection_posture: 'str' =None, dma_entry_limit: 'V1DMAEntryLimit' =None, dmi: 'V1DMIInfo' =None, gpu_isolation: 'list[V1DeviceIsolationFitness]' =None, iommu_collection_state: 'str' =None, libnvfm: 'V1LibNVFMFitness' =None, nic_firmware: 'list[V1NICFirmware]' =None, nics: 'list[V1NICFitness]' =None, pcie_ports: 'list[V1PciePortFitness]' =None, per_gpu: 'list[V1GpuFitness]' =None, pex_switch_fw: 'V1PexSwitchFWFitness' =None, rail_nic_isolation: 'list[V1DeviceIsolationFitness]' =None):  # noqa: E501
+    def __init__(self, acs_collection_state: 'str' =None, ats_collection_state: 'str' =None, collection_posture: 'str' =None, dma_entry_limit: 'V1DMAEntryLimit' =None, dmi: 'V1DMIInfo' =None, gpu_isolation: 'list[V1DeviceIsolationFitness]' =None, iommu_collection_state: 'str' =None, libnvfm: 'V1LibNVFMFitness' =None, nic_firmware: 'list[V1NICFirmware]' =None, nics: 'list[V1NICFitness]' =None, pcie_ports: 'list[V1PciePortFitness]' =None, per_gpu: 'list[V1GpuFitness]' =None, pex_switch_fw: 'V1PexSwitchFWFitness' =None, quarantined_gpus: 'list[str]' =None, rail_nic_isolation: 'list[V1DeviceIsolationFitness]' =None):  # noqa: E501
         """V1NodeFitness - a model defined in Swagger"""  # noqa: E501
         self._acs_collection_state = None
         self._ats_collection_state = None
@@ -93,6 +95,7 @@ class V1NodeFitness(object):
         self._pcie_ports = None
         self._per_gpu = None
         self._pex_switch_fw = None
+        self._quarantined_gpus = None
         self._rail_nic_isolation = None
         self.discriminator = None
         if acs_collection_state is not None:
@@ -121,6 +124,8 @@ class V1NodeFitness(object):
             self.per_gpu = per_gpu
         if pex_switch_fw is not None:
             self.pex_switch_fw = pex_switch_fw
+        if quarantined_gpus is not None:
+            self.quarantined_gpus = quarantined_gpus
         if rail_nic_isolation is not None:
             self.rail_nic_isolation = rail_nic_isolation
 
@@ -406,6 +411,29 @@ class V1NodeFitness(object):
         """
 
         self._pex_switch_fw = pex_switch_fw
+
+    @property
+    def quarantined_gpus(self) -> 'list[str]':
+        """Gets the quarantined_gpus of this V1NodeFitness.  # noqa: E501
+
+        Idle host GPU BDFs excluded from allocate after repeated guest FOTB / nvidia probe failures. Cleared on host reboot (boot_id) or ClearQuarantine. The scheduler subtracts these from free GPU capacity.  # noqa: E501
+
+        :return: The quarantined_gpus of this V1NodeFitness.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._quarantined_gpus
+
+    @quarantined_gpus.setter
+    def quarantined_gpus(self, quarantined_gpus: 'list[str]'):
+        """Sets the quarantined_gpus of this V1NodeFitness.
+
+        Idle host GPU BDFs excluded from allocate after repeated guest FOTB / nvidia probe failures. Cleared on host reboot (boot_id) or ClearQuarantine. The scheduler subtracts these from free GPU capacity.  # noqa: E501
+
+        :param quarantined_gpus: The quarantined_gpus of this V1NodeFitness.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._quarantined_gpus = quarantined_gpus
 
     @property
     def rail_nic_isolation(self) -> 'list[V1DeviceIsolationFitness]':

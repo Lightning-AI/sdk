@@ -56,6 +56,7 @@ class V1CreateSandboxRequest(object):
         'persistent': 'bool',
         'ports': 'list[str]',
         'project_id': 'str',
+        'purpose': 'V1SandboxPurpose',
         'runtime': 'str',
         'snapshot_id': 'str',
         'spot': 'bool',
@@ -75,6 +76,7 @@ class V1CreateSandboxRequest(object):
         'persistent': 'persistent',
         'ports': 'ports',
         'project_id': 'projectId',
+        'purpose': 'purpose',
         'runtime': 'runtime',
         'snapshot_id': 'snapshotId',
         'spot': 'spot',
@@ -82,7 +84,7 @@ class V1CreateSandboxRequest(object):
         'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -95,6 +97,7 @@ class V1CreateSandboxRequest(object):
         self._persistent = None
         self._ports = None
         self._project_id = None
+        self._purpose = None
         self._runtime = None
         self._snapshot_id = None
         self._spot = None
@@ -123,6 +126,8 @@ class V1CreateSandboxRequest(object):
             self.ports = ports
         if project_id is not None:
             self.project_id = project_id
+        if purpose is not None:
+            self.purpose = purpose
         if runtime is not None:
             self.runtime = runtime
         if snapshot_id is not None:
@@ -372,6 +377,27 @@ class V1CreateSandboxRequest(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def purpose(self) -> 'V1SandboxPurpose':
+        """Gets the purpose of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The purpose of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: V1SandboxPurpose
+        """
+        return self._purpose
+
+    @purpose.setter
+    def purpose(self, purpose: 'V1SandboxPurpose'):
+        """Sets the purpose of this V1CreateSandboxRequest.
+
+
+        :param purpose: The purpose of this V1CreateSandboxRequest.  # noqa: E501
+        :type: V1SandboxPurpose
+        """
+
+        self._purpose = purpose
 
     @property
     def runtime(self) -> 'str':

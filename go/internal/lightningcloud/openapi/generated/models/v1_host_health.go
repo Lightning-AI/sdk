@@ -33,6 +33,11 @@ type V1HostHealth struct {
 	// node fitness
 	NodeFitness *V1NodeFitness `json:"nodeFitness,omitempty"`
 
+	// Shared-NVSwitch FM partition topology. Omitted entirely on non-NVSwitch
+	// hosts so health_state stays byte-identical. When present, shared_nvswitch
+	// distinguishes "MMT host with empty/unusable table" from "not an FM host".
+	NvlinkFmTopology *V1NVLinkFMTopology `json:"nvlinkFmTopology,omitempty"`
+
 	// recent dmesg errors
 	RecentDmesgErrors []string `json:"recentDmesgErrors"`
 
@@ -56,6 +61,10 @@ func (m *V1HostHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNodeFitness(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNvlinkFmTopology(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -149,6 +158,29 @@ func (m *V1HostHealth) validateNodeFitness(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1HostHealth) validateNvlinkFmTopology(formats strfmt.Registry) error {
+	if swag.IsZero(m.NvlinkFmTopology) { // not required
+		return nil
+	}
+
+	if m.NvlinkFmTopology != nil {
+		if err := m.NvlinkFmTopology.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmTopology")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmTopology")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1HostHealth) validateStorage(formats strfmt.Registry) error {
 	if swag.IsZero(m.Storage) { // not required
 		return nil
@@ -208,6 +240,10 @@ func (m *V1HostHealth) ContextValidate(ctx context.Context, formats strfmt.Regis
 	}
 
 	if err := m.contextValidateNodeFitness(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNvlinkFmTopology(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -295,6 +331,31 @@ func (m *V1HostHealth) contextValidateNodeFitness(ctx context.Context, formats s
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("nodeFitness")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateNvlinkFmTopology(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NvlinkFmTopology != nil {
+
+		if swag.IsZero(m.NvlinkFmTopology) { // not required
+			return nil
+		}
+
+		if err := m.NvlinkFmTopology.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvlinkFmTopology")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvlinkFmTopology")
 			}
 
 			return err

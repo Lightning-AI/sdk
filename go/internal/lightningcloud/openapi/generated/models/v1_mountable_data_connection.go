@@ -46,6 +46,9 @@ type V1MountableDataConnection struct {
 	// Mount as read-only if true
 	ReadOnly bool `json:"readOnly,omitempty"`
 
+	// Region this mount lives in; when set, it only mounts on same-region servers. Stamped at creation.
+	Region string `json:"region,omitempty"`
+
 	// Remote export/path (NFS export, SMB share, etc.)
 	RemotePath string `json:"remotePath,omitempty"`
 

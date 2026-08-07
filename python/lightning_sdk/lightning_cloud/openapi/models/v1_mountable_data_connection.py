@@ -52,6 +52,7 @@ class V1MountableDataConnection(object):
         'port': 'int',
         'protocol': 'str',
         'read_only': 'bool',
+        'region': 'str',
         'remote_path': 'str',
         'server_ip': 'str',
         'source': 'str',
@@ -68,6 +69,7 @@ class V1MountableDataConnection(object):
         'port': 'port',
         'protocol': 'protocol',
         'read_only': 'readOnly',
+        'region': 'region',
         'remote_path': 'remotePath',
         'server_ip': 'serverIp',
         'source': 'source',
@@ -76,7 +78,7 @@ class V1MountableDataConnection(object):
         'username': 'username'
     }
 
-    def __init__(self, baremetal: 'bool' =None, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, storage_id: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, baremetal: 'bool' =None, mount_opts: 'str' =None, nfs_version: 'str' =None, password: 'str' =None, port: 'int' =None, protocol: 'str' =None, read_only: 'bool' =None, region: 'str' =None, remote_path: 'str' =None, server_ip: 'str' =None, source: 'str' =None, storage_id: 'str' =None, type: 'V1StorageType' =None, username: 'str' =None):  # noqa: E501
         """V1MountableDataConnection - a model defined in Swagger"""  # noqa: E501
         self._baremetal = None
         self._mount_opts = None
@@ -85,6 +87,7 @@ class V1MountableDataConnection(object):
         self._port = None
         self._protocol = None
         self._read_only = None
+        self._region = None
         self._remote_path = None
         self._server_ip = None
         self._source = None
@@ -106,6 +109,8 @@ class V1MountableDataConnection(object):
             self.protocol = protocol
         if read_only is not None:
             self.read_only = read_only
+        if region is not None:
+            self.region = region
         if remote_path is not None:
             self.remote_path = remote_path
         if server_ip is not None:
@@ -267,6 +272,29 @@ class V1MountableDataConnection(object):
         """
 
         self._read_only = read_only
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1MountableDataConnection.  # noqa: E501
+
+        Region this mount lives in; when set, it only mounts on same-region servers. Stamped at creation.  # noqa: E501
+
+        :return: The region of this V1MountableDataConnection.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1MountableDataConnection.
+
+        Region this mount lives in; when set, it only mounts on same-region servers. Stamped at creation.  # noqa: E501
+
+        :param region: The region of this V1MountableDataConnection.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def remote_path(self) -> 'str':
