@@ -32,7 +32,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job
     help="Only include lines at or above this severity.",
 )
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
-@click.option("--tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def logs_job(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,

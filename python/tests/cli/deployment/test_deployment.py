@@ -556,7 +556,7 @@ def test_deployment_logs_tui_opens_for_multi_node_replica(monkeypatch) -> None:
     api = _deployment_api_with_specced_replicas(("replica-0", 2))
     run_tui = _patch_tui_command(monkeypatch, api)
 
-    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui"])
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--interactive"])
 
     assert result.exit_code == 0, result.output
     run_tui.assert_called_once()
@@ -567,13 +567,13 @@ def test_deployment_logs_tui_rejects_rank(monkeypatch) -> None:
     api = _deployment_api_with_specced_replicas(("replica-0", 1))
     run_tui = _patch_tui_command(monkeypatch, api)
 
-    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui", "--rank", "1"])
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--interactive", "--rank", "1"])
 
     assert result.exit_code != 0
     output = click.unstyle(result.output)
     assert "TUI view does not support --rank" in output
     assert "lightning deployment logs my-deployment --rank 1" in output
-    assert "--tui" not in output
+    assert "--interactive" not in output
     run_tui.assert_not_called()
 
 
@@ -582,7 +582,7 @@ def test_deployment_logs_tui_launches_for_single_node_replicas(monkeypatch) -> N
     api = _deployment_api_with_specced_replicas(("replica-0", 1), ("replica-1", 1))
     run_tui = _patch_tui_command(monkeypatch, api)
 
-    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--tui"])
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--interactive"])
 
     assert result.exit_code == 0, result.output
     run_tui.assert_called_once()

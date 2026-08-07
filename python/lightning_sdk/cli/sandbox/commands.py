@@ -735,7 +735,7 @@ def run_sandbox_command(
 )
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
-@click.option("--tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def logs_sandbox_command(
     api_key: str | None,
     sandbox_id: str,

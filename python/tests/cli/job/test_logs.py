@@ -196,7 +196,7 @@ def _invoke_tui(argv: list) -> MagicMock:
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.job.logs.resolve_job", return_value=job
     ), patch("lightning_sdk.cli.logs_tui.run_tui") as run_tui:
-        result = CliRunner().invoke(logs_job, ["my-job", "--tui", *argv])
+        result = CliRunner().invoke(logs_job, ["my-job", "--interactive", *argv])
 
     assert result.exit_code == 0, result.output
     run_tui.assert_called_once()

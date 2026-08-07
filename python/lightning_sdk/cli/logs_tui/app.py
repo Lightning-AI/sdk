@@ -227,7 +227,7 @@ class LogsTUI(App[None]):
     """
 
     BINDINGS: ClassVar[list[Binding]] = [
-        Binding("f", "toggle_filter", "Filter"),
+        Binding("/", "toggle_filter", "Filter"),
         Binding("l", "toggle_follow", "Live"),
         Binding("t", "toggle_timestamps", "Timestamps"),
         Binding("g", "scroll_top", "Top"),

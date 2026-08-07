@@ -40,7 +40,7 @@ def _command_without_tui(
     timestamps: bool,
     as_json: bool,
 ) -> str:
-    """Reconstruct the invoked ``deployment logs`` command with ``--tui`` dropped.
+    """Reconstruct the invoked ``deployment logs`` command with ``--interactive`` dropped.
 
     Only the options actually passed are re-emitted, each shell-quoted, so the string is safe to
     copy-paste back verbatim.
@@ -88,7 +88,7 @@ def _command_without_tui(
 @click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
-@click.option("--tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
+@click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
 def deployment_logs(
     name: str,
     teamspace: Optional[str] = None,
