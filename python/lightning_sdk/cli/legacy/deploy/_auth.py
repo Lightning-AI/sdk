@@ -8,11 +8,11 @@ from rich.console import Console
 
 from lightning_sdk import Teamspace
 from lightning_sdk.api import UserApi
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace as _resolve_teamspace_option
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.utils.resolve import _get_authed_user
 
 _POLL_TIMEOUT = 120
@@ -81,7 +81,7 @@ class _Onboarding:
         self.console = console
         self.user = _get_authed_user()
         self.user_api = UserApi()
-        self.client = LightningClient(max_tries=7)
+        self.client = cached_lightning_client()
 
     @property
     def verified(self) -> bool:

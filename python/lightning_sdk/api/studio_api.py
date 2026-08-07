@@ -67,7 +67,7 @@ class StudioApi:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
         self._keep_alive_threads: Dict[str, Thread] = {}
         self._keep_alive_events: Dict[str, Event] = {}
 

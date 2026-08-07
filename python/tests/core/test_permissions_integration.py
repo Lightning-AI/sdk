@@ -342,7 +342,7 @@ def test_deployment_init_raises_error_when_deployments_disabled(
 
 
 # LitContainer class permission tests
-@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
@@ -374,7 +374,7 @@ def test_litcontainer_list_raises_error_when_containers_disabled(
         container.list_containers(teamspace="test-teamspace")
 
 
-@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
@@ -406,7 +406,7 @@ def test_litcontainer_delete_raises_error_when_containers_disabled(
         container.delete_container(container="test-container", teamspace="test-teamspace")
 
 
-@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
@@ -438,7 +438,7 @@ def test_litcontainer_upload_raises_error_when_containers_disabled(
         container.upload_container(container="test-container", teamspace="test-teamspace")
 
 
-@mock.patch("lightning_sdk.api.lit_container_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.user.UserApi")

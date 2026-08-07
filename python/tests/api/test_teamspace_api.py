@@ -1106,7 +1106,7 @@ def test_delete_secret_rejects_missing_generic_secret():
     mock_delete.assert_not_called()
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_secrets_api_call(mock_client):
     mock_client().secret_service_list_secrets.return_value.secrets = [
@@ -1121,7 +1121,7 @@ def test_get_secrets_api_call(mock_client):
     assert result[0].name == "API_KEY"
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_secret_api_call(mock_client):
     teamspace_api = TeamspaceApi()
@@ -1136,7 +1136,7 @@ def test_create_secret_api_call(mock_client):
     assert call_args[1]["body"].type == V1SecretType.UNSPECIFIED
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_secret_api_call_with_type(mock_client):
     teamspace_api = TeamspaceApi()
@@ -1147,7 +1147,7 @@ def test_create_secret_api_call_with_type(mock_client):
     assert call_args[1]["body"].type == V1SecretType.HF_TOKEN
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_update_secret_api_call(mock_client):
     teamspace_api = TeamspaceApi()

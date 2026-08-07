@@ -6,10 +6,9 @@ import docker
 import requests
 from rich.console import Console
 
-from lightning_sdk.api.utils import _get_registry_url
+from lightning_sdk.api.utils import _get_registry_url, cached_lightning_client
 from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
 from lightning_sdk.lightning_cloud.openapi.models import V1DeleteLitRepositoryResponse
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.teamspace import Teamspace
 
 
@@ -78,7 +77,7 @@ class LitContainerApi:
     """Internal API client for Lightning Container Registry (LitCR) operations."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=3)
+        self._client = cached_lightning_client()
 
         try:
             self._docker_client = docker.from_env()

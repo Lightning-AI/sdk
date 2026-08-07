@@ -1092,9 +1092,9 @@ class AccessibleResource(Enum):
 
 
 @lru_cache(maxsize=None)
-def cached_lightning_client(max_tries: Optional[int] = None) -> LightningClient:
+def cached_lightning_client(retry: bool = True, with_auth: bool = True) -> LightningClient:
     """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
-    return LightningClient(max_tries=max_tries)
+    return LightningClient(max_tries=3, retry=retry, with_auth=with_auth)
 
 
 @lru_cache

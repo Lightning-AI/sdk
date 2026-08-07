@@ -41,7 +41,7 @@ def mock_api_list_containers_string_creation():
     return repo
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_api_list_containers(_mock_docker_from_env, _mock_lightning_client):
     api = LitContainerApi()
@@ -51,7 +51,7 @@ def test_api_list_containers(_mock_docker_from_env, _mock_lightning_client):
     api._client.lit_registry_service_get_lit_project_registry.assert_called_once_with("test-project-id")
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_list_containers(
     _mock_docker_from_env,
@@ -104,7 +104,7 @@ def test_list_containers(
         assert kwargs.get("cloud_account") is None
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_list_containers_with_org(
     _mock_docker_from_env, _mock_lightning_client, mock_teamspace, mock_api_list_containers
@@ -136,7 +136,7 @@ def test_list_containers_with_org(
         assert kwargs.get("cloud_account") is None
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_list_containers_with_org_with_cloud_account(
     _mock_docker_from_env, _mock_lightning_client, mock_teamspace, mock_api_list_containers
@@ -168,7 +168,7 @@ def test_list_containers_with_org_with_cloud_account(
         assert kwargs.get("cloud_account") == "byoc-123"
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_delete_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
@@ -184,7 +184,7 @@ def test_delete_container(_mock_docker_from_env, _mock_lightning_client, mock_te
         registry._api.delete_container.assert_called_once_with("test-project-id", "test-repo")
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     with patch("lightning_sdk.lit_container._resolve_teamspace") as mock_resolve_teamspace:
@@ -200,7 +200,7 @@ def test_delete_container_by_digest(_mock_docker_from_env, _mock_lightning_clien
         registry._api.delete_container.assert_not_called()
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_container_success(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -221,7 +221,7 @@ def test_upload_container_success(_mock_docker_from_env, _mock_lightning_client,
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_byoc_container_success(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -242,7 +242,7 @@ def test_upload_byoc_container_success(_mock_docker_from_env, _mock_lightning_cl
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_byoc_container_pull_then_push(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -282,7 +282,7 @@ def test_upload_byoc_container_pull_then_push(_mock_docker_from_env, _mock_light
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_container_pull_then_push(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -322,7 +322,7 @@ def test_upload_container_pull_then_push(_mock_docker_from_env, _mock_lightning_
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_container_teamspace_resolution_error(_mock_docker_from_env, _mock_lightning_client):
     lit_container = LitContainer()
@@ -335,7 +335,7 @@ def test_upload_container_teamspace_resolution_error(_mock_docker_from_env, _moc
             lit_container.upload_container(container="my-container", teamspace="invalid-team")
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @patch("lightning_sdk.lit_container._resolve_teamspace")
 @patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
@@ -384,7 +384,7 @@ def test_upload_container_auth_retry_success(
     mock_sleep.assert_called_with(2)
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @patch("lightning_sdk.lit_container._resolve_teamspace")
 @patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
@@ -414,7 +414,7 @@ def test_upload_container_timeout_retry_success(
     mock_sleep.assert_called_once_with(2)
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @patch("lightning_sdk.lit_container._resolve_teamspace")
 @patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
@@ -455,7 +455,7 @@ def test_upload_container_auth_retry_max_attempts(
     assert mock_sleep.call_count == 2
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 @patch("lightning_sdk.lit_container._resolve_teamspace")
 @patch("lightning_sdk.api.lit_container_api.LitContainerApi.authenticate")
@@ -516,7 +516,7 @@ def test_upload_container_timeout_retry_max_attempts(
     assert mock_sleep.call_count == 2
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_container_with_org(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -537,7 +537,7 @@ def test_upload_container_with_org(_mock_docker_from_env, _mock_lightning_client
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_upload_container_returns_generator_output(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -581,7 +581,7 @@ def test_upload_container_returns_generator_output(_mock_docker_from_env, _mock_
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_download_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -601,7 +601,7 @@ def test_download_container(_mock_docker_from_env, _mock_lightning_client, mock_
         )
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_download_byoc_container(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     lit_container = LitContainer()
@@ -624,7 +624,7 @@ def test_download_byoc_container(_mock_docker_from_env, _mock_lightning_client, 
 
 
 @patch("lightning_sdk.api.lit_container_api.docker")
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 def test_authenticate(mock_lightning_client, mock_docker):
     api = LitContainerApi()
     mock_lightning_client.auth_service_get_user.return_value = MagicMock(username="test-user", api_key="test-key")
@@ -633,7 +633,7 @@ def test_authenticate(mock_lightning_client, mock_docker):
     mock_docker.from_env().login.assert_called(), "Docker client was not created"
 
 
-@patch("lightning_sdk.api.lit_container_api.LightningClient")
+@patch("lightning_sdk.api.utils.LightningClient")
 @patch("lightning_sdk.api.lit_container_api.docker.from_env")
 def test_get_container_url(_mock_docker_from_env, _mock_lightning_client, mock_teamspace):
     api = LitContainerApi()

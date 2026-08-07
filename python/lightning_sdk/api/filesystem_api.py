@@ -11,6 +11,7 @@ from lightning_sdk.api.utils import (
     _collect_download_results,
     _raise_for_download_status,
     _stream_download_to_file,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -19,7 +20,7 @@ class FilesystemApi:
     """Internal API client for direct artifact filesystem operations (list, download)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
         self._token = _authenticate_and_get_token(self._client)
 
     @property

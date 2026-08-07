@@ -7,9 +7,9 @@ from contextlib import suppress
 from typing import Any, Callable, ParamSpec, TypeVar
 
 from lightning_sdk.__version__ import __version__
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import V1CreateSDKCommandHistoryRequest, V1SDKCommandHistorySeverity
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -53,7 +53,7 @@ def track_calls() -> Callable[[Callable[P, R]], Callable[P, R]]:
                 body.message += f" | Error: {type(e).__name__}: {e!s} | Traceback: {traceback.format_exc(limit=3)}"
                 body.duration = int(time.time() - start_time)
                 with suppress(Exception):
-                    client = LightningClient(retry=False, max_tries=0)
+                    client = cached_lightning_client(retry=False)
                     client.s_dk_command_history_service_create_sdk_command_history(body=body)
                 raise
 

@@ -4,8 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional, TypedDict
 
-from lightning_sdk.api.utils import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.api.utils import ApiException, cached_lightning_client
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +54,7 @@ class K8sClusterApi:
 
     def __init__(self, cloud_account: str) -> None:
         self.cloud_account = cloud_account
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def _parse_request_failure_body(self, e: ApiException) -> str:
         """Parses the failure body from an ApiException.

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from lightning_sdk import base_studio as base_studio_module
-from lightning_sdk.api import base_studio_api as base_studio_api_module
+from lightning_sdk.api import utils as api_utils_module
 from lightning_sdk.lightning_cloud.openapi.models import (
     V1CloudSpaceEnvironmentTemplate,
     V1ListCloudSpaceEnvironmentTemplatesResponse,
@@ -15,7 +15,7 @@ def test_base_studio_update(monkeypatch):
     monkeypatch.setattr(base_studio_module, "_resolve_teamspace", resolve_teamspace_mock)
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     client.cloud_space_environment_template_service_get_cloud_space_environment_template.return_value = (
         V1CloudSpaceEnvironmentTemplate(
@@ -54,7 +54,7 @@ def test_base_studio_list(monkeypatch):
     mock_org.id = "org-id"
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     base_studio = base_studio_module.BaseStudio(org=mock_org, user="user")
 
@@ -96,7 +96,7 @@ def test_base_studio_list_with_disabled_templates(monkeypatch, include_disabled,
     mock_org.id = "org-id"
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     base_studio = base_studio_module.BaseStudio(org=mock_org, user="user")
 
@@ -158,7 +158,7 @@ def test_base_studio_list_creator_managed_templates(monkeypatch):
     mock_org.id = "org-id"
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     base_studio = base_studio_module.BaseStudio(org=mock_org, user="user")
 
@@ -199,7 +199,7 @@ def test_base_studio_list_creator_unmanaged_templates(monkeypatch):
     mock_org.id = "org-id"
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     mock_user_api = MagicMock()
     mock_user_1 = MagicMock()
@@ -258,7 +258,7 @@ def test_base_studio_list_creator_mixed_templates(monkeypatch):
     mock_org.id = "org-id"
 
     client = MagicMock()
-    monkeypatch.setattr(base_studio_api_module, "LightningClient", MagicMock(return_value=client))
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
 
     mock_user_api = MagicMock()
     mock_user = MagicMock()

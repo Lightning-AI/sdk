@@ -9,7 +9,7 @@ from lightning_sdk.lightning_cloud.openapi.models import V1ConversationResponseC
 @pytest.fixture()
 def mock_client():
     """Mock the LightningClient."""
-    with patch("lightning_sdk.api.llm_api.LightningClient") as mock_client_class:
+    with patch("lightning_sdk.api.utils.LightningClient") as mock_client_class:
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
         yield mock_client

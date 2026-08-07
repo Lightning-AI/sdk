@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 
 from rich.prompt import Confirm
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi.models import (
@@ -20,7 +21,6 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1ResponseChoice,
     V1ResponseChoiceDelta,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 LITAI_CODE = os.environ.get("LITAI_CODE", "x334uv8t7v")
 
@@ -69,7 +69,7 @@ class LLMApi:
     """Internal API client for Lightning AI LLM (LitAI) conversation and model operations."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(retry=False, max_tries=0)
+        self._client = cached_lightning_client(retry=False)
         self._assistant = None
         self._model = None
 

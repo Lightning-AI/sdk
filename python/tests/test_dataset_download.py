@@ -59,7 +59,7 @@ def _mock_files_api(files):
     api_client.default_headers = {}
     client = mock.MagicMock()
     client.api_client = api_client
-    return mock.patch("lightning_sdk.api.dataset.LightningClient", return_value=client)
+    return mock.patch("lightning_sdk.api.utils.LightningClient", return_value=client)
 
 
 def _range_get(payloads):

@@ -6,6 +6,7 @@ import pytest
 from lightning_sdk import studio as studio_module
 from lightning_sdk import teamspace
 from lightning_sdk.api import pipeline_api
+from lightning_sdk.api import utils as api_utils_module
 from lightning_sdk.lightning_cloud.openapi.models import (
     V1PipelineStep,
     V1PipelineStepType,
@@ -337,7 +338,7 @@ def test_mmt_step_threads_placement_group_id():
 @patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
 @patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
 @patch.object(pipeline_api, "CloudAccountApi", new=MagicMock())
-@patch.object(pipeline_api, "LightningClient")
+@patch.object(api_utils_module, "LightningClient")
 def test_stop(mock_client):
     pipeline_spec = MagicMock()
     pipeline_spec.id = "pipeline_id"
@@ -354,7 +355,7 @@ def test_stop(mock_client):
 @patch.object(pipeline_module, "CloudAccountApi", new=MagicMock())
 @patch.object(pipeline_module, "_resolve_teamspace", new=MagicMock())
 @patch.object(pipeline_api, "CloudAccountApi", new=MagicMock())
-@patch.object(pipeline_api, "LightningClient")
+@patch.object(api_utils_module, "LightningClient")
 def test_delete(mock_client):
     pipeline_spec = MagicMock()
     pipeline_spec.id = "pipeline_id"

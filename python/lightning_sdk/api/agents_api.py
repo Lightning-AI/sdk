@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceUpdateAssistantBody,
     EndpointServiceUpdateEndpointBody,
@@ -8,14 +9,13 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1PromptSuggestion,
     V1UpstreamOpenAI,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class AgentApi:
     """Internal API client for handling Agents-related HTTP requests."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_agent(self, agent_id: str) -> V1Assistant:
         """Retrieve the agent by its ID.

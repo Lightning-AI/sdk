@@ -19,6 +19,7 @@ from lightning_sdk.api.utils import (
     _MAX_SIZE_MULTI_PART_CHUNK,
     _MAX_WORKERS,
     _SIZE_LIMIT_SINGLE_PART,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
@@ -127,7 +128,7 @@ def _resolve_dataset_id_and_version(project_id: str, dataset_name: str, version:
     Combines name->id and default-version resolution into a single API round-trip
     so callers don't list datasets twice before downloading.
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     url = env.LIGHTNING_CLOUD_URL
     resp = api_client.request(
@@ -295,7 +296,7 @@ def _download_dataset_version(
         unzip: Extract a dataset stored as exactly one ZIP artifact.
     """
     cloud_url = env.LIGHTNING_CLOUD_URL
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     resolved_id = dataset_id or dataset_name
@@ -406,7 +407,7 @@ def _create_dataset(
     Returns:
         The created dataset dict (containing ``id``).
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     body: dict = {"name": name}
@@ -444,7 +445,7 @@ def _create_dataset_version(
     Returns:
         The created version dict (containing ``version``).
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     body: dict = {"cluster_id": cluster_id}
@@ -629,7 +630,7 @@ def _upload_dataset_files(
     if not file_paths:
         return
 
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     file_workers = max(1, min(num_workers, len(file_paths)))
     part_workers = max(1, num_workers // file_workers)
 
@@ -666,7 +667,7 @@ def _upload_dataset_files(
 
 def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> None:
     """Signal that all files for a dataset version have been uploaded."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     api_client.request(
         "POST",
@@ -679,7 +680,7 @@ def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> 
 
 def _list_datasets(project_id: str) -> list:
     """List all Lightning Datasets in a Teamspace."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     resp = api_client.request(
         "GET",
@@ -693,7 +694,7 @@ def _list_datasets(project_id: str) -> list:
 
 def _list_dataset_versions(project_id: str, dataset_id: str) -> list:
     """List all versions of a Lightning Dataset."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     resp = api_client.request(
         "GET",

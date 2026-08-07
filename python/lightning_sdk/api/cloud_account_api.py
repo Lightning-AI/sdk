@@ -33,7 +33,7 @@ class CloudAccountApi:
     """Internal API client for API requests to cluster endpoints."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_cloud_account(self, cloud_account_id: str, teamspace_id: str, org_id: str) -> Externalv1Cluster:
         """Return a cloud account by ID.

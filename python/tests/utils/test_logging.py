@@ -199,7 +199,7 @@ class TestTrackCallsABCMeta:
 class TestMetaclassIntegration:
     """Integration tests to ensure metaclass doesn't break real SDK classes."""
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_owner_base_class_compatibility(self, mock_client):
         """Test that Owner works with the metaclass."""
         from lightning_sdk.owner import Owner
@@ -208,7 +208,7 @@ class TestMetaclassIntegration:
         assert isinstance(Owner, type)
         assert hasattr(Owner, "__abstractmethods__")
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_studio_class_compatibility(self, mock_client):
         """Test that Studio works with the metaclass."""
         from lightning_sdk.studio import Studio
@@ -216,7 +216,7 @@ class TestMetaclassIntegration:
         # Verify the metaclass is applied
         assert isinstance(Studio, type)
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_teamspace_class_compatibility(self, mock_client):
         """Test that Teamspace works with the metaclass."""
         from lightning_sdk.teamspace import Teamspace
@@ -224,7 +224,7 @@ class TestMetaclassIntegration:
         # Verify the metaclass is applied
         assert isinstance(Teamspace, type)
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_agent_class_compatibility(self, mock_client):
         """Test that Agent works with the metaclass."""
         from lightning_sdk.agents import Agent
@@ -232,7 +232,7 @@ class TestMetaclassIntegration:
         # Verify the metaclass is applied
         assert isinstance(Agent, type)
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_deployment_class_compatibility(self, mock_client):
         """Test that Deployment works with the metaclass."""
         from lightning_sdk.deployment import Deployment
@@ -244,7 +244,7 @@ class TestMetaclassIntegration:
 class TestMetaclassLogging:
     """Tests for the actual logging behavior."""
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_successful_method_call_logging(self, mock_client):
         """Test that successful method calls are logged."""
 
@@ -256,7 +256,7 @@ class TestMetaclassLogging:
         result = obj.test_method(5)
         assert result == 10
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_failed_method_call_logging(self, mock_client):
         """Test that failed method calls are logged with error info."""
 
@@ -268,7 +268,7 @@ class TestMetaclassLogging:
         with pytest.raises(RuntimeError, match="Test error"):
             obj.test_method()
 
-    @mock.patch("lightning_sdk.utils.logging.LightningClient")
+    @mock.patch("lightning_sdk.api.utils.LightningClient")
     def test_property_access_logging(self, mock_client):
         """Test that property access is logged."""
 
