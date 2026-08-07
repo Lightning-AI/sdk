@@ -290,7 +290,7 @@ class DeploymentApi:
     """Internal API client for Deployment requests (mainly http requests)."""
 
     def __init__(self, wait_on_stop: int = 5) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
         self._wait_on_stop = wait_on_stop
 
     def get_deployment_by_name(self, name: str, teamspace_id: str) -> Optional[V1Deployment]:

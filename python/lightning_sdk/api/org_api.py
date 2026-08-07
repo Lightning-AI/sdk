@@ -9,7 +9,7 @@ class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_org(self, name: str) -> V1Organization:
         """Fetch an organisation by name.

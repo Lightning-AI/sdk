@@ -15,7 +15,7 @@ class AgentApi:
     """Internal API client for handling Agents-related HTTP requests."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_agent(self, agent_id: str) -> V1Assistant:
         """Retrieve the agent by its ID.

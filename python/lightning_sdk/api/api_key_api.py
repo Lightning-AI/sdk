@@ -14,7 +14,7 @@ class ApiKeyApi:
     """API client for org-scoped API keys used with public model endpoints."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def _try_resolve_org_by_name(self, name: Optional[str]) -> Optional["Organization"]:
         if not name:

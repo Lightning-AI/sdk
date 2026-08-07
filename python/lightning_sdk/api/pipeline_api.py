@@ -22,7 +22,7 @@ class PipelineApi:
     """Internal API client for Pipeline requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=0, retry=False)
+        self._client = cached_lightning_client(retry=False)
         self._cloud_account_api = CloudAccountApi()
 
     def get_pipeline_by_id(self, project_id: str, pipeline_id_or_name: str) -> Optional[V1Pipeline]:

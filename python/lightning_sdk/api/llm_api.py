@@ -69,7 +69,7 @@ class LLMApi:
     """Internal API client for Lightning AI LLM (LitAI) conversation and model operations."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(retry=False, max_tries=0)
+        self._client = cached_lightning_client(retry=False)
         self._assistant = None
         self._model = None
 

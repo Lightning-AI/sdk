@@ -30,7 +30,7 @@ class MMTApiV2:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def submit_job(
         self,

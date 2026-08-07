@@ -34,7 +34,7 @@ def _build_pipeline_api(mock_client_cls):
 def test_init(mock_client_cls, _mock_cloud_account_api):
     """Test that the LightningClient is initialized with the correct arguments."""
     PipelineApi()
-    mock_client_cls.assert_called_once_with(max_tries=0, retry=False, with_auth=True)
+    mock_client_cls.assert_called_once_with(max_tries=3, retry=False, with_auth=True)
 
 
 class TestGetPipelineById:

@@ -27,7 +27,7 @@ class UserApi:
     """Internal API Client for user requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_user(self, name: str) -> Union[V1SearchUser, V1GetUserResponse]:
         """Fetch a user by username, returning the authenticated user object if it matches.

@@ -10,7 +10,7 @@ class AuthApi:
     """API client for identity and authorization introspection."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def whoami(self) -> V1WhoamiResponse:
         """Return the authenticated caller's identity.

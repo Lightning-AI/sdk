@@ -7,7 +7,7 @@ class GpuTelemetryApi:
     """Internal API client for source-aware GPU telemetry requests."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
 
     def list_gpu_telemetry(
         self,

@@ -81,7 +81,7 @@ class _Onboarding:
         self.console = console
         self.user = _get_authed_user()
         self.user_api = UserApi()
-        self.client = cached_lightning_client(max_tries=7)
+        self.client = cached_lightning_client()
 
     @property
     def verified(self) -> bool:

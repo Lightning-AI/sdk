@@ -20,7 +20,7 @@ class FilesystemApi:
     """Internal API client for direct artifact filesystem operations (list, download)."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=7)
+        self._client = cached_lightning_client()
         self._token = _authenticate_and_get_token(self._client)
 
     @property

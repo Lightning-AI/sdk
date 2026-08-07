@@ -53,7 +53,7 @@ def track_calls() -> Callable[[Callable[P, R]], Callable[P, R]]:
                 body.message += f" | Error: {type(e).__name__}: {e!s} | Traceback: {traceback.format_exc(limit=3)}"
                 body.duration = int(time.time() - start_time)
                 with suppress(Exception):
-                    client = cached_lightning_client(retry=False, max_tries=0)
+                    client = cached_lightning_client(retry=False)
                     client.s_dk_command_history_service_create_sdk_command_history(body=body)
                 raise
 

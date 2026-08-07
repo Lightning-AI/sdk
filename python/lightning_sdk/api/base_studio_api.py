@@ -17,7 +17,7 @@ class BaseStudioApi:
     """Internal API client for base studio (environment template) operations."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(retry=False, max_tries=0)
+        self._client = cached_lightning_client(retry=False)
 
     def get_base_studio(self, base_studio_id: str, org_id: Optional[str] = None) -> V1CloudSpaceEnvironmentTemplate:
         """Retrieve the base studio by its ID.

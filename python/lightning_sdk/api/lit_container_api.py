@@ -77,7 +77,7 @@ class LitContainerApi:
     """Internal API client for Lightning Container Registry (LitCR) operations."""
 
     def __init__(self) -> None:
-        self._client = cached_lightning_client(max_tries=3)
+        self._client = cached_lightning_client()
 
         try:
             self._docker_client = docker.from_env()
