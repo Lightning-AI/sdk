@@ -37,7 +37,11 @@ from lightning_sdk.mmt import MMT
 @click.option(
     "--studio",
     default=None,
-    help="The studio env to run the multi-machine job with. Mutually exclusive with image.",
+    help=(
+        "The studio env to run the multi-machine job with. Mutually exclusive with image. "
+        "If both --studio and --image are omitted while running inside a Studio, defaults to that Studio "
+        "(if its teamspace matches --teamspace)."
+    ),
 )
 @click.option(
     "--image",
