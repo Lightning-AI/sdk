@@ -866,23 +866,95 @@ def test_upload_file_without_headers(
     assert headers is None
 
 
+# An object store refusing a GET answers with an XML document, not with the bytes.
+_S3_ERROR_BODY = (
+    b'<?xml version="1.0" encoding="UTF-8"?>\n'
+    b"<Error><Code>AccessDenied</Code><Message>Access Denied</Message></Error>"
+)
+
+
+def _stub_response(status_code: int, body: bytes) -> mock.Mock:
+    response = mock.Mock()
+    response.status_code = status_code
+    response.headers = {"content-length": str(len(body))}
+    response.iter_content = lambda chunk_size=None: iter([body])
+    return response
+
+
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
+    mock_requests_get.return_value = _stub_response(200, b"data" * 256)
+
     teamspace_api = TeamspaceApi()
 
     filepath = os.path.join(tmpdir, "file1")
     teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
+    assert Path(filepath).read_bytes() == b"data" * 256
     mock_authenticate.assert_called_once_with(teamspace_api._client)
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.concurrent.futures.wait")
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_file_rejects_an_error_document(_mock_authenticate, mock_requests_get, tmpdir):
+    mock_requests_get.return_value = _stub_response(403, _S3_ERROR_BODY)
+
+    teamspace_api = TeamspaceApi()
+
+    filepath = os.path.join(tmpdir, "file1")
+    with pytest.raises(RuntimeError, match="(?s)HTTP 403.*AccessDenied"):
+        teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
+
+    assert not os.path.exists(filepath)
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_single_file_rejects_an_error_document_under_200(mock_requests_get, tmp_path):
+    # A 2 MiB object that comes back as a 278-byte body under a 200 is only detectable
+    # against the size the listing reported.
+    mock_requests_get.return_value = _stub_response(200, _S3_ERROR_BODY)
+
+    teamspace_api = TeamspaceApi()
+    file_info = {"path": "single_2mib.bin", "size": 2 * 1024 * 1024}
+
+    with pytest.raises(RuntimeError, match="the listing reported 2097152 bytes"):
+        teamspace_api._download_single_file(file_info, "base", tmp_path, "ts-abc", "token")
+
+    assert list(tmp_path.iterdir()) == []
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_folder_does_not_report_success_on_a_partial_download(
+    _mock_authenticate, inline_executor_cls, tmp_path
+):
+    teamspace_api = TeamspaceApi()
+    teamspace_api.list_files = mock.Mock(
+        return_value=[{"path": "ok.bin", "size": 1000}, {"path": "single_2mib.bin", "size": 2 * 1024 * 1024}]
+    )
+
+    def download(file_info, *args, **kwargs):
+        if file_info["path"] == "single_2mib.bin":
+            raise RuntimeError("Failed to download 'single_2mib.bin': HTTP 503: SlowDown")
+
+    teamspace_api._download_single_file = mock.Mock(side_effect=download)
+
+    with (
+        mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor", inline_executor_cls),
+        pytest.raises(RuntimeError, match="single_2mib.bin"),
+    ):
+        teamspace_api.download_folder("file1", str(tmp_path), "ts-abc", "cluster-abc", progress_bar=False)
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._collect_download_results")
 @mock.patch("lightning_sdk.api.teamspace_api.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
     authenticate_mock.return_value = "test-token-123"
 
     teamspace_api = TeamspaceApi()
@@ -898,7 +970,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
 
     mock_future = mock.Mock()
     mock_executor.return_value.__enter__.return_value.submit.return_value = mock_future
-    mock_wait.return_value = None
+    mock_collect.return_value = None
 
     filepath = os.path.join(tmpdir, "download_folder")
     teamspace_api.download_folder("file1", filepath, "ts-abc", "cluster-abc")

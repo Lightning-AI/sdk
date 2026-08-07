@@ -239,11 +239,19 @@ def _download_dataset_files(
                     with url_lock:
                         urls[rel] = fresh["url"]
             resp.raise_for_status()
+            written = 0
             with open(local_path, "r+b") as f:
                 f.seek(start)
                 for chunk in resp.iter_content(chunk_size=request_chunk):
                     f.write(chunk)
+                    written += len(chunk)
                     pbar.update(len(chunk))
+            # A short range read would otherwise leave the pre-allocated zeros in place.
+            if written != end - start + 1:
+                raise RuntimeError(
+                    f"Failed to download {rel!r}: byte range {start}-{end} returned "
+                    f"{written} of {end - start + 1} bytes"
+                )
 
     try:
         with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:

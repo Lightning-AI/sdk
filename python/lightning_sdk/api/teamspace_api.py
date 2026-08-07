@@ -1,4 +1,3 @@
-import concurrent
 import os
 import re
 import warnings
@@ -14,10 +13,13 @@ from lightning_sdk.api.utils import (
     Experiment,
     _authenticate_and_get_token,
     _BlobUploader,
+    _collect_download_results,
     _download_model_files,
     _DummyBody,
     _get_model_version,
     _ModelFileUploader,
+    _raise_for_download_status,
+    _stream_download_to_file,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -785,6 +787,10 @@ class TeamspaceApi:
             teamspace_id: ID of the owning teamspace.
             cloud_account: Optional cloud account ID used to locate the artifact.
             progress_bar: Whether to display a progress bar during download.
+
+        Raises:
+            RuntimeError: If the server returns a non-2xx status code, or if the body that
+                arrives is not the length the server advertised.
         """
         # TODO: Update this endpoint to permit basic auth
         token = _authenticate_and_get_token(self._client)
@@ -801,6 +807,9 @@ class TeamspaceApi:
             params=query_params,
             stream=True,
         )
+
+        _raise_for_download_status(r, path)
+
         total_length = int(r.headers.get("content-length", 0))
 
         pbar: Optional[tqdm] = None
@@ -813,14 +822,7 @@ class TeamspaceApi:
                 unit_divisor=1024,
             )
 
-        target_dir = os.path.split(target_path)[0]
-        if target_dir:
-            os.makedirs(target_dir, exist_ok=True)
-        with open(target_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                if pbar is not None:
-                    pbar.update(len(chunk))
+        _stream_download_to_file(r, target_path, path, pbar=pbar)
 
     def _download_single_file(
         self,
@@ -842,10 +844,13 @@ class TeamspaceApi:
             token: Authentication token for the artifact API.
             cloud_account: Optional cloud account ID used to locate the artifact.
             pbar: Optional tqdm progress bar to update as bytes are written.
+
+        Raises:
+            RuntimeError: If the server returns a non-2xx status code, or if the body that
+                arrives is not the size the listing reported.
         """
         relative_path = file_info["path"].lstrip("/")
         local_file = download_dir / relative_path
-        local_file.parent.mkdir(parents=True, exist_ok=True)
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
@@ -861,11 +866,8 @@ class TeamspaceApi:
             stream=True,
         )
 
-        with open(str(local_file), "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                if pbar:
-                    pbar.update(len(chunk))
+        _raise_for_download_status(r, file_path)
+        _stream_download_to_file(r, local_file, file_path, pbar=pbar, expected_size=file_info.get("size"))
 
     def download_folder(
         self,
@@ -885,6 +887,10 @@ class TeamspaceApi:
             cloud_account: Optional cloud account ID used to locate the artifacts.
             progress_bar: Whether to display a progress bar during download.
             num_workers: Number of parallel download threads; defaults to ``cpu_count * 4``.
+
+        Raises:
+            RuntimeError: If any file failed to download. A partial folder is never reported
+                as a success.
         """
         # TODO: Update this endpoint to permit basic auth
         if num_workers is None:
@@ -916,26 +922,29 @@ class TeamspaceApi:
                 mininterval=1,
             )
 
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            futures = [
-                executor.submit(
-                    self._download_single_file,
-                    file_info,
-                    path,
-                    download_dir,
-                    teamspace_id,
-                    token,
-                    cloud_account,
-                    pbar,
-                )
-                for file_info in files
-            ]
-            concurrent.futures.wait(futures)
+        try:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+                futures = [
+                    executor.submit(
+                        self._download_single_file,
+                        file_info,
+                        path,
+                        download_dir,
+                        teamspace_id,
+                        token,
+                        cloud_account,
+                        pbar,
+                    )
+                    for file_info in files
+                ]
+                _collect_download_results(futures, path)
 
-        if pbar:
-            pbar.set_description("Download complete")
-            pbar.refresh()
-            pbar.close()
+            if pbar:
+                pbar.set_description("Download complete")
+                pbar.refresh()
+        finally:
+            if pbar:
+                pbar.close()
 
     def get_secrets(self, teamspace_id: str) -> Dict[str, str]:
         """Get all secrets for a teamspace.

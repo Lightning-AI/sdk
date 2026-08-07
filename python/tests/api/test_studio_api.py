@@ -1,6 +1,7 @@
 import os
 import subprocess
 import warnings
+from typing import Optional
 from unittest import mock
 
 import pytest
@@ -1339,24 +1340,26 @@ def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
 def test_download_file_non_200_status(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
     mock_response.status_code = 404
+    mock_response.headers = {}
+    mock_response.iter_content = mock.Mock(return_value=iter([b"<Error><Code>NoSuchKey</Code></Error>"]))
     mock_requests_get.return_value = mock_response
 
     studio_api = StudioApi()
     filepath = os.path.join(tmpdir, "file1")
 
-    with pytest.raises(RuntimeError, match="Failed to download file: 404"):
+    with pytest.raises(RuntimeError, match="(?s)HTTP 404.*NoSuchKey"):
         studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
     assert not os.path.exists(filepath)
     mock_authenticate.assert_called_once_with(studio_api._client)
 
 
-@mock.patch("lightning_sdk.api.studio_api.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.studio_api._collect_download_results")
 @mock.patch("lightning_sdk.api.studio_api.tqdm")
 @mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait, tmpdir):
+def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
     authenticate_mock.return_value = "test-token-123"
 
     studio_api = StudioApi()
@@ -1372,7 +1375,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
 
     mock_future = mock.Mock()
     mock_executor.return_value.__enter__.return_value.submit.return_value = mock_future
-    mock_wait.return_value = None
+    mock_collect.return_value = None
 
     filepath = os.path.join(tmpdir, "download_folder")
     studio_api.download_folder("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
@@ -1384,6 +1387,79 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_wait,
     mock_tqdm.assert_called_once()
     assert mock_tqdm.call_args.kwargs["desc"] == "Downloading files"
     assert mock_tqdm.call_args.kwargs["total"] == 3000  # 1000 + 2000
+
+
+# An object store refusing a GET answers with an XML document, not with the bytes. Writing
+# that document to the destination and exiting 0 is silent corruption.
+_S3_ERROR_BODY = (
+    b'<?xml version="1.0" encoding="UTF-8"?>\n'
+    b"<Error><Code>SlowDown</Code><Message>Please reduce your request rate.</Message></Error>"
+)
+
+
+def _error_document_response(status_code: int, content_length: Optional[int] = None) -> mock.Mock:
+    response = mock.Mock()
+    response.status_code = status_code
+    length = len(_S3_ERROR_BODY) if content_length is None else content_length
+    response.headers = {"content-length": str(length)}
+    response.iter_content = lambda chunk_size=None: iter([_S3_ERROR_BODY])
+    return response
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_single_studio_file_rejects_an_error_document(mock_requests_get, tmp_path):
+    mock_requests_get.return_value = _error_document_response(503)
+
+    studio_api = StudioApi()
+    file_info = {"path": "single_2mib.bin", "size": 2 * 1024 * 1024}
+
+    with pytest.raises(RuntimeError, match="(?s)HTTP 503.*SlowDown"):
+        studio_api._download_single_studio_file(file_info, "base", tmp_path, "st-abc", "ts-abc", "token", None)
+
+    assert list(tmp_path.iterdir()) == []
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_single_studio_file_rejects_an_error_document_under_200(mock_requests_get, tmp_path):
+    # The observed failure: a 2 MiB object came back as a 278-byte body under a 200, so the
+    # only thing that gives it away is the size the listing reported.
+    mock_requests_get.return_value = _error_document_response(200)
+
+    studio_api = StudioApi()
+    file_info = {"path": "single_2mib.bin", "size": 2 * 1024 * 1024}
+
+    with pytest.raises(RuntimeError, match="the listing reported 2097152 bytes"):
+        studio_api._download_single_studio_file(file_info, "base", tmp_path, "st-abc", "ts-abc", "token", None)
+
+    assert list(tmp_path.iterdir()) == []
+
+
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_download_folder_does_not_report_success_on_a_partial_download(
+    _mock_authenticate, inline_executor_cls, tmp_path
+):
+    studio_api = StudioApi()
+    studio_api.list_files = mock.Mock(
+        return_value=[
+            {"path": "ok.bin", "size": 1000},
+            {"path": "single_2mib.bin", "size": 2 * 1024 * 1024},
+        ]
+    )
+
+    def download(file_info, *args, **kwargs):
+        if file_info["path"] == "single_2mib.bin":
+            raise RuntimeError("Failed to download 'single_2mib.bin': HTTP 503: SlowDown")
+
+    studio_api._download_single_studio_file = mock.Mock(side_effect=download)
+
+    with (
+        mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor", inline_executor_cls),
+        pytest.raises(RuntimeError, match="single_2mib.bin"),
+    ):
+        studio_api.download_folder("file1", str(tmp_path), "st-abc", "ts-abc", "cluster-abc", progress_bar=False)
 
 
 @mock.patch(
