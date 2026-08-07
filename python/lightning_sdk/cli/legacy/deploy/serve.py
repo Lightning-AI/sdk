@@ -31,7 +31,7 @@ _MACHINE_VALUES = tuple(
 
 
 class _ServeGroup(click.Group):
-    def parse_args(self, ctx: click.Context, args: list) -> click.Group:
+    def parse_args(self, ctx: click.Context, args: list[str]) -> list[str]:
         # Check if first arg is a file path and not a command name
         if args and os.path.exists(args[0]) and args[0] not in self.commands:
             # Insert the 'api' command before the file path
@@ -147,7 +147,7 @@ def api(
         cloud=cloud,
         name=name,
         yes=yes,
-        machine=machine,
+        machine=machine or "CPU",
         devbox=devbox,
         interruptible=interruptible,
         teamspace=teamspace,
@@ -229,12 +229,12 @@ def api_impl(
             raise RuntimeError(error_msg) from None
 
     if devbox:
-        machine = Machine.from_str(devbox)
+        resolved_machine = Machine.from_str(devbox)
         return _handle_devbox(
             name,
             script_path,
             console,
-            machine=machine,
+            machine=resolved_machine,
             interruptible=interruptible,
             teamspace=teamspace,
             org=org,
@@ -242,14 +242,14 @@ def api_impl(
             recovery=recovery,
         )
 
-    machine = Machine.from_str(machine)
+    resolved_machine = Machine.from_str(machine)
     return _handle_cloud(
         script_path,
         console,
         repository=name,
         tag=tag,
         yes=yes,
-        machine=machine,
+        machine=resolved_machine,
         interruptible=interruptible,
         teamspace=teamspace,
         org=org,
@@ -310,7 +310,7 @@ def _handle_cloud(
     repository: str = "litserve-model",
     tag: Optional[str] = None,
     yes: bool = False,
-    machine: Machine = "CPU",
+    machine: Machine = Machine.CPU,
     interruptible: bool = False,
     teamspace: Optional[str] = None,
     org: Optional[str] = None,
@@ -332,7 +332,9 @@ def _handle_cloud(
 
     port = port or 8000
     ls_deployer = _LitServeDeployer(name=deployment_name, teamspace=None)
-    path = ls_deployer.dockerize_api(script_path, port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False)
+    path = ls_deployer.dockerize_api(
+        str(script_path), port=port, gpu=not machine.is_cpu(), tag=tag, print_success=False
+    )
 
     console.print(f"\n[bold]LitServe generated a Dockerfile at:[/bold]\n[u]{path}[/u]\n")
     if not yes:
@@ -388,7 +390,8 @@ def _handle_cloud(
     deployment_cloud = cloud
     lightning_containers_cloud_account = None
     if not _is_cloud_provider(cloud):
-        lightning_containers_cloud_account = resolve_cluster(resolved_teamspace, cloud, "--cloud")
+        cloud_account_name = cloud if isinstance(cloud, str) else None
+        lightning_containers_cloud_account = resolve_cluster(resolved_teamspace, cloud_account_name, "--cloud")
         deployment_cloud = cloud or resolved_teamspace.default_cloud_account
 
     # list containers to create the project if it doesn't exist

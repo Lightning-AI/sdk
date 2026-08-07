@@ -59,7 +59,11 @@ def logs_job(
     resolved_teamspace = resolve_teamspace(teamspace)
     resource = resolve_job(name, resolved_teamspace)
     selected_rank = resource.is_multi_machine is True and rank is not None
-    job = resolve_job_machine(resource, rank) if selected_rank else resource
+    if selected_rank:
+        assert rank is not None
+        job = resolve_job_machine(resource, rank)
+    else:
+        job = resource
 
     if tui:
         from lightning_sdk.cli.logs_tui import run_tui
@@ -82,13 +86,17 @@ def logs_job(
         if job.is_multi_machine is True:
             labels: dict = {}
             with suppress(Exception):
-                labels = {machine.resource_id: machine.name for machine in job.machines}
+                labels = {
+                    machine.resource_id: machine.name for machine in job.machines if machine.resource_id is not None
+                }
             selection = LogSelection(
                 teamspace_id=resolved_teamspace.id,
                 mmt_id=job.resource_id,
                 labels=labels,
             )
         else:
+            if job.resource_id is None:
+                raise click.ClickException("The selected job does not have a resource ID.")
             selection = LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id])
         read_logs(
             selection,
@@ -103,20 +111,29 @@ def logs_job(
         return
 
     try:
-        log_options = {
-            "follow": follow,
-            "tail": tail,
-            "timestamps": timestamps,
-            "since": resolve_time(since, "--since"),
-            "until": resolve_time(until, "--until"),
-            "query": query,
-            "severity": severity,
-        }
-        if job.is_multi_machine is not True:
+        if job.is_multi_machine is True:
+            logs = job.logs(
+                follow=follow,
+                tail=tail,
+                timestamps=timestamps,
+                since=resolve_time(since, "--since"),
+                until=resolve_time(until, "--until"),
+                query=query,
+                severity=severity,
+            )
+        else:
             # Any non-None rank routes Job through the legacy per-job websocket (server-side
             # tail). For a selected MMT machine the process rank on that node is 0.
-            log_options["rank"] = 0 if selected_rank else rank
-        logs = job.logs(**log_options)
+            logs = job.logs(
+                follow=follow,
+                tail=tail,
+                rank=0 if selected_rank else rank,
+                timestamps=timestamps,
+                since=resolve_time(since, "--since"),
+                until=resolve_time(until, "--until"),
+                query=query,
+                severity=severity,
+            )
         if follow:
             for line in logs:
                 click.echo(line)

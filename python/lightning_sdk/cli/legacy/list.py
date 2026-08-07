@@ -6,10 +6,9 @@ from rich.console import Console
 from rich.table import Table
 from typing_extensions import Literal
 
-from lightning_sdk import Job, Machine, Studio
+from lightning_sdk import MMT, Job, Machine, Studio
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.resource_resolution import resolve_cluster, resolve_teamspace
-from lightning_sdk.lightning_cloud.openapi import V1MultiMachineJob
 from lightning_sdk.lit_container import LitContainer
 from lightning_sdk.models import _list_teamspaces
 
@@ -103,13 +102,13 @@ def jobs(
     as_json: bool = False,
 ) -> None:
     """List jobs for a given teamspace."""
-    jobs = []
+    jobs: list[Job] = []
     if all and not teamspace:
         for teamspace_slug in _list_teamspaces():
             jobs.extend(resolve_teamspace(teamspace_slug).jobs)
     else:
         resolved_teamspace = resolve_teamspace(teamspace)
-        jobs = resolved_teamspace.jobs
+        jobs = list(resolved_teamspace.jobs)
 
     rows = []
     for j in sorted(jobs, key=_sort_jobs_key(sort_by)):
@@ -144,12 +143,12 @@ def jobs(
     table.add_column("Total Cost")
     for row in rows:
         table.add_row(
-            row["name"],
-            row["teamspace"],
-            row["studio"],
-            row["image"],
-            row["status"],
-            row["machine"],
+            str(row["name"] or ""),
+            str(row["teamspace"] or ""),
+            str(row["studio"] or ""),
+            str(row["image"] or ""),
+            str(row["status"] or ""),
+            str(row["machine"] or ""),
             f"{row['total_cost']:.3f}",
         )
 
@@ -188,13 +187,13 @@ def mmts(
     as_json: bool = False,
 ) -> None:
     """List multi-machine jobs for a given teamspace."""
-    jobs = []
+    jobs: list[MMT] = []
     if all and not teamspace:
         for teamspace_slug in _list_teamspaces():
             jobs.extend(resolve_teamspace(teamspace_slug).multi_machine_jobs)
     else:
         resolved_teamspace = resolve_teamspace(teamspace)
-        jobs = resolved_teamspace.multi_machine_jobs
+        jobs = list(resolved_teamspace.multi_machine_jobs)
 
     sorted_jobs = sorted(jobs, key=_sort_mmts_key(sort_by))
     for j in sorted_jobs:
@@ -322,7 +321,7 @@ def machines() -> None:
     Console().print(table)
 
 
-def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
+def _sort_studios_key(sort_by: Optional[str]) -> Callable[[Studio], str]:
     """Return a key function to sort studios by a given attribute."""
     sort_key_map = {
         "name": lambda s: str(s.name or ""),
@@ -331,10 +330,10 @@ def _sort_studios_key(sort_by: str) -> Callable[[Studio], str]:
         "machine": lambda s: str(s.machine or ""),
         "cloud-account": lambda s: str(s.cloud_account or ""),
     }
-    return sort_key_map.get(sort_by, lambda s: s.name)
+    return sort_key_map.get(sort_by or "", lambda s: s.name)
 
 
-def _sort_jobs_key(sort_by: str) -> Callable[[Job], str]:
+def _sort_jobs_key(sort_by: Optional[str]) -> Callable[[Job], str]:
     """Return a key function to sort studios by a given attribute."""
     sort_key_map = {
         "name": lambda j: str(j.name or ""),
@@ -345,10 +344,10 @@ def _sort_jobs_key(sort_by: str) -> Callable[[Job], str]:
         "image": lambda j: str(j.image or ""),
         "cloud-account": lambda j: str(j.cloud_account or ""),
     }
-    return sort_key_map.get(sort_by, lambda j: j.name)
+    return sort_key_map.get(sort_by or "", lambda j: j.name)
 
 
-def _sort_mmts_key(sort_by: str) -> Callable[[V1MultiMachineJob], str]:
+def _sort_mmts_key(sort_by: Optional[str]) -> Callable[[MMT], str]:
     """Return a key function to sort multi-machine jobs by a given attribute."""
     sort_key_map = {
         "name": lambda j: str(j.name or ""),
@@ -359,4 +358,4 @@ def _sort_mmts_key(sort_by: str) -> Callable[[V1MultiMachineJob], str]:
         "machine": lambda j: str(j.machine or ""),
         "cloud-account": lambda j: str(j.cloud_account or ""),
     }
-    return sort_key_map.get(sort_by, lambda j: j.name)
+    return sort_key_map.get(sort_by or "", lambda j: j.name)

@@ -43,7 +43,15 @@ _MACHINE_VALUES = tuple(
         "If not provided for images, will run the container entrypoint and default command."
     ),
 )
-@click.option("--studio", default=None, help="The studio env to run the job with. Mutually exclusive with image.")
+@click.option(
+    "--studio",
+    default=None,
+    help=(
+        "The studio env to run the job with. Mutually exclusive with image. "
+        "If both --studio and --image are omitted while running inside a Studio, defaults to that Studio "
+        "(if its teamspace matches --teamspace)."
+    ),
+)
 @click.option("--image", default=None, help="The docker image to run the job with. Mutually exclusive with studio.")
 @teamspace_option
 @click.option(
@@ -171,25 +179,24 @@ def run_job(
     for value in env:
         env_dict.update(_resolve_envs(value))
 
-    run_kwargs = {
-        "name": name,
-        "machine": machine_enum,
-        "command": command,
-        "studio": studio,
-        "image": image,
-        "teamspace": resolved_teamspace,
-        "org": org,
-        "user": user,
-        "cloud": cloud,
-        "env": env_dict,
-        "interruptible": interruptible,
-        "image_credentials": image_credentials,
-        "cloud_account_auth": cloud_account_auth,
-        "entrypoint": entrypoint,
-        "path_mappings": path_mappings_dict,
-        "num_machines": num_machines,
-    }
-    job = Job.run(**run_kwargs)
+    job = Job.run(
+        name=name,
+        machine=machine_enum,
+        command=command,
+        studio=studio,
+        image=image,
+        teamspace=resolved_teamspace,
+        org=org,
+        user=user,
+        cloud=cloud,
+        env=env_dict,
+        interruptible=interruptible,
+        image_credentials=image_credentials,
+        cloud_account_auth=cloud_account_auth,
+        entrypoint=entrypoint,
+        path_mappings=path_mappings_dict,
+        num_machines=num_machines,
+    )
 
     if as_json:
         echo_json(

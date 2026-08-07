@@ -22,7 +22,7 @@ def test_org_api_valueerror(internal_get_org_api_mocker):
         org_api.get_org("xyz")
 
 
-@mock.patch("lightning_sdk.api.org_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 def test_create_teamspace(mock_client):
     org_api = OrgApi()
 

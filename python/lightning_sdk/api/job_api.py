@@ -1,5 +1,6 @@
 import json
 import time
+import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Union
@@ -9,6 +10,7 @@ from urllib.request import urlopen
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
+    cached_lightning_client,
     remove_datetime_prefix,
     resolve_path_mappings,
 )
@@ -25,7 +27,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1Volume,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -122,7 +123,7 @@ class JobApiV2:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def submit_job(
         self,
@@ -137,7 +138,7 @@ class JobApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         max_runtime: Optional[int] = None,
         reuse_snapshot: bool = True,
@@ -161,7 +162,9 @@ class JobApiV2:
             cloud_account_auth: Whether to pass cloud-account credentials into the container.
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -214,7 +217,7 @@ class JobApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
@@ -238,7 +241,9 @@ class JobApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -590,6 +595,59 @@ class JobApiV2:
 
         return Machine.from_str(spec.instance_name or spec.instance_type)
 
+    def warn_if_max_runtime_noop(
+        self,
+        *,
+        max_runtime: Optional[int],
+        machine: Union[Machine, str],
+        interruptible: bool,
+        teamspace_id: str,
+        cloud_account_id: Optional[str],
+        org_id: str,
+        stacklevel: int = 3,
+    ) -> None:
+        """Warn when ``max_runtime`` will not take effect.
+
+        ``max_runtime`` maps to a DWS reservation duration. The product UI only sends it for
+        non-spot machines with ``dws_supported`` / ``dws_only``; elsewhere it is a no-op.
+        """
+        if not max_runtime:
+            return
+
+        if interruptible:
+            warnings.warn(
+                "max_runtime has no effect on interruptible (spot) instances; "
+                "it only applies to DWS (Dynamic Workload Scheduler) machines.",
+                UserWarning,
+                stacklevel=stacklevel,
+            )
+            return
+
+        if not cloud_account_id:
+            return
+
+        try:
+            accelerators = self._get_machines_for_cloud_account(
+                teamspace_id=teamspace_id,
+                cloud_account_id=cloud_account_id,
+                org_id=org_id,
+            )
+        except Exception:
+            return
+
+        accelerator = _match_accelerator(machine, accelerators)
+        if accelerator is None:
+            return
+        if accelerator.dws_supported or accelerator.dws_only:
+            return
+
+        warnings.warn(
+            f"max_runtime has no effect on machine '{machine}'; "
+            "it only applies to DWS (Dynamic Workload Scheduler) machines.",
+            UserWarning,
+            stacklevel=stacklevel,
+        )
+
     def _get_machines_for_cloud_account(
         self, teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
@@ -637,3 +695,21 @@ class JobApiV2:
     def list_mmt_subjobs(self, job_id: str, teamspace_id: str) -> List[V1Job]:
         """Single-machine jobs have no sub-jobs. Kept for parity with ``MMTApiV2.list_mmt_subjobs``."""
         return []
+
+
+def _match_accelerator(
+    machine: Union[Machine, str],
+    accelerators: List[V1ClusterAccelerator],
+) -> Optional[V1ClusterAccelerator]:
+    """Return the accelerator record matching ``machine``, if any."""
+    instance_name = _machine_to_compute_name(machine)
+    for accelerator in accelerators:
+        possible_identifiers = (
+            accelerator.slug,
+            accelerator.slug_multi_cloud,
+            accelerator.instance_id,
+            getattr(accelerator, "secondary_instance_id", None),
+        )
+        if instance_name in possible_identifiers:
+            return accelerator
+    return None

@@ -1,4 +1,8 @@
 # coding: utf-8
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 
 """
     external/v1/auth_service.proto
@@ -54,6 +58,7 @@ class V1ServerSpec(object):
         'cloud_init_run_cmds': 'list[str]',
         'cloud_space_id': 'str',
         'cluster_id': 'str',
+        'customer_network_ids': 'list[str]',
         'delete_protection': 'bool',
         'deployment_id': 'str',
         'desired_machine_id': 'str',
@@ -124,6 +129,7 @@ class V1ServerSpec(object):
         'cloud_init_run_cmds': 'cloudInitRunCmds',
         'cloud_space_id': 'cloudSpaceId',
         'cluster_id': 'clusterId',
+        'customer_network_ids': 'customerNetworkIds',
         'delete_protection': 'deleteProtection',
         'deployment_id': 'deploymentId',
         'desired_machine_id': 'desiredMachineId',
@@ -180,7 +186,7 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, customer_network_ids: 'list[str]' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
@@ -195,6 +201,7 @@ class V1ServerSpec(object):
         self._cloud_init_run_cmds = None
         self._cloud_space_id = None
         self._cluster_id = None
+        self._customer_network_ids = None
         self._delete_protection = None
         self._deployment_id = None
         self._desired_machine_id = None
@@ -276,6 +283,8 @@ class V1ServerSpec(object):
             self.cloud_space_id = cloud_space_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if customer_network_ids is not None:
+            self.customer_network_ids = customer_network_ids
         if delete_protection is not None:
             self.delete_protection = delete_protection
         if deployment_id is not None:
@@ -657,6 +666,29 @@ class V1ServerSpec(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def customer_network_ids(self) -> 'list[str]':
+        """Gets the customer_network_ids of this V1ServerSpec.  # noqa: E501
+
+        Customer network agent ids this VM may reach over the VPN. Granted by the baremetal agent at create; empty means no customer access.  # noqa: E501
+
+        :return: The customer_network_ids of this V1ServerSpec.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._customer_network_ids
+
+    @customer_network_ids.setter
+    def customer_network_ids(self, customer_network_ids: 'list[str]'):
+        """Sets the customer_network_ids of this V1ServerSpec.
+
+        Customer network agent ids this VM may reach over the VPN. Granted by the baremetal agent at create; empty means no customer access.  # noqa: E501
+
+        :param customer_network_ids: The customer_network_ids of this V1ServerSpec.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._customer_network_ids = customer_network_ids
 
     @property
     def delete_protection(self) -> 'bool':

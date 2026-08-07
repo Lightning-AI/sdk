@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 from collections.abc import Sequence
 from functools import partial
-from typing import Any
+from typing import Any, cast
 
 import rich_click as click
 from rich.table import Table
@@ -56,7 +56,7 @@ def resolve_snapshot_delete(
 
 def _json_default(value: object) -> str:
     if hasattr(value, "isoformat"):
-        return value.isoformat()  # type: ignore[attr-defined]
+        return str(cast(Any, value).isoformat())
     return str(value)
 
 
@@ -177,7 +177,7 @@ COMMON_OPTIONS = [
 ]
 
 
-def _with_common_options(command: click.Command) -> click.Command:
+def _with_common_options(command: Any) -> Any:
     for option in reversed(COMMON_OPTIONS):
         command = option(command)
     return command
@@ -715,7 +715,9 @@ def run_sandbox_command(
             click.echo(f"Command ID: {command.cmd_id}")
 
     if command.exit_code not in (None, 0):
-        click.get_current_context().exit(command.exit_code)
+        context = click.get_current_context()
+        assert context is not None
+        context.exit(command.exit_code)
 
 
 @click.command("logs", cls=LightningCommand)

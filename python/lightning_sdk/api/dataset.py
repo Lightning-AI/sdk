@@ -8,7 +8,7 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Sequence, Union, cast
 
 import backoff
 import requests
@@ -19,6 +19,7 @@ from lightning_sdk.api.utils import (
     _MAX_SIZE_MULTI_PART_CHUNK,
     _MAX_WORKERS,
     _SIZE_LIMIT_SINGLE_PART,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi.api_client import ApiClient
@@ -127,7 +128,7 @@ def _resolve_dataset_id_and_version(project_id: str, dataset_name: str, version:
     Combines name->id and default-version resolution into a single API round-trip
     so callers don't list datasets twice before downloading.
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     url = env.LIGHTNING_CLOUD_URL
     resp = api_client.request(
@@ -239,11 +240,19 @@ def _download_dataset_files(
                     with url_lock:
                         urls[rel] = fresh["url"]
             resp.raise_for_status()
+            written = 0
             with open(local_path, "r+b") as f:
                 f.seek(start)
                 for chunk in resp.iter_content(chunk_size=request_chunk):
                     f.write(chunk)
+                    written += len(chunk)
                     pbar.update(len(chunk))
+            # A short range read would otherwise leave the pre-allocated zeros in place.
+            if written != end - start + 1:
+                raise RuntimeError(
+                    f"Failed to download {rel!r}: byte range {start}-{end} returned "
+                    f"{written} of {end - start + 1} bytes"
+                )
 
     try:
         with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
@@ -287,7 +296,7 @@ def _download_dataset_version(
         unzip: Extract a dataset stored as exactly one ZIP artifact.
     """
     cloud_url = env.LIGHTNING_CLOUD_URL
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     resolved_id = dataset_id or dataset_name
@@ -372,6 +381,7 @@ def _download_dataset_version(
             files_list, dest_dir, project_id, _refresh_file, num_workers=num_workers, part_size=part_size
         )
         if unzip:
+            assert zip_relative_path is not None
             archive_path = _safe_destination_path(dest_dir, zip_relative_path, "dataset filepath")
             _extract_zip_safely(str(archive_path), target_path)
     finally:
@@ -397,7 +407,7 @@ def _create_dataset(
     Returns:
         The created dataset dict (containing ``id``).
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     body: dict = {"name": name}
@@ -417,7 +427,7 @@ def _create_dataset(
 def _create_dataset_version(
     project_id: str,
     dataset_id: str,
-    cluster_id: str,
+    cluster_id: Optional[str],
     version: Optional[str] = None,
 ) -> dict:
     """Create a new version of a Lightning Dataset via the API.
@@ -435,7 +445,7 @@ def _create_dataset_version(
     Returns:
         The created version dict (containing ``version``).
     """
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
 
     body: dict = {"cluster_id": cluster_id}
@@ -487,6 +497,7 @@ class _DatasetFileUploader:
         # When a shared (aggregate) progress bar is provided, update it instead of
         # creating per-file/per-chunk bars (which get messy under parallel uploads).
         self._shared_progress = shared_progress
+        self._progress_bar: Optional[tqdm]
         if shared_progress is not None:
             self._progress_bar = shared_progress
         elif progress_bar:
@@ -566,13 +577,17 @@ class _DatasetFileUploader:
     def _handle_uploading_single_part(self, presigned_url: dict, upload_id: str) -> dict:
         try:
             return self._handle_upload_presigned_url(presigned_url)
-        except Exception:
+        except Exception as e:
             part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
+            if part_number is None:
+                raise ValueError("Upload URL response did not include a part number") from e
             return self._error_handling_upload(part=int(part_number), upload_id=upload_id)
 
     def _handle_upload_presigned_url(self, presigned_url: dict) -> dict:
         part_number = presigned_url.get("partNumber") or presigned_url.get("part_number")
         url = presigned_url.get("url")
+        if part_number is None or url is None:
+            raise ValueError("Upload URL response did not include a URL and part number")
         with open(self._local_path, "rb") as f:
             f.seek((int(part_number) - 1) * self._chunk_size)
             data = f.read(self._chunk_size)
@@ -594,7 +609,7 @@ def _upload_dataset_files(
     project_id: str,
     dataset_id: str,
     version: str,
-    file_paths: List[Union[str, Path]],
+    file_paths: Sequence[Union[str, Path]],
     remote_paths: List[str],
     progress_bar: bool = True,
     num_workers: int = _DEFAULT_UPLOAD_WORKERS,
@@ -615,7 +630,7 @@ def _upload_dataset_files(
     if not file_paths:
         return
 
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     file_workers = max(1, min(num_workers, len(file_paths)))
     part_workers = max(1, num_workers // file_workers)
 
@@ -652,7 +667,7 @@ def _upload_dataset_files(
 
 def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> None:
     """Signal that all files for a dataset version have been uploaded."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     api_client.request(
         "POST",
@@ -665,7 +680,7 @@ def _complete_dataset_upload(project_id: str, dataset_id: str, version: str) -> 
 
 def _list_datasets(project_id: str) -> list:
     """List all Lightning Datasets in a Teamspace."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     resp = api_client.request(
         "GET",
@@ -679,7 +694,7 @@ def _list_datasets(project_id: str) -> list:
 
 def _list_dataset_versions(project_id: str, dataset_id: str) -> list:
     """List all versions of a Lightning Dataset."""
-    client = LightningClient(retry=False)
+    client = cached_lightning_client(retry=False)
     api_client: ApiClient = client.api_client
     resp = api_client.request(
         "GET",
@@ -717,7 +732,7 @@ def _upload_dataset(
     """
     existing = _get_dataset_by_name(project_id=project_id, dataset_name=name)
     if existing:
-        dataset_id = existing.get("id")
+        dataset_id = cast(str, existing.get("id"))
         # compute the next version number from existing versions
         if version is None:
             versions = _list_dataset_versions(project_id=project_id, dataset_id=dataset_id)
@@ -737,7 +752,7 @@ def _upload_dataset(
             name=name,
             cluster_id=cluster_id,
         )
-        dataset_id = ds.get("id")
+        dataset_id = cast(str, ds.get("id"))
 
     # CreateLitDataset only creates the dataset record; a version must be
     # created explicitly before the version-scoped upload endpoints exist.
@@ -747,7 +762,7 @@ def _upload_dataset(
         cluster_id=cluster_id,
         version=version,
     )
-    ds_version = ver.get("version")
+    ds_version = cast(str, ver.get("version"))
 
     _upload_dataset_files(
         project_id=project_id,

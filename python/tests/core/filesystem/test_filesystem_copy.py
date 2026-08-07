@@ -29,7 +29,7 @@ def fake_path_result():
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -68,10 +68,10 @@ def test_copy_download_file(
     assert target.read_bytes() == b"x" * 1024
 
 
-@mock.patch("lightning_sdk.api.filesystem_api.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.filesystem_api._collect_download_results")
 @mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -82,7 +82,7 @@ def test_copy_download_folder(
     mock_client_cls,
     mock_get,
     mock_executor,
-    mock_wait,
+    mock_collect,
     fake_teamspace,
     tmp_path,
 ):
@@ -94,7 +94,7 @@ def test_copy_download_folder(
     mock_resolve.return_value = fake_teamspace
     mock_authenticate.return_value = FAKE_TOKEN
     mock_client_cls.return_value.api_client.configuration.host = HOST
-    mock_wait.return_value = None
+    mock_collect.return_value = None
 
     def fake_get(url, **kwargs):
         resp = mock.MagicMock()
@@ -118,7 +118,7 @@ def test_copy_download_folder(
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value=FAKE_TOKEN)
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -141,7 +141,7 @@ def test_copy_raises_if_directory_without_recursive(
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value=FAKE_TOKEN)
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -172,7 +172,7 @@ def test_copy_raises_if_both_local():
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")

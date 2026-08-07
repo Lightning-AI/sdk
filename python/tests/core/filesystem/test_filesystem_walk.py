@@ -29,7 +29,7 @@ def fake_path_result():
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -59,7 +59,7 @@ def test_walk_yields_os_walk_style_tuples(
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -86,7 +86,7 @@ def test_walk_flat_directory(
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -104,7 +104,7 @@ def test_walk_empty(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get,
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
@@ -125,7 +125,7 @@ def test_walk_is_recursive(
 
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.filesystem_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")

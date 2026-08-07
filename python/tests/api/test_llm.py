@@ -9,7 +9,7 @@ from lightning_sdk.lightning_cloud.openapi.models import V1ConversationResponseC
 @pytest.fixture()
 def mock_client():
     """Mock the LightningClient."""
-    with patch("lightning_sdk.api.llm_api.LightningClient") as mock_client_class:
+    with patch("lightning_sdk.api.utils.LightningClient") as mock_client_class:
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
         yield mock_client
@@ -64,3 +64,10 @@ def test_start_conversation_basic(llm_api, mock_client, sample_response):
     # Check assistant_id parameter
     assert call_args[0][1] == "assistant-123"
     assert call_args[1]["_preload_content"] is True
+
+
+def test_parse_stream_line_warns_and_returns_none_for_invalid_json(llm_api):
+    with pytest.warns(UserWarning, match="Error decoding JSON: not-json"):
+        result = llm_api._parse_stream_line("not-json")
+
+    assert result is None

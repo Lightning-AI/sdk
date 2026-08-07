@@ -1,4 +1,3 @@
-import concurrent
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -9,6 +8,10 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     _authenticate_and_get_token,
+    _collect_download_results,
+    _raise_for_download_status,
+    _stream_download_to_file,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -17,7 +20,7 @@ class FilesystemApi:
     """Internal API client for direct artifact filesystem operations (list, download)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
         self._token = _authenticate_and_get_token(self._client)
 
     @property
@@ -76,6 +79,7 @@ class FilesystemApi:
         token: str,
         pbar: Optional[tqdm] = None,
         progress_bar: bool = False,
+        expected_size: Optional[int] = None,
     ) -> None:
         """Download a single artifact file.
 
@@ -89,9 +93,12 @@ class FilesystemApi:
             token: Authentication token for the download request.
             pbar: Optional shared tqdm progress bar to update with downloaded bytes.
             progress_bar: When ``True`` and ``pbar`` is ``None``, create a per-file progress bar.
+            expected_size: Size the listing reported for this file, checked against the bytes
+                that actually arrive.
 
         Raises:
-            RuntimeError: If the server returns a non-200 status code.
+            RuntimeError: If the server returns a non-2xx status code, or if the body that
+                arrives is not the expected length.
         """
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}",
@@ -99,8 +106,7 @@ class FilesystemApi:
             stream=True,
             allow_redirects=True,
         )
-        if r.status_code != 200:
-            raise RuntimeError(f"Failed to download {remote_path!r}: {r.status_code}")
+        _raise_for_download_status(r, remote_path)
 
         owned_pbar = None
         if pbar is None and progress_bar:
@@ -114,15 +120,11 @@ class FilesystemApi:
             )
             pbar = owned_pbar
 
-        local_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(local_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                if pbar is not None:
-                    pbar.update(len(chunk))
-
-        if owned_pbar is not None:
-            owned_pbar.close()
+        try:
+            _stream_download_to_file(r, local_path, remote_path, pbar=pbar, expected_size=expected_size)
+        finally:
+            if owned_pbar is not None:
+                owned_pbar.close()
 
     def download_folder(
         self,
@@ -140,6 +142,10 @@ class FilesystemApi:
             teamspace_id: The teamspace that owns the artifacts.
             progress_bar: Whether to display a tqdm progress bar during download.
             num_workers: Number of parallel download threads; defaults to ``cpu_count * 4``.
+
+        Raises:
+            RuntimeError: If any file failed to download. A partial folder is never reported
+                as a success.
         """
         path = path.strip("/")
         entries = self.list_files(teamspace_id, path, recursive=True)
@@ -147,7 +153,7 @@ class FilesystemApi:
         files = [e for e in entries if e.get("type") == "blob"]
 
         if num_workers is None:
-            num_workers = os.cpu_count() * 4
+            num_workers = (os.cpu_count() or 1) * 4
 
         download_dir = Path(target_path)
         download_dir.mkdir(parents=True, exist_ok=True)
@@ -163,21 +169,25 @@ class FilesystemApi:
                 mininterval=1,
             )
 
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            futures = [
-                executor.submit(
-                    self._download_single_file,
-                    f"{path}/{entry['path']}",
-                    download_dir / entry["path"],
-                    teamspace_id,
-                    self._token,
-                    pbar,
-                )
-                for entry in files
-            ]
-            concurrent.futures.wait(futures)
+        try:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+                futures = [
+                    executor.submit(
+                        self._download_single_file,
+                        f"{path}/{entry['path']}",
+                        download_dir / entry["path"],
+                        teamspace_id,
+                        self._token,
+                        pbar,
+                        expected_size=entry.get("size"),
+                    )
+                    for entry in files
+                ]
+                _collect_download_results(futures, path)
 
-        if pbar:
-            pbar.set_description("Download complete")
-            pbar.refresh()
-            pbar.close()
+            if pbar:
+                pbar.set_description("Download complete")
+                pbar.refresh()
+        finally:
+            if pbar:
+                pbar.close()

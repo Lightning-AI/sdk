@@ -3,7 +3,7 @@ import os
 import warnings
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
 
 from tqdm.auto import tqdm
 
@@ -120,8 +120,9 @@ class Teamspace(metaclass=TrackCallsMeta):
 
             slug_owner, name = name.split("/", 1)
             try:
-                org = _resolve_org(slug_owner)
-                self._teamspace_api.get_teamspace(name=name, owner_id=org.id)
+                resolved_org = cast(Organization, _resolve_org(slug_owner))
+                self._teamspace_api.get_teamspace(name=name, owner_id=resolved_org.id)
+                org = resolved_org
             except Exception:
                 org = None
                 user = _resolve_user(slug_owner)
@@ -160,6 +161,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             self._owner = self._org
 
         else:
+            assert self._user is not None
             self._owner = self._user
 
         try:
@@ -207,16 +209,17 @@ class Teamspace(metaclass=TrackCallsMeta):
         return self._get_studios(Studio)
 
     def _get_studios(self, target_cls: type) -> List["Studio"]:
+        # An unfiltered call already returns every Studio across every cloud account (paginated
+        # internally), so there's no need to loop per cloud_account and pay one round trip per
+        # account even when it has zero Studios.
         studios = []
-        cloud_accounts = self._teamspace_api.list_cloud_accounts(teamspace_id=self.id)
-        for cl in cloud_accounts:
-            _studios = self._teamspace_api.list_studios(teamspace_id=self.id, cloud_account=cl.cluster_id)
-            for s in _studios:
-                with skip_studio_init():
-                    studio = target_cls(name=s.name, teamspace=self, create_ok=False)
-                    studio._studio = s
-                    studio._teamspace = self
-                    studios.append(studio)
+        _studios = self._teamspace_api.list_studios(teamspace_id=self.id)
+        for s in _studios:
+            with skip_studio_init():
+                studio = target_cls(name=s.name, teamspace=self, create_ok=False)
+                studio._studio = s
+                studio._teamspace = self
+                studios.append(studio)
 
         return studios
 
@@ -408,6 +411,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         if cloud_accounts is None:
             raise RuntimeError("Could not resolve cloud account")
 
+        machine_filter: Optional[Machine] = None
         if machine:
             _machine_values = tuple(
                 [
@@ -418,10 +422,13 @@ class Teamspace(metaclass=TrackCallsMeta):
             )
             if machine not in _machine_values:
                 raise ValueError(f"Machine '{machine}' is not valid. Valid machines are: {_machine_values}")
-            machine = getattr(Machine, machine.upper(), Machine(machine, machine))
+            machine_filter = cast(Machine, getattr(Machine, machine.upper(), Machine(machine, machine)))
 
         cloud_machines = self._teamspace_api.list_machines(
-            self.id, cloud_accounts=cloud_accounts, machine=machine, org_id=self._org.id
+            self.id,
+            cloud_accounts=cloud_accounts,
+            machine=machine_filter,
+            org_id=self._org.id if self._org is not None else None,
         )
         # filter out of capacity machines
         cloud_machines = [cm for cm in cloud_machines if not cm.out_of_capacity]
@@ -443,7 +450,7 @@ class Teamspace(metaclass=TrackCallsMeta):
             for cluster_machine in cloud_machines
         ]
 
-    def __eq__(self, other: "Teamspace") -> bool:
+    def __eq__(self, other: object) -> bool:
         """Checks whether the provided other object is equal to this one.
 
         Args:
@@ -633,9 +640,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         raise_access_error_if_not_allowed(AccessibleResource.Models, self.id)
         if not name:
             raise ValueError("No name provided for the model")
-        if download_dir is None:
-            download_dir = Path.cwd()
-        download_dir = Path(download_dir)
+        download_path = Path.cwd() if download_dir is None else Path(download_dir)
 
         name, version = _parse_model_and_version(name)
         model_version = self._teamspace_api.get_model_version(name=name, version=version, teamspace_id=self.id)
@@ -646,7 +651,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         downloaded_files = self._teamspace_api.download_model_files(
             name=name,
             version=version,
-            download_dir=download_dir,
+            download_dir=download_path,
             teamspace_name=self.name,
             teamspace_owner_name=self.owner.name,
             progress_bar=progress_bar,
@@ -657,9 +662,9 @@ class Teamspace(metaclass=TrackCallsMeta):
 
         if len(downloaded_files) == 1:
             downloaded_file = Path(downloaded_files[0])
-            downloaded_path = download_dir / downloaded_file.parts[0]
+            downloaded_path = download_path / downloaded_file.parts[0]
             return str(downloaded_path.resolve())
-        return str(Path(download_dir).resolve())
+        return str(download_path.resolve())
 
     def delete_model(self, name: str) -> None:
         """Delete a model from the model store.
@@ -725,6 +730,8 @@ class Teamspace(metaclass=TrackCallsMeta):
                 f"No cloud account specified. Using teamspace default cloud account: {self.default_cloud_account}."
             )
             cloud_account = self.default_cloud_account
+        if cloud_account is None:
+            raise RuntimeError("Could not resolve a cloud account for the upload")
 
         # The drive backend expects POSIX-style ("/") remote paths. os.path.normpath
         # emits "\" separators on Windows, which the backend rejects, so normalize any
@@ -734,7 +741,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         self._teamspace_api.upload_file(
             teamspace_id=self._teamspace.id,
             cloud_account=cloud_account,
-            file_path=file_path,
+            file_path=str(file_path),
             remote_path=remote_path,
             progress_bar=progress_bar,
         )
@@ -773,16 +780,15 @@ class Teamspace(metaclass=TrackCallsMeta):
             remote_file = os.path.join(remote_path, rel_path) if remote_path else rel_path
             all_files.append((fp, remote_file))
 
-        if progress_bar:
-            progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
+        progress = tqdm(total=len(all_files), desc="Uploading files", unit="file") if progress_bar else None
         for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
-            if progress_bar:
-                progress_bar.set_description(f"Uploading {local_file}")
+            if progress is not None:
+                progress.set_description(f"Uploading {local_file}")
             self.upload_file(local_file, remote_path=remote_path, progress_bar=False, cloud_account=cloud_account)
-            if progress_bar:
-                progress_bar.update(1)
-        if progress_bar:
-            progress_bar.close()
+            if progress is not None:
+                progress.update(1)
+        if progress is not None:
+            progress.close()
 
     def download_file(
         self, remote_path: str, file_path: Optional[str] = None, cloud_account: Optional[str] = None

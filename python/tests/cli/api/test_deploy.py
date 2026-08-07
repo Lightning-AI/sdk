@@ -581,7 +581,7 @@ def test_poll_verified_status(mock_user_api_cls, mock_get_authed_user):
 def mock_onboarding():
     with patch("lightning_sdk.cli.legacy.deploy._auth.UserApi") as mock_user_api_cls:  # noqa: SIM117
         with patch("lightning_sdk.cli.legacy.deploy._auth._get_authed_user") as mock_get_authed_user:
-            with patch("lightning_sdk.cli.legacy.deploy._auth.LightningClient") as mock_lightning_client:
+            with patch("lightning_sdk.api.utils.LightningClient") as mock_lightning_client:
                 with patch("lightning_sdk.cli.legacy.deploy._auth.select_teamspace") as mock_select_teamspace:
                     onboarding = _Onboarding(MagicMock())
                     yield (

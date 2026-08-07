@@ -42,4 +42,6 @@ def list_mmts(
     """List multi-machine jobs for a given teamspace."""
     from lightning_sdk.cli.legacy.list import mmts
 
-    mmts.callback(teamspace=teamspace, all=all, sort_by=sort_by, as_json=as_json)
+    callback = mmts.callback
+    assert callback is not None
+    callback(teamspace=teamspace, all=all, sort_by=sort_by, as_json=as_json)

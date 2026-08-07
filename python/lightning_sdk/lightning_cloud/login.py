@@ -1,13 +1,15 @@
+# This file is vendored.
+# Do not edit it directly; changes will be overwritten.
+# Make changes in the internal upstream repository instead.
+
 import base64
-from contextlib import contextmanager
-from contextvars import ContextVar
 from enum import Enum
 import json
 import logging
 import os
 import pathlib
 from dataclasses import dataclass
-from typing import Generator, Optional, Literal
+from typing import Optional, Literal
 from urllib.parse import urlencode
 
 import webbrowser
@@ -31,19 +33,6 @@ logger = logging.getLogger(__name__)
 
 # Authentication override types
 AuthOverride = Literal["auth_token", "api_key"]
-
-_BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
-
-
-@contextmanager
-def browser_authentication(allowed: bool) -> Generator[None, None, None]:
-    """Temporarily control whether missing credentials may start browser authentication."""
-    token = _BROWSER_AUTH_ALLOWED.set(allowed)
-    try:
-        yield
-    finally:
-        _BROWSER_AUTH_ALLOWED.reset(token)
-
 
 class Keys(Enum):
     # USERNAME = "LIGHTNING_USERNAME"
@@ -136,7 +125,7 @@ class Auth:
         override : AuthOverride, optional
             Override the default authentication method:
             - "auth_token": Force use of JWT auth token (Bearer)
-            - "api_key": Force use of API key (Basic)
+            - "api_key": Force use of API key (Basic/Bearer)
             - None: Use automatic selection (default)
             
         Returns
@@ -158,22 +147,26 @@ class Auth:
             return f"Bearer {self.auth_token}"
         
         elif override == "api_key":
-            if not self.api_key or not self.user_id:
+            if not self.api_key:
                 raise ValueError(
-                    "API key override requested but no API key or user ID available. "
-                    "Please set LIGHTNING_API_KEY and LIGHTNING_USER_ID environment variables "
+                    "API key override requested but no API key available. "
+                    "Please set LIGHTNING_API_KEY environment variable "
                     "or use authenticate() method."
                 )
-            token = f"{self.user_id}:{self.api_key}"
-            return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+            if self.user_id:
+                token = f"{self.user_id}:{self.api_key}"
+                return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+            return f"Bearer {self.api_key}"
         
         elif override is None:
             # Use the original automatic selection logic (default behavior)
             if self.auth_token:
                 return f"Bearer {self.auth_token}"
             elif self.api_key:
-                token = f"{self.user_id}:{self.api_key}"
-                return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+                if self.user_id:
+                    token = f"{self.user_id}:{self.api_key}"
+                    return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
+                return f"Bearer {self.api_key}"
             else:
                 raise ValueError(
                     "No authentication credentials available. Please authenticate first using "
@@ -204,15 +197,14 @@ class Auth:
             return self.auth_header
 
         if not self.load():
-            if not _BROWSER_AUTH_ALLOWED.get():
-                raise ValueError("No Lightning credentials are available. Run `lightning login` first.")
-            logger.debug("failed to load credentials, opening browser to get new.")
+            logger.debug(
+                "failed to load credentials, opening browser to get new.")
             self._run_server()
             return self.auth_header
 
         elif self.auth_token:
             return self.auth_header
-        elif self.user_id and self.api_key:
+        elif self.api_key:
             return self.auth_header
 
         raise ValueError(

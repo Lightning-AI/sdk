@@ -47,6 +47,8 @@ def switch_impl(
     resolved_teamspace = resolve_teamspace(teamspace)
     studio = resolve_studio(name, resolved_teamspace)
 
+    if machine is None:
+        raise click.UsageError("--machine is required.")
     resolved_machine = Machine.from_str(machine)
 
     studio.__class__.show_progress = True

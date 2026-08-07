@@ -4,15 +4,18 @@ import time
 import traceback
 from abc import ABCMeta
 from contextlib import suppress
-from typing import Callable, Dict, Tuple
+from typing import Any, Callable, ParamSpec, TypeVar
 
 from lightning_sdk.__version__ import __version__
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import V1CreateSDKCommandHistoryRequest, V1SDKCommandHistorySeverity
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
-def track_calls() -> Callable[..., any]:
+def track_calls() -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decorator factory that records every SDK call and its arguments to the command history API.
 
     On error, the exception details and traceback are appended to the history record before
@@ -22,9 +25,9 @@ def track_calls() -> Callable[..., any]:
         Callable: A decorator that wraps a function with call-tracking logic.
     """
 
-    def decorator(func: Callable[..., any]) -> Callable[..., any]:
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         @functools.wraps(func)
-        def wrapper(*args: Tuple[any, ...], **kwargs: Dict[str, any]) -> any:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             start_time = time.time()
             sig = inspect.signature(func)
             bound_args = sig.bind(*args, **kwargs)
@@ -50,7 +53,7 @@ def track_calls() -> Callable[..., any]:
                 body.message += f" | Error: {type(e).__name__}: {e!s} | Traceback: {traceback.format_exc(limit=3)}"
                 body.duration = int(time.time() - start_time)
                 with suppress(Exception):
-                    client = LightningClient(retry=False, max_tries=0)
+                    client = cached_lightning_client(retry=False)
                     client.s_dk_command_history_service_create_sdk_command_history(body=body)
                 raise
 
@@ -66,7 +69,7 @@ class TrackCallsMeta(type):
     other than ``__init__`` and ``__call__`` are left untouched.
     """
 
-    def __new__(cls, name: any, bases: any, attrs: any) -> type.__new__:
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, Any], **kwargs: Any) -> "TrackCallsMeta":
         for attr_name, attr_value in attrs.items():
             if attr_name.startswith("__") and attr_name not in ("__init__", "__call__"):
                 attrs[attr_name] = attr_value
@@ -88,7 +91,7 @@ class TrackCallsMeta(type):
 
             else:
                 attrs[attr_name] = attr_value
-        return super().__new__(cls, name, bases, attrs)
+        return super().__new__(cls, name, bases, attrs, **kwargs)
 
 
 class TrackCallsABCMeta(ABCMeta, TrackCallsMeta):

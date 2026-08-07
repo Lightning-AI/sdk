@@ -5,6 +5,7 @@ from lightning_sdk.api.job_api import V1ClusterAccelerator
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
+    cached_lightning_client,
     resolve_path_mappings,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
@@ -18,7 +19,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
     V1MultiMachineJobState,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class MMTApiV2:
 
     def __init__(self) -> None:
         self._cloud_url = _cloud_url()
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def submit_job(
         self,
@@ -46,7 +46,7 @@ class MMTApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         max_runtime: Optional[int],
         reuse_snapshot: bool,
@@ -70,7 +70,9 @@ class MMTApiV2:
             cloud_account_auth: Whether to pass cloud-account credentials into the container.
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
             scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
@@ -115,7 +117,7 @@ class MMTApiV2:
         env: Optional[Dict[str, str]],
         image_credentials: Optional[str],
         cloud_account_auth: bool,
-        entrypoint: str,
+        entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
@@ -139,7 +141,9 @@ class MMTApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
-            max_runtime: Maximum allowed runtime in seconds, or ``None`` for no limit.
+            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
+                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
+                (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
 

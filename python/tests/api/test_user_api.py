@@ -141,7 +141,7 @@ def test_delete_secret_rejects_missing_generic_secret():
     mock_delete.assert_not_called()
 
 
-@mock.patch("lightning_sdk.api.user_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_secrets_api_call(mock_client):
     mock_client().secret_service_list_user_secrets.return_value.secrets = [
@@ -156,7 +156,7 @@ def test_get_secrets_api_call(mock_client):
     assert result[0].name == "API_KEY"
 
 
-@mock.patch("lightning_sdk.api.user_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_secret_api_call(mock_client):
     user_api = UserApi()
@@ -169,7 +169,7 @@ def test_create_secret_api_call(mock_client):
     assert call_args[1]["body"].value == "secret_value"
 
 
-@mock.patch("lightning_sdk.api.user_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_update_secret_api_call(mock_client):
     user_api = UserApi()
@@ -211,7 +211,7 @@ def test_verify_secret_name(secret_name, expected):
     assert result == expected
 
 
-@mock.patch("lightning_sdk.api.user_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_create_teamspace(mock_client):
     user_api = UserApi()

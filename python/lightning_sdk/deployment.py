@@ -2,7 +2,7 @@ import os
 import re
 import sys
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import requests
 
@@ -108,7 +108,7 @@ class Deployment(metaclass=TrackCallsMeta):
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
     ) -> None:
-        self._request_session = None
+        self._request_session: Optional[requests.Session] = None
         self._cloud_account_api = CloudAccountApi()
 
         # Auth is applied automatically on every API request, so there is no need to
@@ -124,17 +124,18 @@ class Deployment(metaclass=TrackCallsMeta):
         self._user = _resolve_user(user)
         self._org = _resolve_org(org)
 
-        self._teamspace = _resolve_teamspace(
+        resolved_teamspace = _resolve_teamspace(
             teamspace=teamspace,
             org=org,
             user=user,
         )
-        if self._teamspace is None:
+        if resolved_teamspace is None:
             raise ValueError(
                 "Could not determine the teamspace for your deployment. Pass a teamspace as "
                 "'owner/teamspace', set one of LIGHTNING_TEAMSPACE / LIGHTNING_ORG (or LIGHTNING_USERNAME), "
                 "or configure a default with 'lightning config set teamspace'."
             )
+        self._teamspace = resolved_teamspace
 
         raise_access_error_if_not_allowed(AccessibleResource.Deployments, self._teamspace.id)
 
@@ -147,6 +148,8 @@ class Deployment(metaclass=TrackCallsMeta):
         else:
             deployment = self._deployment_api.get_deployment_by_name(name, self._teamspace.id)
 
+        # Deployment payloads are generated API models and remain opaque here.
+        self._deployment: Any
         if deployment:
             self._name = deployment.name
             self._is_created = True
@@ -310,7 +313,9 @@ class Deployment(metaclass=TrackCallsMeta):
         if commands is not None:
             command = compose_commands(commands)
 
-        autoscaling_metric_name = ("CPU" if machine.is_cpu() else "GPU") if isinstance(machine, Machine) else "CPU"
+        autoscaling_metric_name: Literal["CPU", "GPU"] = (
+            ("CPU" if machine.is_cpu() else "GPU") if isinstance(machine, Machine) else "CPU"
+        )
 
         if autoscale is None:
             autoscale = AutoScaleConfig(
@@ -377,7 +382,7 @@ class Deployment(metaclass=TrackCallsMeta):
         entrypoint: Optional[str] = None,
         command: Optional[str] = None,
         commands: Optional[List[str]] = None,
-        env: Optional[List[Union[Env, Secret]]] = None,
+        env: Union[List[Union[Env, Secret]], Dict[str, str], None] = None,
         spot: Optional[bool] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
         # Changing those arguments don't create a new release
@@ -387,7 +392,7 @@ class Deployment(metaclass=TrackCallsMeta):
         ports: Optional[List[float]] = None,
         release_strategy: Optional[ReleaseStrategy] = None,
         replicas: Optional[int] = None,
-        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
+        auth: Optional[Auth] = None,
         custom_domain: Optional[str] = None,
         quantity: Optional[int] = None,
         include_credentials: Optional[bool] = None,
@@ -572,11 +577,11 @@ class Deployment(metaclass=TrackCallsMeta):
         return None
 
     @property
-    def ports(self) -> Optional[int]:
+    def ports(self) -> Optional[List[int]]:
         """The exposed ports on which you can reach your deployment.
 
         Returns:
-            Optional[int]: List of exposed port numbers, or ``None`` if not started.
+            Optional[List[int]]: List of exposed port numbers, or ``None`` if not started.
         """
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
@@ -779,7 +784,7 @@ class Deployment(metaclass=TrackCallsMeta):
         return self._user
 
     @property
-    def teamspace(self) -> Optional[Teamspace]:
+    def teamspace(self) -> Teamspace:
         """The teamspace of the deployment."""
         return self._teamspace
 
@@ -818,8 +823,9 @@ class Deployment(metaclass=TrackCallsMeta):
     @property
     def _session(self) -> Any:
         if self._request_session is None:
-            self._request_session = requests.Session()
-            self._request_session.headers.update(**self._get_auth_headers())
+            session = requests.Session()
+            session.headers.update(**self._get_auth_headers())
+            self._request_session = session
         return self._request_session
 
     def _get_auth_headers(self) -> Dict:

@@ -201,7 +201,7 @@ class StudioProgressTracker:
         start_time = time.time()
         last_progress = 5
         phase_start_times = {}
-        last_message_time = 0
+        last_message_time = 0.0
         message_stability_delay = 3.0  # Seconds to wait before changing message
 
         # Show initial progress immediately

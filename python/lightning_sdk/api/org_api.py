@@ -1,15 +1,15 @@
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
     V1Organization,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 
 class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_org(self, name: str) -> V1Organization:
         """Fetch an organisation by name.

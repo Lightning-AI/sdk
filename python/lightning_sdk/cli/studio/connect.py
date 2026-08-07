@@ -17,6 +17,7 @@ from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
+from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.names import random_unique_name
 
 
@@ -27,7 +28,7 @@ def _parse_args_or_get_from_current_studio(
     gpus: Optional[str] = None,
     name: Optional[str] = None,
     cloud: Optional[str] = None,
-) -> tuple[Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]]:
+) -> tuple[Teamspace, Optional[str], Optional[str], Optional[str], str]:
     # Parse args provided by user
     resolved_teamspace = resolve_teamspace(teamspace)
     save_teamspace_to_config(resolved_teamspace, overwrite=False)
@@ -47,7 +48,7 @@ def _parse_args_or_get_from_current_studio(
         if not template_id:
             template_id = s._studio.environment_template_id
         if not machine and not gpus:
-            machine = s.machine
+            machine = str(s.machine)
 
     return resolved_teamspace, cloud, template_id, machine, name
 
@@ -89,7 +90,7 @@ def connect_studio(
     Example:
         lightning studio connect
     """
-    teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
+    resolved_teamspace, cloud, template_id, machine, name = _parse_args_or_get_from_current_studio(
         teamspace=teamspace,
         studio_type=studio_type,
         machine=machine,
@@ -101,7 +102,7 @@ def connect_studio(
     try:
         studio = Studio(
             name=name,
-            teamspace=teamspace,
+            teamspace=resolved_teamspace,
             create_ok=True,
             cloud=cloud,
             studio_type=template_id,

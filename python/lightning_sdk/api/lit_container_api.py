@@ -6,10 +6,9 @@ import docker
 import requests
 from rich.console import Console
 
-from lightning_sdk.api.utils import _get_registry_url
+from lightning_sdk.api.utils import _get_registry_url, cached_lightning_client
 from lightning_sdk.lightning_cloud.env import LIGHTNING_CLOUD_URL
 from lightning_sdk.lightning_cloud.openapi.models import V1DeleteLitRepositoryResponse
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.teamspace import Teamspace
 
 
@@ -41,7 +40,7 @@ class DockerNotRunningError(Exception):
         console.print("4. Read more here: https://docs.docker.com/engine/daemon/start/")
 
 
-def retry_on_lcr_auth_failure(func: Callable) -> Callable:
+def retry_on_lcr_auth_failure(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator that re-authenticates once and retries the wrapped method on ``LCRAuthFailedError``.
 
     Args:
@@ -51,7 +50,7 @@ def retry_on_lcr_auth_failure(func: Callable) -> Callable:
         Callable: The wrapped function that retries after re-authentication.
     """
 
-    def generator_wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Callable:
+    def generator_wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Generator[Any, None, None]:
         try:
             gen = func(self, *args, **kwargs)
             yield from gen
@@ -61,7 +60,7 @@ def retry_on_lcr_auth_failure(func: Callable) -> Callable:
             yield from gen
         return
 
-    def wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Callable:
+    def wrapper(self: "LitContainerApi", *args: Any, **kwargs: Any) -> Any:
         try:
             return func(self, *args, **kwargs)
         except LCRAuthFailedError:
@@ -78,12 +77,12 @@ class LitContainerApi:
     """Internal API client for Lightning Container Registry (LitCR) operations."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=3)
+        self._client = cached_lightning_client()
 
         try:
             self._docker_client = docker.from_env()
             self._docker_client.ping()
-            self._docker_auth_config = {}
+            self._docker_auth_config: Dict[str, str] = {}
         except docker.errors.DockerException:
             raise DockerNotRunningError() from None
 
@@ -216,10 +215,10 @@ class LitContainerApi:
         container: str,
         teamspace: Teamspace,
         tag: str,
-        cloud_account: str,
-        platform: str,
+        cloud_account: Optional[str],
+        platform: Optional[str],
         return_final_dict: bool = False,
-    ) -> Generator[dict, None, Dict]:
+    ) -> Generator[dict, None, None]:
         """Upload container will push the container to LitCR.
 
         It uses docker push API to interact with docker daemon which will then push the container to a storage
@@ -335,7 +334,7 @@ class LitContainerApi:
     @retry_on_lcr_auth_failure
     def download_container(
         self, container: str, teamspace: Teamspace, tag: str, cloud_account: Optional[str] = None
-    ) -> Generator[str, None, None]:
+    ) -> bool:
         """Will download container from LitCR. Optionally from a BYOC cluster.
 
         :param container: The name of the container to download
@@ -350,7 +349,7 @@ class LitContainerApi:
             cloud_account: Optional BYOC cluster ID; uses Lightning SaaS storage if ``None``.
 
         Returns:
-            Generator[str, None, None]: Status output from the Docker pull operation.
+            Whether the downloaded image was tagged successfully.
 
         Raises:
             LCRAuthFailedError: If authentication with the registry fails.

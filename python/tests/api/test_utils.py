@@ -1,3 +1,5 @@
+from concurrent.futures import Future
+from typing import Optional
 from unittest import mock
 from unittest.mock import MagicMock, Mock, mock_open
 
@@ -8,12 +10,15 @@ import lightning_sdk.api.utils
 from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
     _BlobUploader,
+    _collect_download_results,
     _download_model_files,
     _FileDownloader,
     _local_file_matches_size,
     _machine_to_compute_name,
     _ModelFileUploader,
+    _raise_for_download_status,
     _sanitize_studio_remote_path,
+    _stream_download_to_file,
     resolve_path_mappings,
 )
 from lightning_sdk.lightning_cloud.openapi import (
@@ -339,8 +344,8 @@ def test_model_file_uploader(_, tmp_path, monkeypatch):
 
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
-def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch):
+@mock.patch("lightning_sdk.api.utils._collect_download_results")
+def test_download_model_files(collect_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch):
     tqdm_mock = MagicMock()
     monkeypatch.setattr(utils, "tqdm", tqdm_mock)
     client = Mock()
@@ -381,7 +386,7 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tm
         "mininterval": 1,
     }
     assert file_downloader_mock.call_count == 2
-    assert wait_mock.call_count == 1
+    assert collect_mock.call_count == 1
 
     # By default, skip_if_exists is forwarded as True to every _FileDownloader instantiation
     for call in file_downloader_mock.call_args_list:
@@ -390,9 +395,9 @@ def test_download_model_files(wait_mock, executor_mock, file_downloader_mock, tm
 
 @mock.patch("lightning_sdk.api.utils._FileDownloader")
 @mock.patch("lightning_sdk.api.utils.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.utils.concurrent.futures.wait")
+@mock.patch("lightning_sdk.api.utils._collect_download_results")
 def test_download_model_files_forwards_skip_if_exists_false(
-    wait_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch
+    collect_mock, executor_mock, file_downloader_mock, tmp_path, monkeypatch
 ):
     tqdm_mock = MagicMock()
     monkeypatch.setattr(utils, "tqdm", tqdm_mock)
@@ -431,7 +436,7 @@ def mock_iter_content(chunk_size):
 def test_download_chunk_success(mock_get):
     url = "http://example.com"
     start = 0
-    end = 100
+    end = 8  # the stubbed body is 9 bytes; a range download must return the whole range
     filename = "test_file"
 
     mock_response = Mock()
@@ -455,7 +460,7 @@ def test_download_chunk_success(mock_get):
     with mock.patch("builtins.open", mock_open()) as mock_file:
         file_downloader._download_chunk(filename, (start, end))
 
-        mock_get.assert_called_once_with(url, headers={"Range": "bytes=0-100"}, stream=True)
+        mock_get.assert_called_once_with(url, headers={"Range": "bytes=0-8"}, stream=True)
 
         mock_file.assert_called_once_with(filename, "r+b")
         mock_file().seek.assert_called_once_with(start)
@@ -467,7 +472,7 @@ def test_download_chunk_success(mock_get):
 def test_download_chunk_failure_and_retry_success(mock_get, _):
     url = "http://example.com"
     start = 0
-    end = 100
+    end = 8  # the stubbed body is 9 bytes; a range download must return the whole range
     filename = "test_file"
 
     # First call fails
@@ -505,9 +510,9 @@ def test_download_chunk_failure_and_retry_success(mock_get, _):
     # Check calls
     assert mock_get.call_count == 2
     # First call with old url
-    mock_get.assert_any_call(url, headers={"Range": "bytes=0-100"}, stream=True)
+    mock_get.assert_any_call(url, headers={"Range": "bytes=0-8"}, stream=True)
     # Second call with new url from refresh_fn
-    mock_get.assert_any_call(new_url, headers={"Range": "bytes=0-100"}, stream=True)
+    mock_get.assert_any_call(new_url, headers={"Range": "bytes=0-8"}, stream=True)
 
     assert refresh_fn_mock.call_count == 1
 
@@ -841,3 +846,122 @@ def test_single_part_uploader_does_not_retry_client_error(mock_requests, _, tmp_
         uploader()
 
     assert mock_requests.put.call_count == 1
+
+
+# --- download integrity -------------------------------------------------------------------
+
+# What an object store actually returns when it refuses a GET. The status alone does not say
+# which of the many possible reasons applied, so the body has to make it into the error.
+_S3_ERROR_BODY = (
+    b'<?xml version="1.0" encoding="UTF-8"?>\n'
+    b"<Error><Code>SlowDown</Code><Message>Please reduce your request rate.</Message>"
+    b"<RequestId>7A1BC2D3E4F5</RequestId></Error>"
+)
+
+
+def _fake_stream_response(body: bytes = b"", status_code: int = 200, headers: Optional[dict] = None) -> Mock:
+    response = Mock()
+    response.status_code = status_code
+    response.headers = {"content-length": str(len(body))} if headers is None else headers
+    response.iter_content = lambda chunk_size=None: iter([body]) if body else iter([])
+    return response
+
+
+def test_raise_for_download_status_allows_success():
+    _raise_for_download_status(_fake_stream_response(b"payload", status_code=206), "some/file")
+
+
+def test_raise_for_download_status_quotes_the_error_body():
+    response = _fake_stream_response(_S3_ERROR_BODY, status_code=503)
+
+    with pytest.raises(RuntimeError) as excinfo:
+        _raise_for_download_status(response, "some/file")
+
+    message = str(excinfo.value)
+    assert "HTTP 503" in message
+    # the reason is only ever in the body, never in the status
+    assert "SlowDown" in message
+    assert "some/file" in message
+    response.close.assert_called_once()
+
+
+def test_stream_download_to_file_writes_body(tmp_path):
+    target = tmp_path / "nested" / "file.bin"
+
+    written = _stream_download_to_file(_fake_stream_response(b"payload"), target, "some/file")
+
+    assert written == len(b"payload")
+    assert target.read_bytes() == b"payload"
+
+
+def test_stream_download_to_file_rejects_a_short_body(tmp_path):
+    target = tmp_path / "file.bin"
+
+    # 200 with an error document in the body: the listing said 2 MiB, 278-ish bytes arrived.
+    response = _fake_stream_response(_S3_ERROR_BODY)
+    with pytest.raises(RuntimeError, match="the listing reported 2097152 bytes"):
+        _stream_download_to_file(response, target, "some/file", expected_size=2 * 1024 * 1024)
+
+    assert not target.exists()
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_stream_download_to_file_rejects_a_truncated_body(tmp_path):
+    target = tmp_path / "file.bin"
+
+    # The stream died mid-body: fewer bytes arrived than Content-Length advertised.
+    response = _fake_stream_response(b"half", headers={"content-length": "1024"})
+    with pytest.raises(RuntimeError, match="Content-Length reported 1024 bytes but 4 bytes arrived"):
+        _stream_download_to_file(response, target, "some/file")
+
+    assert not target.exists()
+
+
+def test_stream_download_to_file_keeps_the_file_the_user_already_had(tmp_path):
+    target = tmp_path / "file.bin"
+    target.write_bytes(b"the copy the user already had")
+
+    response = _fake_stream_response(_S3_ERROR_BODY)
+    with pytest.raises(RuntimeError):
+        _stream_download_to_file(response, target, "some/file", expected_size=2 * 1024 * 1024)
+
+    assert target.read_bytes() == b"the copy the user already had"
+    assert [p.name for p in tmp_path.iterdir()] == ["file.bin"]
+
+
+def test_stream_download_to_file_ignores_content_length_when_encoded(tmp_path):
+    target = tmp_path / "file.bin"
+
+    # requests undoes Content-Encoding for us, so the header no longer describes what we write.
+    response = _fake_stream_response(b"decompressed", headers={"content-length": "5", "content-encoding": "gzip"})
+    _stream_download_to_file(response, target, "some/file")
+
+    assert target.read_bytes() == b"decompressed"
+
+
+def _finished_future(exception: Optional[BaseException] = None) -> Future:
+    future: Future = Future()
+    if exception is None:
+        future.set_result(None)
+    else:
+        future.set_exception(exception)
+    return future
+
+
+def test_collect_download_results_reraises_a_worker_failure():
+    failure = RuntimeError("worker exploded")
+    futures = [_finished_future(failure), _finished_future()]
+
+    with pytest.raises(RuntimeError, match="worker exploded"):
+        _collect_download_results(futures, "some/folder")
+
+
+def test_collect_download_results_reports_every_failure():
+    futures = [_finished_future(RuntimeError("boom")), _finished_future(RuntimeError("boom")), _finished_future()]
+
+    with pytest.raises(RuntimeError, match="Failed to download 2 of 3 files from 'some/folder'"):
+        _collect_download_results(futures, "some/folder")
+
+
+def test_collect_download_results_is_quiet_when_every_worker_succeeds():
+    _collect_download_results([_finished_future() for _ in range(3)], "some/folder")

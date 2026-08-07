@@ -48,7 +48,7 @@ def job() -> None:
     """Run batch jobs and sweeps."""
 
 
-@click.group(name="mmt", cls=DeprecatedGroup, hidden=False, replacement="lightning job")
+@click.group(name="mmt", cls=DeprecatedGroup, hidden=False, replacement="lightning job", replacement_group=job)
 def mmt() -> None:
     """Multi-node distributed training."""
 
@@ -186,7 +186,7 @@ def dataset() -> None:
 @click.argument("destination", required=False)
 @click.option("--recursive", "-r", is_flag=True, help="Copy directories recursively")
 @click.pass_context
-def cp() -> None:
+def cp(_ctx: click.Context) -> None:
     """Copy between local, Studios, Drive.
 
     URL formats:

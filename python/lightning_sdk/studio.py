@@ -3,7 +3,7 @@ import os
 import re
 import threading
 import warnings
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
 from tqdm.auto import tqdm
 
@@ -90,17 +90,20 @@ class Studio(metaclass=TrackCallsMeta):
         self._cloud_account_api = CloudAccountApi()
 
         self._prevent_refetch = False
-        self._teamspace = None
+        # Skip-init instances are name/id shells; regular instances resolve this before use.
+        self._teamspace = cast(Teamspace, None)
         self._setup_done = getattr(self._skip_setup, "value", False)
         self._disable_secrets = disable_secrets
-        self._studio = None
+        # Cloud API models are generated and intentionally treated as an opaque boundary.
+        self._studio: Any = None
 
         if getattr(self._skip_init, "value", False):
             return
 
-        self._teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
-        if self._teamspace is None:
+        resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=org, user=user)
+        if resolved_teamspace is None:
             raise ValueError("Couldn't resolve teamspace from the provided name, org, or user")
+        self._teamspace = resolved_teamspace
         raise_access_error_if_not_allowed(AccessibleResource.Studios, self._teamspace.id)
 
         # Check if we're running inside a studio that can be used as source. This is only
@@ -224,7 +227,10 @@ class Studio(metaclass=TrackCallsMeta):
         Returns:
             Status: The current :class:`~lightning_sdk.status.Status` of the Studio.
         """
-        internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
+        if self._prevent_refetch and self._studio.code_status is not None:
+            internal_status = self._studio.code_status.in_use
+        else:
+            internal_status = self._studio_api.get_studio_status(self._studio.id, self._teamspace.id).in_use
         return _internal_status_to_external_status(
             internal_status.phase if internal_status is not None else internal_status
         )
@@ -256,6 +262,16 @@ class Studio(metaclass=TrackCallsMeta):
         """
         if self.status != Status.Running:
             return None
+
+        cached_in_use = self._studio.code_status.in_use if self._prevent_refetch and self._studio.code_status else None
+        if cached_in_use is not None and cached_in_use.compute_config is not None:
+            return self._studio_api.machine_from_compute_config(
+                cached_in_use.compute_config,
+                self._teamspace.id,
+                self.cloud_account,
+                _get_org_id(self._teamspace),
+            )
+
         return self._studio_api.get_machine(
             self._studio.id,
             self._teamspace.id,
@@ -276,7 +292,7 @@ class Studio(metaclass=TrackCallsMeta):
         )
 
     @property
-    def interruptible(self) -> bool:
+    def interruptible(self) -> Optional[bool]:
         """Returns whether the Studio is running on a interruptible instance.
 
         Returns:
@@ -365,7 +381,7 @@ class Studio(metaclass=TrackCallsMeta):
             else:
                 interruptible = self.teamspace.start_studios_on_interruptible
 
-        new_machine = DEFAULT_MACHINE
+        new_machine: Union[Machine, str] = DEFAULT_MACHINE
         if machine is not None:
             new_machine = machine
         elif current_studio_machine is not None:
@@ -473,19 +489,19 @@ class Studio(metaclass=TrackCallsMeta):
         if target_teamspace is None:
             target_teamspace_id = self._teamspace.id
         else:
-            target_teamspace = _resolve_teamspace(
+            resolved_target_teamspace = _resolve_teamspace(
                 target_teamspace,
                 org=self._teamspace.owner if isinstance(self._teamspace.owner, Organization) else None,
                 user=self._teamspace.owner if isinstance(self._teamspace.owner, User) else None,
             )
 
-            if target_teamspace is None:
+            if resolved_target_teamspace is None:
                 raise ValueError(
                     f"Could not resolve target teamspace {target_teamspace} "
                     f"with owner {self.teamspace.owner} for duplication!"
                 )
 
-            target_teamspace_id = target_teamspace.id
+            target_teamspace_id = resolved_target_teamspace.id
 
         kwargs = self._studio_api.duplicate_studio(
             studio_id=self._studio.id,
@@ -524,8 +540,12 @@ class Studio(metaclass=TrackCallsMeta):
             self._studio.cluster_id,
         )
 
-        cloud_account = ""
-        if cloud_provider is not None and current_cloud.spec.cluster_type == V1ClusterType.GLOBAL:
+        cloud_account: Optional[str] = ""
+        if (
+            cloud_provider is not None
+            and current_cloud is not None
+            and current_cloud.spec.cluster_type == V1ClusterType.GLOBAL
+        ):
             cloud_account = self._cloud_account_api.resolve_cloud_account(
                 self._teamspace.id,
                 cloud=cloud_provider,
@@ -557,7 +577,9 @@ class Studio(metaclass=TrackCallsMeta):
             # TODO: get this from the API
             self._studio.cluster_id = cloud_account
 
-    def run_and_detach(self, *commands: str, timeout: float = 10, check_interval: float = 1) -> str:
+    def run_and_detach(
+        self, *commands: str, timeout: float = 10, check_interval: float = 1
+    ) -> Tuple[str, Optional[int]]:
         """Runs given commands on the Studio and returns immediately.
 
         The command will continue to run in the background.
@@ -691,18 +713,17 @@ class Studio(metaclass=TrackCallsMeta):
             remote_file = os.path.join(remote_path, rel_path) if remote_path else rel_path
             all_files.append((fp, remote_file))
 
-        if progress_bar:
-            progress_bar = tqdm(total=len(all_files), desc="Uploading files", unit="file")
+        progress = tqdm(total=len(all_files), desc="Uploading files", unit="file") if progress_bar else None
         for local_file, remote_path in sorted(all_files, key=lambda p: p[1]):
-            if progress_bar:
-                progress_bar.set_description("Uploading files")
+            if progress is not None:
+                progress.set_description("Uploading files")
             self.upload_file(local_file, remote_path=remote_path, progress_bar=False)
-            if progress_bar:
-                progress_bar.update(1)
-        if progress_bar:
-            progress_bar.set_description("Upload complete")
-            progress_bar.refresh()
-            progress_bar.close()
+            if progress is not None:
+                progress.update(1)
+        if progress is not None:
+            progress.set_description("Upload complete")
+            progress.refresh()
+            progress.close()
 
     def download_file(self, remote_path: str, file_path: Optional[str] = None) -> None:
         """Downloads a file from the Studio to a given target path.
@@ -828,6 +849,7 @@ class Studio(metaclass=TrackCallsMeta):
             Endpoints for the added ports. Each entry exposes ``name``,
             ``ports``, and ``urls`` attributes.
         """
+        port_items: Iterable[Tuple[Optional[str], int]]
         if isinstance(ports, dict):
             port_items = ports.items()
         elif isinstance(ports, list):
@@ -1004,7 +1026,7 @@ class Studio(metaclass=TrackCallsMeta):
             partial=False,
         )
 
-    def __eq__(self, other: "Studio") -> bool:
+    def __eq__(self, other: object) -> bool:
         """Checks for equality with other Studios.
 
         Args:
@@ -1044,7 +1066,7 @@ class Studio(metaclass=TrackCallsMeta):
         return self.__class__.__qualname__
 
 
-def _internal_status_to_external_status(internal_status: str) -> Status:
+def _internal_status_to_external_status(internal_status: Optional[str]) -> Status:
     """Converts internal status strings from HTTP requests to external enums.
 
     Args:

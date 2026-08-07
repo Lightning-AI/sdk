@@ -1,11 +1,10 @@
-import concurrent
 import os
 import re
 import warnings
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -14,10 +13,14 @@ from lightning_sdk.api.utils import (
     Experiment,
     _authenticate_and_get_token,
     _BlobUploader,
+    _collect_download_results,
     _download_model_files,
     _DummyBody,
     _get_model_version,
     _ModelFileUploader,
+    _raise_for_download_status,
+    _stream_download_to_file,
+    cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
@@ -47,7 +50,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1SecretType,
     V1UpstreamOpenAI,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from lightning_sdk.machine import Machine
 
 __all__ = ["SecretType", "TeamspaceApi"]
@@ -106,7 +108,7 @@ class TeamspaceApi:
     """Internal API client for Teamspace requests (mainly http requests)."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def get_teamspace(self, name: str, owner_id: str) -> V1Project:
         """Get the current teamspace from the owner.
@@ -564,15 +566,20 @@ class TeamspaceApi:
                         if not machine:
                             matched_accelerators.append(cluster_machine)
                             continue
+                        machine_family = (machine.family or "").lower()
                         if (
-                            cluster_machine.resources.gpu == machine.accelerator_count
-                            or cluster_machine.resources.cpu == machine.accelerator_count
-                        ) and any(
-                            machine.family.lower() in s
-                            for s in (
-                                cluster_machine.slug,
-                                cluster_machine.slug_multi_cloud,
-                                cluster_machine.instance_id,
+                            machine_family
+                            and (
+                                cluster_machine.resources.gpu == machine.accelerator_count
+                                or cluster_machine.resources.cpu == machine.accelerator_count
+                            )
+                            and any(
+                                machine_family in s
+                                for s in (
+                                    cluster_machine.slug,
+                                    cluster_machine.slug_multi_cloud,
+                                    cluster_machine.instance_id,
+                                )
                             )
                         ):
                             matched_accelerators.append(cluster_machine)
@@ -638,7 +645,7 @@ class TeamspaceApi:
         response = self._client.models_store_list_model_versions(project_id=teamspace_id, model_id=model_id)
         return response.versions
 
-    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[dict] = None) -> None:
+    def get_tree(self, teamspace_id: str, path: str, query_params: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
         """Fetch the directory tree at ``path`` from the teamspace artifact REST API.
 
         Args:
@@ -780,6 +787,10 @@ class TeamspaceApi:
             teamspace_id: ID of the owning teamspace.
             cloud_account: Optional cloud account ID used to locate the artifact.
             progress_bar: Whether to display a progress bar during download.
+
+        Raises:
+            RuntimeError: If the server returns a non-2xx status code, or if the body that
+                arrives is not the length the server advertised.
         """
         # TODO: Update this endpoint to permit basic auth
         token = _authenticate_and_get_token(self._client)
@@ -796,8 +807,12 @@ class TeamspaceApi:
             params=query_params,
             stream=True,
         )
+
+        _raise_for_download_status(r, path)
+
         total_length = int(r.headers.get("content-length", 0))
 
+        pbar: Optional[tqdm] = None
         if progress_bar:
             pbar = tqdm(
                 desc=f"Downloading {os.path.split(path)[1]}",
@@ -807,17 +822,7 @@ class TeamspaceApi:
                 unit_divisor=1024,
             )
 
-            pbar_update = pbar.update
-        else:
-            pbar_update = lambda x: None
-
-        target_dir = os.path.split(target_path)[0]
-        if target_dir:
-            os.makedirs(target_dir, exist_ok=True)
-        with open(target_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                pbar_update(len(chunk))
+        _stream_download_to_file(r, target_path, path, pbar=pbar)
 
     def _download_single_file(
         self,
@@ -827,7 +832,7 @@ class TeamspaceApi:
         teamspace_id: str,
         token: str,
         cloud_account: Optional[str] = None,
-        pbar: Optional[tqdm] = True,
+        pbar: Optional[tqdm] = None,
     ) -> None:
         """Download a single file from Teamspace drive with progress tracking.
 
@@ -839,10 +844,13 @@ class TeamspaceApi:
             token: Authentication token for the artifact API.
             cloud_account: Optional cloud account ID used to locate the artifact.
             pbar: Optional tqdm progress bar to update as bytes are written.
+
+        Raises:
+            RuntimeError: If the server returns a non-2xx status code, or if the body that
+                arrives is not the size the listing reported.
         """
         relative_path = file_info["path"].lstrip("/")
         local_file = download_dir / relative_path
-        local_file.parent.mkdir(parents=True, exist_ok=True)
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
@@ -858,11 +866,8 @@ class TeamspaceApi:
             stream=True,
         )
 
-        with open(str(local_file), "wb") as f:
-            for chunk in r.iter_content(chunk_size=4096 * 8):
-                f.write(chunk)
-                if pbar:
-                    pbar.update(len(chunk))
+        _raise_for_download_status(r, file_path)
+        _stream_download_to_file(r, local_file, file_path, pbar=pbar, expected_size=file_info.get("size"))
 
     def download_folder(
         self,
@@ -882,10 +887,14 @@ class TeamspaceApi:
             cloud_account: Optional cloud account ID used to locate the artifacts.
             progress_bar: Whether to display a progress bar during download.
             num_workers: Number of parallel download threads; defaults to ``cpu_count * 4``.
+
+        Raises:
+            RuntimeError: If any file failed to download. A partial folder is never reported
+                as a success.
         """
         # TODO: Update this endpoint to permit basic auth
         if num_workers is None:
-            num_workers = os.cpu_count() * 4
+            num_workers = (os.cpu_count() or 1) * 4
 
         # Normalize the path
         path = path.strip("/")
@@ -913,26 +922,29 @@ class TeamspaceApi:
                 mininterval=1,
             )
 
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            futures = [
-                executor.submit(
-                    self._download_single_file,
-                    file_info,
-                    path,
-                    download_dir,
-                    teamspace_id,
-                    token,
-                    cloud_account,
-                    pbar,
-                )
-                for file_info in files
-            ]
-            concurrent.futures.wait(futures)
+        try:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+                futures = [
+                    executor.submit(
+                        self._download_single_file,
+                        file_info,
+                        path,
+                        download_dir,
+                        teamspace_id,
+                        token,
+                        cloud_account,
+                        pbar,
+                    )
+                    for file_info in files
+                ]
+                _collect_download_results(futures, path)
 
-        if pbar:
-            pbar.set_description("Download complete")
-            pbar.refresh()
-            pbar.close()
+            if pbar:
+                pbar.set_description("Download complete")
+                pbar.refresh()
+        finally:
+            if pbar:
+                pbar.close()
 
     def get_secrets(self, teamspace_id: str) -> Dict[str, str]:
         """Get all secrets for a teamspace.

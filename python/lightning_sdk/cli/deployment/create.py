@@ -174,6 +174,8 @@ def create_deployment(
             extra_vllm_args=vllm_args,
             enable_weight_reload=enable_weight_reload,
         )
+        if spec is None:
+            raise RuntimeError("A model is required to create a model deployment specification.")
         click.echo("Dry run — model configuration that would be deployed:")
         click.echo(json.dumps({k: v for k, v in spec.to_dict().items() if v is not None}, indent=2, sort_keys=True))
         click.echo("No deployment created.")

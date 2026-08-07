@@ -19,6 +19,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1EfsConfig,
     V1ExternalCluster,
     V1ExternalClusterSpec,
+    V1GetUserResponse,
     V1Job,
     V1ListClustersResponse,
     V1ListMembershipsResponse,
@@ -130,8 +131,8 @@ def test_teamspace_list_clusters_studios_user(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -152,8 +153,8 @@ def test_teamspace_list_clusters_studios_org(
 
     studios = ts.studios
 
-    # 2 clusters * 3 studios per cluster
-    assert len(studios) == 6
+    # a single unfiltered, paginated call across all cloud accounts -- 2 pages of studios
+    assert len(studios) == 3
 
 
 @pytest.mark.parametrize(
@@ -925,15 +926,13 @@ def test_teamspace_delete_secret_invalid_name(
     mock_delete.assert_not_called()
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_agnostic(
     mock_cloud_account_client,
-    mock_teamspace_client,
     internal_user_api_mocker,
 ):
-    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+    mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
                 name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
@@ -941,12 +940,16 @@ def test_new_folder_agnostic(
         ],
     )
 
-    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+    mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
         id="ts-abc002",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
         owner_id="user-abc",
         owner_type="user",
+    )
+
+    mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
+        id="user-abc", username="user-abc"
     )
 
     ts = Teamspace("ts-abc", user="user-abc")
@@ -967,11 +970,11 @@ def test_new_folder_agnostic(
     mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
     mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
 
     ts.new_folder("test-folder")
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
         DataConnectionServiceCreateDataConnectionBody(
             name="test-folder",
             create_resources=True,
@@ -983,15 +986,13 @@ def test_new_folder_agnostic(
     )
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_new_folder_byoc(
     mock_cloud_account_client,
-    mock_teamspace_client,
     internal_user_api_mocker,
 ):
-    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+    mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
                 name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
@@ -999,12 +1000,16 @@ def test_new_folder_byoc(
         ],
     )
 
-    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+    mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
         id="ts-abc002",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
         owner_id="user-abc",
         owner_type="user",
+    )
+
+    mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
+        id="user-abc", username="user-abc"
     )
 
     ts = Teamspace("ts-abc", user="user-abc")
@@ -1031,11 +1036,11 @@ def test_new_folder_byoc(
     mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
     mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
 
     ts.new_folder("test-folder", cloud_account="byoc-cluster")
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
         DataConnectionServiceCreateDataConnectionBody(
             name="test-folder",
             create_resources=True,
@@ -1050,11 +1055,10 @@ def test_new_folder_byoc(
 
 
 @pytest.mark.parametrize("writable", [True, False])
-@mock.patch("lightning_sdk.api.teamspace_api.LightningClient")
-@mock.patch("lightning_sdk.api.cloud_account_api.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, internal_user_api_mocker, writable):
-    mock_teamspace_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
+def test_new_connection_efs(mock_cloud_account_client, internal_user_api_mocker, writable):
+    mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
                 name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
@@ -1062,12 +1066,16 @@ def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, in
         ],
     )
 
-    mock_teamspace_client().projects_service_get_project.return_value = V1Project(
+    mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
         id="ts-abc002",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
         owner_id="user-abc",
         owner_type="user",
+    )
+
+    mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
+        id="user-abc", username="user-abc"
     )
 
     ts = Teamspace("ts-abc", user="user-abc")
@@ -1094,7 +1102,7 @@ def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, in
     mock_cloud_account_client.return_value.cluster_service_list_project_clusters.return_value = mock_project_response
     mock_cloud_account_client.return_value.cluster_service_list_clusters.return_value = mock_global_response
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection = mock.MagicMock()
 
     ts.new_connection(
         name="test-connection-efs",
@@ -1104,7 +1112,7 @@ def test_new_connection_efs(mock_cloud_account_client, mock_teamspace_client, in
         writable=writable,
     )
 
-    mock_teamspace_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
+    mock_cloud_account_client.return_value.data_connection_service_create_data_connection.assert_called_once_with(
         DataConnectionServiceCreateDataConnectionBody(
             name="test-connection-efs",
             create_resources=False,
@@ -1393,7 +1401,7 @@ class _FakeRangeResponse:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version(
     mock_lightning_client,
@@ -1462,7 +1470,7 @@ def test_download_dataset_version(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version_no_token_no_cluster(
     mock_lightning_client,
@@ -1519,7 +1527,7 @@ def test_download_dataset_version_no_token_no_cluster(
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_dataset_id_and_version(
     mock_lightning_client,
@@ -1611,7 +1619,7 @@ def test_download_dataset_files_chunked(tmp_path):
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_new(
     mock_lightning_client,
@@ -1725,7 +1733,7 @@ class _SyncExecutor:
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     """Files upload in parallel: one uploader per file, with the concurrency
     budget split across files x within-file parts."""
@@ -1769,7 +1777,7 @@ def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
     """The concurrency budget splits sensibly at the edges: a single large file
     gets all workers within-file; many small files fan out one part-worker each."""
@@ -1819,7 +1827,7 @@ def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_existing(
     mock_lightning_client,
@@ -1911,7 +1919,7 @@ def test_upload_dataset_existing(
 @mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
-@mock.patch("lightning_sdk.api.dataset.LightningClient")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_dataset_with_explicit_version(
     mock_lightning_client,

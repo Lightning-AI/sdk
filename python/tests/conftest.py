@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from typing import Callable
 from unittest import mock
 
 import pytest
@@ -72,6 +73,28 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
 @pytest.fixture(autouse=True)
+def _clear_lightning_env_vars(monkeypatch):
+    """Reset ambient LIGHTNING_* env vars to CI's baseline so the suite is hermetic in a Studio.
+
+    A Studio exports real credentials and context (LIGHTNING_API_KEY, LIGHTNING_USER_ID,
+    LIGHTNING_CLOUD_SPACE_ID, LIGHTNING_ORG, LIGHTNING_TEAMSPACE, ...). Tests are written
+    assuming CI's environment, which sets none of that except two dummy values (see
+    .github/workflows/unittest.yaml) -- just enough for ``Auth`` to short-circuit on
+    ``_with_env_var`` without ever needing real credentials or a browser. Left ambient, the
+    real vars leak the actual account into Auth() and the org/teamspace/user resolution
+    fallbacks, letting API calls intended to hit a mock escape to the real backend instead;
+    stripped entirely (including the two Auth relies on), a handful of tests that construct
+    an API class without mocking Auth hang trying to open a browser for login. Tests that
+    want a var set to something else can still do so themselves via ``monkeypatch.setenv``.
+    """
+    for name in list(os.environ):
+        if name.startswith("LIGHTNING_"):
+            monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("LIGHTNING_USER_ID", "dummy-user-id")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "dummy-api-key")
+
+
+@pytest.fixture(autouse=True)
 def _clean_studio_thread_local_state():
     """Automatically ensure clean Studio thread-local state for every test."""
     from lightning_sdk.studio import Studio
@@ -89,6 +112,16 @@ def _clean_studio_thread_local_state():
     # Restore original states after test
     Studio._skip_init.value = original_skip_init
     Studio._skip_setup.value = original_skip_setup
+
+
+@pytest.fixture(autouse=True)
+def _clear_cached_lightning_client():
+    """cached_lightning_client is process-global -- clear it so one test's mocked/unmocked client can't leak."""
+    from lightning_sdk.api.utils import cached_lightning_client
+
+    cached_lightning_client.cache_clear()
+    yield
+    cached_lightning_client.cache_clear()
 
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"
@@ -2725,3 +2758,34 @@ def _mock_allowed_resource_access(mocker, request):
         return_value=True,
         autospec=True,
     )
+
+
+@pytest.fixture()
+def inline_executor_cls():
+    """A ``ThreadPoolExecutor`` stand-in that runs each task on the calling thread.
+
+    ``keep_alive_mocker`` patches ``threading.Thread`` for every test, so a real pool would
+    accept work and never run it. Patch this over a module's ``ThreadPoolExecutor`` to
+    exercise code that has to observe what its workers did.
+    """
+    from concurrent.futures import Future
+
+    class _InlineExecutor:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        def __enter__(self) -> "_InlineExecutor":
+            return self
+
+        def __exit__(self, *exc_info: object) -> bool:
+            return False
+
+        def submit(self, fn: Callable, *args: object, **kwargs: object) -> Future:
+            future: Future = Future()
+            try:
+                future.set_result(fn(*args, **kwargs))
+            except BaseException as e:  # mirrors what a real worker records
+                future.set_exception(e)
+            return future
+
+    return _InlineExecutor

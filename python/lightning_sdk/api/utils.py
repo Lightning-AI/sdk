@@ -1,14 +1,29 @@
 import concurrent.futures
+import contextlib
 import errno
 import math
 import os
 import re
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache, partial
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterator, List, Optional, Protocol, Tuple, TypedDict, Union, runtime_checkable
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    Tuple,
+    TypedDict,
+    Union,
+    runtime_checkable,
+)
 
 import backoff
 import requests
@@ -42,8 +57,8 @@ class Experiment(Protocol):
 
 class _DummyBody:
     def __init__(self) -> None:
-        self.swagger_types = {}
-        self.attribute_map = {}
+        self.swagger_types: dict[str, Any] = {}
+        self.attribute_map: dict[str, str] = {}
 
 
 _BYTES_PER_KB = 1024
@@ -132,7 +147,7 @@ class _BlobUploader:
         self.extra_headers = extra_headers
         self.notify_completion = notify_completion
         self.show_progress = progress_bar
-        self.progress_bar = None
+        self.progress_bar: Optional[tqdm] = None
 
         self.filesize = os.path.getsize(file_path)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -396,6 +411,7 @@ class _ModelFileUploader:
 
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
         self.filesize = os.path.getsize(file_path)
+        self.progress_bar: Optional[tqdm]
         if progress_bar:
             self.progress_bar = tqdm(
                 desc=f"Uploading {os.path.split(file_path)[1]}",
@@ -417,7 +433,7 @@ class _ModelFileUploader:
     def __call__(self) -> None:
         """Does the actual uploading."""
         count = 1 if self.filesize <= self.multipart_threshold else math.ceil(self.filesize / self.chunk_size)
-        return self._multipart_upload(count=count)
+        self._multipart_upload(count=count)
 
     def _multipart_upload(self, count: int) -> None:
         """Does a parallel multipart upload.
@@ -452,7 +468,9 @@ class _ModelFileUploader:
             upload_id=resp.upload_id,
         )
 
-    def _process_upload_batch(self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str) -> None:
+    def _process_upload_batch(
+        self, executor: ThreadPoolExecutor, batch: List[int], upload_id: str
+    ) -> Iterator[V1CompletedPart]:
         """Uploads a single batch of chunks in parallel.
 
         Args:
@@ -585,6 +603,126 @@ def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
 
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
+_DOWNLOAD_STREAM_CHUNK_SIZE = 4096 * 8
+_DOWNLOAD_ERROR_PREVIEW_BYTES = 512
+
+
+def _raise_for_download_status(response: requests.Response, remote_path: str) -> None:
+    """Reject a download response that is not a success, before any of its body is written out.
+
+    The status alone is rarely actionable: object stores name the actual reason (SlowDown,
+    AccessDenied, InternalError, ...) only in the XML body, so the start of the body is
+    quoted in the error.
+    """
+    if 200 <= response.status_code < 300:
+        return
+
+    preview = ""
+    try:
+        body = next(response.iter_content(chunk_size=_DOWNLOAD_ERROR_PREVIEW_BYTES), b"")
+        preview = body.decode("utf-8", errors="replace").strip()
+    except Exception:  # the body is a best-effort diagnostic, never a hard failure
+        pass
+    finally:
+        response.close()
+
+    message = f"Failed to download {remote_path!r}: HTTP {response.status_code}"
+    raise RuntimeError(f"{message}: {preview}" if preview else message)
+
+
+def _declared_download_size(response: requests.Response) -> Optional[int]:
+    """Content-Length, but only when it can be compared against the bytes we end up writing.
+
+    ``iter_content`` transparently undoes ``Content-Encoding``, so a compressed body writes a
+    different number of bytes than the header advertises.
+    """
+    encoding = response.headers.get("content-encoding", "").strip().lower()
+    if encoding and encoding != "identity":
+        return None
+    if response.headers.get("transfer-encoding"):
+        return None
+    try:
+        return int(response.headers["content-length"])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+class _ProgressBar(Protocol):
+    """Just the slice of tqdm the download helpers use.
+
+    Callers pass either ``tqdm.tqdm`` or ``tqdm.auto.tqdm`` depending on the module.
+    """
+
+    def update(self, n: float) -> Any:
+        ...
+
+
+def _stream_download_to_file(
+    response: requests.Response,
+    local_path: Union[str, Path],
+    remote_path: str,
+    pbar: Optional[_ProgressBar] = None,
+    expected_size: Optional[int] = None,
+    chunk_size: int = _DOWNLOAD_STREAM_CHUNK_SIZE,
+) -> int:
+    """Stream an already status-checked response body into ``local_path``.
+
+    Bytes land in a temporary file alongside the destination and are moved into place only
+    once the whole body has arrived and its length checks out. A failed or truncated
+    download therefore never leaves a corrupt file behind, and never destroys whatever the
+    user already had at that path.
+    """
+    local_path = Path(local_path)
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+
+    declared_size = _declared_download_size(response)
+    tmp_fd, tmp_name = tempfile.mkstemp(dir=str(local_path.parent), prefix=f".{local_path.name}.", suffix=".partial")
+    written = 0
+    try:
+        with os.fdopen(tmp_fd, "wb") as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                if not chunk:
+                    continue
+                f.write(chunk)
+                written += len(chunk)
+                if pbar is not None:
+                    pbar.update(len(chunk))
+
+        for source, expected in (("the listing", expected_size), ("Content-Length", declared_size)):
+            if expected is not None and expected > 0 and written != expected:
+                raise RuntimeError(
+                    f"Failed to download {remote_path!r}: {source} reported {expected} bytes "
+                    f"but {written} bytes arrived"
+                )
+
+        os.replace(tmp_name, str(local_path))
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.remove(tmp_name)
+        raise
+
+    return written
+
+
+def _collect_download_results(futures: Sequence["concurrent.futures.Future"], remote_path: str) -> None:
+    """Wait for download workers and re-raise their failures.
+
+    ``concurrent.futures.wait`` returns the futures without ever touching ``result()``, which
+    silently discards every exception a worker raised — that is how a folder download with a
+    dead file used to finish reporting success.
+    """
+    errors: List[BaseException] = []
+    for future in concurrent.futures.as_completed(futures):
+        try:
+            future.result()
+        except BaseException as e:  # every worker is reported, not just the first
+            errors.append(e)
+
+    if not errors:
+        return
+    if len(errors) == 1:
+        raise errors[0]
+    raise RuntimeError(f"Failed to download {len(errors)} of {len(futures)} files from {remote_path!r}") from errors[0]
 
 
 class _RefreshResponse(TypedDict):
@@ -626,10 +764,12 @@ class _FileDownloader:
 
     @property
     def url(self) -> str:
+        assert self._url is not None
         return self._url
 
     @property
     def size(self) -> int:
+        assert self._size is not None
         return self._size
 
     def update_progress(self, n: int) -> None:
@@ -643,17 +783,25 @@ class _FileDownloader:
         self.progress_bar.set_description(f"{(desc[:72] + '...') if len(desc) > 75 else desc:<75.75}")
 
     @backoff.on_exception(backoff.expo, (requests.exceptions.HTTPError), max_tries=10)
-    def _download_chunk(self, filename: str, start_end: Tuple[int]) -> None:
+    def _download_chunk(self, filename: str, start_end: Tuple[int, int]) -> None:
         start, end = start_end
         headers = {"Range": f"bytes={start}-{end}"}
 
         with requests.get(self.url, headers=headers, stream=True) as response:
             if response.status_code in [200, 206]:
+                written = 0
                 with open(filename, "r+b") as f:
                     f.seek(start)
                     for chunk in response.iter_content(chunk_size=_DOWNLOAD_REQUEST_CHUNK_SIZE):
                         f.write(chunk)
+                        written += len(chunk)
                         self.update_progress(len(chunk))  # tqdm write is thread-safe
+                # A short range read would otherwise leave the pre-allocated zeros in place.
+                if written != end - start + 1:
+                    raise RuntimeError(
+                        f"Failed to download {self.remote_path!r}: byte range {start}-{end} returned "
+                        f"{written} of {end - start + 1} bytes"
+                    )
             if response.status_code == 403:  # Expired
                 self.refresh()
             response.raise_for_status()
@@ -692,19 +840,21 @@ class _FileDownloader:
             ranges.append((start, end))
 
         futures = [self.executor.submit(self._download_chunk, filename, r) for r in ranges]
-        concurrent.futures.wait(futures)
+        _collect_download_results(futures, self.remote_path)
 
     def download(self) -> None:
         # Fast path: if size is already known and the local file matches, skip without hitting the API.
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
-        if self.url is None:
+        if self._url is None:
             self.refresh()
 
         # Re-check after refresh in case size was previously unknown (e.g. model files flow).
         if self.skip_if_exists and _local_file_matches_size(self.local_path, self._size):
+            assert self._size is not None
             self.update_progress(self._size)
             return
 
@@ -736,7 +886,9 @@ class _FileDownloader:
         os.rename(tmp_filename, self.local_path)
 
 
-def _get_model_version(client: LightningClient, teamspace_id: str, name: str, version: str) -> V1ModelVersionArchive:
+def _get_model_version(
+    client: LightningClient, teamspace_id: str, name: str, version: Optional[str]
+) -> V1ModelVersionArchive:
     models = client.models_store_list_models(project_id=teamspace_id, name=name).models
     if not models:
         raise ValueError(f"Model `{name}` does not exist")
@@ -805,14 +957,13 @@ def _download_model_files(
                 num_workers=num_workers,
                 progress_bar=pbar,
                 executor=part_executor,
-                refresh_fn=lambda f=filepath: refresh_fn(f),
+                refresh_fn=partial(refresh_fn, filepath),
                 skip_if_exists=skip_if_exists,
             )
 
             futures.append(file_executor.submit(file_downloader.download))
 
-        # wait for all threads
-        concurrent.futures.wait(futures)
+        _collect_download_results(futures, f"{name}/{version}")
 
         return response.filepaths
 
@@ -938,6 +1089,12 @@ class AccessibleResource(Enum):
             int: Hash of the resource type's string value.
         """
         return hash(self.value)
+
+
+@lru_cache(maxsize=None)
+def cached_lightning_client(retry: bool = True, with_auth: bool = True) -> LightningClient:
+    """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
+    return LightningClient(max_tries=3, retry=retry, with_auth=with_auth)
 
 
 @lru_cache

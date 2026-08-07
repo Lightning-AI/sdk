@@ -2,10 +2,9 @@ import json
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 
-from lightning_sdk.api.utils import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.api.utils import ApiException, cached_lightning_client
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +16,17 @@ class K8sClusterApiError(Exception):
 class RowData(TypedDict):
     """Raw per-sample GPU metrics row as returned by the cluster metrics API."""
 
-    num_allocated_gpus: int
-    num_requested_gpus: int
-    num_gpus: int
+    num_allocated_gpus: float
+    num_requested_gpus: float
+    num_gpus: float
 
 
-def _calculate_billed_k8s_gpus(row: RowData) -> int:
+class HourlyData(TypedDict):
+    allocated_gpus: List[float]
+    first_entry: Optional[Dict[str, Any]]
+
+
+def _calculate_billed_k8s_gpus(row: RowData) -> float:
     """Calculate the number of GPUs to be billed based on the given row data.
 
     The function determines the billed GPUs using the following logic:
@@ -50,7 +54,7 @@ class K8sClusterApi:
 
     def __init__(self, cloud_account: str) -> None:
         self.cloud_account = cloud_account
-        self._client = LightningClient(max_tries=7)
+        self._client = cached_lightning_client()
 
     def _parse_request_failure_body(self, e: ApiException) -> str:
         """Parses the failure body from an ApiException.
@@ -68,7 +72,7 @@ class K8sClusterApi:
         except Exception:
             return str(e.reason)
 
-    def get_billing_usage(self, print_data: bool = False, **kwargs: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def get_billing_usage(self, print_data: bool = False, **kwargs: Any) -> List[Dict[str, Any]]:
         """Gets the k8s usage metrics.
 
         Args:
@@ -89,7 +93,9 @@ class K8sClusterApi:
                 return []
 
             # Parse timestamps and floor to hour, then group by hour
-            hourly_data = defaultdict(lambda: {"allocated_gpus": [], "first_entry": None})
+            hourly_data: defaultdict[datetime, HourlyData] = defaultdict(
+                lambda: {"allocated_gpus": [], "first_entry": None}
+            )
 
             for entry in cluster_metrics:
                 # Parse timestamp and floor to hour
@@ -112,9 +118,11 @@ class K8sClusterApi:
                     hourly_data[hour]["first_entry"] = entry
 
             # Build result list with aggregated data
-            result = []
+            result: List[Dict[str, Any]] = []
             for hour, data in sorted(hourly_data.items()):
                 entry = data["first_entry"]
+                if entry is None:
+                    continue
 
                 # Calculate mean of allocated GPUs for this hour
                 mean_allocated_gpus = sum(data["allocated_gpus"]) / len(data["allocated_gpus"])

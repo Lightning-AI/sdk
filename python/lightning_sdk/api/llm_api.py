@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 
 from rich.prompt import Confirm
 
+from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi.models import (
@@ -20,7 +21,6 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1ResponseChoice,
     V1ResponseChoiceDelta,
 )
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 LITAI_CODE = os.environ.get("LITAI_CODE", "x334uv8t7v")
 
@@ -69,7 +69,7 @@ class LLMApi:
     """Internal API client for Lightning AI LLM (LitAI) conversation and model operations."""
 
     def __init__(self) -> None:
-        self._client = LightningClient(retry=False, max_tries=0)
+        self._client = cached_lightning_client(retry=False)
         self._assistant = None
         self._model = None
 
@@ -141,7 +141,7 @@ class LLMApi:
                 usage=result_data.get("usage"),
             )
         except json.JSONDecodeError:
-            warnings.warn("Error decoding JSON:", decoded_line)
+            warnings.warn(f"Error decoding JSON: {decoded_line}")
             return None
 
     def _stream_chat_response(
@@ -368,7 +368,7 @@ class LLMApi:
         loop = asyncio.get_event_loop()
         response = await asyncio.to_thread(thread.get)
 
-        queue = asyncio.Queue()
+        queue: asyncio.Queue[V1ConversationResponseChunk | None] = asyncio.Queue()
 
         def enqueue() -> None:
             try:
@@ -389,19 +389,19 @@ class LLMApi:
                 break
             yield item
 
-    def list_conversations(self, assistant_id: str) -> List[str]:
+    def list_conversations(self, assistant_id: str) -> List[Any]:
         """Return all conversation IDs for the given assistant.
 
         Args:
             assistant_id: The assistant whose conversations to list.
 
         Returns:
-            List[str]: The list of conversation IDs.
+            List[Any]: Conversation records returned by the generated API client.
         """
         result = self._client.assistants_service_list_conversations(assistant_id)
         return result.conversations
 
-    def get_conversation(self, assistant_id: str, conversation_id: str) -> V1ConversationResponseChunk:
+    def get_conversation(self, assistant_id: str, conversation_id: str) -> List[Any]:
         """Fetch all messages for a specific conversation.
 
         Args:
@@ -409,7 +409,7 @@ class LLMApi:
             conversation_id: The unique ID of the conversation to retrieve.
 
         Returns:
-            V1ConversationResponseChunk: The messages in the conversation.
+            List[Any]: The messages in the conversation.
         """
         result = self._client.assistants_service_get_conversation(assistant_id, conversation_id)
         return result.messages
