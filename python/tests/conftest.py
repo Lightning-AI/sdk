@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from typing import Callable
 from unittest import mock
 
 import pytest
@@ -2735,3 +2736,34 @@ def _mock_allowed_resource_access(mocker, request):
         return_value=True,
         autospec=True,
     )
+
+
+@pytest.fixture()
+def inline_executor_cls():
+    """A ``ThreadPoolExecutor`` stand-in that runs each task on the calling thread.
+
+    ``keep_alive_mocker`` patches ``threading.Thread`` for every test, so a real pool would
+    accept work and never run it. Patch this over a module's ``ThreadPoolExecutor`` to
+    exercise code that has to observe what its workers did.
+    """
+    from concurrent.futures import Future
+
+    class _InlineExecutor:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            pass
+
+        def __enter__(self) -> "_InlineExecutor":
+            return self
+
+        def __exit__(self, *exc_info: object) -> bool:
+            return False
+
+        def submit(self, fn: Callable, *args: object, **kwargs: object) -> Future:
+            future: Future = Future()
+            try:
+                future.set_result(fn(*args, **kwargs))
+            except BaseException as e:  # mirrors what a real worker records
+                future.set_exception(e)
+            return future
+
+    return _InlineExecutor
