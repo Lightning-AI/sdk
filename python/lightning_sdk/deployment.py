@@ -209,8 +209,8 @@ class Deployment(metaclass=TrackCallsMeta):
             release_strategy: The release strategy to use when changing core deployment specs.
             entrypoint: The docker container entrypoint.
             command: The docker container command.
-            env: The environements variables or secrets to use.
-            spot: Wether to use spot instances for the replicas.
+            env: The environment variables or secrets to use.
+            spot: Whether to use spot instances for the replicas.
             replicas: The number of replicas to deploy with.
             health_check: The health check config to know whether your service is ready to receive traffic.
             auth: The auth config to protect your services. Only Basic and Token supported.

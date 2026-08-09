@@ -401,7 +401,7 @@ class Teamspace(metaclass=TrackCallsMeta):
         if cloud_account is None:
             cloud_account = os.getenv("LIGHTNING_CLUSTER_ID", None)
 
-        # if cloud_account is not given as a paramter and as a env var, use global cloud_accounts
+        # if cloud_account is not given as a parameter and as a env var, use global cloud_accounts
         if cloud_account is None:
             global_cloud_accounts = self._cloud_account_api.list_global_cloud_accounts(teamspace_id=self.id)
             cloud_accounts = [cm.id for cm in global_cloud_accounts]
