@@ -363,6 +363,7 @@ class Job(metaclass=TrackCallsMeta):
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
+        _logger.info(f"Stream logs interactively: lightning job logs {job.name} --teamspace {job.teamspace.name} -i")
         return job
 
     def _submit(

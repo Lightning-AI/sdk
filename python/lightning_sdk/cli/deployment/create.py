@@ -229,3 +229,8 @@ def create_deployment(
         return
 
     click.echo(f"Created deployment {deployment.name}.")
+    click.echo(
+        f"\nStream logs interactively: "
+        f"lightning deployment logs {deployment.name} "
+        f"--teamspace {resolved_teamspace.name} -i"
+    )

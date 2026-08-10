@@ -126,7 +126,7 @@ def test_list_deployments_source_column(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "api"
     deployment_cls = MagicMock(return_value=deployment)
@@ -149,7 +149,7 @@ def test_create_deployment_delegates_to_sdk(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_deployment_with_cloud(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "api"
     deployment_cls = MagicMock(return_value=deployment)
@@ -220,7 +220,7 @@ def test_create_deployment_model_requires_gpu(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "llama"
     deployment_cls = MagicMock(return_value=deployment)
@@ -267,7 +267,7 @@ def test_create_deployment_model_delegates_and_defaults_port(monkeypatch) -> Non
 )
 @mock_command_logging
 def test_create_deployment_enable_weight_reload_delegates(monkeypatch, flag, expected) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "llama"
 
@@ -303,7 +303,7 @@ def test_create_deployment_enable_weight_reload_in_dry_run(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_model_force_acks_and_retries(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "llm"
     deployment.start.side_effect = [_unacked_exc("BYOM_INSUFFICIENT_VRAM_ESTIMATE"), None]
@@ -320,7 +320,7 @@ def test_create_model_force_acks_and_retries(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_model_non_interactive_unacked_errors(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.start.side_effect = _unacked_exc("BYOM_INSUFFICIENT_VRAM_ESTIMATE")
 
@@ -361,7 +361,7 @@ def test_create_ack_without_model_errors(monkeypatch) -> None:
 
 @mock_command_logging
 def test_create_serving_image_variant_accepted(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = MagicMock()
     deployment.name = "llm"
     monkeypatch.setattr("lightning_sdk.cli.deployment.create.resolve_teamspace", MagicMock(return_value=teamspace))
@@ -389,7 +389,7 @@ def test_create_old_byom_image_variant_rejected(monkeypatch) -> None:
 
 def _patch_logs_command(monkeypatch, api, entries):
     """Wire the deployment logs command to ``api`` and make the logs API yield ``entries``."""
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     monkeypatch.setattr(
         "lightning_sdk.cli.deployment.logs.resolve_teamspace",
         MagicMock(return_value=teamspace),
@@ -593,7 +593,7 @@ def test_deployment_logs_tui_launches_for_single_node_replicas(monkeypatch) -> N
 
 @mock_command_logging
 def test_reload_weights_calls_api_and_prints_version(monkeypatch) -> None:
-    teamspace = SimpleNamespace(id="project-id")
+    teamspace = SimpleNamespace(id="project-id", name="test")
     deployment = V1Deployment(name="my-llama-deployment", id="dep-id", project_id="project-id")
     api = MagicMock()
     api.get_deployment_by_name.return_value = deployment
