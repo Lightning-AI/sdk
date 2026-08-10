@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from lightning_sdk.api import OrgApi
-from lightning_sdk.api.org_api import MonthlySummary, MonthlySummaryResponse  # noqa: F401
+from lightning_sdk.api.org_api import MonthlySummary # noqa: F401
 from lightning_sdk.owner import Owner
 from lightning_sdk.utils.resolve import _resolve_org_name
 
@@ -72,7 +72,7 @@ class Organization(Owner):
         self,
         start: Optional[datetime] = None,
         end: Optional[datetime] = None,
-    ) -> MonthlySummaryResponse:
+    ) -> list[MonthlySummary]:
         """Returns a monthly summary of credits purchased, used, and remaining.
 
         Exactly one of ``start`` and ``end`` must be supplied,
@@ -89,21 +89,17 @@ class Organization(Owner):
                 ``start``, acts as a "BEFORE" pivot.
 
         Returns:
-            MonthlySummaryResponse: A dict with the following shape::
-
+            A list of MonthlySummary dicts:
+            [
                 {
-                    "org_id": str,
-                    "monthly_summaries": [
-                        {
-                            "period_start": datetime,
-                            "period_end": datetime,
-                            "total_credits_consumed": float,
-                            "total_credits_remaining": float,
-                            "total_credits_purchased": float,
-                        },
-                        ...
-                    ],
-                }
+                    "period_start": datetime,
+                    "period_end": datetime,
+                    "total_credits_consumed": float,
+                    "total_credits_remaining": float,
+                    "total_credits_purchased": float,
+                },
+                ...
+            ]
 
         Raises:
             ValueError: If neither ``start`` nor ``end`` is

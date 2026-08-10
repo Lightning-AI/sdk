@@ -18,11 +18,6 @@ class MonthlySummary(TypedDict):
     total_credits_purchased: float
 
 
-class MonthlySummaryResponse(TypedDict):
-    org_id: str
-    monthly_summaries: List[MonthlySummary]
-
-
 class OrgApi:
     """Internal API client for org requests (mainly http requests)."""
 
@@ -73,7 +68,7 @@ class OrgApi:
         organization_id: str,
         start: Optional[datetime] = None,
         end: Optional[datetime] = None,
-    ) -> MonthlySummaryResponse:
+    ) -> list[MonthlySummary]:
         """Get the monthly billing summary of an organization.
 
         Exactly one of ``start`` and ``end`` must be supplied,
@@ -93,20 +88,17 @@ class OrgApi:
                 ``start``, acts as a "BEFORE" pivot.
 
         Returns:
-            MonthlySummaryResponse: A dict with the following shape:
-            {
-                "org_id": str,
-                "monthly_summaries": [
-                    {
-                        "period_start": datetime,
-                        "period_end": datetime,
-                        "total_credits_consumed": float,
-                        "total_credits_remaining": float,
-                        "total_credits_purchased": float,
-                    },
-                    ...
-                ],
-            }
+            A list of MonthlySummary dicts:
+            [
+                {
+                    "period_start": datetime,
+                    "period_end": datetime,
+                    "total_credits_consumed": float,
+                    "total_credits_remaining": float,
+                    "total_credits_purchased": float,
+                },
+                ...
+            ]
 
         Raises:
             ValueError: If neither ``start`` nor ``end`` is
@@ -141,4 +133,4 @@ class OrgApi:
             kwargs["time_filter_pivot_filter_pivot"] = end
             kwargs["time_filter_pivot_filter_pivot_direction"] = "BEFORE"
 
-        return self._client.billing_service_get_monthly_summary(**kwargs).to_dict()
+        return self._client.billing_service_get_monthly_summary(**kwargs).to_dict()["monthly_summaries"]

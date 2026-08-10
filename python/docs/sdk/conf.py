@@ -85,7 +85,6 @@ nitpick_ignore = [
     ("py:class", "lightning_sdk.api.deployment_api.Auth"),
     ("py:class", "MachineDict"),
     ("py:class", "MonthlySummary"),
-    ("py:class", "MonthlySummaryResponse"),
 ]
 nitpick_ignore_regex = [
     # private / internal base classes
