@@ -20,6 +20,7 @@ from lightning_sdk.cli.license import register_commands as register_license_comm
 from lightning_sdk.cli.machine import register_commands as register_machine_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
 from lightning_sdk.cli.model import register_commands as register_model_commands
+from lightning_sdk.cli.pipeline import register_commands as register_pipeline_commands
 from lightning_sdk.cli.sandbox import register_commands as register_sandbox_commands
 from lightning_sdk.cli.ssh import register_commands as register_ssh_commands
 from lightning_sdk.cli.studio import register_commands as register_studio_commands
@@ -136,6 +137,11 @@ def model() -> None:
     """Register and version models."""
 
 
+@click.group(name="pipeline", cls=LightningGroup)
+def pipeline() -> None:
+    """Build and manage pipelines."""
+
+
 @click.group(name="api-key", cls=LightningGroup)
 def api_key() -> None:
     """Keys for model endpoint access.
@@ -212,6 +218,7 @@ register_deployment_commands(deployment)
 register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)
+register_pipeline_commands(pipeline)
 register_api_key_commands(api_key)
 register_auth_commands(auth)
 register_file_commands(file)
