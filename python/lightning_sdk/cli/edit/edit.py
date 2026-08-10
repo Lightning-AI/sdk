@@ -49,7 +49,7 @@ def _content_digest(path: str) -> Optional[str]:
 
 
 def _resolve_editor(editor: Optional[str]) -> str:
-    """Resolve which editor command to launch: explicit ``--editor`` > ``$EDITOR`` > ``vim``."""
+    """Resolve which editor command to launch: ``--editor`` > ``$EDITOR`` > ``$VISUAL`` > ``vi``."""
     return editor or os.environ.get("EDITOR") or os.environ.get("VISUAL") or "vi"
 
 
@@ -68,7 +68,7 @@ def route_edit_operation(remote_url: str, editor: Optional[str] = None) -> None:
 
     Args:
         remote_url: The ``lit://`` URL of the file to edit.
-        editor: The editor command to launch. Defaults to ``$EDITOR`` or ``vim``.
+        editor: The editor command to launch. Defaults to ``$EDITOR``, ``$VISUAL``, or ``vi``.
 
     Raises:
         ValueError: If ``remote_url`` is not a ``lit://`` URL.

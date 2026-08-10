@@ -205,7 +205,7 @@ def cp(_ctx: click.Context) -> None:
 @click.option(
     "--editor",
     default=None,
-    help="Editor command to launch. Defaults to the $EDITOR environment variable, or vim.",
+    help="Editor command to launch. Defaults to the $EDITOR environment variable, or vi.",
 )
 @click.pass_context
 def edit(_ctx: click.Context) -> None:
