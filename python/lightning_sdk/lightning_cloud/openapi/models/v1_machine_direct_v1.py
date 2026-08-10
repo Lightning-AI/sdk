@@ -67,6 +67,7 @@ class V1MachineDirectV1(object):
         'update_agent': 'bool',
         'update_agents_on_sandbox_machines': 'bool',
         'use_nvme_disks': 'bool',
+        'vast_supported_regions': 'list[str]',
         'voltage_park_credentials_secret_id': 'str'
     }
 
@@ -93,10 +94,11 @@ class V1MachineDirectV1(object):
         'update_agent': 'updateAgent',
         'update_agents_on_sandbox_machines': 'updateAgentsOnSandboxMachines',
         'use_nvme_disks': 'useNvmeDisks',
+        'vast_supported_regions': 'vastSupportedRegions',
         'voltage_park_credentials_secret_id': 'voltageParkCredentialsSecretId'
     }
 
-    def __init__(self, access_mode: 'str' =None, agent_version: 'str' =None, burst_cluster_id: 'str' =None, cloud_hypervisor_user: 'str' =None, customer_networks: 'list[V1CustomerNetwork]' =None, disable_cpu_vm_on_gpu_node: 'bool' =None, disable_reservation_alerts: 'bool' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, update_agents_on_sandbox_machines: 'bool' =None, use_nvme_disks: 'bool' =None, voltage_park_credentials_secret_id: 'str' =None):  # noqa: E501
+    def __init__(self, access_mode: 'str' =None, agent_version: 'str' =None, burst_cluster_id: 'str' =None, cloud_hypervisor_user: 'str' =None, customer_networks: 'list[V1CustomerNetwork]' =None, disable_cpu_vm_on_gpu_node: 'bool' =None, disable_reservation_alerts: 'bool' =None, dns_servers: 'list[str]' =None, extra_setup_commands: 'list[str]' =None, machine_architecture: 'V1MachineArchitecture' =None, max_storage_gb: 'str' =None, primary_region: 'str' =None, private_networking: 'bool' =None, refresh_machines_placement: 'bool' =None, regions: 'list[str]' =None, setup_firewall: 'bool' =None, setup_infiniband: 'bool' =None, storage_overcommit_factor: 'float' =None, tailscale_auth_key_secret_id: 'str' =None, update_agent: 'bool' =None, update_agents_on_sandbox_machines: 'bool' =None, use_nvme_disks: 'bool' =None, vast_supported_regions: 'list[str]' =None, voltage_park_credentials_secret_id: 'str' =None):  # noqa: E501
         """V1MachineDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._access_mode = None
         self._agent_version = None
@@ -120,6 +122,7 @@ class V1MachineDirectV1(object):
         self._update_agent = None
         self._update_agents_on_sandbox_machines = None
         self._use_nvme_disks = None
+        self._vast_supported_regions = None
         self._voltage_park_credentials_secret_id = None
         self.discriminator = None
         if access_mode is not None:
@@ -166,6 +169,8 @@ class V1MachineDirectV1(object):
             self.update_agents_on_sandbox_machines = update_agents_on_sandbox_machines
         if use_nvme_disks is not None:
             self.use_nvme_disks = use_nvme_disks
+        if vast_supported_regions is not None:
+            self.vast_supported_regions = vast_supported_regions
         if voltage_park_credentials_secret_id is not None:
             self.voltage_park_credentials_secret_id = voltage_park_credentials_secret_id
 
@@ -632,6 +637,29 @@ class V1MachineDirectV1(object):
         """
 
         self._use_nvme_disks = use_nvme_disks
+
+    @property
+    def vast_supported_regions(self) -> 'list[str]':
+        """Gets the vast_supported_regions of this V1MachineDirectV1.  # noqa: E501
+
+        Regions where this machine cluster offers VAST (a cluster may mix VAST and non-VAST infra). Empty means VAST is not offered on the cluster.  # noqa: E501
+
+        :return: The vast_supported_regions of this V1MachineDirectV1.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._vast_supported_regions
+
+    @vast_supported_regions.setter
+    def vast_supported_regions(self, vast_supported_regions: 'list[str]'):
+        """Sets the vast_supported_regions of this V1MachineDirectV1.
+
+        Regions where this machine cluster offers VAST (a cluster may mix VAST and non-VAST infra). Empty means VAST is not offered on the cluster.  # noqa: E501
+
+        :param vast_supported_regions: The vast_supported_regions of this V1MachineDirectV1.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._vast_supported_regions = vast_supported_regions
 
     @property
     def voltage_park_credentials_secret_id(self) -> 'str':

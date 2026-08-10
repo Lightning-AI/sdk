@@ -48,6 +48,7 @@ class V1HostHealth(object):
         'aer_counters': 'list[V1AERCounter]',
         'fabric_manager': 'V1FabricManagerHealth',
         'node_fitness': 'V1NodeFitness',
+        'nvlink_fm_topology': 'V1NVLinkFMTopology',
         'recent_dmesg_errors': 'list[str]',
         'storage': 'V1HostStorage',
         'system': 'V1MachineSystemInfo'
@@ -57,16 +58,18 @@ class V1HostHealth(object):
         'aer_counters': 'aerCounters',
         'fabric_manager': 'fabricManager',
         'node_fitness': 'nodeFitness',
+        'nvlink_fm_topology': 'nvlinkFmTopology',
         'recent_dmesg_errors': 'recentDmesgErrors',
         'storage': 'storage',
         'system': 'system'
     }
 
-    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
+    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
         """V1HostHealth - a model defined in Swagger"""  # noqa: E501
         self._aer_counters = None
         self._fabric_manager = None
         self._node_fitness = None
+        self._nvlink_fm_topology = None
         self._recent_dmesg_errors = None
         self._storage = None
         self._system = None
@@ -77,6 +80,8 @@ class V1HostHealth(object):
             self.fabric_manager = fabric_manager
         if node_fitness is not None:
             self.node_fitness = node_fitness
+        if nvlink_fm_topology is not None:
+            self.nvlink_fm_topology = nvlink_fm_topology
         if recent_dmesg_errors is not None:
             self.recent_dmesg_errors = recent_dmesg_errors
         if storage is not None:
@@ -146,6 +151,27 @@ class V1HostHealth(object):
         """
 
         self._node_fitness = node_fitness
+
+    @property
+    def nvlink_fm_topology(self) -> 'V1NVLinkFMTopology':
+        """Gets the nvlink_fm_topology of this V1HostHealth.  # noqa: E501
+
+
+        :return: The nvlink_fm_topology of this V1HostHealth.  # noqa: E501
+        :rtype: V1NVLinkFMTopology
+        """
+        return self._nvlink_fm_topology
+
+    @nvlink_fm_topology.setter
+    def nvlink_fm_topology(self, nvlink_fm_topology: 'V1NVLinkFMTopology'):
+        """Sets the nvlink_fm_topology of this V1HostHealth.
+
+
+        :param nvlink_fm_topology: The nvlink_fm_topology of this V1HostHealth.  # noqa: E501
+        :type: V1NVLinkFMTopology
+        """
+
+        self._nvlink_fm_topology = nvlink_fm_topology
 
     @property
     def recent_dmesg_errors(self) -> 'list[str]':

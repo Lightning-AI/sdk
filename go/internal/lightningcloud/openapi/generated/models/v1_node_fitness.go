@@ -90,6 +90,11 @@ type V1NodeFitness struct {
 	// Dell PEX890xx PCIe-switch firmware compliance (fail-open MMT prerequisite).
 	PexSwitchFw *V1PexSwitchFWFitness `json:"pexSwitchFw,omitempty"`
 
+	// Idle host GPU BDFs excluded from allocate after repeated guest FOTB /
+	// nvidia probe failures. Cleared on host reboot (boot_id) or ClearQuarantine.
+	// The scheduler subtracts these from free GPU capacity.
+	QuarantinedGpus []string `json:"quarantinedGpus"`
+
 	// rail nic isolation
 	RailNicIsolation []*V1DeviceIsolationFitness `json:"railNicIsolation"`
 }

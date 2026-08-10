@@ -1807,6 +1807,7 @@ class SandboxesServiceApi(object):
         :param str project_id:
         :param str name:
         :param str sort_order:
+        :param str purpose: Purpose filter, matching ListSandboxesRequest.purpose semantics: unset returns every snapshot EXCEPT those captured from product-purposed sandboxes; set returns only snapshots whose source sandbox had that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
         :return: V1ListSandboxSnapshotsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1833,12 +1834,13 @@ class SandboxesServiceApi(object):
         :param str project_id:
         :param str name:
         :param str sort_order:
+        :param str purpose: Purpose filter, matching ListSandboxesRequest.purpose semantics: unset returns every snapshot EXCEPT those captured from product-purposed sandboxes; set returns only snapshots whose source sandbox had that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
         :return: V1ListSandboxSnapshotsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['organization_id', 'page_token', 'limit', 'project_id', 'name', 'sort_order']  # noqa: E501
+        all_params = ['organization_id', 'page_token', 'limit', 'project_id', 'name', 'sort_order', 'purpose']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1871,6 +1873,8 @@ class SandboxesServiceApi(object):
             query_params.append(('name', params['name']))  # noqa: E501
         if 'sort_order' in params:
             query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
+        if 'purpose' in params:
+            query_params.append(('purpose', params['purpose']))  # noqa: E501
 
         header_params = {}
 
@@ -1914,6 +1918,7 @@ class SandboxesServiceApi(object):
         :param str page_token:
         :param str limit:
         :param str project_id: Optional teamspace/project scoping. When set, only sandboxes belonging to this project are returned. Mirrors `ListSandboxSnapshotsRequest`. Sandboxes created before this field landed have no `project_id` persisted server-side, so filtering will return an empty set until sandboxes are recreated with a project context.
+        :param str purpose: Purpose filter. When unset (UNSPECIFIED), the default view is returned: every sandbox EXCEPT those tagged with a product purpose (e.g. notebook kernels). Set to a specific purpose to list only sandboxes created for that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
         :return: V1ListSandboxesResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1938,12 +1943,13 @@ class SandboxesServiceApi(object):
         :param str page_token:
         :param str limit:
         :param str project_id: Optional teamspace/project scoping. When set, only sandboxes belonging to this project are returned. Mirrors `ListSandboxSnapshotsRequest`. Sandboxes created before this field landed have no `project_id` persisted server-side, so filtering will return an empty set until sandboxes are recreated with a project context.
+        :param str purpose: Purpose filter. When unset (UNSPECIFIED), the default view is returned: every sandbox EXCEPT those tagged with a product purpose (e.g. notebook kernels). Set to a specific purpose to list only sandboxes created for that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
         :return: V1ListSandboxesResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['organization_id', 'page_token', 'limit', 'project_id']  # noqa: E501
+        all_params = ['organization_id', 'page_token', 'limit', 'project_id', 'purpose']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1972,6 +1978,8 @@ class SandboxesServiceApi(object):
             query_params.append(('limit', params['limit']))  # noqa: E501
         if 'project_id' in params:
             query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'purpose' in params:
+            query_params.append(('purpose', params['purpose']))  # noqa: E501
 
         header_params = {}
 

@@ -992,6 +992,8 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_multi_machine_job_status im
 from lightning_sdk.lightning_cloud.openapi.models.v1_nic_firmware import V1NICFirmware
 from lightning_sdk.lightning_cloud.openapi.models.v1_nic_fitness import V1NICFitness
 from lightning_sdk.lightning_cloud.openapi.models.v1_numa_hugepages import V1NUMAHugepages
+from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_fm_partition import V1NVLinkFMPartition
+from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_fm_topology import V1NVLinkFMTopology
 from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_info import V1NVLinkInfo
 from lightning_sdk.lightning_cloud.openapi.models.v1_nv_link_status import V1NVLinkStatus
 from lightning_sdk.lightning_cloud.openapi.models.v1_named_get_logger_metrics import V1NamedGetLoggerMetrics
@@ -1007,6 +1009,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preference imp
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_preferences_request import V1NotificationPreferencesRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_notification_type import V1NotificationType
 from lightning_sdk.lightning_cloud.openapi.models.v1_nvidia_info import V1NvidiaInfo
+from lightning_sdk.lightning_cloud.openapi.models.v1_nvlink_fm_partition_binding import V1NvlinkFMPartitionBinding
 from lightning_sdk.lightning_cloud.openapi.models.v1_onboarding_event_request import V1OnboardingEventRequest
 from lightning_sdk.lightning_cloud.openapi.models.v1_onboarding_event_response import V1OnboardingEventResponse
 from lightning_sdk.lightning_cloud.openapi.models.v1_opt_in_early_migration_response import V1OptInEarlyMigrationResponse
@@ -1139,6 +1142,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_ssh_public_key import V1SSH
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox import V1Sandbox
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_command import V1SandboxCommand
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_phase_duration import V1SandboxPhaseDuration
+from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_purpose import V1SandboxPurpose
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_resource_metric import V1SandboxResourceMetric
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_resource_metric_sample import V1SandboxResourceMetricSample
 from lightning_sdk.lightning_cloud.openapi.models.v1_sandbox_snapshot import V1SandboxSnapshot

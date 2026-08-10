@@ -46,23 +46,28 @@ class ClusterServiceUpdateMachineServerBody(object):
     """
     swagger_types = {
         'ib_device_infos': 'list[V1IBDeviceInfo]',
-        'memory_zones': 'list[V1MemoryZone]'
+        'memory_zones': 'list[V1MemoryZone]',
+        'nvlink_fm_partition': 'V1NvlinkFMPartitionBinding'
     }
 
     attribute_map = {
         'ib_device_infos': 'ibDeviceInfos',
-        'memory_zones': 'memoryZones'
+        'memory_zones': 'memoryZones',
+        'nvlink_fm_partition': 'nvlinkFmPartition'
     }
 
-    def __init__(self, ib_device_infos: 'list[V1IBDeviceInfo]' =None, memory_zones: 'list[V1MemoryZone]' =None):  # noqa: E501
+    def __init__(self, ib_device_infos: 'list[V1IBDeviceInfo]' =None, memory_zones: 'list[V1MemoryZone]' =None, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding' =None):  # noqa: E501
         """ClusterServiceUpdateMachineServerBody - a model defined in Swagger"""  # noqa: E501
         self._ib_device_infos = None
         self._memory_zones = None
+        self._nvlink_fm_partition = None
         self.discriminator = None
         if ib_device_infos is not None:
             self.ib_device_infos = ib_device_infos
         if memory_zones is not None:
             self.memory_zones = memory_zones
+        if nvlink_fm_partition is not None:
+            self.nvlink_fm_partition = nvlink_fm_partition
 
     @property
     def ib_device_infos(self) -> 'list[V1IBDeviceInfo]':
@@ -105,6 +110,27 @@ class ClusterServiceUpdateMachineServerBody(object):
         """
 
         self._memory_zones = memory_zones
+
+    @property
+    def nvlink_fm_partition(self) -> 'V1NvlinkFMPartitionBinding':
+        """Gets the nvlink_fm_partition of this ClusterServiceUpdateMachineServerBody.  # noqa: E501
+
+
+        :return: The nvlink_fm_partition of this ClusterServiceUpdateMachineServerBody.  # noqa: E501
+        :rtype: V1NvlinkFMPartitionBinding
+        """
+        return self._nvlink_fm_partition
+
+    @nvlink_fm_partition.setter
+    def nvlink_fm_partition(self, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding'):
+        """Sets the nvlink_fm_partition of this ClusterServiceUpdateMachineServerBody.
+
+
+        :param nvlink_fm_partition: The nvlink_fm_partition of this ClusterServiceUpdateMachineServerBody.  # noqa: E501
+        :type: V1NvlinkFMPartitionBinding
+        """
+
+        self._nvlink_fm_partition = nvlink_fm_partition
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -74,6 +74,17 @@ export class SandboxesService<
        * sandboxes are recreated with a project context.
        */
       projectId?: string;
+      /**
+       * Purpose filter. When unset (UNSPECIFIED), the default view is
+       * returned: every sandbox EXCEPT those tagged with a product purpose
+       * (e.g. notebook kernels). Set to a specific purpose to list only
+       * sandboxes created for that purpose.
+       *
+       *  - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.
+       *  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
+       * @default "SANDBOX_PURPOSE_UNSPECIFIED"
+       */
+      purpose?: "SANDBOX_PURPOSE_UNSPECIFIED" | "SANDBOX_PURPOSE_NOTEBOOK";
     },
     params: RequestParams = {},
   ) =>
@@ -120,6 +131,17 @@ export class SandboxesService<
       projectId?: string;
       name?: string;
       sortOrder?: string;
+      /**
+       * Purpose filter, matching ListSandboxesRequest.purpose semantics:
+       * unset returns every snapshot EXCEPT those captured from
+       * product-purposed sandboxes; set returns only snapshots whose source
+       * sandbox had that purpose.
+       *
+       *  - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.
+       *  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
+       * @default "SANDBOX_PURPOSE_UNSPECIFIED"
+       */
+      purpose?: "SANDBOX_PURPOSE_UNSPECIFIED" | "SANDBOX_PURPOSE_NOTEBOOK";
     },
     params: RequestParams = {},
   ) =>

@@ -14,6 +14,22 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * SandboxPurpose records what a sandbox was created for. Sandboxes spawned
+ * as an implementation detail of another product (e.g. the kernel behind a
+ * Lightning Notebook) are tagged so user-facing list surfaces can hide them
+ * and billing can attribute them to that product instead of raw sandbox
+ * usage.
+ *
+ *  - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.
+ *  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
+ * @default "SANDBOX_PURPOSE_UNSPECIFIED"
+ */
+export enum V1SandboxPurpose {
+  SANDBOX_PURPOSE_UNSPECIFIED = "SANDBOX_PURPOSE_UNSPECIFIED",
+  SANDBOX_PURPOSE_NOTEBOOK = "SANDBOX_PURPOSE_NOTEBOOK",
+}
+
 export interface SandboxesServiceCreateSandboxDirectoryBody {
   organizationId?: string;
   path?: string;
@@ -341,6 +357,13 @@ export interface V1CreateSandboxRequest {
    * set; empty + `image` set = anonymous public-registry pull.
    */
   imageSecretRef?: string;
+  /**
+   * What this sandbox is created for. Leave unset for ordinary user
+   * sandboxes. Product integrations (e.g. Lightning Notebooks) set their
+   * purpose so the sandbox is hidden from default list views and billed
+   * as that product.
+   */
+  purpose?: V1SandboxPurpose;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -561,6 +584,11 @@ export interface V1Sandbox {
    * list / update responses; empty when the sandbox has no user ports.
    */
   portUrls?: Record<string, string>;
+  /**
+   * Mirrors CreateSandboxRequest.purpose. UNSPECIFIED for ordinary user
+   * sandboxes and for sandboxes created before this field landed.
+   */
+  purpose?: V1SandboxPurpose;
 }
 
 export interface V1SandboxCommand {
@@ -672,6 +700,12 @@ export interface V1SandboxSnapshot {
    * path then treats missing policy as allow-all.
    */
   sourceSandboxNetworkPolicy?: V1NetworkPolicy;
+  /**
+   * Purpose captured from the source sandbox at snapshot time, so
+   * snapshots of product-spawned sandboxes (e.g. notebook kernels) stay
+   * out of default snapshot list views along with their sandboxes.
+   */
+  sourceSandboxPurpose?: V1SandboxPurpose;
 }
 
 /**
