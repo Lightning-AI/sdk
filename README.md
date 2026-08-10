@@ -10,7 +10,7 @@ ______________________________________________________________________
   <a href="#quick-start">Quick start</a> •
   <a href="#packages">Packages</a> •
   <a href="#development">Development</a> •
-  <a href="https://lightning.ai/docs/overview/sdk-reference">Docs</a>
+  <a href="https://lightning.ai/docs/platform/developers/sdk">Docs</a>
 </p>
 
 [![PyPI](https://img.shields.io/pypi/v/lightning-sdk.svg)](https://pypi.org/project/lightning-sdk/)
