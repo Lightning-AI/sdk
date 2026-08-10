@@ -50,7 +50,7 @@ def _content_digest(path: str) -> Optional[str]:
 
 def _resolve_editor(editor: Optional[str]) -> str:
     """Resolve which editor command to launch: explicit ``--editor`` > ``$EDITOR`` > ``vim``."""
-    return editor or os.environ.get("EDITOR") or "vim"
+    return editor or os.environ.get("EDITOR") or os.environ.get("VISUAL") or "vi"
 
 
 def _drive_url(remote_url: str) -> Optional[str]:
