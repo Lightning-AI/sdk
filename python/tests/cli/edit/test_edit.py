@@ -24,7 +24,7 @@ def test_resolve_editor_precedence(monkeypatch):
     assert _resolve_editor("code -w") == "code -w"  # first --editor
     assert _resolve_editor(None) == "nano"  # then $EDITOR
     monkeypatch.delenv("EDITOR")
-    assert _resolve_editor(None) == "vim"  # then default
+    assert _resolve_editor(None) == "vi"  # then default
 
 
 def test_drive_url_encodes_nested_studio_path(monkeypatch):
