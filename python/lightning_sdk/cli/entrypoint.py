@@ -20,6 +20,7 @@ from lightning_sdk.cli.groups import (
     cp,
     dataset,
     deployment,
+    edit,
     file,
     folder,
     job,
@@ -49,7 +50,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
-        {"name": "DATA & FILES", "commands": ["cp"]},
+        {"name": "DATA & FILES", "commands": ["cp", "edit"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
@@ -143,6 +144,7 @@ main_cli.add_command(base_studio)
 main_cli.add_command(dataset)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
+main_cli.add_command(edit)
 
 # hidden plural aliases for noun-first groups
 main_cli.add_command(build_hidden_alias_group("apis", api))

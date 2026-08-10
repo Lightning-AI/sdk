@@ -12,6 +12,7 @@ from lightning_sdk.cli.container import register_commands as register_container_
 from lightning_sdk.cli.cp import register_commands as register_cp_commands
 from lightning_sdk.cli.dataset import register_commands as register_dataset_commands
 from lightning_sdk.cli.deployment import register_commands as register_deployment_commands
+from lightning_sdk.cli.edit import register_commands as register_edit_commands
 from lightning_sdk.cli.file import register_commands as register_file_commands
 from lightning_sdk.cli.folder import register_commands as register_folder_commands
 from lightning_sdk.cli.job import register_commands as register_job_commands
@@ -205,6 +206,30 @@ def cp(_ctx: click.Context) -> None:
     """
 
 
+@click.command(name="edit", cls=LightningCommand)
+@click.argument("path")
+@click.option(
+    "--editor",
+    default=None,
+    help="Editor command to launch. Defaults to the $EDITOR environment variable, or vi.",
+)
+@click.pass_context
+def edit(_ctx: click.Context) -> None:
+    """Edit a Drive file in place with a local editor.
+
+    Downloads the file, opens it in your editor, and re-uploads it when you save
+    and close, only if the contents changed.
+
+    URL formats:
+      Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>
+      Teamspace drives: lit://<owner>/<teamspace>/uploads/<path>
+
+    Examples:
+      lightning edit lit://<owner>/<my-teamspace>/studios/<my-studio>/notes.txt
+      lightning edit lit://<owner>/<my-teamspace>/uploads/config.yaml --editor "code -w"
+    """
+
+
 # Register config commands with the main config group
 register_job_commands(job)
 register_mmt_commands(mmt)
@@ -228,3 +253,4 @@ register_base_studio_commands(base_studio)
 register_license_commands(license)
 register_dataset_commands(dataset)
 register_cp_commands(cp)
+register_edit_commands(edit)
