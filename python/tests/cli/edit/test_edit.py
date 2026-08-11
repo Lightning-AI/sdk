@@ -15,7 +15,7 @@ def test_edit_help() -> None:
     assert_help_contains(
         "lightning edit --help",
         "Usage: lightning edit [OPTIONS] PATH",
-        "Edit a Drive file in place with a local editor.",
+        "Edit a file in place.",
     )
 
 

@@ -215,10 +215,11 @@ def cp(_ctx: click.Context) -> None:
 )
 @click.pass_context
 def edit(_ctx: click.Context) -> None:
-    """Edit a Drive file in place with a local editor.
+    """Edit a file in place.
 
-    Downloads the file, opens it in your editor, and re-uploads it when you save
-    and close, only if the contents changed.
+    For a running Studio, the editor opens on the remote machine via SSH.
+    Otherwise, the file is downloaded, opened in a local editor, and re-uploaded
+    when you save and close, only if the contents changed.
 
     URL formats:
       Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>

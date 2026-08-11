@@ -1,4 +1,4 @@
-"""Edit a Drive file in place with a local editor."""
+"""Edit a Lightning-backed file in place: remotely for running Studio paths, else locally."""
 
 import contextlib
 import hashlib
@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Iterator, Optional
+from typing import Any, Iterator, Optional
 from urllib.parse import quote
 
 import rich_click as click
@@ -17,7 +17,33 @@ from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.cp import route_cp_operation
+from lightning_sdk.cli.utils.filesystem import parse_studio_path
+from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
+from lightning_sdk.status import Status
 from lightning_sdk.utils.filesystem import parse_lit_url
+
+
+def _is_studio_url(remote_url: str) -> bool:
+    return "/studios/" in remote_url
+
+
+def _resolve_studio_for_edit(remote_url: str) -> tuple:
+    try:
+        parsed = parse_studio_path(remote_url)
+    except ValueError as exc:
+        raise ValueError(f"Could not parse studio URL {remote_url!r}: {exc}") from exc
+
+    if not parsed.get("studio"):
+        raise ValueError(f"Could not determine studio name from URL {remote_url!r}")
+
+    from lightning_sdk.cli.utils.filesystem import resolve_studio
+
+    studio = resolve_studio(parsed["studio"], parsed["teamspace"], parsed["owner"])
+    destination = parsed.get("destination", "")
+    if not destination:
+        raise ValueError("The lit:// URL must point to a file, not a studio root.")
+
+    return studio, destination
 
 
 @contextlib.contextmanager
@@ -64,14 +90,18 @@ def _drive_url(remote_url: str) -> Optional[str]:
 
 
 def route_edit_operation(remote_url: str, editor: Optional[str] = None) -> None:
-    """Download a Drive file, open it in an editor, and re-upload it if it changed.
+    """Edit a remote file in place.
+
+    For URLs targeting a running Studio, the editor is opened on the remote machine via SSH.
+    For Drive URLs or non-running Studios, the file is downloaded, opened in a local editor,
+    and re-uploaded if it changed.
 
     Args:
         remote_url: The ``lit://`` URL of the file to edit.
         editor: The editor command to launch. Defaults to ``$EDITOR``, ``$VISUAL``, or ``vi``.
 
     Raises:
-        ValueError: If ``remote_url`` is not a ``lit://`` URL.
+        ValueError: If ``remote_url`` is not a ``lit://`` URL or is a directory.
     """
     console = Console()
 
@@ -84,6 +114,85 @@ def route_edit_operation(remote_url: str, editor: Optional[str] = None) -> None:
     filename = os.path.basename(remote_url)
     if not filename:
         raise ValueError("The lit:// URL must point to a file, not a directory.")
+
+    if _is_studio_url(remote_url):
+        fallback_msg = "Falling back to local download/edit/upload flow."
+        try:
+            studio, destination = _resolve_studio_for_edit(remote_url)
+        except ValueError:
+            console.print(fallback_msg)
+            _edit_locally_download_upload(remote_url, editor, console)
+            return
+
+        try:
+            status = studio.status
+        except Exception:
+            console.print(fallback_msg)
+            _edit_locally_download_upload(remote_url, editor, console)
+            return
+
+        if status == Status.Running:
+            remote_path = os.path.join("/teamspace/studios/this_studio", destination)
+            try:
+                _edit_via_ssh(studio, remote_path, editor, console)
+                return
+            except Exception:
+                console.print(fallback_msg)
+        else:
+            console.print(
+                f"[yellow]Studio [cyan]{studio.name}[/cyan] is [cyan]{status.value}[/cyan], "
+                f"not running. {fallback_msg}[/yellow]"
+            )
+
+    _edit_locally_download_upload(remote_url, editor, console)
+
+
+def _edit_via_ssh(studio: Any, remote_path: str, editor: Optional[str], console: Console) -> None:
+    """Open a file directly on a running remote Studio via SSH.
+
+    Args:
+        studio: The resolved running Studio.
+        remote_path: Absolute filesystem path to the file on the remote machine.
+        editor: Override editor command; falls back to ``$EDITOR`` > ``$VISUAL`` > ``vi``.
+        console: Rich Console for user-facing output.
+    """
+    editor_cmd = _resolve_editor(editor)
+    ssh_key_path = configure_ssh_internal()
+    ssh_target = f"s_{studio._studio.id}@ssh.lightning.ai"
+
+    ssh_base = [
+        "ssh",
+        "-i",
+        ssh_key_path,
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "-o",
+        "LogLevel=ERROR",
+        "-tt",
+    ]
+
+    remote_cmd = f"{editor_cmd} {shlex.quote(remote_path)}"
+    console.print(f"[dim]SSH remote path: {remote_path}, command: {remote_cmd}[/dim]")
+
+    console.print(f"Opening [cyan]{editor_cmd}[/cyan] on running Studio [cyan]{studio.name}[/cyan] via SSH ...")
+
+    try:
+        result = subprocess.run([*ssh_base, ssh_target, remote_cmd])
+    except FileNotFoundError:
+        raise ValueError("Could not launch SSH. Ensure 'ssh' is installed and available on your PATH.") from None
+
+    if result.returncode != 0:
+        console.print(
+            f"[yellow]Remote editor exited with code {result.returncode}. "
+            f"File was edited in place on the Studio.[/yellow]"
+        )
+
+
+def _edit_locally_download_upload(remote_url: str, editor: Optional[str], console: Console) -> None:
+    """Download a file, open it in a local editor, and re-upload if changed."""
+    filename = os.path.basename(remote_url)
 
     tmp_dir = tempfile.mkdtemp(prefix="lightning-edit-")
     local_path = os.path.join(tmp_dir, filename)
