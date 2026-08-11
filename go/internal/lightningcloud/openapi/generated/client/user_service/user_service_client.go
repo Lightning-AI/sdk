@@ -86,8 +86,6 @@ type ClientService interface {
 
 	UserServiceUpdateAffiliateLink(params *UserServiceUpdateAffiliateLinkParams, opts ...ClientOption) (*UserServiceUpdateAffiliateLinkOK, error)
 
-	UserServiceUpdateUserCreditsAutoReplenish(params *UserServiceUpdateUserCreditsAutoReplenishParams, opts ...ClientOption) (*UserServiceUpdateUserCreditsAutoReplenishOK, error)
-
 	UserServiceUpdateUserViewedNewFeatures(params *UserServiceUpdateUserViewedNewFeaturesParams, opts ...ClientOption) (*UserServiceUpdateUserViewedNewFeaturesOK, error)
 
 	UserServiceUploadSettings(params *UserServiceUploadSettingsParams, opts ...ClientOption) (*UserServiceUploadSettingsOK, error)
@@ -681,48 +679,6 @@ func (a *Client) UserServiceUpdateAffiliateLink(params *UserServiceUpdateAffilia
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UserServiceUpdateAffiliateLinkDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-UserServiceUpdateUserCreditsAutoReplenish user service update user credits auto replenish API
-*/
-func (a *Client) UserServiceUpdateUserCreditsAutoReplenish(params *UserServiceUpdateUserCreditsAutoReplenishParams, opts ...ClientOption) (*UserServiceUpdateUserCreditsAutoReplenishOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewUserServiceUpdateUserCreditsAutoReplenishParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "UserService_UpdateUserCreditsAutoReplenish",
-		Method:             "PUT",
-		PathPattern:        "/v1/users/{userId}/credits/auto-replenish",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &UserServiceUpdateUserCreditsAutoReplenishReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*UserServiceUpdateUserCreditsAutoReplenishOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*UserServiceUpdateUserCreditsAutoReplenishDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

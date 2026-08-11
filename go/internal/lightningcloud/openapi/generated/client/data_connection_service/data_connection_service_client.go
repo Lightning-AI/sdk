@@ -66,8 +66,6 @@ type ClientService interface {
 
 	DataConnectionServiceGetTempBucketCredentials(params *DataConnectionServiceGetTempBucketCredentialsParams, opts ...ClientOption) (*DataConnectionServiceGetTempBucketCredentialsOK, error)
 
-	DataConnectionServiceListDataConnectionArtifacts(params *DataConnectionServiceListDataConnectionArtifactsParams, opts ...ClientOption) (*DataConnectionServiceListDataConnectionArtifactsOK, error)
-
 	DataConnectionServiceListDataConnections(params *DataConnectionServiceListDataConnectionsParams, opts ...ClientOption) (*DataConnectionServiceListDataConnectionsOK, error)
 
 	DataConnectionServiceSetupDataConnection(params *DataConnectionServiceSetupDataConnectionParams, opts ...ClientOption) (*DataConnectionServiceSetupDataConnectionOK, error)
@@ -243,48 +241,6 @@ func (a *Client) DataConnectionServiceGetTempBucketCredentials(params *DataConne
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DataConnectionServiceGetTempBucketCredentialsDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-DataConnectionServiceListDataConnectionArtifacts data connection service list data connection artifacts API
-*/
-func (a *Client) DataConnectionServiceListDataConnectionArtifacts(params *DataConnectionServiceListDataConnectionArtifactsParams, opts ...ClientOption) (*DataConnectionServiceListDataConnectionArtifactsOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewDataConnectionServiceListDataConnectionArtifactsParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "DataConnectionService_ListDataConnectionArtifacts",
-		Method:             "GET",
-		PathPattern:        "/v1/projects/{projectId}/data-connections/artifacts/{id}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &DataConnectionServiceListDataConnectionArtifactsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*DataConnectionServiceListDataConnectionArtifactsOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*DataConnectionServiceListDataConnectionArtifactsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -12,8 +12,10 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ClusterServiceServerCheckInBody cluster service server check in body
@@ -21,12 +23,37 @@ import (
 // swagger:model ClusterServiceServerCheckInBody
 type ClusterServiceServerCheckInBody struct {
 
+	// for servers with a persistent filesystem, when did they last successfully sync
+	// Format: date-time
+	FilesystemSyncedAt strfmt.DateTime `json:"filesystemSyncedAt,omitempty"`
+
 	// Set by auth
 	UserID string `json:"userId,omitempty"`
 }
 
 // Validate validates this cluster service server check in body
 func (m *ClusterServiceServerCheckInBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateFilesystemSyncedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ClusterServiceServerCheckInBody) validateFilesystemSyncedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.FilesystemSyncedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("filesystemSyncedAt", "body", "date-time", m.FilesystemSyncedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 
