@@ -11,6 +11,16 @@ _MAX_DURATION = timedelta(days=730)
 
 
 class MonthlySummary(TypedDict):
+    """A single month's billing summary of credits purchased, used, and remaining.
+
+    Attributes:
+        period_start: Start of the billing period (typically the first of the month).
+        period_end: End of the billing period (typically the end of the month).
+        total_credits_consumed: Total credits consumed during the monthly period.
+        total_credits_remaining: Total credits remaining at the end of the monthly period.
+        total_credits_purchased: Total credits purchased during the monthly period.
+    """
+
     period_start: datetime
     period_end: datetime
     total_credits_consumed: float

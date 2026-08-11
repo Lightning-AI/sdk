@@ -89,7 +89,8 @@ class Organization(Owner):
                 ``start``, acts as a "BEFORE" pivot.
 
         Returns:
-            A list of MonthlySummary dicts:
+            A list of :class:`~lightning_sdk.api.org_api.MonthlySummary` dicts,
+            one per month in the requested range:
             [
                 {
                     "period_start": datetime,
