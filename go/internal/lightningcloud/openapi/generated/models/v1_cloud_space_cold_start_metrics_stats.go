@@ -24,14 +24,23 @@ type V1CloudSpaceColdStartMetricsStats struct {
 	// cpu count
 	CPUCount int64 `json:"cpuCount,omitempty"`
 
+	// env setup
+	EnvSetup map[string]float32 `json:"envSetup,omitempty"`
+
 	// gpu count
 	GpuCount int64 `json:"gpuCount,omitempty"`
 
 	// gpu type
 	GpuType string `json:"gpuType,omitempty"`
 
+	// initialize env
+	InitializeEnv map[string]float32 `json:"initializeEnv,omitempty"`
+
 	// instance type
 	InstanceType string `json:"instanceType,omitempty"`
+
+	// machine startup
+	MachineStartup map[string]float32 `json:"machineStartup,omitempty"`
 
 	// median env setup
 	MedianEnvSetup float32 `json:"medianEnvSetup,omitempty"`
@@ -45,11 +54,17 @@ type V1CloudSpaceColdStartMetricsStats struct {
 	// median total
 	MedianTotal float32 `json:"medianTotal,omitempty"`
 
-	// median wait for machine
+	// Deprecated: use the per-stage percentile maps below (keys like "p50", "p85").
 	MedianWaitForMachine float32 `json:"medianWaitForMachine,omitempty"`
 
 	// provider
 	Provider string `json:"provider,omitempty"`
+
+	// total
+	Total map[string]float32 `json:"total,omitempty"`
+
+	// wait for machine
+	WaitForMachine map[string]float32 `json:"waitForMachine,omitempty"`
 }
 
 // Validate validates this v1 cloud space cold start metrics stats

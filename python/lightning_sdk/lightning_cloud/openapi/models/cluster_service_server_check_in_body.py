@@ -45,19 +45,45 @@ class ClusterServiceServerCheckInBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'filesystem_synced_at': 'datetime',
         'user_id': 'str'
     }
 
     attribute_map = {
+        'filesystem_synced_at': 'filesystemSyncedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, filesystem_synced_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """ClusterServiceServerCheckInBody - a model defined in Swagger"""  # noqa: E501
+        self._filesystem_synced_at = None
         self._user_id = None
         self.discriminator = None
+        if filesystem_synced_at is not None:
+            self.filesystem_synced_at = filesystem_synced_at
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def filesystem_synced_at(self) -> 'datetime':
+        """Gets the filesystem_synced_at of this ClusterServiceServerCheckInBody.  # noqa: E501
+
+
+        :return: The filesystem_synced_at of this ClusterServiceServerCheckInBody.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._filesystem_synced_at
+
+    @filesystem_synced_at.setter
+    def filesystem_synced_at(self, filesystem_synced_at: 'datetime'):
+        """Sets the filesystem_synced_at of this ClusterServiceServerCheckInBody.
+
+
+        :param filesystem_synced_at: The filesystem_synced_at of this ClusterServiceServerCheckInBody.  # noqa: E501
+        :type: datetime
+        """
+
+        self._filesystem_synced_at = filesystem_synced_at
 
     @property
     def user_id(self) -> 'str':
