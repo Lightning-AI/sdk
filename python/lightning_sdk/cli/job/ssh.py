@@ -1,23 +1,13 @@
 """Job SSH command."""
 
-import subprocess
 from typing import Optional
 
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
-from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
+from lightning_sdk.cli.utils.ssh_connection import _job_ssh_user, exec_ssh
 from lightning_sdk.status import Status
-
-_SSH_HOST = "ssh.lightning.ai"
-_JOB_ID_PREFIX = "job_"
-
-
-def _ssh_user_for_job_id(job_id: str) -> str:
-    """Map a stored job id (``job_<ulid>``) to the SSH gateway user (``j_<ulid>``)."""
-    suffix = job_id[len(_JOB_ID_PREFIX) :] if job_id.startswith(_JOB_ID_PREFIX) else job_id
-    return f"j_{suffix}"
 
 
 @click.command("ssh", cls=LightningCommand)
@@ -69,17 +59,5 @@ def ssh_impl(
     if not job_id:
         raise click.ClickException(f"Could not resolve id for job '{job.name}'.")
 
-    ssh_user = _ssh_user_for_job_id(job_id)
-
-    def _run(key_path: str) -> None:
-        command = f"ssh -i {key_path} {ssh_user}@{_SSH_HOST}"
-        subprocess.run(command.split())
-
-    try:
-        _run(configure_ssh_internal())
-    except Exception:
-        # Redownload keys in case they are stale, then retry once.
-        try:
-            _run(configure_ssh_internal(force_download=True))
-        except Exception:
-            raise click.ClickException("Failed to establish SSH connection") from None
+    ssh_user = _job_ssh_user(job_id)
+    exec_ssh(ssh_user)

@@ -1,6 +1,5 @@
 """Studio SSH command."""
 
-import subprocess
 from typing import List, Optional
 
 import rich_click as click
@@ -8,7 +7,7 @@ import rich_click as click
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
-from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
+from lightning_sdk.cli.utils.ssh_connection import _studio_ssh_user, exec_ssh
 
 
 @click.command("ssh", cls=LightningCommand)
@@ -38,18 +37,6 @@ def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[Lis
     studio = resolve_studio(name, resolved_teamspace)
     save_studio_to_config(studio)
 
-    ssh_private_key_path = configure_ssh_internal()
-
-    ssh_options = " -o " + " -o ".join(option) if option else ""
-    ssh_command = f"ssh -i {ssh_private_key_path}{ssh_options} s_{studio._studio.id}@ssh.lightning.ai"
-
-    try:
-        subprocess.run(ssh_command.split())
-    except Exception:
-        # redownload the keys to be sure they are up to date
-        ssh_private_key_path = configure_ssh_internal(force_download=True)
-        try:
-            subprocess.run(ssh_command.split())
-        except Exception:
-            # TODO: make this a generic CLI error
-            raise RuntimeError("Failed to establish SSH connection") from None
+    ssh_user = _studio_ssh_user(studio._studio.id)
+    extra_options = list(option) if option else []
+    exec_ssh(ssh_user, extra_options=extra_options)

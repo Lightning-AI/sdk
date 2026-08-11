@@ -1,6 +1,5 @@
 """Studio connect command."""
 
-import subprocess
 import sys
 from contextlib import suppress
 from typing import Optional
@@ -13,7 +12,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.richt_print import studio_name_link
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config, save_teamspace_to_config
-from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
+from lightning_sdk.cli.utils.ssh_connection import _studio_ssh_user, exec_ssh
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.studio import Studio
@@ -119,12 +118,9 @@ def connect_studio(
     save_studio_to_config(studio)
     studio.start(machine=machine, interruptible=interruptible)
 
-    ssh_private_key_path = configure_ssh_internal()
-
-    ssh_option = "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=ERROR"
+    ssh_user = _studio_ssh_user(studio._studio.id)
     try:
-        ssh_command = f"ssh -i {ssh_private_key_path} {ssh_option} s_{studio._studio.id}@ssh.lightning.ai"
-        subprocess.run(ssh_command.split())
+        exec_ssh(ssh_user)
     except Exception as ex:
         print(f"Failed to establish SSH connection: {ex}")
         sys.exit(1)

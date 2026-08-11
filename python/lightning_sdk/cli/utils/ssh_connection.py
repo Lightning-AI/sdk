@@ -1,14 +1,22 @@
 import os
 import platform
+import subprocess
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import rich_click as click
 
 from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
+
+_SSH_HOST = "ssh.lightning.ai"
+_DEFAULT_SSH_OPTIONS = [
+    "-o", "UserKnownHostsFile=/dev/null",
+    "-o", "StrictHostKeyChecking=no",
+    "-o", "LogLevel=ERROR",
+]
 
 
 def configure_ssh_internal(force_download: bool = False) -> str:
@@ -62,3 +70,77 @@ def download_file(url: str, local_path: Path, overwrite: bool = True, chmod: Opt
             file.write(chunk)
     if chmod is not None:
         os.chmod(local_path, 0o600)
+
+
+def exec_ssh(
+    user: str,
+    host: str = _SSH_HOST,
+    *,
+    remote_command: Optional[str] = None,
+    extra_options: Optional[List[str]] = None,
+    tty: bool = False,
+) -> subprocess.CompletedProcess:
+    """Run an SSH session to a Lightning machine.
+
+    Args:
+        user: SSH user to connect as (e.g. ``s_<studio_id>`` or ``j_<job_id>``).
+        host: SSH host; defaults to ``ssh.lightning.ai``.
+        remote_command: Optional command to run on the remote host.
+            When omitted, opens an interactive shell.
+        extra_options: Additional ``-o``-style SSH options (e.g. ``["Port=2222"]``).
+        tty: Force pseudo-terminal allocation (``-tt``). Required for interactive
+            editors and other TUI programs.
+
+    Returns:
+        The ``CompletedProcess`` from ``subprocess.run``.
+
+    Raises:
+        RuntimeError: If the SSH connection fails even after retrying with fresh keys.
+        FileNotFoundError: If the ``ssh`` binary is not on ``PATH``.
+    """
+    ssh_key_path = configure_ssh_internal()
+
+    def _build_cmd(key_path: str) -> List[str]:
+        cmd: List[str] = ["ssh", "-i", key_path]
+        cmd.extend(_DEFAULT_SSH_OPTIONS)
+        if tty:
+            cmd.append("-tt")
+        if extra_options:
+            for opt in extra_options:
+                cmd.extend(["-o", opt])
+        cmd.append(f"{user}@{host}")
+        if remote_command is not None:
+            cmd.append(remote_command)
+        return cmd
+
+    def _run(key_path: str) -> subprocess.CompletedProcess:
+        return subprocess.run(_build_cmd(key_path))
+
+    try:
+        return _run(ssh_key_path)
+    except FileNotFoundError:
+        raise
+    except Exception:
+        # Redownload keys in case they are stale, then retry once.
+        ssh_key_path = configure_ssh_internal(force_download=True)
+        try:
+            return _run(ssh_key_path)
+        except FileNotFoundError:
+            raise
+        except Exception as exc:
+            raise RuntimeError("Failed to establish SSH connection") from exc
+
+
+def _studio_ssh_user(studio_id: str) -> str:
+    """Build the SSH user string for a Studio (``s_<id>``)."""
+    return f"s_{studio_id}"
+
+
+def _job_ssh_user(job_id: str) -> str:
+    """Build the SSH user string for a Job (``j_<id>``).
+
+    Handles both ``job_<ulid>`` and plain ``<ulid>`` ids.
+    """
+    prefix = "job_"
+    suffix = job_id[len(prefix):] if job_id.startswith(prefix) else job_id
+    return f"j_{suffix}"
