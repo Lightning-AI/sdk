@@ -544,9 +544,7 @@ func (s *Studio) DownloadFile(remotePath, filePath string) error {
 	if err != nil {
 		return err
 	}
-	query := url.Values{
-		"key": []string{sanitizeStudioRemotePath(remotePath, s.id)},
-	}
+	query := url.Values{}
 	if s.cloud != "" {
 		query.Set("clusterId", s.cloud)
 	}
@@ -1311,11 +1309,6 @@ func studioArtifactBlobPath(teamspaceID, studioID, remotePath string) string {
 
 func studioArtifactTreePath(teamspaceID, studioID, remotePath string) string {
 	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts/cloudspaces/" + url.PathEscape(studioID) + "/trees/" + strings.TrimLeft(remotePath, "/")
-}
-
-func sanitizeStudioRemotePath(remotePath, studioID string) string {
-	remotePath = strings.ReplaceAll(remotePath, "/teamspace/studios/this_studio/", "")
-	return "/cloudspaces/" + studioID + "/code/content/" + strings.TrimLeft(remotePath, "/")
 }
 
 func sleepConfig(config *models.V1CloudSpaceInstanceConfig) (bool, int) {
