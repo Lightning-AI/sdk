@@ -20,7 +20,6 @@ from lightning_sdk.api.utils import (
     _DummyResponse,
     _machine_to_compute_name,
     _raise_for_download_status,
-    _sanitize_studio_remote_path,
     _stream_download_to_file,
     cached_lightning_client,
 )
@@ -1089,7 +1088,6 @@ class StudioApi:
 
         query_params = {
             "clusterId": cloud_account,
-            "key": _sanitize_studio_remote_path(path, studio_id),
             "token": token,
         }
 
