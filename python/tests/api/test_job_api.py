@@ -8,6 +8,7 @@ import pytest
 
 from lightning_sdk.api.job_api import (
     JobApiV2,
+    _cached_studio_name,
     _decode_log_messages,
     _format_log_timestamp,
     _job_logs_ws_url,
@@ -19,6 +20,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1PathMapping,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
@@ -541,3 +543,43 @@ def test_warn_if_max_runtime_noop_silent_for_dws_machine():
             org_id="org",
         )
     assert recorded == []
+
+
+def test_get_studio_name_returns_none_when_cloudspace_missing(mocker_auth):
+    job_api = JobApiV2()
+    job_api._client.cloud_space_service_get_cloud_space = mock.MagicMock(
+        side_effect=ApiException(status=404, reason="Not Found")
+    )
+    job = V1Job(project_id="ts-abc", spec=V1JobSpec(cloudspace_id="deleted-studio"))
+
+    assert job_api.get_studio_name(job) is None
+    job_api._client.cloud_space_service_get_cloud_space.assert_called_once_with(
+        project_id="ts-abc", id="deleted-studio"
+    )
+
+
+def test_get_studio_name_caches_cloudspace_lookups(mocker_auth):
+    job_api_a = JobApiV2()
+    job_api_b = JobApiV2()
+    cs = mock.MagicMock()
+    cs.name = "studio-a"
+    get_cs = mock.MagicMock(return_value=cs)
+    job_api_a._client.cloud_space_service_get_cloud_space = get_cs
+    job = V1Job(project_id="ts-abc", spec=V1JobSpec(cloudspace_id="cs-1"))
+
+    assert job_api_a.get_studio_name(job) == "studio-a"
+    assert job_api_b.get_studio_name(job) == "studio-a"
+    assert get_cs.call_count == 1
+    assert _cached_studio_name.cache_info().hits == 1
+
+
+def test_machine_from_spec_skips_accelerator_lookup_for_known_slug():
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock()
+
+    machine = job_api._get_job_machine_from_spec(
+        V1JobSpec(instance_name="lit-t4-4", cluster_id="c-abc"), "ts-abc", "org-abc"
+    )
+
+    assert machine == Machine.T4_X_4
+    job_api._get_machines_for_cloud_account.assert_not_called()

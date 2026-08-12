@@ -3,6 +3,7 @@ import time
 import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Union
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from urllib.request import urlopen
@@ -19,7 +20,6 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateJobBody,
     JobsServiceUpdateJobBody,
-    V1CloudSpace,
     V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
     V1EnvVar,
@@ -27,6 +27,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1Volume,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -36,6 +37,19 @@ if TYPE_CHECKING:
 # finished. It must stay below the server's log-socket heartbeat (10s) so recv() actually wakes up
 # during quiet periods.
 _FOLLOW_POLL_INTERVAL = 5.0
+
+
+@lru_cache(maxsize=None)
+def _cached_studio_name(project_id: str, cloudspace_id: str) -> Optional[str]:
+    """Resolve a studio display name, caching across Job/MMT API instances."""
+    try:
+        return (
+            cached_lightning_client().cloud_space_service_get_cloud_space(project_id=project_id, id=cloudspace_id).name
+        )
+    except ApiException as ex:
+        if ex.status == 404:
+            return None
+        raise
 
 
 def _job_logs_ws_url(
@@ -469,13 +483,9 @@ class JobApiV2:
         Returns:
             The display name of the Studio, or ``None`` if the job has no associated Studio.
         """
-        if job.spec.cloudspace_id:
-            cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
-                project_id=job.project_id, id=job.spec.cloudspace_id
-            )
-            return cs.name
-
-        return None
+        if not job.spec.cloudspace_id:
+            return None
+        return _cached_studio_name(job.project_id, job.spec.cloudspace_id)
 
     def get_image_name(self, job: V1Job) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.
@@ -576,6 +586,10 @@ class JobApiV2:
             The ``Machine`` enum value that matches the spec's instance, falling back to
             ``Machine.from_str`` if no accelerator record matches.
         """
+        predefined = Machine._predefined_from_str(spec.instance_name or spec.instance_type)
+        if predefined is not None:
+            return predefined
+
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id,
             cloud_account_id=spec.cluster_id,
@@ -661,9 +675,9 @@ class JobApiV2:
         Returns:
             A list of ``V1ClusterAccelerator`` objects that are marked as enabled.
         """
-        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+        from lightning_sdk.api.cloud_account_api import cached_cloud_account_api
 
-        cloud_account_api = CloudAccountApi()
+        cloud_account_api = cached_cloud_account_api()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
             teamspace_id=teamspace_id,
             cloud_account_id=cloud_account_id,

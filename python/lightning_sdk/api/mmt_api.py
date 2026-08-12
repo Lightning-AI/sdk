@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from lightning_sdk.api.job_api import V1ClusterAccelerator
+from lightning_sdk.api.job_api import V1ClusterAccelerator, _cached_studio_name
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
@@ -12,7 +12,6 @@ from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateMultiMachineJobBody,
     JobsServiceUpdateMultiMachineJobBody,
-    V1CloudSpace,
     V1EnvVar,
     V1Job,
     V1JobSpec,
@@ -308,13 +307,9 @@ class MMTApiV2:
         Returns:
             The display name of the Studio, or ``None`` if the job has no associated Studio.
         """
-        if job.spec.cloudspace_id:
-            cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
-                project_id=job.project_id, id=job.spec.cloudspace_id
-            )
-            return cs.name
-
-        return None
+        if not job.spec.cloudspace_id:
+            return None
+        return _cached_studio_name(job.project_id, job.spec.cloudspace_id)
 
     def get_image_name(self, job: V1MultiMachineJob) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.
@@ -350,6 +345,10 @@ class MMTApiV2:
             The ``Machine`` enum value that matches the spec's instance, falling back to
             ``Machine.from_str`` if no accelerator record matches.
         """
+        predefined = Machine._predefined_from_str(spec.instance_name or spec.instance_type)
+        if predefined is not None:
+            return predefined
+
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id,
             cloud_account_id=spec.cluster_id,
@@ -382,9 +381,9 @@ class MMTApiV2:
         Returns:
             A list of ``V1ClusterAccelerator`` objects that are marked as enabled.
         """
-        from lightning_sdk.api.cloud_account_api import CloudAccountApi
+        from lightning_sdk.api.cloud_account_api import cached_cloud_account_api
 
-        cloud_account_api = CloudAccountApi()
+        cloud_account_api = cached_cloud_account_api()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
             teamspace_id=teamspace_id,
             cloud_account_id=cloud_account_id,
