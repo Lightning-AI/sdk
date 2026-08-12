@@ -171,49 +171,160 @@ def test_copy_raises_if_both_local():
         fs.copy("/local/a.txt", "/local/b.txt")
 
 
-@mock.patch("lightning_sdk.api.filesystem_api.requests.get")
-@mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
-def test_copy_upload_to_lightning_storage(
-    mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace, fake_path_result
-):
-    upload_url = "lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt"
-    mock_parse_lit_url.return_value = {
-        **fake_path_result,
-        "destination": "lightning_storage/my-storage/data/model.ckpt",
-    }
-    mock_resolve.return_value = fake_teamspace
-    mock_authenticate.return_value = FAKE_AUTH_HEADERS
-    mock_client_cls.return_value.api_client.configuration.host = HOST
-    mock_upload = mock.Mock()
+def _upload_fs(fake_teamspace, destination):
+    """A Filesystem with a mocked API, patched to resolve to fake_teamspace and destination."""
+    fs = Filesystem.__new__(Filesystem)
+    fs._filesystem_api = mock.Mock()
+    patches = (
+        mock.patch(
+            "lightning_sdk.filesystem.parse_lit_url",
+            return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": destination},
+        ),
+        mock.patch("lightning_sdk.filesystem.resolve_teamspace", return_value=fake_teamspace),
+    )
+    return fs, patches
 
-    with mock.patch(
-        "lightning_sdk.filesystem.lightning_storage_upload_api.copy_local_path_to_lightning_storage",
-        mock_upload,
-    ):
-        fs = Filesystem()
-        fs.copy(LOCAL_PATH, upload_url)
 
-    mock_upload.assert_called_once_with(
-        client=fs._filesystem_api.client,
+def test_copy_upload_file_exact_remote_path(tmp_path, fake_teamspace):
+    local = tmp_path / "model.ckpt"
+    local.write_bytes(b"weights")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/data/model.ckpt")
+    # the destination's parent holds no directory of that name -> explicit filename
+    fs._filesystem_api.list_files.return_value = [{"path": "other", "type": "tree"}]
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt")
+
+    fs._filesystem_api.upload_file.assert_called_once_with(
         teamspace_id=TEAMSPACE_ID,
-        local_path=LOCAL_PATH,
-        remote_path=upload_url,
-        recursive=False,
+        file_path=str(local),
+        remote_path="lightning_storage/my-storage/data/model.ckpt",
         progress_bar=True,
+        cloud_account=None,
     )
 
 
-def test_copy_upload_non_lightning_storage_raises_not_implemented(fake_teamspace):
-    fs = Filesystem.__new__(Filesystem)
-    fs._filesystem_api = mock.Mock()
+def test_copy_upload_file_to_trailing_slash_directory(tmp_path, fake_teamspace):
+    local = tmp_path / "model.ckpt"
+    local.write_bytes(b"weights")
 
-    with mock.patch(
-        "lightning_sdk.filesystem.parse_lit_url",
-        return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data/model.ckpt"},
-    ), mock.patch("lightning_sdk.filesystem.resolve_teamspace", return_value=fake_teamspace), pytest.raises(
-        NotImplementedError, match="Filesystem upload is not implemented"
-    ):
-        fs.copy(LOCAL_PATH, "lit://my-org/my-teamspace/uploads/data/model.ckpt")
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/data/")
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/lightning_storage/my-storage/data/")
+
+    # trailing slash means directory target; no listing round-trip needed
+    fs._filesystem_api.list_files.assert_not_called()
+    assert (
+        fs._filesystem_api.upload_file.call_args.kwargs["remote_path"] == "lightning_storage/my-storage/data/model.ckpt"
+    )
+
+
+def test_copy_upload_file_into_existing_remote_directory(tmp_path, fake_teamspace):
+    local = tmp_path / "model.ckpt"
+    local.write_bytes(b"weights")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/data")
+    fs._filesystem_api.list_files.return_value = [{"path": "data", "type": "tree"}]
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/lightning_storage/my-storage/data")
+
+    fs._filesystem_api.list_files.assert_called_once_with(TEAMSPACE_ID, "lightning_storage/my-storage", recursive=False)
+    assert (
+        fs._filesystem_api.upload_file.call_args.kwargs["remote_path"] == "lightning_storage/my-storage/data/model.ckpt"
+    )
+
+
+def test_copy_upload_file_into_existing_remote_directory_with_qualified_tree_path(tmp_path, fake_teamspace):
+    local = tmp_path / "model.ckpt"
+    local.write_bytes(b"weights")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/data")
+    fs._filesystem_api.list_files.return_value = [{"path": "lightning_storage/my-storage/data", "type": "tree"}]
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/lightning_storage/my-storage/data")
+
+    assert (
+        fs._filesystem_api.upload_file.call_args.kwargs["remote_path"] == "lightning_storage/my-storage/data/model.ckpt"
+    )
+
+
+def test_copy_upload_treats_unlistable_parent_as_explicit_filename(tmp_path, fake_teamspace):
+    local = tmp_path / "file.txt"
+    local.write_bytes(b"x")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/new-folder/file.txt")
+    fs._filesystem_api.list_files.side_effect = RuntimeError("Failed to list files: 404")
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/lightning_storage/new-folder/file.txt")
+
+    assert fs._filesystem_api.upload_file.call_args.kwargs["remote_path"] == "lightning_storage/new-folder/file.txt"
+
+
+def test_copy_upload_any_namespace_with_cloud_account(tmp_path, fake_teamspace):
+    local = tmp_path / "data.csv"
+    local.write_bytes(b"x")
+
+    fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
+    fs._filesystem_api.list_files.return_value = []
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv", cloud_account="cluster-1")
+
+    fs._filesystem_api.upload_file.assert_called_once_with(
+        teamspace_id=TEAMSPACE_ID,
+        file_path=str(local),
+        remote_path="uploads/data.csv",
+        progress_bar=True,
+        cloud_account="cluster-1",
+    )
+
+
+def test_copy_upload_strips_teamspace_prefix(tmp_path, fake_teamspace):
+    local = tmp_path / "file.txt"
+    local.write_bytes(b"x")
+
+    fs, patches = _upload_fs(fake_teamspace, "teamspace/lightning_storage/my-storage/file.txt")
+    fs._filesystem_api.list_files.return_value = []
+
+    with patches[0], patches[1]:
+        fs.copy(str(local), "lit://my-org/my-teamspace/teamspace/lightning_storage/my-storage/file.txt")
+
+    assert fs._filesystem_api.upload_file.call_args.kwargs["remote_path"] == "lightning_storage/my-storage/file.txt"
+
+
+def test_copy_upload_directory_requires_recursive(tmp_path, fake_teamspace):
+    (tmp_path / "a.txt").write_bytes(b"a")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/")
+
+    with patches[0], patches[1], pytest.raises(ValueError, match="recursive=True"):
+        fs.copy(str(tmp_path), "lit://my-org/my-teamspace/lightning_storage/my-storage/")
+
+
+def test_copy_upload_directory_preserves_relative_paths(tmp_path, fake_teamspace):
+    (tmp_path / "b.txt").write_bytes(b"b")
+    (tmp_path / "nested").mkdir()
+    (tmp_path / "nested" / "a.txt").write_bytes(b"a")
+
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/dest")
+
+    with patches[0], patches[1]:
+        fs.copy(str(tmp_path), "lit://my-org/my-teamspace/lightning_storage/my-storage/dest", recursive=True)
+
+    uploaded = [call.kwargs["remote_path"] for call in fs._filesystem_api.upload_file.call_args_list]
+    assert uploaded == [
+        "lightning_storage/my-storage/dest/b.txt",
+        "lightning_storage/my-storage/dest/nested/a.txt",
+    ]
+
+
+def test_copy_upload_missing_local_path_raises(fake_teamspace):
+    fs, patches = _upload_fs(fake_teamspace, "lightning_storage/my-storage/file.txt")
+
+    with patches[0], patches[1], pytest.raises(FileNotFoundError):
+        fs.copy("does/not/exist", "lit://my-org/my-teamspace/lightning_storage/my-storage/file.txt")

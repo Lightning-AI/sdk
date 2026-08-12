@@ -1,8 +1,8 @@
 import logging
 import os
-from typing import Generator, List, Tuple
+from pathlib import Path
+from typing import Generator, List, Optional, Tuple
 
-from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
 from lightning_sdk.utils.filesystem import parse_lit_url
@@ -13,11 +13,6 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "Filesystem",
 ]
-
-
-def _is_lightning_storage_destination(path: str) -> bool:
-    normalized = path.strip("/")
-    return normalized == "lightning_storage" or normalized.startswith("lightning_storage/")
 
 
 class Filesystem(metaclass=TrackCallsMeta):
@@ -85,11 +80,13 @@ class Filesystem(metaclass=TrackCallsMeta):
         destination: str,
         recursive: bool = False,
         progress_bar: bool = True,
+        cloud_account: Optional[str] = None,
     ) -> None:
         """Copy a file or directory between a local path and a remote ``lit://`` location.
 
         Exactly one of ``source`` or ``destination`` must be a ``lit://`` URL; the other
-        must be a local path.  Upload is restricted to ``lightning_storage`` destinations.
+        must be a local path.  Remote paths are passed through to the server, so any
+        destination the teamspace drive accepts works here.
 
         Args:
             source: Source path — either a local filesystem path or a ``lit://`` URL.
@@ -97,12 +94,13 @@ class Filesystem(metaclass=TrackCallsMeta):
             recursive: When ``True``, copy directories recursively.  Required when the source
                 is a remote directory or a local directory.
             progress_bar: Whether to display an upload/download progress bar.
+            cloud_account: Cloud account to store uploads on.  Some destinations require
+                one (e.g. ``uploads/``); others pick their own storage.
 
         Raises:
             ValueError: If both paths are remote, neither path is remote, the remote file does
                 not exist, or a directory is copied without ``recursive=True``.
-            NotImplementedError: If the destination is a remote path that is not a
-                ``lightning_storage`` location.
+            FileNotFoundError: If a local upload source does not exist.
         """
         source_is_lit = source.startswith("lit://")
         dest_is_lit = destination.startswith("lit://")
@@ -157,13 +155,58 @@ class Filesystem(metaclass=TrackCallsMeta):
                 self._filesystem_api.download_file(remote_path, target_path, selected_teamspace.id, progress_bar)
         else:
             # upload
-            if not _is_lightning_storage_destination(remote_path):
-                raise NotImplementedError("Filesystem upload is not implemented.")
-            lightning_storage_upload_api.copy_local_path_to_lightning_storage(
-                client=self._filesystem_api.client,
-                teamspace_id=selected_teamspace.id,
-                local_path=local_path,
-                remote_path=destination,
-                recursive=recursive,
-                progress_bar=progress_bar,
-            )
+            if not os.path.exists(local_path):
+                raise FileNotFoundError(f"The provided path does not exist: {local_path}")
+
+            remote_dest = remote_path.replace("\\", "/").lstrip("/")
+            if remote_dest.startswith("teamspace/"):
+                remote_dest = remote_dest[len("teamspace/") :]
+
+            if os.path.isdir(local_path):
+                if not recursive:
+                    raise ValueError(
+                        f"'{local_path}' is a directory. Use recursive=True to copy directories recursively."
+                    )
+                root = remote_dest.strip("/")
+                for file_path in sorted(p for p in Path(local_path).rglob("*") if p.is_file()):
+                    relative = file_path.relative_to(local_path).as_posix()
+                    self._filesystem_api.upload_file(
+                        teamspace_id=selected_teamspace.id,
+                        file_path=str(file_path),
+                        remote_path=f"{root}/{relative}" if root else relative,
+                        progress_bar=progress_bar,
+                        cloud_account=cloud_account,
+                    )
+            else:
+                target = remote_dest
+                directory_target = (
+                    target.endswith("/")
+                    or not target.strip("/")
+                    or self._is_remote_directory(selected_teamspace.id, target)
+                )
+                if directory_target:
+                    target = f"{target.strip('/')}/{os.path.basename(local_path)}".lstrip("/")
+                self._filesystem_api.upload_file(
+                    teamspace_id=selected_teamspace.id,
+                    file_path=local_path,
+                    remote_path=target,
+                    progress_bar=progress_bar,
+                    cloud_account=cloud_account,
+                )
+
+    def _is_remote_directory(self, teamspace_id: str, remote_path: str) -> bool:
+        """Whether ``remote_path`` names an existing remote directory.
+
+        Mirrors ``cp`` semantics: copying a file onto an existing directory puts the
+        file inside it.  A path that cannot be listed is treated as not-a-directory,
+        so the upload proceeds and any real problem surfaces from the upload itself.
+        """
+        parent, _, name = remote_path.strip("/").rpartition("/")
+        try:
+            entries = self._filesystem_api.list_files(teamspace_id, parent, recursive=False)
+        except RuntimeError:
+            return False
+        return any(
+            os.path.basename(str(entry.get("path", "")).rstrip("/")) == name and entry.get("type") == "tree"
+            for entry in entries
+        )

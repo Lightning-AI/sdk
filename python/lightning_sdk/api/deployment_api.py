@@ -12,7 +12,6 @@ from urllib.parse import urlparse
 
 import requests
 
-from lightning_sdk.api import lightning_storage_upload as lightning_storage_upload_api
 from lightning_sdk.api.logs_api import LogEntry, parse_log_entries
 from lightning_sdk.api.utils import (
     _BlobUploader,
@@ -90,8 +89,6 @@ class RequestCaptureExportResult:
 
 @dataclass
 class _LightningStorageUploadTarget:
-    data_connection_id: str
-    cloud_account: Optional[str]
     folder_name: str
     relative_parts: Tuple[str, ...]
 
@@ -818,8 +815,6 @@ def _export_deployment_request_captures(
         )
         folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
         planned_upload_target = _LightningStorageUploadTarget(
-            data_connection_id="",
-            cloud_account=None,
             folder_name=folder_name,
             relative_parts=relative_parts,
         )
@@ -1103,16 +1098,10 @@ def _resolve_lightning_storage_upload_target(
         teamspace_id=teamspace_id,
         remote_path=remote_path,
     )
-    resolved_target = lightning_storage_upload_api.resolve_lightning_storage_upload_target(
-        client=client,
-        teamspace_id=teamspace_id,
-        remote_path=remote_path,
-    )
+    folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
     return _LightningStorageUploadTarget(
-        data_connection_id=resolved_target.data_connection_id,
-        cloud_account=resolved_target.cloud_account,
-        folder_name=resolved_target.folder_name,
-        relative_parts=resolved_target.relative_parts,
+        folder_name=folder_name,
+        relative_parts=relative_parts,
     )
 
 
@@ -1147,7 +1136,8 @@ def _validate_remote_upload_path_target(*, client: Any, teamspace_id: str, remot
 
 
 def _extract_lit_remote_destination(remote_path: str) -> str:
-    return lightning_storage_upload_api._extract_lit_remote_destination(remote_path)
+    parsed = parse_lit_url(remote_path)
+    return str(parsed.get("destination") or "").strip("/")
 
 
 def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
@@ -1172,58 +1162,32 @@ def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
 
 
 def _parse_lightning_storage_path(remote_path: str) -> Tuple[str, Tuple[str, ...]]:
-    return lightning_storage_upload_api._parse_lightning_storage_path(remote_path)
+    """Split a lightning_storage destination into its folder name and inner path parts.
 
+    Accepts ``lit://`` URLs and paths with or without a ``/teamspace/`` prefix; the
+    destination must live under ``lightning_storage``.
+    """
+    normalized = str(remote_path or "").strip().replace("\\", "/")
+    if not normalized:
+        raise ValueError("remote_path must not be empty")
 
-def _get_or_create_lightning_storage_folder(
-    *,
-    client: Any,
-    teamspace_id: str,
-    folder_name: str,
-) -> Any:
-    return lightning_storage_upload_api._get_or_create_lightning_storage_folder(
-        client=client,
-        teamspace_id=teamspace_id,
-        folder_name=folder_name,
-    )
+    if normalized.startswith("lit://"):
+        normalized = _extract_lit_remote_destination(normalized)
 
+    normalized = normalized.strip("/")
+    if normalized.startswith("teamspace/"):
+        normalized = normalized[len("teamspace/") :]
+    if normalized != "lightning_storage" and not normalized.startswith("lightning_storage/"):
+        raise ValueError("remote_path currently supports lightning_storage destinations only")
+    normalized = normalized[len("lightning_storage") :].strip("/")
 
-def _resolve_lightning_storage_upload_cloud_account(*, client: Any, teamspace_id: str) -> str:
-    return lightning_storage_upload_api._resolve_lightning_storage_upload_cloud_account(
-        client=client,
-        teamspace_id=teamspace_id,
-    )
+    parts = [part for part in PurePosixPath(normalized).parts if part not in ("", ".", "/")]
+    if not parts:
+        raise ValueError("remote_path must include a lightning_storage folder name")
+    if any(part == ".." for part in parts):
+        raise ValueError("Remote path parts must not be '..'")
 
-
-def _find_lightning_storage_folder(*, client: Any, teamspace_id: str, folder_name: str) -> Optional[Any]:
-    return lightning_storage_upload_api._find_lightning_storage_folder(
-        client=client,
-        teamspace_id=teamspace_id,
-        folder_name=folder_name,
-    )
-
-
-def _is_lightning_storage_folder_ready(connection: Any) -> bool:
-    return lightning_storage_upload_api._is_lightning_storage_folder_ready(connection)
-
-
-def _wait_for_lightning_storage_folder_ready(
-    *,
-    client: Any,
-    teamspace_id: str,
-    folder_name: str,
-    initial_connection: Optional[Any] = None,
-    timeout_seconds: int = lightning_storage_upload_api.LIGHTNING_STORAGE_POLL_TIMEOUT_SECONDS,
-    poll_interval_seconds: int = lightning_storage_upload_api.LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS,
-) -> Any:
-    return lightning_storage_upload_api._wait_for_lightning_storage_folder_ready(
-        client=client,
-        teamspace_id=teamspace_id,
-        folder_name=folder_name,
-        initial_connection=initial_connection,
-        timeout_seconds=timeout_seconds,
-        poll_interval_seconds=poll_interval_seconds,
-    )
+    return parts[0], tuple(parts[1:])
 
 
 def _upload_request_export_artifact(
@@ -1233,21 +1197,17 @@ def _upload_request_export_artifact(
     upload_target: _LightningStorageUploadTarget,
     local_path: Path,
 ) -> None:
+    remote_path = "/".join(
+        ("lightning_storage", upload_target.folder_name, *upload_target.relative_parts, local_path.name)
+    )
     try:
-        lightning_storage_upload_api.upload_file_to_resolved_lightning_storage_target(
+        _BlobUploader(
             client=client,
-            teamspace_id=teamspace_id,
-            upload_target=lightning_storage_upload_api.LightningStorageUploadTarget(
-                data_connection_id=upload_target.data_connection_id,
-                cloud_account=upload_target.cloud_account,
-                folder_name=upload_target.folder_name,
-                relative_parts=upload_target.relative_parts,
-            ),
-            local_path=local_path,
-            destination_parts=(local_path.name,),
+            endpoint_base=f"{client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts",
+            file_path=str(local_path),
+            remote_path=remote_path,
             progress_bar=False,
-            uploader_cls=_BlobUploader,
-        )
+        )()
     except Exception as ex:
         destination = upload_target.absolute_artifact_path(local_path.name)
         raise RuntimeError(f"failed to upload request export artifact '{local_path.name}' to {destination}") from ex
