@@ -257,7 +257,7 @@ def test_export_keeps_local_manifest_honest_when_manifest_upload_fails(tmp_path,
     }
 
 
-def test_export_does_not_resolve_upload_target_before_local_manifest_is_written(tmp_path, monkeypatch):
+def test_export_does_not_upload_before_local_manifest_is_written(tmp_path, monkeypatch):
     client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
 
@@ -267,8 +267,8 @@ def test_export_does_not_resolve_upload_target_before_local_manifest_is_written(
     monkeypatch.setattr(deployment_api_module, "_build_manifest", fail_manifest)
     monkeypatch.setattr(
         deployment_api_module,
-        "_resolve_lightning_storage_upload_target",
-        lambda **kwargs: pytest.fail("upload target should not resolve before local manifest exists"),
+        "_upload_request_export_artifact",
+        lambda **kwargs: pytest.fail("nothing should upload before the local manifest exists"),
     )
 
     with pytest.raises(RuntimeError, match="manifest failed"):
@@ -315,32 +315,22 @@ def test_export_records_partial_remote_uploads_when_jsonl_upload_fails(tmp_path,
 
 
 @pytest.mark.parametrize(
-    ("remote_path", "expected"),
+    "remote_path",
     [
-        (
-            "lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "/teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "lit://my-org/my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "lightning_storage//blackbox-exports//daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
+        "lightning_storage/blackbox-exports/daily/2026-04-22",
+        "teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "/teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "lit://my-org/my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "lightning_storage//blackbox-exports//daily/2026-04-22",
     ],
 )
-def test_parse_remote_upload_path_accepts_lightning_storage_forms(remote_path, expected):
-    assert deployment_api_module._parse_lightning_storage_path(remote_path) == expected
+def test_normalize_upload_destination_accepts_lightning_storage_forms(remote_path):
+    destination = deployment_api_module._normalize_upload_destination(
+        client=_FakeClient(pages=[]),
+        teamspace_id="teamspace-id",
+        remote_path=remote_path,
+    )
+    assert destination == "lightning_storage/blackbox-exports/daily/2026-04-22"
 
 
 @pytest.mark.parametrize(

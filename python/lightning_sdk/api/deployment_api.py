@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
 from time import sleep
-from typing import Any, Dict, Iterator, List, Literal, Optional, Sequence, TextIO, Tuple, Union
+from typing import Any, Dict, Iterator, List, Literal, Optional, Sequence, TextIO, Union
 from urllib.parse import urlparse
 
 import requests
@@ -85,20 +85,6 @@ class RequestCaptureExportResult:
     missing_content_count: int
     content_error_count: int
     uploaded_artifacts: Optional[Dict[str, str]] = None
-
-
-@dataclass
-class _LightningStorageUploadTarget:
-    folder_name: str
-    relative_parts: Tuple[str, ...]
-
-    def absolute_artifact_path(self, filename: str) -> str:
-        parts = ("teamspace", "lightning_storage", self.folder_name, *self.relative_parts, filename)
-        return "/" + "/".join(parts)
-
-    def remote_artifact_path(self, filename: str) -> str:
-        remote_path = PurePosixPath(*self.relative_parts, filename)
-        return remote_path.as_posix()
 
 
 class MissingRequestContentError(RuntimeError):
@@ -806,17 +792,12 @@ def _export_deployment_request_captures(
     else:
         path_filter = list(paths)
     status_filter = None if status_codes is None else list(status_codes)
-    planned_upload_target = None
+    upload_destination = None
     if remote_path is not None:
-        _validate_remote_upload_path_target(
+        upload_destination = _normalize_upload_destination(
             client=client,
             teamspace_id=teamspace_id,
             remote_path=remote_path,
-        )
-        folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
-        planned_upload_target = _LightningStorageUploadTarget(
-            folder_name=folder_name,
-            relative_parts=relative_parts,
         )
 
     counts = {
@@ -898,25 +879,18 @@ def _export_deployment_request_captures(
         raise
 
     uploaded_artifacts = None
-    if planned_upload_target is not None:
-        assert remote_path is not None
+    if upload_destination is not None:
         uploaded_artifacts = {
-            "csv": planned_upload_target.absolute_artifact_path(csv_path.name),
-            "jsonl": planned_upload_target.absolute_artifact_path(jsonl_path.name),
-            "manifest": planned_upload_target.absolute_artifact_path(manifest_path.name),
+            "csv": f"/teamspace/{upload_destination}/{csv_path.name}",
+            "jsonl": f"/teamspace/{upload_destination}/{jsonl_path.name}",
+            "manifest": f"/teamspace/{upload_destination}/{manifest_path.name}",
         }
-        upload_target = _resolve_lightning_storage_upload_target(
-            client=client,
-            teamspace_id=teamspace_id,
-            # A planned upload target is only created when a remote path was supplied.
-            remote_path=remote_path,
-        )
         partial_uploaded_artifacts = {}
         for artifact_name, local_artifact_path in (("csv", csv_path), ("jsonl", jsonl_path)):
             _upload_request_export_artifact(
                 client=client,
                 teamspace_id=teamspace_id,
-                upload_target=upload_target,
+                destination=upload_destination,
                 local_path=local_artifact_path,
             )
             partial_uploaded_artifacts[artifact_name] = uploaded_artifacts[artifact_name]
@@ -932,7 +906,7 @@ def _export_deployment_request_captures(
             _upload_request_export_artifact(
                 client=client,
                 teamspace_id=teamspace_id,
-                upload_target=upload_target,
+                destination=upload_destination,
                 local_path=manifest_upload_path,
             )
         manifest["uploaded_artifacts"] = uploaded_artifacts
@@ -1087,22 +1061,36 @@ def _remove_artifacts(paths: Sequence[Path]) -> None:
             path.unlink(missing_ok=True)
 
 
-def _resolve_lightning_storage_upload_target(
-    *,
-    client: Any,
-    teamspace_id: str,
-    remote_path: str,
-) -> _LightningStorageUploadTarget:
+def _normalize_upload_destination(*, client: Any, teamspace_id: str, remote_path: str) -> str:
+    """Resolve ``remote_path`` to the drive path exports upload into.
+
+    Accepts ``lit://`` URLs (validated against the deployment's teamspace) and
+    paths with or without a ``/teamspace/`` prefix; the destination must live
+    under ``lightning_storage``.
+    """
     _validate_remote_upload_path_target(
         client=client,
         teamspace_id=teamspace_id,
         remote_path=remote_path,
     )
-    folder_name, relative_parts = _parse_lightning_storage_path(remote_path)
-    return _LightningStorageUploadTarget(
-        folder_name=folder_name,
-        relative_parts=relative_parts,
-    )
+
+    normalized = str(remote_path or "").strip().replace("\\", "/")
+    if not normalized:
+        raise ValueError("remote_path must not be empty")
+    if normalized.startswith("lit://"):
+        normalized = str(parse_lit_url(normalized).get("destination") or "").strip("/")
+    normalized = normalized.strip("/")
+    if normalized.startswith("teamspace/"):
+        normalized = normalized[len("teamspace/") :]
+
+    parts = [part for part in PurePosixPath(normalized).parts if part not in ("", ".", "/")]
+    if any(part == ".." for part in parts):
+        raise ValueError("Remote path parts must not be '..'")
+    if not parts or parts[0] != "lightning_storage":
+        raise ValueError("remote_path currently supports lightning_storage destinations only")
+    if len(parts) < 2:
+        raise ValueError("remote_path must include a lightning_storage folder name")
+    return "/".join(parts)
 
 
 def _validate_remote_upload_path_target(*, client: Any, teamspace_id: str, remote_path: str) -> None:
@@ -1135,11 +1123,6 @@ def _validate_remote_upload_path_target(*, client: Any, teamspace_id: str, remot
         )
 
 
-def _extract_lit_remote_destination(remote_path: str) -> str:
-    parsed = parse_lit_url(remote_path)
-    return str(parsed.get("destination") or "").strip("/")
-
-
 def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
     owner_id = str(getattr(project, "owner_id", "") or "").strip()
     owner_type = str(getattr(project, "owner_type", "") or "").strip().lower()
@@ -1161,56 +1144,24 @@ def _resolve_project_owner_name(*, client: Any, project: Any) -> str:
     return ""
 
 
-def _parse_lightning_storage_path(remote_path: str) -> Tuple[str, Tuple[str, ...]]:
-    """Split a lightning_storage destination into its folder name and inner path parts.
-
-    Accepts ``lit://`` URLs and paths with or without a ``/teamspace/`` prefix; the
-    destination must live under ``lightning_storage``.
-    """
-    normalized = str(remote_path or "").strip().replace("\\", "/")
-    if not normalized:
-        raise ValueError("remote_path must not be empty")
-
-    if normalized.startswith("lit://"):
-        normalized = _extract_lit_remote_destination(normalized)
-
-    normalized = normalized.strip("/")
-    if normalized.startswith("teamspace/"):
-        normalized = normalized[len("teamspace/") :]
-    if normalized != "lightning_storage" and not normalized.startswith("lightning_storage/"):
-        raise ValueError("remote_path currently supports lightning_storage destinations only")
-    normalized = normalized[len("lightning_storage") :].strip("/")
-
-    parts = [part for part in PurePosixPath(normalized).parts if part not in ("", ".", "/")]
-    if not parts:
-        raise ValueError("remote_path must include a lightning_storage folder name")
-    if any(part == ".." for part in parts):
-        raise ValueError("Remote path parts must not be '..'")
-
-    return parts[0], tuple(parts[1:])
-
-
 def _upload_request_export_artifact(
     *,
     client: Any,
     teamspace_id: str,
-    upload_target: _LightningStorageUploadTarget,
+    destination: str,
     local_path: Path,
 ) -> None:
-    remote_path = "/".join(
-        ("lightning_storage", upload_target.folder_name, *upload_target.relative_parts, local_path.name)
-    )
     try:
         _BlobUploader(
             client=client,
             endpoint_base=f"{client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts",
             file_path=str(local_path),
-            remote_path=remote_path,
+            remote_path=f"{destination}/{local_path.name}",
             progress_bar=False,
         )()
     except Exception as ex:
-        destination = upload_target.absolute_artifact_path(local_path.name)
-        raise RuntimeError(f"failed to upload request export artifact '{local_path.name}' to {destination}") from ex
+        target = f"/teamspace/{destination}/{local_path.name}"
+        raise RuntimeError(f"failed to upload request export artifact '{local_path.name}' to {target}") from ex
 
 
 def _update_counts(counts: Dict[str, int], row: Dict[str, Any]) -> None:
