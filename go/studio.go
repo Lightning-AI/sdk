@@ -613,7 +613,7 @@ func (s *Studio) UploadFile(filePath, remotePath string) error {
 		query.Set("token", token)
 	}
 	// Completion makes the file show up in a running Studio.
-	return api.Upload(context.Background(), studioArtifactScopePath(s.teamspaceID, s.id), strings.TrimLeft(remotePath, "/"), query, filePath, sdkclient.UploadOptions{NotifyCompletion: true})
+	return api.Upload(context.Background(), studioArtifactScopePath(s.teamspaceID, s.id), strings.TrimLeft(remotePath, "/"), query, filePath, sdkclient.UploadOptions{})
 }
 
 // UploadFolder uploads a folder to the studio.

@@ -1059,7 +1059,6 @@ class StudioApi:
             file_path=file_path,
             remote_path=remote_path,
             progress_bar=progress_bar,
-            notify_completion=True,
         )()
 
     def download_file(

@@ -391,7 +391,7 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 			clusterID, paths := decodeBlobUploadBatch(t, r)
 			assert.Falsef(t, clusterID != "cloud-1" || len(paths) != 1 || paths[0] != "drive/remote.txt",
 				"unexpected upload request: cluster_id=%q paths=%v", clusterID, paths)
-			writeBlobUploadResponse(w, "drive/remote.txt", server.URL+"/signed/drive/remote.txt", nil)
+			writeBlobUploadResponse(w, "drive/remote.txt", server.URL+"/signed/drive/remote.txt", nil, false)
 		case "PUT /signed/drive/remote.txt":
 			assert.Falsef(t, r.Header.Get("Authorization") != "",
 				"presigned PUT must not carry credentials")
@@ -450,7 +450,7 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 			}
 			assert.Falsef(t, clusterID != "cloud-1",
 				"cluster_id = %q, want cloud-1", clusterID)
-			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil)
+			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil, false)
 		case "PUT /signed/drive/a.txt", "PUT /signed/drive/nested/b.txt":
 			// presigned storage PUT
 		default:

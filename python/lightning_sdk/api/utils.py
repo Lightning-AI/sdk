@@ -104,9 +104,8 @@ class _BlobUploader:
     Requests presigned URL(s) from ``POST {endpoint_base}/blobs``, PUTs the bytes
     straight to storage (single-part below the multipart threshold, parallel
     multipart above it), then finalizes via ``POST {endpoint_base}/blobs/complete``
-    where required: always for multipart, and for single-part only when
-    ``notify_completion`` is set (the studio scope uses that so uploads show
-    up in a running Studio).
+    where required: always for multipart, and for single-part when the response
+    marks the blob ``complete_required``.
     """
 
     def __init__(
@@ -119,7 +118,6 @@ class _BlobUploader:
         cluster_id: Optional[str] = None,
         content_type: Optional[str] = None,
         extra_headers: Optional[Dict[str, str]] = None,
-        notify_completion: bool = False,
     ) -> None:
         """Initialise the uploader.
 
@@ -136,7 +134,6 @@ class _BlobUploader:
                 the studio scope.
             content_type: Optional content type to bind to the upload.
             extra_headers: Optional extra HTTP headers for the storage PUT requests.
-            notify_completion: Whether to finalize single-part uploads too.
         """
         self.client = client
         self.endpoint_base = endpoint_base.rstrip("/")
@@ -145,9 +142,10 @@ class _BlobUploader:
         self.cluster_id = cluster_id
         self.content_type = content_type
         self.extra_headers = extra_headers
-        self.notify_completion = notify_completion
         self.show_progress = progress_bar
         self.progress_bar: Optional[tqdm] = None
+        # set from the upload response: whether the blob needs the finalize call
+        self._complete_required = False
 
         self.filesize = os.path.getsize(file_path)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -163,7 +161,7 @@ class _BlobUploader:
         """Execute the upload, dispatching to single-part or multipart."""
         if self.filesize <= self.multipart_threshold:
             self._single_part_upload()
-            if self.notify_completion:
+            if self._complete_required:
                 self._complete_upload()
             return
 
@@ -237,6 +235,7 @@ class _BlobUploader:
             blob["part_size"] = self.chunk_size
         r = self._post_blob_request("/blobs", blob, action="request upload URLs for")
         result = r.json()["results"][0]
+        self._complete_required = bool(result.get("complete_required"))
         return result.get("upload_id") or upload_id, result.get("urls") or []
 
     @backoff.on_exception(

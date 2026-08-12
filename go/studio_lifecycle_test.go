@@ -328,7 +328,7 @@ func TestStudioUploadFileUsesArtifactBlobRouteAndCompletion(t *testing.T) {
 			assert.Falsef(t, clusterID != "" || len(paths) != 1 || paths[0] != "remote.txt",
 				"unexpected upload request: cluster_id=%q paths=%v", clusterID, paths)
 			writeBlobUploadResponse(w, "remote.txt", server.URL+"/signed/remote.txt",
-				map[string]string{"Content-Type": "application/octet-stream"})
+				map[string]string{"Content-Type": "application/octet-stream"}, true)
 		case "PUT /signed/remote.txt":
 			// The presigned URL carries its own authentication; the returned
 			// headers must be replayed for the signature to match.
@@ -401,7 +401,7 @@ func TestStudioUploadFolderPreservesRelativePaths(t *testing.T) {
 				http.Error(w, "expected exactly one blob", http.StatusBadRequest)
 				return
 			}
-			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil)
+			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil, true)
 		case "PUT /signed/remote/a.txt", "PUT /signed/remote/nested/b.txt":
 			// presigned storage PUT
 		case "POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete":
