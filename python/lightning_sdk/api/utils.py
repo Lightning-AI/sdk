@@ -40,7 +40,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
     V1CompletedPart,
-    V1LoginRequest,
     V1PathMapping,
     V1SignedUrl,
 )
@@ -155,7 +154,7 @@ class _BlobUploader:
         if self.filesize > self.chunk_size * _MAX_UPLOAD_PARTS:
             self.chunk_size = math.ceil(self.filesize / _MAX_UPLOAD_PARTS)
         self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
-        self._token = _authenticate_and_get_token(client)
+        self._auth_headers = _authenticate_and_get_auth_headers()
 
     def __call__(self) -> None:
         """Execute the upload, dispatching to single-part or multipart."""
@@ -200,7 +199,7 @@ class _BlobUploader:
         body: Dict[str, Any] = {"blobs": [blob]}
         if self.cluster_id:
             body["cluster_id"] = self.cluster_id
-        r = requests.post(url, json=body, params={"token": self._token}, timeout=30)
+        r = requests.post(url, json=body, headers=self._auth_headers, timeout=30)
         if r.status_code >= 500 or r.status_code == 429:
             raise HTTPError(
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
@@ -1135,7 +1134,6 @@ def to_iso_z(dt: datetime) -> str:
     return dt.isoformat(timespec="milliseconds")
 
 
-def _authenticate_and_get_token(client: Any) -> str:
-    auth = Auth()
-    auth.authenticate()
-    return client.auth_service_login(V1LoginRequest(auth.api_key)).token
+def _authenticate_and_get_auth_headers() -> Dict[str, str]:
+    """Resolve the caller's credentials and return the HTTP headers carrying them."""
+    return {"Authorization": Auth().authenticate()}

@@ -7,7 +7,7 @@ import requests
 from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_token,
+    _authenticate_and_get_auth_headers,
     _collect_download_results,
     _raise_for_download_status,
     _stream_download_to_file,
@@ -21,7 +21,7 @@ class FilesystemApi:
 
     def __init__(self) -> None:
         self._client = cached_lightning_client()
-        self._token = _authenticate_and_get_token(self._client)
+        self._auth_headers = _authenticate_and_get_auth_headers()
 
     @property
     def client(self) -> LightningClient:
@@ -51,10 +51,10 @@ class FilesystemApi:
         if recursive:
             query_params["recursive"] = "true"
 
-        query_params["token"] = self._token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
             params=query_params,
+            headers=self._auth_headers,
         )
         if r.status_code != 200:
             raise RuntimeError(f"Failed to list files: {r.status_code}")
@@ -69,14 +69,13 @@ class FilesystemApi:
             teamspace_id: The teamspace that owns the artifact.
             progress_bar: Whether to display a tqdm progress bar during download.
         """
-        self._download_single_file(path, Path(target_path), teamspace_id, self._token, progress_bar=progress_bar)
+        self._download_single_file(path, Path(target_path), teamspace_id, progress_bar=progress_bar)
 
     def _download_single_file(
         self,
         remote_path: str,
         local_path: Path,
         teamspace_id: str,
-        token: str,
         pbar: Optional[tqdm] = None,
         progress_bar: bool = False,
         expected_size: Optional[int] = None,
@@ -90,7 +89,6 @@ class FilesystemApi:
             remote_path: The artifact path within the teamspace to download.
             local_path: Local filesystem path to write the downloaded file to.
             teamspace_id: The teamspace that owns the artifact.
-            token: Authentication token for the download request.
             pbar: Optional shared tqdm progress bar to update with downloaded bytes.
             progress_bar: When ``True`` and ``pbar`` is ``None``, create a per-file progress bar.
             expected_size: Size the listing reported for this file, checked against the bytes
@@ -102,7 +100,7 @@ class FilesystemApi:
         """
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}",
-            params={"token": token},
+            headers=self._auth_headers,
             stream=True,
             allow_redirects=True,
         )
@@ -177,7 +175,6 @@ class FilesystemApi:
                         f"{path}/{entry['path']}",
                         download_dir / entry["path"],
                         teamspace_id,
-                        self._token,
                         pbar,
                         expected_size=entry.get("size"),
                     )

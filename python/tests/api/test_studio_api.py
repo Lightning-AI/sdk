@@ -982,7 +982,10 @@ def test_create_inference_run(mock_create_app):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_tree(mock_authenticate, mock_requests_get):
     """Test get_tree retrieves directory structure from studio."""
@@ -1014,8 +1017,9 @@ def test_get_tree(mock_authenticate, mock_requests_get):
     call_args = mock_requests_get.call_args
 
     assert "/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/my-folder/" in call_args[0][0]
-    assert call_args[1]["params"] == {"token": "test-token"}
-    mock_authenticate.assert_called_once_with(studio_api._client)
+    assert call_args[1]["params"] is None
+    assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
+    mock_authenticate.assert_called_once_with()
 
 
 @pytest.mark.parametrize(
@@ -1059,7 +1063,10 @@ def test_get_tree(mock_authenticate, mock_requests_get):
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response, expected_result):
     mock_response = mock.MagicMock()
@@ -1092,7 +1099,7 @@ def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response
             # root level should include /trees/
             call_url = mock_requests_get.call_args[0][0]
             assert "/trees/" in call_url
-        mock_authenticate.assert_called_once_with(studio_api._client)
+        mock_authenticate.assert_called_once_with()
 
 
 @pytest.mark.parametrize(
@@ -1155,7 +1162,10 @@ def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_files(
     mock_authenticate,
@@ -1188,7 +1198,7 @@ def test_list_files(
     assert call_args[1]["params"]["recursive"] == "true"
 
     assert result == expected_files
-    mock_authenticate.assert_called_once_with(studio_api._client)
+    mock_authenticate.assert_called_once_with()
 
 
 def _blob_upload_create_response(path, upload_id, urls):
@@ -1206,7 +1216,7 @@ def _blob_upload_create_response(path, upload_id, urls):
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
-@mock.patch("lightning_sdk.api.utils._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.utils._authenticate_and_get_auth_headers")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file(
     authenticate_mock,
@@ -1222,7 +1232,7 @@ def test_upload_file(
     # executor workers would never run; fall back to a plain map
     monkeypatch.setattr("lightning_sdk.api.utils.ThreadPoolExecutor.map", map)
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
-    authenticate_mock.return_value = "test-token-123"
+    authenticate_mock.return_value = {"Authorization": "Bearer test-token-123"}
 
     studio_api = StudioApi()
 
@@ -1250,10 +1260,10 @@ def test_upload_file(
     # with the blob path in the body rather than the URL.
     create_call = requests_post_mock.call_args_list[0]
     assert create_call.args[0].endswith("/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs")
-    assert create_call.kwargs["params"] == {"token": "test-token-123"}
+    assert create_call.kwargs["headers"] == {"Authorization": "Bearer test-token-123"}
     complete_call = requests_post_mock.call_args_list[1]
     assert complete_call.args[0].endswith("/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs/complete")
-    assert complete_call.kwargs["params"] == {"token": "test-token-123"}
+    assert complete_call.kwargs["headers"] == {"Authorization": "Bearer test-token-123"}
 
     if single_part:
         assert create_call.kwargs["json"] == {"blobs": [{"path": "file1"}]}
@@ -1284,7 +1294,7 @@ def test_upload_file(
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
-@mock.patch("lightning_sdk.api.utils._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.utils._authenticate_and_get_auth_headers")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file_leading_slash(
     authenticate_mock,
@@ -1297,7 +1307,7 @@ def test_upload_file_leading_slash(
     # A leading slash must not leak into the blob path sent to the upload
     # endpoints; both variants request the same clean path.
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
-    authenticate_mock.return_value = "test-token-123"
+    authenticate_mock.return_value = {"Authorization": "Bearer test-token-123"}
 
     studio_api = StudioApi()
 
@@ -1319,7 +1329,9 @@ def test_upload_file_leading_slash(
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
@@ -1332,11 +1344,13 @@ def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
-    mock_authenticate.assert_called_once_with(studio_api._client)
+    mock_authenticate.assert_called_once_with()
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_file_non_200_status(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
@@ -1352,16 +1366,16 @@ def test_download_file_non_200_status(mock_authenticate, mock_requests_get, tmpd
         studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
 
     assert not os.path.exists(filepath)
-    mock_authenticate.assert_called_once_with(studio_api._client)
+    mock_authenticate.assert_called_once_with()
 
 
 @mock.patch("lightning_sdk.api.studio_api._collect_download_results")
 @mock.patch("lightning_sdk.api.studio_api.tqdm")
 @mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_auth_headers")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
-    authenticate_mock.return_value = "test-token-123"
+    authenticate_mock.return_value = {"Authorization": "Bearer test-token-123"}
 
     studio_api = StudioApi()
 
@@ -1437,7 +1451,9 @@ def test_download_single_studio_file_rejects_an_error_document_under_200(mock_re
     assert list(tmp_path.iterdir()) == []
 
 
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_folder_does_not_report_success_on_a_partial_download(
     _mock_authenticate, inline_executor_cls, tmp_path
@@ -2107,7 +2123,10 @@ def test_get_port_url(mock_list_endpoints, port, name, endpoints, expected_url, 
     ],
 )
 @mock.patch("requests.delete", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.api.studio_api.StudioApi.get_path_info", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_remove_file(
@@ -2142,9 +2161,9 @@ def test_remove_file(
         call_args = mock_requests_delete.call_args
 
         assert f"/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/blobs/{path}" in call_args[0][0]
-        assert call_args[1]["params"]["token"] == "test-token"
+        assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
         assert call_args[1]["timeout"] == 30
-        mock_authenticate.assert_called_once_with(studio_api._client)
+        mock_authenticate.assert_called_once_with()
 
     mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)
 
@@ -2186,7 +2205,10 @@ def test_remove_file(
     ],
 )
 @mock.patch("requests.delete", autospec=True)
-@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.api.studio_api.StudioApi.get_path_info", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_remove_folder(
@@ -2221,8 +2243,8 @@ def test_remove_folder(
         call_args = mock_requests_delete.call_args
 
         assert f"/v1/projects/ts-abc/artifacts/cloudspaces/st-abc/trees/{path}" in call_args[0][0]
-        assert call_args[1]["params"]["token"] == "test-token"
+        assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
         assert call_args[1]["timeout"] == 30
-        mock_authenticate.assert_called_once_with(studio_api._client)
+        mock_authenticate.assert_called_once_with()
 
     mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)

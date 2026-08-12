@@ -34,7 +34,9 @@ _TEST_ENDPOINT_BASE = "https://api.example.com/v1/projects/test-project-id/artif
 def _make_mocked_blob_uploader(monkeypatch, file_path, remote_path, **kwargs):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
-    monkeypatch.setattr(lightning_sdk.api.utils, "_authenticate_and_get_token", lambda client: "test-token")
+    monkeypatch.setattr(
+        lightning_sdk.api.utils, "_authenticate_and_get_auth_headers", lambda: {"Authorization": "Bearer test-token"}
+    )
     return _BlobUploader(
         client=Mock(),
         endpoint_base=_TEST_ENDPOINT_BASE,
@@ -108,7 +110,7 @@ def test_blob_uploader_multipart(tmp_path, monkeypatch):
 
     create_call = post_mock.call_args_list[0]
     assert create_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
-    assert create_call.kwargs["params"] == {"token": "test-token"}
+    assert create_call.kwargs["headers"] == {"Authorization": "Bearer test-token"}
     assert create_call.kwargs["json"] == {
         "cluster_id": "test-cluster-id",
         "blobs": [{"path": "path/to/file/on/remote", "parts": 3, "part_size": 4}],
@@ -711,7 +713,10 @@ def test_resolve_path_mappings():
 def _make_single_part_blob_uploader(tmp_path, progress_bar=False, extra_headers=None):
     file_path = tmp_path / "test_file.txt"
     file_path.write_text("hello world")
-    with mock.patch("lightning_sdk.api.utils._authenticate_and_get_token", return_value="test-token"):
+    with mock.patch(
+        "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+        return_value={"Authorization": "Bearer test-token"},
+    ):
         return utils._BlobUploader(
             client=Mock(),
             endpoint_base=_TEST_ENDPOINT_BASE,
@@ -739,7 +744,7 @@ def test_single_part_uploader_basic(mock_requests, tmp_path):
     assert mock_requests.post.call_count == 1
     post_call = mock_requests.post.call_args
     assert post_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
-    assert post_call.kwargs["params"] == {"token": "test-token"}
+    assert post_call.kwargs["headers"] == {"Authorization": "Bearer test-token"}
 
     # one PUT straight to the signed storage URL, with no token
     assert mock_requests.put.call_count == 1

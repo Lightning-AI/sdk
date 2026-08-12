@@ -11,7 +11,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     Experiment,
-    _authenticate_and_get_token,
+    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _download_model_files,
@@ -651,22 +651,15 @@ class TeamspaceApi:
         Args:
             teamspace_id: ID of the teamspace.
             path: Artifact path to inspect.
-            query_params: Extra query parameters merged with the auth token.
+            query_params: Extra query parameters for the request.
 
         Returns:
             Parsed JSON response from the server.
         """
-        token = _authenticate_and_get_token(self._client)
-
-        if query_params is None:
-            query_params = {
-                "token": token,
-            }
-        else:
-            query_params["token"] = token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
         )
         return r.json()
 
@@ -792,12 +785,7 @@ class TeamspaceApi:
             RuntimeError: If the server returns a non-2xx status code, or if the body that
                 arrives is not the length the server advertised.
         """
-        # TODO: Update this endpoint to permit basic auth
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {
-            "token": token,
-        }
+        query_params = {}
 
         if cloud_account:
             query_params["clusterId"] = cloud_account
@@ -805,6 +793,7 @@ class TeamspaceApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
             stream=True,
         )
 
@@ -830,7 +819,7 @@ class TeamspaceApi:
         base_path: str,
         download_dir: Path,
         teamspace_id: str,
-        token: str,
+        auth_headers: Dict[str, str],
         cloud_account: Optional[str] = None,
         pbar: Optional[tqdm] = None,
     ) -> None:
@@ -841,7 +830,7 @@ class TeamspaceApi:
             base_path: Base directory path prepended to the relative file path when building the request URL.
             download_dir: Local directory where the downloaded file is written.
             teamspace_id: ID of the owning teamspace.
-            token: Authentication token for the artifact API.
+            auth_headers: HTTP headers carrying the caller's credentials.
             cloud_account: Optional cloud account ID used to locate the artifact.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
@@ -854,15 +843,14 @@ class TeamspaceApi:
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
-        query_params = {
-            "token": token,
-        }
+        query_params = {}
         if cloud_account:
             query_params["clusterId"] = cloud_account
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{file_path}",
             params=query_params,
+            headers=auth_headers,
             stream=True,
         )
 
@@ -892,7 +880,6 @@ class TeamspaceApi:
             RuntimeError: If any file failed to download. A partial folder is never reported
                 as a success.
         """
-        # TODO: Update this endpoint to permit basic auth
         if num_workers is None:
             num_workers = (os.cpu_count() or 1) * 4
 
@@ -907,7 +894,7 @@ class TeamspaceApi:
             print(f"No files found in {path}")
             return
 
-        token = _authenticate_and_get_token(self._client)
+        auth_headers = _authenticate_and_get_auth_headers()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -931,7 +918,7 @@ class TeamspaceApi:
                         path,
                         download_dir,
                         teamspace_id,
-                        token,
+                        auth_headers,
                         cloud_account,
                         pbar,
                     )
