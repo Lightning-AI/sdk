@@ -7,11 +7,42 @@ import rich_click as click
 from rich.console import Console
 from rich.table import Table
 
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.job import Job
+from lightning_sdk.machine import Machine
 from lightning_sdk.models import _list_teamspaces
+from lightning_sdk.utils.resolve import _get_org_id
+
+# Shared across the list command so accelerator lookups hit CloudAccountApi's
+# per-instance lru_cache instead of creating a fresh client for every job.
+_cloud_account_api = CloudAccountApi()
+
+
+def _machine_label(job: Job) -> str:
+    """Resolve a job's machine display name without per-job API client churn.
+
+    ``Job.machine`` creates a new ``CloudAccountApi`` on every access, so listing
+    N jobs pays ~3 HTTP calls each. Reuse one client and match against the
+    already-fetched job spec, falling back to ``Machine.from_str`` like the
+    accelerator path does when no record matches.
+    """
+    spec = job._guaranteed_job.spec
+    accelerators = _cloud_account_api.list_cloud_account_accelerators(
+        teamspace_id=job.teamspace.id,
+        cloud_account_id=spec.cluster_id,
+        org_id=_get_org_id(job.teamspace),
+    )
+    enabled = [a for a in (accelerators.accelerator or []) if a.enabled] if accelerators else []
+    for accelerator in enabled:
+        identifiers = (accelerator.slug, accelerator.slug_multi_cloud, accelerator.instance_id)
+        if (spec.instance_name and spec.instance_name in identifiers) or (
+            spec.instance_type and spec.instance_type in identifiers
+        ):
+            return str(Machine._from_accelerator(accelerator))
+    return str(Machine.from_str(spec.instance_name or spec.instance_type or ""))
 
 
 @click.command("list", cls=LightningCommand)
@@ -62,6 +93,7 @@ def list_jobs(
     for job in resources:
         job._prevent_refetch_latest = True
         with suppress(RuntimeError):
+            spec = job._guaranteed_job.spec
             rows.append(
                 {
                     "name": job.name,
@@ -69,10 +101,10 @@ def list_jobs(
                     "studio": job.studio_name,
                     "image": job.image,
                     "status": str(job.status) if job.status is not None else None,
-                    "machine": str(job.machine),
+                    "machine": _machine_label(job),
                     "num_machines": getattr(job, "num_machines", 1),
                     "total_cost": round(job.total_cost, 3),
-                    "_cloud_account": str(getattr(job, "cloud_account", "") or ""),
+                    "_cloud_account": spec.cluster_id or "",
                 }
             )
 

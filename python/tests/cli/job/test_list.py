@@ -36,8 +36,9 @@ def _teamspace_with_jobs() -> SimpleNamespace:
         studio_name=None,
         image="ubuntu",
         status="Running",
-        machine="CPU",
         total_cost=1.0,
+        _guaranteed_job=SimpleNamespace(spec=SimpleNamespace(instance_name="cpu-1", instance_type=None, cluster_id="")),
+        _prevent_refetch_latest=False,
     )
     multi = SimpleNamespace(
         name="distributed",
@@ -45,9 +46,10 @@ def _teamspace_with_jobs() -> SimpleNamespace:
         studio_name=None,
         image="ubuntu",
         status="Running",
-        machine="CPU",
         num_machines=4,
         total_cost=4.0,
+        _guaranteed_job=SimpleNamespace(spec=SimpleNamespace(instance_name="cpu-1", instance_type=None, cluster_id="")),
+        _prevent_refetch_latest=False,
     )
     teamspace.jobs = [single, multi]
     teamspace.multi_machine_jobs = [multi]
@@ -58,7 +60,10 @@ def _teamspace_with_jobs() -> SimpleNamespace:
 def test_job_list_includes_single_and_multi_machine_jobs() -> None:
     teamspace = _teamspace_with_jobs()
 
-    with patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace):
+    with (
+        patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace),
+        patch("lightning_sdk.cli.job.list._machine_label", return_value="CPU"),
+    ):
         result = CliRunner().invoke(list_jobs, ["--json"])
 
     assert result.exit_code == 0, result.output
@@ -73,7 +78,10 @@ def test_job_list_includes_single_and_multi_machine_jobs() -> None:
 def test_job_list_sort_by_cloud_account_without_attribute() -> None:
     teamspace = _teamspace_with_jobs()
 
-    with patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace):
+    with (
+        patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace),
+        patch("lightning_sdk.cli.job.list._machine_label", return_value="CPU"),
+    ):
         result = CliRunner().invoke(list_jobs, ["--sort-by", "cloud-account", "--json"])
 
     assert result.exit_code == 0, result.output
