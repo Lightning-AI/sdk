@@ -1195,7 +1195,8 @@ def _blob_upload_create_response(path, upload_id, urls):
     response = mock.Mock(status_code=200)
     response.json.return_value = {
         "expires_at": "2026-01-01T00:00:00Z",
-        "results": [{"path": path, "upload_id": upload_id, "urls": urls}],
+        # the studio scope always asks for the finalize call
+        "results": [{"path": path, "upload_id": upload_id, "urls": urls, "complete_required": True}],
     }
     return response
 

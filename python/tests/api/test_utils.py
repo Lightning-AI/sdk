@@ -45,11 +45,13 @@ def _make_mocked_blob_uploader(monkeypatch, file_path, remote_path, **kwargs):
     )
 
 
-def _blob_upload_response(remote_path, upload_id, urls):
+def _blob_upload_response(remote_path, upload_id, urls, complete_required=False):
     response = Mock(status_code=200)
     response.json.return_value = {
         "expires_at": "2026-01-01T00:00:00Z",
-        "results": [{"path": remote_path, "upload_id": upload_id, "urls": urls}],
+        "results": [
+            {"path": remote_path, "upload_id": upload_id, "urls": urls, "complete_required": complete_required}
+        ],
     }
     return response
 
@@ -223,7 +225,7 @@ def test_blob_uploader_multipart_resigns_failed_part(tmp_path, monkeypatch):
 
 
 def test_blob_uploader_single_part(tmp_path, monkeypatch):
-    """A small file gets one presigned PUT; completion only fires when notify_completion is set."""
+    """A small file gets one presigned PUT; completion fires when the response asks for it."""
     file_path = tmp_path / "file"
     file_path.write_bytes(b"0123")
 
@@ -232,13 +234,15 @@ def test_blob_uploader_single_part(tmp_path, monkeypatch):
         file_path=str(file_path),
         remote_path="remote-path",
         content_type="text/plain",
-        notify_completion=True,
     )
 
     post_mock = Mock(
         side_effect=[
             _blob_upload_response(
-                "remote-path", "", [{"url": "signed-put-url", "headers": {"Content-Type": "text/plain"}}]
+                "remote-path",
+                "",
+                [{"url": "signed-put-url", "headers": {"Content-Type": "text/plain"}}],
+                complete_required=True,
             ),
             Mock(status_code=204),
         ]
@@ -264,7 +268,7 @@ def test_blob_uploader_single_part(tmp_path, monkeypatch):
 
 
 def test_blob_uploader_single_part_no_completion(tmp_path, monkeypatch):
-    """Without notify_completion, a single-part upload never calls the complete route."""
+    """When the response doesn't ask for completion, a single-part upload never calls the complete route."""
     file_path = tmp_path / "file"
     file_path.write_bytes(b"0123")
 
@@ -704,7 +708,7 @@ def test_resolve_path_mappings():
     assert path_mappings[1].connection_path == ""
 
 
-def _make_single_part_blob_uploader(tmp_path, progress_bar=False, notify_completion=False, extra_headers=None):
+def _make_single_part_blob_uploader(tmp_path, progress_bar=False, extra_headers=None):
     file_path = tmp_path / "test_file.txt"
     file_path.write_text("hello world")
     with mock.patch("lightning_sdk.api.utils._authenticate_and_get_token", return_value="test-token"):
@@ -715,7 +719,6 @@ def _make_single_part_blob_uploader(tmp_path, progress_bar=False, notify_complet
             remote_path="test_file.txt",
             progress_bar=progress_bar,
             extra_headers=extra_headers,
-            notify_completion=notify_completion,
         )
 
 

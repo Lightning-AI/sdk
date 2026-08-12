@@ -273,12 +273,16 @@ func newUploadTestClient(t *testing.T, serverURL string) *RawClient {
 	}
 }
 
-func writeUploadTestResponse(t *testing.T, w http.ResponseWriter, path, signedURL string) {
+func writeUploadTestResponse(t *testing.T, w http.ResponseWriter, path, signedURL string, completeRequired bool) {
 	t.Helper()
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(map[string]any{
 		"expires_at": "2026-01-01T00:00:00Z",
-		"results":    []map[string]any{{"path": path, "urls": []map[string]any{{"url": signedURL}}}},
+		"results": []map[string]any{{
+			"path":              path,
+			"urls":              []map[string]any{{"url": signedURL}},
+			"complete_required": completeRequired,
+		}},
 	})
 	if err != nil {
 		t.Error(err)
@@ -299,7 +303,7 @@ func TestUploadEmptyFileSendsContentLengthZero(t *testing.T) {
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method + " " + r.URL.Path {
 		case "POST /scope/blobs":
-			writeUploadTestResponse(t, w, "empty.bin", server.URL+"/signed/empty.bin")
+			writeUploadTestResponse(t, w, "empty.bin", server.URL+"/signed/empty.bin", false)
 		case "PUT /signed/empty.bin":
 			// A chunked body would surface as TransferEncoding ["chunked"]
 			// and ContentLength -1; presigned PUTs require a known length.
@@ -339,7 +343,7 @@ func TestUploadSurfacesSignedPutFailure(t *testing.T) {
 	var server *httptest.Server
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
-			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin")
+			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin", false)
 			return
 		}
 		http.Error(w, "no such key", http.StatusNotFound)
@@ -363,7 +367,7 @@ func TestUploadResignsOnSignedPutAuthFailure(t *testing.T) {
 		switch {
 		case r.Method == http.MethodPost:
 			creates++
-			writeUploadTestResponse(t, w, "file.bin", server.URL+fmt.Sprintf("/signed/%d/file.bin", creates))
+			writeUploadTestResponse(t, w, "file.bin", server.URL+fmt.Sprintf("/signed/%d/file.bin", creates), false)
 		case r.URL.Path == "/signed/1/file.bin":
 			http.Error(w, "credentials not yet active", http.StatusUnauthorized)
 		case r.URL.Path == "/signed/2/file.bin":
@@ -390,7 +394,7 @@ func TestUploadSurfacesCompleteFailure(t *testing.T) {
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method + " " + r.URL.Path {
 		case "POST /scope/blobs":
-			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin")
+			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin", true)
 		case "PUT /signed/file.bin":
 			// storage accepts the bytes
 		case "POST /scope/blobs/complete":
@@ -403,9 +407,37 @@ func TestUploadSurfacesCompleteFailure(t *testing.T) {
 	defer server.Close()
 
 	c := newUploadTestClient(t, server.URL)
-	err := c.Upload(context.Background(), "/scope", "file.bin", nil, writeUploadTestFile(t, "data"),
-		UploadOptions{NotifyCompletion: true})
+	err := c.Upload(context.Background(), "/scope", "file.bin", nil, writeUploadTestFile(t, "data"), UploadOptions{})
 	if err == nil || !strings.Contains(err.Error(), "blobs/complete") {
 		t.Fatalf("Upload error = %v, want the complete failure to surface", err)
+	}
+}
+
+func TestUploadCompletesWhenResponseAsks(t *testing.T) {
+	completes := 0
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method + " " + r.URL.Path {
+		case "POST /scope/blobs":
+			writeUploadTestResponse(t, w, "file.bin", server.URL+"/signed/file.bin", true)
+		case "PUT /signed/file.bin":
+			// storage accepts the bytes
+		case "POST /scope/blobs/complete":
+			completes++
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			t.Errorf("unexpected request: %s %s", r.Method, r.URL.Path)
+			http.Error(w, "unexpected request", http.StatusBadRequest)
+		}
+	}))
+	defer server.Close()
+
+	c := newUploadTestClient(t, server.URL)
+	err := c.Upload(context.Background(), "/scope", "file.bin", nil, writeUploadTestFile(t, "data"), UploadOptions{})
+	if err != nil {
+		t.Fatalf("Upload returned error: %v", err)
+	}
+	if completes != 1 {
+		t.Fatalf("blobs/complete called %d times, want 1", completes)
 	}
 }
