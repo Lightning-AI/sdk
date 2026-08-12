@@ -5,6 +5,7 @@ from typing import List, Optional
 
 import rich_click as click
 
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
@@ -15,6 +16,7 @@ from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
 @click.option(
     "--name",
     help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)", type=click.STRING)
 @click.option(

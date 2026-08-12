@@ -5,6 +5,7 @@ from typing import Optional
 import rich_click as click
 from rich.console import Console
 
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.ssh.common import generate_ssh_config
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
@@ -15,6 +16,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_
     "--name",
     default=None,
     help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
 )
 @click.option(
     "--teamspace",

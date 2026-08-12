@@ -5,6 +5,7 @@ from typing import Optional, Sequence, Union
 import rich_click as click
 
 from lightning_sdk.cli.job.run import _MACHINE_VALUES, _resolve_envs, _resolve_path_mapping
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
@@ -37,6 +38,7 @@ from lightning_sdk.mmt import MMT
 @click.option(
     "--studio",
     default=None,
+    shell_complete=complete_studio,
     help=(
         "The studio env to run the multi-machine job with. Mutually exclusive with image. "
         "If both --studio and --image are omitted while running inside a Studio, defaults to that Studio "

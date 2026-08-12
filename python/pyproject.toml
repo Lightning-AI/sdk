@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [ # alphabetically sorted
     "backoff", # for api retries
-    "click", # for CLI
+    "click>=8.2", # for CLI and shell completion
     "rich-click", # for rich CLI help formatting
     "docker", # for lit-container-registry
     "fastapi", # for lightning-cloud

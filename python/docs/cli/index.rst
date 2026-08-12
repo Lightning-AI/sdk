@@ -39,6 +39,39 @@ variables instead:
    export LIGHTNING_USER_ID=your-user-id
    export LIGHTNING_API_KEY=your-api-key
 
+Shell completion
+----------------
+
+Install native shell completion for your current shell:
+
+.. code-block:: bash
+
+   lightning completion install
+
+Supported shells are Zsh, Fish, and Bash 4.4 or newer.
+
+Pass the shell explicitly when it cannot be detected from ``$SHELL``:
+
+.. code-block:: bash
+
+   lightning completion install --shell zsh
+
+The installer writes a static completion script and configures Bash or Zsh to
+source it. Fish uses its native auto-loaded completions directory. This avoids
+importing the CLI while the shell starts. Check or remove the installation with:
+
+.. code-block:: bash
+
+   lightning completion status
+   lightning completion uninstall
+
+Local paths are completed by the shell. Paths beginning with ``lit://`` are
+resolved dynamically from accessible Teamspaces, Studios, and remote files
+without opening interactive CLI prompts. Resource options also complete
+dynamically, including ``--teamspace owner/teamspace`` and existing Studio
+selectors such as ``lightning studio stop --name`` when a Teamspace is selected
+or configured.
+
 Usage
 -----
 

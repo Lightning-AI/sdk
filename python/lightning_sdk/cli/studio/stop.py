@@ -4,6 +4,7 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
@@ -15,6 +16,7 @@ from lightning_sdk.cli.utils.save_to_config import save_studio_to_config
 @click.option(
     "--name",
     help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
 )
 @click.option("--teamspace", help="Override default teamspace (format: owner/teamspace)")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")

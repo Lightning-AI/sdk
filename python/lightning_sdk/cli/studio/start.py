@@ -4,6 +4,7 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.handle_machine_and_gpus_args import handle_machine_and_gpus_args
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
@@ -24,6 +25,7 @@ click.rich_click.OPTION_GROUPS = {
 @click.option(
     "--name",
     help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
 )
 @click.option(
     "--teamspace",
