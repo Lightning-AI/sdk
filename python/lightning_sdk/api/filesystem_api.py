@@ -8,6 +8,7 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     _authenticate_and_get_auth_headers,
+    _BlobUploader,
     _collect_download_results,
     _raise_for_download_status,
     _stream_download_to_file,
@@ -59,6 +60,39 @@ class FilesystemApi:
         if r.status_code != 200:
             raise RuntimeError(f"Failed to list files: {r.status_code}")
         return r.json().get("tree", [])
+
+    def upload_file(
+        self,
+        teamspace_id: str,
+        file_path: str,
+        remote_path: str,
+        progress_bar: bool = True,
+        cloud_account: Optional[str] = None,
+    ) -> None:
+        """Upload a local file to a path in the teamspace drive.
+
+        The path is passed through to the server as-is, so any destination the
+        drive accepts works here; a path inside a Lightning-managed folder
+        namespace (e.g. ``lightning_storage/<name>/...``) creates the folder on
+        first use.
+
+        Args:
+            teamspace_id: The teamspace that owns the artifacts.
+            file_path: Local filesystem path of the file to upload.
+            remote_path: Destination path inside the teamspace drive.
+            progress_bar: Whether to display a tqdm progress bar during upload.
+            cloud_account: Cloud account to store the file on. Some destinations
+                require one (e.g. ``uploads/``); others pick their own storage
+                and reject a mismatch.
+        """
+        _BlobUploader(
+            client=self._client,
+            endpoint_base=f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts",
+            file_path=file_path,
+            remote_path=remote_path.strip("/"),
+            progress_bar=progress_bar,
+            cluster_id=cloud_account,
+        )()
 
     def download_file(self, path: str, target_path: str, teamspace_id: str, progress_bar: bool = True) -> None:
         """Download a single artifact file from the teamspace to a local path.
