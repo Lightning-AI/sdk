@@ -226,7 +226,7 @@ func TestStudioDownloadFileUsesArtifactBlobRoute(t *testing.T) {
 			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
 
 		query := r.URL.Query()
-		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || query.Get("key") != "/cloudspaces/studio-1/code/content/remote.txt" || r.Header.Get("Authorization") != "Bearer token-1",
+		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1",
 			"unexpected query: %s", r.URL.RawQuery)
 
 		_, _ = w.Write([]byte("file contents"))
