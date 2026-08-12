@@ -704,9 +704,6 @@ func (t *Teamspace) DownloadFile(remotePath, filePath string, cloudAccount ...st
 	if len(cloudAccount) > 0 && cloudAccount[0] != "" {
 		query.Set("clusterId", cloudAccount[0])
 	}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
-	}
 	return api.Download(context.Background(), teamspaceArtifactBlobPath(id, remotePath), query, filePath)
 }
 
@@ -766,15 +763,11 @@ func (t *Teamspace) UploadFile(filePath, remotePath string, cloudAccount ...stri
 	if err != nil {
 		return err
 	}
-	query := url.Values{}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
-	}
 	opts := sdkclient.UploadOptions{}
 	if len(cloudAccount) > 0 {
 		opts.ClusterID = cloudAccount[0]
 	}
-	return api.Upload(context.Background(), teamspaceArtifactScopePath(id), strings.TrimLeft(remotePath, "/"), query, filePath, opts)
+	return api.Upload(context.Background(), teamspaceArtifactScopePath(id), strings.TrimLeft(remotePath, "/"), nil, filePath, opts)
 }
 
 // UploadFolder uploads all files from a local folder into teamspace artifacts.
@@ -1034,9 +1027,6 @@ func teamspaceArtifactQuery(cloudAccount ...string) url.Values {
 	query := url.Values{}
 	if len(cloudAccount) > 0 && cloudAccount[0] != "" {
 		query.Set("clusterId", cloudAccount[0])
-	}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
 	}
 	return query
 }

@@ -5,7 +5,7 @@ import pytest
 from lightning_sdk.filesystem import Filesystem
 
 TEAMSPACE_ID = "ts-123"
-FAKE_TOKEN = "fake-token"
+FAKE_AUTH_HEADERS = {"Authorization": "Bearer fake-token"}
 HOST = "https://lightning.ai"
 REMOTE_PATH = "data/test1.txt"
 LIT_URL = f"lit://my-org/my-teamspace/{REMOTE_PATH}"
@@ -30,7 +30,10 @@ def fake_path_result():
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
+)
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
 def test_listdir_returns_files(
@@ -54,7 +57,10 @@ def test_listdir_returns_files(
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
+)
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
 def test_listdir_passes_correct_teamspace_id(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get):
@@ -75,7 +81,10 @@ def test_listdir_passes_correct_teamspace_id(mock_parse_lit_url, mock_resolve, m
 
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", new=mock.MagicMock(return_value=FAKE_TOKEN))
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
+)
 @mock.patch("lightning_sdk.filesystem.resolve_teamspace")
 @mock.patch("lightning_sdk.filesystem.parse_lit_url")
 def test_listdir_non_recursive(

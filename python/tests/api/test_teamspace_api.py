@@ -434,7 +434,10 @@ def test_get_model_errors(internal_teamspace_api_mocker):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_tree(mock_authenticate, mock_requests_get):
     """Test get_tree retrieves directory structure from teamspace drive."""
@@ -466,8 +469,9 @@ def test_get_tree(mock_authenticate, mock_requests_get):
     call_args = mock_requests_get.call_args
 
     assert "/v1/projects/ts-abc/artifacts/trees/my-folder/" in call_args[0][0]
-    assert call_args[1]["params"] == {"token": "test-token"}
-    mock_authenticate.assert_called_once_with(teamspace_api._client)
+    assert call_args[1]["params"] is None
+    assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
+    mock_authenticate.assert_called_once_with()
 
 
 @pytest.mark.parametrize(
@@ -511,7 +515,10 @@ def test_get_tree(mock_authenticate, mock_requests_get):
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response, expected_result):
     mock_response = mock.MagicMock()
@@ -544,7 +551,7 @@ def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response
             # root level should include /trees/
             call_url = mock_requests_get.call_args[0][0]
             assert "/trees/" in call_url
-        mock_authenticate.assert_called_once_with(teamspace_api._client)
+        mock_authenticate.assert_called_once_with()
 
 
 @pytest.mark.parametrize(
@@ -607,7 +614,10 @@ def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response
     ],
 )
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="test-token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_list_files(
     mock_authenticate,
@@ -639,7 +649,7 @@ def test_list_files(
     assert call_args[1]["params"]["recursive"] == "true"
 
     assert result == expected_files
-    mock_authenticate.assert_called_once_with(teamspace_api._client)
+    mock_authenticate.assert_called_once_with()
 
 
 def _blob_upload_create_response(path, upload_id, urls):
@@ -665,8 +675,8 @@ def _make_upload_teamspace_api():
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch(
-    "lightning_sdk.api.utils._authenticate_and_get_token",
-    new=mock.MagicMock(return_value="test-token"),
+    "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -711,7 +721,7 @@ def test_upload_file(
     # URL request goes to the project-scoped batch endpoint with the cluster in the body.
     create_call = requests_post_mock.call_args_list[0]
     assert create_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/blobs"
-    assert create_call.kwargs["params"] == {"token": "test-token"}
+    assert create_call.kwargs["headers"] == {"Authorization": "Bearer test-token"}
 
     if single_part:
         assert create_call.kwargs["json"] == {"cluster_id": "cluster-abc", "blobs": [{"path": "file1"}]}
@@ -746,8 +756,8 @@ def test_upload_file(
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch(
-    "lightning_sdk.api.utils._authenticate_and_get_token",
-    new=mock.MagicMock(return_value="test-token"),
+    "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -783,8 +793,8 @@ def test_upload_file_uploads_prefix(
 @mock.patch("requests.put")
 @mock.patch("lightning_sdk.api.utils.tqdm")
 @mock.patch(
-    "lightning_sdk.api.utils._authenticate_and_get_token",
-    new=mock.MagicMock(return_value="test-token"),
+    "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -834,8 +844,8 @@ def test_upload_file_with_headers(
 @mock.patch("requests.post")
 @mock.patch("requests.put")
 @mock.patch(
-    "lightning_sdk.api.utils._authenticate_and_get_token",
-    new=mock.MagicMock(return_value="test-token"),
+    "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+    new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -882,7 +892,9 @@ def _stub_response(status_code: int, body: bytes) -> mock.Mock:
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_requests_get.return_value = _stub_response(200, b"data" * 256)
@@ -892,11 +904,13 @@ def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     filepath = os.path.join(tmpdir, "file1")
     teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
     assert Path(filepath).read_bytes() == b"data" * 256
-    mock_authenticate.assert_called_once_with(teamspace_api._client)
+    mock_authenticate.assert_called_once_with()
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_file_rejects_an_error_document(_mock_authenticate, mock_requests_get, tmpdir):
     mock_requests_get.return_value = _stub_response(403, _S3_ERROR_BODY)
@@ -921,12 +935,14 @@ def test_download_single_file_rejects_an_error_document_under_200(mock_requests_
     file_info = {"path": "single_2mib.bin", "size": 2 * 1024 * 1024}
 
     with pytest.raises(RuntimeError, match="the listing reported 2097152 bytes"):
-        teamspace_api._download_single_file(file_info, "base", tmp_path, "ts-abc", "token")
+        teamspace_api._download_single_file(file_info, "base", tmp_path, "ts-abc", {"Authorization": "Bearer token"})
 
     assert list(tmp_path.iterdir()) == []
 
 
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_folder_does_not_report_success_on_a_partial_download(
     _mock_authenticate, inline_executor_cls, tmp_path
@@ -952,10 +968,10 @@ def test_download_folder_does_not_report_success_on_a_partial_download(
 @mock.patch("lightning_sdk.api.teamspace_api._collect_download_results")
 @mock.patch("lightning_sdk.api.teamspace_api.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
-    authenticate_mock.return_value = "test-token-123"
+    authenticate_mock.return_value = {"Authorization": "Bearer test-token-123"}
 
     teamspace_api = TeamspaceApi()
 

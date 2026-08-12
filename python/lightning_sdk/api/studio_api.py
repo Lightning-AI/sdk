@@ -12,7 +12,7 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_token,
+    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _create_app,
@@ -952,22 +952,15 @@ class StudioApi:
             studio_id: Studio (cloud space) ID.
             teamspace_id: ID of the owning teamspace.
             path: Artifact path to inspect.
-            query_params: Extra query parameters merged with the auth token.
+            query_params: Extra query parameters for the request.
 
         Returns:
             Parsed JSON response from the server.
         """
-        token = _authenticate_and_get_token(self._client)
-
-        if query_params is None:
-            query_params = {
-                "token": token,
-            }
-        else:
-            query_params["token"] = token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
         )
         return r.json()
 
@@ -1083,17 +1076,14 @@ class StudioApi:
             RuntimeError: If the server returns a non-2xx status code, or if the body that
                 arrives is not the length the server advertised.
         """
-        # TODO: Update this endpoint to permit basic auth
-        token = _authenticate_and_get_token(self._client)
-
         query_params = {
             "clusterId": cloud_account,
-            "token": token,
         }
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
             stream=True,
             allow_redirects=True,
         )
@@ -1121,7 +1111,7 @@ class StudioApi:
         download_dir: Path,
         studio_id: str,
         teamspace_id: str,
-        token: str,
+        auth_headers: Dict[str, str],
         pbar: Optional[tqdm],
     ) -> None:
         """Download a single file from Studio with progress tracking.
@@ -1132,7 +1122,7 @@ class StudioApi:
             download_dir: Local directory where the downloaded file is written.
             studio_id: Studio (cloud space) ID containing the file.
             teamspace_id: ID of the owning teamspace.
-            token: Authentication token for the artifact API.
+            auth_headers: HTTP headers carrying the caller's credentials.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
         Raises:
@@ -1144,13 +1134,9 @@ class StudioApi:
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
-        query_params = {
-            "token": token,
-        }
-
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{file_path}",
-            params=query_params,
+            headers=auth_headers,
             stream=True,
         )
 
@@ -1198,7 +1184,7 @@ class StudioApi:
             print(f"No files found in {path}")
             return
 
-        token = _authenticate_and_get_token(self._client)
+        auth_headers = _authenticate_and_get_auth_headers()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -1223,7 +1209,7 @@ class StudioApi:
                         download_dir,
                         studio_id,
                         teamspace_id,
-                        token,
+                        auth_headers,
                         pbar,
                     )
                     for file_info in files
@@ -1258,13 +1244,10 @@ class StudioApi:
         if info["type"] != "file":
             raise IsADirectoryError(f"The path '{path}' is a directory. Use 'remove_folder()' to remove directories.")
 
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}"
 
-        r = requests.delete(url, params=query_params, timeout=30)
+        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
 
         if r.status_code == 204:
             return
@@ -1292,13 +1275,10 @@ class StudioApi:
         if info["type"] == "file":
             raise ValueError(f"The path '{path}' is a file. Use 'remove_file()' to remove files.")
 
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}"
 
-        r = requests.delete(url, params=query_params, timeout=30)
+        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
 
         if r.status_code == 204:
             return
