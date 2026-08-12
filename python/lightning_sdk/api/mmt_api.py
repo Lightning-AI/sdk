@@ -19,6 +19,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
     V1MultiMachineJobState,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -308,13 +309,18 @@ class MMTApiV2:
         Returns:
             The display name of the Studio, or ``None`` if the job has no associated Studio.
         """
-        if job.spec.cloudspace_id:
+        if not job.spec.cloudspace_id:
+            return None
+
+        try:
             cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
                 project_id=job.project_id, id=job.spec.cloudspace_id
             )
-            return cs.name
-
-        return None
+        except ApiException as ex:
+            if ex.status == 404:
+                return None
+            raise
+        return cs.name
 
     def get_image_name(self, job: V1MultiMachineJob) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.

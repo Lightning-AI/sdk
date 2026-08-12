@@ -12,6 +12,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
     V1PathMapping,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
@@ -260,3 +261,16 @@ def test_mmt_delete(_mock_auth):
     job_api.delete_job("test-job-id", "ts-abc")
 
     delete_job_mock.assert_called_once_with(id="test-job-id", project_id="ts-abc")
+
+
+def test_get_studio_name_returns_none_when_cloudspace_missing():
+    job_api = MMTApiV2()
+    job_api._client.cloud_space_service_get_cloud_space = mock.MagicMock(
+        side_effect=ApiException(status=404, reason="Not Found")
+    )
+    job = V1MultiMachineJob(project_id="ts-abc", spec=V1JobSpec(cloudspace_id="deleted-studio"))
+
+    assert job_api.get_studio_name(job) is None
+    job_api._client.cloud_space_service_get_cloud_space.assert_called_once_with(
+        project_id="ts-abc", id="deleted-studio"
+    )
