@@ -595,12 +595,6 @@ def _get_registry_url() -> str:
     return registry_url
 
 
-def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
-    path = path.replace("/teamspace/studios/this_studio/", "")
-    root = f"/cloudspaces/{studio_id}/code/content/"
-    return os.path.join(root, path)
-
-
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
 _DOWNLOAD_STREAM_CHUNK_SIZE = 4096 * 8

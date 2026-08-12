@@ -17,7 +17,6 @@ from lightning_sdk.api.utils import (
     _machine_to_compute_name,
     _ModelFileUploader,
     _raise_for_download_status,
-    _sanitize_studio_remote_path,
     _stream_download_to_file,
     resolve_path_mappings,
 )
@@ -703,21 +702,6 @@ def test_resolve_path_mappings():
     assert path_mappings[1].container_path == "/path2"
     assert path_mappings[1].connection_name == "conn2"
     assert path_mappings[1].connection_path == ""
-
-
-def test_sanitize_studio_remote_path():
-    path = "test-folder"
-    studio_id = "test-studio-id"
-    result = _sanitize_studio_remote_path(path, studio_id)
-    assert result == f"/cloudspaces/{studio_id}/code/content/{path}"
-
-    path = "test-folder/sub-folder"
-    result = _sanitize_studio_remote_path(path, studio_id)
-    assert result == f"/cloudspaces/{studio_id}/code/content/{path}"
-
-    path = ""
-    result = _sanitize_studio_remote_path(path, studio_id)
-    assert result == f"/cloudspaces/{studio_id}/code/content/"
 
 
 def _make_single_part_blob_uploader(tmp_path, progress_bar=False, notify_completion=False, extra_headers=None):
