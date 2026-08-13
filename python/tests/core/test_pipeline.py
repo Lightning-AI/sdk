@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -247,7 +248,8 @@ def test_prepare_steps():
         V1PipelineStep(name="d", wait_for=DEFAULT),
         V1PipelineStep(name="e", wait_for=DEFAULT),
     ]
-    steps = prepare_steps(steps)
+    with pytest.warns(UserWarning, match="Pipeline is using default linear dependency"):
+        steps = prepare_steps(steps)
     assert steps[0].wait_for == []
     assert steps[1].wait_for == ["a"]
     assert steps[2].wait_for == ["b"]
@@ -261,7 +263,8 @@ def test_prepare_steps():
         V1PipelineStep(name="d", wait_for=DEFAULT),
         V1PipelineStep(name="e", wait_for=DEFAULT),
     ]
-    steps = prepare_steps(steps)
+    with pytest.warns(UserWarning, match="Pipeline is using default linear dependency"):
+        steps = prepare_steps(steps)
     assert steps[0].wait_for == []
     assert steps[1].wait_for == []
     assert steps[2].wait_for == ["a", "b"]
@@ -275,7 +278,8 @@ def test_prepare_steps():
         V1PipelineStep(name="d", wait_for=[]),
         V1PipelineStep(name="e", wait_for=[]),
     ]
-    steps = prepare_steps(steps)
+    with pytest.warns(UserWarning, match="Pipeline is using default linear dependency"):
+        steps = prepare_steps(steps)
     assert steps[0].wait_for == []
     assert steps[1].wait_for == []
     assert steps[2].wait_for == ["a", "b"]
@@ -290,13 +294,55 @@ def test_prepare_steps():
         V1PipelineStep(name="e", wait_for=[]),
         V1PipelineStep(name="f", wait_for=DEFAULT),
     ]
-    steps = prepare_steps(steps)
+    with pytest.warns(UserWarning, match="Pipeline is using default linear dependency"):
+        steps = prepare_steps(steps)
     assert steps[0].wait_for == []
     assert steps[1].wait_for == []
     assert steps[2].wait_for == ["a", "b"]
     assert steps[3].wait_for == []
     assert steps[4].wait_for == []
     assert steps[5].wait_for == ["c", "d", "e"]
+
+    # no warning when all steps are explicit
+    steps = [
+        V1PipelineStep(name="a", wait_for=[]),
+        V1PipelineStep(name="b", wait_for=["a"]),
+        V1PipelineStep(name="c", wait_for=["b"]),
+    ]
+    with warnings.catch_warnings(record=True) as record:
+        warnings.simplefilter("always")
+        steps = prepare_steps(steps)
+    assert len([w for w in record if "default linear dependency" in str(w.message)]) == 0
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == ["a"]
+    assert steps[2].wait_for == ["b"]
+
+    # no warning in explicit mode
+    steps = [
+        V1PipelineStep(name="a", wait_for=DEFAULT),
+        V1PipelineStep(name="b", wait_for=DEFAULT),
+        V1PipelineStep(name="c", wait_for=DEFAULT),
+    ]
+    with warnings.catch_warnings(record=True) as record:
+        warnings.simplefilter("always")
+        steps = prepare_steps(steps, dependency_mode="explicit")
+    assert len([w for w in record if "default linear dependency" in str(w.message)]) == 0
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == []
+    assert steps[2].wait_for == []
+
+    steps = [
+        V1PipelineStep(name="a", wait_for=[]),
+        V1PipelineStep(name="b", wait_for=["a"]),
+        V1PipelineStep(name="c", wait_for=["b"]),
+    ]
+    with warnings.catch_warnings(record=True) as record:
+        warnings.simplefilter("always")
+        steps = prepare_steps(steps, dependency_mode="explicit")
+    assert len([w for w in record if "default linear dependency" in str(w.message)]) == 0
+    assert steps[0].wait_for == []
+    assert steps[1].wait_for == ["a"]
+    assert steps[2].wait_for == ["b"]
 
 
 def test_deployment_default():

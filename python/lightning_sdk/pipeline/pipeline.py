@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Union
+from typing import List, Literal, Optional, Union
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.pipeline_api import PipelineApi
@@ -28,6 +28,7 @@ class Pipeline:
         studio: Optional[Union[Studio, str]] = None,
         stop_on_failure: bool = True,
         interruption_retries: int = 0,
+        dependency_mode: Literal["linear", "explicit"] = "linear",
     ) -> None:
         """The Lightning Pipeline can be used to create complex DAG.
 
@@ -45,11 +46,15 @@ class Pipeline:
             stop_on_failure: Whether the pipeline execution should stop if any step fails. Defaults to True.
             interruption_retries: Number of times to retry a step if it is interrupted
                 before marking the pipeline as failed. Defaults to 0.
+            dependency_mode: Controls how steps without an explicit ``wait_for`` are handled.
+                ``"linear"`` (default): steps are chained in declaration order.
+                ``"explicit"``: each step runs independently unless ``wait_for`` is set.
 
         """
         self._name = name
         self._stop_on_failure = stop_on_failure
         self._interruption_retries = interruption_retries
+        self._dependency_mode = dependency_mode
 
         resolved_teamspace = _resolve_teamspace(
             teamspace=teamspace,
@@ -128,7 +133,7 @@ class Pipeline:
 
         steps = [step.to_proto(self._teamspace, cloud_account, self._shared_filesystem) for step in steps]
 
-        proto_steps = prepare_steps(steps)
+        proto_steps = prepare_steps(steps, dependency_mode=self._dependency_mode)
         schedules = schedules or []
 
         for schedule_idx, schedule in enumerate(schedules):
