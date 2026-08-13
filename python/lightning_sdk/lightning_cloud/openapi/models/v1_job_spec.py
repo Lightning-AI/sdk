@@ -50,6 +50,7 @@ class V1JobSpec(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'command': 'str',
+        'current_run_attempt': 'int',
         'data_paths': 'list[V1DataPath]',
         'disable_artifacts_persistence': 'bool',
         'entrypoint': 'str',
@@ -62,6 +63,7 @@ class V1JobSpec(object):
         'instance_type': 'str',
         'machine_id': 'str',
         'machine_image_version': 'str',
+        'max_run_attempts': 'int',
         'modified_volume': 'bool',
         'path_mappings': 'list[V1PathMapping]',
         'pipeline_id': 'str',
@@ -87,6 +89,7 @@ class V1JobSpec(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'command': 'command',
+        'current_run_attempt': 'currentRunAttempt',
         'data_paths': 'dataPaths',
         'disable_artifacts_persistence': 'disableArtifactsPersistence',
         'entrypoint': 'entrypoint',
@@ -99,6 +102,7 @@ class V1JobSpec(object):
         'instance_type': 'instanceType',
         'machine_id': 'machineId',
         'machine_image_version': 'machineImageVersion',
+        'max_run_attempts': 'maxRunAttempts',
         'modified_volume': 'modifiedVolume',
         'path_mappings': 'pathMappings',
         'pipeline_id': 'pipelineId',
@@ -118,13 +122,14 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
         self._cloudspace_id = None
         self._cluster_id = None
         self._command = None
+        self._current_run_attempt = None
         self._data_paths = None
         self._disable_artifacts_persistence = None
         self._entrypoint = None
@@ -137,6 +142,7 @@ class V1JobSpec(object):
         self._instance_type = None
         self._machine_id = None
         self._machine_image_version = None
+        self._max_run_attempts = None
         self._modified_volume = None
         self._path_mappings = None
         self._pipeline_id = None
@@ -165,6 +171,8 @@ class V1JobSpec(object):
             self.cluster_id = cluster_id
         if command is not None:
             self.command = command
+        if current_run_attempt is not None:
+            self.current_run_attempt = current_run_attempt
         if data_paths is not None:
             self.data_paths = data_paths
         if disable_artifacts_persistence is not None:
@@ -189,6 +197,8 @@ class V1JobSpec(object):
             self.machine_id = machine_id
         if machine_image_version is not None:
             self.machine_image_version = machine_image_version
+        if max_run_attempts is not None:
+            self.max_run_attempts = max_run_attempts
         if modified_volume is not None:
             self.modified_volume = modified_volume
         if path_mappings is not None:
@@ -332,6 +342,29 @@ class V1JobSpec(object):
         """
 
         self._command = command
+
+    @property
+    def current_run_attempt(self) -> 'int':
+        """Gets the current_run_attempt of this V1JobSpec.  # noqa: E501
+
+        Current run attempt for this job.  # noqa: E501
+
+        :return: The current_run_attempt of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._current_run_attempt
+
+    @current_run_attempt.setter
+    def current_run_attempt(self, current_run_attempt: 'int'):
+        """Sets the current_run_attempt of this V1JobSpec.
+
+        Current run attempt for this job.  # noqa: E501
+
+        :param current_run_attempt: The current_run_attempt of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._current_run_attempt = current_run_attempt
 
     @property
     def data_paths(self) -> 'list[V1DataPath]':
@@ -586,6 +619,29 @@ class V1JobSpec(object):
         """
 
         self._machine_image_version = machine_image_version
+
+    @property
+    def max_run_attempts(self) -> 'int':
+        """Gets the max_run_attempts of this V1JobSpec.  # noqa: E501
+
+        Max number of run attempts for this job. 0 means unset; 1 means a single attempt (no retries).  # noqa: E501
+
+        :return: The max_run_attempts of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_run_attempts
+
+    @max_run_attempts.setter
+    def max_run_attempts(self, max_run_attempts: 'int'):
+        """Sets the max_run_attempts of this V1JobSpec.
+
+        Max number of run attempts for this job. 0 means unset; 1 means a single attempt (no retries).  # noqa: E501
+
+        :param max_run_attempts: The max_run_attempts of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._max_run_attempts = max_run_attempts
 
     @property
     def modified_volume(self) -> 'bool':
