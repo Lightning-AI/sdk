@@ -5,9 +5,9 @@ import pytest
 from lightning_sdk.cli.cp import route_cp_operation
 
 
-@pytest.mark.parametrize("resource_type", ["r2_connections", "artifacts", "unknown_resource"])
-def test_route_cp_passes_any_non_studio_resource_type_through(resource_type):
-    """Any non-studio resource type routes to the drive; the server decides what exists."""
+@pytest.mark.parametrize("resource_type", ["studios", "r2_connections", "artifacts", "unknown_resource"])
+def test_route_cp_passes_any_resource_type_through(resource_type):
+    """Every resource type routes to the drive; the server decides what exists."""
     mock_fs = MagicMock()
     source = f"lit://my-org/my-teamspace/{resource_type}/data/model.ckpt"
 

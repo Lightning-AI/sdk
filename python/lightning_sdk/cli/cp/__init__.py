@@ -4,8 +4,6 @@ from typing import Any, Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.studio.cp import cp_download as studio_cp_download
-from lightning_sdk.cli.studio.cp import cp_upload as studio_cp_upload
 from lightning_sdk.filesystem import Filesystem
 
 
@@ -47,13 +45,9 @@ def route_cp_operation(source: str, destination: Optional[str], **options: Any) 
     if not source_is_lit and not dest_is_lit:
         raise ValueError("At least one path must be a lit://")
 
-    # Studios are ID-addressed through their own routes; every other resource
-    # type is a path in the teamspace drive, passed through for the server to
-    # resolve.
-    if parse_lit_url(source if source_is_lit else destination) == "studios":
-        if source_is_lit:
-            return studio_cp_download(source, destination, options.get("recursive", False))
-        return studio_cp_upload(source, destination, options.get("recursive", False))
+    # Every resource type is a path in the teamspace drive, passed through
+    # for the server to resolve. This validates the URL shape up front.
+    parse_lit_url(source if source_is_lit else destination)
 
     return Filesystem().copy(
         source=source,
