@@ -1550,7 +1550,6 @@ class BillingServiceApi(object):
         :param str resource_id: Optional, if not specified, all filtered resources will be returned
         :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
         :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
-        :param str user_id: Optional, if specified, filters owner by User ID
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
@@ -1581,7 +1580,6 @@ class BillingServiceApi(object):
         :param str resource_id: Optional, if not specified, all filtered resources will be returned
         :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
         :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
-        :param str user_id: Optional, if specified, filters owner by User ID
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
@@ -1590,7 +1588,7 @@ class BillingServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'time_zone', 'limit', 'search_after']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1625,8 +1623,6 @@ class BillingServiceApi(object):
             query_params.append(('from', params['_from']))  # noqa: E501
         if 'to' in params:
             query_params.append(('to', params['to']))  # noqa: E501
-        if 'user_id' in params:
-            query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'time_zone' in params:
             query_params.append(('timeZone', params['time_zone']))  # noqa: E501
         if 'limit' in params:

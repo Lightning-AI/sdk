@@ -44,6 +44,9 @@ type V1JobSpec struct {
 	// Command to run on the machine
 	Command string `json:"command,omitempty"`
 
+	// Current run attempt for this job.
+	CurrentRunAttempt int64 `json:"currentRunAttempt,omitempty"`
+
 	// Whether files have been uploaded to the deployment. Those files are accessible on start
 	DataPaths []*V1DataPath `json:"dataPaths"`
 
@@ -82,6 +85,9 @@ type V1JobSpec struct {
 
 	// machine image version
 	MachineImageVersion string `json:"machineImageVersion,omitempty"`
+
+	// Max number of run attempts for this job. 0 means unset; 1 means a single attempt (no retries).
+	MaxRunAttempts int64 `json:"maxRunAttempts,omitempty"`
 
 	// Track whether the EBS volume has been modified once the flow was ready
 	ModifiedVolume bool `json:"modifiedVolume,omitempty"`
