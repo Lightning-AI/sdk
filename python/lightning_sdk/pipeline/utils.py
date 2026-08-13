@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, List, Literal, Optional, Union
 
 from lightning_sdk.lightning_cloud.openapi.models import (
@@ -11,7 +12,10 @@ from lightning_sdk.studio import Studio
 DEFAULT: Literal["DEFAULT"] = "DEFAULT"
 
 
-def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
+def prepare_steps(
+    steps: List["V1PipelineStep"],
+    dependency_mode: Literal["linear", "explicit"] = "linear",
+) -> List["V1PipelineStep"]:
     """The prepare_steps function is responsible for creating dependencies between steps.
 
     The dependencies are based on whether a step wait_for to be executed before another.
@@ -32,11 +36,15 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
     steps[0].wait_for = []
 
     # This implements a linear dependency between the steps as the default behaviour
+    warned = False
     for current_step_idx, current_step in reversed(list(enumerate(steps))):
         if current_step_idx == 0:
             continue
 
         if current_step.wait_for == DEFAULT:
+            if dependency_mode == "explicit":
+                current_step.wait_for = []
+                continue
             prev_step_idx = current_step_idx - 1
             wait_for: List[str] = []
             while prev_step_idx > -1:
@@ -46,6 +54,16 @@ def prepare_steps(steps: List["V1PipelineStep"]) -> List["V1PipelineStep"]:
                     break
                 prev_step_idx -= 1
             current_step.wait_for = wait_for
+            if not warned and dependency_mode == "linear" and wait_for:
+                warnings.warn(
+                    "Pipeline is using default linear dependency behavior, "
+                    "so unrelated steps may become serialized and block each other. "
+                    'To declare explicit or no dependencies, use `wait_for=["step_name"]`. '
+                    'To change dependency behavior, pass `dependency_mode="explicit"` to the Pipeline.',
+                    UserWarning,
+                    stacklevel=2,
+                )
+                warned = True
         else:
             for name in current_step.wait_for:
                 if current_step.name == name:
