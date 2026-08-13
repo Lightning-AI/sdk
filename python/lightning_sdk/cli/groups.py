@@ -196,7 +196,10 @@ def dataset() -> None:
     "--cloud-account",
     "cloud_account",
     default=None,
-    help="Cloud account to store uploads on. Defaults to the teamspace default where one is needed.",
+    help=(
+        "Cloud account to store uploads on. Where one is needed, defaults to the current "
+        "cloud account (LIGHTNING_CLUSTER_ID) or the teamspace's default cloud account."
+    ),
 )
 @click.pass_context
 def cp(_ctx: click.Context) -> None:
