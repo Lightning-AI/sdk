@@ -742,10 +742,6 @@ class TeamspaceApi:
             remote_path = remote_path[len("teamspace/") :]
 
         client_host = self._client.api_client.configuration.host
-        endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts"
-        if remote_path.startswith(("uploads/", "Uploads/")):
-            remote_path = remote_path[len("uploads/") :]
-            endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads"
 
         content_type = None
         extra_headers = dict(headers) if headers else None
@@ -755,7 +751,7 @@ class TeamspaceApi:
 
         _BlobUploader(
             client=self._client,
-            endpoint_base=endpoint_base,
+            endpoint_base=f"{client_host}/v1/projects/{teamspace_id}/artifacts",
             file_path=file_path,
             remote_path=remote_path,
             progress_bar=progress_bar,
@@ -772,7 +768,7 @@ class TeamspaceApi:
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
     ) -> None:
-        """Downloads a given file in Teamspace drive /Uploads/ to a target location.
+        """Downloads a given file in the Teamspace drive to a target location.
 
         Args:
             path: Path of the file inside the Teamspace drive to download.
@@ -866,7 +862,7 @@ class TeamspaceApi:
         progress_bar: bool = True,
         num_workers: Optional[int] = None,
     ) -> None:
-        """Downloads a given folder from Teamspace drive /Uploads/ to a target location.
+        """Downloads a given folder from the Teamspace drive to a target location.
 
         Args:
             path: Path of the folder inside the Teamspace drive to download.

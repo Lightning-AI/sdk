@@ -56,7 +56,7 @@ def test_cp_upload_file_successful(tmp_path: Path):
         )
 
         mock_teamspace.upload_file.assert_called_once_with(
-            str(test_file), "Uploads/remote_file.txt", cloud_account=None
+            str(test_file), "uploads/remote_file.txt", cloud_account=None
         )
 
 
@@ -88,7 +88,7 @@ def test_cp_upload_file_with_cloud_account(tmp_path: Path):
         )
 
         mock_teamspace.upload_file.assert_called_once_with(
-            str(test_file), "Uploads/remote_file.txt", cloud_account="my-cloud-account"
+            str(test_file), "uploads/remote_file.txt", cloud_account="my-cloud-account"
         )
 
 
@@ -122,7 +122,7 @@ def test_cp_upload_folder_successful(tmp_path: Path):
         )
 
         mock_teamspace.upload_folder.assert_called_once_with(
-            str(test_dir), "Uploads/remote_folder/", cloud_account=None
+            str(test_dir), "uploads/remote_folder/", cloud_account=None
         )
 
 
@@ -183,7 +183,7 @@ def test_cp_upload_file_to_directory_path(tmp_path: Path):
             options={},
         )
 
-        expected_path = os.path.join("Uploads", os.path.join("remote_folder", "test_file.txt"))
+        expected_path = os.path.join("uploads", os.path.join("remote_folder", "test_file.txt"))
         mock_teamspace.upload_file.assert_called_once_with(str(test_file), expected_path, cloud_account=None)
 
 
@@ -215,5 +215,5 @@ def test_cp_upload_with_nested_path(tmp_path: Path):
         )
 
         mock_teamspace.upload_file.assert_called_once_with(
-            str(test_file), "Uploads/folder/subfolder/remote_file.txt", cloud_account=None
+            str(test_file), "uploads/folder/subfolder/remote_file.txt", cloud_account=None
         )
