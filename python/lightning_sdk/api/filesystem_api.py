@@ -10,6 +10,7 @@ from lightning_sdk.api.utils import (
     _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
+    _paged_tree_entries,
     _raise_for_download_status,
     _RemoteApiError,
     _stream_download_to_file,
@@ -59,15 +60,11 @@ class FilesystemApi:
             RuntimeError: If the server returns a non-200 status code.
         """
         path = path.strip("/")
-        entries: List[Dict] = []
-        cursor: Optional[str] = None
-        while True:
-            query_params = {"recursive": "true" if recursive else "false"}
+
+        def fetch_page(query_params: Dict[str, str]) -> Dict:
+            query_params["recursive"] = "true" if recursive else "false"
             if page_size is not None:
                 query_params["atMost"] = str(page_size)
-            if cursor:
-                query_params["cursor"] = cursor
-
             r = requests.get(
                 f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
                 params=query_params,
@@ -75,12 +72,9 @@ class FilesystemApi:
             )
             if r.status_code != 200:
                 raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
+            return r.json()
 
-            payload = r.json()
-            entries.extend(payload.get("tree", []))
-            cursor = payload.get("nextCursor")
-            if not cursor:
-                return entries
+        return _paged_tree_entries(fetch_page)
 
     def upload_file(
         self,

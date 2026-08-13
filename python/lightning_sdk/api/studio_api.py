@@ -1,7 +1,6 @@
 import json
 import os
 import time
-import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Event, Thread
@@ -19,8 +18,10 @@ from lightning_sdk.api.utils import (
     _DummyBody,
     _DummyResponse,
     _machine_to_compute_name,
+    _paged_tree_entries,
     _raise_for_download_status,
     _stream_download_to_file,
+    _tree_path_info,
     cached_lightning_client,
 )
 from lightning_sdk.api.utils import (
@@ -966,17 +967,13 @@ class StudioApi:
 
     def _tree_entries(self, studio_id: str, teamspace_id: str, path: str, recursive: bool) -> List[Dict]:
         """All entries under ``path``, following the listing's cursor until the last page."""
-        entries: List[Dict] = []
-        cursor: Optional[str] = None
-        while True:
-            query_params = {"recursive": "true"} if recursive else {}
-            if cursor:
-                query_params["cursor"] = cursor
-            payload = self.get_tree(studio_id, teamspace_id, path, query_params=query_params)
-            entries.extend(payload.get("tree", []))
-            cursor = payload.get("nextCursor")
-            if not cursor:
-                return entries
+
+        def fetch_page(query_params: Dict[str, str]) -> Dict[str, Any]:
+            if recursive:
+                query_params["recursive"] = "true"
+            return self.get_tree(studio_id, teamspace_id, path, query_params=query_params)
+
+        return _paged_tree_entries(fetch_page)
 
     def get_path_info(self, studio_id: str, teamspace_id: str, path: str = "") -> dict:
         """Return existence, type, and size metadata for a path inside a Studio.
@@ -990,30 +987,10 @@ class StudioApi:
             Dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or ``None``),
             and ``size`` (int bytes for files, ``None`` otherwise).
         """
-        path = path.strip("/")
-
-        if "/" in path:
-            parent_path = path.rsplit("/", 1)[0]
-            target_name = path.rsplit("/", 1)[1]
-        else:
-            if path == "":
-                # root directory
-                return {"exists": True, "type": "directory", "size": None}
-            parent_path = ""
-            target_name = path
-
-        for item in self._tree_entries(studio_id, teamspace_id, parent_path, recursive=False):
-            item_name = item.get("path", "")
-            if item_name == target_name:
-                item_type = item.get("type")
-                # if type == "blob" it's a file, if "tree" it's a directory
-                return {
-                    "exists": True,
-                    "type": "file" if item_type == "blob" else "directory",
-                    "size": item.get("size", 0) if item_type == "blob" else None,
-                }
-        warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
-        return {"exists": False, "type": None, "size": None}
+        return _tree_path_info(
+            lambda parent: self._tree_entries(studio_id, teamspace_id, parent, recursive=False),
+            path,
+        )
 
     def list_files(
         self,

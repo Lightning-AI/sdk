@@ -564,30 +564,15 @@ func (s *Studio) DownloadFolder(remotePath, targetPath string) error {
 		return err
 	}
 	remotePath = strings.Trim(remotePath, "/")
-	query := url.Values{"recursive": []string{"true"}}
-	for {
-		var tree artifactTreeResponse
-		if err := api.Do(context.Background(), http.MethodGet, studioArtifactTreePath(s.teamspaceID, s.id, remotePath), query, nil, &tree); err != nil {
-			return err
-		}
-		for _, item := range tree.Tree {
-			if item.Type != "blob" || item.Path == "" {
-				continue
-			}
-			remoteFilePath := item.Path
-			if remotePath != "" {
-				remoteFilePath = remotePath + "/" + strings.TrimLeft(item.Path, "/")
-			}
-			targetFilePath := filepath.Join(targetPath, filepath.FromSlash(item.Path))
-			if err := api.Download(context.Background(), studioArtifactBlobPath(s.teamspaceID, s.id, remoteFilePath), nil, targetFilePath); err != nil {
-				return err
-			}
-		}
-		if tree.NextCursor == "" {
-			return nil
-		}
-		query.Set("cursor", tree.NextCursor)
-	}
+	return downloadArtifactFolder(
+		api,
+		remotePath,
+		targetPath,
+		studioArtifactTreePath(s.teamspaceID, s.id, remotePath),
+		func(remoteFilePath string) string { return studioArtifactBlobPath(s.teamspaceID, s.id, remoteFilePath) },
+		url.Values{"recursive": []string{"true"}},
+		nil,
+	)
 }
 
 // UploadFile uploads a file to the studio.
