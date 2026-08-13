@@ -205,7 +205,9 @@ class _BlobUploader:
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
             )
         if r.status_code not in (200, 204):
-            raise RuntimeError(f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}")
+            reason = r.text.strip()[:300]
+            message = f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}"
+            raise RuntimeError(f"{message}: {reason}" if reason else message)
         return r
 
     def _create_upload(

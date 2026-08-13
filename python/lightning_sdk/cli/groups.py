@@ -192,6 +192,12 @@ def dataset() -> None:
 @click.argument("source")
 @click.argument("destination", required=False)
 @click.option("--recursive", "-r", is_flag=True, help="Copy directories recursively")
+@click.option(
+    "--cloud-account",
+    "cloud_account",
+    default=None,
+    help="Cloud account to store uploads on. Defaults to the teamspace default where one is needed.",
+)
 @click.pass_context
 def cp(_ctx: click.Context) -> None:
     """Copy between local, Studios, Drive.
