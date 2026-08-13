@@ -320,13 +320,25 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 				assert.Fail(t, fmt.Sprintf("unexpected tree query: %s", r.URL.RawQuery))
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{
-				"tree": []map[string]any{
-					{"path": "a.txt", "type": "blob", "size": 1},
-					{"path": "nested", "type": "tree"},
-					{"path": "nested/b.txt", "type": "blob", "size": 1},
-				},
-			})
+			// The listing is paginated: the first page ends with a cursor,
+			// the second page is the last.
+			if query.Get("cursor") == "" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "a.txt", "type": "blob", "size": 1},
+						{"path": "nested", "type": "tree"},
+					},
+					"nextCursor": "page-2",
+				})
+			} else if query.Get("cursor") == "page-2" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "nested/b.txt", "type": "blob", "size": 1},
+					},
+				})
+			} else {
+				assert.Fail(t, fmt.Sprintf("unexpected cursor: %q", query.Get("cursor")))
+			}
 		case "GET /v1/projects/project-1/artifacts/blobs/drive/a.txt":
 			query := r.URL.Query()
 			if query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1" {
@@ -365,6 +377,7 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 	want := []string{
 		"GET /v1/projects/project-1/artifacts/trees/drive?clusterId=cloud-1&recursive=true",
 		"GET /v1/projects/project-1/artifacts/blobs/drive/a.txt?clusterId=cloud-1",
+		"GET /v1/projects/project-1/artifacts/trees/drive?clusterId=cloud-1&cursor=page-2&recursive=true",
 		"GET /v1/projects/project-1/artifacts/blobs/drive/nested/b.txt?clusterId=cloud-1",
 	}
 	assert.Falsef(t, len(seen) != len(want),

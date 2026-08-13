@@ -761,14 +761,14 @@ def test_upload_file(
 )
 @mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_upload_file_uploads_prefix(
+def test_upload_file_uploads_paths_pass_through(
     auth_mock,
     requests_put_mock,
     requests_post_mock,
     tmpdir,
     remote_path,
 ):
-    """Paths under uploads/ go to the uploads-scoped endpoint, minus the prefix."""
+    """Paths under uploads/ pass through to the project scope verbatim; the server maps both spellings."""
     auth_instance = auth_mock.return_value
     auth_instance.api_key = "test-api-key"
     teamspace_api = _make_upload_teamspace_api()
@@ -777,15 +777,15 @@ def test_upload_file_uploads_prefix(
     subprocess.run(f"truncate -s 1MB {filepath}".split(" "))
 
     requests_post_mock.return_value = _blob_upload_create_response(
-        "file1", "", [{"url": "https://storage.example.com/signed"}]
+        remote_path, "", [{"url": "https://storage.example.com/signed"}]
     )
     requests_put_mock.return_value = mock.Mock(status_code=200)
 
     teamspace_api.upload_file("ts-abc", "cluster-abc", filepath, remote_path, progress_bar=False)
 
     create_call = requests_post_mock.call_args_list[0]
-    assert create_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/uploads/blobs"
-    assert create_call.kwargs["json"] == {"cluster_id": "cluster-abc", "blobs": [{"path": "file1"}]}
+    assert create_call.args[0] == "https://api.example.com/v1/projects/ts-abc/artifacts/blobs"
+    assert create_call.kwargs["json"] == {"cluster_id": "cluster-abc", "blobs": [{"path": remote_path}]}
 
 
 @pytest.mark.parametrize("progress_bar", [True, False])
@@ -1204,3 +1204,31 @@ def test_verify_secret_name(secret_name, expected):
     teamspace_api = TeamspaceApi()
     result = teamspace_api.verify_secret_name(secret_name)
     assert result == expected
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
+    """A truncated listing is followed page by page until nextCursor comes back empty."""
+    pages = [
+        {"tree": [{"path": "a.txt", "type": "blob"}], "truncated": True, "nextCursor": "cursor-1"},
+        {"tree": [{"path": "b.txt", "type": "blob"}], "truncated": False},
+    ]
+    responses = []
+    for page in pages:
+        resp = mock.MagicMock()
+        resp.json.return_value = page
+        responses.append(resp)
+    mock_requests_get.side_effect = responses
+
+    teamspace_api = TeamspaceApi()
+    result = teamspace_api.list_files("ts-abc", "big-folder")
+
+    assert [entry["path"] for entry in result] == ["a.txt", "b.txt"]
+    params = [call[1]["params"] for call in mock_requests_get.call_args_list]
+    assert "cursor" not in params[0]
+    assert params[1]["cursor"] == "cursor-1"

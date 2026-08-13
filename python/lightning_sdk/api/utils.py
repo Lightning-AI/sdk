@@ -5,6 +5,7 @@ import math
 import os
 import re
 import tempfile
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from enum import Enum
@@ -95,6 +96,59 @@ class _IterableFileWrapper:
 
     def __iter__(self) -> Iterator[Any]:
         return iter(self._wrapped)
+
+
+def _paged_tree_entries(fetch_page: Callable[[Dict[str, str]], Dict[str, Any]]) -> List[Dict]:
+    """All entries of a tree listing, following the cursor until the last page.
+
+    ``fetch_page`` performs one trees request, merging the given query
+    parameters into its own, and returns the parsed response.
+    """
+    entries: List[Dict] = []
+    cursor: Optional[str] = None
+    while True:
+        params: Dict[str, str] = {}
+        if cursor:
+            params["cursor"] = cursor
+        payload = fetch_page(params)
+        entries.extend(payload.get("tree", []))
+        cursor = payload.get("nextCursor")
+        if not cursor:
+            return entries
+
+
+def _tree_path_info(list_entries: Callable[[str], List[Dict]], path: str) -> dict:
+    """Existence, type, and size metadata for ``path``, from a listing of its parent.
+
+    ``list_entries`` lists the immediate children of a folder path.  Returns a
+    dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or
+    ``None``), and ``size`` (int bytes for files, ``None`` otherwise).
+    """
+    path = path.strip("/")
+    if path == "":
+        return {"exists": True, "type": "directory", "size": None}
+    parent_path, _, target_name = path.rpartition("/")
+
+    for item in list_entries(parent_path):
+        if item.get("path", "") == target_name:
+            item_type = item.get("type")
+            # if type == "blob" it's a file, if "tree" it's a directory
+            return {
+                "exists": True,
+                "type": "file" if item_type == "blob" else "directory",
+                "size": item.get("size", 0) if item_type == "blob" else None,
+            }
+    warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
+    return {"exists": False, "type": None, "size": None}
+
+
+class _RemoteApiError(RuntimeError):
+    """A filesystem-API request the server rejected, carrying the response details."""
+
+    def __init__(self, message: str, status_code: int, server_message: str = "") -> None:
+        super().__init__(message)
+        self.status_code = status_code
+        self.server_message = server_message
 
 
 class _BlobUploader:
@@ -205,7 +259,13 @@ class _BlobUploader:
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
             )
         if r.status_code not in (200, 204):
-            raise RuntimeError(f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}")
+            reason = r.text.strip()[:300]
+            message = f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}"
+            raise _RemoteApiError(
+                f"{message}: {reason}" if reason else message,
+                status_code=r.status_code,
+                server_message=reason,
+            )
         return r
 
     def _create_upload(

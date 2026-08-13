@@ -259,13 +259,25 @@ func TestStudioDownloadFolderUsesRecursiveTree(t *testing.T) {
 				assert.Fail(t, fmt.Sprintf("unexpected tree query: %s", r.URL.RawQuery))
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{
-				"tree": []map[string]any{
-					{"path": "a.txt", "type": "blob", "size": 1},
-					{"path": "nested", "type": "tree"},
-					{"path": "nested/b.txt", "type": "blob", "size": 1},
-				},
-			})
+			// The listing is paginated: the first page ends with a cursor,
+			// the second page is the last.
+			if query.Get("cursor") == "" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "a.txt", "type": "blob", "size": 1},
+						{"path": "nested", "type": "tree"},
+					},
+					"nextCursor": "page-2",
+				})
+			} else if query.Get("cursor") == "page-2" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "nested/b.txt", "type": "blob", "size": 1},
+					},
+				})
+			} else {
+				assert.Fail(t, fmt.Sprintf("unexpected cursor: %q", query.Get("cursor")))
+			}
 		case "GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/a.txt":
 			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
 				assert.Fail(t, fmt.Sprintf("download auth = %q, want Bearer token-1", auth))
@@ -302,6 +314,7 @@ func TestStudioDownloadFolderUsesRecursiveTree(t *testing.T) {
 	want := []string{
 		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote?recursive=true",
 		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/a.txt",
+		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote?cursor=page-2&recursive=true",
 		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/nested/b.txt",
 	}
 	assert.Falsef(t, len(seen) != len(want),

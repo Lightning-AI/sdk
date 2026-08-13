@@ -72,8 +72,6 @@ type ClientService interface {
 
 	UserServiceGetUserProfile(params *UserServiceGetUserProfileParams, opts ...ClientOption) (*UserServiceGetUserProfileOK, error)
 
-	UserServiceGetUserStorageBreakdown(params *UserServiceGetUserStorageBreakdownParams, opts ...ClientOption) (*UserServiceGetUserStorageBreakdownOK, error)
-
 	UserServiceListAffiliateLinks(params *UserServiceListAffiliateLinksParams, opts ...ClientOption) (*UserServiceListAffiliateLinksOK, error)
 
 	UserServiceListNotificationDialogs(params *UserServiceListNotificationDialogsParams, opts ...ClientOption) (*UserServiceListNotificationDialogsOK, error)
@@ -385,48 +383,6 @@ func (a *Client) UserServiceGetUserProfile(params *UserServiceGetUserProfilePara
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UserServiceGetUserProfileDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-UserServiceGetUserStorageBreakdown user service get user storage breakdown API
-*/
-func (a *Client) UserServiceGetUserStorageBreakdown(params *UserServiceGetUserStorageBreakdownParams, opts ...ClientOption) (*UserServiceGetUserStorageBreakdownOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewUserServiceGetUserStorageBreakdownParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "UserService_GetUserStorageBreakdown",
-		Method:             "GET",
-		PathPattern:        "/v1/users/storage/breakdown",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &UserServiceGetUserStorageBreakdownReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*UserServiceGetUserStorageBreakdownOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*UserServiceGetUserStorageBreakdownDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

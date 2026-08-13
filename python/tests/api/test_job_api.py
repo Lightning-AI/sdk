@@ -544,7 +544,7 @@ def test_warn_if_max_runtime_noop_silent_for_dws_machine():
     assert recorded == []
 
 
-def test_get_studio_name_returns_none_when_cloudspace_missing(mocker_auth):
+def test_get_studio_name_returns_none_when_cloudspace_missing():
     job_api = JobApiV2()
     job_api._client.cloud_space_service_get_cloud_space = mock.MagicMock(
         side_effect=ApiException(status=404, reason="Not Found")
@@ -555,6 +555,18 @@ def test_get_studio_name_returns_none_when_cloudspace_missing(mocker_auth):
     job_api._client.cloud_space_service_get_cloud_space.assert_called_once_with(
         project_id="ts-abc", id="deleted-studio"
     )
+
+
+def test_get_studio_name_reraises_non_404():
+    job_api = JobApiV2()
+    job_api._client.cloud_space_service_get_cloud_space = mock.MagicMock(
+        side_effect=ApiException(status=500, reason="Internal Server Error")
+    )
+    job = V1Job(project_id="ts-abc", spec=V1JobSpec(cloudspace_id="studio-abc"))
+
+    with pytest.raises(ApiException) as raised:
+        job_api.get_studio_name(job)
+    assert raised.value.status == 500
 
 
 def test_get_studio_name_caches_cloudspace_lookups(mocker_auth):

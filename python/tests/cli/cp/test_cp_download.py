@@ -5,13 +5,25 @@ import pytest
 from lightning_sdk.cli.cp import route_cp_operation
 
 
-def test_route_unsupported_resource_type():
-    """Test that unsupported resource type raises ValueError."""
-    with pytest.raises(ValueError, match="Resource type: unknown_resource is not supported"):
+@pytest.mark.parametrize("resource_type", ["studios", "r2_connections", "artifacts", "unknown_resource"])
+def test_route_cp_passes_any_resource_type_through(resource_type):
+    """Every resource type routes to the drive; the server decides what exists."""
+    mock_fs = MagicMock()
+    source = f"lit://my-org/my-teamspace/{resource_type}/data/model.ckpt"
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
         route_cp_operation(
-            source="lit://my-org/my-teamspace/unknown_resource/data/model.ckpt",
+            source=source,
             destination="/local/model.ckpt",
             recursive=False,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source=source,
+            destination="/local/model.ckpt",
+            recursive=False,
+            progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -68,6 +80,7 @@ def test_route_cp_download(resource_type, resource_name):
             destination=destination,
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -87,6 +100,7 @@ def test_route_cp_download_recursive(resource_type, resource_name):
             destination=destination,
             recursive=True,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -101,7 +115,7 @@ def test_route_cp_raises_if_both_remote(resource_type, resource_name):
 
 
 def test_route_cp_uploads_download():
-    """Test that uploads download replaces uploads/ with Uploads/."""
+    """Test that uploads download passes the source through unmodified."""
     mock_fs = MagicMock()
 
     with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
@@ -112,15 +126,16 @@ def test_route_cp_uploads_download():
         )
 
         mock_fs.copy.assert_called_once_with(
-            source="lit://my-org/my-teamspace/Uploads/data/model.ckpt",
+            source="lit://my-org/my-teamspace/uploads/data/model.ckpt",
             destination="/local/model.ckpt",
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
 def test_route_cp_uploads_download_recursive():
-    """Test that uploads download passes recursive=True with path rewriting."""
+    """Test that uploads download passes recursive=True through."""
     mock_fs = MagicMock()
 
     with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
@@ -131,15 +146,16 @@ def test_route_cp_uploads_download_recursive():
         )
 
         mock_fs.copy.assert_called_once_with(
-            source="lit://my-org/my-teamspace/Uploads/data/mydir",
+            source="lit://my-org/my-teamspace/uploads/data/mydir",
             destination="/local/mydir",
             recursive=True,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
-def test_route_cp_download_does_not_rewrite_non_uploads_paths_with_uploads_segment():
-    """Test that only uploads downloads apply the Uploads/ path rewrite."""
+def test_route_cp_download_passes_paths_with_uploads_segment_through():
+    """Test that a nested uploads segment in another namespace is left alone."""
     mock_fs = MagicMock()
     source = "lit://my-org/my-teamspace/lightning_storage/my-storage/uploads/model.ckpt"
 
@@ -155,6 +171,7 @@ def test_route_cp_download_does_not_rewrite_non_uploads_paths_with_uploads_segme
             destination="/local/model.ckpt",
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -175,6 +192,7 @@ def test_route_cp_download_canonicalizes_mixed_case_resource_type():
             destination="/local/model.ckpt",
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -194,6 +212,7 @@ def test_route_cp_lightning_storage_upload():
             destination="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -213,6 +232,7 @@ def test_route_cp_lightning_storage_upload_canonicalizes_mixed_case_resource_typ
             destination="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
             recursive=False,
             progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -233,4 +253,5 @@ def test_route_cp_lightning_storage_upload_passes_progress_bar():
             destination="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
             recursive=False,
             progress_bar=False,
+            cloud_account=None,
         )

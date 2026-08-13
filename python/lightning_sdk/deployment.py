@@ -667,9 +667,9 @@ class Deployment(metaclass=TrackCallsMeta):
 
         names = set(new_env)
         if partial:
-            kept = [entry for entry in current if entry.name not in names]
+            kept = [entry for entry in current if entry.env_var_name not in names]
         else:
-            kept = [entry for entry in current if isinstance(entry, Secret) and entry.name not in names]
+            kept = [entry for entry in current if isinstance(entry, Secret) and entry.env_var_name not in names]
         self.update(env=[*kept, *(Env(name=name, value=value) for name, value in new_env.items())])
 
     def delete_env(self, key: str) -> None:
@@ -689,6 +689,44 @@ class Deployment(metaclass=TrackCallsMeta):
         if not any(isinstance(entry, Env) and entry.name == key for entry in current):
             raise ValueError(f"Deployment environment variable {key!r} was not found.")
         self.update(env=[entry for entry in current if not (isinstance(entry, Env) and entry.name == key)])
+
+    def set_secret(self, secret_name: str, env_name: Optional[str] = None) -> None:
+        """Reference a teamspace secret as a Deployment environment variable.
+
+        Args:
+            secret_name: Name of the teamspace secret to inject.
+            env_name: Environment variable name to inject the secret under. Defaults to
+                the secret name.
+
+        Raises:
+            ValueError: If a name is invalid or the Deployment does not exist.
+        """
+        injected = env_name or secret_name
+        _validate_env_names({secret_name: "", injected: ""})
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+        kept = [entry for entry in current if entry.env_var_name != injected]
+        self.update(env=[*kept, Secret(name=secret_name, env_name=env_name)])
+
+    def delete_secret(self, env_name: str) -> None:
+        """Remove a teamspace secret reference from the Deployment.
+
+        Args:
+            env_name: Injected environment variable name of the secret reference to remove.
+
+        Raises:
+            ValueError: If the name is invalid, the Deployment does not exist, or no secret
+                is injected under that name.
+        """
+        _validate_env_names({env_name: ""})
+        current = self.env
+        if current is None:
+            raise ValueError("Deployment must exist before its environment can be changed.")
+        if not any(isinstance(entry, Secret) and entry.env_var_name == env_name for entry in current):
+            raise ValueError(f"Deployment secret {env_name!r} was not found.")
+        kept = [e for e in current if not (isinstance(e, Secret) and e.env_var_name == env_name)]
+        self.update(env=kept)
 
     @property
     def urls(self) -> Optional[List[str]]:

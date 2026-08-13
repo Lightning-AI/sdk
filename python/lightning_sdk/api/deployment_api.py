@@ -98,12 +98,28 @@ class Env:
         self.name = name
         self.value = value
 
+    @property
+    def env_var_name(self) -> str:
+        """The container environment variable name this entry occupies."""
+        return self.name
+
 
 class Secret:
-    """The Secret describes a protected environnement variable."""
+    """The Secret describes a protected environnement variable.
 
-    def __init__(self, name: str) -> None:
+    Args:
+        name: Name of the Lightning secret to read the value from.
+        env_name: Environment variable name to inject the secret under. Defaults to ``name``.
+    """
+
+    def __init__(self, name: str, env_name: Optional[str] = None) -> None:
         self.name = name
+        self.env_name = env_name
+
+    @property
+    def env_var_name(self) -> str:
+        """The container environment variable name this entry occupies."""
+        return self.env_name or self.name
 
 
 class Auth:
@@ -1316,7 +1332,10 @@ def restore_autoscale(autoscaling: V1AutoscalingSpec) -> AutoScaleConfig:
 
 
 def restore_env(env: List[V1EnvVar]) -> List[Union[Secret, Env]]:
-    return [Secret(name=e.from_secret) if e.from_secret else Env(name=e.name, value=e.value) for e in env]
+    return [
+        Secret(name=e.from_secret, env_name=e.name or None) if e.from_secret else Env(name=e.name, value=e.value)
+        for e in env
+    ]
 
 
 def to_env(env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None) -> Optional[List[V1EnvVar]]:
@@ -1332,7 +1351,9 @@ def to_env(env: Union[List[Union[Secret, Env]], Dict[str, str], None] = None) ->
         env_list = env
 
     return [
-        V1EnvVar(name=env.name, value=env.value) if isinstance(env, Env) else V1EnvVar(from_secret=env.name)
+        V1EnvVar(name=env.name, value=env.value)
+        if isinstance(env, Env)
+        else V1EnvVar(name=env.env_name, from_secret=env.name)
         for env in env_list
     ]
 

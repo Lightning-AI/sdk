@@ -6,6 +6,7 @@ import rich_click as click
 from lightning_sdk.api.deployment_api import Env, Secret
 from lightning_sdk.cli.utils.configuration import (
     deployment_environment_records,
+    deployment_secret_records,
     environment_records,
     parse_assignment,
     read_secret_value,
@@ -70,4 +71,14 @@ def test_configuration_records_are_sorted_and_never_expose_secrets():
     assert deployment_environment_records([Secret("TOKEN"), Env("DEBUG", "true")]) == [
         {"name": "DEBUG", "value": "true"},
         {"from_secret": "TOKEN", "name": "TOKEN"},
+    ]
+    # An aliased secret renders under its env var name, referencing the source secret.
+    assert deployment_environment_records([Secret("source_secret", env_name="ENV_ALIAS")]) == [
+        {"from_secret": "source_secret", "name": "ENV_ALIAS"},
+    ]
+    # Secret records drop literals and sort by injected env var name.
+    entries = [Secret("source_secret", env_name="ENV_ALIAS"), Env("DEBUG", "true"), Secret("A")]
+    assert deployment_secret_records(entries) == [
+        {"from_secret": "A", "name": "A"},
+        {"from_secret": "source_secret", "name": "ENV_ALIAS"},
     ]

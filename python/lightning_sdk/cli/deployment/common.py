@@ -68,7 +68,13 @@ def parse_env(env: Sequence[str], secrets: Sequence[str]) -> Optional[List[Union
         for key, env_value in _resolve_envs(value).items():
             result.append(Env(key, env_value))
     for secret in secrets:
-        if secret:
+        if not secret:
+            continue
+        env_name, sep, secret_name = secret.partition("=")
+        # ENV_NAME=secret_name injects the secret under a different env var name.
+        if sep and secret_name:
+            result.append(Secret(name=secret_name, env_name=env_name))
+        else:
             result.append(Secret(secret))
     return result or None
 
