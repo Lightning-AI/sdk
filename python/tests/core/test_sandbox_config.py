@@ -58,3 +58,35 @@ def test_sandbox_config_api_passes_through_config():
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_reject_legacy_org_id_config_is_noop_without_env():
     reject_legacy_org_id_config()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_importing_sandbox_module_tolerates_legacy_org_id_env(monkeypatch):
+    """Importing must not read the environment. LIGHTNING_ORG_ID is rejected, so reading
+    it at import time made every `lightning` CLI command fail in an environment that
+    sets it (a Lightning job does), because the CLI imports this module to register the
+    sandbox command group."""
+    monkeypatch.setenv("LIGHTNING_ORG_ID", "org-legacy")
+    import importlib
+
+    import lightning_sdk.sandbox.base as base
+
+    importlib.reload(base)  # stands in for a fresh interpreter importing the module
+
+    # ... but the rejection must still reach anyone actually reaching for a sandbox.
+    with pytest.raises(ValueError, match="LIGHTNING_ORG_ID is no longer supported"):
+        base._default_api()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_global_config_loads_env_on_first_use(monkeypatch):
+    monkeypatch.setenv("LIGHTNING_SANDBOX_API_KEY", "key-from-env")
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://env.unit")
+    import importlib
+
+    import lightning_sdk.sandbox.base as base
+
+    importlib.reload(base)
+
+    assert base._global_config().api_key == "key-from-env"
+    assert base._global_config().base_url == "https://env.unit"
