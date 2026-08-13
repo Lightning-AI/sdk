@@ -362,21 +362,24 @@ class JobApiV2:
         """
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
 
-    def get_logs_finished(self, job_id: str, teamspace_id: str) -> str:
+    def get_logs_finished(self, job_id: str, teamspace_id: str, timestamps: bool = False) -> str:
         """Download and return the completed log output for a v2 job.
 
         Args:
             job_id: The unique identifier of the job whose logs are fetched.
             teamspace_id: The ID of the teamspace that owns the job.
+            timestamps: Keep each line's ``[<RFC3339>] `` prefix instead of stripping it.
 
         Returns:
-            The decoded log text with datetime prefixes stripped.
+            The decoded log text, with datetime prefixes stripped unless ``timestamps``.
         """
         resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
             project_id=teamspace_id, id=job_id
         )
 
         data = urlopen(resp.url).read().decode("utf-8")
+        if timestamps:
+            return str(data)
         return remove_datetime_prefix(str(data))
 
     def stream_logs(
