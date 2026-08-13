@@ -1204,3 +1204,31 @@ def test_verify_secret_name(secret_name, expected):
     teamspace_api = TeamspaceApi()
     result = teamspace_api.verify_secret_name(secret_name)
     assert result == expected
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
+    """A truncated listing is followed page by page until nextCursor comes back empty."""
+    pages = [
+        {"tree": [{"path": "a.txt", "type": "blob"}], "truncated": True, "nextCursor": "cursor-1"},
+        {"tree": [{"path": "b.txt", "type": "blob"}], "truncated": False},
+    ]
+    responses = []
+    for page in pages:
+        resp = mock.MagicMock()
+        resp.json.return_value = page
+        responses.append(resp)
+    mock_requests_get.side_effect = responses
+
+    teamspace_api = TeamspaceApi()
+    result = teamspace_api.list_files("ts-abc", "big-folder")
+
+    assert [entry["path"] for entry in result] == ["a.txt", "b.txt"]
+    params = [call[1]["params"] for call in mock_requests_get.call_args_list]
+    assert "cursor" not in params[0]
+    assert params[1]["cursor"] == "cursor-1"

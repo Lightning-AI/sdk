@@ -1,24 +1,67 @@
 package lit
 
 import (
+	"context"
 	"errors"
+	"net/http"
+	"net/url"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/models"
+	"github.com/lightning-ai/sdk/go/internal/sdkclient"
 )
 
 var secretNamePattern = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
 
 type artifactTreeResponse struct {
 	Tree []artifactTreeItem `json:"tree"`
+	// NextCursor resumes the listing at the next page, as the "cursor"
+	// query parameter. Empty means this was the last page.
+	NextCursor string `json:"nextCursor"`
 }
 
 type artifactTreeItem struct {
 	Path string `json:"path"`
 	Type string `json:"type"`
 	Size int64  `json:"size"`
+}
+
+// downloadArtifactFolder downloads every file listed under treePath into
+// targetPath, following the listing's cursor pages. blobPath maps a listed
+// file's remote path to its blobs route. treeQuery gains the cursor between
+// pages; downloadQuery rides along on every file download.
+func downloadArtifactFolder(
+	api *sdkclient.RawClient,
+	remotePath, targetPath, treePath string,
+	blobPath func(remoteFilePath string) string,
+	treeQuery, downloadQuery url.Values,
+) error {
+	for {
+		var tree artifactTreeResponse
+		if err := api.Do(context.Background(), http.MethodGet, treePath, treeQuery, nil, &tree); err != nil {
+			return err
+		}
+		for _, item := range tree.Tree {
+			if item.Type != "blob" || item.Path == "" {
+				continue
+			}
+			remoteFilePath := strings.TrimLeft(item.Path, "/")
+			if remotePath != "" {
+				remoteFilePath = remotePath + "/" + remoteFilePath
+			}
+			targetFilePath := filepath.Join(targetPath, filepath.FromSlash(item.Path))
+			if err := api.Download(context.Background(), blobPath(remoteFilePath), downloadQuery, targetFilePath); err != nil {
+				return err
+			}
+		}
+		if tree.NextCursor == "" {
+			return nil
+		}
+		treeQuery.Set("cursor", tree.NextCursor)
+	}
 }
 
 func firstNonEmpty(values ...string) string {

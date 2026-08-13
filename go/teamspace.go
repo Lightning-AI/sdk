@@ -726,25 +726,15 @@ func (t *Teamspace) DownloadFolder(remotePath, targetPath string, cloudAccount .
 	remotePath = strings.Trim(remotePath, "/")
 	treeQuery := teamspaceArtifactQuery(cloudAccount...)
 	treeQuery.Set("recursive", "true")
-	var tree artifactTreeResponse
-	if err := api.Do(context.Background(), http.MethodGet, teamspaceArtifactTreePath(id, remotePath), treeQuery, nil, &tree); err != nil {
-		return err
-	}
-	downloadQuery := teamspaceArtifactQuery(cloudAccount...)
-	for _, item := range tree.Tree {
-		if item.Type != "blob" || item.Path == "" {
-			continue
-		}
-		remoteFilePath := strings.TrimLeft(item.Path, "/")
-		if remotePath != "" {
-			remoteFilePath = remotePath + "/" + remoteFilePath
-		}
-		targetFilePath := filepath.Join(targetPath, filepath.FromSlash(item.Path))
-		if err := api.Download(context.Background(), teamspaceArtifactBlobPath(id, remoteFilePath), downloadQuery, targetFilePath); err != nil {
-			return err
-		}
-	}
-	return nil
+	return downloadArtifactFolder(
+		api,
+		remotePath,
+		targetPath,
+		teamspaceArtifactTreePath(id, remotePath),
+		func(remoteFilePath string) string { return teamspaceArtifactBlobPath(id, remoteFilePath) },
+		treeQuery,
+		teamspaceArtifactQuery(cloudAccount...),
+	)
 }
 
 // UploadFile uploads a file into teamspace artifacts.

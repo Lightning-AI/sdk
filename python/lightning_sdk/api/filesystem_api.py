@@ -10,6 +10,7 @@ from lightning_sdk.api.utils import (
     _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
+    _paged_tree_entries,
     _raise_for_download_status,
     _RemoteApiError,
     _stream_download_to_file,
@@ -34,13 +35,23 @@ class FilesystemApi:
         """
         return self._client
 
-    def list_files(self, teamspace_id: str, path: str, recursive: bool = False) -> List[Dict]:
+    def list_files(
+        self,
+        teamspace_id: str,
+        path: str,
+        recursive: bool = False,
+        page_size: Optional[int] = None,
+    ) -> List[Dict]:
         """List artifact entries under ``path`` in the teamspace, optionally recursing into subdirectories.
+
+        Follows the listing's cursor until the last page, so large directories
+        come back complete rather than truncated.
 
         Args:
             teamspace_id: The teamspace that owns the artifacts.
             path: The artifact folder path to list.
             recursive: When ``True``, list files in all subdirectories recursively.
+            page_size: Entries to request per page; defaults to the server's page size.
 
         Returns:
             List[Dict]: A list of artifact entry dicts from the API tree response.
@@ -49,18 +60,21 @@ class FilesystemApi:
             RuntimeError: If the server returns a non-200 status code.
         """
         path = path.strip("/")
-        query_params = {"recursive": "false"}
-        if recursive:
-            query_params["recursive"] = "true"
 
-        r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
-            params=query_params,
-            headers=self._auth_headers,
-        )
-        if r.status_code != 200:
-            raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
-        return r.json().get("tree", [])
+        def fetch_page(query_params: Dict[str, str]) -> Dict:
+            query_params["recursive"] = "true" if recursive else "false"
+            if page_size is not None:
+                query_params["atMost"] = str(page_size)
+            r = requests.get(
+                f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
+                params=query_params,
+                headers=self._auth_headers,
+            )
+            if r.status_code != 200:
+                raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
+            return r.json()
+
+        return _paged_tree_entries(fetch_page)
 
     def upload_file(
         self,

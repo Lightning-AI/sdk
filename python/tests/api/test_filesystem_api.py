@@ -205,3 +205,36 @@ def test_list_files_raises_on_non_200(_authenticate_mock, _mock_auth, mock_reque
     filesystem_api = FilesystemApi()
     with pytest.raises(RuntimeError, match="Failed to list files: 404"):
         filesystem_api.list_files(teamspace_id="ts-abc", path="path/to/files")
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_list_files_follows_cursor_pages(_authenticate_mock, _mock_auth, mock_requests_get):
+    """A truncated listing is followed page by page until nextCursor comes back empty."""
+    pages = [
+        {"tree": [{"path": "a.txt"}], "truncated": True, "nextCursor": "cursor-1"},
+        {"tree": [{"path": "b.txt"}], "truncated": True, "nextCursor": "cursor-2"},
+        {"tree": [{"path": "c.txt"}], "truncated": False},
+    ]
+    responses = []
+    for page in pages:
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = page
+        responses.append(resp)
+    mock_requests_get.side_effect = responses
+
+    filesystem_api = FilesystemApi()
+    result = filesystem_api.list_files(teamspace_id="ts-abc", path="big-folder", recursive=True, page_size=1)
+
+    assert [entry["path"] for entry in result] == ["a.txt", "b.txt", "c.txt"]
+
+    params = [call[1]["params"] for call in mock_requests_get.call_args_list]
+    assert "cursor" not in params[0]
+    assert params[1]["cursor"] == "cursor-1"
+    assert params[2]["cursor"] == "cursor-2"
+    assert all(p["recursive"] == "true" and p["atMost"] == "1" for p in params)

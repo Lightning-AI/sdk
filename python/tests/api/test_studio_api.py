@@ -2248,3 +2248,31 @@ def test_remove_folder(
         mock_authenticate.assert_called_once_with()
 
     mock_get_path_info.assert_called_once_with(mock.ANY, "st-abc", "ts-abc", path=path)
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.studio_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
+    """A truncated listing is followed page by page until nextCursor comes back empty."""
+    pages = [
+        {"tree": [{"path": "a.txt", "type": "blob"}], "truncated": True, "nextCursor": "cursor-1"},
+        {"tree": [{"path": "b.txt", "type": "blob"}], "truncated": False},
+    ]
+    responses = []
+    for page in pages:
+        resp = mock.MagicMock()
+        resp.json.return_value = page
+        responses.append(resp)
+    mock_requests_get.side_effect = responses
+
+    studio_api = StudioApi()
+    result = studio_api.list_files("st-abc", "ts-abc", "big-folder")
+
+    assert [entry["path"] for entry in result] == ["a.txt", "b.txt"]
+    params = [call[1]["params"] for call in mock_requests_get.call_args_list]
+    assert "cursor" not in params[0]
+    assert params[1]["cursor"] == "cursor-1"
