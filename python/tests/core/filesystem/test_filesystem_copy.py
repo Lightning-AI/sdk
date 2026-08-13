@@ -339,18 +339,19 @@ _CLUSTER_REQUIRED_ERROR = _RemoteApiError(
 )
 
 
-def test_copy_upload_falls_back_to_teamspace_default_cloud_account(tmp_path, fake_teamspace):
+def test_copy_upload_falls_back_to_resolved_cloud_account(tmp_path, fake_teamspace):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace.default_cloud_account = "default-cluster"
+    fake_teamspace._teamspace_api._determine_cloud_account.return_value = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []
     fs._filesystem_api.upload_file.side_effect = [_CLUSTER_REQUIRED_ERROR, None]
 
-    with patches[0], patches[1], pytest.warns(UserWarning, match="default cloud account: default-cluster"):
+    with patches[0], patches[1], pytest.warns(UserWarning, match="cloud account: default-cluster"):
         fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv")
 
+    fake_teamspace._teamspace_api._determine_cloud_account.assert_called_once_with(fake_teamspace.id)
     accounts = [call.kwargs["cloud_account"] for call in fs._filesystem_api.upload_file.call_args_list]
     assert accounts == [None, "default-cluster"]
 
@@ -358,7 +359,7 @@ def test_copy_upload_falls_back_to_teamspace_default_cloud_account(tmp_path, fak
 def test_copy_upload_directory_reuses_fallback_cloud_account(tmp_path, fake_teamspace):
     (tmp_path / "a.csv").write_bytes(b"a")
     (tmp_path / "b.csv").write_bytes(b"b")
-    fake_teamspace.default_cloud_account = "default-cluster"
+    fake_teamspace._teamspace_api._determine_cloud_account.return_value = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/dest")
     fs._filesystem_api.upload_file.side_effect = [_CLUSTER_REQUIRED_ERROR, None, None]
@@ -373,7 +374,6 @@ def test_copy_upload_directory_reuses_fallback_cloud_account(tmp_path, fake_team
 def test_copy_upload_does_not_retry_other_errors(tmp_path, fake_teamspace):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace.default_cloud_account = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []
@@ -390,7 +390,6 @@ def test_copy_upload_does_not_retry_other_errors(tmp_path, fake_teamspace):
 def test_copy_upload_does_not_second_guess_an_explicit_cloud_account(tmp_path, fake_teamspace):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace.default_cloud_account = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []
@@ -402,10 +401,12 @@ def test_copy_upload_does_not_second_guess_an_explicit_cloud_account(tmp_path, f
     assert fs._filesystem_api.upload_file.call_count == 1
 
 
-def test_copy_upload_errors_helpfully_when_no_default_cloud_account(tmp_path, fake_teamspace):
+def test_copy_upload_errors_helpfully_when_no_cloud_account_resolves(tmp_path, fake_teamspace):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace.default_cloud_account = None
+    fake_teamspace._teamspace_api._determine_cloud_account.side_effect = RuntimeError(
+        "Could not determine the current cloud account. Please provide it manually as input."
+    )
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []

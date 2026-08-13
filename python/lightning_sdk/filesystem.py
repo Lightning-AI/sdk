@@ -98,7 +98,9 @@ class Filesystem(metaclass=TrackCallsMeta):
                 is a remote directory or a local directory.
             progress_bar: Whether to display an upload/download progress bar.
             cloud_account: Cloud account to store uploads on.  Some destinations require
-                one (e.g. ``uploads/``); others pick their own storage.
+                one (e.g. ``uploads/``); others pick their own storage.  When omitted,
+                resolves to the current cloud account (``LIGHTNING_CLUSTER_ID``), the
+                teamspace's only cloud account, or its default, in that order.
 
         Raises:
             ValueError: If both paths are remote, neither path is remote, the remote file does
@@ -211,10 +213,10 @@ class Filesystem(metaclass=TrackCallsMeta):
         progress_bar: bool,
         cloud_account: Optional[str],
     ) -> Optional[str]:
-        """Upload one file, deferring to the teamspace default cloud account when the server asks for one.
+        """Upload one file, resolving a cloud account when the server asks for one.
 
         Some destinations need a cloud account to store the file on, and the server
-        names that demand in its rejection; retry with the teamspace default rather
+        names that demand in its rejection; retry with the resolved account rather
         than making callers know which destinations those are.  Returns the cloud
         account to reuse for the remaining files of the same copy.
         """
@@ -233,21 +235,22 @@ class Filesystem(metaclass=TrackCallsMeta):
             cluster_demanded = e.status_code == 400 and "ClusterID" in e.server_message
             if cloud_account is not None or not cluster_demanded:
                 raise
-            default = getattr(teamspace, "default_cloud_account", None)
-            if not default:
+            try:
+                resolved = teamspace._teamspace_api._determine_cloud_account(teamspace.id)
+            except RuntimeError as resolve_error:
                 raise RuntimeError(
-                    f"A cloud account is required to upload to {remote_path!r} and the teamspace "
-                    "has no default. Pass cloud_account to pick one."
+                    f"A cloud account is required to upload to {remote_path!r}. "
+                    f"Pass cloud_account to pick one. ({resolve_error})"
                 ) from e
-            warnings.warn(f"No cloud account specified. Using teamspace default cloud account: {default}.")
+            warnings.warn(f"No cloud account specified. Using cloud account: {resolved}.")
             self._filesystem_api.upload_file(
                 teamspace_id=teamspace.id,
                 file_path=file_path,
                 remote_path=remote_path,
                 progress_bar=progress_bar,
-                cloud_account=default,
+                cloud_account=resolved,
             )
-            return default
+            return resolved
 
     def _is_remote_directory(self, teamspace_id: str, remote_path: str) -> bool:
         """Whether ``remote_path`` names an existing remote directory.
