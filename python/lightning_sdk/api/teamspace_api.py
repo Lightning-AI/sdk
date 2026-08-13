@@ -663,6 +663,20 @@ class TeamspaceApi:
         )
         return r.json()
 
+    def _tree_entries(self, teamspace_id: str, path: str, recursive: bool) -> List[Dict]:
+        """All entries under ``path``, following the listing's cursor until the last page."""
+        entries: List[Dict] = []
+        cursor: Optional[str] = None
+        while True:
+            query_params = {"recursive": "true"} if recursive else {}
+            if cursor:
+                query_params["cursor"] = cursor
+            payload = self.get_tree(teamspace_id, path, query_params=query_params)
+            entries.extend(payload.get("tree", []))
+            cursor = payload.get("nextCursor")
+            if not cursor:
+                return entries
+
     def get_path_info(self, teamspace_id: str, path: str = "") -> dict:
         """Return existence, type, and size metadata for an artifact path.
 
@@ -686,9 +700,7 @@ class TeamspaceApi:
             parent_path = ""
             target_name = path
 
-        tree = self.get_tree(teamspace_id, path=parent_path)
-        tree_items = tree.get("tree", [])
-        for item in tree_items:
+        for item in self._tree_entries(teamspace_id, parent_path, recursive=False):
             item_name = item.get("path", "")
             if item_name == target_name:
                 item_type = item.get("type")
@@ -715,8 +727,7 @@ class TeamspaceApi:
         Returns:
             List of file-info dicts from the recursive tree response.
         """
-        path = path.strip("/")
-        return self.get_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
+        return self._tree_entries(teamspace_id, path.strip("/"), recursive=True)
 
     def upload_file(
         self,

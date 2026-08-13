@@ -13,6 +13,9 @@ var secretNamePattern = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
 
 type artifactTreeResponse struct {
 	Tree []artifactTreeItem `json:"tree"`
+	// NextCursor resumes the listing at the next page, as the "cursor"
+	// query parameter. Empty means this was the last page.
+	NextCursor string `json:"nextCursor"`
 }
 
 type artifactTreeItem struct {
