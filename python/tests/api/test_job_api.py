@@ -567,3 +567,30 @@ def test_get_studio_name_reraises_non_404():
     with pytest.raises(ApiException) as raised:
         job_api.get_studio_name(job)
     assert raised.value.status == 500
+
+
+def test_get_studio_name_caches_cloudspace_lookups(mocker_auth):
+    job_api_a = JobApiV2()
+    job_api_b = JobApiV2()
+    cs = mock.MagicMock()
+    cs.name = "studio-a"
+    get_cs = mock.MagicMock(return_value=cs)
+    job_api_a._client.cloud_space_service_get_cloud_space = get_cs
+    job = V1Job(project_id="ts-abc", spec=V1JobSpec(cloudspace_id="cs-1"))
+
+    assert job_api_a.get_studio_name(job) == "studio-a"
+    assert job_api_b.get_studio_name(job) == "studio-a"
+    assert get_cs.call_count == 1
+    assert JobApiV2._cached_studio_name.cache_info().hits == 1
+
+
+def test_machine_from_spec_skips_accelerator_lookup_for_known_slug():
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock()
+
+    machine = job_api._get_job_machine_from_spec(
+        V1JobSpec(instance_name="lit-t4-4", cluster_id="c-abc"), "ts-abc", "org-abc"
+    )
+
+    assert machine == Machine.T4_X_4
+    job_api._get_machines_for_cloud_account.assert_not_called()

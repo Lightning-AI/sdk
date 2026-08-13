@@ -144,6 +144,30 @@ class Machine:
         return self.family in ("CPU", "DATA_PREP")
 
     @classmethod
+    def _predefined_from_str(cls, machine: Optional[str], *additional_machine_ids: Any) -> Optional["Machine"]:
+        """Return the predefined machine matching any of the identifiers, or ``None`` if unknown.
+
+        Args:
+            machine: Primary machine identifier (name, slug, or instance type).
+            *additional_machine_ids: Extra identifiers to try when the primary does not match.
+
+        Returns:
+            Machine: The matching predefined machine, or ``None`` when no attribute matches.
+        """
+        possible_values: Tuple["Machine", ...] = tuple(
+            [machine for machine in cls.__dict__.values() if isinstance(machine, cls)]
+        )
+        for m in possible_values:
+            for machine_id in [machine, *additional_machine_ids]:
+                if machine_id and machine_id in (
+                    getattr(m, "name", None),
+                    getattr(m, "instance_type", None),
+                    getattr(m, "slug", None),
+                ):
+                    return m
+        return None
+
+    @classmethod
     def from_str(cls, machine: str, *additional_machine_ids: Any) -> "Machine":
         """Resolve a machine from one or more string identifiers.
 
@@ -157,17 +181,9 @@ class Machine:
         Returns:
             Machine: The resolved or constructed machine instance.
         """
-        possible_values: Tuple["Machine", ...] = tuple(
-            [machine for machine in cls.__dict__.values() if isinstance(machine, cls)]
-        )
-        for m in possible_values:
-            for machine_id in [machine, *additional_machine_ids]:
-                if machine_id and machine_id in (
-                    getattr(m, "name", None),
-                    getattr(m, "instance_type", None),
-                    getattr(m, "slug", None),
-                ):
-                    return m
+        predefined = cls._predefined_from_str(machine, *additional_machine_ids)
+        if predefined is not None:
+            return predefined
 
         if additional_machine_ids:
             return cls(machine, *additional_machine_ids)
