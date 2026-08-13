@@ -97,6 +97,15 @@ class _IterableFileWrapper:
         return iter(self._wrapped)
 
 
+class _RemoteApiError(RuntimeError):
+    """A filesystem-API request the server rejected, carrying the response details."""
+
+    def __init__(self, message: str, status_code: int, server_message: str = "") -> None:
+        super().__init__(message)
+        self.status_code = status_code
+        self.server_message = server_message
+
+
 class _BlobUploader:
     """Uploads a single file via the batch blob-upload endpoints.
 
@@ -207,7 +216,11 @@ class _BlobUploader:
         if r.status_code not in (200, 204):
             reason = r.text.strip()[:300]
             message = f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}"
-            raise RuntimeError(f"{message}: {reason}" if reason else message)
+            raise _RemoteApiError(
+                f"{message}: {reason}" if reason else message,
+                status_code=r.status_code,
+                server_message=reason,
+            )
         return r
 
     def _create_upload(

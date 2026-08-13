@@ -11,6 +11,7 @@ from lightning_sdk.api.utils import (
     _BlobUploader,
     _collect_download_results,
     _raise_for_download_status,
+    _RemoteApiError,
     _stream_download_to_file,
     cached_lightning_client,
 )
@@ -58,7 +59,7 @@ class FilesystemApi:
             headers=self._auth_headers,
         )
         if r.status_code != 200:
-            raise RuntimeError(f"Failed to list files: {r.status_code}")
+            raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
         return r.json().get("tree", [])
 
     def upload_file(

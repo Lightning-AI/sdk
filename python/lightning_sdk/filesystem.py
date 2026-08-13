@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Generator, List, Optional, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
+from lightning_sdk.api.utils import _RemoteApiError
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.filesystem import parse_lit_url
@@ -123,9 +124,9 @@ class Filesystem(metaclass=TrackCallsMeta):
             parent = os.path.dirname(remote_path.strip("/"))
             try:
                 entries = self._filesystem_api.list_files(selected_teamspace.id, parent, recursive=False)
-            except RuntimeError as e:
-                # An unlistable parent means the path can't exist either.
-                if "404" not in str(e):
+            except _RemoteApiError as e:
+                # A missing parent means the path can't exist either.
+                if e.status_code != 404:
                     raise
                 raise ValueError(f"File {remote_path} does not exist in teamspace {selected_teamspace.name}") from e
             found = False
@@ -226,10 +227,18 @@ class Filesystem(metaclass=TrackCallsMeta):
                 cloud_account=cloud_account,
             )
             return cloud_account
-        except RuntimeError as e:
-            default = None if cloud_account else getattr(teamspace, "default_cloud_account", None)
-            if not default or "require a ClusterID" not in str(e):
+        except _RemoteApiError as e:
+            # The server has no structured error codes yet, so its message is
+            # the only way to recognize the demand.
+            cluster_demanded = e.status_code == 400 and "ClusterID" in e.server_message
+            if cloud_account is not None or not cluster_demanded:
                 raise
+            default = getattr(teamspace, "default_cloud_account", None)
+            if not default:
+                raise RuntimeError(
+                    f"A cloud account is required to upload to {remote_path!r} and the teamspace "
+                    "has no default. Pass cloud_account to pick one."
+                ) from e
             warnings.warn(f"No cloud account specified. Using teamspace default cloud account: {default}.")
             self._filesystem_api.upload_file(
                 teamspace_id=teamspace.id,

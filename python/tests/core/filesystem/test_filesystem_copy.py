@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.utils import _RemoteApiError
 from lightning_sdk.filesystem import Filesystem
 
 TEAMSPACE_ID = "ts-123"
@@ -330,9 +331,11 @@ def test_copy_upload_missing_local_path_raises(fake_teamspace):
         fs.copy("does/not/exist", "lit://my-org/my-teamspace/lightning_storage/my-storage/file.txt")
 
 
-_CLUSTER_REQUIRED_ERROR = RuntimeError(
+_CLUSTER_REQUIRED_ERROR = _RemoteApiError(
     "Failed to request upload URLs for 'uploads/data.csv'. Status code: 400: "
-    '{"error":"drive: invalid request: uploads require a ClusterID"}'
+    '{"error":"drive: invalid request: uploads require a ClusterID"}',
+    status_code=400,
+    server_message='{"error":"drive: invalid request: uploads require a ClusterID"}',
 )
 
 
@@ -374,7 +377,9 @@ def test_copy_upload_does_not_retry_other_errors(tmp_path, fake_teamspace):
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []
-    fs._filesystem_api.upload_file.side_effect = RuntimeError("Failed to upload. Status code: 500")
+    fs._filesystem_api.upload_file.side_effect = _RemoteApiError(
+        "Failed to upload. Status code: 500", status_code=500, server_message="internal error"
+    )
 
     with patches[0], patches[1], pytest.raises(RuntimeError, match="500"):
         fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv")
@@ -395,3 +400,24 @@ def test_copy_upload_does_not_second_guess_an_explicit_cloud_account(tmp_path, f
         fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv", cloud_account="my-cluster")
 
     assert fs._filesystem_api.upload_file.call_count == 1
+
+
+def test_copy_upload_errors_helpfully_when_no_default_cloud_account(tmp_path, fake_teamspace):
+    local = tmp_path / "data.csv"
+    local.write_bytes(b"x")
+    fake_teamspace.default_cloud_account = None
+
+    fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
+    fs._filesystem_api.list_files.return_value = []
+    fs._filesystem_api.upload_file.side_effect = _CLUSTER_REQUIRED_ERROR
+
+    with patches[0], patches[1], pytest.raises(RuntimeError, match="Pass cloud_account"):
+        fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv")
+
+
+def test_copy_download_maps_missing_parent_to_does_not_exist(fake_teamspace):
+    fs, patches = _upload_fs(fake_teamspace, "r2_connections/nope/file.txt")
+    fs._filesystem_api.list_files.side_effect = _RemoteApiError("Failed to list files: 404", status_code=404)
+
+    with patches[0], patches[1], pytest.raises(ValueError, match="does not exist in teamspace"):
+        fs.copy("lit://my-org/my-teamspace/r2_connections/nope/file.txt", "/tmp/out")
