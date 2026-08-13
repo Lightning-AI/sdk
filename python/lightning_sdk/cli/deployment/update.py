@@ -32,7 +32,12 @@ from lightning_sdk.deployment import Deployment
 @click.option("--port", "ports", multiple=True, type=float, help="Replacement exposed port. Can be repeated.")
 @click.option("--cloud", help="New cloud provider or cloud account to run replicas on.")
 @click.option("--env", "-e", multiple=True, default=[""], help="Replacement env var in KEY=VALUE or JSON format.")
-@click.option("--secret", multiple=True, help="Replacement secret name to expose as an environment variable.")
+@click.option(
+    "--secret",
+    multiple=True,
+    help="Replacement secret to expose as an environment variable. Use SECRET to inject under the secret name, "
+    "or ENV_NAME=SECRET to inject under a different env var name.",
+)
 @click.option("--interruptible/--no-interruptible", default=None, help="Whether to use interruptible instances.")
 @click.option("--quantity", type=int, help="New number of machines per replica.")
 @click.option("--include-credentials/--no-include-credentials", default=None, help="Inject SDK credentials.")

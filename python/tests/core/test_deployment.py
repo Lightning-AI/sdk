@@ -159,6 +159,75 @@ def test_deployment_env_mutations_reject_missing_invalid_and_uncreated():
     deployment.update.assert_not_called()
 
 
+def test_deployment_set_secret_appends_reference_and_supports_alias():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+    current = [Env("KEEP", "yes"), Secret("TOKEN")]
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.set_secret("SERVICE_A_GCP", env_name="GCP_JSON")
+
+    entries = deployment.update.call_args.kwargs["env"]
+    added = entries[-1]
+    assert isinstance(added, Secret)
+    assert (added.name, added.env_var_name) == ("SERVICE_A_GCP", "GCP_JSON")
+    assert [e.env_var_name for e in entries[:-1]] == ["KEEP", "TOKEN"]
+
+
+def test_deployment_set_secret_replaces_entry_sharing_injected_name():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+    current = [Secret("OLD", env_name="GCP_JSON"), Secret("KEEP")]
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.set_secret("NEW", env_name="GCP_JSON")
+
+    entries = deployment.update.call_args.kwargs["env"]
+    assert [(e.name, e.env_var_name) for e in entries] == [("KEEP", "KEEP"), ("NEW", "GCP_JSON")]
+
+
+def test_deployment_delete_secret_matches_injected_name():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+    current = [Secret("SERVICE_A_GCP", env_name="GCP_JSON"), Secret("TOKEN"), Env("GCP_JSON", "literal")]
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=current):
+        deployment.delete_secret("GCP_JSON")
+
+    entries = deployment.update.call_args.kwargs["env"]
+    assert [(type(e).__name__, e.env_var_name) for e in entries] == [("Secret", "TOKEN"), ("Env", "GCP_JSON")]
+
+
+def test_deployment_secret_mutations_reject_missing_invalid_and_uncreated():
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment.update = MagicMock()
+
+    with patch.object(
+        deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=[Env("GCP_JSON", "literal")]
+    ), pytest.raises(ValueError, match="Deployment secret 'GCP_JSON' was not found"):
+        deployment.delete_secret("GCP_JSON")
+
+    with patch.object(
+        deployment_module.Deployment,
+        "env",
+        new_callable=PropertyMock,
+        side_effect=AssertionError("environment should not be read"),
+    ):
+        for invalid_name in ("", "2_NAME", "INVALID-NAME"):
+            with pytest.raises(ValueError, match="Environment variable names must start"):
+                deployment.set_secret(invalid_name)
+            with pytest.raises(ValueError, match="Environment variable names must start"):
+                deployment.delete_secret(invalid_name)
+
+    with patch.object(deployment_module.Deployment, "env", new_callable=PropertyMock, return_value=None):
+        with pytest.raises(ValueError, match="Deployment must exist before its environment can be changed"):
+            deployment.set_secret("TOKEN")
+        with pytest.raises(ValueError, match="Deployment must exist before its environment can be changed"):
+            deployment.delete_secret("TOKEN")
+
+    deployment.update.assert_not_called()
+
+
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 @patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
 def test_unstarted_deployment_id_is_none(monkeypatch):
@@ -478,6 +547,30 @@ def test_to_env():
 
     env = deployment_api_module.to_env([Env("key", "value"), Secret("secret")])
     assert env == [V1EnvVar(name="key", value="value"), V1EnvVar(from_secret="secret")]
+
+    # A secret injected under a different env var name (alias) sets both fields.
+    env = deployment_api_module.to_env([Secret("source_secret", env_name="ENV_ALIAS")])
+    assert env == [V1EnvVar(name="ENV_ALIAS", from_secret="source_secret")]
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
+def test_restore_env_preserves_secret_alias():
+    restored = deployment_api_module.restore_env(
+        [
+            V1EnvVar(name="key", value="value"),
+            V1EnvVar(from_secret="plain_secret"),
+            V1EnvVar(name="ENV_ALIAS", from_secret="source_secret"),
+        ]
+    )
+    assert isinstance(restored[0], Env)
+    assert (restored[0].name, restored[0].value) == ("key", "value")
+    # No alias round-trips back to a bare Secret.
+    assert isinstance(restored[1], Secret)
+    assert (restored[1].name, restored[1].env_name) == ("plain_secret", None)
+    # An alias is preserved as env_name.
+    assert isinstance(restored[2], Secret)
+    assert (restored[2].name, restored[2].env_name) == ("source_secret", "ENV_ALIAS")
 
 
 def test_to_env_distinguishes_no_change_from_clear():
@@ -800,6 +893,36 @@ def test_deployment_update(monkeypatch):
     assert readiness_probe.http_get.port == 8000
     assert deployment.entrypoint == "new_entrypoint"
     assert deployment.command == "python server2.py"
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+@patch("lightning_sdk.deployment.login.Auth", new=MagicMock())
+def test_deployment_update_injects_secret_alias(monkeypatch):
+    monkeypatch.setattr(deployment_module, "User", MagicMock())
+    monkeypatch.setattr(user, "UserApi", MagicMock())
+
+    teamspace_mock = MagicMock()
+    teamspace_mock.id = "project_id"
+    monkeypatch.setattr(deployment_module, "_resolve_teamspace", MagicMock(return_value=teamspace_mock))
+
+    client = MagicMock()
+    client.jobs_service_get_deployment_by_name.return_value = V1Deployment(
+        name="ollama",
+        spec=V1JobSpec(),
+        endpoint=V1Endpoint(),
+        strategy=None,
+        release_id="release-id",
+    )
+    monkeypatch.setattr(api_utils_module, "LightningClient", MagicMock(return_value=client))
+
+    deployment = deployment_module.Deployment(name="ollama")
+    deployment.update(
+        env=[Secret("source_secret", env_name="ENV_ALIAS")],
+        release_strategy=deployment_api_module.RollingUpdateReleaseStrategy(),
+    )
+
+    spec = client.jobs_service_update_deployment._mock_mock_calls[0].kwargs["body"].spec
+    assert spec.env == [V1EnvVar(name="ENV_ALIAS", from_secret="source_secret")]
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
