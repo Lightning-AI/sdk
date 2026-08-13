@@ -62,8 +62,6 @@ def route_cp_operation(source: str, destination: Optional[str], **options: Any) 
             or resource_type == "gcs_connections"
         ):
             fs = Filesystem()
-            if resource_type == "uploads":
-                source = source.replace("uploads/", "Uploads/")
             return fs.copy(
                 source=source,
                 destination=destination,

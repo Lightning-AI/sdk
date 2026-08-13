@@ -101,7 +101,7 @@ def test_route_cp_raises_if_both_remote(resource_type, resource_name):
 
 
 def test_route_cp_uploads_download():
-    """Test that uploads download replaces uploads/ with Uploads/."""
+    """Test that uploads download passes the source through unmodified."""
     mock_fs = MagicMock()
 
     with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
@@ -112,7 +112,7 @@ def test_route_cp_uploads_download():
         )
 
         mock_fs.copy.assert_called_once_with(
-            source="lit://my-org/my-teamspace/Uploads/data/model.ckpt",
+            source="lit://my-org/my-teamspace/uploads/data/model.ckpt",
             destination="/local/model.ckpt",
             recursive=False,
             progress_bar=True,
@@ -120,7 +120,7 @@ def test_route_cp_uploads_download():
 
 
 def test_route_cp_uploads_download_recursive():
-    """Test that uploads download passes recursive=True with path rewriting."""
+    """Test that uploads download passes recursive=True through."""
     mock_fs = MagicMock()
 
     with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
@@ -131,15 +131,15 @@ def test_route_cp_uploads_download_recursive():
         )
 
         mock_fs.copy.assert_called_once_with(
-            source="lit://my-org/my-teamspace/Uploads/data/mydir",
+            source="lit://my-org/my-teamspace/uploads/data/mydir",
             destination="/local/mydir",
             recursive=True,
             progress_bar=True,
         )
 
 
-def test_route_cp_download_does_not_rewrite_non_uploads_paths_with_uploads_segment():
-    """Test that only uploads downloads apply the Uploads/ path rewrite."""
+def test_route_cp_download_passes_paths_with_uploads_segment_through():
+    """Test that a nested uploads segment in another namespace is left alone."""
     mock_fs = MagicMock()
     source = "lit://my-org/my-teamspace/lightning_storage/my-storage/uploads/model.ckpt"
 

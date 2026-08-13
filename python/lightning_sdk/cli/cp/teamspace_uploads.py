@@ -21,7 +21,7 @@ def cp_upload(
 
     teamspace_path_result = parse_teamspace_uploads_path(teamspace_path)
 
-    teamspace_path_result["destination"] = path_join("Uploads", teamspace_path_result["destination"])
+    teamspace_path_result["destination"] = path_join("uploads", teamspace_path_result["destination"])
 
     selected_teamspace = resolve_teamspace(teamspace_path_result["teamspace"], teamspace_path_result["owner"])
     console.print(f"Uploading to {selected_teamspace.owner.name}/{selected_teamspace.name}")
