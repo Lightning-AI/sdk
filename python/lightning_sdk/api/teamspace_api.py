@@ -371,6 +371,7 @@ class TeamspaceApi:
         return self._client.models_store_create_model_version(
             body=ModelsStoreCreateModelVersionBody(
                 cluster_id=cloud_account,
+                metadata=metadata,
                 version=version,
                 metrics_stream_id=experiment_id,
             ),

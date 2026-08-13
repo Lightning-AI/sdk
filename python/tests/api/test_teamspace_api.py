@@ -257,7 +257,9 @@ def test_create_delete_model_version():
     teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._client.models_store_create_model_version.assert_called_with(
         project_id="ts-abc",
-        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv", metrics_stream_id=None),
+        body=ModelsStoreCreateModelVersionBody(
+            cluster_id="cluster-abc", metadata={}, version="vVv", metrics_stream_id=None
+        ),
         model_id="model-id",
     )
 
@@ -302,7 +304,9 @@ def test_create_delete_model_version_with_experiment():
     teamspace_api._client.models_store_list_models.assert_called_with(project_id="ts-abc", name="model-name")
     teamspace_api._client.models_store_create_model_version.assert_called_with(
         project_id="ts-abc",
-        body=ModelsStoreCreateModelVersionBody(cluster_id="cluster-abc", version="vVv", metrics_stream_id="exp-abc"),
+        body=ModelsStoreCreateModelVersionBody(
+            cluster_id="cluster-abc", metadata={}, version="vVv", metrics_stream_id="exp-abc"
+        ),
         model_id="model-id",
     )
 
@@ -1232,3 +1236,30 @@ def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
     params = [call[1]["params"] for call in mock_requests_get.call_args_list]
     assert "cursor" not in params[0]
     assert params[1]["cursor"] == "cursor-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_create_model_version_keeps_metadata():
+    """Metadata must reach every version, not just the first.
+
+    A new version of an existing model takes the create_model_version path, which used
+    to drop `metadata` silently — so v1 carried a model card and every later version
+    stored nothing, with no error, warning or return-value hint.
+    """
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.MagicMock(
+        models_store_list_models=mock.MagicMock(return_value=mock.MagicMock(models=[mock.MagicMock(id="model-id")])),
+        models_store_create_model_version=mock.MagicMock(
+            return_value=mock.MagicMock(model_id="model-id", version="v2")
+        ),
+    )
+    teamspace_api.create_model(
+        teamspace_id="ts-abc",
+        name="model-name",
+        version="v2",
+        metadata={"accuracy": "0.81", "notes": "3 epochs"},
+        private=True,
+        cloud_account="cluster-abc",
+    )
+    body = teamspace_api._client.models_store_create_model_version.call_args.kwargs["body"]
+    assert body.metadata == {"accuracy": "0.81", "notes": "3 epochs"}
