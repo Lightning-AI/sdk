@@ -40,7 +40,7 @@ def test_mmt_inspect_uses_name_option() -> None:
 
     teamspace = MagicMock()
     mmt = MagicMock()
-    mmt.json.return_value = '{"name":"distributed"}'
+    mmt.dict.return_value = {"name": "distributed"}
     with patch("lightning_sdk.cli.mmt.inspect.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
         "lightning_sdk.cli.mmt.inspect.resolve_mmt", return_value=mmt
     ) as resolve_mmt:
@@ -49,7 +49,7 @@ def test_mmt_inspect_uses_name_option() -> None:
     assert result.exit_code == 0
     resolve_teamspace.assert_called_once_with("org/teamspace")
     resolve_mmt.assert_called_once_with("distributed", teamspace)
-    mmt.json.assert_called_once_with()
+    mmt.dict.assert_called_once_with()
 
 
 @mock_command_logging

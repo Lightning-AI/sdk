@@ -3,8 +3,8 @@
 from typing import Optional
 
 import rich_click as click
-from rich.console import Console
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
 
@@ -35,4 +35,4 @@ def inspect_job(
         job = resolve_job_machine(job, rank)
     elif rank is not None:
         raise click.UsageError("--rank is only supported for multi-machine jobs.")
-    Console().print(job.json())
+    echo_json(job.dict())
