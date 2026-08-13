@@ -3,17 +3,24 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import backoff
 import requests
 from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
+    _DOWNLOAD_CONNECT_TIMEOUT_SECONDS,
+    _DOWNLOAD_MAX_TRIES,
+    _DOWNLOAD_READ_TIMEOUT_SECONDS,
+    _RETRYABLE_DOWNLOAD_STATUSES,
     _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _paged_tree_entries,
     _raise_for_download_status,
     _RemoteApiError,
+    _RetryableProgress,
     _stream_download_to_file,
+    _TransientDownloadError,
     cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
@@ -145,30 +152,60 @@ class FilesystemApi:
 
         Raises:
             RuntimeError: If the server returns a non-2xx status code, or if the body that
-                arrives is not the expected length.
+                arrives is not the expected length. Transient failures — dropped connections,
+                timeouts, and temporary server conditions — are retried with backoff first.
         """
-        r = requests.get(
-            f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}",
-            headers=self._auth_headers,
-            stream=True,
-            allow_redirects=True,
-        )
-        _raise_for_download_status(r, remote_path)
-
+        url = f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
         owned_pbar = None
-        if pbar is None and progress_bar:
-            total_length = int(r.headers.get("content-length", 0))
-            owned_pbar = tqdm(
-                desc=f"Downloading {os.path.split(remote_path)[1]}",
-                total=total_length if total_length > 0 else None,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1024,
-            )
-            pbar = owned_pbar
+
+        @backoff.on_exception(backoff.expo, _TransientDownloadError, max_tries=_DOWNLOAD_MAX_TRIES)
+        def download() -> None:
+            nonlocal owned_pbar, pbar
+            try:
+                r = requests.get(
+                    url,
+                    headers=self._auth_headers,
+                    stream=True,
+                    allow_redirects=True,
+                    timeout=(_DOWNLOAD_CONNECT_TIMEOUT_SECONDS, _DOWNLOAD_READ_TIMEOUT_SECONDS),
+                )
+            except requests.RequestException as e:
+                raise _TransientDownloadError(f"Failed to download {remote_path!r}: {e}") from e
+
+            if r.status_code in _RETRYABLE_DOWNLOAD_STATUSES:
+                try:
+                    _raise_for_download_status(r, remote_path)
+                except RuntimeError as e:
+                    raise _TransientDownloadError(str(e)) from e
+            _raise_for_download_status(r, remote_path)
+
+            if pbar is None and progress_bar:
+                total_length = int(r.headers.get("content-length", 0))
+                owned_pbar = tqdm(
+                    desc=f"Downloading {os.path.split(remote_path)[1]}",
+                    total=total_length if total_length > 0 else None,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1024,
+                )
+                pbar = owned_pbar
+
+            progress = _RetryableProgress(pbar) if pbar is not None else None
+            try:
+                _stream_download_to_file(r, local_path, remote_path, pbar=progress, expected_size=expected_size)
+            except requests.RequestException as e:
+                if progress is not None:
+                    progress.rollback()
+                raise _TransientDownloadError(f"Failed to download {remote_path!r}: {e}") from e
+            except RuntimeError as e:
+                # A body shorter than the listing or Content-Length promised is a cut
+                # connection, not a bad request.
+                if progress is not None:
+                    progress.rollback()
+                raise _TransientDownloadError(str(e)) from e
 
         try:
-            _stream_download_to_file(r, local_path, remote_path, pbar=pbar, expected_size=expected_size)
+            download()
         finally:
             if owned_pbar is not None:
                 owned_pbar.close()

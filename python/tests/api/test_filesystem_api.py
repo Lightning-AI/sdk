@@ -2,8 +2,10 @@ import os
 from unittest import mock
 
 import pytest
+import requests
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
+from lightning_sdk.api.utils import _DOWNLOAD_MAX_TRIES
 
 
 @mock.patch("requests.get", autospec=True)
@@ -75,10 +77,86 @@ def test_download_file_rejects_an_error_document(_authenticate_mock, _mock_auth,
     filesystem_api = FilesystemApi()
 
     filepath = tmp_path / "file1"
-    with pytest.raises(RuntimeError, match="(?s)HTTP 500.*InternalError"):
+    with mock.patch("time.sleep"), pytest.raises(RuntimeError, match="(?s)HTTP 500.*InternalError"):
         filesystem_api.download_file("file1", str(filepath), "ts-abc")
 
+    # A 500 is a temporary condition, so it is retried before giving up.
+    assert mock_requests_get.call_count == _DOWNLOAD_MAX_TRIES
     assert list(tmp_path.iterdir()) == []
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_retries_a_dropped_connection(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    body = b"hello"
+    ok_response = mock.Mock()
+    ok_response.status_code = 200
+    ok_response.headers = {"content-length": str(len(body))}
+    ok_response.iter_content = lambda chunk_size=None: iter([body])
+    mock_requests_get.side_effect = [requests.exceptions.ConnectionError("connection reset"), ok_response]
+
+    filesystem_api = FilesystemApi()
+
+    filepath = tmp_path / "file1"
+    with mock.patch("time.sleep"):
+        filesystem_api.download_file("file1", str(filepath), "ts-abc", progress_bar=False)
+
+    assert mock_requests_get.call_count == 2
+    assert filepath.read_bytes() == body
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_retries_a_truncated_body(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    # A body shorter than Content-Length promised is a cut connection: retried, not fatal.
+    body = b"hello"
+    short_response = mock.Mock()
+    short_response.status_code = 200
+    short_response.headers = {"content-length": str(len(body))}
+    short_response.iter_content = lambda chunk_size=None: iter([body[:2]])
+    ok_response = mock.Mock()
+    ok_response.status_code = 200
+    ok_response.headers = {"content-length": str(len(body))}
+    ok_response.iter_content = lambda chunk_size=None: iter([body])
+    mock_requests_get.side_effect = [short_response, ok_response]
+
+    filesystem_api = FilesystemApi()
+
+    filepath = tmp_path / "file1"
+    with mock.patch("time.sleep"):
+        filesystem_api.download_file("file1", str(filepath), "ts-abc", progress_bar=False)
+
+    assert mock_requests_get.call_count == 2
+    assert filepath.read_bytes() == body
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_does_not_retry_a_denial(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    mock_response = mock.Mock()
+    mock_response.status_code = 404
+    mock_response.headers = {}
+    mock_response.iter_content = lambda chunk_size=None: iter([b"not found"])
+    mock_requests_get.return_value = mock_response
+
+    filesystem_api = FilesystemApi()
+
+    with pytest.raises(RuntimeError, match="HTTP 404"):
+        filesystem_api.download_file("file1", str(tmp_path / "file1"), "ts-abc")
+
+    assert mock_requests_get.call_count == 1
 
 
 @mock.patch(
