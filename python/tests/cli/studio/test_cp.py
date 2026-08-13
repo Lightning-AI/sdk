@@ -2,9 +2,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from click.testing import CliRunner
 
-from lightning_sdk.cli.studio.cp import cp_download, cp_impl, cp_studio_file, cp_upload, resolve_studio
+from lightning_sdk.cli.studio.cp import cp_impl
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging
 
 
@@ -40,634 +39,79 @@ def test_cp_impl_both_local_files_raises_error():
         cp_impl(source="local_file1.txt", destination="local_file2.txt")
 
 
+def _mock_studio():
+    studio = MagicMock()
+    studio.name = "test-studio"
+    studio.teamspace.name = "test-teamspace"
+    studio.owner.name = "test-owner"
+    return studio
+
+
+_FULL_URL = "lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt"
+
+
+@pytest.mark.parametrize(
+    "studio_path",
+    [
+        _FULL_URL,
+        # short forms: owner, or owner and teamspace, resolve from defaults
+        "lit://test-teamspace/studios/test-studio/remote_file.txt",
+        "lit://test-studio/remote_file.txt",
+    ],
+)
 @mock_command_logging
-def test_cp_upload_with_nonexistent_raises_error(tmp_path: Path):
-    """Test that providing a nonexistent file and folder path raises FileNotFoundError."""
-    nonexistent_file = tmp_path / "nonexistent.txt"
-
-    with pytest.raises(FileNotFoundError, match="The provided path does not exist"):
-        cp_upload(
-            local_file_path=str(nonexistent_file),
-            studio_file_path="lit://owner/teamspace/studios/test-studio/dest.txt",
-        )
-    nonexistent_dir = tmp_path / "nonexistent_dir"
-
-    with pytest.raises(FileNotFoundError, match="The provided path does not exist"):
-        cp_upload(
-            local_file_path=str(nonexistent_dir),
-            studio_file_path="lit://owner/teamspace/studios/test-studio/dest/",
-        )
-
-
-@mock_command_logging
-def test_cp_download_with_nonexistent_file_raises_error(tmp_path: Path):
-    """Test that providing a nonexistent studio file path raises FileNotFoundError."""
-    test_file = tmp_path / "test_file.txt"
-
-    mock_parse_result = {
-        "studio": "test-studio",
-        "teamspace": "test-teamspace",
-        "owner": "test-owner",
-        "destination": "/nonexistent.txt",
-    }
-
-    mock_selected_studio = MagicMock()
-    mock_selected_studio.name = "test-studio"
-    mock_selected_studio.teamspace.name = "test-teamspace"
-    mock_selected_studio._studio.id = "studio-id"
-    mock_selected_studio._teamspace.id = "teamspace-id"
-
-    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": False}
-
-    with (
-        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
-        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
-        patch("lightning_sdk.cli.studio.cp.Console"),  # silence console output
-        pytest.raises(FileNotFoundError, match="The provided path does not exist in the studio"),
-    ):
-        cp_download(
-            studio_path="lit://test-owner/test-teamspace/studios/test-studio/nonexistent.txt",
-            local_path=str(test_file),
-        )
-
-
-@mock_command_logging
-def test_cp_upload_successful(tmp_path: Path):
-    """Test successful file upload to Studio."""
+def test_cp_upload_delegates_to_generic_copy(studio_path, tmp_path: Path):
+    """Every accepted URL form resolves to the fully-qualified drive URL and delegates to Filesystem.copy."""
     test_file = tmp_path / "test_file.txt"
     test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt",
-            recursive=False,
-        )
-
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
-
-    test_dir = tmp_path
-    test_dir_file = test_dir / "test_file.txt"
-    test_dir_file.write_text("test content")
+    mock_fs = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_upload(
-            local_file_path=str(test_dir),
-            studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote-dir/",
-            recursive=True,
-        )
-
-        mock_studio_instance.upload_folder.assert_called_once_with(str(test_dir), "remote-dir/")
-
-
-@mock_command_logging
-def test_cp_download_successful(tmp_path: Path):
-    """Test successful file download from Studio."""
-    test_file = tmp_path / "test_file.txt"
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.download_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_download(
-            studio_path="lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt",
-            local_path=str(test_file),
-        )
-
-        mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
-
-
-@mock_command_logging
-def test_cp_upload_without_teamspace(tmp_path: Path):
-    """Test that cp_upload works when teamspace is not provided in the path."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://test-studio/remote_file.txt",
-        )
-
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
-
-
-@mock_command_logging
-def test_cp_download_without_teamspace(tmp_path: Path):
-    """Test that cp_download works when teamspace is not provided in the path."""
-    test_file = tmp_path / "test_file.txt"
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.download_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_download(
-            studio_path="lit://test-studio/remote_file.txt",
-            local_path=str(test_file),
-        )
-
-        mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
-
-
-@mock_command_logging
-def test_cp_studio_file_upload_integration(tmp_path: Path):
-    """Test the full cp_studio_file command for upload."""
-    runner = CliRunner()
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        result = runner.invoke(
-            cp_studio_file, [str(test_file), "lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt"]
-        )
-
-        assert result.exit_code == 0
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
-
-
-@mock_command_logging
-def test_cp_studio_file_download_integration(tmp_path: Path):
-    """Test the full cp_studio_file command for download."""
-    runner = CliRunner()
-    test_file = tmp_path / "test_file.txt"
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.download_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        result = runner.invoke(
-            cp_studio_file, ["lit://test-owner/test-teamspace/studios/test-studio/remote_file.txt", str(test_file)]
-        )
-
-        assert result.exit_code == 0
-        mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
-
-
-@mock_command_logging
-def test_resolve_studio_with_teamspace():
-    """Test that resolve_studio correctly resolves studio with provided owner and teamspace."""
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    with (
-        patch(
-            "lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace
-        ) as mock_resolve_teamspace,
-        patch(
-            "lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance
-        ) as mock_resolve_studio,
-    ):
-        result = resolve_studio(studio_name="test-studio", teamspace="test-teamspace", owner="test-owner")
-
-        assert result == mock_studio_instance
-        mock_resolve_teamspace.assert_called_once_with("test-owner/test-teamspace")
-        mock_resolve_studio.assert_called_once_with("test-studio", mock_teamspace)
-
-
-@mock_command_logging
-def test_resolve_studio_without_teamspace():
-    """Test that resolve_studio works when teamspace and owner are None."""
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    with (
-        patch(
-            "lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace
-        ) as mock_resolve_teamspace,
-        patch(
-            "lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance
-        ) as mock_resolve_studio,
-    ):
-        result = resolve_studio(studio_name="test-studio", teamspace=None, owner=None)
-
-        assert result == mock_studio_instance
-        mock_resolve_teamspace.assert_called_once_with(None)
-        mock_resolve_studio.assert_called_once_with("test-studio", mock_teamspace)
-
-
-@mock_command_logging
-def test_cp_upload_with_nested_path(tmp_path: Path):
-    """Test uploading a file with nested destination path."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://test-studio/folder/subfolder/remote_file.txt",
-        )
-
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "folder/subfolder/remote_file.txt")
-
-
-@mock_command_logging
-def test_cp_download_with_nested_path(tmp_path: Path):
-    """Test downloading a file with nested destination path."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_download(
-            studio_path="lit://test-studio/folder/subfolder/remote_file.txt",
-            local_path=str(test_file),
-        )
-
-        mock_studio_instance.download_file.assert_called_once_with("folder/subfolder/remote_file.txt", str(test_file))
-
-
-@mock_command_logging
-def test_cp_impl_dispatches_to_upload(tmp_path: Path):
-    """Test that cp_impl correctly dispatches to upload when destination has lit://."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_impl(source=str(test_file), destination="lit://test-studio/remote_file.txt")
-
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "remote_file.txt")
-
-
-@mock_command_logging
-def test_cp_impl_dispatches_to_download(tmp_path: Path):
-    """Test that cp_impl correctly dispatches to download when source has lit://."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.download_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
-
-        mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.download_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_impl(source="lit://test-studio/remote_file.txt", destination=str(test_file))
-
-        mock_studio_instance.download_file.assert_called_once_with("remote_file.txt", str(test_file))
-
-
-@mock_command_logging
-def test_cp_upload_prints_correct_messages(tmp_path: Path):
-    """Test that cp_upload prints the correct console messages."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    mock_console = MagicMock()
-
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-        patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://test-studio/remote_file.txt",
-        )
-
-        assert mock_console.print.call_count == 2
-        first_call_arg = str(mock_console.print.call_args_list[0][0][0])
-        assert "Uploading to test-teamspace/test-studio" in first_call_arg
-
-        second_call_arg = str(mock_console.print.call_args_list[1][0][0])
-        assert "See your file at" in second_call_arg
-        assert "test-owner" in second_call_arg
-        assert "test-teamspace" in second_call_arg
-        assert "test-studio" in second_call_arg
-
-
-@mock_command_logging
-def test_cp_download_prints_correct_messages(tmp_path: Path):
-    """Test that cp_download prints the correct console messages."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    mock_console = MagicMock()
-
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-        patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
-    ):
-        cp_download(
-            studio_path="lit://test-studio/remote_file.txt",
-            local_path=str(test_file),
-        )
-
-        assert mock_console.print.call_count == 2
-        first_call_arg = str(mock_console.print.call_args_list[0][0][0])
-        assert "Downloading from test-teamspace/test-studio" in first_call_arg
-
-        second_call_arg = str(mock_console.print.call_args_list[1][0][0])
-
-        assert "test_file.txt" in second_call_arg
-
-
-@mock_command_logging
-def test_cp_studio_file_with_special_characters_in_filename(tmp_path: Path):
-    """Test uploading a file with special characters in the filename."""
-    test_file = tmp_path / "test file with spaces.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "test-studio"
-    mock_studio_instance.teamspace.name = "test-teamspace"
-    mock_studio_instance.owner.name = "test-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://test-studio/file.txt",
-        )
-
-        mock_studio_instance.upload_file.assert_called_once_with(str(test_file), "file.txt")
-
-
-@mock_command_logging
-def test_cp_upload_url_construction(tmp_path: Path):
-    """Test that the Studio URL is constructed correctly with port removal."""
-    test_file = tmp_path / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_teamspace = MagicMock()
-
-    mock_studio_instance = MagicMock()
-    mock_studio_instance.name = "my-studio"
-    mock_studio_instance.teamspace.name = "my-teamspace"
-    mock_studio_instance.owner.name = "my-owner"
-    mock_studio_instance.upload_file = MagicMock()
-    mock_console = MagicMock()
-
-    with (
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_teamspace", return_value=mock_teamspace),
-        patch("lightning_sdk.cli.utils.filesystem.resolve_cli_studio", return_value=mock_studio_instance),
-        patch("lightning_sdk.cli.studio.cp.Console", return_value=mock_console),
-    ):
-        cp_upload(
-            local_file_path=str(test_file),
-            studio_file_path="lit://my-studio/remote_file.txt",
-        )
-
-        second_call_arg = str(mock_console.print.call_args_list[1][0][0])
-        assert ":443" not in second_call_arg
-        assert "https://lightning.ai/my-owner/my-teamspace/studios/my-studio" in second_call_arg
-
-
-@mock_command_logging
-def test_cp_upload_folder_without_recursive_flag_raises_error(tmp_path: Path):
-    """Test that uploading a folder without -r flag raises an error."""
-    test_dir = tmp_path / "test_folder"
-    test_dir.mkdir()
-    test_file = test_dir / "test_file.txt"
-    test_file.write_text("test content")
-
-    mock_parse_result = {
-        "studio": "test-studio",
-        "teamspace": "test-teamspace",
-        "owner": "test-owner",
-        "destination": "remote_folder/",
-    }
-
-    mock_selected_studio = MagicMock()
-    mock_selected_studio.name = "test-studio"
-    mock_selected_studio.teamspace.name = "test-teamspace"
-
-    with (
-        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
-        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
-        patch("lightning_sdk.cli.studio.cp.Console"),
-        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
-    ):
-        cp_upload(
-            local_file_path=str(test_dir),
-            studio_file_path="lit://test-owner/test-teamspace/studios/test-studio/remote_folder/",
-            recursive=False,
-        )
-
-
-@mock_command_logging
-def test_cp_download_folder_without_recursive_flag_raises_error(tmp_path: Path):
-    """Test that downloading a folder without -r flag raises an error."""
-    test_file = tmp_path / "test_file.txt"
-
-    mock_parse_result = {
-        "studio": "test-studio",
-        "teamspace": "test-teamspace",
-        "owner": "test-owner",
-        "destination": "/remote_folder",
-    }
-
-    mock_selected_studio = MagicMock()
-    mock_selected_studio.name = "test-studio"
-    mock_selected_studio.teamspace.name = "test-teamspace"
-    mock_selected_studio._studio.id = "studio-id"
-    mock_selected_studio._teamspace.id = "teamspace-id"
-
-    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
-
-    with (
-        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
-        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
-        patch("lightning_sdk.cli.studio.cp.Console"),
-        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
-    ):
-        cp_download(
-            studio_path="lit://test-owner/test-teamspace/studios/test-studio/remote_folder",
-            local_path=str(test_file),
-            recursive=False,
-        )
-
-
-@mock_command_logging
-def test_cp_download_root_directory_with_recursive(tmp_path: Path):
-    """Test that downloading studio root directory with -r creates folder named after studio."""
-    local_dir = tmp_path / "test_output"
-    local_dir.mkdir()
-
-    mock_parse_result = {
-        "studio": "test-studio",
-        "teamspace": "test-teamspace",
-        "owner": "test-owner",
-        "destination": "",
-    }
-
-    mock_selected_studio = MagicMock()
-    mock_selected_studio.name = "test-studio"
-    mock_selected_studio.teamspace.name = "test-teamspace"
-    mock_selected_studio._studio.id = "studio-id"
-    mock_selected_studio._teamspace.id = "teamspace-id"
-    mock_selected_studio.download_folder = MagicMock()
-
-    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
-
-    with (
-        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
-        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=_mock_studio()) as resolve_mock,
+        patch("lightning_sdk.cli.studio.cp.Filesystem", return_value=mock_fs),
         patch("lightning_sdk.cli.studio.cp.Console"),
     ):
-        cp_download(
-            studio_path="lit://test-owner/test-teamspace/studios/test-studio/",
-            local_path=str(local_dir),
-            recursive=True,
-        )
+        cp_impl(source=str(test_file), destination=studio_path)
 
-        expected_target = str(local_dir)
-        mock_selected_studio.download_folder.assert_called_once_with("", expected_target)
+    resolve_mock.assert_called_once()
+    mock_fs.copy.assert_called_once_with(source=str(test_file), destination=_FULL_URL, recursive=False)
 
 
 @mock_command_logging
-def test_cp_download_root_directory_without_recursive_fails(tmp_path: Path):
-    """Test that downloading studio root directory without -r flag raises an error."""
-    local_dir = tmp_path / "test_output"
-    local_dir.mkdir()
-
-    mock_parse_result = {
-        "studio": "test-studio",
-        "teamspace": "test-teamspace",
-        "owner": "test-owner",
-        "destination": "",
-    }
-
-    mock_selected_studio = MagicMock()
-    mock_selected_studio.name = "test-studio"
-    mock_selected_studio.teamspace.name = "test-teamspace"
-    mock_selected_studio._studio.id = "studio-id"
-    mock_selected_studio._teamspace.id = "teamspace-id"
-
-    mock_selected_studio._studio_api.get_path_info.return_value = {"exists": True, "type": "directory"}
+def test_cp_download_delegates_to_generic_copy(tmp_path: Path):
+    test_file = tmp_path / "test_file.txt"
+    mock_fs = MagicMock()
 
     with (
-        patch("lightning_sdk.cli.studio.cp.parse_studio_path", return_value=mock_parse_result),
-        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=mock_selected_studio),
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=_mock_studio()),
+        patch("lightning_sdk.cli.studio.cp.Filesystem", return_value=mock_fs),
         patch("lightning_sdk.cli.studio.cp.Console"),
-        pytest.raises(ValueError, match="is a directory. Use -r flag to copy directories recursively"),
     ):
-        cp_download(
-            studio_path="lit://lightning-ai/test-teamspace/studios/test-studio/",
-            local_path=str(local_dir),
-            recursive=False,
-        )
+        cp_impl(source=_FULL_URL, destination=str(test_file), recursive=False)
+
+    mock_fs.copy.assert_called_once_with(source=_FULL_URL, destination=str(test_file), recursive=False)
+
+
+@mock_command_logging
+def test_cp_download_preserves_trailing_slash_for_directory_targets(tmp_path: Path):
+    """A trailing slash marks a directory target; the drive URL keeps it."""
+    mock_fs = MagicMock()
+
+    with (
+        patch("lightning_sdk.cli.studio.cp.resolve_studio", return_value=_mock_studio()),
+        patch("lightning_sdk.cli.studio.cp.Filesystem", return_value=mock_fs),
+        patch("lightning_sdk.cli.studio.cp.Console"),
+    ):
+        cp_impl(source="lit://test-studio/", destination=str(tmp_path), recursive=True)
+
+    mock_fs.copy.assert_called_once_with(
+        source="lit://test-owner/test-teamspace/studios/test-studio/",
+        destination=str(tmp_path),
+        recursive=True,
+    )
+
+
+@mock_command_logging
+def test_cp_studio_root_without_trailing_slash_raises():
+    with pytest.raises(ValueError, match="add a trailing '/'"):
+        cp_impl(source="lit://owner/teamspace/studios/my-studio", destination="/local/out")
