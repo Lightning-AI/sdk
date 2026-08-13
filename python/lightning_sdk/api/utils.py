@@ -657,6 +657,17 @@ _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
 _DOWNLOAD_STREAM_CHUNK_SIZE = 4096 * 8
 _DOWNLOAD_ERROR_PREVIEW_BYTES = 512
+_DOWNLOAD_CONNECT_TIMEOUT_SECONDS = 15
+# Applies to each gap between bytes of a streamed body, not to the whole download.
+_DOWNLOAD_READ_TIMEOUT_SECONDS = 90
+_DOWNLOAD_MAX_TRIES = 5
+
+# Statuses that signal a temporary condition rather than a fault in the request.
+_RETRYABLE_DOWNLOAD_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
+
+
+class _TransientDownloadError(RuntimeError):
+    """A download failure worth retrying: a dropped connection, a timeout, or a temporary server condition."""
 
 
 def _raise_for_download_status(response: requests.Response, remote_path: str) -> None:
@@ -707,6 +718,26 @@ class _ProgressBar(Protocol):
 
     def update(self, n: float) -> Any:
         ...
+
+
+class _RetryableProgress:
+    """Progress updates for one download attempt, undone if the attempt fails.
+
+    A retried download replays its bytes from the start; without the rollback every failed
+    attempt would leave its partial byte count behind on the shared bar.
+    """
+
+    def __init__(self, pbar: _ProgressBar) -> None:
+        self._pbar = pbar
+        self._count = 0.0
+
+    def update(self, n: float) -> None:
+        self._count += n
+        self._pbar.update(n)
+
+    def rollback(self) -> None:
+        self._pbar.update(-self._count)
+        self._count = 0.0
 
 
 def _stream_download_to_file(
