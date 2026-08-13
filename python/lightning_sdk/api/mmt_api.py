@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from lightning_sdk.api.job_api import V1ClusterAccelerator, _cached_studio_name
+from lightning_sdk.api.job_api import JobApiV2, V1ClusterAccelerator
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
@@ -309,7 +309,7 @@ class MMTApiV2:
         """
         if not job.spec.cloudspace_id:
             return None
-        return _cached_studio_name(job.project_id, job.spec.cloudspace_id)
+        return JobApiV2._cached_studio_name(job.project_id, job.spec.cloudspace_id)
 
     def get_image_name(self, job: V1MultiMachineJob) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.
@@ -381,18 +381,11 @@ class MMTApiV2:
         Returns:
             A list of ``V1ClusterAccelerator`` objects that are marked as enabled.
         """
-        from lightning_sdk.api.cloud_account_api import cached_cloud_account_api
-
-        cloud_account_api = cached_cloud_account_api()
-        accelerators = cloud_account_api.list_cloud_account_accelerators(
+        return JobApiV2._get_machines_for_cloud_account(
             teamspace_id=teamspace_id,
             cloud_account_id=cloud_account_id,
             org_id=org_id,
         )
-        if not accelerators:
-            return []
-
-        return list(filter(lambda acc: acc.enabled, accelerators.accelerator))
 
     def get_total_cost(self, job: V1MultiMachineJob) -> float:
         """Return the accumulated cost for this multi-machine job in USD.

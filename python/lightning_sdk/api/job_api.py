@@ -39,19 +39,6 @@ if TYPE_CHECKING:
 _FOLLOW_POLL_INTERVAL = 5.0
 
 
-@lru_cache(maxsize=None)
-def _cached_studio_name(project_id: str, cloudspace_id: str) -> Optional[str]:
-    """Resolve a studio display name, caching across Job/MMT API instances."""
-    try:
-        return (
-            cached_lightning_client().cloud_space_service_get_cloud_space(project_id=project_id, id=cloudspace_id).name
-        )
-    except ApiException as ex:
-        if ex.status == 404:
-            return None
-        raise
-
-
 def _job_logs_ws_url(
     teamspace_id: str,
     job_id: str,
@@ -474,6 +461,21 @@ class JobApiV2:
                 return  # socket dropped and the job is done — nothing more to stream
             time.sleep(1)  # brief backoff before reconnecting, matches the CLI
 
+    @staticmethod
+    @lru_cache(maxsize=None)
+    def _cached_studio_name(project_id: str, cloudspace_id: str) -> Optional[str]:
+        """Resolve a studio display name, caching across Job/MMT API instances."""
+        try:
+            return (
+                cached_lightning_client()
+                .cloud_space_service_get_cloud_space(project_id=project_id, id=cloudspace_id)
+                .name
+            )
+        except ApiException as ex:
+            if ex.status == 404:
+                return None
+            raise
+
     def get_studio_name(self, job: V1Job) -> Optional[str]:
         """Return the name of the Studio linked to this job, or ``None`` if none is attached.
 
@@ -485,7 +487,7 @@ class JobApiV2:
         """
         if not job.spec.cloudspace_id:
             return None
-        return _cached_studio_name(job.project_id, job.spec.cloudspace_id)
+        return self._cached_studio_name(job.project_id, job.spec.cloudspace_id)
 
     def get_image_name(self, job: V1Job) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.
@@ -662,8 +664,10 @@ class JobApiV2:
             stacklevel=stacklevel,
         )
 
+    @staticmethod
+    @lru_cache(maxsize=None)
     def _get_machines_for_cloud_account(
-        self, teamspace_id: str, cloud_account_id: str, org_id: str
+        teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
         """Return only the enabled accelerators for a given cloud account.
 
@@ -675,9 +679,9 @@ class JobApiV2:
         Returns:
             A list of ``V1ClusterAccelerator`` objects that are marked as enabled.
         """
-        from lightning_sdk.api.cloud_account_api import cached_cloud_account_api
+        from lightning_sdk.api.cloud_account_api import CloudAccountApi
 
-        cloud_account_api = cached_cloud_account_api()
+        cloud_account_api = CloudAccountApi()
         accelerators = cloud_account_api.list_cloud_account_accelerators(
             teamspace_id=teamspace_id,
             cloud_account_id=cloud_account_id,

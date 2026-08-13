@@ -396,9 +396,3 @@ class CloudAccountApi:
             return V1CloudProvider.MACHINE
 
         raise ValueError(f"Provided unsupported cloud provider {cloud_provider}")
-
-
-@lru_cache(maxsize=1)
-def cached_cloud_account_api() -> CloudAccountApi:
-    """A shared CloudAccountApi so instance-level ``@lru_cache`` methods survive across callers."""
-    return CloudAccountApi()

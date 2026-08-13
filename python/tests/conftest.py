@@ -117,17 +117,16 @@ def _clean_studio_thread_local_state():
 @pytest.fixture(autouse=True)
 def _clear_cached_lightning_client():
     """cached_lightning_client is process-global -- clear it so one test's mocked/unmocked client can't leak."""
-    from lightning_sdk.api.cloud_account_api import cached_cloud_account_api
-    from lightning_sdk.api.job_api import _cached_studio_name
+    from lightning_sdk.api.job_api import JobApiV2
     from lightning_sdk.api.utils import cached_lightning_client
 
     cached_lightning_client.cache_clear()
-    cached_cloud_account_api.cache_clear()
-    _cached_studio_name.cache_clear()
+    JobApiV2._cached_studio_name.cache_clear()
+    JobApiV2._get_machines_for_cloud_account.cache_clear()
     yield
     cached_lightning_client.cache_clear()
-    cached_cloud_account_api.cache_clear()
-    _cached_studio_name.cache_clear()
+    JobApiV2._cached_studio_name.cache_clear()
+    JobApiV2._get_machines_for_cloud_account.cache_clear()
 
 
 _BEGIN_OUTPUT_TOKEN = "LIGHTNING_BEGIN_OUTPUT"

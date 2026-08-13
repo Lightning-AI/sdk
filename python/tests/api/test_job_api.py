@@ -8,7 +8,6 @@ import pytest
 
 from lightning_sdk.api.job_api import (
     JobApiV2,
-    _cached_studio_name,
     _decode_log_messages,
     _format_log_timestamp,
     _job_logs_ws_url,
@@ -570,7 +569,7 @@ def test_get_studio_name_caches_cloudspace_lookups(mocker_auth):
     assert job_api_a.get_studio_name(job) == "studio-a"
     assert job_api_b.get_studio_name(job) == "studio-a"
     assert get_cs.call_count == 1
-    assert _cached_studio_name.cache_info().hits == 1
+    assert JobApiV2._cached_studio_name.cache_info().hits == 1
 
 
 def test_machine_from_spec_skips_accelerator_lookup_for_known_slug():
