@@ -76,8 +76,6 @@ type ClientService interface {
 
 	UserServiceListNotificationDialogs(params *UserServiceListNotificationDialogsParams, opts ...ClientOption) (*UserServiceListNotificationDialogsOK, error)
 
-	UserServiceOptInEarlyMigration(params *UserServiceOptInEarlyMigrationParams, opts ...ClientOption) (*UserServiceOptInEarlyMigrationOK, error)
-
 	UserServiceRequestVerificationCode(params *UserServiceRequestVerificationCodeParams, opts ...ClientOption) (*UserServiceRequestVerificationCodeOK, error)
 
 	UserServiceSearchUsers(params *UserServiceSearchUsersParams, opts ...ClientOption) (*UserServiceSearchUsersOK, error)
@@ -467,48 +465,6 @@ func (a *Client) UserServiceListNotificationDialogs(params *UserServiceListNotif
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UserServiceListNotificationDialogsDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-UserServiceOptInEarlyMigration user service opt in early migration API
-*/
-func (a *Client) UserServiceOptInEarlyMigration(params *UserServiceOptInEarlyMigrationParams, opts ...ClientOption) (*UserServiceOptInEarlyMigrationOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewUserServiceOptInEarlyMigrationParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "UserService_OptInEarlyMigration",
-		Method:             "POST",
-		PathPattern:        "/v1/users/{userId}/early-migration-optin",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &UserServiceOptInEarlyMigrationReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*UserServiceOptInEarlyMigrationOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*UserServiceOptInEarlyMigrationDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

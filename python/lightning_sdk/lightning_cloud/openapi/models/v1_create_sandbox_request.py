@@ -50,6 +50,7 @@ class V1CreateSandboxRequest(object):
         'image': 'str',
         'image_secret_ref': 'str',
         'instance_type': 'str',
+        'memory_snapshot_compatible': 'bool',
         'name': 'str',
         'network_policy': 'V1NetworkPolicy',
         'organization_id': 'str',
@@ -57,6 +58,7 @@ class V1CreateSandboxRequest(object):
         'ports': 'list[str]',
         'project_id': 'str',
         'purpose': 'V1SandboxPurpose',
+        'require_memory_restore': 'bool',
         'runtime': 'str',
         'snapshot_id': 'str',
         'spot': 'bool',
@@ -70,6 +72,7 @@ class V1CreateSandboxRequest(object):
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
+        'memory_snapshot_compatible': 'memorySnapshotCompatible',
         'name': 'name',
         'network_policy': 'networkPolicy',
         'organization_id': 'organizationId',
@@ -77,6 +80,7 @@ class V1CreateSandboxRequest(object):
         'ports': 'ports',
         'project_id': 'projectId',
         'purpose': 'purpose',
+        'require_memory_restore': 'requireMemoryRestore',
         'runtime': 'runtime',
         'snapshot_id': 'snapshotId',
         'spot': 'spot',
@@ -84,13 +88,14 @@ class V1CreateSandboxRequest(object):
         'timeout': 'timeout'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._image = None
         self._image_secret_ref = None
         self._instance_type = None
+        self._memory_snapshot_compatible = None
         self._name = None
         self._network_policy = None
         self._organization_id = None
@@ -98,6 +103,7 @@ class V1CreateSandboxRequest(object):
         self._ports = None
         self._project_id = None
         self._purpose = None
+        self._require_memory_restore = None
         self._runtime = None
         self._snapshot_id = None
         self._spot = None
@@ -114,6 +120,8 @@ class V1CreateSandboxRequest(object):
             self.image_secret_ref = image_secret_ref
         if instance_type is not None:
             self.instance_type = instance_type
+        if memory_snapshot_compatible is not None:
+            self.memory_snapshot_compatible = memory_snapshot_compatible
         if name is not None:
             self.name = name
         if network_policy is not None:
@@ -128,6 +136,8 @@ class V1CreateSandboxRequest(object):
             self.project_id = project_id
         if purpose is not None:
             self.purpose = purpose
+        if require_memory_restore is not None:
+            self.require_memory_restore = require_memory_restore
         if runtime is not None:
             self.runtime = runtime
         if snapshot_id is not None:
@@ -247,6 +257,29 @@ class V1CreateSandboxRequest(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def memory_snapshot_compatible(self) -> 'bool':
+        """Gets the memory_snapshot_compatible of this V1CreateSandboxRequest.  # noqa: E501
+
+        Use a checkpointable root filesystem so a later snapshot may include this sandbox's running process state.  # noqa: E501
+
+        :return: The memory_snapshot_compatible of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._memory_snapshot_compatible
+
+    @memory_snapshot_compatible.setter
+    def memory_snapshot_compatible(self, memory_snapshot_compatible: 'bool'):
+        """Sets the memory_snapshot_compatible of this V1CreateSandboxRequest.
+
+        Use a checkpointable root filesystem so a later snapshot may include this sandbox's running process state.  # noqa: E501
+
+        :param memory_snapshot_compatible: The memory_snapshot_compatible of this V1CreateSandboxRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._memory_snapshot_compatible = memory_snapshot_compatible
 
     @property
     def name(self) -> 'str':
@@ -398,6 +431,29 @@ class V1CreateSandboxRequest(object):
         """
 
         self._purpose = purpose
+
+    @property
+    def require_memory_restore(self) -> 'bool':
+        """Gets the require_memory_restore of this V1CreateSandboxRequest.  # noqa: E501
+
+        Fail a snapshot restore instead of cold-booting when its process-memory checkpoint is absent or incompatible with the selected host.  # noqa: E501
+
+        :return: The require_memory_restore of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._require_memory_restore
+
+    @require_memory_restore.setter
+    def require_memory_restore(self, require_memory_restore: 'bool'):
+        """Sets the require_memory_restore of this V1CreateSandboxRequest.
+
+        Fail a snapshot restore instead of cold-booting when its process-memory checkpoint is absent or incompatible with the selected host.  # noqa: E501
+
+        :param require_memory_restore: The require_memory_restore of this V1CreateSandboxRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._require_memory_restore = require_memory_restore
 
     @property
     def runtime(self) -> 'str':

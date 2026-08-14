@@ -33,6 +33,9 @@ type ClusterServiceProvisionMachineBody struct {
 	// Optional, used for BM provisioning (e.g. ThunderCat)
 	Bootstrap *V1MachineBootstrap `json:"bootstrap,omitempty"`
 
+	// bridge network cidr
+	BridgeNetworkCidr string `json:"bridgeNetworkCidr,omitempty"`
+
 	// ca cert
 	CaCert string `json:"caCert,omitempty"`
 
