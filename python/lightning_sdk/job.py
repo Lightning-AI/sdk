@@ -655,6 +655,11 @@ class Job(metaclass=TrackCallsMeta):
 
         ``since``, ``until``, ``query`` and ``severity`` are applied by the server, to both the
         saved logs and the live stream.
+
+        A job whose lines are not in the logs API falls back to its saved log file, which
+        cannot be filtered server-side. ``timestamps`` still works there, but ``query`` and
+        ``severity`` raise :class:`RuntimeError` rather than silently returning nothing —
+        read unfiltered and filter locally for such a job.
         """
         return _Logs(self._compute_logs)
 
@@ -702,10 +707,23 @@ class Job(metaclass=TrackCallsMeta):
         lines = list(
             self._stream_entries(follow=False, tail=tail, timestamps=timestamps, query=query, severity=severity)
         )
-        if not lines and status != Status.Running and query is None and severity is None:
+        if not lines and status != Status.Running:
+            if query is not None or severity is not None:
+                # An empty filtered read is ambiguous: either the filter genuinely matched
+                # nothing, or this job's lines aren't in the logs API at all. Only the
+                # latter needs the saved-file fallback, which cannot filter — so probe
+                # unfiltered before deciding, rather than reporting "no matches" for a
+                # filter that was never applied.
+                if not any(self._stream_entries(follow=False, tail=1, timestamps=False)):
+                    raise RuntimeError(
+                        "This job's logs are only available as a saved file, which cannot be "
+                        "filtered server-side, so `query`/`severity` cannot be applied. Read "
+                        "the logs without them and filter locally."
+                    )
+                return iter(()) if follow else ""
             # Nothing in the current log format for this job: fall back to the saved log file.
             text = self._standalone_job_api.get_logs_finished(
-                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id
+                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id, timestamps=timestamps
             )
             if tail is not None:
                 text = "\n".join(text.splitlines()[-tail:])
@@ -797,7 +815,7 @@ class Job(metaclass=TrackCallsMeta):
                 stacklevel=3,
             )
             text = self._standalone_job_api.get_logs_finished(
-                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id
+                job_id=self._guaranteed_job.id, teamspace_id=self.teamspace.id, timestamps=timestamps
             )
             if tail is not None:
                 text = "\n".join(text.splitlines()[-tail:])
