@@ -1,3 +1,4 @@
+import json
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
@@ -52,7 +53,7 @@ def test_job_inspect_uses_positional_name() -> None:
 
     teamspace = MagicMock()
     job = MagicMock()
-    job.json.return_value = '{"name":"my-job"}'
+    job.dict.return_value = {"name": "my-job"}
 
     with patch("lightning_sdk.cli.job.inspect.resolve_teamspace", return_value=teamspace) as resolve_teamspace, patch(
         "lightning_sdk.cli.job.inspect.resolve_job", return_value=job
@@ -62,8 +63,8 @@ def test_job_inspect_uses_positional_name() -> None:
     assert result.exit_code == 0
     resolve_teamspace.assert_called_once_with("org/teamspace")
     resolve_job.assert_called_once_with("my-job", teamspace)
-    assert '{"name":"my-job"}' in result.output
-    job.json.assert_called_once_with()
+    assert json.loads(result.output) == {"name": "my-job"}
+    job.dict.assert_called_once_with()
 
 
 @mock_command_logging
@@ -74,7 +75,7 @@ def test_job_inspect_selects_mmt_rank() -> None:
     mmt = MagicMock(spec=MMT)
     mmt.is_multi_machine = True
     machine = MagicMock()
-    machine.json.return_value = '{"name":"distributed-1"}'
+    machine.dict.return_value = {"name": "distributed-1"}
     with patch("lightning_sdk.cli.job.inspect.resolve_teamspace", return_value=teamspace), patch(
         "lightning_sdk.cli.job.inspect.resolve_job",
         return_value=mmt,
@@ -108,3 +109,30 @@ def test_job_inspect_requires_name_without_listing_resources() -> None:
     assert "Missing job name. Pass JOB." in result.output
     job.assert_not_called()
     assert teamspace.mock_calls == []
+
+
+@mock_command_logging
+def test_job_inspect_emits_parseable_json_for_long_values() -> None:
+    """Output must survive `| jq` however long the values are.
+
+    It used to render through `rich`, which hard-wraps at the terminal width (80 when
+    stdout is not a tty) and so injected raw newlines *inside* the `command` string —
+    producing output that json.loads and jq both reject with a control-character error.
+    """
+    from lightning_sdk.cli.job.inspect import inspect_job
+
+    long_command = "python train.py " + " ".join(f"--flag-{i} value-{i}" for i in range(40))
+    assert len(long_command) > 200, "the command must exceed a terminal width to be a regression"
+
+    teamspace = MagicMock()
+    job = MagicMock()
+    job.dict.return_value = {"name": "my-job", "command": long_command, "total_cost": 0.0}
+
+    with patch("lightning_sdk.cli.job.inspect.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.inspect.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(inspect_job, ["my-job"])
+
+    assert result.exit_code == 0
+    parsed = json.loads(result.output)  # would raise on the wrapped output
+    assert parsed["command"] == long_command
