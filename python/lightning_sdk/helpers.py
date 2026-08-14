@@ -70,6 +70,9 @@ class VersionChecker:
         Args:
             curr_version: The currently installed version string.
         """
+        if os.environ.get("_LIGHTNING_COMPLETE"):
+            return
+
         if self._warning_shown:
             return
 

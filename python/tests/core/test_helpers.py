@@ -72,6 +72,17 @@ class TestVersionChecker:
         assert result is None
         assert checker._cached_version is None
 
+    @mock.patch.dict(os.environ, {"_LIGHTNING_COMPLETE": "bash_complete"})
+    def test_version_check_skipped_during_shell_completion(self):
+        from lightning_sdk.helpers import VersionChecker
+
+        checker = VersionChecker()
+        checker._get_newer_version = mock.Mock()
+
+        checker.check_and_prompt_upgrade("1.0.0")
+
+        checker._get_newer_version.assert_not_called()
+
     @mock.patch("requests.get")
     def test_version_check_newer_version_available(self, mock_get):
         """Test that newer version is detected when available."""

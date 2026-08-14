@@ -125,11 +125,11 @@ def test_remote_completion_does_not_start_login_without_credentials(auth, access
 
 def test_accessible_teamspaces_are_grouped_by_owner():
     client = MagicMock()
-    client.auth_service_get_user.return_value = SimpleNamespace(id="user-1", username="personal")
-    client.organizations_service_list_organizations.return_value = SimpleNamespace(
+    client.auth_service_get_user.return_value.get.return_value = SimpleNamespace(id="user-1", username="personal")
+    client.organizations_service_list_organizations.return_value.get.return_value = SimpleNamespace(
         organizations=[SimpleNamespace(id="org-1", name="acme")]
     )
-    client.projects_service_list_memberships.return_value = SimpleNamespace(
+    client.projects_service_list_memberships.return_value.get.return_value = SimpleNamespace(
         memberships=[
             SimpleNamespace(owner_id="org-1", name="research", project_id="project-1"),
             SimpleNamespace(owner_id="user-1", name="scratch", project_id="project-2"),
@@ -142,7 +142,9 @@ def test_accessible_teamspaces_are_grouped_by_owner():
             "personal": {"scratch": "project-2"},
         }
 
-    client.projects_service_list_memberships.assert_called_once_with(filter_by_user_id=True)
+    client.auth_service_get_user.assert_called_once_with(async_req=True)
+    client.organizations_service_list_organizations.assert_called_once_with(async_req=True)
+    client.projects_service_list_memberships.assert_called_once_with(filter_by_user_id=True, async_req=True)
 
 
 def test_studio_listing_follows_pagination():
