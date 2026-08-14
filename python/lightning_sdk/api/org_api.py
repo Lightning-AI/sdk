@@ -1,5 +1,6 @@
-from typing import List, Optional, TypedDict
 from datetime import datetime, timedelta
+from typing import Any, Dict, Optional, TypedDict
+
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
@@ -119,7 +120,7 @@ class OrgApi:
         if start is None and end is None:
             raise ValueError("Provide at least one of start or end.")
 
-        kwargs = {"org_id": organization_id}
+        kwargs: Dict[str, Any] = {"org_id": organization_id}
 
         if start is not None and end is not None:
             if start > end:

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from lightning_sdk.api import OrgApi
-from lightning_sdk.api.org_api import MonthlySummary # noqa: F401
+from lightning_sdk.api.org_api import MonthlySummary
 from lightning_sdk.owner import Owner
 from lightning_sdk.utils.resolve import _resolve_org_name
 
@@ -90,17 +90,18 @@ class Organization(Owner):
 
         Returns:
             A list of :class:`~lightning_sdk.api.org_api.MonthlySummary` dicts,
-            one per month in the requested range:
-            [
-                {
-                    "period_start": datetime,
-                    "period_end": datetime,
-                    "total_credits_consumed": float,
-                    "total_credits_remaining": float,
-                    "total_credits_purchased": float,
-                },
-                ...
-            ]
+            one per month in the requested range::
+
+                [
+                    {
+                        "period_start": datetime,
+                        "period_end": datetime,
+                        "total_credits_consumed": float,
+                        "total_credits_remaining": float,
+                        "total_credits_purchased": float,
+                    },
+                    ...
+                ]
 
         Raises:
             ValueError: If neither ``start`` nor ``end`` is
