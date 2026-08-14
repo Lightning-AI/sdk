@@ -47,7 +47,10 @@ class V1SandboxSnapshot(object):
     swagger_types = {
         'created_at': 'datetime',
         'expires_at': 'datetime',
+        'filesystem_size_bytes': 'str',
         'id': 'str',
+        'includes_memory': 'bool',
+        'memory_size_bytes': 'str',
         'organization_id': 'str',
         'project_id': 'str',
         'rootfs_digest': 'str',
@@ -68,7 +71,10 @@ class V1SandboxSnapshot(object):
     attribute_map = {
         'created_at': 'createdAt',
         'expires_at': 'expiresAt',
+        'filesystem_size_bytes': 'filesystemSizeBytes',
         'id': 'id',
+        'includes_memory': 'includesMemory',
+        'memory_size_bytes': 'memorySizeBytes',
         'organization_id': 'organizationId',
         'project_id': 'projectId',
         'rootfs_digest': 'rootfsDigest',
@@ -86,11 +92,14 @@ class V1SandboxSnapshot(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, filesystem_size_bytes: 'str' =None, id: 'str' =None, includes_memory: 'bool' =None, memory_size_bytes: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1SandboxSnapshot - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._expires_at = None
+        self._filesystem_size_bytes = None
         self._id = None
+        self._includes_memory = None
+        self._memory_size_bytes = None
         self._organization_id = None
         self._project_id = None
         self._rootfs_digest = None
@@ -111,8 +120,14 @@ class V1SandboxSnapshot(object):
             self.created_at = created_at
         if expires_at is not None:
             self.expires_at = expires_at
+        if filesystem_size_bytes is not None:
+            self.filesystem_size_bytes = filesystem_size_bytes
         if id is not None:
             self.id = id
+        if includes_memory is not None:
+            self.includes_memory = includes_memory
+        if memory_size_bytes is not None:
+            self.memory_size_bytes = memory_size_bytes
         if organization_id is not None:
             self.organization_id = organization_id
         if project_id is not None:
@@ -187,6 +202,29 @@ class V1SandboxSnapshot(object):
         self._expires_at = expires_at
 
     @property
+    def filesystem_size_bytes(self) -> 'str':
+        """Gets the filesystem_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+
+        Logical bytes in the writable filesystem tree. This is the portion that must fit on the destination sandbox disk during restore.  # noqa: E501
+
+        :return: The filesystem_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: str
+        """
+        return self._filesystem_size_bytes
+
+    @filesystem_size_bytes.setter
+    def filesystem_size_bytes(self, filesystem_size_bytes: 'str'):
+        """Sets the filesystem_size_bytes of this V1SandboxSnapshot.
+
+        Logical bytes in the writable filesystem tree. This is the portion that must fit on the destination sandbox disk during restore.  # noqa: E501
+
+        :param filesystem_size_bytes: The filesystem_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+        :type: str
+        """
+
+        self._filesystem_size_bytes = filesystem_size_bytes
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1SandboxSnapshot.  # noqa: E501
 
@@ -206,6 +244,52 @@ class V1SandboxSnapshot(object):
         """
 
         self._id = id
+
+    @property
+    def includes_memory(self) -> 'bool':
+        """Gets the includes_memory of this V1SandboxSnapshot.  # noqa: E501
+
+        True while a memory capture is in progress and, once ready, when the finalized snapshot contains a process-memory checkpoint.  # noqa: E501
+
+        :return: The includes_memory of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: bool
+        """
+        return self._includes_memory
+
+    @includes_memory.setter
+    def includes_memory(self, includes_memory: 'bool'):
+        """Sets the includes_memory of this V1SandboxSnapshot.
+
+        True while a memory capture is in progress and, once ready, when the finalized snapshot contains a process-memory checkpoint.  # noqa: E501
+
+        :param includes_memory: The includes_memory of this V1SandboxSnapshot.  # noqa: E501
+        :type: bool
+        """
+
+        self._includes_memory = includes_memory
+
+    @property
+    def memory_size_bytes(self) -> 'str':
+        """Gets the memory_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+
+        Logical bytes in the process-memory checkpoint. These bytes are stored outside the destination sandbox's writable disk.  # noqa: E501
+
+        :return: The memory_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: str
+        """
+        return self._memory_size_bytes
+
+    @memory_size_bytes.setter
+    def memory_size_bytes(self, memory_size_bytes: 'str'):
+        """Sets the memory_size_bytes of this V1SandboxSnapshot.
+
+        Logical bytes in the process-memory checkpoint. These bytes are stored outside the destination sandbox's writable disk.  # noqa: E501
+
+        :param memory_size_bytes: The memory_size_bytes of this V1SandboxSnapshot.  # noqa: E501
+        :type: str
+        """
+
+        self._memory_size_bytes = memory_size_bytes
 
     @property
     def organization_id(self) -> 'str':

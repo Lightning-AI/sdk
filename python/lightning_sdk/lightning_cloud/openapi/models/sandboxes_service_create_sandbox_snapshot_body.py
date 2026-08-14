@@ -47,6 +47,7 @@ class SandboxesServiceCreateSandboxSnapshotBody(object):
     swagger_types = {
         'excludes': 'list[str]',
         'expiration': 'str',
+        'include_memory': 'bool',
         'organization_id': 'str',
         'project_id': 'str'
     }
@@ -54,14 +55,16 @@ class SandboxesServiceCreateSandboxSnapshotBody(object):
     attribute_map = {
         'excludes': 'excludes',
         'expiration': 'expiration',
+        'include_memory': 'includeMemory',
         'organization_id': 'organizationId',
         'project_id': 'projectId'
     }
 
-    def __init__(self, excludes: 'list[str]' =None, expiration: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, excludes: 'list[str]' =None, expiration: 'str' =None, include_memory: 'bool' =None, organization_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """SandboxesServiceCreateSandboxSnapshotBody - a model defined in Swagger"""  # noqa: E501
         self._excludes = None
         self._expiration = None
+        self._include_memory = None
         self._organization_id = None
         self._project_id = None
         self.discriminator = None
@@ -69,6 +72,8 @@ class SandboxesServiceCreateSandboxSnapshotBody(object):
             self.excludes = excludes
         if expiration is not None:
             self.expiration = expiration
+        if include_memory is not None:
+            self.include_memory = include_memory
         if organization_id is not None:
             self.organization_id = organization_id
         if project_id is not None:
@@ -119,6 +124,27 @@ class SandboxesServiceCreateSandboxSnapshotBody(object):
         """
 
         self._expiration = expiration
+
+    @property
+    def include_memory(self) -> 'bool':
+        """Gets the include_memory of this SandboxesServiceCreateSandboxSnapshotBody.  # noqa: E501
+
+
+        :return: The include_memory of this SandboxesServiceCreateSandboxSnapshotBody.  # noqa: E501
+        :rtype: bool
+        """
+        return self._include_memory
+
+    @include_memory.setter
+    def include_memory(self, include_memory: 'bool'):
+        """Sets the include_memory of this SandboxesServiceCreateSandboxSnapshotBody.
+
+
+        :param include_memory: The include_memory of this SandboxesServiceCreateSandboxSnapshotBody.  # noqa: E501
+        :type: bool
+        """
+
+        self._include_memory = include_memory
 
     @property
     def organization_id(self) -> 'str':

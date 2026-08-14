@@ -21,6 +21,7 @@ from lightning_sdk.api.utils import (
     resolve_path_mappings,
 )
 from lightning_sdk.lightning_cloud.openapi import (
+    ApiClient,
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
     V1PathMapping,
@@ -957,3 +958,35 @@ def test_collect_download_results_reports_every_failure():
 
 def test_collect_download_results_is_quiet_when_every_worker_succeeds():
     _collect_download_results([_finished_future() for _ in range(3)], "some/folder")
+
+
+def test_cached_lightning_client_retries_outside_shell_completion(monkeypatch):
+    monkeypatch.delenv("_LIGHTNING_COMPLETE", raising=False)
+    utils.cached_lightning_client.cache_clear()
+
+    client = utils.cached_lightning_client(with_auth=False)
+
+    # the retry wrapper rebinds every API method on the instance
+    assert "auth_service_get_user" in vars(client)
+
+
+def test_cached_lightning_client_fails_fast_during_shell_completion(monkeypatch):
+    monkeypatch.setenv("_LIGHTNING_COMPLETE", "zsh_complete")
+    utils.cached_lightning_client.cache_clear()
+
+    seen = {}
+
+    def fake_request(self, *args, **kwargs):
+        seen.update(kwargs)
+        return Mock()
+
+    monkeypatch.setattr(ApiClient, "request", fake_request)
+    client = utils.cached_lightning_client(with_auth=False)
+
+    assert "auth_service_get_user" not in vars(client)
+
+    client.api_client.request("GET", "https://example.com")
+    assert seen["_request_timeout"] == utils._COMPLETION_REQUEST_TIMEOUT
+
+    client.api_client.request("GET", "https://example.com", _request_timeout=10)
+    assert seen["_request_timeout"] == 10

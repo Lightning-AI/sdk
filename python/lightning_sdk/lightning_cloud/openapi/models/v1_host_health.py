@@ -49,6 +49,7 @@ class V1HostHealth(object):
         'fabric_manager': 'V1FabricManagerHealth',
         'node_fitness': 'V1NodeFitness',
         'nvlink_fm_topology': 'V1NVLinkFMTopology',
+        'nvswitch_fatal': 'V1NVSwitchFatal',
         'recent_dmesg_errors': 'list[str]',
         'storage': 'V1HostStorage',
         'system': 'V1MachineSystemInfo'
@@ -59,17 +60,19 @@ class V1HostHealth(object):
         'fabric_manager': 'fabricManager',
         'node_fitness': 'nodeFitness',
         'nvlink_fm_topology': 'nvlinkFmTopology',
+        'nvswitch_fatal': 'nvswitchFatal',
         'recent_dmesg_errors': 'recentDmesgErrors',
         'storage': 'storage',
         'system': 'system'
     }
 
-    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
+    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, nvswitch_fatal: 'V1NVSwitchFatal' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
         """V1HostHealth - a model defined in Swagger"""  # noqa: E501
         self._aer_counters = None
         self._fabric_manager = None
         self._node_fitness = None
         self._nvlink_fm_topology = None
+        self._nvswitch_fatal = None
         self._recent_dmesg_errors = None
         self._storage = None
         self._system = None
@@ -82,6 +85,8 @@ class V1HostHealth(object):
             self.node_fitness = node_fitness
         if nvlink_fm_topology is not None:
             self.nvlink_fm_topology = nvlink_fm_topology
+        if nvswitch_fatal is not None:
+            self.nvswitch_fatal = nvswitch_fatal
         if recent_dmesg_errors is not None:
             self.recent_dmesg_errors = recent_dmesg_errors
         if storage is not None:
@@ -172,6 +177,27 @@ class V1HostHealth(object):
         """
 
         self._nvlink_fm_topology = nvlink_fm_topology
+
+    @property
+    def nvswitch_fatal(self) -> 'V1NVSwitchFatal':
+        """Gets the nvswitch_fatal of this V1HostHealth.  # noqa: E501
+
+
+        :return: The nvswitch_fatal of this V1HostHealth.  # noqa: E501
+        :rtype: V1NVSwitchFatal
+        """
+        return self._nvswitch_fatal
+
+    @nvswitch_fatal.setter
+    def nvswitch_fatal(self, nvswitch_fatal: 'V1NVSwitchFatal'):
+        """Sets the nvswitch_fatal of this V1HostHealth.
+
+
+        :param nvswitch_fatal: The nvswitch_fatal of this V1HostHealth.  # noqa: E501
+        :type: V1NVSwitchFatal
+        """
+
+        self._nvswitch_fatal = nvswitch_fatal
 
     @property
     def recent_dmesg_errors(self) -> 'list[str]':
