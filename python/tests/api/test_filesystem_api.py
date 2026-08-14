@@ -2,13 +2,18 @@ import os
 from unittest import mock
 
 import pytest
+import requests
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
+from lightning_sdk.api.utils import _DOWNLOAD_MAX_TRIES
 
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_download_file(_authenticate_mock, _mock_auth, mock_requests_get, tmpdir):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
@@ -25,7 +30,7 @@ def test_download_file(_authenticate_mock, _mock_auth, mock_requests_get, tmpdir
 @mock.patch("lightning_sdk.api.filesystem_api._collect_download_results")
 @mock.patch("lightning_sdk.api.filesystem_api.tqdm")
 @mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token")
+@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
 def test_download_folder(_mock_auth, authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
     authenticate_mock.return_value = "test-token-123"
@@ -56,7 +61,10 @@ def test_download_folder(_mock_auth, authenticate_mock, mock_executor, mock_tqdm
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_download_file_rejects_an_error_document(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
     # An object store refusing a GET answers with an XML document, not with the bytes.
     body = b"<Error><Code>InternalError</Code><Message>We encountered an internal error.</Message></Error>"
@@ -69,13 +77,92 @@ def test_download_file_rejects_an_error_document(_authenticate_mock, _mock_auth,
     filesystem_api = FilesystemApi()
 
     filepath = tmp_path / "file1"
-    with pytest.raises(RuntimeError, match="(?s)HTTP 500.*InternalError"):
+    with mock.patch("time.sleep"), pytest.raises(RuntimeError, match="(?s)HTTP 500.*InternalError"):
         filesystem_api.download_file("file1", str(filepath), "ts-abc")
 
+    # A 500 is a temporary condition, so it is retried before giving up.
+    assert mock_requests_get.call_count == _DOWNLOAD_MAX_TRIES
     assert list(tmp_path.iterdir()) == []
 
 
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_retries_a_dropped_connection(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    body = b"hello"
+    ok_response = mock.Mock()
+    ok_response.status_code = 200
+    ok_response.headers = {"content-length": str(len(body))}
+    ok_response.iter_content = lambda chunk_size=None: iter([body])
+    mock_requests_get.side_effect = [requests.exceptions.ConnectionError("connection reset"), ok_response]
+
+    filesystem_api = FilesystemApi()
+
+    filepath = tmp_path / "file1"
+    with mock.patch("time.sleep"):
+        filesystem_api.download_file("file1", str(filepath), "ts-abc", progress_bar=False)
+
+    assert mock_requests_get.call_count == 2
+    assert filepath.read_bytes() == body
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_retries_a_truncated_body(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    # A body shorter than Content-Length promised is a cut connection: retried, not fatal.
+    body = b"hello"
+    short_response = mock.Mock()
+    short_response.status_code = 200
+    short_response.headers = {"content-length": str(len(body))}
+    short_response.iter_content = lambda chunk_size=None: iter([body[:2]])
+    ok_response = mock.Mock()
+    ok_response.status_code = 200
+    ok_response.headers = {"content-length": str(len(body))}
+    ok_response.iter_content = lambda chunk_size=None: iter([body])
+    mock_requests_get.side_effect = [short_response, ok_response]
+
+    filesystem_api = FilesystemApi()
+
+    filepath = tmp_path / "file1"
+    with mock.patch("time.sleep"):
+        filesystem_api.download_file("file1", str(filepath), "ts-abc", progress_bar=False)
+
+    assert mock_requests_get.call_count == 2
+    assert filepath.read_bytes() == body
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_download_file_does_not_retry_a_denial(_authenticate_mock, _mock_auth, mock_requests_get, tmp_path):
+    mock_response = mock.Mock()
+    mock_response.status_code = 404
+    mock_response.headers = {}
+    mock_response.iter_content = lambda chunk_size=None: iter([b"not found"])
+    mock_requests_get.return_value = mock_response
+
+    filesystem_api = FilesystemApi()
+
+    with pytest.raises(RuntimeError, match="HTTP 404"):
+        filesystem_api.download_file("file1", str(tmp_path / "file1"), "ts-abc")
+
+    assert mock_requests_get.call_count == 1
+
+
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
 def test_download_folder_does_not_report_success_on_a_partial_download(
     _mock_auth, _authenticate_mock, inline_executor_cls, tmp_path
@@ -103,7 +190,10 @@ def test_download_folder_does_not_report_success_on_a_partial_download(
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_list_files_returns_tree(_authenticate_mock, _mock_auth, mock_requests_get):
     fake_files = [{"name": "test1.txt"}, {"name": "test2.txt"}]
     mock_response = mock.MagicMock()
@@ -119,7 +209,10 @@ def test_list_files_returns_tree(_authenticate_mock, _mock_auth, mock_requests_g
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_list_files_returns_empty_when_tree_missing(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
@@ -134,7 +227,10 @@ def test_list_files_returns_empty_when_tree_missing(_authenticate_mock, _mock_au
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_list_files_passes_correct_url_and_params(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
@@ -151,12 +247,15 @@ def test_list_files_passes_correct_url_and_params(_authenticate_mock, _mock_auth
     assert "ts-abc" in url
     assert "path/to/files" in url
     assert params["recursive"] == "true"
-    assert params["token"] == "token"
+    assert mock_requests_get.call_args[1]["headers"] == {"Authorization": "Bearer token"}
 
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_list_files_non_recursive_by_default(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 200
@@ -172,7 +271,10 @@ def test_list_files_non_recursive_by_default(_authenticate_mock, _mock_auth, moc
 
 @mock.patch("requests.get", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
-@mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_token", return_value="token")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
 def test_list_files_raises_on_non_200(_authenticate_mock, _mock_auth, mock_requests_get):
     mock_response = mock.MagicMock()
     mock_response.status_code = 404
@@ -181,3 +283,36 @@ def test_list_files_raises_on_non_200(_authenticate_mock, _mock_auth, mock_reque
     filesystem_api = FilesystemApi()
     with pytest.raises(RuntimeError, match="Failed to list files: 404"):
         filesystem_api.list_files(teamspace_id="ts-abc", path="path/to/files")
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch(
+    "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer token"},
+)
+def test_list_files_follows_cursor_pages(_authenticate_mock, _mock_auth, mock_requests_get):
+    """A truncated listing is followed page by page until nextCursor comes back empty."""
+    pages = [
+        {"tree": [{"path": "a.txt"}], "truncated": True, "nextCursor": "cursor-1"},
+        {"tree": [{"path": "b.txt"}], "truncated": True, "nextCursor": "cursor-2"},
+        {"tree": [{"path": "c.txt"}], "truncated": False},
+    ]
+    responses = []
+    for page in pages:
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = page
+        responses.append(resp)
+    mock_requests_get.side_effect = responses
+
+    filesystem_api = FilesystemApi()
+    result = filesystem_api.list_files(teamspace_id="ts-abc", path="big-folder", recursive=True, page_size=1)
+
+    assert [entry["path"] for entry in result] == ["a.txt", "b.txt", "c.txt"]
+
+    params = [call[1]["params"] for call in mock_requests_get.call_args_list]
+    assert "cursor" not in params[0]
+    assert params[1]["cursor"] == "cursor-1"
+    assert params[2]["cursor"] == "cursor-2"
+    assert all(p["recursive"] == "true" and p["atMost"] == "1" for p in params)

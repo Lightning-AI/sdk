@@ -38,8 +38,34 @@ if TYPE_CHECKING:
     from lightning_sdk.sandbox.process import SandboxProcess
 
 _sandbox_config: dict[str, Any] = {}
-_sandbox_config.update(SandboxConfig.from_env().to_api_dict())
-_api = SandboxApi(_sandbox_config)
+_config_loaded = False
+_api_instance: SandboxApi | None = None
+
+
+def _ensure_config() -> dict[str, Any]:
+    """Populate the process-wide config from the environment, once.
+
+    Deliberately lazy. ``SandboxConfig.from_env()`` raises when ``LIGHTNING_ORG_ID`` is
+    set, so doing this at import time made *importing* this module fail — and the CLI
+    imports it while registering the ``sandbox`` command group, which meant every
+    ``lightning`` command died in any environment that sets that variable, including
+    inside a Lightning job. Loading on first use keeps the error where it belongs: in
+    front of someone actually reaching for a sandbox.
+    """
+    global _config_loaded
+    if not _config_loaded:
+        _sandbox_config.update(SandboxConfig.from_env().to_api_dict())
+        _config_loaded = True
+    return _sandbox_config
+
+
+def _default_api() -> SandboxApi:
+    """The shared client used when no explicit api/config is passed."""
+    global _api_instance
+    if _api_instance is None:
+        _api_instance = SandboxApi(_ensure_config())
+    return _api_instance
+
 
 #: Suffix identifying the Docker-in-gVisor variant of a curated runtime. Their
 #: images carry the ``ai.lightning.sandbox.docker=true`` OCI label, which is what
@@ -83,7 +109,7 @@ def _resolve_sandbox_api(
         return sandbox_api
     if config is not None:
         return config.api()
-    return _api
+    return _default_api()
 
 
 def _global_config() -> SandboxConfig:
@@ -94,9 +120,10 @@ def _global_config() -> SandboxConfig:
     built without an explicit ``config`` exposes a ``config`` that matches the
     client it actually uses.
     """
+    cfg = _ensure_config()
     return SandboxConfig(
-        api_key=_sandbox_config.get("api_key"),
-        base_url=_sandbox_config.get("base_url"),
+        api_key=cfg.get("api_key"),
+        base_url=cfg.get("base_url"),
     )
 
 
@@ -109,16 +136,18 @@ def configure(
     """Set global defaults for sandbox API calls.
 
     Pass a :class:`SandboxConfig` and/or individual fields. Later keyword arguments
-    override values from ``config``. The process-wide store is also initialized from
-    environment variables at import.
+    override values from ``config``. The process-wide store is initialized from
+    environment variables on first use, and these values are layered on top.
     """
+    _ensure_config()  # env first, so explicit values here win over it
     if config is not None:
         _sandbox_config.update(config.to_api_dict())
     if api_key is not None:
         _sandbox_config["api_key"] = api_key
     if base_url is not None:
         _sandbox_config["base_url"] = base_url
-    _api.reset()
+    if _api_instance is not None:
+        _api_instance.reset()
 
 
 _configure_globals = configure
@@ -385,7 +414,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     ) -> None:
         self._v1 = data
         self._runtime = runtime
-        self._sandbox_api = sandbox_api or _api
+        self._sandbox_api = sandbox_api or _default_api()
         self._fs_inst: Any = None
         self._process_inst: Any = None
 
@@ -397,7 +426,7 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         runtime: str | None = None,
         sandbox_api: SandboxApi | None = None,
     ) -> SandboxInstance:
-        return cls(v1, runtime=runtime, sandbox_api=sandbox_api or _api)
+        return cls(v1, runtime=runtime, sandbox_api=sandbox_api or _default_api())
 
     @property
     def runtime(self) -> str | None:

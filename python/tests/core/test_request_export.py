@@ -4,19 +4,16 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import MagicMock
 
 import pytest
 import requests
 
-import lightning_sdk.api.lightning_storage_upload as lightning_storage_upload_module
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.api.deployment_api import (
     DEFAULT_REQUEST_CAPTURE_PATH,
     DeploymentApi,
     MissingRequestContentError,
 )
-from lightning_sdk.lightning_cloud.openapi import DataConnectionServiceCreateDataConnectionBody, V1R2DataConnection
 
 
 class _FakeResponse:
@@ -178,39 +175,7 @@ def test_export_include_all_paths_omits_path_filter(tmp_path, monkeypatch):
 def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monkeypatch):
     monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
     client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
-    pending_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="tmp", account_id="tmp"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_PENDING",
-    )
-    ready_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_CREATED",
-    )
-    client.data_connection_service_list_data_connections = MagicMock(
-        side_effect=[
-            SimpleNamespace(data_connections=[]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[ready_connection]),
-        ]
-    )
-    client.data_connection_service_create_data_connection = MagicMock(
-        return_value=SimpleNamespace(
-            id="data-connection-id",
-            name="blackbox-exports",
-            r2=SimpleNamespace(source="tmp", account_id="tmp"),
-            writable=True,
-            cluster_id="data-connection-cluster-id",
-        )
-    )
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
-    sleeps = []
-    monkeypatch.setattr(lightning_storage_upload_module, "sleep", lambda seconds: sleeps.append(seconds))
 
     uploads = []
     manifest_uploads = []
@@ -243,16 +208,6 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
     }
     manifest = json.loads(result.manifest_path.read_text())
     assert manifest["uploaded_artifacts"] == result.uploaded_artifacts
-    assert client.data_connection_service_list_data_connections.call_count == 3
-    create_kwargs = client.data_connection_service_create_data_connection.call_args.kwargs
-    assert create_kwargs["project_id"] == "teamspace-id"
-    assert create_kwargs["body"] == DataConnectionServiceCreateDataConnectionBody(
-        name="blackbox-exports",
-        create_resources=True,
-        force=True,
-        writable=True,
-        r2=V1R2DataConnection(name="blackbox-exports"),
-    )
     assert [upload["remote_path"] for upload in uploads] == [
         "lightning_storage/blackbox-exports/daily/2026-04-22/requests.csv",
         "lightning_storage/blackbox-exports/daily/2026-04-22/requests.jsonl",
@@ -264,25 +219,11 @@ def test_export_optionally_uploads_artifacts_to_lightning_storage(tmp_path, monk
         upload["endpoint_base"] == "https://api.example.com/v1/projects/teamspace-id/artifacts" for upload in uploads
     )
     assert all("cluster_id" not in upload for upload in uploads)
-    assert sleeps == [lightning_storage_upload_module.LIGHTNING_STORAGE_POLL_INTERVAL_SECONDS]
 
 
 def test_export_keeps_local_manifest_honest_when_manifest_upload_fails(tmp_path, monkeypatch):
     monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
     client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
-    client.data_connection_service_list_data_connections = MagicMock(
-        return_value=SimpleNamespace(
-            data_connections=[
-                SimpleNamespace(
-                    id="data-connection-id",
-                    name="blackbox-exports",
-                    r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-                    writable=True,
-                    state="DATA_CONNECTION_STATE_CREATED",
-                )
-            ]
-        )
-    )
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
 
     uploads = []
@@ -316,7 +257,7 @@ def test_export_keeps_local_manifest_honest_when_manifest_upload_fails(tmp_path,
     }
 
 
-def test_export_does_not_resolve_upload_target_before_local_manifest_is_written(tmp_path, monkeypatch):
+def test_export_does_not_upload_before_local_manifest_is_written(tmp_path, monkeypatch):
     client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
 
@@ -326,8 +267,8 @@ def test_export_does_not_resolve_upload_target_before_local_manifest_is_written(
     monkeypatch.setattr(deployment_api_module, "_build_manifest", fail_manifest)
     monkeypatch.setattr(
         deployment_api_module,
-        "_resolve_lightning_storage_upload_target",
-        lambda **kwargs: pytest.fail("upload target should not resolve before local manifest exists"),
+        "_upload_request_export_artifact",
+        lambda **kwargs: pytest.fail("nothing should upload before the local manifest exists"),
     )
 
     with pytest.raises(RuntimeError, match="manifest failed"):
@@ -344,19 +285,6 @@ def test_export_does_not_resolve_upload_target_before_local_manifest_is_written(
 def test_export_records_partial_remote_uploads_when_jsonl_upload_fails(tmp_path, monkeypatch):
     monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
     client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
-    client.data_connection_service_list_data_connections = MagicMock(
-        return_value=SimpleNamespace(
-            data_connections=[
-                SimpleNamespace(
-                    id="data-connection-id",
-                    name="blackbox-exports",
-                    r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-                    writable=True,
-                    state="DATA_CONNECTION_STATE_CREATED",
-                )
-            ]
-        )
-    )
     monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
 
     class _FakeUploader:
@@ -386,238 +314,23 @@ def test_export_records_partial_remote_uploads_when_jsonl_upload_fails(tmp_path,
     }
 
 
-def test_lightning_storage_upload_cloud_account_errors_when_no_clusters_are_bound(monkeypatch):
-    monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
-    client = _FakeClient(pages=[])
-    client.project_cluster_bindings = []
-    client.preferred_cluster = None
-
-    with pytest.raises(RuntimeError, match="no clusters are bound to the teamspace"):
-        deployment_api_module._resolve_lightning_storage_upload_cloud_account(
-            client=client,
-            teamspace_id="teamspace-id",
-        )
-
-
-def test_wait_for_lightning_storage_folder_ready_respects_timeout_window(monkeypatch):
-    client = _FakeClient(pages=[])
-    pending_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="tmp", account_id="tmp"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_PENDING",
-    )
-    ready_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_CREATED",
-    )
-    client.data_connection_service_list_data_connections = MagicMock(
-        side_effect=[
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[ready_connection]),
-        ]
-    )
-    clock = {"now": 0.0}
-    sleeps = []
-
-    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
-
-    def fake_sleep(seconds):
-        sleeps.append(seconds)
-        clock["now"] += seconds
-
-    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
-
-    result = deployment_api_module._wait_for_lightning_storage_folder_ready(
-        client=client,
-        teamspace_id="teamspace-id",
-        folder_name="blackbox-exports",
-        timeout_seconds=31,
-        poll_interval_seconds=10,
-    )
-
-    assert result == ready_connection
-    assert sleeps == [10, 10, 10]
-
-
-def test_wait_for_lightning_storage_folder_ready_caps_final_sleep(monkeypatch):
-    client = _FakeClient(pages=[])
-    pending_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="tmp", account_id="tmp"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_PENDING",
-    )
-    client.data_connection_service_list_data_connections = MagicMock(
-        side_effect=[
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-            SimpleNamespace(data_connections=[pending_connection]),
-        ]
-    )
-    clock = {"now": 0.0}
-    sleeps = []
-
-    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
-
-    def fake_sleep(seconds):
-        sleeps.append(seconds)
-        clock["now"] += seconds
-
-    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
-
-    with pytest.raises(RuntimeError, match="was not ready for upload within 31s"):
-        deployment_api_module._wait_for_lightning_storage_folder_ready(
-            client=client,
-            teamspace_id="teamspace-id",
-            folder_name="blackbox-exports",
-            timeout_seconds=31,
-            poll_interval_seconds=10,
-        )
-
-    assert sleeps == [10, 10, 10, 1]
-
-
-def test_wait_for_lightning_storage_folder_ready_sleeps_before_repolling_initial_connection(monkeypatch):
-    client = _FakeClient(pages=[])
-    pending_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="tmp", account_id="tmp"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_PENDING",
-    )
-    ready_connection = SimpleNamespace(
-        id="data-connection-id",
-        name="blackbox-exports",
-        r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-        writable=True,
-        state="DATA_CONNECTION_STATE_CREATED",
-    )
-    client.data_connection_service_list_data_connections = MagicMock(
-        return_value=SimpleNamespace(data_connections=[ready_connection])
-    )
-    clock = {"now": 0.0}
-    sleeps = []
-
-    monkeypatch.setattr(lightning_storage_upload_module, "monotonic", lambda: clock["now"])
-
-    def fake_sleep(seconds):
-        sleeps.append(seconds)
-        clock["now"] += seconds
-
-    monkeypatch.setattr(lightning_storage_upload_module, "sleep", fake_sleep)
-
-    result = deployment_api_module._wait_for_lightning_storage_folder_ready(
-        client=client,
-        teamspace_id="teamspace-id",
-        folder_name="blackbox-exports",
-        initial_connection=pending_connection,
-        timeout_seconds=31,
-        poll_interval_seconds=10,
-    )
-
-    assert result == ready_connection
-    assert sleeps == [10]
-    client.data_connection_service_list_data_connections.assert_called_once()
-
-
-def test_export_prefers_project_default_cluster_for_lightning_storage_upload(tmp_path, monkeypatch):
-    monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
-    client = _FakeClient(pages=[[_telemetry("health-1", path="/health", captured=False)]])
-    client.project_cluster_bindings = [
-        SimpleNamespace(cluster_id="project-cluster-a"),
-        SimpleNamespace(cluster_id="project-cluster-b"),
-    ]
-    client.preferred_cluster = "project-cluster-b"
-    client.data_connection_service_list_data_connections = MagicMock(
-        return_value=SimpleNamespace(
-            data_connections=[
-                SimpleNamespace(
-                    id="data-connection-id",
-                    name="blackbox-exports",
-                    r2=SimpleNamespace(source="r2://bucket-name", account_id="account-id"),
-                    writable=True,
-                    state="DATA_CONNECTION_STATE_CREATED",
-                    cluster_id="data-connection-cluster-id",
-                )
-            ]
-        )
-    )
-    monkeypatch.setattr("lightning_sdk.api.deployment_api.requests.get", pytest.fail)
-
-    uploads = []
-
-    class _FakeUploader:
-        def __init__(self, **kwargs):
-            uploads.append(kwargs)
-
-        def __call__(self):
-            return None
-
-    monkeypatch.setattr(deployment_api_module, "_BlobUploader", _FakeUploader)
-
-    resolved_cloud_accounts = []
-    original_resolve = lightning_storage_upload_module._resolve_lightning_storage_upload_cloud_account
-
-    def spy_resolve(**kwargs):
-        result = original_resolve(**kwargs)
-        resolved_cloud_accounts.append(result)
-        return result
-
-    monkeypatch.setattr(lightning_storage_upload_module, "_resolve_lightning_storage_upload_cloud_account", spy_resolve)
-
-    _deployment_api(client).export_request_captures(
-        _deployment(),
-        start="2026-04-20T00:00:00Z",
-        end="2026-04-22T00:00:00Z",
-        output_dir=tmp_path,
-        include_all_paths=True,
-        remote_path="lightning_storage/blackbox-exports/daily/2026-04-22",
-    )
-
-    # the upload itself no longer needs a cluster, but target resolution still
-    # prefers the project default
-    assert uploads
-    assert resolved_cloud_accounts == ["project-cluster-b"]
-
-
 @pytest.mark.parametrize(
-    ("remote_path", "expected"),
+    "remote_path",
     [
-        (
-            "lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "/teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "lit://my-org/my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
-        (
-            "lightning_storage//blackbox-exports//daily/2026-04-22",
-            ("blackbox-exports", ("daily", "2026-04-22")),
-        ),
+        "lightning_storage/blackbox-exports/daily/2026-04-22",
+        "teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "/teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "lit://my-org/my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "lightning_storage//blackbox-exports//daily/2026-04-22",
     ],
 )
-def test_parse_remote_upload_path_accepts_lightning_storage_forms(remote_path, expected):
-    assert deployment_api_module._parse_lightning_storage_path(remote_path) == expected
+def test_normalize_upload_destination_accepts_lightning_storage_forms(remote_path):
+    destination = deployment_api_module._normalize_upload_destination(
+        client=_FakeClient(pages=[]),
+        teamspace_id="teamspace-id",
+        remote_path=remote_path,
+    )
+    assert destination == "lightning_storage/blackbox-exports/daily/2026-04-22"
 
 
 @pytest.mark.parametrize(

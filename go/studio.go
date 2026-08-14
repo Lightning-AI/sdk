@@ -544,14 +544,9 @@ func (s *Studio) DownloadFile(remotePath, filePath string) error {
 	if err != nil {
 		return err
 	}
-	query := url.Values{
-		"key": []string{sanitizeStudioRemotePath(remotePath, s.id)},
-	}
+	query := url.Values{}
 	if s.cloud != "" {
 		query.Set("clusterId", s.cloud)
-	}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
 	}
 	return api.Download(context.Background(), studioArtifactBlobPath(s.teamspaceID, s.id, remotePath), query, filePath)
 }
@@ -569,28 +564,15 @@ func (s *Studio) DownloadFolder(remotePath, targetPath string) error {
 		return err
 	}
 	remotePath = strings.Trim(remotePath, "/")
-	query := url.Values{"recursive": []string{"true"}}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
-	}
-	var tree artifactTreeResponse
-	if err := api.Do(context.Background(), http.MethodGet, studioArtifactTreePath(s.teamspaceID, s.id, remotePath), query, nil, &tree); err != nil {
-		return err
-	}
-	for _, item := range tree.Tree {
-		if item.Type != "blob" || item.Path == "" {
-			continue
-		}
-		remoteFilePath := item.Path
-		if remotePath != "" {
-			remoteFilePath = remotePath + "/" + strings.TrimLeft(item.Path, "/")
-		}
-		targetFilePath := filepath.Join(targetPath, filepath.FromSlash(item.Path))
-		if err := api.Download(context.Background(), studioArtifactBlobPath(s.teamspaceID, s.id, remoteFilePath), downloadQuery(), targetFilePath); err != nil {
-			return err
-		}
-	}
-	return nil
+	return downloadArtifactFolder(
+		api,
+		remotePath,
+		targetPath,
+		studioArtifactTreePath(s.teamspaceID, s.id, remotePath),
+		func(remoteFilePath string) string { return studioArtifactBlobPath(s.teamspaceID, s.id, remoteFilePath) },
+		url.Values{"recursive": []string{"true"}},
+		nil,
+	)
 }
 
 // UploadFile uploads a file to the studio.
@@ -608,12 +590,8 @@ func (s *Studio) UploadFile(filePath, remotePath string) error {
 	if err != nil {
 		return err
 	}
-	query := url.Values{}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
-	}
 	// Completion makes the file show up in a running Studio.
-	return api.Upload(context.Background(), studioArtifactScopePath(s.teamspaceID, s.id), strings.TrimLeft(remotePath, "/"), query, filePath, sdkclient.UploadOptions{NotifyCompletion: true})
+	return api.Upload(context.Background(), studioArtifactScopePath(s.teamspaceID, s.id), strings.TrimLeft(remotePath, "/"), nil, filePath, sdkclient.UploadOptions{})
 }
 
 // UploadFolder uploads a folder to the studio.
@@ -1321,19 +1299,6 @@ func studioArtifactBlobPath(teamspaceID, studioID, remotePath string) string {
 
 func studioArtifactTreePath(teamspaceID, studioID, remotePath string) string {
 	return "/v1/projects/" + url.PathEscape(teamspaceID) + "/artifacts/cloudspaces/" + url.PathEscape(studioID) + "/trees/" + strings.TrimLeft(remotePath, "/")
-}
-
-func sanitizeStudioRemotePath(remotePath, studioID string) string {
-	remotePath = strings.ReplaceAll(remotePath, "/teamspace/studios/this_studio/", "")
-	return "/cloudspaces/" + studioID + "/code/content/" + strings.TrimLeft(remotePath, "/")
-}
-
-func downloadQuery() url.Values {
-	query := url.Values{}
-	if token := os.Getenv("LIGHTNING_AUTH_TOKEN"); token != "" {
-		query.Set("token", token)
-	}
-	return query
 }
 
 func sleepConfig(config *models.V1CloudSpaceInstanceConfig) (bool, int) {

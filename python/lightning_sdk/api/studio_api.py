@@ -1,7 +1,6 @@
 import json
 import os
 import time
-import warnings
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Event, Thread
@@ -12,16 +11,17 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_token,
+    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _create_app,
     _DummyBody,
     _DummyResponse,
     _machine_to_compute_name,
+    _paged_tree_entries,
     _raise_for_download_status,
-    _sanitize_studio_remote_path,
     _stream_download_to_file,
+    _tree_path_info,
     cached_lightning_client,
 )
 from lightning_sdk.api.utils import (
@@ -953,24 +953,27 @@ class StudioApi:
             studio_id: Studio (cloud space) ID.
             teamspace_id: ID of the owning teamspace.
             path: Artifact path to inspect.
-            query_params: Extra query parameters merged with the auth token.
+            query_params: Extra query parameters for the request.
 
         Returns:
             Parsed JSON response from the server.
         """
-        token = _authenticate_and_get_token(self._client)
-
-        if query_params is None:
-            query_params = {
-                "token": token,
-            }
-        else:
-            query_params["token"] = token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
         )
         return r.json()
+
+    def _tree_entries(self, studio_id: str, teamspace_id: str, path: str, recursive: bool) -> List[Dict]:
+        """All entries under ``path``, following the listing's cursor until the last page."""
+
+        def fetch_page(query_params: Dict[str, str]) -> Dict[str, Any]:
+            if recursive:
+                query_params["recursive"] = "true"
+            return self.get_tree(studio_id, teamspace_id, path, query_params=query_params)
+
+        return _paged_tree_entries(fetch_page)
 
     def get_path_info(self, studio_id: str, teamspace_id: str, path: str = "") -> dict:
         """Return existence, type, and size metadata for a path inside a Studio.
@@ -984,32 +987,10 @@ class StudioApi:
             Dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or ``None``),
             and ``size`` (int bytes for files, ``None`` otherwise).
         """
-        path = path.strip("/")
-
-        if "/" in path:
-            parent_path = path.rsplit("/", 1)[0]
-            target_name = path.rsplit("/", 1)[1]
-        else:
-            if path == "":
-                # root directory
-                return {"exists": True, "type": "directory", "size": None}
-            parent_path = ""
-            target_name = path
-
-        tree = self.get_tree(studio_id, teamspace_id, path=parent_path)
-        tree_items = tree.get("tree", [])
-        for item in tree_items:
-            item_name = item.get("path", "")
-            if item_name == target_name:
-                item_type = item.get("type")
-                # if type == "blob" it's a file, if "tree" it's a directory
-                return {
-                    "exists": True,
-                    "type": "file" if item_type == "blob" else "directory",
-                    "size": item.get("size", 0) if item_type == "blob" else None,
-                }
-        warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
-        return {"exists": False, "type": None, "size": None}
+        return _tree_path_info(
+            lambda parent: self._tree_entries(studio_id, teamspace_id, parent, recursive=False),
+            path,
+        )
 
     def list_files(
         self,
@@ -1027,8 +1008,7 @@ class StudioApi:
         Returns:
             List of file-info dicts from the recursive tree response.
         """
-        path = path.strip("/")
-        return self.get_tree(studio_id, teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
+        return self._tree_entries(studio_id, teamspace_id, path.strip("/"), recursive=True)
 
     def upload_file(
         self,
@@ -1059,7 +1039,6 @@ class StudioApi:
             file_path=file_path,
             remote_path=remote_path,
             progress_bar=progress_bar,
-            notify_completion=True,
         )()
 
     def download_file(
@@ -1085,18 +1064,14 @@ class StudioApi:
             RuntimeError: If the server returns a non-2xx status code, or if the body that
                 arrives is not the length the server advertised.
         """
-        # TODO: Update this endpoint to permit basic auth
-        token = _authenticate_and_get_token(self._client)
-
         query_params = {
             "clusterId": cloud_account,
-            "key": _sanitize_studio_remote_path(path, studio_id),
-            "token": token,
         }
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
             stream=True,
             allow_redirects=True,
         )
@@ -1124,7 +1099,7 @@ class StudioApi:
         download_dir: Path,
         studio_id: str,
         teamspace_id: str,
-        token: str,
+        auth_headers: Dict[str, str],
         pbar: Optional[tqdm],
     ) -> None:
         """Download a single file from Studio with progress tracking.
@@ -1135,7 +1110,7 @@ class StudioApi:
             download_dir: Local directory where the downloaded file is written.
             studio_id: Studio (cloud space) ID containing the file.
             teamspace_id: ID of the owning teamspace.
-            token: Authentication token for the artifact API.
+            auth_headers: HTTP headers carrying the caller's credentials.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
         Raises:
@@ -1147,13 +1122,9 @@ class StudioApi:
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
-        query_params = {
-            "token": token,
-        }
-
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{file_path}",
-            params=query_params,
+            headers=auth_headers,
             stream=True,
         )
 
@@ -1201,7 +1172,7 @@ class StudioApi:
             print(f"No files found in {path}")
             return
 
-        token = _authenticate_and_get_token(self._client)
+        auth_headers = _authenticate_and_get_auth_headers()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -1226,7 +1197,7 @@ class StudioApi:
                         download_dir,
                         studio_id,
                         teamspace_id,
-                        token,
+                        auth_headers,
                         pbar,
                     )
                     for file_info in files
@@ -1261,13 +1232,10 @@ class StudioApi:
         if info["type"] != "file":
             raise IsADirectoryError(f"The path '{path}' is a directory. Use 'remove_folder()' to remove directories.")
 
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}"
 
-        r = requests.delete(url, params=query_params, timeout=30)
+        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
 
         if r.status_code == 204:
             return
@@ -1295,13 +1263,10 @@ class StudioApi:
         if info["type"] == "file":
             raise ValueError(f"The path '{path}' is a file. Use 'remove_file()' to remove files.")
 
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {"token": token}
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}"
 
-        r = requests.delete(url, params=query_params, timeout=30)
+        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
 
         if r.status_code == 204:
             return

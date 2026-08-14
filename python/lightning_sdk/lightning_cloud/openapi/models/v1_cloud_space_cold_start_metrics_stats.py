@@ -46,51 +46,72 @@ class V1CloudSpaceColdStartMetricsStats(object):
     """
     swagger_types = {
         'cpu_count': 'int',
+        'env_setup': 'dict(str, float)',
         'gpu_count': 'int',
         'gpu_type': 'str',
+        'initialize_env': 'dict(str, float)',
         'instance_type': 'str',
+        'machine_startup': 'dict(str, float)',
         'median_env_setup': 'float',
         'median_initialize_env': 'float',
         'median_machine_startup': 'float',
         'median_total': 'float',
         'median_wait_for_machine': 'float',
-        'provider': 'str'
+        'provider': 'str',
+        'total': 'dict(str, float)',
+        'wait_for_machine': 'dict(str, float)'
     }
 
     attribute_map = {
         'cpu_count': 'cpuCount',
+        'env_setup': 'envSetup',
         'gpu_count': 'gpuCount',
         'gpu_type': 'gpuType',
+        'initialize_env': 'initializeEnv',
         'instance_type': 'instanceType',
+        'machine_startup': 'machineStartup',
         'median_env_setup': 'medianEnvSetup',
         'median_initialize_env': 'medianInitializeEnv',
         'median_machine_startup': 'medianMachineStartup',
         'median_total': 'medianTotal',
         'median_wait_for_machine': 'medianWaitForMachine',
-        'provider': 'provider'
+        'provider': 'provider',
+        'total': 'total',
+        'wait_for_machine': 'waitForMachine'
     }
 
-    def __init__(self, cpu_count: 'int' =None, gpu_count: 'int' =None, gpu_type: 'str' =None, instance_type: 'str' =None, median_env_setup: 'float' =None, median_initialize_env: 'float' =None, median_machine_startup: 'float' =None, median_total: 'float' =None, median_wait_for_machine: 'float' =None, provider: 'str' =None):  # noqa: E501
+    def __init__(self, cpu_count: 'int' =None, env_setup: 'dict(str, float)' =None, gpu_count: 'int' =None, gpu_type: 'str' =None, initialize_env: 'dict(str, float)' =None, instance_type: 'str' =None, machine_startup: 'dict(str, float)' =None, median_env_setup: 'float' =None, median_initialize_env: 'float' =None, median_machine_startup: 'float' =None, median_total: 'float' =None, median_wait_for_machine: 'float' =None, provider: 'str' =None, total: 'dict(str, float)' =None, wait_for_machine: 'dict(str, float)' =None):  # noqa: E501
         """V1CloudSpaceColdStartMetricsStats - a model defined in Swagger"""  # noqa: E501
         self._cpu_count = None
+        self._env_setup = None
         self._gpu_count = None
         self._gpu_type = None
+        self._initialize_env = None
         self._instance_type = None
+        self._machine_startup = None
         self._median_env_setup = None
         self._median_initialize_env = None
         self._median_machine_startup = None
         self._median_total = None
         self._median_wait_for_machine = None
         self._provider = None
+        self._total = None
+        self._wait_for_machine = None
         self.discriminator = None
         if cpu_count is not None:
             self.cpu_count = cpu_count
+        if env_setup is not None:
+            self.env_setup = env_setup
         if gpu_count is not None:
             self.gpu_count = gpu_count
         if gpu_type is not None:
             self.gpu_type = gpu_type
+        if initialize_env is not None:
+            self.initialize_env = initialize_env
         if instance_type is not None:
             self.instance_type = instance_type
+        if machine_startup is not None:
+            self.machine_startup = machine_startup
         if median_env_setup is not None:
             self.median_env_setup = median_env_setup
         if median_initialize_env is not None:
@@ -103,6 +124,10 @@ class V1CloudSpaceColdStartMetricsStats(object):
             self.median_wait_for_machine = median_wait_for_machine
         if provider is not None:
             self.provider = provider
+        if total is not None:
+            self.total = total
+        if wait_for_machine is not None:
+            self.wait_for_machine = wait_for_machine
 
     @property
     def cpu_count(self) -> 'int':
@@ -124,6 +149,27 @@ class V1CloudSpaceColdStartMetricsStats(object):
         """
 
         self._cpu_count = cpu_count
+
+    @property
+    def env_setup(self) -> 'dict(str, float)':
+        """Gets the env_setup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+
+
+        :return: The env_setup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._env_setup
+
+    @env_setup.setter
+    def env_setup(self, env_setup: 'dict(str, float)'):
+        """Sets the env_setup of this V1CloudSpaceColdStartMetricsStats.
+
+
+        :param env_setup: The env_setup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._env_setup = env_setup
 
     @property
     def gpu_count(self) -> 'int':
@@ -168,6 +214,27 @@ class V1CloudSpaceColdStartMetricsStats(object):
         self._gpu_type = gpu_type
 
     @property
+    def initialize_env(self) -> 'dict(str, float)':
+        """Gets the initialize_env of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+
+
+        :return: The initialize_env of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._initialize_env
+
+    @initialize_env.setter
+    def initialize_env(self, initialize_env: 'dict(str, float)'):
+        """Sets the initialize_env of this V1CloudSpaceColdStartMetricsStats.
+
+
+        :param initialize_env: The initialize_env of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._initialize_env = initialize_env
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
 
@@ -187,6 +254,27 @@ class V1CloudSpaceColdStartMetricsStats(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def machine_startup(self) -> 'dict(str, float)':
+        """Gets the machine_startup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+
+
+        :return: The machine_startup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._machine_startup
+
+    @machine_startup.setter
+    def machine_startup(self, machine_startup: 'dict(str, float)'):
+        """Sets the machine_startup of this V1CloudSpaceColdStartMetricsStats.
+
+
+        :param machine_startup: The machine_startup of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._machine_startup = machine_startup
 
     @property
     def median_env_setup(self) -> 'float':
@@ -276,6 +364,7 @@ class V1CloudSpaceColdStartMetricsStats(object):
     def median_wait_for_machine(self) -> 'float':
         """Gets the median_wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
 
+        Deprecated: use the per-stage percentile maps below (keys like \"p50\", \"p85\").  # noqa: E501
 
         :return: The median_wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
         :rtype: float
@@ -286,6 +375,7 @@ class V1CloudSpaceColdStartMetricsStats(object):
     def median_wait_for_machine(self, median_wait_for_machine: 'float'):
         """Sets the median_wait_for_machine of this V1CloudSpaceColdStartMetricsStats.
 
+        Deprecated: use the per-stage percentile maps below (keys like \"p50\", \"p85\").  # noqa: E501
 
         :param median_wait_for_machine: The median_wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
         :type: float
@@ -313,6 +403,48 @@ class V1CloudSpaceColdStartMetricsStats(object):
         """
 
         self._provider = provider
+
+    @property
+    def total(self) -> 'dict(str, float)':
+        """Gets the total of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+
+
+        :return: The total of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._total
+
+    @total.setter
+    def total(self, total: 'dict(str, float)'):
+        """Sets the total of this V1CloudSpaceColdStartMetricsStats.
+
+
+        :param total: The total of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._total = total
+
+    @property
+    def wait_for_machine(self) -> 'dict(str, float)':
+        """Gets the wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+
+
+        :return: The wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :rtype: dict(str, float)
+        """
+        return self._wait_for_machine
+
+    @wait_for_machine.setter
+    def wait_for_machine(self, wait_for_machine: 'dict(str, float)'):
+        """Sets the wait_for_machine of this V1CloudSpaceColdStartMetricsStats.
+
+
+        :param wait_for_machine: The wait_for_machine of this V1CloudSpaceColdStartMetricsStats.  # noqa: E501
+        :type: dict(str, float)
+        """
+
+        self._wait_for_machine = wait_for_machine
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

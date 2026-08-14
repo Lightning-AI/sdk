@@ -14,7 +14,8 @@ import (
 
 // writeBlobUploadResponse answers a blob-upload request with one presigned URL
 // for path, optionally carrying headers the client must replay on the PUT.
-func writeBlobUploadResponse(w http.ResponseWriter, path, signedURL string, headers map[string]string) {
+// completeRequired marks whether the blob needs the finalize call afterwards.
+func writeBlobUploadResponse(w http.ResponseWriter, path, signedURL string, headers map[string]string, completeRequired bool) {
 	urlEntry := map[string]any{"url": signedURL}
 	if len(headers) > 0 {
 		urlEntry["headers"] = headers
@@ -22,7 +23,11 @@ func writeBlobUploadResponse(w http.ResponseWriter, path, signedURL string, head
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]any{
 		"expires_at": "2026-01-01T00:00:00Z",
-		"results":    []map[string]any{{"path": path, "urls": []map[string]any{urlEntry}}},
+		"results": []map[string]any{{
+			"path":              path,
+			"urls":              []map[string]any{urlEntry},
+			"complete_required": completeRequired,
+		}},
 	})
 }
 

@@ -5,6 +5,7 @@ import math
 import os
 import re
 import tempfile
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from enum import Enum
@@ -40,7 +41,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
     V1CompletedPart,
-    V1LoginRequest,
     V1PathMapping,
     V1SignedUrl,
 )
@@ -98,15 +98,67 @@ class _IterableFileWrapper:
         return iter(self._wrapped)
 
 
+def _paged_tree_entries(fetch_page: Callable[[Dict[str, str]], Dict[str, Any]]) -> List[Dict]:
+    """All entries of a tree listing, following the cursor until the last page.
+
+    ``fetch_page`` performs one trees request, merging the given query
+    parameters into its own, and returns the parsed response.
+    """
+    entries: List[Dict] = []
+    cursor: Optional[str] = None
+    while True:
+        params: Dict[str, str] = {}
+        if cursor:
+            params["cursor"] = cursor
+        payload = fetch_page(params)
+        entries.extend(payload.get("tree", []))
+        cursor = payload.get("nextCursor")
+        if not cursor:
+            return entries
+
+
+def _tree_path_info(list_entries: Callable[[str], List[Dict]], path: str) -> dict:
+    """Existence, type, and size metadata for ``path``, from a listing of its parent.
+
+    ``list_entries`` lists the immediate children of a folder path.  Returns a
+    dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or
+    ``None``), and ``size`` (int bytes for files, ``None`` otherwise).
+    """
+    path = path.strip("/")
+    if path == "":
+        return {"exists": True, "type": "directory", "size": None}
+    parent_path, _, target_name = path.rpartition("/")
+
+    for item in list_entries(parent_path):
+        if item.get("path", "") == target_name:
+            item_type = item.get("type")
+            # if type == "blob" it's a file, if "tree" it's a directory
+            return {
+                "exists": True,
+                "type": "file" if item_type == "blob" else "directory",
+                "size": item.get("size", 0) if item_type == "blob" else None,
+            }
+    warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
+    return {"exists": False, "type": None, "size": None}
+
+
+class _RemoteApiError(RuntimeError):
+    """A filesystem-API request the server rejected, carrying the response details."""
+
+    def __init__(self, message: str, status_code: int, server_message: str = "") -> None:
+        super().__init__(message)
+        self.status_code = status_code
+        self.server_message = server_message
+
+
 class _BlobUploader:
     """Uploads a single file via the batch blob-upload endpoints.
 
     Requests presigned URL(s) from ``POST {endpoint_base}/blobs``, PUTs the bytes
     straight to storage (single-part below the multipart threshold, parallel
     multipart above it), then finalizes via ``POST {endpoint_base}/blobs/complete``
-    where required: always for multipart, and for single-part only when
-    ``notify_completion`` is set (the studio scope uses that so uploads show
-    up in a running Studio).
+    where required: always for multipart, and for single-part when the response
+    marks the blob ``complete_required``.
     """
 
     def __init__(
@@ -119,7 +171,6 @@ class _BlobUploader:
         cluster_id: Optional[str] = None,
         content_type: Optional[str] = None,
         extra_headers: Optional[Dict[str, str]] = None,
-        notify_completion: bool = False,
     ) -> None:
         """Initialise the uploader.
 
@@ -136,7 +187,6 @@ class _BlobUploader:
                 the studio scope.
             content_type: Optional content type to bind to the upload.
             extra_headers: Optional extra HTTP headers for the storage PUT requests.
-            notify_completion: Whether to finalize single-part uploads too.
         """
         self.client = client
         self.endpoint_base = endpoint_base.rstrip("/")
@@ -145,9 +195,10 @@ class _BlobUploader:
         self.cluster_id = cluster_id
         self.content_type = content_type
         self.extra_headers = extra_headers
-        self.notify_completion = notify_completion
         self.show_progress = progress_bar
         self.progress_bar: Optional[tqdm] = None
+        # set from the upload response: whether the blob needs the finalize call
+        self._complete_required = False
 
         self.filesize = os.path.getsize(file_path)
         self.multipart_threshold = int(os.environ.get("LIGHTNING_MULTIPART_THRESHOLD", _MAX_SIZE_MULTI_PART_CHUNK))
@@ -157,13 +208,13 @@ class _BlobUploader:
         if self.filesize > self.chunk_size * _MAX_UPLOAD_PARTS:
             self.chunk_size = math.ceil(self.filesize / _MAX_UPLOAD_PARTS)
         self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
-        self._token = _authenticate_and_get_token(client)
+        self._auth_headers = _authenticate_and_get_auth_headers()
 
     def __call__(self) -> None:
         """Execute the upload, dispatching to single-part or multipart."""
         if self.filesize <= self.multipart_threshold:
             self._single_part_upload()
-            if self.notify_completion:
+            if self._complete_required:
                 self._complete_upload()
             return
 
@@ -202,13 +253,19 @@ class _BlobUploader:
         body: Dict[str, Any] = {"blobs": [blob]}
         if self.cluster_id:
             body["cluster_id"] = self.cluster_id
-        r = requests.post(url, json=body, params={"token": self._token}, timeout=30)
+        r = requests.post(url, json=body, headers=self._auth_headers, timeout=30)
         if r.status_code >= 500 or r.status_code == 429:
             raise HTTPError(
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
             )
         if r.status_code not in (200, 204):
-            raise RuntimeError(f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}")
+            reason = r.text.strip()[:300]
+            message = f"Failed to {action} '{self.remote_path}'. Status code: {r.status_code}"
+            raise _RemoteApiError(
+                f"{message}: {reason}" if reason else message,
+                status_code=r.status_code,
+                server_message=reason,
+            )
         return r
 
     def _create_upload(
@@ -237,6 +294,7 @@ class _BlobUploader:
             blob["part_size"] = self.chunk_size
         r = self._post_blob_request("/blobs", blob, action="request upload URLs for")
         result = r.json()["results"][0]
+        self._complete_required = bool(result.get("complete_required"))
         return result.get("upload_id") or upload_id, result.get("urls") or []
 
     @backoff.on_exception(
@@ -595,16 +653,21 @@ def _get_registry_url() -> str:
     return registry_url
 
 
-def _sanitize_studio_remote_path(path: str, studio_id: str) -> str:
-    path = path.replace("/teamspace/studios/this_studio/", "")
-    root = f"/cloudspaces/{studio_id}/code/content/"
-    return os.path.join(root, path)
-
-
 _DOWNLOAD_REQUEST_CHUNK_SIZE = 10 * _BYTES_PER_MB
 _DOWNLOAD_MIN_CHUNK_SIZE = 100 * _BYTES_PER_KB
 _DOWNLOAD_STREAM_CHUNK_SIZE = 4096 * 8
 _DOWNLOAD_ERROR_PREVIEW_BYTES = 512
+_DOWNLOAD_CONNECT_TIMEOUT_SECONDS = 15
+# Applies to each gap between bytes of a streamed body, not to the whole download.
+_DOWNLOAD_READ_TIMEOUT_SECONDS = 90
+_DOWNLOAD_MAX_TRIES = 5
+
+# Statuses that signal a temporary condition rather than a fault in the request.
+_RETRYABLE_DOWNLOAD_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
+
+
+class _TransientDownloadError(RuntimeError):
+    """A download failure worth retrying: a dropped connection, a timeout, or a temporary server condition."""
 
 
 def _raise_for_download_status(response: requests.Response, remote_path: str) -> None:
@@ -655,6 +718,26 @@ class _ProgressBar(Protocol):
 
     def update(self, n: float) -> Any:
         ...
+
+
+class _RetryableProgress:
+    """Progress updates for one download attempt, undone if the attempt fails.
+
+    A retried download replays its bytes from the start; without the rollback every failed
+    attempt would leave its partial byte count behind on the shared bar.
+    """
+
+    def __init__(self, pbar: _ProgressBar) -> None:
+        self._pbar = pbar
+        self._count = 0.0
+
+    def update(self, n: float) -> None:
+        self._count += n
+        self._pbar.update(n)
+
+    def rollback(self) -> None:
+        self._pbar.update(-self._count)
+        self._count = 0.0
 
 
 def _stream_download_to_file(
@@ -1142,7 +1225,6 @@ def to_iso_z(dt: datetime) -> str:
     return dt.isoformat(timespec="milliseconds")
 
 
-def _authenticate_and_get_token(client: Any) -> str:
-    auth = Auth()
-    auth.authenticate()
-    return client.auth_service_login(V1LoginRequest(auth.api_key)).token
+def _authenticate_and_get_auth_headers() -> Dict[str, str]:
+    """Resolve the caller's credentials and return the HTTP headers carrying them."""
+    return {"Authorization": Auth().authenticate()}

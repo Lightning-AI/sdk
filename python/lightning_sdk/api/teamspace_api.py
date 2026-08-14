@@ -1,6 +1,5 @@
 import os
 import re
-import warnings
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
@@ -11,15 +10,17 @@ from tqdm.auto import tqdm
 
 from lightning_sdk.api.utils import (
     Experiment,
-    _authenticate_and_get_token,
+    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _download_model_files,
     _DummyBody,
     _get_model_version,
     _ModelFileUploader,
+    _paged_tree_entries,
     _raise_for_download_status,
     _stream_download_to_file,
+    _tree_path_info,
     cached_lightning_client,
 )
 from lightning_sdk.lightning_cloud.login import Auth
@@ -370,6 +371,7 @@ class TeamspaceApi:
         return self._client.models_store_create_model_version(
             body=ModelsStoreCreateModelVersionBody(
                 cluster_id=cloud_account,
+                metadata=metadata,
                 version=version,
                 metrics_stream_id=experiment_id,
             ),
@@ -651,24 +653,27 @@ class TeamspaceApi:
         Args:
             teamspace_id: ID of the teamspace.
             path: Artifact path to inspect.
-            query_params: Extra query parameters merged with the auth token.
+            query_params: Extra query parameters for the request.
 
         Returns:
             Parsed JSON response from the server.
         """
-        token = _authenticate_and_get_token(self._client)
-
-        if query_params is None:
-            query_params = {
-                "token": token,
-            }
-        else:
-            query_params["token"] = token
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
         )
         return r.json()
+
+    def _tree_entries(self, teamspace_id: str, path: str, recursive: bool) -> List[Dict]:
+        """All entries under ``path``, following the listing's cursor until the last page."""
+
+        def fetch_page(query_params: Dict[str, str]) -> Dict[str, Any]:
+            if recursive:
+                query_params["recursive"] = "true"
+            return self.get_tree(teamspace_id, path, query_params=query_params)
+
+        return _paged_tree_entries(fetch_page)
 
     def get_path_info(self, teamspace_id: str, path: str = "") -> dict:
         """Return existence, type, and size metadata for an artifact path.
@@ -681,32 +686,10 @@ class TeamspaceApi:
             Dict with keys ``exists`` (bool), ``type`` (``"file"``, ``"directory"``, or ``None``),
             and ``size`` (int bytes for files, ``None`` otherwise).
         """
-        path = path.strip("/")
-
-        if "/" in path:
-            parent_path = path.rsplit("/", 1)[0]
-            target_name = path.rsplit("/", 1)[1]
-        else:
-            if path == "":
-                # root directory
-                return {"exists": True, "type": "directory", "size": None}
-            parent_path = ""
-            target_name = path
-
-        tree = self.get_tree(teamspace_id, path=parent_path)
-        tree_items = tree.get("tree", [])
-        for item in tree_items:
-            item_name = item.get("path", "")
-            if item_name == target_name:
-                item_type = item.get("type")
-                # if type == "blob" it's a file, if "tree" it's a directory
-                return {
-                    "exists": True,
-                    "type": "file" if item_type == "blob" else "directory",
-                    "size": item.get("size", 0) if item_type == "blob" else None,
-                }
-        warnings.warn(f"If '{path}' is a directory, it may be empty and thus not detected.")
-        return {"exists": False, "type": None, "size": None}
+        return _tree_path_info(
+            lambda parent: self._tree_entries(teamspace_id, parent, recursive=False),
+            path,
+        )
 
     def list_files(
         self,
@@ -722,8 +705,7 @@ class TeamspaceApi:
         Returns:
             List of file-info dicts from the recursive tree response.
         """
-        path = path.strip("/")
-        return self.get_tree(teamspace_id, path, query_params={"recursive": "true"}).get("tree", [])
+        return self._tree_entries(teamspace_id, path.strip("/"), recursive=True)
 
     def upload_file(
         self,
@@ -749,10 +731,6 @@ class TeamspaceApi:
             remote_path = remote_path[len("teamspace/") :]
 
         client_host = self._client.api_client.configuration.host
-        endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts"
-        if remote_path.startswith(("uploads/", "Uploads/")):
-            remote_path = remote_path[len("uploads/") :]
-            endpoint_base = f"{client_host}/v1/projects/{teamspace_id}/artifacts/uploads"
 
         content_type = None
         extra_headers = dict(headers) if headers else None
@@ -762,7 +740,7 @@ class TeamspaceApi:
 
         _BlobUploader(
             client=self._client,
-            endpoint_base=endpoint_base,
+            endpoint_base=f"{client_host}/v1/projects/{teamspace_id}/artifacts",
             file_path=file_path,
             remote_path=remote_path,
             progress_bar=progress_bar,
@@ -779,7 +757,7 @@ class TeamspaceApi:
         cloud_account: Optional[str] = None,
         progress_bar: bool = True,
     ) -> None:
-        """Downloads a given file in Teamspace drive /Uploads/ to a target location.
+        """Downloads a given file in the Teamspace drive to a target location.
 
         Args:
             path: Path of the file inside the Teamspace drive to download.
@@ -792,12 +770,7 @@ class TeamspaceApi:
             RuntimeError: If the server returns a non-2xx status code, or if the body that
                 arrives is not the length the server advertised.
         """
-        # TODO: Update this endpoint to permit basic auth
-        token = _authenticate_and_get_token(self._client)
-
-        query_params = {
-            "token": token,
-        }
+        query_params = {}
 
         if cloud_account:
             query_params["clusterId"] = cloud_account
@@ -805,6 +778,7 @@ class TeamspaceApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{path}",
             params=query_params,
+            headers=_authenticate_and_get_auth_headers(),
             stream=True,
         )
 
@@ -830,7 +804,7 @@ class TeamspaceApi:
         base_path: str,
         download_dir: Path,
         teamspace_id: str,
-        token: str,
+        auth_headers: Dict[str, str],
         cloud_account: Optional[str] = None,
         pbar: Optional[tqdm] = None,
     ) -> None:
@@ -841,7 +815,7 @@ class TeamspaceApi:
             base_path: Base directory path prepended to the relative file path when building the request URL.
             download_dir: Local directory where the downloaded file is written.
             teamspace_id: ID of the owning teamspace.
-            token: Authentication token for the artifact API.
+            auth_headers: HTTP headers carrying the caller's credentials.
             cloud_account: Optional cloud account ID used to locate the artifact.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
@@ -854,15 +828,14 @@ class TeamspaceApi:
 
         file_path = os.path.join(base_path, relative_path) if base_path else relative_path
 
-        query_params = {
-            "token": token,
-        }
+        query_params = {}
         if cloud_account:
             query_params["clusterId"] = cloud_account
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{file_path}",
             params=query_params,
+            headers=auth_headers,
             stream=True,
         )
 
@@ -878,7 +851,7 @@ class TeamspaceApi:
         progress_bar: bool = True,
         num_workers: Optional[int] = None,
     ) -> None:
-        """Downloads a given folder from Teamspace drive /Uploads/ to a target location.
+        """Downloads a given folder from the Teamspace drive to a target location.
 
         Args:
             path: Path of the folder inside the Teamspace drive to download.
@@ -892,7 +865,6 @@ class TeamspaceApi:
             RuntimeError: If any file failed to download. A partial folder is never reported
                 as a success.
         """
-        # TODO: Update this endpoint to permit basic auth
         if num_workers is None:
             num_workers = (os.cpu_count() or 1) * 4
 
@@ -907,7 +879,7 @@ class TeamspaceApi:
             print(f"No files found in {path}")
             return
 
-        token = _authenticate_and_get_token(self._client)
+        auth_headers = _authenticate_and_get_auth_headers()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -931,7 +903,7 @@ class TeamspaceApi:
                         path,
                         download_dir,
                         teamspace_id,
-                        token,
+                        auth_headers,
                         cloud_account,
                         pbar,
                     )

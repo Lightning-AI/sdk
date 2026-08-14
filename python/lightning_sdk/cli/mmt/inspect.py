@@ -3,8 +3,8 @@
 from typing import Optional
 
 import rich_click as click
-from rich.console import Console
 
+from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
@@ -25,4 +25,4 @@ def inspect_mmt(name: Optional[str] = None, teamspace: Optional[str] = None, as_
     """Inspect a multi-machine job for further details as JSON."""
     resolved_teamspace = resolve_teamspace(teamspace)
     mmt = resolve_mmt(name, resolved_teamspace)
-    Console().print(mmt.json())
+    echo_json(mmt.dict())

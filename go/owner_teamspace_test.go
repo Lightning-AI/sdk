@@ -287,7 +287,7 @@ func TestTeamspaceDownloadFileUsesArtifactBlobRoute(t *testing.T) {
 			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
 
 		query := r.URL.Query()
-		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || query.Get("token") != "token-1",
+		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1",
 			"unexpected query: %s", r.URL.RawQuery)
 
 		_, _ = w.Write([]byte("teamspace contents"))
@@ -316,26 +316,38 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 		switch r.Method + " " + r.URL.Path {
 		case "GET /v1/projects/project-1/artifacts/trees/drive":
 			query := r.URL.Query()
-			if query.Get("clusterId") != "cloud-1" || query.Get("recursive") != "true" || query.Get("token") != "token-1" {
+			if query.Get("clusterId") != "cloud-1" || query.Get("recursive") != "true" || r.Header.Get("Authorization") != "Bearer token-1" {
 				assert.Fail(t, fmt.Sprintf("unexpected tree query: %s", r.URL.RawQuery))
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{
-				"tree": []map[string]any{
-					{"path": "a.txt", "type": "blob", "size": 1},
-					{"path": "nested", "type": "tree"},
-					{"path": "nested/b.txt", "type": "blob", "size": 1},
-				},
-			})
+			// The listing is paginated: the first page ends with a cursor,
+			// the second page is the last.
+			if query.Get("cursor") == "" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "a.txt", "type": "blob", "size": 1},
+						{"path": "nested", "type": "tree"},
+					},
+					"nextCursor": "page-2",
+				})
+			} else if query.Get("cursor") == "page-2" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "nested/b.txt", "type": "blob", "size": 1},
+					},
+				})
+			} else {
+				assert.Fail(t, fmt.Sprintf("unexpected cursor: %q", query.Get("cursor")))
+			}
 		case "GET /v1/projects/project-1/artifacts/blobs/drive/a.txt":
 			query := r.URL.Query()
-			if query.Get("clusterId") != "cloud-1" || query.Get("token") != "token-1" {
+			if query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1" {
 				assert.Fail(t, fmt.Sprintf("unexpected download query: %s", r.URL.RawQuery))
 			}
 			_, _ = w.Write([]byte("a"))
 		case "GET /v1/projects/project-1/artifacts/blobs/drive/nested/b.txt":
 			query := r.URL.Query()
-			if query.Get("clusterId") != "cloud-1" || query.Get("token") != "token-1" {
+			if query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1" {
 				assert.Fail(t, fmt.Sprintf("unexpected download query: %s", r.URL.RawQuery))
 			}
 			_, _ = w.Write([]byte("b"))
@@ -363,9 +375,10 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 		"downloaded files = (%q, %q), want (a, b)", string(gotA), string(gotB))
 
 	want := []string{
-		"GET /v1/projects/project-1/artifacts/trees/drive?clusterId=cloud-1&recursive=true&token=token-1",
-		"GET /v1/projects/project-1/artifacts/blobs/drive/a.txt?clusterId=cloud-1&token=token-1",
-		"GET /v1/projects/project-1/artifacts/blobs/drive/nested/b.txt?clusterId=cloud-1&token=token-1",
+		"GET /v1/projects/project-1/artifacts/trees/drive?clusterId=cloud-1&recursive=true",
+		"GET /v1/projects/project-1/artifacts/blobs/drive/a.txt?clusterId=cloud-1",
+		"GET /v1/projects/project-1/artifacts/trees/drive?clusterId=cloud-1&cursor=page-2&recursive=true",
+		"GET /v1/projects/project-1/artifacts/blobs/drive/nested/b.txt?clusterId=cloud-1",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
@@ -384,14 +397,14 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
 		switch r.Method + " " + r.URL.Path {
 		case "POST /v1/projects/project-1/artifacts/blobs":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("auth = %q, want Bearer token-1", auth))
 			}
 			// the cluster travels in the body, not the query
 			clusterID, paths := decodeBlobUploadBatch(t, r)
 			assert.Falsef(t, clusterID != "cloud-1" || len(paths) != 1 || paths[0] != "drive/remote.txt",
 				"unexpected upload request: cluster_id=%q paths=%v", clusterID, paths)
-			writeBlobUploadResponse(w, "drive/remote.txt", server.URL+"/signed/drive/remote.txt", nil)
+			writeBlobUploadResponse(w, "drive/remote.txt", server.URL+"/signed/drive/remote.txt", nil, false)
 		case "PUT /signed/drive/remote.txt":
 			assert.Falsef(t, r.Header.Get("Authorization") != "",
 				"presigned PUT must not carry credentials")
@@ -418,7 +431,7 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 
 	// single-part teamspace uploads don't need finalizing, so no complete call
 	want := []string{
-		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/blobs",
 		"PUT /signed/drive/remote.txt",
 	}
 	assert.Falsef(t, len(seen) != len(want),
@@ -438,8 +451,8 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
 		switch r.Method + " " + r.URL.Path {
 		case "POST /v1/projects/project-1/artifacts/blobs":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("auth = %q, want Bearer token-1", auth))
 			}
 			clusterID, paths := decodeBlobUploadBatch(t, r)
 			// non-fatal on the handler goroutine; a 400 fails fast (not retried)
@@ -450,7 +463,7 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 			}
 			assert.Falsef(t, clusterID != "cloud-1",
 				"cluster_id = %q, want cloud-1", clusterID)
-			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil)
+			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil, false)
 		case "PUT /signed/drive/a.txt", "PUT /signed/drive/nested/b.txt":
 			// presigned storage PUT
 		default:
@@ -474,9 +487,9 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 		"teamspace.UploadFolder returned error")
 
 	want := []string{
-		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/blobs",
 		"PUT /signed/drive/a.txt",
-		"POST /v1/projects/project-1/artifacts/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/blobs",
 		"PUT /signed/drive/nested/b.txt",
 	}
 	assert.Falsef(t, len(seen) != len(want),

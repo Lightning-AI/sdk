@@ -46,7 +46,12 @@ from lightning_sdk.deployment import Deployment
 @click.option("--autoscale-threshold", type=float, help="Autoscaling threshold.")
 @click.option("--cloud", help="Cloud provider or cloud account to run replicas on.")
 @click.option("--env", "-e", multiple=True, default=[""], help="Environment variable in KEY=VALUE or JSON format.")
-@click.option("--secret", multiple=True, help="Secret name to expose as an environment variable.")
+@click.option(
+    "--secret",
+    multiple=True,
+    help="Secret to expose as an environment variable. Use SECRET to inject under the secret name, "
+    "or ENV_NAME=SECRET to inject under a different env var name.",
+)
 @click.option("--interruptible/--no-interruptible", default=None, help="Whether to use interruptible instances.")
 @click.option("--quantity", type=int, help="Number of machines per replica.")
 @click.option("--include-credentials/--no-include-credentials", default=None, help="Inject SDK credentials.")

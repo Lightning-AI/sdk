@@ -1067,7 +1067,22 @@ def test_job_logs_finished_falls_back_to_saved_file(job_api_get_job_by_name_mock
     assert str(job.logs) == "line 1\nline 2\n"
     assert job.logs.splitlines() == ["line 1", "line 2"]
     assert list(job.logs) == ["line 1", "line 2"]
-    logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id)
+    logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id, timestamps=False)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_finished_saved_file_keeps_timestamps(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    """--timestamps must survive the saved-file fallback; it used to be stripped there."""
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    _stub_logs_api(job, [])
+    logs_mock = mock.MagicMock(return_value="[2026-08-13T14:15:03.797142418Z] line 1\n")
+    job._job_api.get_logs_finished = logs_mock
+
+    assert job.logs(timestamps=True) == "[2026-08-13T14:15:03.797142418Z] line 1\n"
+    logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id, timestamps=True)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1076,12 +1091,34 @@ def test_job_logs_filtered_read_does_not_fall_back(job_api_get_job_by_name_mocke
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    _stub_logs_api(job, [])
+    # the job IS in the logs API — an unfiltered read has lines, the filter just matched none
+    job._logs_api.stream = mock.MagicMock(
+        side_effect=lambda *a, **kw: [] if kw.get("query") or kw.get("severity") else [LogEntry(message="x")]
+    )
     fallback = mock.MagicMock(return_value="everything\n")
     job._job_api.get_logs_finished = fallback
 
     # a filtered read matching nothing must stay empty rather than dump the unfiltered file
     assert job.logs(query="nope") == ""
+    fallback.assert_not_called()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_filtered_read_raises_when_only_saved_file_exists(
+    job_api_get_job_by_name_mocker, internal_studio_init_mocker
+):
+    """A filter the server never applied must not be reported as "no matches"."""
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    _stub_logs_api(job, [])  # nothing in the logs API at all: only the saved file has lines
+    fallback = mock.MagicMock(return_value="everything\n")
+    job._job_api.get_logs_finished = fallback
+
+    with pytest.raises(RuntimeError, match="cannot be filtered server-side"):
+        job.logs(query="nope")
+    # and it must still never dump the unfiltered file for a filtered read
     fallback.assert_not_called()
 
 

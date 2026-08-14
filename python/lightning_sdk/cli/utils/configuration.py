@@ -53,7 +53,15 @@ def deployment_environment_records(entries: List[Union[Env, Secret]]) -> List[Di
     records = [
         {"name": entry.name, "value": entry.value}
         if isinstance(entry, Env)
-        else {"name": entry.name, "from_secret": entry.name}
+        else {"name": entry.env_var_name, "from_secret": entry.name}
         for entry in entries
+    ]
+    return sorted(records, key=lambda record: record["name"])
+
+
+def deployment_secret_records(entries: List[Union[Env, Secret]]) -> List[Dict[str, str]]:
+    """Build sorted records for Deployment secret references only."""
+    records = [
+        {"name": entry.env_var_name, "from_secret": entry.name} for entry in entries if isinstance(entry, Secret)
     ]
     return sorted(records, key=lambda record: record["name"])

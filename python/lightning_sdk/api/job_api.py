@@ -3,6 +3,7 @@ import time
 import warnings
 from contextlib import suppress
 from datetime import datetime, timezone
+from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Union
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from urllib.request import urlopen
@@ -19,7 +20,6 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateJobBody,
     JobsServiceUpdateJobBody,
-    V1CloudSpace,
     V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
     V1EnvVar,
@@ -27,6 +27,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1Volume,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 
 if TYPE_CHECKING:
@@ -361,21 +362,24 @@ class JobApiV2:
         """
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
 
-    def get_logs_finished(self, job_id: str, teamspace_id: str) -> str:
+    def get_logs_finished(self, job_id: str, teamspace_id: str, timestamps: bool = False) -> str:
         """Download and return the completed log output for a v2 job.
 
         Args:
             job_id: The unique identifier of the job whose logs are fetched.
             teamspace_id: The ID of the teamspace that owns the job.
+            timestamps: Keep each line's ``[<RFC3339>] `` prefix instead of stripping it.
 
         Returns:
-            The decoded log text with datetime prefixes stripped.
+            The decoded log text, with datetime prefixes stripped unless ``timestamps``.
         """
         resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
             project_id=teamspace_id, id=job_id
         )
 
         data = urlopen(resp.url).read().decode("utf-8")
+        if timestamps:
+            return str(data)
         return remove_datetime_prefix(str(data))
 
     def stream_logs(
@@ -460,6 +464,21 @@ class JobApiV2:
                 return  # socket dropped and the job is done — nothing more to stream
             time.sleep(1)  # brief backoff before reconnecting, matches the CLI
 
+    @staticmethod
+    @lru_cache(maxsize=None)
+    def _cached_studio_name(project_id: str, cloudspace_id: str) -> Optional[str]:
+        """Resolve a studio display name, caching across Job/MMT API instances."""
+        try:
+            return (
+                cached_lightning_client()
+                .cloud_space_service_get_cloud_space(project_id=project_id, id=cloudspace_id)
+                .name
+            )
+        except ApiException as ex:
+            if ex.status == 404:
+                return None
+            raise
+
     def get_studio_name(self, job: V1Job) -> Optional[str]:
         """Return the name of the Studio linked to this job, or ``None`` if none is attached.
 
@@ -469,13 +488,9 @@ class JobApiV2:
         Returns:
             The display name of the Studio, or ``None`` if the job has no associated Studio.
         """
-        if job.spec.cloudspace_id:
-            cs: V1CloudSpace = self._client.cloud_space_service_get_cloud_space(
-                project_id=job.project_id, id=job.spec.cloudspace_id
-            )
-            return cs.name
-
-        return None
+        if not job.spec.cloudspace_id:
+            return None
+        return self._cached_studio_name(job.project_id, job.spec.cloudspace_id)
 
     def get_image_name(self, job: V1Job) -> Optional[str]:
         """Return the container image used by this job, or ``None`` if not set.
@@ -576,6 +591,10 @@ class JobApiV2:
             The ``Machine`` enum value that matches the spec's instance, falling back to
             ``Machine.from_str`` if no accelerator record matches.
         """
+        predefined = Machine._predefined_from_str(spec.instance_name or spec.instance_type)
+        if predefined is not None:
+            return predefined
+
         accelerators = self._get_machines_for_cloud_account(
             teamspace_id=teamspace_id,
             cloud_account_id=spec.cluster_id,
@@ -648,8 +667,10 @@ class JobApiV2:
             stacklevel=stacklevel,
         )
 
+    @staticmethod
+    @lru_cache(maxsize=None)
     def _get_machines_for_cloud_account(
-        self, teamspace_id: str, cloud_account_id: str, org_id: str
+        teamspace_id: str, cloud_account_id: str, org_id: str
     ) -> List[V1ClusterAccelerator]:
         """Return only the enabled accelerators for a given cloud account.
 

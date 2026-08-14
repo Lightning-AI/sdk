@@ -226,7 +226,7 @@ func TestStudioDownloadFileUsesArtifactBlobRoute(t *testing.T) {
 			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
 
 		query := r.URL.Query()
-		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || query.Get("key") != "/cloudspaces/studio-1/code/content/remote.txt" || query.Get("token") != "token-1",
+		assert.Falsef(t, query.Get("clusterId") != "cloud-1" || r.Header.Get("Authorization") != "Bearer token-1",
 			"unexpected query: %s", r.URL.RawQuery)
 
 		_, _ = w.Write([]byte("file contents"))
@@ -255,25 +255,37 @@ func TestStudioDownloadFolderUsesRecursiveTree(t *testing.T) {
 		switch r.Method + " " + r.URL.Path {
 		case "GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote":
 			query := r.URL.Query()
-			if query.Get("recursive") != "true" || query.Get("token") != "token-1" {
+			if query.Get("recursive") != "true" || r.Header.Get("Authorization") != "Bearer token-1" {
 				assert.Fail(t, fmt.Sprintf("unexpected tree query: %s", r.URL.RawQuery))
 			}
 			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(map[string]any{
-				"tree": []map[string]any{
-					{"path": "a.txt", "type": "blob", "size": 1},
-					{"path": "nested", "type": "tree"},
-					{"path": "nested/b.txt", "type": "blob", "size": 1},
-				},
-			})
+			// The listing is paginated: the first page ends with a cursor,
+			// the second page is the last.
+			if query.Get("cursor") == "" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "a.txt", "type": "blob", "size": 1},
+						{"path": "nested", "type": "tree"},
+					},
+					"nextCursor": "page-2",
+				})
+			} else if query.Get("cursor") == "page-2" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"tree": []map[string]any{
+						{"path": "nested/b.txt", "type": "blob", "size": 1},
+					},
+				})
+			} else {
+				assert.Fail(t, fmt.Sprintf("unexpected cursor: %q", query.Get("cursor")))
+			}
 		case "GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/a.txt":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("download token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("download auth = %q, want Bearer token-1", auth))
 			}
 			_, _ = w.Write([]byte("a"))
 		case "GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/nested/b.txt":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("download token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("download auth = %q, want Bearer token-1", auth))
 			}
 			_, _ = w.Write([]byte("b"))
 		default:
@@ -300,9 +312,10 @@ func TestStudioDownloadFolderUsesRecursiveTree(t *testing.T) {
 		"downloaded files = (%q, %q), want (a, b)", string(gotA), string(gotB))
 
 	want := []string{
-		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote?recursive=true&token=token-1",
-		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/a.txt?token=token-1",
-		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/nested/b.txt?token=token-1",
+		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote?recursive=true",
+		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/a.txt",
+		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/trees/remote?cursor=page-2&recursive=true",
+		"GET /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/remote/nested/b.txt",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
@@ -321,14 +334,14 @@ func TestStudioUploadFileUsesArtifactBlobRouteAndCompletion(t *testing.T) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
 		switch r.Method + " " + r.URL.Path {
 		case "POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("auth = %q, want Bearer token-1", auth))
 			}
 			clusterID, paths := decodeBlobUploadBatch(t, r)
 			assert.Falsef(t, clusterID != "" || len(paths) != 1 || paths[0] != "remote.txt",
 				"unexpected upload request: cluster_id=%q paths=%v", clusterID, paths)
 			writeBlobUploadResponse(w, "remote.txt", server.URL+"/signed/remote.txt",
-				map[string]string{"Content-Type": "application/octet-stream"})
+				map[string]string{"Content-Type": "application/octet-stream"}, true)
 		case "PUT /signed/remote.txt":
 			// The presigned URL carries its own authentication; the returned
 			// headers must be replayed for the signature to match.
@@ -346,8 +359,8 @@ func TestStudioUploadFileUsesArtifactBlobRouteAndCompletion(t *testing.T) {
 				assert.Fail(t, fmt.Sprintf("upload body = %q, want upload contents", string(body)))
 			}
 		case "POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("complete token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("complete auth = %q, want Bearer token-1", auth))
 			}
 			_, paths := decodeBlobUploadBatch(t, r)
 			assert.Falsef(t, len(paths) != 1 || paths[0] != "remote.txt",
@@ -370,9 +383,9 @@ func TestStudioUploadFileUsesArtifactBlobRouteAndCompletion(t *testing.T) {
 		"studio.UploadFile returned error")
 
 	want := []string{
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs",
 		"PUT /signed/remote.txt",
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete?token=token-1",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
@@ -391,8 +404,8 @@ func TestStudioUploadFolderPreservesRelativePaths(t *testing.T) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
 		switch r.Method + " " + r.URL.Path {
 		case "POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs":
-			if token := r.URL.Query().Get("token"); token != "token-1" {
-				assert.Fail(t, fmt.Sprintf("token = %q, want token-1", token))
+			if auth := r.Header.Get("Authorization"); auth != "Bearer token-1" {
+				assert.Fail(t, fmt.Sprintf("auth = %q, want Bearer token-1", auth))
 			}
 			_, paths := decodeBlobUploadBatch(t, r)
 			// non-fatal on the handler goroutine; a 400 fails fast (not retried)
@@ -401,7 +414,7 @@ func TestStudioUploadFolderPreservesRelativePaths(t *testing.T) {
 				http.Error(w, "expected exactly one blob", http.StatusBadRequest)
 				return
 			}
-			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil)
+			writeBlobUploadResponse(w, paths[0], server.URL+"/signed/"+paths[0], nil, true)
 		case "PUT /signed/remote/a.txt", "PUT /signed/remote/nested/b.txt":
 			// presigned storage PUT
 		case "POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete":
@@ -427,12 +440,12 @@ func TestStudioUploadFolderPreservesRelativePaths(t *testing.T) {
 		"studio.UploadFolder returned error")
 
 	want := []string{
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs",
 		"PUT /signed/remote/a.txt",
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete?token=token-1",
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs?token=token-1",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs",
 		"PUT /signed/remote/nested/b.txt",
-		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete?token=token-1",
+		"POST /v1/projects/project-1/artifacts/cloudspaces/studio-1/blobs/complete",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)

@@ -580,13 +580,13 @@ def test_sandbox_create_without_config_uses_configured_globals():
             Sandbox.create(name="from-defaults", instance_type="cpu-1")
 
         received = m_create.call_args.kwargs["sandbox_api"]
-        assert received is base._api
+        assert received is base._default_api()
         assert received.config_get("api_key") == "configured-key"
         assert received.config_get("base_url") == "https://configured.unit"
     finally:
         base._sandbox_config.clear()
         base._sandbox_config.update(snapshot)
-        base._api.reset()
+        base._default_api().reset()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -599,7 +599,7 @@ def test_sandbox_client_without_config_uses_configured_globals():
         Sandbox.configure(api_key="configured-key", base_url="https://configured.unit")
         client = Sandbox()
 
-        assert client.api is base._api
+        assert client.api is base._default_api()
         assert client.api.config_get("api_key") == "configured-key"
         assert client.api.config_get("base_url") == "https://configured.unit"
         assert client.config.api_key == "configured-key"
@@ -607,7 +607,7 @@ def test_sandbox_client_without_config_uses_configured_globals():
     finally:
         base._sandbox_config.clear()
         base._sandbox_config.update(snapshot)
-        base._api.reset()
+        base._default_api().reset()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -616,7 +616,7 @@ def test_sandbox_client_with_config_uses_isolated_client():
     import lightning_sdk.sandbox.base as base
 
     client = Sandbox(SandboxConfig(api_key="explicit-key", base_url="https://explicit.unit"))
-    assert client.api is not base._api
+    assert client.api is not base._default_api()
     assert client.api.config_get("api_key") == "explicit-key"
 
 
@@ -681,7 +681,7 @@ def test_configure_updates_globals_and_resets_client():
 
     snapshot = dict(base._sandbox_config)
     try:
-        with mock.patch.object(base, "_api") as mock_api:
+        with mock.patch.object(base, "_api_instance") as mock_api:
             base.configure(api_key="unit-config-key", base_url="https://cfg.unit")
             assert base._sandbox_config.get("api_key") == "unit-config-key"
             assert base._sandbox_config.get("base_url") == "https://cfg.unit"
@@ -689,4 +689,4 @@ def test_configure_updates_globals_and_resets_client():
     finally:
         base._sandbox_config.clear()
         base._sandbox_config.update(snapshot)
-        base._api.reset()
+        base._default_api().reset()
