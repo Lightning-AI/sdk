@@ -154,6 +154,14 @@ class _GradientHelpMixin:
 class LightningCommand(_GradientHelpMixin, rich_click.RichCommand):
     """RichCommand with the gradient rule after the header."""
 
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        from lightning_sdk.cli.resource_completion import complete_teamspace
+
+        for parameter in self.params:
+            if parameter.name == "teamspace" and getattr(parameter, "_custom_shell_complete", None) is None:
+                parameter._custom_shell_complete = complete_teamspace
+
 
 class LightningGroup(_GradientHelpMixin, rich_click.RichGroup):  # type: ignore[misc]
     """RichGroup with the gradient rule after the header."""

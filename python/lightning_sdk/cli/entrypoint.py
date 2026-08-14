@@ -8,6 +8,7 @@ import rich_click as click
 from lightning_sdk import __version__
 from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli import groups as cli_groups
+from lightning_sdk.cli.completion import completion
 
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
@@ -46,7 +47,7 @@ from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
-        {"name": "GET STARTED", "commands": ["login", "logout", "config"]},
+        {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
@@ -123,6 +124,7 @@ def logout() -> None:
 
 # Add new command groups
 main_cli.add_command(config)
+main_cli.add_command(completion)
 main_cli.add_command(job)
 main_cli.add_command(mmt)
 main_cli.add_command(machine)

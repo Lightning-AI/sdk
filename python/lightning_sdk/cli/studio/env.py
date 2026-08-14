@@ -5,6 +5,7 @@ from typing import Optional
 import rich_click as click
 from rich.table import Table
 
+from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.configuration import environment_records, parse_assignment, validate_name
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
@@ -19,7 +20,11 @@ def env() -> None:
 
 
 @env.command("list", cls=LightningCommand)
-@click.option("--name", help="Studio to use. Falls back to the current Studio or configured default.")
+@click.option(
+    "--name",
+    help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
+)
 @teamspace_option
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def list_env(
@@ -47,7 +52,11 @@ def list_env(
 
 @env.command("set", cls=LightningCommand)
 @click.argument("assignment")
-@click.option("--name", help="Studio to use. Falls back to the current Studio or configured default.")
+@click.option(
+    "--name",
+    help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
+)
 @teamspace_option
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def set_env(
@@ -71,7 +80,11 @@ def set_env(
 
 @env.command("delete", cls=LightningCommand)
 @click.argument("key")
-@click.option("--name", help="Studio to use. Falls back to the current Studio or configured default.")
+@click.option(
+    "--name",
+    help="Studio to use. Falls back to the current Studio or configured default.",
+    shell_complete=complete_studio,
+)
 @teamspace_option
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def delete_env(
