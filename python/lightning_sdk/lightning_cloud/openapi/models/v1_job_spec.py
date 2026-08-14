@@ -65,6 +65,7 @@ class V1JobSpec(object):
         'machine_image_version': 'str',
         'max_run_attempts': 'int',
         'modified_volume': 'bool',
+        'parent_job_id': 'str',
         'path_mappings': 'list[V1PathMapping]',
         'pipeline_id': 'str',
         'placement_group_id': 'str',
@@ -104,6 +105,7 @@ class V1JobSpec(object):
         'machine_image_version': 'machineImageVersion',
         'max_run_attempts': 'maxRunAttempts',
         'modified_volume': 'modifiedVolume',
+        'parent_job_id': 'parentJobId',
         'path_mappings': 'pathMappings',
         'pipeline_id': 'pipelineId',
         'placement_group_id': 'placementGroupId',
@@ -122,7 +124,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, parent_job_id: 'str' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -144,6 +146,7 @@ class V1JobSpec(object):
         self._machine_image_version = None
         self._max_run_attempts = None
         self._modified_volume = None
+        self._parent_job_id = None
         self._path_mappings = None
         self._pipeline_id = None
         self._placement_group_id = None
@@ -201,6 +204,8 @@ class V1JobSpec(object):
             self.max_run_attempts = max_run_attempts
         if modified_volume is not None:
             self.modified_volume = modified_volume
+        if parent_job_id is not None:
+            self.parent_job_id = parent_job_id
         if path_mappings is not None:
             self.path_mappings = path_mappings
         if pipeline_id is not None:
@@ -663,6 +668,29 @@ class V1JobSpec(object):
         """
 
         self._modified_volume = modified_volume
+
+    @property
+    def parent_job_id(self) -> 'str':
+        """Gets the parent_job_id of this V1JobSpec.  # noqa: E501
+
+        Parent job id for this job.  # noqa: E501
+
+        :return: The parent_job_id of this V1JobSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_job_id
+
+    @parent_job_id.setter
+    def parent_job_id(self, parent_job_id: 'str'):
+        """Sets the parent_job_id of this V1JobSpec.
+
+        Parent job id for this job.  # noqa: E501
+
+        :param parent_job_id: The parent_job_id of this V1JobSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_job_id = parent_job_id
 
     @property
     def path_mappings(self) -> 'list[V1PathMapping]':

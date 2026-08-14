@@ -48,6 +48,7 @@ class ClusterServiceCreateMachineBody(object):
         'added_by': 'str',
         'address': 'str',
         'bootstrap': 'V1MachineBootstrap',
+        'bridge_network_cidr': 'str',
         'ca_cert': 'str',
         'env': 'list[V1EnvVar]',
         'id': 'str',
@@ -73,6 +74,7 @@ class ClusterServiceCreateMachineBody(object):
         'added_by': 'addedBy',
         'address': 'address',
         'bootstrap': 'bootstrap',
+        'bridge_network_cidr': 'bridgeNetworkCidr',
         'ca_cert': 'caCert',
         'env': 'env',
         'id': 'id',
@@ -94,11 +96,12 @@ class ClusterServiceCreateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, bridge_network_cidr: 'str' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
         self._bootstrap = None
+        self._bridge_network_cidr = None
         self._ca_cert = None
         self._env = None
         self._id = None
@@ -125,6 +128,8 @@ class ClusterServiceCreateMachineBody(object):
             self.address = address
         if bootstrap is not None:
             self.bootstrap = bootstrap
+        if bridge_network_cidr is not None:
+            self.bridge_network_cidr = bridge_network_cidr
         if ca_cert is not None:
             self.ca_cert = ca_cert
         if env is not None:
@@ -226,6 +231,27 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._bootstrap = bootstrap
+
+    @property
+    def bridge_network_cidr(self) -> 'str':
+        """Gets the bridge_network_cidr of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+
+        :return: The bridge_network_cidr of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._bridge_network_cidr
+
+    @bridge_network_cidr.setter
+    def bridge_network_cidr(self, bridge_network_cidr: 'str'):
+        """Sets the bridge_network_cidr of this ClusterServiceCreateMachineBody.
+
+
+        :param bridge_network_cidr: The bridge_network_cidr of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._bridge_network_cidr = bridge_network_cidr
 
     @property
     def ca_cert(self) -> 'str':

@@ -38,6 +38,11 @@ type V1HostHealth struct {
 	// distinguishes "MMT host with empty/unusable table" from "not an FM host".
 	NvlinkFmTopology *V1NVLinkFMTopology `json:"nvlinkFmTopology,omitempty"`
 
+	// Present on a current-boot fatal host SXid 20034 (LTSSM Fault Up). Omitted
+	// when this boot is clean. consecutive_fatal_boots counts fatal boots since
+	// the last clean boot; 3 in a row means the switch is not recovering.
+	NvswitchFatal *V1NVSwitchFatal `json:"nvswitchFatal,omitempty"`
+
 	// recent dmesg errors
 	RecentDmesgErrors []string `json:"recentDmesgErrors"`
 
@@ -65,6 +70,10 @@ func (m *V1HostHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNvlinkFmTopology(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNvswitchFatal(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -181,6 +190,29 @@ func (m *V1HostHealth) validateNvlinkFmTopology(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1HostHealth) validateNvswitchFatal(formats strfmt.Registry) error {
+	if swag.IsZero(m.NvswitchFatal) { // not required
+		return nil
+	}
+
+	if m.NvswitchFatal != nil {
+		if err := m.NvswitchFatal.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvswitchFatal")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvswitchFatal")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1HostHealth) validateStorage(formats strfmt.Registry) error {
 	if swag.IsZero(m.Storage) { // not required
 		return nil
@@ -244,6 +276,10 @@ func (m *V1HostHealth) ContextValidate(ctx context.Context, formats strfmt.Regis
 	}
 
 	if err := m.contextValidateNvlinkFmTopology(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNvswitchFatal(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -356,6 +392,31 @@ func (m *V1HostHealth) contextValidateNvlinkFmTopology(ctx context.Context, form
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("nvlinkFmTopology")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateNvswitchFatal(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NvswitchFatal != nil {
+
+		if swag.IsZero(m.NvswitchFatal) { // not required
+			return nil
+		}
+
+		if err := m.NvswitchFatal.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("nvswitchFatal")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("nvswitchFatal")
 			}
 
 			return err

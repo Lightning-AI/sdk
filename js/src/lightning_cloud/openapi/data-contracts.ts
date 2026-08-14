@@ -50,6 +50,7 @@ export interface SandboxesServiceCreateSandboxSnapshotBody {
    * under the project's prefix and authorization is project-scoped.
    */
   projectId?: string;
+  includeMemory?: boolean;
 }
 
 export interface SandboxesServiceExtendSandboxTimeoutBody {
@@ -364,6 +365,16 @@ export interface V1CreateSandboxRequest {
    * as that product.
    */
   purpose?: V1SandboxPurpose;
+  /**
+   * Use a checkpointable root filesystem so a later snapshot may include
+   * this sandbox's running process state.
+   */
+  memorySnapshotCompatible?: boolean;
+  /**
+   * Fail a snapshot restore instead of cold-booting when its process-memory
+   * checkpoint is absent or incompatible with the selected host.
+   */
+  requireMemoryRestore?: boolean;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -706,6 +717,23 @@ export interface V1SandboxSnapshot {
    * out of default snapshot list views along with their sandboxes.
    */
   sourceSandboxPurpose?: V1SandboxPurpose;
+  /**
+   * True while a memory capture is in progress and, once ready, when the
+   * finalized snapshot contains a process-memory checkpoint.
+   */
+  includesMemory?: boolean;
+  /**
+   * Logical bytes in the writable filesystem tree. This is the portion that
+   * must fit on the destination sandbox disk during restore.
+   * @format uint64
+   */
+  filesystemSizeBytes?: string;
+  /**
+   * Logical bytes in the process-memory checkpoint. These bytes are stored
+   * outside the destination sandbox's writable disk.
+   * @format uint64
+   */
+  memorySizeBytes?: string;
 }
 
 /**

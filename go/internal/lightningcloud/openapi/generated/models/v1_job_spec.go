@@ -92,6 +92,9 @@ type V1JobSpec struct {
 	// Track whether the EBS volume has been modified once the flow was ready
 	ModifiedVolume bool `json:"modifiedVolume,omitempty"`
 
+	// Parent job id for this job.
+	ParentJobID string `json:"parentJobId,omitempty"`
+
 	// define path mappings from remote storage inside a container
 	PathMappings []*V1PathMapping `json:"pathMappings"`
 
