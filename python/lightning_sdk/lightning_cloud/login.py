@@ -15,6 +15,10 @@ from urllib.parse import urlencode
 import webbrowser
 
 import requests
+import uvicorn
+from fastapi import FastAPI, Query, Request
+from starlette.background import BackgroundTask
+from starlette.responses import RedirectResponse
 
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi import ApiClient, Configuration
@@ -388,13 +392,6 @@ class AuthServer:
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
     def login_with_browser(self, auth: Auth) -> None:
-        # Deferred: the login callback server is only needed here, and these
-        # imports are too slow to pay on every CLI startup.
-        import uvicorn
-        from fastapi import FastAPI, Query, Request
-        from starlette.background import BackgroundTask
-        from starlette.responses import RedirectResponse
-
         from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
 
         app = FastAPI()
