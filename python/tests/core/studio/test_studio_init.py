@@ -89,10 +89,8 @@ def test_studio_placement_group_id_is_none_without_compute_config(internal_studi
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.studio.BaseStudio", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_init(
-    mock_base_studio,
     mock_get_teamspace,
     mock_get_org,
     mock_get_status,
@@ -100,6 +98,7 @@ def test_studio_init(
     mock_create_cloudspace,
     mock_create_lightning_run,
     mock_requests_put,
+    mock_base_studio,
     name,
     cluster,
     create_ok,
@@ -421,7 +420,7 @@ def test_studio_init_uses_current_studio_cloud_account(
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_studio_init_uses_current_studio_template(
+def test_studio_init_inherits_current_studio_template(
     mock_get_teamspace,
     mock_get_org,
     mock_get_cloud_space,
@@ -431,7 +430,7 @@ def test_studio_init_uses_current_studio_template(
     mock_create_lightning_run,
     mock_requests_put,
 ):
-    """Test that Studio.__init__ uses current studio's environment_template_id when no studio_type is specified."""
+    """Creating from inside a Studio inherits its environment template."""
     existing_studios = {
         "st-current": V1CloudSpace(
             name="st-current",
@@ -481,7 +480,83 @@ def test_studio_init_uses_current_studio_template(
     studio = Studio(name="st-new", teamspace="ts-abc", org="org-abc", create_ok=True)
 
     assert studio.name == "st-new"
+    assert existing_studios["st-new"].environment_template_id == "python-template-id"
     mock_get_cloud_space.assert_called()
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_SPACE_ID": "", "LIGHTNING_CLOUD_PROJECT_ID": ""}, clear=False)
+@mock.patch("requests.put", autospec=True)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_lightning_run",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_list_cloud_spaces",
+    autospec=True,
+)
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_studio_init_defaults_to_first_enabled_template_outside_studio(
+    mock_get_teamspace,
+    mock_get_org,
+    mock_get_status,
+    mock_list_cloudspaces,
+    mock_create_cloudspace,
+    mock_create_lightning_run,
+    mock_requests_put,
+    mock_base_studio,
+):
+    """Outside a Studio, creation defaults to the first enabled template, like the launcher."""
+    existing_studios = {}
+
+    def _create_cloudspace_side_effect(*args, **kwargs):
+        body = args[1] if len(args) > 1 else kwargs.get("body")
+        project_id = args[2] if len(args) > 2 else kwargs.get("project_id")
+        cloudspace = V1CloudSpace(
+            name=body.name,
+            display_name=body.display_name,
+            cluster_id=body.cluster_id,
+            project_id=project_id,
+            id=body.name,
+            environment_template_id=getattr(body, "cloud_space_environment_template_id", None),
+        )
+        existing_studios[cloudspace.name] = cloudspace
+        return cloudspace
+
+    def _get_status_side_effect(*args, **kwargs):
+        return V1GetCloudSpaceInstanceStatusResponse(in_use=Externalv1CloudSpaceInstanceStatus(phase=None))
+
+    mock_get_teamspace.return_value = V1Project(
+        name="ts-abc",
+        display_name="ts-abc",
+        id="ts-abc",
+        project_settings=V1ProjectSettings(preferred_cluster="c-abc"),
+    )
+    mock_get_org.return_value = V1Organization(
+        display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
+    )
+    mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
+    mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
+    mock_get_status.side_effect = _get_status_side_effect
+
+    first_template = mock.MagicMock()
+    first_template.id = "first-template-id"
+    first_template.name = "First Template"
+    mock_base_studio.return_value.list.return_value = [first_template]
+
+    studio = Studio(name="st-new", teamspace="ts-abc", org="org-abc", create_ok=True)
+
+    assert studio.name == "st-new"
+    assert existing_studios["st-new"].environment_template_id == "first-template-id"
 
 
 @mock.patch("requests.put", autospec=True)
