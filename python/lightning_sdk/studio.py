@@ -58,8 +58,10 @@ class Studio(metaclass=TrackCallsMeta):
             org. Deprecated — pass the owner as part of ``teamspace`` instead, e.g. ``teamspace="owner/teamspace"``.
         cloud: Cloud provider or cloud account to create the studio on.
         create_ok: whether the studio will be created if it does not yet exist. Defaults to True
-        studio_type: Type of studio to create. Only effective during initial creation;
-            ignored for existing studios.
+        studio_type: Type of studio to create: a base studio template id or name.
+            Defaults to the current studio's template when creating from inside a
+            Studio in the same teamspace, otherwise to the first enabled template.
+            Only effective during initial creation; ignored for existing studios.
 
     Note:
         Since a teamspace can either be owned by an org or by a user directly,
@@ -84,7 +86,7 @@ class Studio(metaclass=TrackCallsMeta):
         create_ok: bool = True,
         source: Optional[str] = None,
         disable_secrets: bool = False,
-        studio_type: Optional[str] = None,  # for base studio templates
+        studio_type: Optional[str] = None,
     ) -> None:
         self._studio_api = StudioApi()
         self._cloud_account_api = CloudAccountApi()
@@ -184,8 +186,13 @@ class Studio(metaclass=TrackCallsMeta):
                     f"Available studio types: "
                     f"{[bst.name.lower().replace(' ', '-') for bst in available_base_studios]}"
                 )
-        elif current_studio:
+        elif current_studio is not None:
             studio_type = current_studio.environment_template_id
+        else:
+            # Default to the first enabled template, as the launcher does. An org
+            # that disabled every template creates without one.
+            available_base_studios = BaseStudio(teamspace=self._teamspace).list()
+            studio_type = available_base_studios[0].id if available_base_studios else None
 
         self._studio = self._studio_api.create_studio(
             name or random_unique_name(),

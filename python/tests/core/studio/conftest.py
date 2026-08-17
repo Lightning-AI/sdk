@@ -28,3 +28,17 @@ def _offline_studio_env(monkeypatch):
         mock.patch("lightning_sdk.api.studio_api.StudioApi.start_keeping_alive", autospec=True),
     ):
         yield
+
+
+@pytest.fixture(autouse=True)
+def mock_base_studio():
+    """Creation consults BaseStudio.list() for the default template; default to
+    "org has no templates" so untouched tests stay offline and template-less.
+
+    Tests exercising template selection request this fixture and set
+    ``mock_base_studio.return_value.list.return_value`` — don't also patch
+    ``lightning_sdk.studio.BaseStudio``, the double patch fails to autospec.
+    """
+    with mock.patch("lightning_sdk.studio.BaseStudio", autospec=True) as base_studio:
+        base_studio.return_value.list.return_value = []
+        yield base_studio
