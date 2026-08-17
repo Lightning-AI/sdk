@@ -1103,6 +1103,24 @@ def remove_datetime_prefix(text: str) -> str:
     return re.sub(r"^\[.*?\] ", "", text, flags=re.MULTILINE)
 
 
+def logs_filename(prefix: str, name: str, rank: Optional[int] = None) -> str:
+    """Build the default download filename, e.g. ``job-<name>.log`` or ``deployment-<name>-rank-<n>.log``."""
+    rank_suffix = f"-rank-{rank}" if rank is not None else ""
+    return f"{prefix}-{name}{rank_suffix}.log"
+
+
+def resolve_logs_path(path: Optional[Union[str, Path]], default_name: str) -> Path:
+    """Resolve a log destination: ``None`` or a directory yields ``default_name``, else ``path`` verbatim."""
+    if path is None:
+        return Path.cwd() / default_name
+    dest = Path(path).expanduser()
+    if dest.is_dir():
+        return dest / default_name
+    if not dest.parent.exists():
+        raise FileNotFoundError(f"Directory {dest.parent} does not exist.")
+    return dest
+
+
 def resolve_path_mappings(mappings: Dict[str, str]) -> List[V1PathMapping]:
     path_mappings_list = []
     for k, v in mappings.items():

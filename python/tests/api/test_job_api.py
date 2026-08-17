@@ -594,3 +594,83 @@ def test_machine_from_spec_skips_accelerator_lookup_for_known_slug():
 
     assert machine == Machine.T4_X_4
     job_api._get_machines_for_cloud_account.assert_not_called()
+
+
+class _FakeUrlResponse:
+    def __init__(self, body: bytes) -> None:
+        self._body = body
+
+    def read(self) -> bytes:
+        return self._body
+
+
+def _download_response(url: str = "https://logs.example/all-pages.txt"):
+    return mock.MagicMock(url=url)
+
+
+def test_download_logs_passes_selectors_and_strips_timestamps(mocker, mocker_auth):
+    job_api = JobApiV2()
+    job_api._client.jobs_service_download_job_logs = mock.MagicMock(return_value=_download_response())
+    body = b"[2025-01-08T14:15:03.797142418Z] hello\n[2025-01-08T14:15:03.803077717Z] world\n"
+    mocker.patch("lightning_sdk.api.job_api.urlopen", return_value=_FakeUrlResponse(body))
+
+    text = job_api.download_logs("job-1", "ts-abc", deployment_id="dep-1", rank=2, cloudspace_id="cs-1")
+
+    assert text == "hello\nworld\n"
+    job_api._client.jobs_service_download_job_logs.assert_called_once_with(
+        project_id="ts-abc", id="job-1", deployment_id="dep-1", rank=2, cloudspace_id="cs-1"
+    )
+
+
+def test_download_logs_keeps_timestamps_when_requested(mocker, mocker_auth):
+    job_api = JobApiV2()
+    job_api._client.jobs_service_download_job_logs = mock.MagicMock(return_value=_download_response())
+    body = b"[2025-01-08T14:15:03Z] hello\n"
+    mocker.patch("lightning_sdk.api.job_api.urlopen", return_value=_FakeUrlResponse(body))
+
+    text = job_api.download_logs("job-1", "ts-abc", timestamps=True)
+
+    assert text == "[2025-01-08T14:15:03Z] hello\n"
+
+
+def test_download_logs_retries_then_succeeds(mocker, mocker_auth):
+    from urllib.error import URLError
+
+    job_api = JobApiV2()
+    job_api._client.jobs_service_download_job_logs = mock.MagicMock(return_value=_download_response())
+    urlopen = mocker.patch(
+        "lightning_sdk.api.job_api.urlopen",
+        side_effect=[URLError("not ready"), _FakeUrlResponse(b"ok\n")],
+    )
+    mocker.patch("lightning_sdk.api.job_api.time.sleep")
+
+    text = job_api.download_logs("job-1", "ts-abc")
+
+    assert text == "ok\n"
+    assert urlopen.call_count == 2
+    assert job_api._client.jobs_service_download_job_logs.call_count == 2
+
+
+def test_download_logs_raises_after_max_retries(mocker, mocker_auth):
+    from urllib.error import URLError
+
+    job_api = JobApiV2()
+    job_api._client.jobs_service_download_job_logs = mock.MagicMock(return_value=_download_response())
+    mocker.patch("lightning_sdk.api.job_api.urlopen", side_effect=URLError("nope"))
+    mocker.patch("lightning_sdk.api.job_api.time.sleep")
+
+    with pytest.raises(RuntimeError, match="Could not download logs"):
+        job_api.download_logs("job-1", "ts-abc", max_retries=3)
+
+    assert job_api._client.jobs_service_download_job_logs.call_count == 3
+
+
+def test_get_logs_finished_delegates_to_download_logs(mocker, mocker_auth):
+    job_api = JobApiV2()
+    job_api._client.jobs_service_download_job_logs = mock.MagicMock(return_value=_download_response())
+    mocker.patch(
+        "lightning_sdk.api.job_api.urlopen",
+        return_value=_FakeUrlResponse(b"[2025-01-08T14:15:03Z] hi\n"),
+    )
+
+    assert job_api.get_logs_finished("job-1", "ts-abc") == "hi\n"

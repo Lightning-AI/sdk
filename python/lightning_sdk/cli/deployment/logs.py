@@ -18,8 +18,10 @@ from lightning_sdk.cli.utils.logs import (
     LIVE_FALLBACK_IDLE_TIMEOUT,
     LogSelection,
     deployment_replica_labels,
+    make_logs_group,
     read_logs,
     resolve_time,
+    run_download,
 )
 
 _DEFAULT_TAIL = 100
@@ -89,7 +91,7 @@ def _command_without_tui(
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 @click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
-def deployment_logs(
+def _deployment_logs_cmd(
     name: str,
     teamspace: Optional[str] = None,
     job_ids: Sequence[str] = (),
@@ -270,3 +272,36 @@ def _ranked_logs(
         pass
     except RuntimeError as ex:
         raise click.ClickException(str(ex)) from ex
+
+
+@click.command("download", cls=LightningCommand)
+@click.argument("name")
+@click.option("--teamspace", help="Override default teamspace (format: owner/teamspace).")
+@click.option("--job-id", "job_ids", multiple=True, help="Specific deployment job ID. Can be repeated.")
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+def download_deployment(
+    name: str,
+    teamspace: Optional[str] = None,
+    job_ids: Sequence[str] = (),
+    timestamps: bool = False,
+) -> None:
+    """Download the complete logs for a deployment replica."""
+    resolved_teamspace = resolve_teamspace(teamspace)
+    api = DeploymentApi()
+    deployment = resolve_deployment(api, resolved_teamspace.id, name)
+
+    from lightning_sdk.deployment import Deployment
+
+    resource = Deployment(name=deployment.name, teamspace=resolved_teamspace)
+    run_download(
+        resource,
+        timestamps=timestamps,
+        job_id=job_ids[0] if job_ids else None,
+    )
+
+
+deployment_logs = make_logs_group(
+    default_cmd=_deployment_logs_cmd,
+    download_cmd=download_deployment,
+    help_text="View the logs for a deployment.",
+)

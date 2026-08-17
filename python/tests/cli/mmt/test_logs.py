@@ -10,13 +10,14 @@ def test_mmt_logs_help() -> None:
     assert_help_contains(
         "lightning mmt logs --help",
         "Usage: lightning mmt logs",
-        "Print the logs for a multi-machine job.",
+        "View the logs for a multi-machine job.",
         "--follow",
         "--tail",
         "--timestamps",
         "--query",
         "--severity",
         "configured default teamspace",
+        "download",
     )
 
 
@@ -25,7 +26,7 @@ def test_mmts_logs_help() -> None:
     assert_help_contains(
         "lightning mmts logs --help",
         "Usage: lightning mmts logs",
-        "Print the logs for a multi-machine job.",
+        "View the logs for a multi-machine job.",
     )
 
 

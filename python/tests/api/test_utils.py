@@ -957,3 +957,29 @@ def test_collect_download_results_reports_every_failure():
 
 def test_collect_download_results_is_quiet_when_every_worker_succeeds():
     _collect_download_results([_finished_future() for _ in range(3)], "some/folder")
+
+
+@pytest.mark.parametrize(
+    ("prefix", "name", "rank", "expected"),
+    [
+        ("job", "my-job", None, "job-my-job.log"),
+        ("job", "my-job", 0, "job-my-job-rank-0.log"),
+        ("deployment", "dep", 2, "deployment-dep-rank-2.log"),
+    ],
+)
+def test_logs_filename(prefix, name, rank, expected):
+    assert utils.logs_filename(prefix, name, rank) == expected
+
+
+def test_resolve_logs_path_directory_appends_default(tmp_path):
+    assert utils.resolve_logs_path(tmp_path, "job-x.log") == tmp_path / "job-x.log"
+
+
+def test_resolve_logs_path_explicit_file(tmp_path):
+    target = tmp_path / "custom.log"
+    assert utils.resolve_logs_path(target, "job-x.log") == target
+
+
+def test_resolve_logs_path_missing_parent_raises(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        utils.resolve_logs_path(tmp_path / "nope" / "custom.log", "job-x.log")
