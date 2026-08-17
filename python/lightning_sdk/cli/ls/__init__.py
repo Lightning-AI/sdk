@@ -4,7 +4,7 @@ import rich_click as click
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.utils import _tree_path_info
-from lightning_sdk.cli.cp.completion import complete_cp_path
+from lightning_sdk.cli.cp.completion import complete_remote_path
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
@@ -12,7 +12,7 @@ from lightning_sdk.utils.filesystem import parse_lit_url
 
 
 @click.command("ls", cls=LightningCommand)
-@click.argument("path", nargs=1, shell_complete=complete_cp_path)
+@click.argument("path", nargs=1, shell_complete=complete_remote_path)
 @click.option("-r", "--recursive", is_flag=True, help="List files in all subdirectories recursively")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the listing entries as JSON.")
 def ls(path: str, recursive: bool = False, as_json: bool = False) -> None:

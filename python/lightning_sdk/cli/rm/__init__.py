@@ -2,13 +2,13 @@
 
 import rich_click as click
 
-from lightning_sdk.cli.cp.completion import complete_cp_path
+from lightning_sdk.cli.cp.completion import complete_remote_path
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.filesystem import Filesystem
 
 
 @click.command("rm", cls=LightningCommand)
-@click.argument("path", nargs=1, shell_complete=complete_cp_path)
+@click.argument("path", nargs=1, shell_complete=complete_remote_path)
 @click.option("-r", "--recursive", is_flag=True, help="Remove directories recursively")
 @click.option("-f", "--force", is_flag=True, help="Ignore nonexistent files, never prompt")
 def rm(path: str, recursive: bool = False, force: bool = False) -> None:
