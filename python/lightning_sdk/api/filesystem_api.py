@@ -274,3 +274,46 @@ class FilesystemApi:
         finally:
             if pbar:
                 pbar.close()
+
+    def delete_file(self, teamspace_id: str, remote_path: str) -> None:
+        """Delete a single file from the teamspace drive.
+
+        Args:
+            teamspace_id: The teamspace that owns the file.
+            remote_path: The file's path within the teamspace drive.
+
+        Raises:
+            RuntimeError: If the server refuses the deletion.
+        """
+        r = requests.delete(
+            f"{self._client.api_client.configuration.host}"
+            f"/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path.strip('/')}",
+            headers=self._auth_headers,
+        )
+        if r.status_code not in (200, 204):
+            raise _RemoteApiError(
+                f"Failed to delete {remote_path!r}: {r.status_code}", status_code=r.status_code, server_message=r.text
+            )
+
+    def delete_folder(self, teamspace_id: str, remote_path: str) -> None:
+        """Delete a folder and everything under it from the teamspace drive.
+
+        In cluster-merged namespaces the server removes the folder from every
+        backing storage location.
+
+        Args:
+            teamspace_id: The teamspace that owns the folder.
+            remote_path: The folder's path within the teamspace drive.
+
+        Raises:
+            RuntimeError: If the server refuses the deletion.
+        """
+        r = requests.delete(
+            f"{self._client.api_client.configuration.host}"
+            f"/v1/projects/{teamspace_id}/artifacts/trees/{remote_path.strip('/')}",
+            headers=self._auth_headers,
+        )
+        if r.status_code not in (200, 204):
+            raise _RemoteApiError(
+                f"Failed to delete {remote_path!r}: {r.status_code}", status_code=r.status_code, server_message=r.text
+            )

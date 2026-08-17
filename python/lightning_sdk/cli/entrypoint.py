@@ -40,6 +40,8 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_command,
     build_legacy_forward_group,
 )
+from lightning_sdk.cli.ls import ls
+from lightning_sdk.cli.rm import rm
 from lightning_sdk.cli.utils.auth import browser_authentication
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
@@ -51,7 +53,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
-        {"name": "DATA & FILES", "commands": ["cp", "edit"]},
+        {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
@@ -147,6 +149,8 @@ main_cli.add_command(dataset)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 main_cli.add_command(edit)
+main_cli.add_command(ls)
+main_cli.add_command(rm)
 
 # hidden plural aliases for noun-first groups
 main_cli.add_command(build_hidden_alias_group("apis", api))
