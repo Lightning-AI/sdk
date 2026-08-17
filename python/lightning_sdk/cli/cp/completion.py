@@ -12,13 +12,10 @@ from click.shell_completion import (
 )
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
-from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.cli.resource_completion import accessible_teamspaces as _accessible_teamspaces
 from lightning_sdk.cli.resource_completion import has_credentials as _has_credentials
-from lightning_sdk.cli.resource_completion import studios as _studios
 
 _LIT_PREFIX = "lit://"
-_REMOTE_RESOURCE_TYPES = ("studios", "uploads")
 
 _BASH_SOURCE = BashComplete.source_template.replace(
     """        elif [[ $type == 'plain' ]]; then
@@ -75,7 +72,22 @@ def complete_cp_path(
     """Complete local paths through the shell and ``lit://`` paths through the API."""
     if not incomplete.startswith(_LIT_PREFIX):
         return [CompletionItem(incomplete, type="file")]
+    return _safe_remote_completions(incomplete)
 
+
+def complete_remote_path(
+    _ctx: click.Context,
+    _param: click.Parameter,
+    incomplete: str,
+) -> list[CompletionItem]:
+    """Complete ``lit://`` paths only, for commands whose argument is always remote."""
+    if not incomplete.startswith(_LIT_PREFIX):
+        # Steer the shell toward lit:// instead of offering local files.
+        return [CompletionItem(_LIT_PREFIX)] if _LIT_PREFIX.startswith(incomplete) else []
+    return _safe_remote_completions(incomplete)
+
+
+def _safe_remote_completions(incomplete: str) -> list[CompletionItem]:
     try:
         if not _has_credentials():
             return []
@@ -101,46 +113,14 @@ def _complete_remote_path(incomplete: str) -> list[CompletionItem]:
             (f"{_LIT_PREFIX}{owner}/{teamspace}/" for teamspace in teamspaces),
         )
 
-    teamspace = parts[1]
-    if len(parts) == 3:
-        base = f"{_LIT_PREFIX}{owner}/{teamspace}/"
-        return _complete_values(
-            incomplete,
-            (f"{base}{resource_type}/" for resource_type in _REMOTE_RESOURCE_TYPES),
-        )
-
-    teamspace_id = _accessible_teamspaces().get(owner, {}).get(teamspace)
+    teamspace_id = _accessible_teamspaces().get(owner, {}).get(parts[1])
     if teamspace_id is None:
         return []
 
-    resource_type = parts[2]
-    if resource_type == "studios":
-        return _complete_studio_path(incomplete, parts[3:], teamspace_id)
-    if resource_type == "uploads":
-        return _complete_uploads_path(incomplete, parts[3:], teamspace_id)
-    return []
-
-
-def _complete_studio_path(incomplete: str, path_parts: list[str], teamspace_id: str) -> list[CompletionItem]:
-    studios = _studios(teamspace_id)
-    studio_name = path_parts[0]
-    if len(path_parts) == 1:
-        base = incomplete[: -len(studio_name)] if studio_name else incomplete
-        return _complete_values(incomplete, (f"{base}{name}/" for name in studios))
-
-    studio_id = studios.get(studio_name)
-    if studio_id is None:
-        return []
-
-    parent = "/".join(path_parts[1:-1])
-    tree = StudioApi().get_tree(studio_id, teamspace_id, path=parent)
-    return _complete_tree_entries(incomplete, tree.get("tree", []))
-
-
-def _complete_uploads_path(incomplete: str, path_parts: list[str], teamspace_id: str) -> list[CompletionItem]:
-    parent = "/".join(path_parts[:-1])
-    remote_parent = posixpath.join("Uploads", parent)
-    entries = FilesystemApi().list_files(teamspace_id, remote_parent, recursive=False)
+    # Anything deeper completes from the drive's own tree listing, so every
+    # namespace the server serves is completable — no client-side list.
+    parent = "/".join(parts[2:-1])
+    entries = FilesystemApi().list_files(teamspace_id, parent, recursive=False)
     return _complete_tree_entries(incomplete, entries)
 
 

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Generator, List, Optional, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
-from lightning_sdk.api.utils import _RemoteApiError
+from lightning_sdk.api.utils import _RemoteApiError, _tree_path_info
 from lightning_sdk.cli.utils.filesystem import resolve_teamspace
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.filesystem import parse_lit_url
@@ -76,6 +76,41 @@ class Filesystem(metaclass=TrackCallsMeta):
 
         for dirpath in sorted(dirs):
             yield dirpath, dirs[dirpath], files.get(dirpath, [])
+
+    def rm(self, path: str, recursive: bool = False) -> None:
+        """Remove a file or directory from the teamspace drive.
+
+        Args:
+            path: Remote path in ``lit://<owner>/<teamspace>/<path>`` format.
+            recursive: Required to remove a directory and everything under it.
+
+        Raises:
+            FileNotFoundError: If the remote path does not exist.
+            ValueError: If the path is a directory and ``recursive`` is ``False``,
+                or the path has no file or directory component.
+        """
+        path_result = parse_lit_url(path)
+        remote_path = (path_result["destination"] or "").strip("/")
+        if not remote_path:
+            raise ValueError("Refusing to remove the teamspace root; pass a file or directory path.")
+        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+
+        def list_entries(folder: str) -> List[dict]:
+            return self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=folder, recursive=False)
+
+        info = _tree_path_info(list_entries, remote_path)
+        if not info["exists"]:
+            raise FileNotFoundError(
+                f"No such file or directory: {remote_path!r}. "
+                "Note that empty folders may not be detected as existing."
+            )
+
+        if info["type"] == "directory":
+            if not recursive:
+                raise ValueError(f"{remote_path!r} is a directory. Pass recursive=True to remove it.")
+            self._filesystem_api.delete_folder(selected_teamspace.id, remote_path)
+        else:
+            self._filesystem_api.delete_file(selected_teamspace.id, remote_path)
 
     def copy(
         self,
