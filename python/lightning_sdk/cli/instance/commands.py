@@ -256,12 +256,21 @@ def list_instance_types(
     multiple=True,
     help="Additional options to pass to the SSH command. Can be specified multiple times.",
 )
+@click.option(
+    "--identity",
+    "-i",
+    "key_path",
+    type=click.Path(exists=True, dir_okay=False),
+    default=None,
+    help="Private key to authenticate with. Defaults to the Lightning-managed key.",
+)
 @click.option("--print", "print_only", is_flag=True, default=False, help="Print the SSH command instead of running it.")
 def ssh_instance(
     name_or_id: str,
     command: Sequence[str] = (),
     org: str | None = None,
     options: Sequence[str] = (),
+    key_path: str | None = None,
     print_only: bool = False,
 ) -> None:
     """SSH into a cloud instance, or run a single command on it.
@@ -269,9 +278,10 @@ def ssh_instance(
     Examples:
       $ lightning instance ssh my-vm
       $ lightning instance ssh my-vm -- uname -a
+      $ lightning instance ssh my-vm -i ~/.ssh/id_ed25519 -- uname -a
     """
     instance = CloudInstance(name_or_id, org=org)
-    args = instance.ssh_args(command=list(command), options=list(options))
+    args = instance.ssh_args(command=list(command), options=list(options), key_path=key_path)
 
     if print_only:
         click.echo(shlex.join(args))

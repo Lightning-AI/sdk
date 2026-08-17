@@ -49,7 +49,8 @@ class FakeInstance:
 
     def ssh_args(self, **kwargs) -> list[str]:
         self.ssh_kwargs = kwargs
-        return ["ssh", "-i", "/tmp/key", "-p", "2201", "ubuntu@203.0.113.10", *kwargs.get("command", [])]
+        key = kwargs.get("key_path") or "/tmp/key"
+        return ["ssh", "-i", key, "-p", "2201", "ubuntu@203.0.113.10", *kwargs.get("command", [])]
 
     def delete(self) -> None:
         self.deleted = True
@@ -206,7 +207,7 @@ def test_ssh_runs_the_command_on_the_instance(fake_instance):
         result = run(["ssh", "unit-vm", "--", "uname", "-a"])
 
     assert result.exit_code == 0, result.output
-    assert instance.ssh_kwargs == {"command": ["uname", "-a"], "options": []}
+    assert instance.ssh_kwargs == {"command": ["uname", "-a"], "options": [], "key_path": None}
     assert run_mock.call_args.args[0][-2:] == ["uname", "-a"]
 
 
@@ -216,6 +217,19 @@ def test_ssh_propagates_the_remote_exit_code(fake_instance):
         result = run(["ssh", "unit-vm", "--", "false"])
 
     assert result.exit_code == 7
+
+
+@mock_command_logging
+def test_ssh_forwards_an_explicit_identity(fake_instance, tmp_path):
+    instance, _ = fake_instance
+    key = tmp_path / "id_ed25519"
+    key.write_text("")
+
+    with mock.patch.object(instance_commands.subprocess, "run", return_value=SimpleNamespace(returncode=0)):
+        result = run(["ssh", "unit-vm", "-i", str(key), "--", "true"])
+
+    assert result.exit_code == 0, result.output
+    assert instance.ssh_kwargs["key_path"] == str(key)
 
 
 @mock_command_logging

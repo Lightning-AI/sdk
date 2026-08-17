@@ -55,6 +55,8 @@ Operational notes
 - ``cloud_account`` defaults to the only cloud account able to host instances.
 - ``wait=True`` blocks until the instance reports an SSH endpoint, so
   ``ssh_command`` is usable as soon as ``create`` returns.
+- ``ssh`` uses the Lightning-managed key by default; pass ``key_path`` (``-i`` on
+  the CLI) to authenticate with a different one.
 - ``ports`` are fixed at creation time. Instances have no update call, so
   recreate the instance to expose a different set of ports.
 - ``image`` and ``cloud_init`` are part of the API contract but are rejected by

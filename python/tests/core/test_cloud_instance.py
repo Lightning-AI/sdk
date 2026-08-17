@@ -198,6 +198,24 @@ def test_ssh_args_uses_the_reported_endpoint(instance_api):
     ]
 
 
+def test_ssh_runs_the_built_command(instance_api):
+    instance_api.get_instance.return_value = _instance()
+    instance = CloudInstance("i-1")
+
+    with mock.patch("lightning_sdk.cloud_instance.subprocess.run", return_value=SimpleNamespace(returncode=7)) as run:
+        assert instance.ssh("uname -a", key_path="/tmp/key") == 7
+
+    assert run.call_args.args[0] == [
+        "ssh",
+        "-i",
+        "/tmp/key",
+        "-p",
+        "2201",
+        "ubuntu@203.0.113.10",
+        "uname -a",
+    ]
+
+
 def test_ssh_args_rejects_instances_without_an_endpoint(instance_api):
     instance_api.get_instance.return_value = _instance(status="pending", ssh_host="", ssh_port=0, ssh_command="")
     instance = CloudInstance("i-1")

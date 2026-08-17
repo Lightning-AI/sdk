@@ -355,14 +355,18 @@ class CloudInstance:
                 raise TimeoutError(f"Instance {self.name} is still {status or 'pending'} after {timeout} seconds")
             time.sleep(poll_interval)
 
-    def ssh(self, command: Optional[Union[str, Sequence[str]]] = None, options: Optional[Sequence[str]] = None) -> int:
+    def ssh(
+        self,
+        command: Optional[Union[str, Sequence[str]]] = None,
+        options: Optional[Sequence[str]] = None,
+        key_path: Optional[str] = None,
+    ) -> int:
         """Open an SSH session to the instance, or run a single command on it.
-
-        Uses the Lightning-managed SSH key, downloading it if needed.
 
         Args:
             command: A command to run on the instance. Opens an interactive shell if omitted.
             options: Additional ``-o`` options to pass to ``ssh``.
+            key_path: The private key to authenticate with. Defaults to the Lightning-managed key.
 
         Returns:
             int: The exit code of the ``ssh`` process.
@@ -370,7 +374,8 @@ class CloudInstance:
         Raises:
             RuntimeError: If the instance is not reachable over SSH yet.
         """
-        return subprocess.run(self.ssh_args(command=command, options=options), check=False).returncode
+        args = self.ssh_args(command=command, options=options, key_path=key_path)
+        return subprocess.run(args, check=False).returncode
 
     def ssh_args(
         self,
@@ -383,7 +388,8 @@ class CloudInstance:
         Args:
             command: A command to run on the instance. Opens an interactive shell if omitted.
             options: Additional ``-o`` options to pass to ``ssh``.
-            key_path: The private key to authenticate with. Defaults to the Lightning-managed key.
+            key_path: The private key to authenticate with. Defaults to the Lightning-managed key,
+                which is downloaded on first use.
 
         Returns:
             List[str]: The full ``ssh`` command as an argument list.

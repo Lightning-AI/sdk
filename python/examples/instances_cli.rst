@@ -50,6 +50,7 @@ Inspect and connect
 
    $ lightning instance ssh sdk-tutorial-vm
    $ lightning instance ssh sdk-tutorial-vm -- uname -a
+   $ lightning instance ssh sdk-tutorial-vm -i ~/.ssh/id_ed25519 -- uname -a
    $ lightning instance ssh sdk-tutorial-vm --print
 
 ``ssh`` exits with the remote command's exit code, so it composes with shell
