@@ -1,8 +1,32 @@
+from datetime import datetime, timedelta
+from typing import Any, Dict, Optional, TypedDict
+
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
     V1Organization,
 )
+
+# The billing summary API only supports querying up to 2 years of history.
+_MAX_DURATION = timedelta(days=730)
+
+
+class MonthlySummary(TypedDict):
+    """A single month's billing summary of credits purchased, used, and remaining.
+
+    Attributes:
+        period_start: Start of the billing period (typically the first of the month).
+        period_end: End of the billing period (typically the end of the month).
+        total_credits_consumed: Total credits consumed during the monthly period.
+        total_credits_remaining: Total credits remaining at the end of the monthly period.
+        total_credits_purchased: Total credits purchased during the monthly period.
+    """
+
+    period_start: datetime
+    period_end: datetime
+    total_credits_consumed: float
+    total_credits_remaining: float
+    total_credits_purchased: float
 
 
 class OrgApi:
@@ -49,3 +73,75 @@ class OrgApi:
         self._client.projects_service_create_project(
             body=V1CreateProjectRequest(name=name, organization_id=organization_id, display_name=name)
         )
+
+    def get_monthly_summary(
+        self,
+        organization_id: str,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> list[MonthlySummary]:
+        """Get the monthly billing summary of an organization.
+
+        Exactly one of ``start`` and ``end`` must be supplied,
+        or both together:
+        - only ``start``: translated to a pivot filter with
+          ``pivot_direction="AFTER"`` and ``pivot=start``.
+        - only ``end``: translated to a pivot filter with
+          ``pivot_direction="BEFORE"`` and ``pivot=end``.
+        - both ``start`` and ``end``: translated to a normal
+          range filter.
+
+        Args:
+            organization_id: ID of the organization to summarize.
+            start: Start of the time range. If given without
+                ``end``, acts as an "AFTER" pivot.
+            end: End of the time range. If given without
+                ``start``, acts as a "BEFORE" pivot.
+
+        Returns:
+            A list of MonthlySummary dicts:
+            [
+                {
+                    "period_start": datetime,
+                    "period_end": datetime,
+                    "total_credits_consumed": float,
+                    "total_credits_remaining": float,
+                    "total_credits_purchased": float,
+                },
+                ...
+            ]
+
+        Raises:
+            ValueError: If neither ``start`` nor ``end`` is
+                provided, if ``start`` is after ``end``, or if
+                an "AFTER" pivot (derived from a lone ``start``) is in
+                the future.
+        """
+        if start is None and end is None:
+            raise ValueError("Provide at least one of start or end.")
+
+        kwargs: Dict[str, Any] = {"org_id": organization_id}
+
+        if start is not None and end is not None:
+            if start > end:
+                raise ValueError("start must not be after end.")
+            if end - start > _MAX_DURATION:
+                raise ValueError("the time range must not be longer than 2 years.")
+            kwargs["time_filter_range_filter_range_start"] = start
+            kwargs["time_filter_range_filter_range_end"] = end
+        elif start is not None:
+            pivot = start
+            # An "AFTER" pivot selects [pivot, now]; it must be in the past
+            # and no more than 2 years back.
+            now = datetime.now(pivot.tzinfo) if pivot.tzinfo is not None else datetime.now()
+            if pivot > now:
+                raise ValueError("start must not be in the future.")
+            if now - pivot > _MAX_DURATION:
+                raise ValueError("start must not be more than 2 years in the past.")
+            kwargs["time_filter_pivot_filter_pivot"] = pivot
+            kwargs["time_filter_pivot_filter_pivot_direction"] = "AFTER"
+        else:
+            kwargs["time_filter_pivot_filter_pivot"] = end
+            kwargs["time_filter_pivot_filter_pivot_direction"] = "BEFORE"
+
+        return self._client.billing_service_get_monthly_summary(**kwargs).to_dict()["monthly_summaries"]
