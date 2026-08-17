@@ -16,6 +16,7 @@ from lightning_sdk.cli.deployment import register_commands as register_deploymen
 from lightning_sdk.cli.edit import register_commands as register_edit_commands
 from lightning_sdk.cli.file import register_commands as register_file_commands
 from lightning_sdk.cli.folder import register_commands as register_folder_commands
+from lightning_sdk.cli.instance import register_commands as register_instance_commands
 from lightning_sdk.cli.job import register_commands as register_job_commands
 from lightning_sdk.cli.legacy_redirects import DeprecatedGroup
 from lightning_sdk.cli.license import register_commands as register_license_commands
@@ -59,6 +60,33 @@ def mmt() -> None:
 @click.group(name="machine", cls=LightningGroup)
 def machine() -> None:
     """Browse GPU and CPU machine types."""
+
+
+@click.group(name="instance", cls=LightningGroup)
+def instance() -> None:
+    """Plain cloud VMs.
+
+    An instance is a raw virtual machine: Lightning provisions it, injects the SSH
+    keys of your Lightning account and gets out of the way. Nothing is installed on
+    it beyond what its image (and your cloud-init) brings, and nothing is persisted
+    once it is deleted.
+
+    Examples:
+      $ lightning instance create my-vm -t cpu-4 --port 8080 --wait
+      ┏━━━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━┓
+      ┃ ID      ┃ Name  ┃ Status  ┃ Instance type ┃ Cloud account       ┃ Ports ┃ Spot ┃
+      ┡━━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━┩
+      │ 01k0abc │ my-vm │ running │ cpu-4         │ lightning-baremetal │ 8080  │ no   │
+      └─────────┴───────┴─────────┴───────────────┴─────────────────────┴───────┴──────┘
+
+      SSH  ssh -p 2201 ubuntu@203.0.113.10
+
+      $ lightning instance ssh my-vm -- uname -a
+      Linux 01k0abc 6.8.0-45-generic #45-Ubuntu SMP x86_64 GNU/Linux
+
+      $ lightning instance delete my-vm -y
+      Instance deleted
+    """
 
 
 @click.group(name="config", cls=LightningGroup)
@@ -244,6 +272,7 @@ def edit(_ctx: click.Context) -> None:
 register_job_commands(job)
 register_mmt_commands(mmt)
 register_machine_commands(machine)
+register_instance_commands(instance)
 register_studio_commands(studio)
 register_user_commands(user)
 register_teamspace_commands(teamspace)

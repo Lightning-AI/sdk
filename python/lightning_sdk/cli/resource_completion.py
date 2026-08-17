@@ -120,3 +120,40 @@ def _matching_teamspace_ids(teamspaces: dict[str, dict[str, str]], selected: Opt
 
     all_ids = [teamspace_id for values in teamspaces.values() for teamspace_id in values.values()]
     return all_ids if len(all_ids) == 1 else []
+
+
+def complete_organization(
+    _ctx: click.Context,
+    _param: click.Parameter,
+    incomplete: str,
+) -> list[CompletionItem]:
+    """Complete organization names the authenticated user belongs to."""
+    try:
+        if not has_credentials():
+            return []
+        client = cached_lightning_client()
+        organizations = client.organizations_service_list_organizations().organizations
+        return [
+            CompletionItem(organization.name)
+            for organization in sorted(organizations, key=lambda organization: organization.name)
+            if organization.name.startswith(incomplete)
+        ]
+    except Exception:
+        return []
+
+
+def complete_instance(
+    ctx: click.Context,
+    _param: click.Parameter,
+    incomplete: str,
+) -> list[CompletionItem]:
+    """Complete cloud instance names in the selected or configured organization."""
+    try:
+        if not has_credentials():
+            return []
+        from lightning_sdk.cloud_instance import CloudInstance
+
+        names = {instance.name for instance in CloudInstance.list(org=ctx.params.get("org"))}
+        return [CompletionItem(name) for name in sorted(names) if name.startswith(incomplete)]
+    except Exception:
+        return []

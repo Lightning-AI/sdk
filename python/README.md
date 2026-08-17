@@ -139,6 +139,23 @@ snapshot_id = sandbox.stop()
 print(snapshot_id)
 ```
 
+## Run a plain cloud VM
+
+```python
+from lightning_sdk import CloudInstance
+
+instance = CloudInstance.create(
+    name="my-vm",
+    instance_type="cpu-4",
+    ports=[8080],
+    wait=True,
+)
+
+print(instance.ssh_command)
+instance.ssh("uname -a")
+instance.delete()
+```
+
 # CLI
 
 The package installs `lightning`, `lightning-sdk`, and `sandbox` commands. The
@@ -179,6 +196,7 @@ Runnable examples live in [`examples/`](examples/):
 | multi-machine training | [`mmts.rst`](examples/mmts.rst)             | [`mmts_cli.rst`](examples/mmts_cli.rst)             |
 | teamspaces             | [`teamspaces.rst`](examples/teamspaces.rst) | [`teamspaces_cli.rst`](examples/teamspaces_cli.rst) |
 | sandboxes              | [`sandboxes.rst`](examples/sandboxes.rst)   | [`sandboxes_cli.rst`](examples/sandboxes_cli.rst)   |
+| cloud instances        | [`instances.rst`](examples/instances.rst)   | [`instances_cli.rst`](examples/instances_cli.rst)   |
 
 # Development
 
