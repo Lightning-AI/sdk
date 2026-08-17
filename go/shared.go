@@ -24,9 +24,53 @@ type artifactTreeResponse struct {
 }
 
 type artifactTreeItem struct {
-	Path string `json:"path"`
-	Type string `json:"type"`
-	Size int64  `json:"size"`
+	Path         string `json:"path"`
+	Type         string `json:"type"`
+	Size         int64  `json:"size"`
+	ClusterID    string `json:"clusterId"`
+	LastModified string `json:"lastModified"`
+}
+
+// FileEntry is one entry of a drive folder listing.
+type FileEntry struct {
+	// Path is relative to the listed folder.
+	Path string
+	// Type is "blob" for a file or "tree" for a folder.
+	Type string
+	// Size in bytes; zero for folders.
+	Size int64
+	// CloudAccount is the storage cluster holding a file, when reported.
+	CloudAccount string
+	// LastModified is the file's RFC 3339 modification time, when reported.
+	LastModified string
+}
+
+// listArtifactFolder lists every entry under treePath, following the
+// listing's cursor pages. query gains the cursor between pages.
+func listArtifactFolder(api *sdkclient.RawClient, treePath string, query url.Values) ([]FileEntry, error) {
+	var entries []FileEntry
+	for {
+		var tree artifactTreeResponse
+		if err := api.Do(context.Background(), http.MethodGet, treePath, query, nil, &tree); err != nil {
+			return nil, err
+		}
+		for _, item := range tree.Tree {
+			entries = append(entries, FileEntry{
+				Path:         item.Path,
+				Type:         item.Type,
+				Size:         item.Size,
+				CloudAccount: item.ClusterID,
+				LastModified: item.LastModified,
+			})
+		}
+		if tree.NextCursor == "" {
+			return entries, nil
+		}
+		if query == nil {
+			query = url.Values{}
+		}
+		query.Set("cursor", tree.NextCursor)
+	}
 }
 
 // downloadArtifactFolder downloads every file listed under treePath into

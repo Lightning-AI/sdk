@@ -805,6 +805,62 @@ func (t *Teamspace) UploadFolder(folderPath, remotePath string, cloudAccount ...
 	return nil
 }
 
+// ListFiles lists the immediate entries of a teamspace drive folder, or every
+// file under it when recursive. An empty remotePath lists the drive's
+// top-level folders (studios, uploads, artifacts, ...).
+func (t *Teamspace) ListFiles(remotePath string, recursive bool, cloudAccount ...string) ([]FileEntry, error) {
+	id, err := t.requireID("list files")
+	if err != nil {
+		return nil, err
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return nil, err
+	}
+	query := teamspaceArtifactQuery(cloudAccount...)
+	if recursive {
+		query.Set("recursive", "true")
+	}
+	return listArtifactFolder(api, teamspaceArtifactTreePath(id, strings.Trim(remotePath, "/")), query)
+}
+
+// DeleteFile removes a single file from the teamspace drive.
+func (t *Teamspace) DeleteFile(remotePath string, cloudAccount ...string) error {
+	id, err := t.requireID("delete file")
+	if err != nil {
+		return err
+	}
+	if remotePath == "" {
+		return errors.New("teamspace delete file requires remote path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	return api.Do(context.Background(), http.MethodDelete,
+		teamspaceArtifactBlobPath(id, remotePath), teamspaceArtifactQuery(cloudAccount...), nil, nil)
+}
+
+// DeleteFolder removes a teamspace drive folder and everything under it. In
+// the cluster-merged namespaces the folder is removed from every backing
+// cloud account, or from just the given one.
+func (t *Teamspace) DeleteFolder(remotePath string, cloudAccount ...string) error {
+	id, err := t.requireID("delete folder")
+	if err != nil {
+		return err
+	}
+	remotePath = strings.Trim(remotePath, "/")
+	if remotePath == "" {
+		return errors.New("teamspace delete folder requires remote path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	return api.Do(context.Background(), http.MethodDelete,
+		teamspaceArtifactTreePath(id, remotePath), teamspaceArtifactQuery(cloudAccount...), nil, nil)
+}
+
 func (t *Teamspace) listSecrets() ([]*models.V1Secret, error) {
 	id, err := t.requireID("secrets")
 	if err != nil {

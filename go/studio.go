@@ -639,6 +639,67 @@ func (s *Studio) UploadFolder(folderPath, remotePath string) error {
 	return nil
 }
 
+// ListFiles lists the immediate entries of a studio drive folder, or every
+// file under it when recursive. An empty remotePath lists the studio's root.
+func (s *Studio) ListFiles(remotePath string, recursive bool) ([]FileEntry, error) {
+	if s == nil || s.teamspaceID == "" || s.id == "" {
+		return nil, errors.New("studio list files requires teamspace ID and studio ID")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return nil, err
+	}
+	query := url.Values{}
+	if s.cloud != "" {
+		query.Set("clusterId", s.cloud)
+	}
+	if recursive {
+		query.Set("recursive", "true")
+	}
+	return listArtifactFolder(api, studioArtifactTreePath(s.teamspaceID, s.id, strings.Trim(remotePath, "/")), query)
+}
+
+// DeleteFile removes a single file from the studio drive.
+func (s *Studio) DeleteFile(remotePath string) error {
+	if s == nil || s.teamspaceID == "" || s.id == "" {
+		return errors.New("studio delete file requires teamspace ID and studio ID")
+	}
+	if remotePath == "" {
+		return errors.New("studio delete file requires remote path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	query := url.Values{}
+	if s.cloud != "" {
+		query.Set("clusterId", s.cloud)
+	}
+	return api.Do(context.Background(), http.MethodDelete,
+		studioArtifactBlobPath(s.teamspaceID, s.id, remotePath), query, nil, nil)
+}
+
+// DeleteFolder removes a studio drive folder and everything under it.
+func (s *Studio) DeleteFolder(remotePath string) error {
+	if s == nil || s.teamspaceID == "" || s.id == "" {
+		return errors.New("studio delete folder requires teamspace ID and studio ID")
+	}
+	remotePath = strings.Trim(remotePath, "/")
+	if remotePath == "" {
+		return errors.New("studio delete folder requires remote path")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	query := url.Values{}
+	if s.cloud != "" {
+		query.Set("clusterId", s.cloud)
+	}
+	return api.Do(context.Background(), http.MethodDelete,
+		studioArtifactTreePath(s.teamspaceID, s.id, remotePath), query, nil, nil)
+}
+
 // RunWithExitCode runs commands in the studio and returns output plus exit code.
 func (s *Studio) RunWithExitCode(commands ...string) (string, int, error) {
 	if s == nil || s.teamspaceID == "" || s.id == "" {
