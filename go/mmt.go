@@ -643,9 +643,14 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 	return result
 }
 
+// isMMTTerminalStatus reports whether an observed MMT state is terminal. The
+// API reports either the bare state or the MultiMachineJob_STATE_* enum name,
+// so both spellings are matched. Mirrors the backend's terminal set:
+// completed, stopped, failed, deleted.
 func isMMTTerminalStatus(status string) bool {
 	switch strings.ToLower(status) {
-	case "completed", "stopped", "failed", "multimachinejob_state_completed", "multimachinejob_state_stopped", "multimachinejob_state_failed":
+	case "completed", "stopped", "failed", "deleted",
+		"multimachinejob_state_completed", "multimachinejob_state_stopped", "multimachinejob_state_failed", "multimachinejob_state_deleted":
 		return true
 	default:
 		return false
