@@ -51,7 +51,6 @@ lightning login
 Or export credentials from Lightning AI account settings:
 
 ```bash
-export LIGHTNING_USER_ID="..."
 export LIGHTNING_API_KEY="..."
 ```
 

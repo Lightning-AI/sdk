@@ -2,7 +2,6 @@ import re
 from typing import Dict, List, Optional, Union
 
 from lightning_sdk.api.utils import cached_lightning_client
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     SecretServiceUpdateUserSecretBody,
     V1CloudSpace,
@@ -117,17 +116,6 @@ class UserApi:
             kwargs["organization_id"] = org_id
 
         return self._client.projects_service_list_memberships(**kwargs).memberships
-
-    def _get_authed_user_name(self) -> str:
-        """Gets the currently logged-in user.
-
-        Returns:
-            str: The username of the currently authenticated user.
-        """
-        auth = Auth()
-        auth.authenticate()
-        user = self._get_user_by_id(auth.user_id)
-        return user.username
 
     def _get_feature_flags(self) -> V1UserFeatures:
         """Return the feature flags enabled for the authenticated user.

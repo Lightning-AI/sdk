@@ -266,6 +266,7 @@ def test_cannot_login_within_studio(monkeypatch):
     # Ensure auth appears as not logged in
     mock_auth_instance.user_id = None
     mock_auth_instance.api_key = None
+    mock_auth_instance.auth_token = None
     mock_auth_instance.load.return_value = False
     mock_auth_instance.authenticate.side_effect = RuntimeError("Test Error")
     monkeypatch.setattr("lightning_sdk.cli.entrypoint.Auth", mock_auth_cls)
@@ -286,6 +287,7 @@ def test_login_not_authed_outside_studio(monkeypatch):
     # Ensure auth appears as not logged in
     mock_auth_instance.user_id = None
     mock_auth_instance.api_key = None
+    mock_auth_instance.auth_token = None
     mock_auth_instance.load.return_value = False
     monkeypatch.setattr("lightning_sdk.cli.entrypoint.Auth", mock_auth_cls)
 

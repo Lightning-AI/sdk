@@ -278,7 +278,6 @@ class LLM:
                 "teamspace_name": teamspace_name,
                 "teamspace_id": os.environ.get("LIGHTNING_CLOUD_PROJECT_ID", None),
                 "user_name": os.environ.get("LIGHTNING_USERNAME", ""),
-                "user_id": os.environ.get("LIGHTNING_USER_ID", None),
                 "org_name": os.environ.get("LIGHTNING_ORG", ""),
                 "cloud_url": os.environ.get("LIGHTNING_CLOUD_URL", None),
             }
@@ -292,7 +291,6 @@ class LLM:
             raise ValueError("Teamspace ID is missing from the resolved authentication information.")
         self._teamspace_id = teamspace_id
         self._user_name = LLM._cached_auth_info["user_name"]
-        self._user_id = LLM._cached_auth_info["user_id"]
         self._org_name = LLM._cached_auth_info["org_name"]
         self._cloud_url = LLM._cached_auth_info["cloud_url"]
         self._org = None
