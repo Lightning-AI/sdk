@@ -358,6 +358,13 @@ func RunJob(name string, machine Machine, command string, opts ...JobOptions) (*
 }
 
 // Stop stops the job.
+//
+// The backend's job state field carries two vocabularies: observed states the
+// job can be in ("pending", "creating", "running", "restarting", "completed",
+// "stopped", "failed", "deleted") and platform actions a client may request
+// ("stop", "delete", "complete", "fail"). UpdateJob only accepts the actions,
+// so stopping a job means requesting "stop"; the job reaches the observed
+// "stopped" state once the platform has acted on the request.
 func (j *Job) Stop() error {
 	if j == nil || j.teamspaceID == "" || j.id == "" {
 		return errors.New("job stop requires teamspace ID and job ID")
@@ -370,7 +377,7 @@ func (j *Job) Stop() error {
 		jobs_service.NewJobsServiceUpdateJobParamsWithContext(context.Background()).
 			WithProjectID(j.teamspaceID).
 			WithID(j.id).
-			WithBody(&models.JobsServiceUpdateJobBody{State: "stopped"}),
+			WithBody(&models.JobsServiceUpdateJobBody{State: jobActionStop}),
 	)
 	if err != nil {
 		return err
@@ -710,9 +717,16 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 	return result
 }
 
+// jobActionStop is the platform action that requests a job stop. It is not an
+// observed job state: "stopped" is what the job reports once the stop lands.
+const jobActionStop = "stop"
+
+// isJobTerminalStatus reports whether an observed job state is terminal, i.e.
+// the job will not transition again. Mirrors the backend's own terminal set:
+// completed, stopped, failed, deleted.
 func isJobTerminalStatus(status string) bool {
 	switch strings.ToLower(status) {
-	case "completed", "stopped", "failed":
+	case "completed", "stopped", "failed", "deleted":
 		return true
 	default:
 		return false

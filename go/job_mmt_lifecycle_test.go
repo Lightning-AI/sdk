@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestJobLifecycleUsesV2Routes(t *testing.T) {
@@ -29,8 +30,8 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 				assert.Fail(t, fmt.Sprintf("decode stop body: %v", err))
 			}
-			if body.State != "stopped" {
-				assert.Fail(t, fmt.Sprintf("state = %q, want stopped", body.State))
+			if body.State != "stop" {
+				assert.Fail(t, fmt.Sprintf("state = %q, want stop", body.State))
 			}
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"id":        "job-1",
@@ -359,5 +360,153 @@ func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
 		assert.Falsef(t, seen[i] != want[i],
 			"request %d = %q, want %q", i, seen[i], want[i])
 
+	}
+}
+
+// TestJobStopRequestsPlatformStopAction pins the request body of Job.Stop to
+// the platform action "stop". UpdateJob rejects observed states such as
+// "stopped" with InvalidArgument; the rejection is masked for jobs that are
+// already stopped by the handler's idempotent early return, so only the wire
+// value proves the SDK asks for something the backend accepts.
+func TestJobStopRequestsPlatformStopAction(t *testing.T) {
+	var sentState string
+
+	sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodPut || r.URL.Path != "/v1/projects/project-1/jobs/job-1",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		var body struct {
+			State string `json:"state"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			assert.Fail(t, fmt.Sprintf("decode stop body: %v", err))
+		}
+		sentState = body.State
+
+		// The backend echoes back the action it recorded; the job only reaches
+		// the observed "stopped" state once the platform has acted on it.
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-1",
+			"name":      "train",
+			"projectId": "project-1",
+			"state":     "stop",
+		})
+	})
+
+	j := mustJob(t, "job-1", "train", "project-1", lit.JobOptions{Status: "running"})
+	require.NoErrorf(t, j.Stop(),
+		"job.Stop returned error")
+
+	assert.Falsef(t, sentState != "stop",
+		"stop sent state = %q, want stop (platform action, not observed state)", sentState)
+}
+
+// TestJobWaitTreatsDeletedAsTerminal covers the fourth terminal state. A
+// deleted job never transitions again, so Wait must return instead of polling
+// until the timeout.
+func TestJobWaitTreatsDeletedAsTerminal(t *testing.T) {
+	polls := 0
+
+	sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodGet || r.URL.Path != "/v1/projects/project-1/jobs/job-1",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		polls++
+		state := "running"
+		if polls >= 2 {
+			state = "deleted"
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-1",
+			"name":      "train",
+			"projectId": "project-1",
+			"state":     state,
+		})
+	})
+
+	j := mustJob(t, "job-1", "train", "project-1", lit.JobOptions{Status: "running"})
+	require.NoErrorf(t, j.Wait(lit.JobWaitOptions{Interval: time.Millisecond, Timeout: 2 * time.Second}),
+		"job.Wait returned error")
+	assert.Falsef(t, j.Status() != "deleted",
+		"job status = %q, want deleted", j.Status())
+	assert.Falsef(t, polls != 2,
+		"polls = %d, want 2 (Wait kept polling past a terminal state)", polls)
+}
+
+// TestJobTerminalStatesMatchBackend pins the whole terminal set, so a state
+// dropped from or wrongly added to isJobTerminalStatus fails here rather than
+// as a hang in Wait.
+func TestJobTerminalStatesMatchBackend(t *testing.T) {
+	cases := map[string]bool{
+		"completed":  true,
+		"stopped":    true,
+		"failed":     true,
+		"deleted":    true,
+		"COMPLETED":  true,
+		"pending":    false,
+		"creating":   false,
+		"running":    false,
+		"restarting": false,
+	}
+
+	for state, terminal := range cases {
+		t.Run(state, func(t *testing.T) {
+			polls := 0
+			sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				polls++
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"id":        "job-1",
+					"name":      "train",
+					"projectId": "project-1",
+					"state":     state,
+				})
+			})
+
+			j := mustJob(t, "job-1", "train", "project-1", lit.JobOptions{Status: "running"})
+			err := j.Wait(lit.JobWaitOptions{Interval: time.Millisecond, Timeout: 50 * time.Millisecond})
+			if terminal {
+				require.NoErrorf(t, err,
+					"job.Wait returned error for terminal state %q", state)
+				assert.Falsef(t, polls != 1,
+					"polls = %d for terminal state %q, want 1", polls, state)
+				return
+			}
+			require.Errorf(t, err,
+				"job.Wait returned nil for non-terminal state %q", state)
+		})
+	}
+}
+
+// TestMMTWaitTreatsDeletedAsTerminal is the MMT counterpart: the API reports
+// either the bare state or the MultiMachineJob_STATE_* enum name, and both
+// spellings of the deleted state are terminal.
+func TestMMTWaitTreatsDeletedAsTerminal(t *testing.T) {
+	for _, state := range []string{"deleted", "MultiMachineJob_STATE_DELETED"} {
+		t.Run(state, func(t *testing.T) {
+			polls := 0
+			sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				assert.Falsef(t, r.Method != http.MethodGet || r.URL.Path != "/v1/projects/project-1/multi-machine-jobs/mmt-1",
+					"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+				polls++
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"id":        "mmt-1",
+					"name":      "dist-train",
+					"projectId": "project-1",
+					"machines":  4,
+					"state":     state,
+				})
+			})
+
+			m := mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{Status: "MultiMachineJob_STATE_RUNNING"})
+			require.NoErrorf(t, m.Wait(lit.MMTWaitOptions{Interval: time.Millisecond, Timeout: 2 * time.Second}),
+				"mmt.Wait returned error")
+			assert.Falsef(t, polls != 1,
+				"polls = %d, want 1 (Wait kept polling past terminal state %q)", polls, state)
+		})
 	}
 }
