@@ -96,7 +96,7 @@ def login() -> None:
     """Sign in to Lightning AI."""
     # try to fetch credentials, if successful (e.g. in a Studio or already logged in), no need to relogin
     auth = Auth()
-    if (auth.user_id and auth.api_key) or auth.load():
+    if auth.api_key or auth.auth_token or auth.load():
         try:
             auth_user = _get_authed_user()
             click.echo(f'You are currently logged in as "{auth_user.name}"')

@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Union
 import requests
 from tqdm.auto import tqdm
 
+from lightning_sdk.api.auth_api import AuthApi
 from lightning_sdk.api.utils import (
     Experiment,
     _authenticate_and_get_auth_headers,
@@ -23,7 +24,6 @@ from lightning_sdk.api.utils import (
     _tree_path_info,
     cached_lightning_client,
 )
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     DataConnectionServiceCreateDataConnectionBody,
@@ -217,9 +217,7 @@ class TeamspaceApi:
         Returns:
             User ID string of the currently authenticated user.
         """
-        auth = Auth()
-        auth.authenticate()
-        return auth.user_id
+        return AuthApi().whoami().user_id
 
     def get_default_cloud_account(self, teamspace_id: str) -> str:
         """Get the default cloud account id of the teamspace.

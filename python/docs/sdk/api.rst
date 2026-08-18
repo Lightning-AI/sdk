@@ -29,7 +29,6 @@ For automation, configure credentials with environment variables:
 
 .. code-block:: bash
 
-   export LIGHTNING_USER_ID=your-user-id
    export LIGHTNING_API_KEY=your-api-key
 
 Core Resources

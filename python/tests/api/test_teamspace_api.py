@@ -61,10 +61,10 @@ def test_list_teamspaces(internal_teamspace_api_list_mocker):
     assert isinstance(projects[0], V1Project)
 
 
-@mock.patch("lightning_sdk.api.teamspace_api.Auth")
+@mock.patch("lightning_sdk.api.teamspace_api.AuthApi")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_studios(mock_auth, internal_studio_api_list_mocker):
-    mock_auth.return_value.user_id = "user-abc"
+def test_list_studios(mock_auth_api, internal_studio_api_list_mocker):
+    mock_auth_api.return_value.whoami.return_value.user_id = "user-abc"
     teamspace_api = TeamspaceApi()
 
     studios = teamspace_api.list_studios(cloud_account="cluster_abc", teamspace_id="ts-abc")
@@ -682,10 +682,8 @@ def _make_upload_teamspace_api():
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file(
-    auth_mock,
     tqdm_mock,
     requests_put_mock,
     requests_post_mock,
@@ -698,8 +696,6 @@ def test_upload_file(
     # executor workers would never run; fall back to a plain map
     monkeypatch.setattr("lightning_sdk.api.utils.ThreadPoolExecutor.map", map)
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
-    auth_instance = auth_mock.return_value
-    auth_instance.api_key = "test-api-key"
     teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
@@ -763,18 +759,14 @@ def test_upload_file(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file_uploads_paths_pass_through(
-    auth_mock,
     requests_put_mock,
     requests_post_mock,
     tmpdir,
     remote_path,
 ):
     """Paths under uploads/ pass through to the project scope verbatim; the server maps both spellings."""
-    auth_instance = auth_mock.return_value
-    auth_instance.api_key = "test-api-key"
     teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
@@ -800,10 +792,8 @@ def test_upload_file_uploads_paths_pass_through(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file_with_headers(
-    auth_mock,
     tqdm_mock,
     requests_put_mock,
     requests_post_mock,
@@ -813,8 +803,6 @@ def test_upload_file_with_headers(
     """Test that custom headers are bound into the upload and replayed on requests.put."""
     tqdm_mock.wrapattr.side_effect = lambda f, *args, **kwargs: f
 
-    auth_instance = auth_mock.return_value
-    auth_instance.api_key = "test-api-key"
     teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")
@@ -851,17 +839,13 @@ def test_upload_file_with_headers(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.api.teamspace_api.Auth")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_upload_file_without_headers(
-    auth_mock,
     requests_put_mock,
     requests_post_mock,
     tmpdir,
 ):
     """Test that headers is None by default when not provided."""
-    auth_instance = auth_mock.return_value
-    auth_instance.api_key = "test-api-key"
     teamspace_api = _make_upload_teamspace_api()
 
     filepath = os.path.join(tmpdir, "file1")

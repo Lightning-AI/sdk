@@ -41,8 +41,7 @@ jobs:
       run: |
         # NOTE: do not include coverage report here, see: https://github.com/nedbat/coveragepy/issues/1003
         coverage run -m pytest . -vv -s --ignore=cli
-      env: # the following values are just dummies since the actual http calls are mocked out
-        LIGHTNING_USER_ID: dummy-user-id
+      env: # the following value is just a dummy since the actual http calls are mocked out
         LIGHTNING_API_KEY: dummy-api-key
 
     - name: Statistics

@@ -263,8 +263,8 @@ lightning sandbox delete "$SANDBOX_ID"
 # Authentication
 
 For the Python SDK and CLI, run `lightning login` or export
-`LIGHTNING_USER_ID` and `LIGHTNING_API_KEY` from Lightning AI account settings.
-Inside a Lightning Studio, these values are usually already available.
+`LIGHTNING_API_KEY` from Lightning AI account settings.
+Inside a Lightning Studio, this value is usually already available.
 
 Sandbox-only API keys can also be passed through `LIGHTNING_SANDBOX_API_KEY` or
 configured directly in code with `Sandbox.configure(...)`.

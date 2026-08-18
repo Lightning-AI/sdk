@@ -117,8 +117,10 @@ def test_teamspace_init_env(
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch(
-    "lightning_sdk.api.teamspace_api.Auth",
-    new=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")),
+    "lightning_sdk.api.teamspace_api.AuthApi",
+    new=mock.MagicMock(
+        return_value=mock.MagicMock(whoami=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")))
+    ),
 )
 def test_teamspace_list_clusters_studios_user(
     _mock_authenticate,
@@ -139,8 +141,10 @@ def test_teamspace_list_clusters_studios_user(
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 @mock.patch(
-    "lightning_sdk.api.teamspace_api.Auth",
-    new=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")),
+    "lightning_sdk.api.teamspace_api.AuthApi",
+    new=mock.MagicMock(
+        return_value=mock.MagicMock(whoami=mock.MagicMock(return_value=mock.MagicMock(user_id="user-abc")))
+    ),
 )
 def test_teamspace_list_clusters_studios_org(
     _mock_authenticate,
