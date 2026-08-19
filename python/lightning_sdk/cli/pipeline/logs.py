@@ -8,7 +8,13 @@ import rich_click as click
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.api.pipeline_api import PipelineApi
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
+from lightning_sdk.cli.utils.logs import (
+    LogSelection,
+    make_logs_group,
+    read_logs,
+    resolve_time,
+    run_download,
+)
 from lightning_sdk.cli.utils.resource_resolution import (
     resolve_job_machine,
     resolve_teamspace,
@@ -145,7 +151,7 @@ def _job_from_status(
     default=False,
     help="Launch the interactive TUI log viewer.",
 )
-def logs_pipeline(
+def _logs_pipeline_cmd(
     pipeline: Optional[str] = None,
     step: Optional[str] = None,
     teamspace: Optional[str] = None,
@@ -269,3 +275,42 @@ def logs_pipeline(
         pass
     except RuntimeError as ex:
         raise click.ClickException(str(ex)) from ex
+
+
+@click.command("download", cls=LightningCommand)
+@click.argument("pipeline", required=False, help="The pipeline name. Required.")
+@click.argument("step", required=False, help="The step (job) name within the pipeline. Required.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help=("Teamspace owner/name. Uses the configured default teamspace when omitted."),
+)
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+def download_pipeline(
+    pipeline: Optional[str] = None,
+    step: Optional[str] = None,
+    teamspace: Optional[str] = None,
+    timestamps: bool = False,
+) -> None:
+    """Download the complete logs for a pipeline step."""
+    resolved_teamspace = resolve_teamspace(teamspace)
+
+    if not pipeline:
+        raise click.UsageError("Missing pipeline name. Pass PIPELINE.")
+    if not step:
+        raise click.UsageError("Missing step name. Pass STEP.")
+
+    pipeline_api = PipelineApi()
+    pipeline_obj = pipeline_api.get_pipeline_by_id(resolved_teamspace.id, pipeline)
+    if pipeline_obj is None:
+        raise click.ClickException(f"Could not resolve pipeline '{pipeline}' in teamspace '{resolved_teamspace.name}'.")
+
+    job = _resolve_pipeline_step(pipeline_obj, step, resolved_teamspace)
+    run_download(job, timestamps=timestamps)
+
+
+logs_pipeline = make_logs_group(
+    default_cmd=_logs_pipeline_cmd,
+    download_cmd=download_pipeline,
+    help_text="View the logs for a pipeline step.",
+)

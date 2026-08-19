@@ -618,12 +618,14 @@ def test_deployment_logs_help() -> None:
     assert_help_contains(
         "lightning deployment logs --help",
         "Usage: lightning deployment logs",
+        "View the logs for a deployment.",
         "--job-id",
         "--query",
         "--severity",
         "--follow",
         "--tail",
         "--timestamps",
+        "download",
     )
 
 

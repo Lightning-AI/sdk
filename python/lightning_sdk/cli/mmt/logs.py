@@ -7,7 +7,13 @@ import rich_click as click
 
 from lightning_sdk.api.logs_api import SEVERITIES
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.cli.utils.logs import LogSelection, read_logs, resolve_time
+from lightning_sdk.cli.utils.logs import (
+    LogSelection,
+    make_logs_group,
+    read_logs,
+    resolve_time,
+    run_download,
+)
 from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_teamspace
 
 
@@ -32,7 +38,7 @@ from lightning_sdk.cli.utils.resource_resolution import resolve_mmt, resolve_tea
 )
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output entries as a JSON array.")
 @click.option("--interactive", "-i", "tui", is_flag=True, default=False, help="Launch the interactive TUI log viewer.")
-def logs_mmt(
+def _logs_mmt_cmd(
     name: Optional[str] = None,
     teamspace: Optional[str] = None,
     follow: bool = False,
@@ -109,3 +115,29 @@ def logs_mmt(
         pass
     except RuntimeError as ex:
         raise click.ClickException(str(ex)) from ex
+
+
+@click.command("download", cls=LightningCommand)
+@click.argument("name", required=False, help="The multi-machine job name. Required.")
+@click.option(
+    "--teamspace",
+    default=None,
+    help="Teamspace owner/name. Uses the configured default teamspace when omitted.",
+)
+@click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
+def download_mmt(
+    name: Optional[str] = None,
+    teamspace: Optional[str] = None,
+    timestamps: bool = False,
+) -> None:
+    """Download the complete logs for a multi-machine job."""
+    resolved_teamspace = resolve_teamspace(teamspace)
+    mmt = resolve_mmt(name, resolved_teamspace)
+    run_download(mmt, timestamps=timestamps)
+
+
+logs_mmt = make_logs_group(
+    default_cmd=_logs_mmt_cmd,
+    download_cmd=download_mmt,
+    help_text="View the logs for a multi-machine job.",
+)

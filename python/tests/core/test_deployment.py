@@ -1378,3 +1378,70 @@ def test_deployment_start_byom_builds_spec(monkeypatch):
     assert body.byom_spec.quantization == "fp8"
     assert body.byom_spec.extra_vllm_args == ["--enable-chunked-prefill"]
     assert body.acknowledged_warnings == ["BYOM_INSUFFICIENT_VRAM_ESTIMATE"]
+
+
+def _bare_deployment(name="my-dep", dep_id="dep-1"):
+    deployment = deployment_module.Deployment.__new__(deployment_module.Deployment)
+    deployment._name = name
+    deployment._deployment = MagicMock(id=dep_id)
+    deployment._teamspace = MagicMock(id="ts-abc")
+    deployment._deployment_api = MagicMock()
+    return deployment
+
+
+def _patch_deployment_identity(name="my-dep", dep_id="dep-1"):
+    return patch.multiple(
+        deployment_module.Deployment,
+        id=PropertyMock(return_value=dep_id),
+        name=PropertyMock(return_value=name),
+    )
+
+
+def test_deployment_download_logs_single_replica_auto_picked(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    deployment = _bare_deployment("my-dep")
+    deployment._deployment_api.list_deployment_jobs.return_value = [MagicMock(id="rep-1")]
+
+    job_api = MagicMock()
+    job_api.download_logs.return_value = "hello\n"
+    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "JobApiV2", return_value=job_api):
+        written = deployment.download_logs()
+
+    assert written == str(tmp_path / "deployment-my-dep.log")
+    assert (tmp_path / "deployment-my-dep.log").read_text() == "hello\n"
+    job_api.download_logs.assert_called_once_with(
+        job_id="rep-1",
+        teamspace_id="ts-abc",
+        deployment_id="dep-1",
+        timestamps=False,
+    )
+
+
+def test_deployment_download_logs_requires_job_id_with_multiple_replicas(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    deployment = _bare_deployment("my-dep")
+    deployment._deployment_api.list_deployment_jobs.return_value = [MagicMock(id="rep-1"), MagicMock(id="rep-2")]
+
+    with _patch_deployment_identity("my-dep"), patch.object(
+        deployment_module, "JobApiV2", return_value=MagicMock()
+    ), pytest.raises(ValueError, match="pass job_id"):
+        deployment.download_logs()
+
+
+def test_deployment_download_logs_explicit_job_id_skips_listing(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    deployment = _bare_deployment("my-dep")
+
+    job_api = MagicMock()
+    job_api.download_logs.return_value = "x\n"
+    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "JobApiV2", return_value=job_api):
+        written = deployment.download_logs(job_id="rep-9")
+
+    assert written == str(tmp_path / "deployment-my-dep.log")
+    deployment._deployment_api.list_deployment_jobs.assert_not_called()
+    job_api.download_logs.assert_called_once_with(
+        job_id="rep-9",
+        teamspace_id="ts-abc",
+        deployment_id="dep-1",
+        timestamps=False,
+    )

@@ -11,7 +11,7 @@ def test_job_logs_help() -> None:
     assert_help_contains(
         "lightning job logs --help",
         "Usage: lightning job logs",
-        "Print the logs for a job.",
+        "View the logs for a job.",
         "--follow",
         "--tail",
         "--rank",
@@ -19,6 +19,7 @@ def test_job_logs_help() -> None:
         "configured default teamspace",
         "--query",
         "--severity",
+        "download",
     )
 
 
@@ -27,13 +28,14 @@ def test_jobs_logs_help() -> None:
     assert_help_contains(
         "lightning jobs logs --help",
         "Usage: lightning jobs logs",
-        "Print the logs for a job.",
+        "View the logs for a job.",
     )
 
 
 @mock_command_logging
 def test_job_logs_help_shows_positional_name() -> None:
     assert_help_contains("lightning job logs --help", "Usage: lightning job logs [OPTIONS] [NAME]")
+    assert_help_contains("lightning job logs --help", "Commands")
 
 
 @mock_command_logging
@@ -221,3 +223,46 @@ def test_job_logs_tui_until_starts_paused() -> None:
 @mock_command_logging
 def test_job_logs_tui_follow_flag_overrides_since() -> None:
     assert _invoke_tui(["--since", "2h", "--follow"]).call_args.kwargs["follow"] is True
+
+
+@mock_command_logging
+def test_job_download_writes_file() -> None:
+    from lightning_sdk.cli.job.logs import download_job
+
+    teamspace = MagicMock()
+    job = MagicMock()
+    job.download_logs.return_value = "/tmp/job-my-job.log"
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(download_job, ["my-job", "--timestamps"])
+
+    assert result.exit_code == 0, result.output
+    assert "Logs downloaded to /tmp/job-my-job.log" in result.output
+    job.download_logs.assert_called_once_with(timestamps=True)
+
+
+@mock_command_logging
+def test_job_download_reports_sdk_errors_cleanly() -> None:
+    from lightning_sdk.cli.job.logs import download_job
+
+    job = MagicMock()
+    job.download_logs.side_effect = RuntimeError("Could not download logs for job job-1.")
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(download_job, ["my-job"])
+
+    assert result.exit_code != 0
+    assert "Could not download logs" in result.output
+    assert not isinstance(result.exception, RuntimeError)
+
+
+@mock_command_logging
+def test_job_download_help() -> None:
+    assert_help_contains(
+        "lightning job logs download --help",
+        "Usage: lightning job logs download",
+        "Download the complete logs for a job as a file.",
+        "--timestamps",
+    )

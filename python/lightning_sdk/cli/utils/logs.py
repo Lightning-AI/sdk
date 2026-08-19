@@ -12,7 +12,7 @@ go through their SDK object (``Job.logs``, ``MMT.logs``) rather than this reader
 import re
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 import rich_click as click
 
@@ -161,6 +161,86 @@ def read_logs(
 
     if not printed:
         click.echo("No logs matched.", err=True)
+
+
+def run_download(resource: Any, *, timestamps: bool = False, **kwargs: Any) -> None:
+    """Download logs for ``resource`` and report the written path.
+
+    ``resource`` must have a ``download_logs(timestamps=...)`` method.
+    Extra keyword arguments are forwarded to ``download_logs`` (e.g. ``job_id`` for deployments).
+    """
+    try:
+        written: str = resource.download_logs(timestamps=timestamps, **kwargs)
+    except (RuntimeError, ValueError) as ex:
+        raise click.ClickException(str(ex)) from ex
+    click.echo(f"Logs downloaded to {written}")
+
+
+def make_logs_group(
+    default_cmd: Any,
+    download_cmd: Any,
+    *,
+    name: str = "logs",
+    help_text: str = "View logs.",
+) -> Any:
+    """Return a `LightningGroup` that acts as ``logs`` with a ``download`` subcommand.
+
+    When invoked without a subcommand the group forwards to ``default_cmd``, preserving the
+    existing ``lightning <resource> logs`` behaviour.  ``lightning <resource> logs download``
+    routes to ``download_cmd``.
+    """
+    from lightning_sdk.cli.utils.logging import LightningGroup
+
+    class _LogsGroup(LightningGroup):
+        def __init__(self, *args: Any, **kw: Any) -> None:
+            kw.setdefault("invoke_without_command", True)
+            super().__init__(*args, **kw)
+            import click as _click
+
+            self._default_cmd = default_cmd
+            self.params = [p for p in default_cmd.params if not isinstance(p, _click.Argument)]
+
+        def invoke(self, ctx: click.Context) -> Any:
+            if ctx.protected_args and ctx.protected_args[0] in self.commands:
+                return super().invoke(ctx)
+            import click as _click
+
+            args: list[str] = []
+            for param in self.params:
+                value = ctx.params.get(param.name)
+                if value is None or value is False or value == param.default:
+                    continue
+                if isinstance(param, _click.Option) and param.multiple:
+                    for item in value if isinstance(value, (tuple, list)) else [value]:
+                        if item:
+                            args.extend([param.opts[0], str(item)])
+                elif isinstance(param, _click.Option) and param.is_flag:
+                    args.append(param.opts[0])
+                else:
+                    args.extend([param.opts[0], str(value)])
+            args.extend(ctx.protected_args + ctx.args)
+            with ctx.scope(cleanup=False):
+                return self._default_cmd.main(args=args, standalone_mode=False)
+
+        def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+            """Render help that includes arguments from the default command."""
+            _saved_params = self.params
+            self.params = list(default_cmd.params)
+            try:
+                super().format_help(ctx, formatter)
+            finally:
+                self.params = _saved_params
+
+        def format_options(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+            """Render option and command panels, including those from the default command."""
+            _saved_params = self.params
+            self.params = list(default_cmd.params)
+            try:
+                super().format_options(ctx, formatter)  # type: ignore[arg-type]
+            finally:
+                self.params = _saved_params
+
+    return _LogsGroup(name=name, help=help_text, commands={"download": download_cmd})
 
 
 def deployment_replica_labels(teamspace_id: str, deployment_id: str) -> Dict[str, str]:

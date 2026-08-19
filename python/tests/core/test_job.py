@@ -193,6 +193,51 @@ def test_submit_calls_max_runtime_noop_warning(_get_org_id_mock):
     job._standalone_job_api.warn_if_max_runtime_noop.assert_not_called()
 
 
+def _bare_job(name="my-job", *, deployment_id="", cloudspace_id="cs-1", num_machines=1):
+    job = Job.__new__(Job)
+    job._name = name
+    job._teamspace = mock.MagicMock(id="ts-abc")
+    job._num_machines = num_machines
+    job._standalone_job_api = mock.MagicMock()
+    job._job = V1Job(id="job-1", name=name, deployment_id=deployment_id, spec=V1JobSpec(cloudspace_id=cloudspace_id))
+    return job
+
+
+def test_download_logs_writes_default_named_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    job = _bare_job("my-job")
+    job._standalone_job_api.download_logs.return_value = "line-1\nline-2\n"
+
+    written = job.download_logs()
+
+    assert written == str(tmp_path / "job-my-job.log")
+    assert (tmp_path / "job-my-job.log").read_text() == "line-1\nline-2\n"
+    job._standalone_job_api.download_logs.assert_called_once_with(
+        job_id="job-1",
+        teamspace_id="ts-abc",
+        deployment_id=None,
+        cloudspace_id="cs-1",
+        timestamps=False,
+    )
+
+
+def test_download_logs_forwards_deployment(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    job = _bare_job("replica", deployment_id="dep-1")
+    job._standalone_job_api.download_logs.return_value = "x\n"
+
+    written = job.download_logs(timestamps=True)
+
+    assert written == str(tmp_path / "job-replica.log")
+    job._standalone_job_api.download_logs.assert_called_once_with(
+        job_id="job-1",
+        teamspace_id="ts-abc",
+        deployment_id="dep-1",
+        cloudspace_id="cs-1",
+        timestamps=True,
+    )
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")

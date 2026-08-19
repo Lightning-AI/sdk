@@ -247,6 +247,9 @@ class CommandLoggingGroup(rich_click.RichGroup):
             else:
                 option_renderables.append(p)
 
+        for p in option_renderables:
+            cast(Any, formatter).write(p)
+
         if not command_renderables:
             return
 

@@ -36,7 +36,13 @@ from lightning_sdk.api.deployment_api import (
     to_spec,
     to_strategy,
 )
-from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
+from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.utils import (
+    AccessibleResource,
+    logs_filename,
+    raise_access_error_if_not_allowed,
+    resolve_logs_path,
+)
 from lightning_sdk.lightning_cloud import login
 from lightning_sdk.lightning_cloud.openapi import V1Deployment, V1DeploymentState
 from lightning_sdk.machine import CloudProvider, Machine
@@ -527,6 +533,39 @@ class Deployment(metaclass=TrackCallsMeta):
             overwrite=overwrite,
             remote_path=remote_path,
         )
+
+    def download_logs(
+        self,
+        *,
+        job_id: Optional[str] = None,
+        timestamps: bool = False,
+    ) -> str:
+        """Download a deployment replica's complete stored logs to a file and return the written path."""
+        if not self._deployment or not self.id:
+            raise RuntimeError("This deployment has not been created.")
+
+        teamspace_id = self._teamspace.id
+        if job_id is None:
+            jobs = self._deployment_api.list_deployment_jobs(teamspace_id, self.id, limit=100)
+            if not jobs:
+                raise RuntimeError(f"Deployment '{self.name}' has no replicas to download logs from.")
+            if len(jobs) > 1:
+                available = ", ".join(job.id for job in jobs)
+                raise ValueError(
+                    f"Deployment '{self.name}' has {len(jobs)} replicas; pass job_id to pick one. "
+                    f"Available replica ids: {available}."
+                )
+            job_id = jobs[0].id
+
+        text = JobApiV2().download_logs(
+            job_id=job_id,
+            teamspace_id=teamspace_id,
+            deployment_id=self.id,
+            timestamps=timestamps,
+        )
+        dest = resolve_logs_path(None, logs_filename("deployment", self.name or self.id))
+        dest.write_text(text, encoding="utf-8")
+        return str(dest)
 
     @property
     def id(self) -> Optional[str]:

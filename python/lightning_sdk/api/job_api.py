@@ -5,6 +5,7 @@ from contextlib import suppress
 from datetime import datetime, timezone
 from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Union
+from urllib.error import URLError
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from urllib.request import urlopen
 
@@ -37,6 +38,10 @@ if TYPE_CHECKING:
 # finished. It must stay below the server's log-socket heartbeat (10s) so recv() actually wakes up
 # during quiet periods.
 _FOLLOW_POLL_INTERVAL = 5.0
+
+_DOWNLOAD_LOGS_MAX_RETRIES = 5
+_DOWNLOAD_LOGS_MIN_BACKOFF = 0.5
+_DOWNLOAD_LOGS_MAX_BACKOFF = 8.0
 
 
 def _job_logs_ws_url(
@@ -361,6 +366,47 @@ class JobApiV2:
             cloudspace_id: The ID of the Studio (cloudspace) associated with the job, or ``None``.
         """
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
+
+    def download_logs(
+        self,
+        job_id: str,
+        teamspace_id: str,
+        *,
+        deployment_id: Optional[str] = None,
+        rank: Optional[int] = None,
+        cloudspace_id: Optional[str] = None,
+        timestamps: bool = False,
+        max_retries: int = _DOWNLOAD_LOGS_MAX_RETRIES,
+    ) -> str:
+        """Download the stored logs for a job, retrying to prevent running-resource upload race."""
+        last_error: Optional[BaseException] = None
+        backoff = _DOWNLOAD_LOGS_MIN_BACKOFF
+        for attempt in range(max(1, max_retries)):
+            try:
+                resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
+                    project_id=teamspace_id,
+                    id=job_id,
+                    deployment_id=deployment_id or "",
+                    rank=rank or 0,
+                    cloudspace_id=cloudspace_id or "",
+                )
+                data = urlopen(resp.url).read().decode("utf-8")
+                if data:
+                    if timestamps:
+                        return str(data)
+                    return remove_datetime_prefix(str(data))
+                last_error = RuntimeError("The log download returned an empty response.")
+            except (URLError, OSError, ApiException) as ex:
+                last_error = ex
+
+            if attempt < max(1, max_retries) - 1:
+                time.sleep(backoff)
+                backoff = min(backoff * 2, _DOWNLOAD_LOGS_MAX_BACKOFF)
+
+        raise RuntimeError(
+            f"Could not download logs for job {job_id} after {max(1, max_retries)} attempts. "
+            "The logs may not have been uploaded yet; try again in a moment."
+        ) from last_error
 
     def get_logs_finished(self, job_id: str, teamspace_id: str, timestamps: bool = False) -> str:
         """Download and return the completed log output for a v2 job.

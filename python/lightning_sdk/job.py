@@ -6,7 +6,13 @@ from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.logs_api import LogsApi
 from lightning_sdk.api.mmt_api import MMTApiV2
-from lightning_sdk.api.utils import AccessibleResource, _get_cloud_url, raise_access_error_if_not_allowed
+from lightning_sdk.api.utils import (
+    AccessibleResource,
+    _get_cloud_url,
+    logs_filename,
+    raise_access_error_if_not_allowed,
+    resolve_logs_path,
+)
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -662,6 +668,25 @@ class Job(metaclass=TrackCallsMeta):
         read unfiltered and filter locally for such a job.
         """
         return _Logs(self._compute_logs)
+
+    def download_logs(
+        self,
+        *,
+        timestamps: bool = False,
+    ) -> str:
+        """Download the job's complete stored logs to a file and return the written path."""
+        job = self._guaranteed_job
+        cloudspace_id = None if self.is_multi_machine else job.spec.cloudspace_id
+        text = self._standalone_job_api.download_logs(
+            job_id=job.id,
+            teamspace_id=self.teamspace.id,
+            deployment_id=getattr(job, "deployment_id", None) or None,
+            cloudspace_id=cloudspace_id,
+            timestamps=timestamps,
+        )
+        dest = resolve_logs_path(None, logs_filename("job", self.name))
+        dest.write_text(text, encoding="utf-8")
+        return str(dest)
 
     def _compute_logs(
         self,
