@@ -88,6 +88,8 @@ type ClientService interface {
 
 	OrganizationsServiceListJoinableOrganizations(params *OrganizationsServiceListJoinableOrganizationsParams, opts ...ClientOption) (*OrganizationsServiceListJoinableOrganizationsOK, error)
 
+	OrganizationsServiceListOrgMemberTransferTargets(params *OrganizationsServiceListOrgMemberTransferTargetsParams, opts ...ClientOption) (*OrganizationsServiceListOrgMemberTransferTargetsOK, error)
+
 	OrganizationsServiceListOrgMembers(params *OrganizationsServiceListOrgMembersParams, opts ...ClientOption) (*OrganizationsServiceListOrgMembersOK, error)
 
 	OrganizationsServiceListOrgMembershipRoleBindings(params *OrganizationsServiceListOrgMembershipRoleBindingsParams, opts ...ClientOption) (*OrganizationsServiceListOrgMembershipRoleBindingsOK, error)
@@ -103,6 +105,8 @@ type ClientService interface {
 	OrganizationsServiceSetOrgMemberModelAPIDailyLimit(params *OrganizationsServiceSetOrgMemberModelAPIDailyLimitParams, opts ...ClientOption) (*OrganizationsServiceSetOrgMemberModelAPIDailyLimitOK, error)
 
 	OrganizationsServiceSetOrgModelAPIDailyLimitDefault(params *OrganizationsServiceSetOrgModelAPIDailyLimitDefaultParams, opts ...ClientOption) (*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultOK, error)
+
+	OrganizationsServiceTransferOrgMemberResources(params *OrganizationsServiceTransferOrgMemberResourcesParams, opts ...ClientOption) (*OrganizationsServiceTransferOrgMemberResourcesOK, error)
 
 	OrganizationsServiceUpdateOrgRole(params *OrganizationsServiceUpdateOrgRoleParams, opts ...ClientOption) (*OrganizationsServiceUpdateOrgRoleOK, error)
 
@@ -746,6 +750,48 @@ func (a *Client) OrganizationsServiceListJoinableOrganizations(params *Organizat
 }
 
 /*
+OrganizationsServiceListOrgMemberTransferTargets organizations service list org member transfer targets API
+*/
+func (a *Client) OrganizationsServiceListOrgMemberTransferTargets(params *OrganizationsServiceListOrgMemberTransferTargetsParams, opts ...ClientOption) (*OrganizationsServiceListOrgMemberTransferTargetsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceListOrgMemberTransferTargetsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_ListOrgMemberTransferTargets",
+		Method:             "GET",
+		PathPattern:        "/v1/orgs/{orgId}/memberships/{userId}/listTransferTargets",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceListOrgMemberTransferTargetsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceListOrgMemberTransferTargetsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceListOrgMemberTransferTargetsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 OrganizationsServiceListOrgMembers organizations service list org members API
 */
 func (a *Client) OrganizationsServiceListOrgMembers(params *OrganizationsServiceListOrgMembersParams, opts ...ClientOption) (*OrganizationsServiceListOrgMembersOK, error) {
@@ -1077,6 +1123,48 @@ func (a *Client) OrganizationsServiceSetOrgModelAPIDailyLimitDefault(params *Org
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+OrganizationsServiceTransferOrgMemberResources organizations service transfer org member resources API
+*/
+func (a *Client) OrganizationsServiceTransferOrgMemberResources(params *OrganizationsServiceTransferOrgMemberResourcesParams, opts ...ClientOption) (*OrganizationsServiceTransferOrgMemberResourcesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceTransferOrgMemberResourcesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_TransferOrgMemberResources",
+		Method:             "POST",
+		PathPattern:        "/v1/orgs/{orgId}/memberships/{userId}/transferResources",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceTransferOrgMemberResourcesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceTransferOrgMemberResourcesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceTransferOrgMemberResourcesDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -15,6 +15,36 @@
  */
 
 /**
+ *  - SANDBOX_WARM_STATE_RESTORED: Restored from a checkpoint: the recipe's processes were already running
+ * when the sandbox was handed over.
+ *  - SANDBOX_WARM_STATE_BUILDING: Cold-booted because no checkpoint existed for this key. A bake was
+ * started, so a later create with the same recipe should restore.
+ *  - SANDBOX_WARM_STATE_COLD: Cold-booted with no bake started — see `reason`. Typically a recipe that
+ * cannot be baked (GPU, docker-in-docker) or a bake that keeps failing.
+ * @default "SANDBOX_WARM_STATE_UNSPECIFIED"
+ */
+export enum V1SandboxWarmState {
+  SANDBOX_WARM_STATE_UNSPECIFIED = "SANDBOX_WARM_STATE_UNSPECIFIED",
+  SANDBOX_WARM_STATE_RESTORED = "SANDBOX_WARM_STATE_RESTORED",
+  SANDBOX_WARM_STATE_BUILDING = "SANDBOX_WARM_STATE_BUILDING",
+  SANDBOX_WARM_STATE_COLD = "SANDBOX_WARM_STATE_COLD",
+}
+
+/**
+ *  - SANDBOX_REBIND_SOURCE_GENERATED_TOKEN: A fresh cryptographically random token, minted per sandbox and returned
+ * to the caller once, on the create response.
+ *  - SANDBOX_REBIND_SOURCE_SANDBOX_ID: The sandbox id.
+ *  - SANDBOX_REBIND_SOURCE_HOSTNAME: The sandbox's internal hostname.
+ * @default "SANDBOX_REBIND_SOURCE_UNSPECIFIED"
+ */
+export enum V1SandboxRebindSource {
+  SANDBOX_REBIND_SOURCE_UNSPECIFIED = "SANDBOX_REBIND_SOURCE_UNSPECIFIED",
+  SANDBOX_REBIND_SOURCE_GENERATED_TOKEN = "SANDBOX_REBIND_SOURCE_GENERATED_TOKEN",
+  SANDBOX_REBIND_SOURCE_SANDBOX_ID = "SANDBOX_REBIND_SOURCE_SANDBOX_ID",
+  SANDBOX_REBIND_SOURCE_HOSTNAME = "SANDBOX_REBIND_SOURCE_HOSTNAME",
+}
+
+/**
  * SandboxPurpose records what a sandbox was created for. Sandboxes spawned
  * as an implementation detail of another product (e.g. the kernel behind a
  * Lightning Notebook) are tagged so user-facing list surfaces can hide them
@@ -375,6 +405,12 @@ export interface V1CreateSandboxRequest {
    * checkpoint is absent or incompatible with the selected host.
    */
   requireMemoryRestore?: boolean;
+  /**
+   * Declarative recipe for a warm start. The platform bakes the recipe into
+   * a process-memory checkpoint once, then restores every later sandbox with
+   * the same recipe from it. See SandboxWarmSpec.
+   */
+  warm?: V1SandboxWarmSpec;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -600,6 +636,17 @@ export interface V1Sandbox {
    * sandboxes and for sandboxes created before this field landed.
    */
   purpose?: V1SandboxPurpose;
+  /**
+   * Whether this sandbox restored from a warm checkpoint, and if not, why.
+   * Empty for sandboxes created without CreateSandboxRequest.warm.
+   */
+  warm?: V1SandboxWarmStatus;
+  /**
+   * Per-sandbox values for the SandboxRebindVars the recipe declared, keyed
+   * by variable name. Returned once, on the create response, and never on
+   * get / list — a generated token is not stored in a readable form.
+   */
+  warmSecrets?: Record<string, string>;
 }
 
 export interface V1SandboxCommand {
@@ -620,6 +667,64 @@ export interface V1SandboxPhaseDuration {
   phase?: string;
   /** @format int64 */
   durationMs?: string;
+}
+
+/**
+ * SandboxReadyCheck is the signal that the recipe has finished and the
+ * sandbox is worth checkpointing. Exactly one variant may be set.
+ */
+export interface V1SandboxReadyCheck {
+  /**
+   * Wait until something is listening on this TCP port inside the sandbox.
+   * @format int64
+   */
+  port?: number;
+  /** Wait until this URL, resolved from inside the sandbox, responds. */
+  url?: V1SandboxReadyUrl;
+  /** Wait until a process with this name is running. */
+  process?: string;
+  /** Wait until this path exists inside the sandbox. */
+  file?: string;
+  /**
+   * Wait this many milliseconds and then checkpoint. A blunt fallback for
+   * processes with no observable readiness signal.
+   * @format int64
+   */
+  timeoutMs?: number;
+  /** Wait until this shell command exits 0. */
+  exec?: string;
+}
+
+export interface V1SandboxReadyUrl {
+  url?: string;
+  /**
+   * Expected HTTP status. Defaults to 200.
+   * @format int64
+   */
+  statusCode?: number;
+}
+
+/**
+ * SandboxRebindVar is one environment variable whose value must be unique per
+ * sandbox even though every sandbox restores from the same checkpoint.
+ *
+ * The bake sees `bake_value`, so a credential-bearing process starts against a
+ * placeholder and no real credential is ever captured in shared memory. At
+ * restore the platform materializes the real value, exports it to
+ * `after_restore_cmd`, writes it to /run/lightning/warm/<name>, and returns it
+ * on the create response in Sandbox.warm_secrets.
+ */
+export interface V1SandboxRebindVar {
+  /** Environment variable name, e.g. "JUPYTER_TOKEN". */
+  name?: string;
+  /** Where the per-sandbox value comes from. */
+  source?: V1SandboxRebindSource;
+  /**
+   * Placeholder value used during the bake. Required for
+   * SANDBOX_REBIND_SOURCE_GENERATED_TOKEN, where the real value cannot exist
+   * until a sandbox does.
+   */
+  bakeValue?: string;
 }
 
 /** One downsampled CPU/memory sample for a sandbox. */
@@ -734,6 +839,17 @@ export interface V1SandboxSnapshot {
    * @format uint64
    */
   memorySizeBytes?: string;
+  /**
+   * Why a snapshot failed, in words meant for a human. Empty unless status is
+   * "failed". Enough to tell a failure worth retrying from one that is
+   * terminal, e.g. `snapshot exceeds max size: filesystem_size=8589934592
+   * max=5368709120`, which no retry can fix until the content shrinks or the
+   * sandbox gets a bigger disk. Causes internal to the platform report as a
+   * plain `snapshot capture failed`.
+   *
+   * Not a stable contract: display it, do not parse it.
+   */
+  failureReason?: string;
 }
 
 /**
@@ -754,6 +870,132 @@ export interface V1SandboxSnapshotBlobDownloadUrl {
 export interface V1SandboxSnapshotBlobUploadUrl {
   sha256?: string;
   url?: string;
+}
+
+/**
+ * SandboxWarmSpec declares how a sandbox should already look by the time it
+ * is handed to the caller: which setup commands have run, which process is
+ * already serving, and how the platform knows that happened.
+ *
+ * The platform runs the recipe once, in a throwaway sandbox, and checkpoints
+ * its memory when `ready_cmd` first succeeds. Later creates with the same
+ * recipe restore that checkpoint instead of running the recipe again, so the
+ * caller gets a sandbox with the process already running and warm.
+ *
+ * The recipe is the cache key — there is no template id to store or refresh.
+ * The platform keys the checkpoint on the recipe together with the image
+ * digest, the sandbox shape and the host runtime version, so changing any of
+ * them produces a different key and the next create bakes a fresh checkpoint.
+ *
+ * On a key miss the create is served cold (the recipe runs in-line) and the
+ * bake happens in the background, unless `require_warm` is set.
+ */
+export interface V1SandboxWarmSpec {
+  /**
+   * Setup commands, run in order, in a shell. These run at bake time only —
+   * a restored sandbox observes their effects but never re-runs them.
+   */
+  runCmd?: string[];
+  /**
+   * Long-running process to leave running in the checkpoint, e.g.
+   * "jupyter lab --port 8888". Started after `run_cmd` and captured mid-flight,
+   * so restored sandboxes get a process that is already listening and warm.
+   * Optional: a recipe may be setup-only.
+   */
+  startCmd?: string;
+  /**
+   * When to take the checkpoint. Retried until it succeeds. Defaults to a TCP
+   * listen check on the first entry of `ports`, or — when no ports are
+   * declared — to `start_cmd` exiting 0.
+   */
+  readyCmd?: V1SandboxReadyCheck;
+  /**
+   * How long to keep retrying `ready_cmd` before abandoning the bake.
+   * Defaults to 120000 (2 minutes).
+   * @format int64
+   */
+  readyTimeoutMs?: number;
+  /**
+   * Environment variables visible to `run_cmd` and `start_cmd` during the
+   * bake. They are captured in the checkpoint and therefore shared by every
+   * sandbox restored from it: put configuration here, never a credential.
+   * For per-sandbox credentials use `rebind`.
+   */
+  envs?: Record<string, string>;
+  /**
+   * Values that must differ per sandbox even though the checkpoint is shared.
+   * Baked with a placeholder, replaced at restore. See SandboxRebindVar.
+   */
+  rebind?: V1SandboxRebindVar[];
+  /**
+   * Commands run once the start command is up — after `ready_cmd` first
+   * passes, before the checkpoint is taken. This is where a recipe warms
+   * something that only exists once its server is running: creating a Jupyter
+   * kernel and importing into it, priming a cache, compiling a first request.
+   *
+   * `run_cmd` cannot do this. Those run before `start_cmd`, so there is nothing
+   * listening for them to talk to.
+   *
+   * Like `run_cmd`, these run at bake time only; a restored sandbox observes
+   * their effects without re-running them. A cold-served create runs them
+   * inline so both paths hand back the same sandbox.
+   */
+  afterStartCmd?: string[];
+  /**
+   * Command run inside each restored sandbox, after `rebind` values are in
+   * place and before the sandbox is reported ready. This is where a process
+   * resumed from a shared checkpoint picks up its own identity — reload a
+   * config, re-issue a token, reseed a PRNG. Skipped on a cold boot, where
+   * the recipe already ran with the real values.
+   */
+  afterRestoreCmd?: string;
+  /**
+   * How long `after_restore_cmd` may take before the restore is failed.
+   * Defaults to 10000 (10 seconds).
+   * @format int64
+   */
+  afterRestoreTimeoutMs?: number;
+  /**
+   * Fail the create instead of cold-booting when no checkpoint is available
+   * for this recipe. Use it to assert warm starts in tests and benchmarks;
+   * leave it unset in production so a bake miss degrades to a slow start
+   * rather than an error.
+   */
+  requireWarm?: boolean;
+  /**
+   * Ignore any existing checkpoint for this recipe and bake a fresh one.
+   * For rebuilding after a change the key cannot see, such as a mutable
+   * image tag or a package the recipe installs from a moving source.
+   */
+  skipCache?: boolean;
+}
+
+export interface V1SandboxWarmStatus {
+  /**
+   *  - SANDBOX_WARM_STATE_RESTORED: Restored from a checkpoint: the recipe's processes were already running
+   * when the sandbox was handed over.
+   *  - SANDBOX_WARM_STATE_BUILDING: Cold-booted because no checkpoint existed for this key. A bake was
+   * started, so a later create with the same recipe should restore.
+   *  - SANDBOX_WARM_STATE_COLD: Cold-booted with no bake started — see `reason`. Typically a recipe that
+   * cannot be baked (GPU, docker-in-docker) or a bake that keeps failing.
+   */
+  state?: V1SandboxWarmState;
+  /**
+   * Opaque digest of the recipe, image, shape and runtime version this
+   * sandbox looked up. Stable across creates that share a checkpoint, so it
+   * can be used to group them; not a handle the caller passes back.
+   */
+  templateKey?: string;
+  /**
+   * Why the sandbox did not restore warm, when it did not. Free-form and
+   * meant for humans, e.g. "no checkpoint for key; bake started".
+   */
+  reason?: string;
+  /**
+   * Wall-clock milliseconds spent restoring, when state is RESTORED.
+   * @format int64
+   */
+  restoreMs?: number;
 }
 
 export interface V1StopSandboxResponse {

@@ -15,10 +15,6 @@ from urllib.parse import urlencode
 import webbrowser
 
 import requests
-import uvicorn
-from fastapi import FastAPI, Query, Request
-from starlette.background import BackgroundTask
-from starlette.responses import RedirectResponse
 
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi import ApiClient, Configuration
@@ -392,6 +388,13 @@ class AuthServer:
         return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
     def login_with_browser(self, auth: Auth) -> None:
+        # Deferred: the login callback server is only needed here, and these
+        # imports are too slow to pay on every CLI startup.
+        import uvicorn
+        from fastapi import FastAPI, Query, Request
+        from starlette.background import BackgroundTask
+        from starlette.responses import RedirectResponse
+
         from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
 
         app = FastAPI()
@@ -416,7 +419,7 @@ class AuthServer:
             deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID", None)
             if deployment_id is not None and deployment_id != "":
                 raise RuntimeError("Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the 'Environment' section of the deployment settings.")
-            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, 'LIGHTNING_USER_ID' and 'LIGHTNING_API_KEY' should be exported.")
+            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, 'LIGHTNING_API_KEY' should be exported.")
 
         @app.get("/login-complete")
         async def save_token(request: Request,

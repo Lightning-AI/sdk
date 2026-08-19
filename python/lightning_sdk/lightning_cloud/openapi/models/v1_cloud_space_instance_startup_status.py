@@ -47,6 +47,7 @@ class V1CloudSpaceInstanceStartupStatus(object):
     swagger_types = {
         'initial_restore_at': 'datetime',
         'initial_restore_finished': 'bool',
+        'stage_progress': 'list[V1CloudSpaceInstanceStageProgress]',
         'started_at': 'datetime',
         'top_up_restore_at': 'datetime',
         'top_up_restore_finished': 'bool'
@@ -55,15 +56,17 @@ class V1CloudSpaceInstanceStartupStatus(object):
     attribute_map = {
         'initial_restore_at': 'initialRestoreAt',
         'initial_restore_finished': 'initialRestoreFinished',
+        'stage_progress': 'stageProgress',
         'started_at': 'startedAt',
         'top_up_restore_at': 'topUpRestoreAt',
         'top_up_restore_finished': 'topUpRestoreFinished'
     }
 
-    def __init__(self, initial_restore_at: 'datetime' =None, initial_restore_finished: 'bool' =None, started_at: 'datetime' =None, top_up_restore_at: 'datetime' =None, top_up_restore_finished: 'bool' =None):  # noqa: E501
+    def __init__(self, initial_restore_at: 'datetime' =None, initial_restore_finished: 'bool' =None, stage_progress: 'list[V1CloudSpaceInstanceStageProgress]' =None, started_at: 'datetime' =None, top_up_restore_at: 'datetime' =None, top_up_restore_finished: 'bool' =None):  # noqa: E501
         """V1CloudSpaceInstanceStartupStatus - a model defined in Swagger"""  # noqa: E501
         self._initial_restore_at = None
         self._initial_restore_finished = None
+        self._stage_progress = None
         self._started_at = None
         self._top_up_restore_at = None
         self._top_up_restore_finished = None
@@ -72,6 +75,8 @@ class V1CloudSpaceInstanceStartupStatus(object):
             self.initial_restore_at = initial_restore_at
         if initial_restore_finished is not None:
             self.initial_restore_finished = initial_restore_finished
+        if stage_progress is not None:
+            self.stage_progress = stage_progress
         if started_at is not None:
             self.started_at = started_at
         if top_up_restore_at is not None:
@@ -120,6 +125,27 @@ class V1CloudSpaceInstanceStartupStatus(object):
         """
 
         self._initial_restore_finished = initial_restore_finished
+
+    @property
+    def stage_progress(self) -> 'list[V1CloudSpaceInstanceStageProgress]':
+        """Gets the stage_progress of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+
+
+        :return: The stage_progress of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+        :rtype: list[V1CloudSpaceInstanceStageProgress]
+        """
+        return self._stage_progress
+
+    @stage_progress.setter
+    def stage_progress(self, stage_progress: 'list[V1CloudSpaceInstanceStageProgress]'):
+        """Sets the stage_progress of this V1CloudSpaceInstanceStartupStatus.
+
+
+        :param stage_progress: The stage_progress of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+        :type: list[V1CloudSpaceInstanceStageProgress]
+        """
+
+        self._stage_progress = stage_progress
 
     @property
     def started_at(self) -> 'datetime':
