@@ -45,6 +45,7 @@ import { getApiKey, getBaseUrl, mergeSandboxConfig } from "./config.js";
 import { FileSystem } from "./filesystem.js";
 import { SandboxProcess } from "./process.js";
 import { NetworkPolicy, fromV1NetworkPolicy, toV1NetworkPolicy } from "./network-policy.js";
+import { WarmStatus, fromV1WarmStatus, toV1Warm } from "./warm.js";
 
 /**
  * Suffix identifying the Docker-in-gVisor variant of a curated runtime. Their
@@ -140,6 +141,8 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     storageGb: v.storageGb !== undefined && v.storageGb !== "" ? Number(v.storageGb) : 0,
     timeout: v.timeout !== undefined && v.timeout !== "" ? Number(v.timeout) : 0,
     networkPolicy: v.networkPolicy,
+    warm: v.warm,
+    warmSecrets: v.warmSecrets ?? {},
     machineId: v.machineId ?? "",
     // Internal-only, create-only: absent for external keys and on get/list,
     // so this stays undefined for them. The wire `durationMs` is an int64
@@ -234,6 +237,17 @@ export class Sandbox {
   /** Egress firewall policy in effect for the sandbox. */
   readonly networkPolicy: NetworkPolicy;
   /**
+   * Whether this sandbox restored from a baked recipe, and if not why.
+   * `undefined` when created without a `warm` recipe. A cold start looks
+   * exactly like a warm one from the outside, so read `.state`.
+   */
+  readonly warm?: WarmStatus;
+  /**
+   * Per-sandbox values for the recipe's rebind variables. Returned once, on
+   * create — a generated token is not stored anywhere readable.
+   */
+  readonly warmSecrets: Record<string, string>;
+  /**
    * Cluster machine that placed this sandbox. **Internal-only:** `""` unless the
    * API key belongs to an internal Lightning user, since the control plane only
    * returns it to internal callers. See {@link SandboxData.machineId}.
@@ -276,6 +290,8 @@ export class Sandbox {
     this.storageGb = data.storageGb ?? 0;
     this.timeout = data.timeout ?? 0;
     this.networkPolicy = fromV1NetworkPolicy(data.networkPolicy);
+    this.warm = fromV1WarmStatus(data.warm);
+    this.warmSecrets = { ...(data.warmSecrets ?? {}) };
     this.machineId = data.machineId ?? "";
     this.phaseDurations = data.phaseDurations;
     this.createdAt = new Date(data.createdAt);
@@ -366,6 +382,8 @@ export class Sandbox {
     if (params.storageGb !== undefined) body.storageGb = String(params.storageGb);
     const policy = toV1NetworkPolicy(params.networkPolicy);
     if (policy !== undefined) body.networkPolicy = policy;
+    const warm = toV1Warm(params.warm);
+    if (warm !== undefined) body.warm = warm;
 
     const data = await request<V1Sandbox>("POST", "/v1/core/sandboxes", body);
     return Sandbox.waitForRunning(new Sandbox(toSandboxData(data)));

@@ -15,6 +15,7 @@ from lightning_sdk.sandbox.base import (
 )
 from lightning_sdk.sandbox.config import SandboxConfig
 from lightning_sdk.sandbox.network_policy import NetworkPolicyInput
+from lightning_sdk.sandbox.warm import WarmInput
 
 if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
@@ -59,6 +60,7 @@ def _sandbox_create_impl(
     network_policy: NetworkPolicyInput | None = None,
     storage_gb: int | None = None,
     timeout: int | None = None,
+    warm: WarmInput = None,
 ) -> SandboxInstance:
     if sandbox_api is not None and config is not None:
         raise ValueError("Pass only one of 'config' and sandbox_api (internal)")
@@ -82,6 +84,7 @@ def _sandbox_create_impl(
         network_policy=network_policy,
         storage_gb=storage_gb,
         timeout=timeout,
+        warm=warm,
     )
 
 

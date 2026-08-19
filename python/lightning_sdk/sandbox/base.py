@@ -31,6 +31,12 @@ from lightning_sdk.sandbox.network_policy import (
     from_v1_network_policy,
     to_v1_network_policy,
 )
+from lightning_sdk.sandbox.warm import (
+    WarmInput,
+    WarmStatus,
+    from_v1_warm_status,
+    to_v1_warm,
+)
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 if TYPE_CHECKING:
@@ -186,6 +192,7 @@ def create_sandbox(
     network_policy: NetworkPolicyInput | None = None,
     storage_gb: int | None = None,
     timeout: int | None = None,
+    warm: WarmInput = None,
 ) -> SandboxInstance:
     """Create a sandbox and block until its status is ``running``.
 
@@ -222,6 +229,14 @@ def create_sandbox(
     ``storage_gb`` overrides the writable disk size (CPU sandboxes only; GPU/VM
     paths ignore it). ``timeout`` is the maximum wall-clock lifetime **in
     milliseconds** after which the control plane auto-stops the sandbox.
+
+    ``warm`` is a :class:`~lightning_sdk.sandbox.warm.WarmRecipe` describing what
+    the sandbox should already have done — packages installed, a server
+    listening. Lightning bakes it once and restores later sandboxes with the
+    same recipe from that snapshot. The first create is served cold with the
+    recipe run inline, so the sandbox is the same either way; check
+    :attr:`SandboxInstance.warm` to see which you got. Cannot be combined with
+    ``snapshot_id``.
     """
     if runtime and image:
         raise ValueError("Pass only one of 'runtime' and 'image' (they are mutually exclusive).")
@@ -271,6 +286,9 @@ def create_sandbox(
     v1_policy = to_v1_network_policy(network_policy)
     if v1_policy is not None:
         body.network_policy = v1_policy
+    v1_warm = to_v1_warm(warm)
+    if v1_warm is not None:
+        body.warm = v1_warm
 
     sb: SandboxesServiceApi = sandbox_api.sandboxes()
     try:
@@ -521,6 +539,26 @@ class SandboxInstance(metaclass=TrackCallsMeta):
         create-time default. Inspect ``.mode`` and ``.allow_cidrs``.
         """
         return from_v1_network_policy(getattr(self._v1, "network_policy", None))
+
+    @property
+    def warm(self) -> WarmStatus | None:
+        """Whether this sandbox restored from a baked recipe, and if not, why.
+
+        ``None`` when the sandbox was created without a ``warm`` recipe. A cold
+        start looks exactly like a warm one from the outside, so read
+        ``.state`` rather than assuming.
+        """
+        return from_v1_warm_status(getattr(self._v1, "warm", None))
+
+    @property
+    def warm_secrets(self) -> dict[str, str]:
+        """Per-sandbox values for the recipe's rebind variables.
+
+        Returned once, on create — a generated token is not stored anywhere
+        readable, so keep it if you need it. Empty on ``get``/``list`` and for
+        sandboxes created without a recipe.
+        """
+        return dict(getattr(self._v1, "warm_secrets", None) or {})
 
     @property
     def ports(self) -> list[str]:
