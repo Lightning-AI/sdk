@@ -9,7 +9,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from enum import Enum
-from functools import lru_cache, partial
+from functools import lru_cache, partial, wraps
 from pathlib import Path
 from typing import (
     Any,
@@ -1174,10 +1174,31 @@ class AccessibleResource(Enum):
         return hash(self.value)
 
 
+# (connect, read) timeouts for shell completion requests, which block the user's shell
+_COMPLETION_REQUEST_TIMEOUT = (1, 3)
+
+
 @lru_cache(maxsize=None)
 def cached_lightning_client(retry: bool = True, with_auth: bool = True) -> LightningClient:
     """A shared LightningClient, since constructing one wraps ~1000+ methods with retry logic."""
+    if os.environ.get("_LIGHTNING_COMPLETE"):
+        return _completion_lightning_client(with_auth=with_auth)
     return LightningClient(max_tries=3, retry=retry, with_auth=with_auth)
+
+
+def _completion_lightning_client(with_auth: bool) -> LightningClient:
+    """A LightningClient for shell completion requests: fails fast instead of retrying or waiting on the API."""
+    client = LightningClient(retry=False, with_auth=with_auth)
+    original_request = client.api_client.request
+
+    @wraps(original_request)
+    def request_with_timeout(*args: Any, **kwargs: Any) -> Any:
+        if kwargs.get("_request_timeout") is None:
+            kwargs["_request_timeout"] = _COMPLETION_REQUEST_TIMEOUT
+        return original_request(*args, **kwargs)
+
+    client.api_client.request = request_with_timeout
+    return client
 
 
 @lru_cache
