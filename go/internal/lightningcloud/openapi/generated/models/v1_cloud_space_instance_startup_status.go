@@ -11,6 +11,8 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -30,6 +32,9 @@ type V1CloudSpaceInstanceStartupStatus struct {
 	// initial restore finished
 	InitialRestoreFinished bool `json:"initialRestoreFinished,omitempty"`
 
+	// stage progress
+	StageProgress []*V1CloudSpaceInstanceStageProgress `json:"stageProgress"`
+
 	// started at
 	// Format: date-time
 	StartedAt strfmt.DateTime `json:"startedAt,omitempty"`
@@ -47,6 +52,10 @@ func (m *V1CloudSpaceInstanceStartupStatus) Validate(formats strfmt.Registry) er
 	var res []error
 
 	if err := m.validateInitialRestoreAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStageProgress(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -76,6 +85,36 @@ func (m *V1CloudSpaceInstanceStartupStatus) validateInitialRestoreAt(formats str
 	return nil
 }
 
+func (m *V1CloudSpaceInstanceStartupStatus) validateStageProgress(formats strfmt.Registry) error {
+	if swag.IsZero(m.StageProgress) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.StageProgress); i++ {
+		if swag.IsZero(m.StageProgress[i]) { // not required
+			continue
+		}
+
+		if m.StageProgress[i] != nil {
+			if err := m.StageProgress[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("stageProgress" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("stageProgress" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *V1CloudSpaceInstanceStartupStatus) validateStartedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.StartedAt) { // not required
 		return nil
@@ -100,8 +139,46 @@ func (m *V1CloudSpaceInstanceStartupStatus) validateTopUpRestoreAt(formats strfm
 	return nil
 }
 
-// ContextValidate validates this v1 cloud space instance startup status based on context it is used
+// ContextValidate validate this v1 cloud space instance startup status based on the context it is used
 func (m *V1CloudSpaceInstanceStartupStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateStageProgress(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1CloudSpaceInstanceStartupStatus) contextValidateStageProgress(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.StageProgress); i++ {
+
+		if m.StageProgress[i] != nil {
+
+			if swag.IsZero(m.StageProgress[i]) { // not required
+				return nil
+			}
+
+			if err := m.StageProgress[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("stageProgress" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("stageProgress" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

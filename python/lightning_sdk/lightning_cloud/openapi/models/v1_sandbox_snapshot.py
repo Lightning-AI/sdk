@@ -47,6 +47,7 @@ class V1SandboxSnapshot(object):
     swagger_types = {
         'created_at': 'datetime',
         'expires_at': 'datetime',
+        'failure_reason': 'str',
         'filesystem_size_bytes': 'str',
         'id': 'str',
         'includes_memory': 'bool',
@@ -71,6 +72,7 @@ class V1SandboxSnapshot(object):
     attribute_map = {
         'created_at': 'createdAt',
         'expires_at': 'expiresAt',
+        'failure_reason': 'failureReason',
         'filesystem_size_bytes': 'filesystemSizeBytes',
         'id': 'id',
         'includes_memory': 'includesMemory',
@@ -92,10 +94,11 @@ class V1SandboxSnapshot(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, filesystem_size_bytes: 'str' =None, id: 'str' =None, includes_memory: 'bool' =None, memory_size_bytes: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, failure_reason: 'str' =None, filesystem_size_bytes: 'str' =None, id: 'str' =None, includes_memory: 'bool' =None, memory_size_bytes: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1SandboxSnapshot - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._expires_at = None
+        self._failure_reason = None
         self._filesystem_size_bytes = None
         self._id = None
         self._includes_memory = None
@@ -120,6 +123,8 @@ class V1SandboxSnapshot(object):
             self.created_at = created_at
         if expires_at is not None:
             self.expires_at = expires_at
+        if failure_reason is not None:
+            self.failure_reason = failure_reason
         if filesystem_size_bytes is not None:
             self.filesystem_size_bytes = filesystem_size_bytes
         if id is not None:
@@ -200,6 +205,29 @@ class V1SandboxSnapshot(object):
         """
 
         self._expires_at = expires_at
+
+    @property
+    def failure_reason(self) -> 'str':
+        """Gets the failure_reason of this V1SandboxSnapshot.  # noqa: E501
+
+        Why a snapshot failed, in words meant for a human. Empty unless status is \"failed\". Enough to tell a failure worth retrying from one that is terminal, e.g. `snapshot exceeds max size: filesystem_size=8589934592 max=5368709120`, which no retry can fix until the content shrinks or the sandbox gets a bigger disk. Causes internal to the platform report as a plain `snapshot capture failed`.  Not a stable contract: display it, do not parse it.  # noqa: E501
+
+        :return: The failure_reason of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: str
+        """
+        return self._failure_reason
+
+    @failure_reason.setter
+    def failure_reason(self, failure_reason: 'str'):
+        """Sets the failure_reason of this V1SandboxSnapshot.
+
+        Why a snapshot failed, in words meant for a human. Empty unless status is \"failed\". Enough to tell a failure worth retrying from one that is terminal, e.g. `snapshot exceeds max size: filesystem_size=8589934592 max=5368709120`, which no retry can fix until the content shrinks or the sandbox gets a bigger disk. Causes internal to the platform report as a plain `snapshot capture failed`.  Not a stable contract: display it, do not parse it.  # noqa: E501
+
+        :param failure_reason: The failure_reason of this V1SandboxSnapshot.  # noqa: E501
+        :type: str
+        """
+
+        self._failure_reason = failure_reason
 
     @property
     def filesystem_size_bytes(self) -> 'str':

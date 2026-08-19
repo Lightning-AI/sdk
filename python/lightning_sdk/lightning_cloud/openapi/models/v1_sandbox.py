@@ -69,7 +69,9 @@ class V1Sandbox(object):
         'storage_gb': 'str',
         'timeout': 'str',
         'updated_at': 'datetime',
-        'user_id': 'str'
+        'user_id': 'str',
+        'warm': 'V1SandboxWarmStatus',
+        'warm_secrets': 'dict(str, str)'
     }
 
     attribute_map = {
@@ -97,10 +99,12 @@ class V1Sandbox(object):
         'storage_gb': 'storageGb',
         'timeout': 'timeout',
         'updated_at': 'updatedAt',
-        'user_id': 'userId'
+        'user_id': 'userId',
+        'warm': 'warm',
+        'warm_secrets': 'warmSecrets'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, warm: 'V1SandboxWarmStatus' =None, warm_secrets: 'dict(str, str)' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -127,6 +131,8 @@ class V1Sandbox(object):
         self._timeout = None
         self._updated_at = None
         self._user_id = None
+        self._warm = None
+        self._warm_secrets = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -178,6 +184,10 @@ class V1Sandbox(object):
             self.updated_at = updated_at
         if user_id is not None:
             self.user_id = user_id
+        if warm is not None:
+            self.warm = warm
+        if warm_secrets is not None:
+            self.warm_secrets = warm_secrets
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -727,6 +737,50 @@ class V1Sandbox(object):
         """
 
         self._user_id = user_id
+
+    @property
+    def warm(self) -> 'V1SandboxWarmStatus':
+        """Gets the warm of this V1Sandbox.  # noqa: E501
+
+
+        :return: The warm of this V1Sandbox.  # noqa: E501
+        :rtype: V1SandboxWarmStatus
+        """
+        return self._warm
+
+    @warm.setter
+    def warm(self, warm: 'V1SandboxWarmStatus'):
+        """Sets the warm of this V1Sandbox.
+
+
+        :param warm: The warm of this V1Sandbox.  # noqa: E501
+        :type: V1SandboxWarmStatus
+        """
+
+        self._warm = warm
+
+    @property
+    def warm_secrets(self) -> 'dict(str, str)':
+        """Gets the warm_secrets of this V1Sandbox.  # noqa: E501
+
+        Per-sandbox values for the SandboxRebindVars the recipe declared, keyed by variable name. Returned once, on the create response, and never on get / list — a generated token is not stored in a readable form.  # noqa: E501
+
+        :return: The warm_secrets of this V1Sandbox.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._warm_secrets
+
+    @warm_secrets.setter
+    def warm_secrets(self, warm_secrets: 'dict(str, str)'):
+        """Sets the warm_secrets of this V1Sandbox.
+
+        Per-sandbox values for the SandboxRebindVars the recipe declared, keyed by variable name. Returned once, on the create response, and never on get / list — a generated token is not stored in a readable form.  # noqa: E501
+
+        :param warm_secrets: The warm_secrets of this V1Sandbox.  # noqa: E501
+        :type: dict(str, str)
+        """
+
+        self._warm_secrets = warm_secrets
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

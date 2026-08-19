@@ -63,7 +63,8 @@ class V1CreateSandboxRequest(object):
         'snapshot_id': 'str',
         'spot': 'bool',
         'storage_gb': 'str',
-        'timeout': 'str'
+        'timeout': 'str',
+        'warm': 'V1SandboxWarmSpec'
     }
 
     attribute_map = {
@@ -85,10 +86,11 @@ class V1CreateSandboxRequest(object):
         'snapshot_id': 'snapshotId',
         'spot': 'spot',
         'storage_gb': 'storageGb',
-        'timeout': 'timeout'
+        'timeout': 'timeout',
+        'warm': 'warm'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None, warm: 'V1SandboxWarmSpec' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
@@ -109,6 +111,7 @@ class V1CreateSandboxRequest(object):
         self._spot = None
         self._storage_gb = None
         self._timeout = None
+        self._warm = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
@@ -148,6 +151,8 @@ class V1CreateSandboxRequest(object):
             self.storage_gb = storage_gb
         if timeout is not None:
             self.timeout = timeout
+        if warm is not None:
+            self.warm = warm
 
     @property
     def cloudspace_id(self) -> 'str':
@@ -563,6 +568,27 @@ class V1CreateSandboxRequest(object):
         """
 
         self._timeout = timeout
+
+    @property
+    def warm(self) -> 'V1SandboxWarmSpec':
+        """Gets the warm of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The warm of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: V1SandboxWarmSpec
+        """
+        return self._warm
+
+    @warm.setter
+    def warm(self, warm: 'V1SandboxWarmSpec'):
+        """Sets the warm of this V1CreateSandboxRequest.
+
+
+        :param warm: The warm of this V1CreateSandboxRequest.  # noqa: E501
+        :type: V1SandboxWarmSpec
+        """
+
+        self._warm = warm
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
