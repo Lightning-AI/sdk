@@ -93,7 +93,7 @@ func (m *V1ListOrgMemberTransferTargetsResponse) contextValidateTargets(ctx cont
 		if m.Targets[i] != nil {
 
 			if swag.IsZero(m.Targets[i]) { // not required
-				continue
+				return nil
 			}
 
 			if err := m.Targets[i].ContextValidate(ctx, formats); err != nil {
