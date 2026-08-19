@@ -143,6 +143,7 @@ await sandbox.delete();
 | PTY sessions                  | `sandbox.process`                                           |
 | Snapshots                     | `sandbox.createSnapshot(...)`, `Sandbox.listSnapshots(...)` |
 | Network egress policy         | `networkPolicy` on `Sandbox.create(...)`                    |
+| Warm starts                   | `warm` on `Sandbox.create(...)`, `sandbox.warm`             |
 
 # Development
 

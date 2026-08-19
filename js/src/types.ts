@@ -1,3 +1,5 @@
+import type { V1SandboxWarmStatus } from "./lightning_cloud/openapi/data-contracts.js";
+import type { WarmRecipe } from "./warm.js";
 /**
  * Types for the Sandbox SDK public API and configuration.
  */
@@ -14,6 +16,10 @@ export interface SandboxConfig {
 /** Raw sandbox record returned by the Lightning API (camelCase JSON). */
 export interface SandboxData {
   id: string;
+  /** Warm-recipe outcome, when the sandbox was created with one. */
+  warm?: V1SandboxWarmStatus;
+  /** Per-sandbox rebind values; present on the create response only. */
+  warmSecrets?: Record<string, string>;
   name: string;
   /** Organization the sandbox belongs to (derived from the API key; read-back only). */
   organizationId: string;
@@ -85,6 +91,15 @@ export interface SandboxPhaseDuration {
 }
 
 export interface CreateSandboxParams {
+  /**
+   * What the sandbox should already have done when you get it — packages
+   * installed, a server listening. Lightning bakes the recipe once and
+   * restores later sandboxes with the same recipe from that snapshot. The
+   * first create is served cold with the recipe run inline, so the sandbox is
+   * the same either way; read `sandbox.warm` to see which you got. Cannot be
+   * combined with `snapshotId`.
+   */
+  warm?: WarmRecipe;
   name?: string;
   instanceType: string;
   spot?: boolean;

@@ -120,6 +120,38 @@ deployment.start(
 print(deployment.status)
 ```
 
+## Start sandboxes warm
+
+A warm recipe says what the sandbox should already have done — packages
+installed, a server listening. Lightning runs it once, snapshots the result,
+and restores later sandboxes with the same recipe from that snapshot. The
+recipe is the cache key, so there is no template id to keep in sync.
+
+```python
+from lightning_sdk.sandbox import Sandbox, WarmRecipe, wait_for_port
+
+sandbox = Sandbox.create(
+    name="warm-notebook",
+    instance_type="cpu-2",
+    image="docker.io/library/python:3.13",
+    ports=[8888],
+    warm=WarmRecipe(
+        run_cmd=["pip install jupyterlab"],
+        start_cmd="jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root",
+        ready_cmd=wait_for_port(8888),
+    ),
+)
+
+print(sandbox.warm.state)  # "restored" | "building" | "cold"
+```
+
+The first create for a recipe is served cold with the recipe run inline, so you
+always get the sandbox you asked for — it is only slower. Baking happens in the
+background once a recipe has been asked for more than once. A cold start looks
+exactly like a warm one from the outside, so read `sandbox.warm.state` rather
+than assuming, and see [`examples/warm_sandbox.py`](examples/warm_sandbox.py)
+for per-sandbox credentials and warming a Jupyter kernel.
+
 ## Use persistent sandboxes
 
 ```python

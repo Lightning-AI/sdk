@@ -44,3 +44,20 @@ export type {
   PtyResult,
   PtySessionInfo,
 } from "./types.js";
+
+export {
+  waitForCommand,
+  waitForFile,
+  waitForPort,
+  waitForProcess,
+  waitForTimeout,
+  waitForUrl,
+} from "./warm.js";
+export type {
+  ReadyCheck,
+  RebindSource,
+  RebindVar,
+  WarmRecipe,
+  WarmState,
+  WarmStatus,
+} from "./warm.js";
