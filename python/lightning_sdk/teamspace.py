@@ -1,6 +1,7 @@
 import glob
 import os
 import warnings
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
@@ -10,6 +11,7 @@ from tqdm.auto import tqdm
 import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, SecretType, TeamspaceApi
+from lightning_sdk.api.billing_activity import BillingActivityReport
 from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
 from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
@@ -449,6 +451,51 @@ class Teamspace(metaclass=TrackCallsMeta):
             )
             for cluster_machine in cloud_machines
         ]
+
+    def get_billing_activity(
+        self,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+        cluster_id: Optional[str] = None,
+        resource_type: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        search_after: Optional[datetime] = None,
+    ) -> BillingActivityReport:
+        """Get the daily-rollup billing activity for this teamspace.
+
+        Args:
+            start: Start of the time range. If omitted, defaults to the teamspace/resource
+                creation time.
+            end: End of the time range. If omitted, defaults to the resource deletion time
+                or now.
+            cluster_id: Restrict to a single cloud account. If omitted, all clusters are included.
+            resource_type: Restrict to a single resource type (e.g. ``"studio"``, ``"job"``).
+                If omitted, all resource types are included.
+            resource_id: Restrict to a single resource. If omitted, all matching resources
+                are included.
+            user_id: Restrict to a single user's activity. If omitted, all users are included.
+            limit: Max number of usage entries to return.
+            search_after: Only include usage entries strictly after this cursor
+                (the ``search_after`` from a previous, paginated call).
+
+        Returns:
+            A :class:`~lightning_sdk.api.teamspace_api.BillingActivityReport` with
+            per-resource and per-day usage plus totals.
+        """
+        return self._teamspace_api.get_billing_activity(
+            teamspace_id=self.id,
+            org_id=self._org.id if self._org is not None else None,
+            start=start,
+            end=end,
+            cluster_id=cluster_id,
+            resource_type=resource_type,
+            resource_id=resource_id,
+            user_id=user_id,
+            limit=limit,
+            search_after=search_after,
+        )
 
     def __eq__(self, other: object) -> bool:
         """Checks whether the provided other object is equal to this one.
