@@ -59,6 +59,7 @@ export LIGHTNING_SANDBOX_API_KEY="..."
 | [`mmts.rst`](mmts.rst)             | [`mmts.py`](mmts.py)             | Run and inspect multi-machine training jobs                                              |
 | [`teamspaces.rst`](teamspaces.rst) | [`teamspaces.py`](teamspaces.py) | Resolve account context and inspect teamspace resources                                  |
 | [`sandboxes.rst`](sandboxes.rst)   | [`sandboxes.py`](sandboxes.py)   | Create disposable or persistent sandboxes, run commands, write files, resume, and delete |
+| [`instances.rst`](instances.rst)   | [`instances.py`](instances.py)   | Create plain cloud VMs, expose ports, run commands over SSH, and delete them              |
 
 # CLI tutorials
 
@@ -69,6 +70,7 @@ export LIGHTNING_SANDBOX_API_KEY="..."
 | [`mmts_cli.rst`](mmts_cli.rst)             | Launch and inspect multi-machine training runs from the CLI                         |
 | [`teamspaces_cli.rst`](teamspaces_cli.rst) | Set CLI context and pass explicit teamspace scope to resource commands              |
 | [`sandboxes_cli.rst`](sandboxes_cli.rst)   | Create sandboxes, run commands, inspect logs, stop, resume, and delete from the CLI |
+| [`instances_cli.rst`](instances_cli.rst)   | Create plain cloud VMs, expose ports, SSH in, run commands, and delete them          |
 | [`logs_cli.rst`](logs_cli.rst)             | Tail, follow, search, and page logs for jobs, MMTs, deployments, and sandboxes      |
 | [`api_cli.rst`](api_cli.rst)               | Call authenticated Lightning API endpoints directly from shell scripts              |
 
