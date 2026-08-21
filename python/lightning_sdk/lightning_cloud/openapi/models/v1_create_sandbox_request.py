@@ -47,6 +47,7 @@ class V1CreateSandboxRequest(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'cluster_id': 'str',
+        'idle_timeout': 'str',
         'image': 'str',
         'image_secret_ref': 'str',
         'instance_type': 'str',
@@ -70,6 +71,7 @@ class V1CreateSandboxRequest(object):
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
+        'idle_timeout': 'idleTimeout',
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
@@ -90,10 +92,11 @@ class V1CreateSandboxRequest(object):
         'warm': 'warm'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None, warm: 'V1SandboxWarmSpec' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None, warm: 'V1SandboxWarmSpec' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
+        self._idle_timeout = None
         self._image = None
         self._image_secret_ref = None
         self._instance_type = None
@@ -117,6 +120,8 @@ class V1CreateSandboxRequest(object):
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if idle_timeout is not None:
+            self.idle_timeout = idle_timeout
         if image is not None:
             self.image = image
         if image_secret_ref is not None:
@@ -195,6 +200,29 @@ class V1CreateSandboxRequest(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def idle_timeout(self) -> 'str':
+        """Gets the idle_timeout of this V1CreateSandboxRequest.  # noqa: E501
+
+        When set, the sandbox stops after this many milliseconds without activity. Its termination deadline starts here rather than at `timeout`, and KeepSandboxAlive pushes it forward. A non-zero `timeout` remains the hard cap: the idle deadline is clamped to it and never exceeds it. Without one the sandbox runs for as long as keep-alives keep arriving.  # noqa: E501
+
+        :return: The idle_timeout of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._idle_timeout
+
+    @idle_timeout.setter
+    def idle_timeout(self, idle_timeout: 'str'):
+        """Sets the idle_timeout of this V1CreateSandboxRequest.
+
+        When set, the sandbox stops after this many milliseconds without activity. Its termination deadline starts here rather than at `timeout`, and KeepSandboxAlive pushes it forward. A non-zero `timeout` remains the hard cap: the idle deadline is clamped to it and never exceeds it. Without one the sandbox runs for as long as keep-alives keep arriving.  # noqa: E501
+
+        :param idle_timeout: The idle_timeout of this V1CreateSandboxRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._idle_timeout = idle_timeout
 
     @property
     def image(self) -> 'str':
@@ -353,7 +381,7 @@ class V1CreateSandboxRequest(object):
     def persistent(self) -> 'bool':
         """Gets the persistent of this V1CreateSandboxRequest.  # noqa: E501
 
-        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox on idle, sleep, or eviction, and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, idle reclaim, or host reschedule.  # noqa: E501
+        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox when it stops — whether the caller stopped it or its termination deadline expired — and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, eviction, or host reschedule.  # noqa: E501
 
         :return: The persistent of this V1CreateSandboxRequest.  # noqa: E501
         :rtype: bool
@@ -364,7 +392,7 @@ class V1CreateSandboxRequest(object):
     def persistent(self, persistent: 'bool'):
         """Sets the persistent of this V1CreateSandboxRequest.
 
-        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox on idle, sleep, or eviction, and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, idle reclaim, or host reschedule.  # noqa: E501
+        Whether the sandbox persists its state across restarts via automatic snapshots. Defaults to true.  When true, the controlplane automatically snapshots the sandbox when it stops — whether the caller stopped it or its termination deadline expired — and transparently restores it (via the FUSE snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id is accessed. This makes the sandbox id a durable handle suitable for long-lived workflow orchestration that may pause across step boundaries.  When false, the sandbox is best-effort ephemeral: state is lost on stop, eviction, or host reschedule.  # noqa: E501
 
         :param persistent: The persistent of this V1CreateSandboxRequest.  # noqa: E501
         :type: bool

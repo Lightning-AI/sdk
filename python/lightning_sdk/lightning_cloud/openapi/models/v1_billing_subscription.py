@@ -51,6 +51,7 @@ class V1BillingSubscription(object):
         'card_type': 'str',
         'card_verification_error': 'str',
         'card_verified': 'bool',
+        'credit_card_unlock_granted': 'bool',
         'features': 'list[V1BillingFeature]',
         'name': 'str',
         'period': 'str',
@@ -67,6 +68,7 @@ class V1BillingSubscription(object):
         'card_type': 'cardType',
         'card_verification_error': 'cardVerificationError',
         'card_verified': 'cardVerified',
+        'credit_card_unlock_granted': 'creditCardUnlockGranted',
         'features': 'features',
         'name': 'name',
         'period': 'period',
@@ -76,7 +78,7 @@ class V1BillingSubscription(object):
         'stripe_managed': 'stripeManaged'
     }
 
-    def __init__(self, amount: 'int' =None, canceled_at: 'datetime' =None, card_last4: 'str' =None, card_type: 'str' =None, card_verification_error: 'str' =None, card_verified: 'bool' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
+    def __init__(self, amount: 'int' =None, canceled_at: 'datetime' =None, card_last4: 'str' =None, card_type: 'str' =None, card_verification_error: 'str' =None, card_verified: 'bool' =None, credit_card_unlock_granted: 'bool' =None, features: 'list[V1BillingFeature]' =None, name: 'str' =None, period: 'str' =None, period_end: 'datetime' =None, seats: 'int' =None, status: 'str' =None, stripe_managed: 'bool' =None):  # noqa: E501
         """V1BillingSubscription - a model defined in Swagger"""  # noqa: E501
         self._amount = None
         self._canceled_at = None
@@ -84,6 +86,7 @@ class V1BillingSubscription(object):
         self._card_type = None
         self._card_verification_error = None
         self._card_verified = None
+        self._credit_card_unlock_granted = None
         self._features = None
         self._name = None
         self._period = None
@@ -104,6 +107,8 @@ class V1BillingSubscription(object):
             self.card_verification_error = card_verification_error
         if card_verified is not None:
             self.card_verified = card_verified
+        if credit_card_unlock_granted is not None:
+            self.credit_card_unlock_granted = credit_card_unlock_granted
         if features is not None:
             self.features = features
         if name is not None:
@@ -244,6 +249,29 @@ class V1BillingSubscription(object):
         """
 
         self._card_verified = card_verified
+
+    @property
+    def credit_card_unlock_granted(self) -> 'bool':
+        """Gets the credit_card_unlock_granted of this V1BillingSubscription.  # noqa: E501
+
+        True when this account holds the one-time credit unlock for adding a card. It reports history, not the outcome of any one verification: the unlock is granted once per account, so a caller that wants to attribute the credits to a single attempt must compare this across that attempt.  Optional because a caller comparing it across an attempt needs \"we could not tell\" kept apart from \"not held\" — unset when the lookup failed. Read as false, a failed lookup before the attempt turns into an apparent grant when the next one succeeds.  # noqa: E501
+
+        :return: The credit_card_unlock_granted of this V1BillingSubscription.  # noqa: E501
+        :rtype: bool
+        """
+        return self._credit_card_unlock_granted
+
+    @credit_card_unlock_granted.setter
+    def credit_card_unlock_granted(self, credit_card_unlock_granted: 'bool'):
+        """Sets the credit_card_unlock_granted of this V1BillingSubscription.
+
+        True when this account holds the one-time credit unlock for adding a card. It reports history, not the outcome of any one verification: the unlock is granted once per account, so a caller that wants to attribute the credits to a single attempt must compare this across that attempt.  Optional because a caller comparing it across an attempt needs \"we could not tell\" kept apart from \"not held\" — unset when the lookup failed. Read as false, a failed lookup before the attempt turns into an apparent grant when the next one succeeds.  # noqa: E501
+
+        :param credit_card_unlock_granted: The credit_card_unlock_granted of this V1BillingSubscription.  # noqa: E501
+        :type: bool
+        """
+
+        self._credit_card_unlock_granted = credit_card_unlock_granted
 
     @property
     def features(self) -> 'list[V1BillingFeature]':

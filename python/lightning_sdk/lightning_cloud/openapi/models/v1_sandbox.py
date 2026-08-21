@@ -49,6 +49,7 @@ class V1Sandbox(object):
         'cluster_id': 'str',
         'created_at': 'datetime',
         'id': 'str',
+        'idle_timeout': 'str',
         'image': 'str',
         'image_secret_ref': 'str',
         'instance_type': 'str',
@@ -79,6 +80,7 @@ class V1Sandbox(object):
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
         'id': 'id',
+        'idle_timeout': 'idleTimeout',
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
         'instance_type': 'instanceType',
@@ -104,12 +106,13 @@ class V1Sandbox(object):
         'warm_secrets': 'warmSecrets'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, warm: 'V1SandboxWarmStatus' =None, warm_secrets: 'dict(str, str)' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, warm: 'V1SandboxWarmStatus' =None, warm_secrets: 'dict(str, str)' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
         self._id = None
+        self._idle_timeout = None
         self._image = None
         self._image_secret_ref = None
         self._instance_type = None
@@ -142,6 +145,8 @@ class V1Sandbox(object):
             self.created_at = created_at
         if id is not None:
             self.id = id
+        if idle_timeout is not None:
+            self.idle_timeout = idle_timeout
         if image is not None:
             self.image = image
         if image_secret_ref is not None:
@@ -272,6 +277,29 @@ class V1Sandbox(object):
         """
 
         self._id = id
+
+    @property
+    def idle_timeout(self) -> 'str':
+        """Gets the idle_timeout of this V1Sandbox.  # noqa: E501
+
+        Mirrors CreateSandboxRequest.idle_timeout. Zero for sandboxes that only have the fixed create-time `timeout`. When set, a non-zero `timeout` is the hard cap the idle deadline is clamped to rather than the deadline itself.  # noqa: E501
+
+        :return: The idle_timeout of this V1Sandbox.  # noqa: E501
+        :rtype: str
+        """
+        return self._idle_timeout
+
+    @idle_timeout.setter
+    def idle_timeout(self, idle_timeout: 'str'):
+        """Sets the idle_timeout of this V1Sandbox.
+
+        Mirrors CreateSandboxRequest.idle_timeout. Zero for sandboxes that only have the fixed create-time `timeout`. When set, a non-zero `timeout` is the hard cap the idle deadline is clamped to rather than the deadline itself.  # noqa: E501
+
+        :param idle_timeout: The idle_timeout of this V1Sandbox.  # noqa: E501
+        :type: str
+        """
+
+        self._idle_timeout = idle_timeout
 
     @property
     def image(self) -> 'str':

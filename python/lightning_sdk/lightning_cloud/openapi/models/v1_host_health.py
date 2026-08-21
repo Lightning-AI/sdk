@@ -47,6 +47,7 @@ class V1HostHealth(object):
     swagger_types = {
         'aer_counters': 'list[V1AERCounter]',
         'fabric_manager': 'V1FabricManagerHealth',
+        'gpu_create_host_crash': 'V1GPUCreateHostCrash',
         'node_fitness': 'V1NodeFitness',
         'nvlink_fm_topology': 'V1NVLinkFMTopology',
         'nvswitch_fatal': 'V1NVSwitchFatal',
@@ -58,6 +59,7 @@ class V1HostHealth(object):
     attribute_map = {
         'aer_counters': 'aerCounters',
         'fabric_manager': 'fabricManager',
+        'gpu_create_host_crash': 'gpuCreateHostCrash',
         'node_fitness': 'nodeFitness',
         'nvlink_fm_topology': 'nvlinkFmTopology',
         'nvswitch_fatal': 'nvswitchFatal',
@@ -66,10 +68,11 @@ class V1HostHealth(object):
         'system': 'system'
     }
 
-    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, nvswitch_fatal: 'V1NVSwitchFatal' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
+    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, gpu_create_host_crash: 'V1GPUCreateHostCrash' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, nvswitch_fatal: 'V1NVSwitchFatal' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
         """V1HostHealth - a model defined in Swagger"""  # noqa: E501
         self._aer_counters = None
         self._fabric_manager = None
+        self._gpu_create_host_crash = None
         self._node_fitness = None
         self._nvlink_fm_topology = None
         self._nvswitch_fatal = None
@@ -81,6 +84,8 @@ class V1HostHealth(object):
             self.aer_counters = aer_counters
         if fabric_manager is not None:
             self.fabric_manager = fabric_manager
+        if gpu_create_host_crash is not None:
+            self.gpu_create_host_crash = gpu_create_host_crash
         if node_fitness is not None:
             self.node_fitness = node_fitness
         if nvlink_fm_topology is not None:
@@ -135,6 +140,27 @@ class V1HostHealth(object):
         """
 
         self._fabric_manager = fabric_manager
+
+    @property
+    def gpu_create_host_crash(self) -> 'V1GPUCreateHostCrash':
+        """Gets the gpu_create_host_crash of this V1HostHealth.  # noqa: E501
+
+
+        :return: The gpu_create_host_crash of this V1HostHealth.  # noqa: E501
+        :rtype: V1GPUCreateHostCrash
+        """
+        return self._gpu_create_host_crash
+
+    @gpu_create_host_crash.setter
+    def gpu_create_host_crash(self, gpu_create_host_crash: 'V1GPUCreateHostCrash'):
+        """Sets the gpu_create_host_crash of this V1HostHealth.
+
+
+        :param gpu_create_host_crash: The gpu_create_host_crash of this V1HostHealth.  # noqa: E501
+        :type: V1GPUCreateHostCrash
+        """
+
+        self._gpu_create_host_crash = gpu_create_host_crash
 
     @property
     def node_fitness(self) -> 'V1NodeFitness':

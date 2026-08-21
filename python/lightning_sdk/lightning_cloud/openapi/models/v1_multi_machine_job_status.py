@@ -52,7 +52,6 @@ class V1MultiMachineJobStatus(object):
         'ready_machines': 'str',
         'requires_maintenance': 'bool',
         'requires_maintenance_started_at': 'datetime',
-        'retries': 'str',
         'started_at': 'datetime',
         'stopped_at': 'datetime'
     }
@@ -65,12 +64,11 @@ class V1MultiMachineJobStatus(object):
         'ready_machines': 'readyMachines',
         'requires_maintenance': 'requiresMaintenance',
         'requires_maintenance_started_at': 'requiresMaintenanceStartedAt',
-        'retries': 'retries',
         'started_at': 'startedAt',
         'stopped_at': 'stoppedAt'
     }
 
-    def __init__(self, deleting_machines: 'str' =None, failing_machines: 'str' =None, message: 'str' =None, pending_machines: 'str' =None, ready_machines: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stopped_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, deleting_machines: 'str' =None, failing_machines: 'str' =None, message: 'str' =None, pending_machines: 'str' =None, ready_machines: 'str' =None, requires_maintenance: 'bool' =None, requires_maintenance_started_at: 'datetime' =None, started_at: 'datetime' =None, stopped_at: 'datetime' =None):  # noqa: E501
         """V1MultiMachineJobStatus - a model defined in Swagger"""  # noqa: E501
         self._deleting_machines = None
         self._failing_machines = None
@@ -79,7 +77,6 @@ class V1MultiMachineJobStatus(object):
         self._ready_machines = None
         self._requires_maintenance = None
         self._requires_maintenance_started_at = None
-        self._retries = None
         self._started_at = None
         self._stopped_at = None
         self.discriminator = None
@@ -97,8 +94,6 @@ class V1MultiMachineJobStatus(object):
             self.requires_maintenance = requires_maintenance
         if requires_maintenance_started_at is not None:
             self.requires_maintenance_started_at = requires_maintenance_started_at
-        if retries is not None:
-            self.retries = retries
         if started_at is not None:
             self.started_at = started_at
         if stopped_at is not None:
@@ -250,27 +245,6 @@ class V1MultiMachineJobStatus(object):
         """
 
         self._requires_maintenance_started_at = requires_maintenance_started_at
-
-    @property
-    def retries(self) -> 'str':
-        """Gets the retries of this V1MultiMachineJobStatus.  # noqa: E501
-
-
-        :return: The retries of this V1MultiMachineJobStatus.  # noqa: E501
-        :rtype: str
-        """
-        return self._retries
-
-    @retries.setter
-    def retries(self, retries: 'str'):
-        """Sets the retries of this V1MultiMachineJobStatus.
-
-
-        :param retries: The retries of this V1MultiMachineJobStatus.  # noqa: E501
-        :type: str
-        """
-
-        self._retries = retries
 
     @property
     def started_at(self) -> 'datetime':

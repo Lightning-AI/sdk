@@ -46,38 +46,63 @@ class V1CloudSpaceStartupStageStatus(object):
     """
     swagger_types = {
         'completed_at': 'datetime',
+        'completed_bytes': 'str',
+        'completed_items': 'str',
         'estimated_seconds': 'str',
+        'parent_stage': 'str',
         'stage': 'str',
         'started_at': 'datetime',
-        'state': 'V1CloudSpaceStartupStageState'
+        'state': 'V1CloudSpaceStartupStageState',
+        'total_bytes': 'str',
+        'total_items': 'str'
     }
 
     attribute_map = {
         'completed_at': 'completedAt',
+        'completed_bytes': 'completedBytes',
+        'completed_items': 'completedItems',
         'estimated_seconds': 'estimatedSeconds',
+        'parent_stage': 'parentStage',
         'stage': 'stage',
         'started_at': 'startedAt',
-        'state': 'state'
+        'state': 'state',
+        'total_bytes': 'totalBytes',
+        'total_items': 'totalItems'
     }
 
-    def __init__(self, completed_at: 'datetime' =None, estimated_seconds: 'str' =None, stage: 'str' =None, started_at: 'datetime' =None, state: 'V1CloudSpaceStartupStageState' =None):  # noqa: E501
+    def __init__(self, completed_at: 'datetime' =None, completed_bytes: 'str' =None, completed_items: 'str' =None, estimated_seconds: 'str' =None, parent_stage: 'str' =None, stage: 'str' =None, started_at: 'datetime' =None, state: 'V1CloudSpaceStartupStageState' =None, total_bytes: 'str' =None, total_items: 'str' =None):  # noqa: E501
         """V1CloudSpaceStartupStageStatus - a model defined in Swagger"""  # noqa: E501
         self._completed_at = None
+        self._completed_bytes = None
+        self._completed_items = None
         self._estimated_seconds = None
+        self._parent_stage = None
         self._stage = None
         self._started_at = None
         self._state = None
+        self._total_bytes = None
+        self._total_items = None
         self.discriminator = None
         if completed_at is not None:
             self.completed_at = completed_at
+        if completed_bytes is not None:
+            self.completed_bytes = completed_bytes
+        if completed_items is not None:
+            self.completed_items = completed_items
         if estimated_seconds is not None:
             self.estimated_seconds = estimated_seconds
+        if parent_stage is not None:
+            self.parent_stage = parent_stage
         if stage is not None:
             self.stage = stage
         if started_at is not None:
             self.started_at = started_at
         if state is not None:
             self.state = state
+        if total_bytes is not None:
+            self.total_bytes = total_bytes
+        if total_items is not None:
+            self.total_items = total_items
 
     @property
     def completed_at(self) -> 'datetime':
@@ -101,6 +126,48 @@ class V1CloudSpaceStartupStageStatus(object):
         self._completed_at = completed_at
 
     @property
+    def completed_bytes(self) -> 'str':
+        """Gets the completed_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+
+
+        :return: The completed_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._completed_bytes
+
+    @completed_bytes.setter
+    def completed_bytes(self, completed_bytes: 'str'):
+        """Sets the completed_bytes of this V1CloudSpaceStartupStageStatus.
+
+
+        :param completed_bytes: The completed_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._completed_bytes = completed_bytes
+
+    @property
+    def completed_items(self) -> 'str':
+        """Gets the completed_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+
+
+        :return: The completed_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._completed_items
+
+    @completed_items.setter
+    def completed_items(self, completed_items: 'str'):
+        """Sets the completed_items of this V1CloudSpaceStartupStageStatus.
+
+
+        :param completed_items: The completed_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._completed_items = completed_items
+
+    @property
     def estimated_seconds(self) -> 'str':
         """Gets the estimated_seconds of this V1CloudSpaceStartupStageStatus.  # noqa: E501
 
@@ -120,6 +187,29 @@ class V1CloudSpaceStartupStageStatus(object):
         """
 
         self._estimated_seconds = estimated_seconds
+
+    @property
+    def parent_stage(self) -> 'str':
+        """Gets the parent_stage of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+
+        Empty for top-level stages. SETTING_UP_STUDIO for nested conda/env/apt children.  # noqa: E501
+
+        :return: The parent_stage of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_stage
+
+    @parent_stage.setter
+    def parent_stage(self, parent_stage: 'str'):
+        """Sets the parent_stage of this V1CloudSpaceStartupStageStatus.
+
+        Empty for top-level stages. SETTING_UP_STUDIO for nested conda/env/apt children.  # noqa: E501
+
+        :param parent_stage: The parent_stage of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_stage = parent_stage
 
     @property
     def stage(self) -> 'str':
@@ -183,6 +273,48 @@ class V1CloudSpaceStartupStageStatus(object):
         """
 
         self._state = state
+
+    @property
+    def total_bytes(self) -> 'str':
+        """Gets the total_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+
+
+        :return: The total_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_bytes
+
+    @total_bytes.setter
+    def total_bytes(self, total_bytes: 'str'):
+        """Sets the total_bytes of this V1CloudSpaceStartupStageStatus.
+
+
+        :param total_bytes: The total_bytes of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._total_bytes = total_bytes
+
+    @property
+    def total_items(self) -> 'str':
+        """Gets the total_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+
+
+        :return: The total_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_items
+
+    @total_items.setter
+    def total_items(self, total_items: 'str'):
+        """Sets the total_items of this V1CloudSpaceStartupStageStatus.
+
+
+        :param total_items: The total_items of this V1CloudSpaceStartupStageStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._total_items = total_items
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

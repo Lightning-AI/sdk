@@ -91,6 +91,10 @@ class Configuration(six.with_metaclass(TypeWithDefault, object)):
         # each re-used connection can use memory somewhere in the range of 50–100 KB by default.
         self.connection_pool_maxsize = max(multiprocessing.cpu_count() * 5, 500)
 
+        # Default _request_timeout applied by RESTClientObject.request().
+        # ``None``, a number, or a ``(connect, read)`` tuple.
+        self.request_timeout = None
+
         # Proxy URL
         self.proxy = None
         # Safe chars for path_param
