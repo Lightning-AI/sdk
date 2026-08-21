@@ -126,9 +126,7 @@ class Experiment(metaclass=TrackCallsMeta):
                 time.sleep(_FOLLOW_POLL_INTERVAL)
         raise AssertionError("unreachable")  # pragma: no cover
 
-    def _fetch_rows(
-        self, *, metric_filter: Optional[set], samples: Optional[int]
-    ) -> List[Dict[str, Any]]:
+    def _fetch_rows(self, *, metric_filter: Optional[set], samples: Optional[int]) -> List[Dict[str, Any]]:
         response = self._fetch_page(samples=samples, transient_retries=_SNAPSHOT_TRANSIENT_RETRIES)
         return _group_by_step(response, self._stream, metric_filter=metric_filter)
 
@@ -189,9 +187,7 @@ def _apply_walltime_window(
     return result
 
 
-def _group_by_step(
-    response: Any, stream: V1MetricsStream, *, metric_filter: Optional[set]
-) -> List[Dict[str, Any]]:
+def _group_by_step(response: Any, stream: V1MetricsStream, *, metric_filter: Optional[set]) -> List[Dict[str, Any]]:
     """Collapse the nested response into one row per step, ordered by walltime.
 
     When the same metric is logged twice at the same step the latest walltime wins.

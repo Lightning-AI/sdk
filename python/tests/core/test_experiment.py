@@ -26,9 +26,7 @@ def _metrics_response(points_by_metric, stream_id="ms-abc"):
     """Turn ``{"loss": [(step, value, walltime), ...]}`` into the nested response shape."""
     named = {}
     for metric_name, points in points_by_metric.items():
-        ids_metrics = {
-            stream_id: SimpleNamespace(metrics_values=[_metric_point(s, v, w) for (s, v, w) in points])
-        }
+        ids_metrics = {stream_id: SimpleNamespace(metrics_values=[_metric_point(s, v, w) for (s, v, w) in points])}
         named[metric_name] = SimpleNamespace(ids_metrics=ids_metrics)
     return SimpleNamespace(named_metrics=named)
 
@@ -97,7 +95,8 @@ def test_metrics_snapshot_groups_by_step() -> None:
     rows = _make_experiment(api).metrics()
 
     by_step = {row["_step"]: row for row in rows}
-    assert by_step["100"]["loss"] == 0.31 and by_step["100"]["val_acc"] == 0.87
+    assert by_step["100"]["loss"] == 0.31
+    assert by_step["100"]["val_acc"] == 0.87
     assert by_step["100"]["_stream"] == "run-42"
     assert by_step["200"] == {"_step": "200", "_stream": "run-42", "_walltime": walltime, "loss": 0.28}
 
@@ -111,7 +110,8 @@ def test_metrics_filter_scopes_output() -> None:
     )
     rows = _make_experiment(api).metrics(metric=["loss"])
     assert len(rows) == 1
-    assert "loss" in rows[0] and "val_acc" not in rows[0]
+    assert "loss" in rows[0]
+    assert "val_acc" not in rows[0]
 
 
 def test_metrics_tail_keeps_last_n() -> None:
@@ -130,14 +130,13 @@ def test_metrics_since_filters_client_side() -> None:
     late = datetime(2026, 5, 1, 13, 0, tzinfo=timezone.utc)
     api = MagicMock()
     api.list_metrics_streams.return_value = [_stream()]
-    api.get_logger_metrics.return_value = _metrics_response(
-        {"loss": [(1, 0.9, early), (2, 0.5, late)]}
-    )
+    api.get_logger_metrics.return_value = _metrics_response({"loss": [(1, 0.9, early), (2, 0.5, late)]})
     rows = _make_experiment(api).metrics(since=late)
     assert [row["_step"] for row in rows] == ["2"]
     # The backend was called without walltime bounds; filtering is fully client-side.
     (call,) = api.get_logger_metrics.call_args_list
-    assert "min_walltime" not in call.kwargs and "max_walltime" not in call.kwargs
+    assert "min_walltime" not in call.kwargs
+    assert "max_walltime" not in call.kwargs
 
 
 def test_metrics_snapshot_retries_transient_5xx() -> None:
@@ -153,7 +152,8 @@ def test_metrics_snapshot_retries_transient_5xx() -> None:
     ]
     with patch.object(experiment_module, "_FOLLOW_POLL_INTERVAL", 0):
         rows = _make_experiment(api).metrics()
-    assert len(rows) == 1 and rows[0]["loss"] == 0.5
+    assert len(rows) == 1
+    assert rows[0]["loss"] == 0.5
     assert api.get_logger_metrics.call_count == 2
 
 
@@ -234,7 +234,7 @@ def test_experiment_reports_errors_to_command_history() -> None:
     ) as fake_client:
         client = MagicMock()
         fake_client.return_value = client
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Cannot resolve the teamspace"):
             Experiment("run-42")
 
     telemetry = client.s_dk_command_history_service_create_sdk_command_history
