@@ -3,6 +3,7 @@ from lightning_sdk.agents import Agent
 from lightning_sdk.api.teamspace_api import SecretType
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.deployment import Deployment
+from lightning_sdk.experiment import Experiment
 from lightning_sdk.helpers import VersionChecker, set_tqdm_envvars_noninteractive
 from lightning_sdk.job import Job
 from lightning_sdk.k8s_cluster import K8sCluster
@@ -20,6 +21,7 @@ __all__ = [
     "CloudProvider",
     "ConnectionType",
     "Deployment",
+    "Experiment",
     "FolderLocation",
     "Job",
     "K8sCluster",
