@@ -4,6 +4,7 @@
 
 import os
 from pathlib import Path
+from typing import Optional
 
 
 def truthy(val) -> bool:
@@ -20,7 +21,21 @@ def truthy(val) -> bool:
     return bool(val)
 
 
+def _float_env(name: str, default: Optional[float]) -> Optional[float]:
+    raw = os.getenv(name)
+    if not raw:
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return default
+
+
 LIGHTNING_CLOUD_URL = os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+
+# Default per-request timeouts, in seconds. See rest_client.create_swagger_client.
+LIGHTNING_CLOUD_CONNECT_TIMEOUT = _float_env("LIGHTNING_CLOUD_CONNECT_TIMEOUT", 10.0)
+LIGHTNING_CLOUD_READ_TIMEOUT = _float_env("LIGHTNING_CLOUD_READ_TIMEOUT", 30.0)
 
 SSL_CA_CERT = os.getenv("REQUESTS_CA_BUNDLE",
                         default=os.getenv("SSL_CERT_FILE", default=None))

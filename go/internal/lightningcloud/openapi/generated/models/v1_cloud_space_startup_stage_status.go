@@ -28,8 +28,17 @@ type V1CloudSpaceStartupStageStatus struct {
 	// Format: date-time
 	CompletedAt strfmt.DateTime `json:"completedAt,omitempty"`
 
+	// completed bytes
+	CompletedBytes string `json:"completedBytes,omitempty"`
+
+	// completed items
+	CompletedItems string `json:"completedItems,omitempty"`
+
 	// estimated seconds
 	EstimatedSeconds string `json:"estimatedSeconds,omitempty"`
+
+	// Empty for top-level stages. SETTING_UP_STUDIO for nested conda/env/apt children.
+	ParentStage string `json:"parentStage,omitempty"`
 
 	// stage
 	Stage string `json:"stage,omitempty"`
@@ -40,6 +49,12 @@ type V1CloudSpaceStartupStageStatus struct {
 
 	// state
 	State *V1CloudSpaceStartupStageState `json:"state,omitempty"`
+
+	// total bytes
+	TotalBytes string `json:"totalBytes,omitempty"`
+
+	// total items
+	TotalItems string `json:"totalItems,omitempty"`
 }
 
 // Validate validates this v1 cloud space startup stage status

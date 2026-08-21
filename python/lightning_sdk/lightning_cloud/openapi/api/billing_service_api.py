@@ -1324,6 +1324,135 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def billing_service_get_rollup_usage_report(self, **kwargs) -> 'V1UsageReport':  # noqa: E501
+        """V2 Usage report endpoint to get credits spending information. Provides credits consumption data by particular project according to filters given. Uses the new daily rollup table  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_rollup_usage_report(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id:
+        :param str cluster_id: Optional, if not specified, takes all clusters of the project
+        :param str resource_type: Optional, if not specified, all resource types will be returned
+        :param str resource_id: Optional, if not specified, all filtered resources will be returned
+        :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
+        :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, will filter by a user's activity in the daily rollup billing activity endpoint
+        :param str time_zone: UTC offset of the user's timezone
+        :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
+        :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :return: V1UsageReport
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_rollup_usage_report_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_rollup_usage_report_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_rollup_usage_report_with_http_info(self, **kwargs) -> 'V1UsageReport':  # noqa: E501
+        """V2 Usage report endpoint to get credits spending information. Provides credits consumption data by particular project according to filters given. Uses the new daily rollup table  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_rollup_usage_report_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id:
+        :param str cluster_id: Optional, if not specified, takes all clusters of the project
+        :param str resource_type: Optional, if not specified, all resource types will be returned
+        :param str resource_id: Optional, if not specified, all filtered resources will be returned
+        :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
+        :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, will filter by a user's activity in the daily rollup billing activity endpoint
+        :param str time_zone: UTC offset of the user's timezone
+        :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
+        :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :return: V1UsageReport
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_rollup_usage_report" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'cluster_id' in params:
+            query_params.append(('clusterId', params['cluster_id']))  # noqa: E501
+        if 'resource_type' in params:
+            query_params.append(('resourceType', params['resource_type']))  # noqa: E501
+        if 'resource_id' in params:
+            query_params.append(('resourceId', params['resource_id']))  # noqa: E501
+        if '_from' in params:
+            query_params.append(('from', params['_from']))  # noqa: E501
+        if 'to' in params:
+            query_params.append(('to', params['to']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'time_zone' in params:
+            query_params.append(('timeZone', params['time_zone']))  # noqa: E501
+        if 'limit' in params:
+            query_params.append(('limit', params['limit']))  # noqa: E501
+        if 'search_after' in params:
+            query_params.append(('searchAfter', params['search_after']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/usage-report-rollup', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UsageReport',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def billing_service_get_sandbox_usage_activity(self, **kwargs) -> 'V1GetSandboxUsageActivityResponse':  # noqa: E501
         """Sandbox billing intervals from ClickHouse: active count, cost, and runtime per time bucket.  # noqa: E501
 
@@ -1550,6 +1679,7 @@ class BillingServiceApi(object):
         :param str resource_id: Optional, if not specified, all filtered resources will be returned
         :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
         :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, will filter by a user's activity in the daily rollup billing activity endpoint
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
@@ -1580,6 +1710,7 @@ class BillingServiceApi(object):
         :param str resource_id: Optional, if not specified, all filtered resources will be returned
         :param datetime _from: Optional, if not specified, we take the project creation / resource creation time
         :param datetime to: Optional, if not specified, we take the resource deletion time or the current date
+        :param str user_id: Optional, will filter by a user's activity in the daily rollup billing activity endpoint
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
@@ -1588,7 +1719,7 @@ class BillingServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'time_zone', 'limit', 'search_after']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1623,6 +1754,8 @@ class BillingServiceApi(object):
             query_params.append(('from', params['_from']))  # noqa: E501
         if 'to' in params:
             query_params.append(('to', params['to']))  # noqa: E501
+        if 'user_id' in params:
+            query_params.append(('userId', params['user_id']))  # noqa: E501
         if 'time_zone' in params:
             query_params.append(('timeZone', params['time_zone']))  # noqa: E501
         if 'limit' in params:

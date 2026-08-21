@@ -23,9 +23,6 @@ import (
 // swagger:model v1MultiMachineJobFaultTolerance
 type V1MultiMachineJobFaultTolerance struct {
 
-	// max retries
-	MaxRetries int64 `json:"maxRetries,omitempty"`
-
 	// strategy
 	Strategy *V1MultiMachineJobFaultToleranceStrategy `json:"strategy,omitempty"`
 }

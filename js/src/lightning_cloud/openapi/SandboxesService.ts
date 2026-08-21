@@ -22,6 +22,7 @@ import {
   SandboxesServiceFinalizeSandboxSnapshotBody,
   SandboxesServiceGetSandboxSnapshotBlobDownloadUrlsBody,
   SandboxesServiceGetSandboxSnapshotBlobUploadUrlsBody,
+  SandboxesServiceKeepSandboxAliveBody,
   SandboxesServiceRunSandboxCommandBody,
   SandboxesServiceStopSandboxBody,
   SandboxesServiceUpdateSandboxBody,
@@ -37,6 +38,7 @@ import {
   V1GetSandboxResourceMetricsResponse,
   V1GetSandboxSnapshotBlobDownloadUrlsResponse,
   V1GetSandboxSnapshotBlobUploadUrlsResponse,
+  V1KeepSandboxAliveResponse,
   V1KillSandboxCommandResponse,
   V1ListSandboxCommandsResponse,
   V1ListSandboxSnapshotsResponse,
@@ -464,12 +466,18 @@ https://vercel.com/docs/rest-api/sandboxes-v2-beta/update-a-sandbox.
       ...params,
     });
   /**
-   * No description
-   *
-   * @tags SandboxesService
-   * @name SandboxesServiceExtendSandboxTimeout
-   * @request POST:/v1/core/sandboxes/{id}/extend-timeout
-   */
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceExtendSandboxTimeout
+ * @summary ExtendSandboxTimeout adds `timeout` more milliseconds to the sandbox's
+termination deadline. FailedPrecondition when the sandbox was created with
+an idle_timeout: its deadline belongs to KeepSandboxAlive and `timeout` is
+the cap that deadline is clamped to, so extending it here would push the
+sandbox past the cap it was created with. Also FailedPrecondition when a
+stop is already in progress.
+ * @request POST:/v1/core/sandboxes/{id}/extend-timeout
+ */
   sandboxesServiceExtendSandboxTimeout = (
     id: string,
     body: SandboxesServiceExtendSandboxTimeoutBody,
@@ -519,6 +527,33 @@ https://vercel.com/docs/rest-api/sandboxes-v2-beta/update-a-sandbox.
   ) =>
     this.request<V1WriteSandboxFileResponse, RpcStatus>({
       path: `/v1/core/sandboxes/${id}/files`,
+      method: "POST",
+      body: body,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceKeepSandboxAlive
+ * @summary KeepSandboxAlive reports that a sandbox is doing work, pushing its idle
+deadline out to now + idle_timeout, clamped to the create-time cap.
+Callers that stop reporting let the sandbox expire through the normal
+timeout path. FailedPrecondition when the sandbox was created without an
+idle_timeout; retrying that can never work, so stop reporting for it.
+Aborted when a stop is already in progress and the keep-alive was not
+applied; retry on the next activity report.
+ * @request POST:/v1/core/sandboxes/{id}/keep-alive
+ */
+  sandboxesServiceKeepSandboxAlive = (
+    id: string,
+    body: SandboxesServiceKeepSandboxAliveBody,
+    params: RequestParams = {},
+  ) =>
+    this.request<V1KeepSandboxAliveResponse, RpcStatus>({
+      path: `/v1/core/sandboxes/${id}/keep-alive`,
       method: "POST",
       body: body,
       type: ContentType.Json,
