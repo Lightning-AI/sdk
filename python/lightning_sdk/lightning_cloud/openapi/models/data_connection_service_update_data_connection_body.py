@@ -47,6 +47,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
     swagger_types = {
         'auto_increase_enabled': 'bool',
         'aws': 'V1AwsDataConnection',
+        'capacity_gb': 'str',
         'efs': 'V1EfsConfig',
         'gcp': 'V1GcpDataConnection',
         'gcs_folder': 'V1GCSFolderDataConnection',
@@ -62,6 +63,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
     attribute_map = {
         'auto_increase_enabled': 'autoIncreaseEnabled',
         'aws': 'aws',
+        'capacity_gb': 'capacityGb',
         'efs': 'efs',
         'gcp': 'gcp',
         'gcs_folder': 'gcsFolder',
@@ -74,10 +76,11 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         'writable': 'writable'
     }
 
-    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, capacity_gb: 'str' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """DataConnectionServiceUpdateDataConnectionBody - a model defined in Swagger"""  # noqa: E501
         self._auto_increase_enabled = None
         self._aws = None
+        self._capacity_gb = None
         self._efs = None
         self._gcp = None
         self._gcs_folder = None
@@ -93,6 +96,8 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
             self.auto_increase_enabled = auto_increase_enabled
         if aws is not None:
             self.aws = aws
+        if capacity_gb is not None:
+            self.capacity_gb = capacity_gb
         if efs is not None:
             self.efs = efs
         if gcp is not None:
@@ -155,6 +160,29 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         """
 
         self._aws = aws
+
+    @property
+    def capacity_gb(self) -> 'str':
+        """Gets the capacity_gb of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+
+        New total capacity in GiB. Capacity can only be expanded, and zero leaves it unchanged. Managed VAST volumes only, for now.  # noqa: E501
+
+        :return: The capacity_gb of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._capacity_gb
+
+    @capacity_gb.setter
+    def capacity_gb(self, capacity_gb: 'str'):
+        """Sets the capacity_gb of this DataConnectionServiceUpdateDataConnectionBody.
+
+        New total capacity in GiB. Capacity can only be expanded, and zero leaves it unchanged. Managed VAST volumes only, for now.  # noqa: E501
+
+        :param capacity_gb: The capacity_gb of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :type: str
+        """
+
+        self._capacity_gb = capacity_gb
 
     @property
     def efs(self) -> 'V1EfsConfig':

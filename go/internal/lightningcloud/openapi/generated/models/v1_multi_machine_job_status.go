@@ -45,9 +45,6 @@ type V1MultiMachineJobStatus struct {
 	// Format: date-time
 	RequiresMaintenanceStartedAt strfmt.DateTime `json:"requiresMaintenanceStartedAt,omitempty"`
 
-	// Number of retries
-	Retries string `json:"retries,omitempty"`
-
 	// started at
 	// Format: date-time
 	StartedAt strfmt.DateTime `json:"startedAt,omitempty"`

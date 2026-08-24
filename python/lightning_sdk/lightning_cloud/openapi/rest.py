@@ -53,11 +53,11 @@ class RESTResponse(io.IOBase):
 
     def getheaders(self):
         """Returns a dictionary of the response headers."""
-        return self.urllib3_response.getheaders()
+        return self.urllib3_response.headers
 
     def getheader(self, name, default=None):
         """Returns a given response header."""
-        return self.urllib3_response.getheader(name, default)
+        return self.urllib3_response.headers.get(name, default)
 
 
 class RESTClientObject(object):
@@ -68,6 +68,8 @@ class RESTClientObject(object):
         # https://github.com/shazow/urllib3/blob/f9409436f83aeb79fbaf090181cd81b784f1b8ce/urllib3/connectionpool.py#L680  # noqa: E501
         # maxsize is the number of requests to host that are allowed in parallel  # noqa: E501
         # Custom SSL certificates and client certificates: http://urllib3.readthedocs.io/en/latest/advanced-usage.html  # noqa: E501
+
+        self.configuration = configuration
 
         # cert_reqs
         if configuration.verify_ssl:
@@ -134,7 +136,8 @@ class RESTClientObject(object):
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
+                                 (connection, read) timeouts. Falls back to
+                                 ``configuration.request_timeout`` when omitted.
         """
         method = method.upper()
         assert method in ['GET', 'HEAD', 'DELETE', 'POST', 'PUT',
@@ -148,14 +151,17 @@ class RESTClientObject(object):
         post_params = post_params or {}
         headers = headers or {}
 
-        timeout = None
-        if _request_timeout:
-            if isinstance(_request_timeout, (int, ) if six.PY3 else (int, long)):  # noqa: E501,F821
-                timeout = urllib3.Timeout(total=_request_timeout)
-            elif (isinstance(_request_timeout, tuple) and
-                  len(_request_timeout) == 2):
-                timeout = urllib3.Timeout(
-                    connect=_request_timeout[0], read=_request_timeout[1])
+        # Never pass an explicit ``None`` to urllib3: that calls
+        # ``sock.settimeout(None)`` and defeats ``socket.setdefaulttimeout``.
+        timeout = _request_timeout
+        if timeout is None:
+            timeout = getattr(self.configuration, 'request_timeout', None)
+        if isinstance(timeout, (int, float)):
+            timeout = urllib3.Timeout(total=timeout)
+        elif isinstance(timeout, tuple) and len(timeout) == 2:
+            timeout = urllib3.Timeout(connect=timeout[0], read=timeout[1])
+        else:
+            timeout = urllib3.Timeout.DEFAULT_TIMEOUT
 
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'

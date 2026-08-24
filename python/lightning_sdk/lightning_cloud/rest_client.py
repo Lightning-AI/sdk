@@ -75,6 +75,10 @@ def create_swagger_client(check_context: bool = True, with_auth: bool = True):
     # during artifacts to actually reverted and not use the custom certs
     # if present in /grid-cli/grid/cli/cli/artifacts.py
     configuration.ssl_ca_cert = env.SSL_CA_CERT
+    configuration.request_timeout = (
+        env.LIGHTNING_CLOUD_CONNECT_TIMEOUT,
+        env.LIGHTNING_CLOUD_READ_TIMEOUT,
+    )
     api_client = ApiClient(configuration)
     if with_auth:
         api_client.default_headers["Authorization"] = Auth().authenticate()
@@ -189,14 +193,14 @@ class LightningClient(GridRestClient):
 
     Args:
         retry: Whether API calls should follow a retry mechanism with exponential backoff.
-        max_tries: Maximum number of attempts (or -1 to retry forever).
+        max_tries: Maximum number of attempts. Pass ``None`` to retry forever.
         with_auth: Whether to use user's Authorization for the api client.
 
     """
 
     def __init__(self,
                  retry: bool = True,
-                 max_tries: Optional[int] = None,
+                 max_tries: Optional[int] = 10,
                  with_auth: bool = True) -> None:
         super().__init__(api_client=create_swagger_client(with_auth=with_auth))
         if retry:

@@ -132,6 +132,17 @@ export interface SandboxesServiceGetSandboxSnapshotBlobUploadUrlsBody {
   sha256Digests?: string[];
 }
 
+export interface SandboxesServiceKeepSandboxAliveBody {
+  organizationId?: string;
+  /**
+   * Optionally replaces the renewable idle window, in milliseconds. Only an
+   * authenticated user or project key may change it; an in-sandbox activity
+   * reporter leaves it unset and renews the currently configured window.
+   * @format uint64
+   */
+  idleTimeout?: string;
+}
+
 export interface SandboxesServiceRunSandboxCommandBody {
   organizationId?: string;
   command?: string;
@@ -353,15 +364,15 @@ export interface V1CreateSandboxRequest {
    * Whether the sandbox persists its state across restarts via automatic
    * snapshots. Defaults to true.
    *
-   * When true, the controlplane automatically snapshots the sandbox on idle,
-   * sleep, or eviction, and transparently restores it (via the FUSE
-   * snapshot/restore path; see sandbox_fuse_snapshot_restore.md) the next
-   * time the sandbox id is accessed. This makes the sandbox id a durable
-   * handle suitable for long-lived workflow orchestration that may pause
-   * across step boundaries.
+   * When true, the controlplane automatically snapshots the sandbox when it
+   * stops — whether the caller stopped it or its termination deadline
+   * expired — and transparently restores it (via the FUSE snapshot/restore
+   * path; see sandbox_fuse_snapshot_restore.md) the next time the sandbox id
+   * is accessed. This makes the sandbox id a durable handle suitable for
+   * long-lived workflow orchestration that may pause across step boundaries.
    *
    * When false, the sandbox is best-effort ephemeral: state is lost on
-   * stop, idle reclaim, or host reschedule.
+   * stop, eviction, or host reschedule.
    */
   persistent?: boolean;
   /**
@@ -411,6 +422,15 @@ export interface V1CreateSandboxRequest {
    * the same recipe from it. See SandboxWarmSpec.
    */
   warm?: V1SandboxWarmSpec;
+  /**
+   * When set, the sandbox stops after this many milliseconds without activity.
+   * Its termination deadline starts here rather than at `timeout`, and
+   * KeepSandboxAlive pushes it forward. A non-zero `timeout` remains the hard
+   * cap: the idle deadline is clamped to it and never exceeds it. Without one
+   * the sandbox runs for as long as keep-alives keep arriving.
+   * @format uint64
+   */
+  idleTimeout?: string;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -452,6 +472,8 @@ export interface V1GetSandboxSnapshotBlobUploadUrlsResponse {
    */
   existingDigests?: string[];
 }
+
+export type V1KeepSandboxAliveResponse = object;
 
 export type V1KillSandboxCommandResponse = object;
 
@@ -647,6 +669,14 @@ export interface V1Sandbox {
    * get / list — a generated token is not stored in a readable form.
    */
   warmSecrets?: Record<string, string>;
+  /**
+   * Mirrors CreateSandboxRequest.idle_timeout. Zero for sandboxes that only
+   * have the fixed create-time `timeout`. When set, a non-zero `timeout` is
+   * the hard cap the idle deadline is clamped to rather than the deadline
+   * itself.
+   * @format uint64
+   */
+  idleTimeout?: string;
 }
 
 export interface V1SandboxCommand {

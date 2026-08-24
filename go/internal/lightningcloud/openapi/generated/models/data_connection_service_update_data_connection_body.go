@@ -29,6 +29,9 @@ type DataConnectionServiceUpdateDataConnectionBody struct {
 	// aws
 	Aws *V1AwsDataConnection `json:"aws,omitempty"`
 
+	// New total capacity in GiB. Capacity can only be expanded, and zero leaves it unchanged. Managed VAST volumes only, for now.
+	CapacityGb string `json:"capacityGb,omitempty"`
+
 	// efs
 	Efs *V1EfsConfig `json:"efs,omitempty"`
 

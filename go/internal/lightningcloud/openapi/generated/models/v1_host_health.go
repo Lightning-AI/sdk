@@ -30,6 +30,10 @@ type V1HostHealth struct {
 	// fabric manager
 	FabricManager *V1FabricManagerHealth `json:"fabricManager,omitempty"`
 
+	// Present while gpu-create-host-crash.json is blocking or probing GPU VM
+	// creates (GHES fatal PCIe panic or vfio-pci HDA hang on the previous boot).
+	GpuCreateHostCrash *V1GPUCreateHostCrash `json:"gpuCreateHostCrash,omitempty"`
+
 	// node fitness
 	NodeFitness *V1NodeFitness `json:"nodeFitness,omitempty"`
 
@@ -62,6 +66,10 @@ func (m *V1HostHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateFabricManager(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGpuCreateHostCrash(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -135,6 +143,29 @@ func (m *V1HostHealth) validateFabricManager(formats strfmt.Registry) error {
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("fabricManager")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) validateGpuCreateHostCrash(formats strfmt.Registry) error {
+	if swag.IsZero(m.GpuCreateHostCrash) { // not required
+		return nil
+	}
+
+	if m.GpuCreateHostCrash != nil {
+		if err := m.GpuCreateHostCrash.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("gpuCreateHostCrash")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("gpuCreateHostCrash")
 			}
 
 			return err
@@ -271,6 +302,10 @@ func (m *V1HostHealth) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateGpuCreateHostCrash(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateNodeFitness(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -342,6 +377,31 @@ func (m *V1HostHealth) contextValidateFabricManager(ctx context.Context, formats
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("fabricManager")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateGpuCreateHostCrash(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.GpuCreateHostCrash != nil {
+
+		if swag.IsZero(m.GpuCreateHostCrash) { // not required
+			return nil
+		}
+
+		if err := m.GpuCreateHostCrash.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("gpuCreateHostCrash")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("gpuCreateHostCrash")
 			}
 
 			return err
