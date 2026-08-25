@@ -31,6 +31,9 @@ type V1MultiMachineJob struct {
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
+	// Current run attempt for this multi-machine job (1-based). First row is 1.
+	CurrentRunAttempt int64 `json:"currentRunAttempt,omitempty"`
+
 	// desired state
 	DesiredState *V1MultiMachineJobState `json:"desiredState,omitempty"`
 
@@ -43,11 +46,17 @@ type V1MultiMachineJob struct {
 	// Number of machines to use
 	Machines int64 `json:"machines,omitempty"`
 
+	// Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).
+	MaxRunAttempts int64 `json:"maxRunAttempts,omitempty"`
+
 	// Human readable message
 	Message string `json:"message,omitempty"`
 
 	// Required
 	Name string `json:"name,omitempty"`
+
+	// Root multi-machine job id. Children copy the root, not the immediate parent.
+	ParentMultiMachineJobID string `json:"parentMultiMachineJobId,omitempty"`
 
 	// The id of the pipeline that this mmt belongs to
 	PipelineID string `json:"pipelineId,omitempty"`

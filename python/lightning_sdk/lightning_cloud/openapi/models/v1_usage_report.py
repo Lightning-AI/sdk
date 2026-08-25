@@ -48,6 +48,8 @@ class V1UsageReport(object):
         'daily_usage': 'list[V1DailyUsage]',
         'has_more': 'bool',
         'search_after': 'datetime',
+        'search_after_resource_id': 'str',
+        'search_after_resource_type': 'str',
         'total_cost': 'float',
         'total_saved_cost': 'float',
         'total_users': 'int',
@@ -58,17 +60,21 @@ class V1UsageReport(object):
         'daily_usage': 'dailyUsage',
         'has_more': 'hasMore',
         'search_after': 'searchAfter',
+        'search_after_resource_id': 'searchAfterResourceId',
+        'search_after_resource_type': 'searchAfterResourceType',
         'total_cost': 'totalCost',
         'total_saved_cost': 'totalSavedCost',
         'total_users': 'totalUsers',
         'usage': 'usage'
     }
 
-    def __init__(self, daily_usage: 'list[V1DailyUsage]' =None, has_more: 'bool' =None, search_after: 'datetime' =None, total_cost: 'float' =None, total_saved_cost: 'float' =None, total_users: 'int' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
+    def __init__(self, daily_usage: 'list[V1DailyUsage]' =None, has_more: 'bool' =None, search_after: 'datetime' =None, search_after_resource_id: 'str' =None, search_after_resource_type: 'str' =None, total_cost: 'float' =None, total_saved_cost: 'float' =None, total_users: 'int' =None, usage: 'list[V1Usage]' =None):  # noqa: E501
         """V1UsageReport - a model defined in Swagger"""  # noqa: E501
         self._daily_usage = None
         self._has_more = None
         self._search_after = None
+        self._search_after_resource_id = None
+        self._search_after_resource_type = None
         self._total_cost = None
         self._total_saved_cost = None
         self._total_users = None
@@ -80,6 +86,10 @@ class V1UsageReport(object):
             self.has_more = has_more
         if search_after is not None:
             self.search_after = search_after
+        if search_after_resource_id is not None:
+            self.search_after_resource_id = search_after_resource_id
+        if search_after_resource_type is not None:
+            self.search_after_resource_type = search_after_resource_type
         if total_cost is not None:
             self.total_cost = total_cost
         if total_saved_cost is not None:
@@ -155,6 +165,52 @@ class V1UsageReport(object):
         """
 
         self._search_after = search_after
+
+    @property
+    def search_after_resource_id(self) -> 'str':
+        """Gets the search_after_resource_id of this V1UsageReport.  # noqa: E501
+
+        Paired with search_after: pass this back verbatim as GetUsageReportRequest.search_after_resource_id on the next page's request.  # noqa: E501
+
+        :return: The search_after_resource_id of this V1UsageReport.  # noqa: E501
+        :rtype: str
+        """
+        return self._search_after_resource_id
+
+    @search_after_resource_id.setter
+    def search_after_resource_id(self, search_after_resource_id: 'str'):
+        """Sets the search_after_resource_id of this V1UsageReport.
+
+        Paired with search_after: pass this back verbatim as GetUsageReportRequest.search_after_resource_id on the next page's request.  # noqa: E501
+
+        :param search_after_resource_id: The search_after_resource_id of this V1UsageReport.  # noqa: E501
+        :type: str
+        """
+
+        self._search_after_resource_id = search_after_resource_id
+
+    @property
+    def search_after_resource_type(self) -> 'str':
+        """Gets the search_after_resource_type of this V1UsageReport.  # noqa: E501
+
+        Paired with search_after: pass this back verbatim as GetUsageReportRequest.search_after_resource_type on the next page's request.  # noqa: E501
+
+        :return: The search_after_resource_type of this V1UsageReport.  # noqa: E501
+        :rtype: str
+        """
+        return self._search_after_resource_type
+
+    @search_after_resource_type.setter
+    def search_after_resource_type(self, search_after_resource_type: 'str'):
+        """Sets the search_after_resource_type of this V1UsageReport.
+
+        Paired with search_after: pass this back verbatim as GetUsageReportRequest.search_after_resource_type on the next page's request.  # noqa: E501
+
+        :param search_after_resource_type: The search_after_resource_type of this V1UsageReport.  # noqa: E501
+        :type: str
+        """
+
+        self._search_after_resource_type = search_after_resource_type
 
     @property
     def total_cost(self) -> 'float':

@@ -32,6 +32,9 @@ type JobsServiceCreateMultiMachineJobBody struct {
 	// Number of machines to use
 	Machines int64 `json:"machines,omitempty"`
 
+	// Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).
+	MaxRunAttempts int64 `json:"maxRunAttempts,omitempty"`
+
 	// Required
 	Name string `json:"name,omitempty"`
 

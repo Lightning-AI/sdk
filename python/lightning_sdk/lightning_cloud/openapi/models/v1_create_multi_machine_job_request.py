@@ -48,6 +48,7 @@ class V1CreateMultiMachineJobRequest(object):
         'cluster_id': 'str',
         'fault_tolerance': 'V1MultiMachineJobFaultTolerance',
         'machines': 'int',
+        'max_run_attempts': 'int',
         'name': 'str',
         'project_id': 'str',
         'spec': 'V1JobSpec'
@@ -57,16 +58,18 @@ class V1CreateMultiMachineJobRequest(object):
         'cluster_id': 'clusterId',
         'fault_tolerance': 'faultTolerance',
         'machines': 'machines',
+        'max_run_attempts': 'maxRunAttempts',
         'name': 'name',
         'project_id': 'projectId',
         'spec': 'spec'
     }
 
-    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, max_run_attempts: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
         """V1CreateMultiMachineJobRequest - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._fault_tolerance = None
         self._machines = None
+        self._max_run_attempts = None
         self._name = None
         self._project_id = None
         self._spec = None
@@ -77,6 +80,8 @@ class V1CreateMultiMachineJobRequest(object):
             self.fault_tolerance = fault_tolerance
         if machines is not None:
             self.machines = machines
+        if max_run_attempts is not None:
+            self.max_run_attempts = max_run_attempts
         if name is not None:
             self.name = name
         if project_id is not None:
@@ -146,6 +151,29 @@ class V1CreateMultiMachineJobRequest(object):
         """
 
         self._machines = machines
+
+    @property
+    def max_run_attempts(self) -> 'int':
+        """Gets the max_run_attempts of this V1CreateMultiMachineJobRequest.  # noqa: E501
+
+        Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).  # noqa: E501
+
+        :return: The max_run_attempts of this V1CreateMultiMachineJobRequest.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_run_attempts
+
+    @max_run_attempts.setter
+    def max_run_attempts(self, max_run_attempts: 'int'):
+        """Sets the max_run_attempts of this V1CreateMultiMachineJobRequest.
+
+        Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).  # noqa: E501
+
+        :param max_run_attempts: The max_run_attempts of this V1CreateMultiMachineJobRequest.  # noqa: E501
+        :type: int
+        """
+
+        self._max_run_attempts = max_run_attempts
 
     @property
     def name(self) -> 'str':

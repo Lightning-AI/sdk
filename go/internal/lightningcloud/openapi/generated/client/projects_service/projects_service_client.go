@@ -86,8 +86,6 @@ type ClientService interface {
 
 	ProjectsServiceGetProjectRole(params *ProjectsServiceGetProjectRoleParams, opts ...ClientOption) (*ProjectsServiceGetProjectRoleOK, error)
 
-	ProjectsServiceInviteProjectMembership(params *ProjectsServiceInviteProjectMembershipParams, opts ...ClientOption) (*ProjectsServiceInviteProjectMembershipOK, error)
-
 	ProjectsServiceListAPIKeys(params *ProjectsServiceListAPIKeysParams, opts ...ClientOption) (*ProjectsServiceListAPIKeysOK, error)
 
 	ProjectsServiceListMemberships(params *ProjectsServiceListMembershipsParams, opts ...ClientOption) (*ProjectsServiceListMembershipsOK, error)
@@ -691,48 +689,6 @@ func (a *Client) ProjectsServiceGetProjectRole(params *ProjectsServiceGetProject
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ProjectsServiceGetProjectRoleDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-ProjectsServiceInviteProjectMembership projects service invite project membership API
-*/
-func (a *Client) ProjectsServiceInviteProjectMembership(params *ProjectsServiceInviteProjectMembershipParams, opts ...ClientOption) (*ProjectsServiceInviteProjectMembershipOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewProjectsServiceInviteProjectMembershipParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "ProjectsService_InviteProjectMembership",
-		Method:             "POST",
-		PathPattern:        "/v1/projects/{projectId}/invite",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &ProjectsServiceInviteProjectMembershipReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*ProjectsServiceInviteProjectMembershipOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*ProjectsServiceInviteProjectMembershipDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

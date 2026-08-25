@@ -49,7 +49,8 @@ class V1DailyUsage(object):
         'total_completion_tokens': 'str',
         'total_cost': 'float',
         'total_num_messages': 'str',
-        'total_prompt_tokens': 'str'
+        'total_prompt_tokens': 'str',
+        'total_saved_cost': 'float'
     }
 
     attribute_map = {
@@ -57,16 +58,18 @@ class V1DailyUsage(object):
         'total_completion_tokens': 'totalCompletionTokens',
         'total_cost': 'totalCost',
         'total_num_messages': 'totalNumMessages',
-        'total_prompt_tokens': 'totalPromptTokens'
+        'total_prompt_tokens': 'totalPromptTokens',
+        'total_saved_cost': 'totalSavedCost'
     }
 
-    def __init__(self, day: 'datetime' =None, total_completion_tokens: 'str' =None, total_cost: 'float' =None, total_num_messages: 'str' =None, total_prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, day: 'datetime' =None, total_completion_tokens: 'str' =None, total_cost: 'float' =None, total_num_messages: 'str' =None, total_prompt_tokens: 'str' =None, total_saved_cost: 'float' =None):  # noqa: E501
         """V1DailyUsage - a model defined in Swagger"""  # noqa: E501
         self._day = None
         self._total_completion_tokens = None
         self._total_cost = None
         self._total_num_messages = None
         self._total_prompt_tokens = None
+        self._total_saved_cost = None
         self.discriminator = None
         if day is not None:
             self.day = day
@@ -78,6 +81,8 @@ class V1DailyUsage(object):
             self.total_num_messages = total_num_messages
         if total_prompt_tokens is not None:
             self.total_prompt_tokens = total_prompt_tokens
+        if total_saved_cost is not None:
+            self.total_saved_cost = total_saved_cost
 
     @property
     def day(self) -> 'datetime':
@@ -183,6 +188,27 @@ class V1DailyUsage(object):
         """
 
         self._total_prompt_tokens = total_prompt_tokens
+
+    @property
+    def total_saved_cost(self) -> 'float':
+        """Gets the total_saved_cost of this V1DailyUsage.  # noqa: E501
+
+
+        :return: The total_saved_cost of this V1DailyUsage.  # noqa: E501
+        :rtype: float
+        """
+        return self._total_saved_cost
+
+    @total_saved_cost.setter
+    def total_saved_cost(self, total_saved_cost: 'float'):
+        """Sets the total_saved_cost of this V1DailyUsage.
+
+
+        :param total_saved_cost: The total_saved_cost of this V1DailyUsage.  # noqa: E501
+        :type: float
+        """
+
+        self._total_saved_cost = total_saved_cost
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

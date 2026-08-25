@@ -1344,6 +1344,8 @@ class BillingServiceApi(object):
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1375,12 +1377,14 @@ class BillingServiceApi(object):
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1423,6 +1427,10 @@ class BillingServiceApi(object):
             query_params.append(('limit', params['limit']))  # noqa: E501
         if 'search_after' in params:
             query_params.append(('searchAfter', params['search_after']))  # noqa: E501
+        if 'search_after_resource_id' in params:
+            query_params.append(('searchAfterResourceId', params['search_after_resource_id']))  # noqa: E501
+        if 'search_after_resource_type' in params:
+            query_params.append(('searchAfterResourceType', params['search_after_resource_type']))  # noqa: E501
 
         header_params = {}
 
@@ -1683,6 +1691,8 @@ class BillingServiceApi(object):
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1714,12 +1724,14 @@ class BillingServiceApi(object):
         :param str time_zone: UTC offset of the user's timezone
         :param int limit: Optional, max number of entries to return. The UI will always send a limit to ensure we don't crash the grpc client.
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
+        :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1762,6 +1774,10 @@ class BillingServiceApi(object):
             query_params.append(('limit', params['limit']))  # noqa: E501
         if 'search_after' in params:
             query_params.append(('searchAfter', params['search_after']))  # noqa: E501
+        if 'search_after_resource_id' in params:
+            query_params.append(('searchAfterResourceId', params['search_after_resource_id']))  # noqa: E501
+        if 'search_after_resource_type' in params:
+            query_params.append(('searchAfterResourceType', params['search_after_resource_type']))  # noqa: E501
 
         header_params = {}
 
