@@ -11,9 +11,8 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 def ls_studio(path: str) -> None:
     """List contents of a directory in Studio.
 
-    PATH: Studio path in the format
-            lit://<owner>/<teamspace>/studios/<studio>/<directory-path>,
-          or lit:///studios/<studio>/<directory-path> for the current teamspace.
+    PATH: Studio path in the format lit://<owner>/<teamspace>/studios/<studio>/<directory-path>,
+    or lit:///studios/<studio>/<directory-path> for the current teamspace.
 
     Example:
         lightning studio ls lit://<owner>/<my-teamspace>/studios/<my-studio>/data
