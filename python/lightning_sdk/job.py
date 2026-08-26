@@ -25,6 +25,8 @@ from lightning_sdk.utils.resolve import (
 )
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from lightning_sdk.machine import CloudProvider, Machine
     from lightning_sdk.organization import Organization
     from lightning_sdk.studio import Studio
@@ -533,6 +535,24 @@ class Job(metaclass=TrackCallsMeta):
             raise RuntimeError(
                 f"Job {self._name} does not exist in Teamspace {self.teamspace.name}. Did you delete it?"
             ) from None
+
+    @property
+    def started_at(self) -> Optional["datetime"]:
+        """When the job started running, or ``None`` if it hasn't started yet."""
+        job = self._latest_job
+        if self.is_multi_machine:
+            status = getattr(job, "status", None)
+            return status.started_at if status is not None else None
+        return getattr(job, "started_at", None)
+
+    @property
+    def stopped_at(self) -> Optional["datetime"]:
+        """When the job stopped running, or ``None`` if it hasn't stopped yet."""
+        job = self._latest_job
+        if self.is_multi_machine:
+            status = getattr(job, "status", None)
+            return status.stopped_at if status is not None else None
+        return getattr(job, "stopped_at", None)
 
     @property
     def machine(self) -> Union["Machine", str]:
