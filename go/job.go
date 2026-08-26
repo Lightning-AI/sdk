@@ -35,6 +35,8 @@ type Job struct {
 	mmtID       string
 	publicIP    string
 	totalCost   float32
+	startedAt   time.Time
+	stoppedAt   time.Time
 
 	artifactsSource      string
 	artifactsDestination string
@@ -268,6 +270,24 @@ func (j *Job) TotalCost() float32 {
 		return 0
 	}
 	return j.totalCost
+}
+
+// StartedAt returns when the job started running, or the zero time if it
+// hasn't started yet.
+func (j *Job) StartedAt() time.Time {
+	if j == nil {
+		return time.Time{}
+	}
+	return j.startedAt
+}
+
+// StoppedAt returns when the job stopped running, or the zero time if it
+// hasn't stopped yet.
+func (j *Job) StoppedAt() time.Time {
+	if j == nil {
+		return time.Time{}
+	}
+	return j.stoppedAt
 }
 
 // ArtifactsSource returns the local artifacts source path.
@@ -705,6 +725,8 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		mmtID:       model.MultiMachineJobID,
 		publicIP:    model.PublicIPAddress,
 		totalCost:   model.TotalCost,
+		startedAt:   time.Time(model.StartedAt),
+		stoppedAt:   time.Time(model.StoppedAt),
 	}
 	if model.Spec != nil {
 		result.machine = model.Spec.InstanceName

@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -335,6 +336,33 @@ func TestMMTGetMapsTopLevelStudioID(t *testing.T) {
 	assert.Falsef(t, existing.StudioID() != "studio-1",
 		"StudioID = %q, want studio-1", existing.StudioID())
 
+}
+
+func TestMMTExposesStartAndStopTimes(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "mmt-1",
+			"name":      "dist-train",
+			"projectId": "project-1",
+			"machines":  4,
+			"state":     "stopped",
+			"status": map[string]any{
+				"startedAt": "2026-08-02T12:00:00Z",
+				"stoppedAt": "2026-08-02T13:00:00Z",
+			},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
+	require.NoErrorf(t, err,
+		"GetMMT returned error")
+	assert.Truef(t, existing.StartedAt().Equal(time.Date(2026, 8, 2, 12, 0, 0, 0, time.UTC)),
+		"StartedAt = %v, want 2026-08-02T12:00:00Z", existing.StartedAt())
+	assert.Truef(t, existing.StoppedAt().Equal(time.Date(2026, 8, 2, 13, 0, 0, 0, time.UTC)),
+		"StoppedAt = %v, want 2026-08-02T13:00:00Z", existing.StoppedAt())
 }
 
 func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
