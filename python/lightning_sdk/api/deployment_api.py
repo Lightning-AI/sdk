@@ -1115,6 +1115,10 @@ def _validate_remote_upload_path_target(*, client: Any, teamspace_id: str, remot
         return
 
     parsed = parse_lit_url(normalized)
+    if parsed.get("owner") is None and parsed.get("teamspace") is None:
+        # Relative form (lit:///<path>) targets the current teamspace by definition.
+        return
+
     parsed_teamspace = str(parsed.get("teamspace", "") or "").strip()
     if not parsed_teamspace:
         raise ValueError("remote_path lit URL must include a non-empty teamspace")

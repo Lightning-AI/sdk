@@ -5,25 +5,34 @@ from typing import Any, Optional
 import rich_click as click
 
 from lightning_sdk.filesystem import Filesystem
+from lightning_sdk.utils.filesystem import parse_lit_url as _parse_lit_url
 
 
 def parse_lit_url(url: str) -> str:
-    """Parse lit:// URL and extract resource type."""
+    """Parse a lit:// URL and extract its resource type (the first drive path segment)."""
     if not url.startswith("lit://"):
         raise ValueError("URL must start with 'lit://'")
 
-    path = url.split("://")[-1].split("/")
-    if len(path) < 3 or not path[2]:
-        raise ValueError("Invalid lit URL format. Expected 'lit://<owner>/<teamspace>/<resource_type>'")
-    return path[2].lower()
+    destination = _parse_lit_url(url)["destination"] or ""
+    resource_type = destination.split("/")[0]
+    if not resource_type:
+        raise ValueError(
+            f"Invalid lit URL {url!r}. Expected a resource type after the teamspace, e.g. "
+            "'lit://<owner>/<teamspace>/<resource_type>/...' or 'lit:///<resource_type>/...'"
+        )
+    return resource_type.lower()
 
 
 def _canonicalize_lit_resource_type(url: str) -> str:
     """Normalize the lit:// resource type segment to its canonical lowercase form."""
-    parse_lit_url(url)
-    path = url.split("://", maxsplit=1)[-1].split("/")
-    path[2] = path[2].lower()
-    return "lit://" + "/".join(path)
+    resource_type = parse_lit_url(url)
+    parsed = _parse_lit_url(url)
+    destination = (parsed["destination"] or "").split("/")
+    destination[0] = resource_type
+    joined = "/".join(destination)
+    if parsed["teamspace"] is None:
+        return f"lit:///{joined}"
+    return f"lit://{parsed['owner']}/{parsed['teamspace']}/{joined}"
 
 
 def route_cp_operation(source: str, destination: Optional[str], **options: Any) -> None:

@@ -32,7 +32,7 @@ def test_ls_prints_entries_with_directory_suffix(capsys) -> None:
             {"path": "summary.html", "type": "blob", "size": 10},
         ]
 
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.side_effect = list_files
@@ -45,7 +45,7 @@ def test_ls_file_prints_its_path(capsys) -> None:
     def list_files(teamspace_id, path, recursive):
         return [{"path": "summary.html", "type": "blob", "size": 10}]
 
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.side_effect = list_files
@@ -55,7 +55,7 @@ def test_ls_file_prints_its_path(capsys) -> None:
 
 
 def test_ls_missing_path_raises() -> None:
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.return_value = []
@@ -79,7 +79,7 @@ def test_ls_json_outputs_entries(capsys) -> None:
             {"path": "summary.html", "type": "blob", "size": 10, "clusterId": "cluster-a"},
         ]
 
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.side_effect = list_files
@@ -98,7 +98,7 @@ def test_ls_json_file_outputs_its_entry(capsys) -> None:
     def list_files(teamspace_id, path, recursive):
         return [{"path": "summary.html", "type": "blob", "size": 10, "clusterId": "cluster-a"}]
 
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.side_effect = list_files
@@ -120,7 +120,7 @@ def test_ls_recursive_lists_full_relative_paths(capsys) -> None:
             ]
         raise AssertionError("expected a recursive listing")
 
-    with mock.patch("lightning_sdk.cli.ls.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
+    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=_fake_teamspace()), mock.patch(
         "lightning_sdk.cli.ls.FilesystemApi"
     ) as mock_api_cls:
         mock_api_cls.return_value.list_files.side_effect = list_files

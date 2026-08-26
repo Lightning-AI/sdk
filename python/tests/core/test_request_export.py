@@ -321,6 +321,7 @@ def test_export_records_partial_remote_uploads_when_jsonl_upload_fails(tmp_path,
         "teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
         "/teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
         "lit://my-org/my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
+        "lit:///lightning_storage/blackbox-exports/daily/2026-04-22",
         "lightning_storage//blackbox-exports//daily/2026-04-22",
     ],
 )
@@ -385,8 +386,9 @@ def test_export_rejects_lit_remote_path_for_other_teamspace(tmp_path, remote_pat
             "non-empty teamspace",
         ),
         (
+            # A relative URL is valid, but its path must still be rooted at lightning_storage.
             "lit:///my-teamspace/lightning_storage/blackbox-exports/daily/2026-04-22",
-            "non-empty owner",
+            "lightning_storage destinations only",
         ),
     ],
 )

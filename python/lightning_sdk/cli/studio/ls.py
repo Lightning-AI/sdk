@@ -2,7 +2,7 @@
 
 import rich_click as click
 
-from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.studio.paths import parse_studio_path, resolve_studio
 from lightning_sdk.cli.utils.logging import LightningCommand
 
 
@@ -12,10 +12,12 @@ def ls_studio(path: str) -> None:
     """List contents of a directory in Studio.
 
     PATH: Studio path in the format
-            lit://<owner>/<teamspace>/studios/<studio>/<directory-path>
+            lit://<owner>/<teamspace>/studios/<studio>/<directory-path>,
+          or lit:///studios/<studio>/<directory-path> for the current teamspace.
 
     Example:
         lightning studio ls lit://<owner>/<my-teamspace>/studios/<my-studio>/data
+        lightning studio ls lit:///studios/<my-studio>/data
 
     """
     return ls_impl(path=path)

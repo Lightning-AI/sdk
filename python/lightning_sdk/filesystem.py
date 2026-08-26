@@ -6,9 +6,8 @@ from typing import Generator, List, Optional, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.utils import _RemoteApiError, _tree_path_info
-from lightning_sdk.cli.utils.filesystem import resolve_teamspace
+from lightning_sdk.cli.utils.filesystem import resolve_lit_url
 from lightning_sdk.teamspace import Teamspace
-from lightning_sdk.utils.filesystem import parse_lit_url
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 logger = logging.getLogger(__name__)
@@ -30,14 +29,13 @@ class Filesystem(metaclass=TrackCallsMeta):
         """List the immediate children of a remote directory.
 
         Args:
-            uri: Remote path in ``lit://[owner/][teamspace/]destination`` format.
+            uri: Remote path in ``lit://<owner>/<teamspace>/<path>`` format, or
+                ``lit:///<path>`` for the current teamspace.
 
         Returns:
             List[str]: Basenames of the entries directly inside the given directory.
         """
-        path_result = parse_lit_url(uri)
-        remote_path = path_result["destination"] or ""
-        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+        selected_teamspace, remote_path = resolve_lit_url(uri)
         output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=False)
         return [os.path.basename(item["path"]) for item in output]
 
@@ -45,16 +43,15 @@ class Filesystem(metaclass=TrackCallsMeta):
         """Recursively walk a remote directory tree, yielding ``(dirpath, subdirs, files)`` tuples.
 
         Args:
-            url: Remote path in ``lit://[owner/][teamspace/]destination`` format.
+            url: Remote path in ``lit://<owner>/<teamspace>/<path>`` format, or
+                ``lit:///<path>`` for the current teamspace.
 
         Returns:
             Generator[Tuple[str, List[str], List[str]], None, None]: Each tuple contains the
             current directory path, a list of its immediate subdirectory names, and a list of
             its immediate file names — mirroring the behaviour of :func:`os.walk`.
         """
-        path_result = parse_lit_url(url)
-        remote_path = path_result["destination"] or ""
-        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+        selected_teamspace, remote_path = resolve_lit_url(url)
         output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=True)
 
         dirs: dict[str, list[str]] = {}
@@ -81,7 +78,8 @@ class Filesystem(metaclass=TrackCallsMeta):
         """Remove a file or directory from the teamspace drive.
 
         Args:
-            path: Remote path in ``lit://<owner>/<teamspace>/<path>`` format.
+            path: Remote path in ``lit://<owner>/<teamspace>/<path>`` format, or
+                ``lit:///<path>`` for the current teamspace.
             recursive: Required to remove a directory and everything under it.
 
         Raises:
@@ -89,11 +87,10 @@ class Filesystem(metaclass=TrackCallsMeta):
             ValueError: If the path is a directory and ``recursive`` is ``False``,
                 or the path has no file or directory component.
         """
-        path_result = parse_lit_url(path)
-        remote_path = (path_result["destination"] or "").strip("/")
+        selected_teamspace, remote_path = resolve_lit_url(path)
+        remote_path = remote_path.strip("/")
         if not remote_path:
             raise ValueError("Refusing to remove the teamspace root; pass a file or directory path.")
-        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
 
         def list_entries(folder: str) -> List[dict]:
             return self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=folder, recursive=False)
@@ -151,11 +148,8 @@ class Filesystem(metaclass=TrackCallsMeta):
         if not source_is_lit and not dest_is_lit:
             raise ValueError("At least one path must be a lit://")
 
-        path_result = parse_lit_url(source if source_is_lit else destination)
-        remote_path = path_result["destination"] or ""
+        selected_teamspace, remote_path = resolve_lit_url(source if source_is_lit else destination)
         local_path = destination if source_is_lit else source
-
-        selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
         if source_is_lit:
             # download
             parent = os.path.dirname(remote_path.strip("/"))

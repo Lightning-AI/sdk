@@ -206,19 +206,21 @@ def dataset() -> None:
 def cp(_ctx: click.Context) -> None:
     """Copy between local, Studios, Drive.
 
-    Every lit:// URL must include a resource root right after the teamspace that
-    tells Lightning where to send the file. There is no default - a URL without
-    a root will fail.
+    Every lit:// URL must include a resource root at the start of its drive path
+    that tells Lightning where to send the file. There is no default - a URL
+    without a root will fail.
 
     URL formats:
       Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>
       Teamspace drives: lit://<owner>/<teamspace>/uploads/<path>
+      Current teamspace (relative): lit:///<resource-root>/<path>
 
     Examples:
       lightning cp source.txt lit://<owner>/<my-teamspace>/studios/<my-studio>/destination.txt
       lightning cp -r source_folder/ lit://<owner>/<my-teamspace>/studios/<my-studio>/destination_folder/
       lightning cp source.txt lit://<owner>/<my-teamspace>/uploads/destination.txt
-      lightning cp -r source_folder/ lit://<owner>/<my-teamspace>/uploads/destination_folder/
+      lightning cp source.txt lit:///uploads/destination.txt
+      lightning cp -r source_folder/ lit:///studios/<my-studio>/destination_folder/
     """
 
 
@@ -239,9 +241,11 @@ def edit(_ctx: click.Context) -> None:
     URL formats:
       Studios:          lit://<owner>/<teamspace>/studios/<studio-name>/<path>
       Teamspace drives: lit://<owner>/<teamspace>/uploads/<path>
+      Current teamspace (relative): lit:///<resource-root>/<path>
 
     Examples:
       lightning edit lit://<owner>/<my-teamspace>/studios/<my-studio>/notes.txt
+      lightning edit lit:///studios/<my-studio>/notes.txt
       lightning edit lit://<owner>/<my-teamspace>/uploads/config.yaml --editor "code -w"
     """
 

@@ -25,5 +25,14 @@ def test_parse_lit_url_lightning_storage():
 
 
 def test_parse_lit_url_missing_resource_type():
-    with pytest.raises(ValueError, match="Invalid lit URL format"):
+    with pytest.raises(ValueError, match="Expected a resource type after the teamspace"):
         parse_lit_url("lit://org/teamspace")
+
+
+def test_parse_lit_url_relative_form():
+    assert parse_lit_url("lit:///uploads/my-file") == "uploads"
+
+
+def test_parse_lit_url_relative_form_missing_resource_type():
+    with pytest.raises(ValueError, match="Expected a resource type"):
+        parse_lit_url("lit:///")

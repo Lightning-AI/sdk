@@ -3,7 +3,7 @@
 import rich_click as click
 from rich.console import Console
 
-from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.studio.paths import parse_studio_path, resolve_studio
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.studio import Studio
 
@@ -15,11 +15,12 @@ from lightning_sdk.studio import Studio
 def rm_studio_file(path: str, recursive: bool = False, force: bool = False) -> None:
     """Remove a Studio file or directory.
 
-    PATH: Studio path to remove. Use the format lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
+    PATH: Studio path to remove. Use the format lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>,
+    or lit:///studios/<my-studio>/<filepath> for the current teamspace.
 
     Example:
         lightning studio rm lit://<owner>/<my-teamspace>/studios/<my-studio>/file.txt
-        lightning studio rm -r lit://<owner>/<my-teamspace>/studios/<my-studio>/folder/
+        lightning studio rm -r lit:///studios/<my-studio>/folder/
 
     """
     return rm_impl(path=path, recursive=recursive, force=force)

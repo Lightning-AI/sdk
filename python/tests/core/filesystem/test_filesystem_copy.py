@@ -32,8 +32,8 @@ def fake_path_result():
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_download_file(
     mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace, tmp_path
 ):
@@ -74,8 +74,8 @@ def test_copy_download_file(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_download_folder(
     mock_parse_lit_url,
     mock_resolve,
@@ -121,8 +121,8 @@ def test_copy_download_folder(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers", return_value=FAKE_AUTH_HEADERS)
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_raises_if_directory_without_recursive(
     mock_parse_lit_url, mock_resolve, _mock_authenticate, mock_client_cls, mock_get, fake_teamspace
 ):
@@ -144,8 +144,8 @@ def test_copy_raises_if_directory_without_recursive(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers", return_value=FAKE_AUTH_HEADERS)
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_raises_if_remote_file_not_found(
     mock_parse_lit_url, mock_resolve, _mock_authenticate, mock_client_cls, mock_get, fake_teamspace, fake_path_result
 ):
@@ -178,10 +178,10 @@ def _upload_fs(fake_teamspace, destination):
     fs._filesystem_api = mock.Mock()
     patches = (
         mock.patch(
-            "lightning_sdk.filesystem.parse_lit_url",
+            "lightning_sdk.cli.utils.filesystem.parse_lit_url",
             return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": destination},
         ),
-        mock.patch("lightning_sdk.filesystem.resolve_teamspace", return_value=fake_teamspace),
+        mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace),
     )
     return fs, patches
 

@@ -5,10 +5,9 @@ import rich_click as click
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.utils import _tree_path_info
 from lightning_sdk.cli.cp.completion import complete_remote_path
-from lightning_sdk.cli.utils.filesystem import resolve_teamspace
+from lightning_sdk.cli.utils.filesystem import resolve_lit_url
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.utils.filesystem import parse_lit_url
 
 
 @click.command("ls", cls=LightningCommand)
@@ -18,12 +17,14 @@ from lightning_sdk.utils.filesystem import parse_lit_url
 def ls(path: str, recursive: bool = False, as_json: bool = False) -> None:
     """List contents of a teamspace drive directory.
 
-    PATH: Drive path in the format lit://<owner>/<teamspace>/<directory-path>.
+    PATH: Drive path in the format lit://<owner>/<teamspace>/<directory-path>,
+    or lit:///<directory-path> for the current teamspace.
     The teamspace root lists the drive's top-level folders (studios, uploads, ...).
 
     Examples:
         lightning ls lit://<owner>/<my-teamspace>/
         lightning ls lit://<owner>/<my-teamspace>/artifacts/reports
+        lightning ls lit:///artifacts/reports
         lightning ls -r lit://<owner>/<my-teamspace>/artifacts/reports
         lightning ls --json lit://<owner>/<my-teamspace>/artifacts/reports
 
@@ -35,9 +36,8 @@ def ls_impl(path: str, recursive: bool = False, as_json: bool = False) -> None:
     if not path.startswith("lit://"):
         raise ValueError("Path must be a drive path starting with 'lit://'.")
 
-    path_result = parse_lit_url(path)
-    remote_path = (path_result["destination"] or "").strip("/")
-    selected_teamspace = resolve_teamspace(path_result["teamspace"], path_result["owner"])
+    selected_teamspace, remote_path = resolve_lit_url(path)
+    remote_path = remote_path.strip("/")
 
     filesystem_api = FilesystemApi()
 

@@ -115,3 +115,11 @@ def test_cp_download_preserves_trailing_slash_for_directory_targets(tmp_path: Pa
 def test_cp_studio_root_without_trailing_slash_raises():
     with pytest.raises(ValueError, match="add a trailing '/'"):
         cp_impl(source="lit://owner/teamspace/studios/my-studio", destination="/local/out")
+
+
+@mock_command_logging
+def test_cp_help_shows_deprecation_warning():
+    result_text = command_text("lightning studio cp --help")
+    assert "Deprecation warning:" in result_text
+    assert "lightning cp" in result_text
+    assert "Note the URL format differs" in result_text

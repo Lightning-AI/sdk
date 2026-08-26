@@ -34,8 +34,8 @@ def fake_path_result():
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
 )
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_walk_yields_os_walk_style_tuples(
     mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get, fake_teamspace, fake_path_result
 ):
@@ -67,8 +67,8 @@ def test_walk_yields_os_walk_style_tuples(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
 )
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_walk_flat_directory(
     mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get, fake_teamspace, fake_path_result
 ):
@@ -97,8 +97,8 @@ def test_walk_flat_directory(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
 )
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_walk_empty(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get, fake_teamspace, fake_path_result):
     mock_parse_lit_url.return_value = fake_path_result
     mock_resolve.return_value = fake_teamspace
@@ -118,8 +118,8 @@ def test_walk_empty(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get,
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
 )
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_walk_is_recursive(
     mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get, fake_teamspace, fake_path_result
 ):
@@ -142,8 +142,8 @@ def test_walk_is_recursive(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value=FAKE_AUTH_HEADERS),
 )
-@mock.patch("lightning_sdk.filesystem.resolve_teamspace")
-@mock.patch("lightning_sdk.filesystem.parse_lit_url")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_walk_passes_correct_teamspace_id(mock_parse_lit_url, mock_resolve, mock_client_cls, mock_get):
     mock_parse_lit_url.return_value = {"teamspace": "my-teamspace", "owner": "my-org", "destination": REMOTE_PATH}
     ts = mock.MagicMock()

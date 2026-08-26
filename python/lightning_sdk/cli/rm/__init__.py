@@ -14,10 +14,12 @@ from lightning_sdk.filesystem import Filesystem
 def rm(path: str, recursive: bool = False, force: bool = False) -> None:
     """Remove a file or directory from a teamspace drive.
 
-    PATH: Drive path to remove, in the format lit://<owner>/<teamspace>/<path>.
+    PATH: Drive path to remove, in the format lit://<owner>/<teamspace>/<path>,
+    or lit:///<path> for the current teamspace.
 
     Examples:
         lightning rm lit://<owner>/<my-teamspace>/uploads/file.txt
+        lightning rm lit:///uploads/file.txt
         lightning rm -r lit://<owner>/<my-teamspace>/artifacts/reports/
 
     """

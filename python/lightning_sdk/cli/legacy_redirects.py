@@ -163,3 +163,35 @@ class DeprecatedGroup(LightningGroup):
 
 def build_hidden_alias_group(name: str, target_group: click.Group) -> HiddenAliasGroup:
     return HiddenAliasGroup(name=name, target_group=target_group)
+
+
+def mark_deprecated_command(cmd: click.Command, replacement: str, detail: str | None = None) -> click.Command:
+    """Mark a still-functional command as deprecated in favor of ``replacement``.
+
+    Unlike :class:`DeprecatedForwardCommand`, the command keeps its own behavior; a
+    warning is shown on every invocation and prepended to its help text. ``detail``
+    is appended to the warning — use it when switching commands takes more than a
+    rename (e.g. a different URL format).
+    """
+    dynamic_cmd = cast(Any, cmd)
+    if getattr(dynamic_cmd, "_lightning_deprecation_wrapped", False):
+        return cmd
+
+    original_invoke = cmd.invoke
+    original_get_help = cmd.get_help
+
+    def _warning(ctx: click.Context) -> str:
+        message = _format_deprecation_warning(ctx.command_path, replacement)
+        return f"{message} {detail}" if detail else message
+
+    def _deprecated_invoke(ctx: click.Context) -> object:
+        click.secho(_warning(ctx), fg="yellow", err=True)
+        return original_invoke(ctx)
+
+    def _deprecated_get_help(ctx: click.Context) -> str:
+        return f"{_warning(ctx)}\n\n{original_get_help(ctx)}"
+
+    dynamic_cmd.invoke = _deprecated_invoke
+    dynamic_cmd.get_help = _deprecated_get_help
+    dynamic_cmd._lightning_deprecation_wrapped = True
+    return cmd

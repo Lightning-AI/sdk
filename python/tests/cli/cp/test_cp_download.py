@@ -38,7 +38,7 @@ def test_route_cp_raises_if_both_local():
 
 def test_route_cp_raises_for_invalid_short_lit_url():
     """Test that malformed short lit URLs still raise a clear ValueError."""
-    with pytest.raises(ValueError, match="Invalid lit URL format"):
+    with pytest.raises(ValueError, match="Expected a resource type after the teamspace"):
         route_cp_operation(
             source="lit://my-org/my-teamspace",
             destination="/local/model.ckpt",
@@ -190,6 +190,26 @@ def test_route_cp_download_canonicalizes_mixed_case_resource_type():
         mock_fs.copy.assert_called_once_with(
             source="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
             destination="/local/model.ckpt",
+            recursive=False,
+            progress_bar=True,
+            cloud_account=None,
+        )
+
+
+def test_route_cp_relative_url_canonicalizes_and_delegates():
+    """Test that relative lit:/// URLs are accepted and canonicalized before dispatch."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="/local/model.ckpt",
+            destination="lit:///Uploads/model.ckpt",
+            recursive=False,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="/local/model.ckpt",
+            destination="lit:///uploads/model.ckpt",
             recursive=False,
             progress_bar=True,
             cloud_account=None,

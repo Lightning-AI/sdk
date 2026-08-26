@@ -226,3 +226,23 @@ def test_remote_only_completion_walks_lit_paths(_accessible_teamspaces):
     parameter = next(parameter for parameter in cp.params if parameter.name == "source")
 
     assert _values(complete_remote_path(ctx, parameter, "lit://a")) == ["lit://acme/"]
+
+
+@patch("lightning_sdk.utils.resolve._resolve_teamspace")
+@patch("lightning_sdk.cli.cp.completion.FilesystemApi")
+def test_remote_completion_relative_form_uses_current_teamspace(filesystem_api, resolve_teamspace):
+    resolve_teamspace.return_value = SimpleNamespace(id="project-1")
+    filesystem_api.return_value.list_files.return_value = [
+        {"path": "artifacts", "type": "tree"},
+        {"path": "uploads", "type": "tree"},
+    ]
+
+    items = _complete_argument("source", "lit:///u")
+
+    assert _values(items) == ["lit:///uploads/"]
+    filesystem_api.return_value.list_files.assert_called_once_with("project-1", "", recursive=False)
+
+
+@patch("lightning_sdk.utils.resolve._resolve_teamspace", return_value=None)
+def test_remote_completion_relative_form_without_current_teamspace_is_empty(_resolve_teamspace):
+    assert _complete_argument("source", "lit:///u") == []
