@@ -1,6 +1,7 @@
 """Job list command."""
 
 from contextlib import suppress
+from datetime import datetime
 from typing import Optional
 
 import rich_click as click
@@ -34,7 +35,8 @@ from lightning_sdk.models import _list_teamspaces
     "--sort_by",
     default=None,
     type=click.Choice(
-        ["name", "teamspace", "status", "studio", "machine", "image", "cloud-account"], case_sensitive=False
+        ["name", "teamspace", "status", "studio", "machine", "image", "cloud-account", "started", "stopped"],
+        case_sensitive=False,
     ),
     help="the attribute to sort the jobs by.",
 )
@@ -69,6 +71,8 @@ def list_jobs(
                     "studio": job.studio_name,
                     "image": job.image,
                     "status": str(job.status) if job.status is not None else None,
+                    "started_at": getattr(job, "started_at", None),
+                    "stopped_at": getattr(job, "stopped_at", None),
                     "machine": str(job.machine),
                     "num_machines": getattr(job, "num_machines", 1),
                     "total_cost": round(job.total_cost, 3),
@@ -76,14 +80,37 @@ def list_jobs(
                 }
             )
 
-    sort_key = "_cloud_account" if sort_by == "cloud-account" else sort_by or "name"
+    sort_by = sort_by or "name"
+    sort_key = {"cloud-account": "_cloud_account", "started": "started_at", "stopped": "stopped_at"}.get(
+        sort_by, sort_by
+    )
     rows.sort(key=lambda row: str(row.get(sort_key) or ""))
     if as_json:
-        echo_json([{key: value for key, value in row.items() if not key.startswith("_")} for row in rows])
+        echo_json(
+            [
+                {
+                    key: value.isoformat() if isinstance(value, datetime) else value
+                    for key, value in row.items()
+                    if not key.startswith("_")
+                }
+                for row in rows
+            ]
+        )
         return
 
     table = Table(pad_edge=True)
-    for column in ("Name", "Teamspace", "Studio", "Image", "Status", "Machine", "Num Machines", "Total Cost"):
+    for column in (
+        "Name",
+        "Teamspace",
+        "Studio",
+        "Image",
+        "Status",
+        "Started",
+        "Stopped",
+        "Machine",
+        "Num Machines",
+        "Total Cost",
+    ):
         table.add_column(column)
     for row in rows:
         table.add_row(
@@ -92,8 +119,14 @@ def list_jobs(
             str(row["studio"] or ""),
             str(row["image"] or ""),
             str(row["status"] or ""),
+            _format_timestamp(row["started_at"]),
+            _format_timestamp(row["stopped_at"]),
             str(row["machine"] or ""),
             str(row["num_machines"]),
             f"{row['total_cost']:.3f}",
         )
     Console().print(table)
+
+
+def _format_timestamp(value: object) -> str:
+    return value.strftime("%Y-%m-%d %H:%M") if isinstance(value, datetime) else ""

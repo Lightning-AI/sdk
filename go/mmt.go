@@ -27,6 +27,8 @@ type MMT struct {
 	image       string
 	studioID    string
 	totalCost   float32
+	startedAt   time.Time
+	stoppedAt   time.Time
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -247,6 +249,24 @@ func (m *MMT) TotalCost() float32 {
 		return 0
 	}
 	return m.totalCost
+}
+
+// StartedAt returns when the MMT's machines started running, or the zero time
+// if they haven't started yet.
+func (m *MMT) StartedAt() time.Time {
+	if m == nil {
+		return time.Time{}
+	}
+	return m.startedAt
+}
+
+// StoppedAt returns when the MMT stopped running, or the zero time if it
+// hasn't stopped yet.
+func (m *MMT) StoppedAt() time.Time {
+	if m == nil {
+		return time.Time{}
+	}
+	return m.stoppedAt
 }
 
 // GetMMT returns an existing MMT by name or ID.
@@ -631,6 +651,10 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 	}
 	if model.State != nil {
 		result.status = string(*model.State)
+	}
+	if model.Status != nil {
+		result.startedAt = time.Time(model.Status.StartedAt)
+		result.stoppedAt = time.Time(model.Status.StoppedAt)
 	}
 	if model.Spec != nil {
 		result.machine = model.Spec.InstanceName

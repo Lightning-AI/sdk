@@ -7,12 +7,36 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
 )
+
+func TestJobExposesStartAndStopTimes(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-1",
+			"name":      "train",
+			"projectId": "project-1",
+			"state":     "running",
+			"startedAt": "2026-08-01T12:00:00Z",
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	existing, err := lit.GetJob("train", lit.JobOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Truef(t, existing.StartedAt().Equal(time.Date(2026, 8, 1, 12, 0, 0, 0, time.UTC)),
+		"StartedAt = %v, want 2026-08-01T12:00:00Z", existing.StartedAt())
+	assert.Truef(t, existing.StoppedAt().IsZero(),
+		"StoppedAt = %v, want zero time", existing.StoppedAt())
+}
 
 func TestJobGetWithIDUsesSimpleStruct(t *testing.T) {
 	j, err := lit.GetJob("train", lit.JobOptions{ID: "job-1", Teamspace: mustTeamspace(t, "project-1", "")})

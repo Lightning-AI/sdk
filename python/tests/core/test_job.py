@@ -10,6 +10,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateJobBody,
     V1Job,
     V1JobSpec,
+    V1MultiMachineJob,
+    V1MultiMachineJobStatus,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
@@ -254,6 +256,46 @@ def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
     assert job.private_ip_address == "10.0.0.7"
     assert job.placement_group_id == "pg-1"
     assert job.rank == 3
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_exposes_start_and_stop_times(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._prevent_refetch_latest = True
+    job._attach_job(
+        V1Job(
+            id="job-123",
+            name="test-job",
+            started_at=datetime(2026, 8, 1, 12, 0, tzinfo=timezone.utc),
+            spec=V1JobSpec(),
+        )
+    )
+
+    assert job.started_at == datetime(2026, 8, 1, 12, 0, tzinfo=timezone.utc)
+    assert job.stopped_at is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_multi_machine_job_exposes_start_and_stop_times(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-mmt", teamspace, _fetch_job=False)
+    job._prevent_refetch_latest = True
+    job._attach_job(
+        V1MultiMachineJob(
+            id="mmt-123",
+            name="test-mmt",
+            machines=4,
+            status=V1MultiMachineJobStatus(
+                started_at=datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc),
+                stopped_at=datetime(2026, 8, 2, 13, 0, tzinfo=timezone.utc),
+            ),
+        )
+    )
+
+    assert job.is_multi_machine
+    assert job.started_at == datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc)
+    assert job.stopped_at == datetime(2026, 8, 2, 13, 0, tzinfo=timezone.utc)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

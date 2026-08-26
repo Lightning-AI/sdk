@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -37,6 +38,8 @@ def _teamspace_with_jobs() -> SimpleNamespace:
         image="ubuntu",
         status="Running",
         machine="CPU",
+        started_at=datetime(2026, 8, 1, 12, 0, tzinfo=timezone.utc),
+        stopped_at=datetime(2026, 8, 1, 13, 0, tzinfo=timezone.utc),
         total_cost=1.0,
     )
     multi = SimpleNamespace(
@@ -47,6 +50,8 @@ def _teamspace_with_jobs() -> SimpleNamespace:
         status="Running",
         machine="CPU",
         num_machines=4,
+        started_at=datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc),
+        stopped_at=None,
         total_cost=4.0,
     )
     teamspace.jobs = [single, multi]
@@ -67,6 +72,32 @@ def test_job_list_includes_single_and_multi_machine_jobs() -> None:
         ("distributed", 4),
         ("single", 1),
     ]
+
+
+@mock_command_logging
+def test_job_list_includes_and_sorts_by_timestamps() -> None:
+    teamspace = _teamspace_with_jobs()
+
+    with patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace):
+        result = CliRunner().invoke(list_jobs, ["--sort-by", "started", "--json"])
+
+    assert result.exit_code == 0, result.output
+    rows = json.loads(result.output)
+    assert [row["name"] for row in rows] == ["single", "distributed"]
+    assert rows[0]["started_at"] == "2026-08-01T12:00:00+00:00"
+    assert rows[0]["stopped_at"] == "2026-08-01T13:00:00+00:00"
+    assert rows[1]["stopped_at"] is None
+
+
+@mock_command_logging
+def test_job_list_sort_by_stopped_puts_unfinished_first() -> None:
+    teamspace = _teamspace_with_jobs()
+
+    with patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace):
+        result = CliRunner().invoke(list_jobs, ["--sort-by", "stopped", "--json"])
+
+    assert result.exit_code == 0, result.output
+    assert [row["name"] for row in json.loads(result.output)] == ["distributed", "single"]
 
 
 @mock_command_logging
