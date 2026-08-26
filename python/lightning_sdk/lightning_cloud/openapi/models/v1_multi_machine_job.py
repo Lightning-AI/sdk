@@ -47,12 +47,15 @@ class V1MultiMachineJob(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'created_at': 'datetime',
+        'current_run_attempt': 'int',
         'desired_state': 'V1MultiMachineJobState',
         'fault_tolerance': 'V1MultiMachineJobFaultTolerance',
         'id': 'str',
         'machines': 'int',
+        'max_run_attempts': 'int',
         'message': 'str',
         'name': 'str',
+        'parent_multi_machine_job_id': 'str',
         'pipeline_id': 'str',
         'project_id': 'str',
         'requires_maintenance': 'bool',
@@ -67,12 +70,15 @@ class V1MultiMachineJob(object):
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'created_at': 'createdAt',
+        'current_run_attempt': 'currentRunAttempt',
         'desired_state': 'desiredState',
         'fault_tolerance': 'faultTolerance',
         'id': 'id',
         'machines': 'machines',
+        'max_run_attempts': 'maxRunAttempts',
         'message': 'message',
         'name': 'name',
+        'parent_multi_machine_job_id': 'parentMultiMachineJobId',
         'pipeline_id': 'pipelineId',
         'project_id': 'projectId',
         'requires_maintenance': 'requiresMaintenance',
@@ -84,16 +90,19 @@ class V1MultiMachineJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, message: 'str' =None, name: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, requires_maintenance: 'bool' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, parent_multi_machine_job_id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, requires_maintenance: 'bool' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
+        self._current_run_attempt = None
         self._desired_state = None
         self._fault_tolerance = None
         self._id = None
         self._machines = None
+        self._max_run_attempts = None
         self._message = None
         self._name = None
+        self._parent_multi_machine_job_id = None
         self._pipeline_id = None
         self._project_id = None
         self._requires_maintenance = None
@@ -108,6 +117,8 @@ class V1MultiMachineJob(object):
             self.cloudspace_id = cloudspace_id
         if created_at is not None:
             self.created_at = created_at
+        if current_run_attempt is not None:
+            self.current_run_attempt = current_run_attempt
         if desired_state is not None:
             self.desired_state = desired_state
         if fault_tolerance is not None:
@@ -116,10 +127,14 @@ class V1MultiMachineJob(object):
             self.id = id
         if machines is not None:
             self.machines = machines
+        if max_run_attempts is not None:
+            self.max_run_attempts = max_run_attempts
         if message is not None:
             self.message = message
         if name is not None:
             self.name = name
+        if parent_multi_machine_job_id is not None:
+            self.parent_multi_machine_job_id = parent_multi_machine_job_id
         if pipeline_id is not None:
             self.pipeline_id = pipeline_id
         if project_id is not None:
@@ -180,6 +195,29 @@ class V1MultiMachineJob(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def current_run_attempt(self) -> 'int':
+        """Gets the current_run_attempt of this V1MultiMachineJob.  # noqa: E501
+
+        Current run attempt for this multi-machine job (1-based). First row is 1.  # noqa: E501
+
+        :return: The current_run_attempt of this V1MultiMachineJob.  # noqa: E501
+        :rtype: int
+        """
+        return self._current_run_attempt
+
+    @current_run_attempt.setter
+    def current_run_attempt(self, current_run_attempt: 'int'):
+        """Sets the current_run_attempt of this V1MultiMachineJob.
+
+        Current run attempt for this multi-machine job (1-based). First row is 1.  # noqa: E501
+
+        :param current_run_attempt: The current_run_attempt of this V1MultiMachineJob.  # noqa: E501
+        :type: int
+        """
+
+        self._current_run_attempt = current_run_attempt
 
     @property
     def desired_state(self) -> 'V1MultiMachineJobState':
@@ -266,6 +304,29 @@ class V1MultiMachineJob(object):
         self._machines = machines
 
     @property
+    def max_run_attempts(self) -> 'int':
+        """Gets the max_run_attempts of this V1MultiMachineJob.  # noqa: E501
+
+        Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).  # noqa: E501
+
+        :return: The max_run_attempts of this V1MultiMachineJob.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_run_attempts
+
+    @max_run_attempts.setter
+    def max_run_attempts(self, max_run_attempts: 'int'):
+        """Sets the max_run_attempts of this V1MultiMachineJob.
+
+        Max number of run attempts for this multi-machine job. 0 means unset (legacy, no retries); 1 means a single attempt (no retries).  # noqa: E501
+
+        :param max_run_attempts: The max_run_attempts of this V1MultiMachineJob.  # noqa: E501
+        :type: int
+        """
+
+        self._max_run_attempts = max_run_attempts
+
+    @property
     def message(self) -> 'str':
         """Gets the message of this V1MultiMachineJob.  # noqa: E501
 
@@ -306,6 +367,29 @@ class V1MultiMachineJob(object):
         """
 
         self._name = name
+
+    @property
+    def parent_multi_machine_job_id(self) -> 'str':
+        """Gets the parent_multi_machine_job_id of this V1MultiMachineJob.  # noqa: E501
+
+        Root multi-machine job id. Children copy the root, not the immediate parent.  # noqa: E501
+
+        :return: The parent_multi_machine_job_id of this V1MultiMachineJob.  # noqa: E501
+        :rtype: str
+        """
+        return self._parent_multi_machine_job_id
+
+    @parent_multi_machine_job_id.setter
+    def parent_multi_machine_job_id(self, parent_multi_machine_job_id: 'str'):
+        """Sets the parent_multi_machine_job_id of this V1MultiMachineJob.
+
+        Root multi-machine job id. Children copy the root, not the immediate parent.  # noqa: E501
+
+        :param parent_multi_machine_job_id: The parent_multi_machine_job_id of this V1MultiMachineJob.  # noqa: E501
+        :type: str
+        """
+
+        self._parent_multi_machine_job_id = parent_multi_machine_job_id
 
     @property
     def pipeline_id(self) -> 'str':

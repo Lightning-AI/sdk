@@ -72,6 +72,9 @@ type V1AWSDirectV1 struct {
 
 	// Run instances from launch templates only (JPMC setup)
 	UseLaunchTemplates bool `json:"useLaunchTemplates,omitempty"`
+
+	// If true, use all tagged subnets instead of selecting one subnet per availability zone
+	UseMultipleSubnetsPerAvailabilityZone bool `json:"useMultipleSubnetsPerAvailabilityZone,omitempty"`
 }
 
 // Validate validates this v1 a w s direct v1
