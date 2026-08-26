@@ -270,3 +270,11 @@ def test_ls_impl_nested_path(capsys):
 
         assert "january.csv" in output_lines
         assert "february.csv" in output_lines
+
+
+@mock_command_logging
+def test_ls_help_shows_deprecation_warning():
+    result_text = command_text("lightning studio ls --help")
+    assert "Deprecation warning:" in result_text
+    assert "lightning ls" in result_text
+    assert "Note the URL format differs" in result_text

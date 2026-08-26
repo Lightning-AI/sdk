@@ -7,47 +7,23 @@ import rich_click as click
 from lightning_sdk.filesystem import Filesystem
 
 
-def parse_lit_url(url: str) -> str:
-    """Parse lit:// URL and extract resource type."""
-    if not url.startswith("lit://"):
-        raise ValueError("URL must start with 'lit://'")
-
-    path = url.split("://")[-1].split("/")
-    if len(path) < 3 or not path[2]:
-        raise ValueError("Invalid lit URL format. Expected 'lit://<owner>/<teamspace>/<resource_type>'")
-    return path[2].lower()
-
-
-def _canonicalize_lit_resource_type(url: str) -> str:
-    """Normalize the lit:// resource type segment to its canonical lowercase form."""
-    parse_lit_url(url)
-    path = url.split("://", maxsplit=1)[-1].split("/")
-    path[2] = path[2].lower()
-    return "lit://" + "/".join(path)
-
-
 def route_cp_operation(source: str, destination: Optional[str], **options: Any) -> None:
-    """Route copy operation based on URL structure."""
+    """Route copy operation based on URL structure.
+
+    Drive paths are passed through untouched — the server owns their validation
+    (resource types, case, existence).
+    """
     if destination is None:
         raise ValueError("Destination path must be provided.")
 
     source_is_lit = source.startswith("lit://")
     dest_is_lit = destination.startswith("lit://")
 
-    if source_is_lit:
-        source = _canonicalize_lit_resource_type(source)
-    if dest_is_lit:
-        destination = _canonicalize_lit_resource_type(destination)
-
     if source_is_lit and dest_is_lit:
         raise ValueError("Cannot copy between two remote URLs. One path must be local.")
 
     if not source_is_lit and not dest_is_lit:
         raise ValueError("At least one path must be a lit://")
-
-    # Every resource type is a path in the teamspace drive, passed through
-    # for the server to resolve. This validates the URL shape up front.
-    parse_lit_url(source if source_is_lit else destination)
 
     return Filesystem().copy(
         source=source,

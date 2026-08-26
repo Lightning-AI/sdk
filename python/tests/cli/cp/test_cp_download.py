@@ -36,12 +36,22 @@ def test_route_cp_raises_if_both_local():
         )
 
 
-def test_route_cp_raises_for_invalid_short_lit_url():
-    """Test that malformed short lit URLs still raise a clear ValueError."""
-    with pytest.raises(ValueError, match="Invalid lit URL format"):
+def test_route_cp_passes_paths_through_for_server_validation():
+    """Drive paths are not validated client-side — the server owns that."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
         route_cp_operation(
             source="lit://my-org/my-teamspace",
             destination="/local/model.ckpt",
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="lit://my-org/my-teamspace",
+            destination="/local/model.ckpt",
+            recursive=False,
+            progress_bar=True,
+            cloud_account=None,
         )
 
 
@@ -175,8 +185,8 @@ def test_route_cp_download_passes_paths_with_uploads_segment_through():
         )
 
 
-def test_route_cp_download_canonicalizes_mixed_case_resource_type():
-    """Test that mixed-case remote resource types are canonicalized before download dispatch."""
+def test_route_cp_download_passes_mixed_case_resource_type_through():
+    """Mixed-case resource types are passed through — the server resolves them case-insensitively."""
     mock_fs = MagicMock()
     source = "lit://my-org/my-teamspace/Lightning_Storage/my-storage/data/model.ckpt"
 
@@ -188,8 +198,28 @@ def test_route_cp_download_canonicalizes_mixed_case_resource_type():
         )
 
         mock_fs.copy.assert_called_once_with(
-            source="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
+            source="lit://my-org/my-teamspace/Lightning_Storage/my-storage/data/model.ckpt",
             destination="/local/model.ckpt",
+            recursive=False,
+            progress_bar=True,
+            cloud_account=None,
+        )
+
+
+def test_route_cp_relative_url_delegates():
+    """Relative lit:/// URLs are accepted and passed through to the copy."""
+    mock_fs = MagicMock()
+
+    with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
+        route_cp_operation(
+            source="/local/model.ckpt",
+            destination="lit:///Uploads/model.ckpt",
+            recursive=False,
+        )
+
+        mock_fs.copy.assert_called_once_with(
+            source="/local/model.ckpt",
+            destination="lit:///Uploads/model.ckpt",
             recursive=False,
             progress_bar=True,
             cloud_account=None,
@@ -216,8 +246,8 @@ def test_route_cp_lightning_storage_upload():
         )
 
 
-def test_route_cp_lightning_storage_upload_canonicalizes_mixed_case_resource_type():
-    """Test that mixed-case upload resource types are canonicalized before Filesystem.copy."""
+def test_route_cp_lightning_storage_upload_passes_mixed_case_resource_type_through():
+    """Mixed-case upload resource types are passed through — the server resolves them."""
     mock_fs = MagicMock()
 
     with patch("lightning_sdk.cli.cp.Filesystem", return_value=mock_fs):
@@ -229,7 +259,7 @@ def test_route_cp_lightning_storage_upload_canonicalizes_mixed_case_resource_typ
 
         mock_fs.copy.assert_called_once_with(
             source="/local/model.ckpt",
-            destination="lit://my-org/my-teamspace/lightning_storage/my-storage/data/model.ckpt",
+            destination="lit://my-org/my-teamspace/Lightning_Storage/my-storage/data/model.ckpt",
             recursive=False,
             progress_bar=True,
             cloud_account=None,

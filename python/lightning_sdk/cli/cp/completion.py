@@ -101,9 +101,23 @@ def _safe_remote_completions(incomplete: str) -> list[CompletionItem]:
 def _complete_remote_path(incomplete: str) -> list[CompletionItem]:
     parts = incomplete[len(_LIT_PREFIX) :].split("/")
 
+    if parts[0] == "" and len(parts) > 1:
+        # Relative form lit:///<path> — complete from the current teamspace's drive.
+        from lightning_sdk.utils.resolve import _resolve_teamspace
+
+        teamspace = _resolve_teamspace(teamspace=None, org=None, user=None)
+        if teamspace is None:
+            return []
+        parent = "/".join(parts[1:-1])
+        entries = FilesystemApi().list_files(teamspace.id, parent, recursive=False)
+        return _complete_tree_entries(incomplete, entries)
+
     if len(parts) == 1:
         owner_names = _accessible_teamspaces()
-        return _complete_values(incomplete, (f"{_LIT_PREFIX}{owner}/" for owner in owner_names))
+        return _complete_values(
+            incomplete,
+            (f"{_LIT_PREFIX}{owner}/" for owner in owner_names),
+        ) + _complete_values(incomplete, [f"{_LIT_PREFIX}/"])
 
     owner = parts[0]
     if len(parts) == 2:

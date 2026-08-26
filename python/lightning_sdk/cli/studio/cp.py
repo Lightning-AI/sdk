@@ -6,7 +6,7 @@ import rich_click as click
 from rich.console import Console
 
 from lightning_sdk.api.utils import _get_cloud_url
-from lightning_sdk.cli.utils.filesystem import parse_studio_path, resolve_studio
+from lightning_sdk.cli.studio.paths import parse_studio_path, resolve_studio
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.filesystem import Filesystem
 from lightning_sdk.studio import Studio
@@ -19,13 +19,16 @@ from lightning_sdk.studio import Studio
 def cp_studio_file(source: str, destination: str, recursive: bool = False) -> None:
     """Copy a Studio file.
 
-    SOURCE: Source file to copy from. For Studio files, use the format lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
+    SOURCE: Source file to copy from. For Studio files, use the format
+    lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>, or
+    lit:///studios/<my-studio>/<filepath> for the current teamspace.
 
-    DESTINATION: Destination file to copy to. For Studio files, use the format lit://<owner>/<my-teamspace>/studios/<my-studio>/<filepath>.
+    DESTINATION: Destination file to copy to. For Studio files, use the same formats.
 
     Example:
         lightning studio cp source.txt lit://<owner>/<my-teamspace>/studios/<my-studio>/destination.txt
-        lightning studio cp -r source_folder/ lit://<owner>/<my-teamspace>/studios/<my-studio>/destination_folder/
+        lightning studio cp source.txt lit:///studios/<my-studio>/destination.txt
+        lightning studio cp -r source_folder/ lit:///studios/<my-studio>/destination_folder/
 
     """
     return cp_impl(source=source, destination=destination, recursive=recursive)
@@ -59,7 +62,8 @@ def _resolve_drive_url(studio_path: str) -> Tuple[Studio, str]:
     """Resolve a studio lit URL to the studio and its fully-qualified drive URL.
 
     Unlike the main ``lightning cp`` URLs, studio paths may omit the owner or
-    the owner and teamspace, which then resolve from the configured defaults.
+    the owner and teamspace, which then resolve from the configured defaults;
+    the relative form (``lit:///studios/...``) resolves the same way.
     """
     parsed = parse_studio_path(studio_path)
     studio = resolve_studio(parsed["studio"], parsed["teamspace"], parsed["owner"])

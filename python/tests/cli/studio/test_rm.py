@@ -402,3 +402,11 @@ def test_rm_with_force_and_recursive():
         )
         # returns None without raising
         assert result is None
+
+
+@mock_command_logging
+def test_rm_help_shows_deprecation_warning():
+    result_text = command_text("lightning studio rm --help")
+    assert "Deprecation warning:" in result_text
+    assert "lightning rm" in result_text
+    assert "Note the URL format differs" in result_text
