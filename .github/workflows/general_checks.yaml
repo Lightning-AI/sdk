@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   check-schema:
-    uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@c89c402603f4f267525f17dc2850ec53e0e48a9a # main
+    uses: Lightning-AI/utilities/.github/workflows/check-schema.yml@f9849e61b4c2c490414486d564a2afe8cef57697 # main
     with:
       azure-dir: ''
 
