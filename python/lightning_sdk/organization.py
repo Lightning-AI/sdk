@@ -96,7 +96,6 @@ class Organization(Owner):
                     {
                         "period_start": datetime,
                         "period_end": datetime,
-                        "total_credits_consumed": float,
                         "total_credits_remaining": float,
                         "total_credits_purchased": float,
                     },
