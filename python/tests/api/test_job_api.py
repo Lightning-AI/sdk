@@ -133,6 +133,40 @@ def test_job_v2_submit_job_threads_placement_group_id(mocker_auth):
     assert body.spec.placement_group_id == "pg-1"
 
 
+@pytest.mark.parametrize(
+    ("regions", "expected"),
+    [
+        (["europe-west4", "europe-west1"], ["europe-west4", "europe-west1"]),
+        (None, None),
+        ([], None),
+    ],
+)
+def test_job_v2_submit_job_threads_regions(mocker_auth, regions, expected):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        regions=regions,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.regions == expected
+
+
 def test_get_job_by_name(mocker_auth):
     job_api = JobApiV2()
 

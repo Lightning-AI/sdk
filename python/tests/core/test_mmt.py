@@ -100,6 +100,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         reuse_snapshot=True,
         placement_group_id=None,
         scratch_disks=None,
+        regions=None,
     )
 
 
@@ -216,6 +217,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         reuse_snapshot=True,
         placement_group_id=None,
         scratch_disks=None,
+        regions=None,
     )
 
 

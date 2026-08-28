@@ -151,6 +151,7 @@ class JobApiV2:
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        regions: Optional[List[str]] = None,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -175,6 +176,8 @@ class JobApiV2:
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
             num_machines: Must be 1 for single-machine jobs. Kept for parity with ``MMTApiV2.submit_job``.
+            regions: Cloud regions the job's machine may be placed in, or ``None`` to
+                consider all of the cloud account's regions.
 
         Returns:
             The newly created ``V1Job`` object.
@@ -206,6 +209,7 @@ class JobApiV2:
             reuse_snapshot=reuse_snapshot,
             scratch_disks=sanitized_scratch_disks,
             placement_group_id=placement_group_id,
+            regions=regions,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -230,6 +234,7 @@ class JobApiV2:
         machine_image_version: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        regions: Optional[List[str]] = None,
     ) -> JobsServiceCreateJobBody:
         """Build the request body for creating a v2 job.
 
@@ -253,6 +258,8 @@ class JobApiV2:
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
+            regions: Cloud regions the job's machine may be placed in, or ``None`` to
+                consider all of the cloud account's regions.
 
         Returns:
             A fully populated ``JobsServiceCreateJobBody`` ready to be sent to the jobs service.
@@ -272,6 +279,8 @@ class JobApiV2:
         optional_spec_kwargs = {}
         if max_runtime:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
+        if regions:
+            optional_spec_kwargs["regions"] = list(regions)
 
         # don't do default dicts, as they'll be mutable. Create a fresh one here
         scratch_disks = scratch_disks or {}

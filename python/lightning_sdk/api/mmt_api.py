@@ -51,6 +51,7 @@ class MMTApiV2:
         reuse_snapshot: bool,
         placement_group_id: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
+        regions: Optional[List[str]] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -75,6 +76,8 @@ class MMTApiV2:
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
             scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
+            regions: Cloud regions the job's machines may be placed in, or ``None`` to
+                consider all of the cloud account's regions.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -98,6 +101,7 @@ class MMTApiV2:
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
+            regions=regions,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -122,6 +126,7 @@ class MMTApiV2:
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
         placement_group_id: Optional[str] = None,
+        regions: Optional[List[str]] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -145,6 +150,8 @@ class MMTApiV2:
                 (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
+            regions: Cloud regions the job's machines may be placed in, or ``None`` to
+                consider all of the cloud account's regions.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -164,6 +171,8 @@ class MMTApiV2:
         optional_spec_kwargs = {}
         if max_runtime:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
+        if regions:
+            optional_spec_kwargs["regions"] = list(regions)
 
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",

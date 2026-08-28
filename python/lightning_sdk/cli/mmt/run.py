@@ -129,6 +129,16 @@ from lightning_sdk.mmt import MMT
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option(
+    "--region",
+    "regions",
+    default=(),
+    multiple=True,
+    help=(
+        "Cloud region the job's machines may be placed in (e.g. europe-west4). "
+        "Can be specified multiple times. Omit to consider all of the cloud account's regions."
+    ),
+)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_mmt(
     name: Optional[str] = None,
@@ -148,6 +158,7 @@ def run_mmt(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    regions: Sequence[str] = (),
     as_json: bool = False,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
@@ -188,6 +199,7 @@ def run_mmt(
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
+        regions=list(regions) or None,
     )
 
     if as_json:

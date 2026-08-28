@@ -134,6 +134,16 @@ _MACHINE_VALUES = tuple(
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option(
+    "--region",
+    "regions",
+    default=(),
+    multiple=True,
+    help=(
+        "Cloud region the job's machines may be placed in (e.g. europe-west4). "
+        "Can be specified multiple times. Omit to consider all of the cloud account's regions."
+    ),
+)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_job(
     name: Optional[str] = None,
@@ -153,6 +163,7 @@ def run_job(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    regions: Sequence[str] = (),
     as_json: bool = False,
 ) -> None:
     """Run async workloads using a docker image or studio.
@@ -198,6 +209,7 @@ def run_job(
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
         num_machines=num_machines,
+        regions=list(regions) or None,
     )
 
     if as_json:

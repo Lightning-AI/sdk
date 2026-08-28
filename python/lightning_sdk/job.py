@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple, TypedDict, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Tuple, TypedDict, Union, cast
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
@@ -228,6 +228,7 @@ class Job(metaclass=TrackCallsMeta):
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        regions: Optional[List[str]] = None,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -267,6 +268,9 @@ class Job(metaclass=TrackCallsMeta):
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
+            regions: Cloud regions the job's machines may be placed in (e.g. ``["europe-west4"]``).
+                Only regions enabled on the cloud account are eligible. If unset, all of the
+                cloud account's regions are considered.
 
         Returns:
             Job: The newly submitted Job instance.
@@ -368,6 +372,7 @@ class Job(metaclass=TrackCallsMeta):
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
+            regions=regions,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -392,6 +397,7 @@ class Job(metaclass=TrackCallsMeta):
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        regions: Optional[List[str]] = None,
     ) -> "Job":
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
@@ -469,6 +475,7 @@ class Job(metaclass=TrackCallsMeta):
             placement_group_id=placement_group_id,
             num_machines=num_machines,
             scratch_disks=scratch_disks,
+            regions=regions,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
