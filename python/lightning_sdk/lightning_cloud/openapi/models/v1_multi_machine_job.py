@@ -62,6 +62,7 @@ class V1MultiMachineJob(object):
         'spec': 'V1JobSpec',
         'state': 'V1MultiMachineJobState',
         'status': 'V1MultiMachineJobStatus',
+        'target_machine_ids': 'list[str]',
         'total_cost': 'float',
         'updated_at': 'datetime',
         'user_id': 'str'
@@ -85,12 +86,13 @@ class V1MultiMachineJob(object):
         'spec': 'spec',
         'state': 'state',
         'status': 'status',
+        'target_machine_ids': 'targetMachineIds',
         'total_cost': 'totalCost',
         'updated_at': 'updatedAt',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, parent_multi_machine_job_id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, requires_maintenance: 'bool' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, desired_state: 'V1MultiMachineJobState' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, id: 'str' =None, machines: 'int' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, parent_multi_machine_job_id: 'str' =None, pipeline_id: 'str' =None, project_id: 'str' =None, requires_maintenance: 'bool' =None, spec: 'V1JobSpec' =None, state: 'V1MultiMachineJobState' =None, status: 'V1MultiMachineJobStatus' =None, target_machine_ids: 'list[str]' =None, total_cost: 'float' =None, updated_at: 'datetime' =None, user_id: 'str' =None):  # noqa: E501
         """V1MultiMachineJob - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._created_at = None
@@ -109,6 +111,7 @@ class V1MultiMachineJob(object):
         self._spec = None
         self._state = None
         self._status = None
+        self._target_machine_ids = None
         self._total_cost = None
         self._updated_at = None
         self._user_id = None
@@ -147,6 +150,8 @@ class V1MultiMachineJob(object):
             self.state = state
         if status is not None:
             self.status = status
+        if target_machine_ids is not None:
+            self.target_machine_ids = target_machine_ids
         if total_cost is not None:
             self.total_cost = total_cost
         if updated_at is not None:
@@ -516,6 +521,29 @@ class V1MultiMachineJob(object):
         """
 
         self._status = status
+
+    @property
+    def target_machine_ids(self) -> 'list[str]':
+        """Gets the target_machine_ids of this V1MultiMachineJob.  # noqa: E501
+
+        Optional ordered machine ids. Entry i is the required host for rank i.  # noqa: E501
+
+        :return: The target_machine_ids of this V1MultiMachineJob.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._target_machine_ids
+
+    @target_machine_ids.setter
+    def target_machine_ids(self, target_machine_ids: 'list[str]'):
+        """Sets the target_machine_ids of this V1MultiMachineJob.
+
+        Optional ordered machine ids. Entry i is the required host for rank i.  # noqa: E501
+
+        :param target_machine_ids: The target_machine_ids of this V1MultiMachineJob.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._target_machine_ids = target_machine_ids
 
     @property
     def total_cost(self) -> 'float':

@@ -75,6 +75,9 @@ type ClusterServiceCreateMachineBody struct {
 	// provisioning method
 	ProvisioningMethod string `json:"provisioningMethod,omitempty"`
 
+	// Machine puspose, optional (sandbox/gateway/...),
+	Purpose string `json:"purpose,omitempty"`
+
 	// resources
 	Resources *V1Resources `json:"resources,omitempty"`
 

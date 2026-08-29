@@ -46,9 +46,6 @@ type V1AffiliateLink struct {
 	// referred incentives
 	ReferredIncentives map[string]string `json:"referredIncentives,omitempty"`
 
-	// skip waitlist
-	SkipWaitlist bool `json:"skipWaitlist,omitempty"`
-
 	// type
 	Type string `json:"type,omitempty"`
 

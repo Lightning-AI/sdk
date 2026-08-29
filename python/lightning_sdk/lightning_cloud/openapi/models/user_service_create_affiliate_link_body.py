@@ -49,7 +49,6 @@ class UserServiceCreateAffiliateLinkBody(object):
         'expires_at': 'datetime',
         'max_uses': 'int',
         'name': 'str',
-        'skip_waitlist': 'bool',
         'type': 'str'
     }
 
@@ -58,17 +57,15 @@ class UserServiceCreateAffiliateLinkBody(object):
         'expires_at': 'expiresAt',
         'max_uses': 'maxUses',
         'name': 'name',
-        'skip_waitlist': 'skipWaitlist',
         'type': 'type'
     }
 
-    def __init__(self, code: 'str' =None, expires_at: 'datetime' =None, max_uses: 'int' =None, name: 'str' =None, skip_waitlist: 'bool' =None, type: 'str' =None):  # noqa: E501
+    def __init__(self, code: 'str' =None, expires_at: 'datetime' =None, max_uses: 'int' =None, name: 'str' =None, type: 'str' =None):  # noqa: E501
         """UserServiceCreateAffiliateLinkBody - a model defined in Swagger"""  # noqa: E501
         self._code = None
         self._expires_at = None
         self._max_uses = None
         self._name = None
-        self._skip_waitlist = None
         self._type = None
         self.discriminator = None
         if code is not None:
@@ -79,8 +76,6 @@ class UserServiceCreateAffiliateLinkBody(object):
             self.max_uses = max_uses
         if name is not None:
             self.name = name
-        if skip_waitlist is not None:
-            self.skip_waitlist = skip_waitlist
         if type is not None:
             self.type = type
 
@@ -167,27 +162,6 @@ class UserServiceCreateAffiliateLinkBody(object):
         """
 
         self._name = name
-
-    @property
-    def skip_waitlist(self) -> 'bool':
-        """Gets the skip_waitlist of this UserServiceCreateAffiliateLinkBody.  # noqa: E501
-
-
-        :return: The skip_waitlist of this UserServiceCreateAffiliateLinkBody.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_waitlist
-
-    @skip_waitlist.setter
-    def skip_waitlist(self, skip_waitlist: 'bool'):
-        """Sets the skip_waitlist of this UserServiceCreateAffiliateLinkBody.
-
-
-        :param skip_waitlist: The skip_waitlist of this UserServiceCreateAffiliateLinkBody.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_waitlist = skip_waitlist
 
     @property
     def type(self) -> 'str':

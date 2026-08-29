@@ -76,6 +76,9 @@ type V1MultiMachineJob struct {
 	// status
 	Status *V1MultiMachineJobStatus `json:"status,omitempty"`
 
+	// Optional ordered machine ids. Entry i is the required host for rank i.
+	TargetMachineIds []string `json:"targetMachineIds"`
+
 	// Total cost of the MultiMachineJob
 	TotalCost float32 `json:"totalCost,omitempty"`
 

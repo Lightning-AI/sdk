@@ -100,6 +100,7 @@ class V1ServerSpec(object):
         'region': 'str',
         'regions': 'list[str]',
         'requested_run_duration_seconds': 'str',
+        'required_machine_id': 'str',
         'reservation_time_minutes': 'str',
         'resource_id': 'str',
         'resource_type': 'str',
@@ -175,6 +176,7 @@ class V1ServerSpec(object):
         'region': 'region',
         'regions': 'regions',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
+        'required_machine_id': 'requiredMachineId',
         'reservation_time_minutes': 'reservationTimeMinutes',
         'resource_id': 'resourceId',
         'resource_type': 'resourceType',
@@ -194,7 +196,7 @@ class V1ServerSpec(object):
         'workload_name': 'workloadName'
     }
 
-    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, customer_network_ids: 'list[str]' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, ib_membership_source: 'str' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, ssh_public_keys: 'list[str]' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_cloud_init: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'V1AcceleratorType' =None, address: 'str' =None, affinity_identifier: 'str' =None, agent_version: 'str' =None, apparent_provider: 'str' =None, availability_zone: 'str' =None, batch_id: 'str' =None, ca_cert: 'str' =None, ca_key: 'str' =None, capacity_reservation_id: 'str' =None, cloud_init_run_cmds: 'list[str]' =None, cloud_space_id: 'str' =None, cluster_id: 'str' =None, customer_network_ids: 'list[str]' =None, delete_protection: 'bool' =None, deployment_id: 'str' =None, desired_machine_id: 'str' =None, dws: 'bool' =None, forward_ports: 'list[int]' =None, free: 'bool' =None, gpu_assignments: 'list[int]' =None, gpu_uuids: 'list[str]' =None, guest_accelerators: 'list[V1ServerAccelerator]' =None, ib_device_infos: 'list[V1IBDeviceInfo]' =None, ib_membership_source: 'str' =None, inband_ip: 'str' =None, instance_managed_group_id: 'str' =None, instance_template_id: 'str' =None, instance_type: 'str' =None, keep_after_stop: 'bool' =None, launch_template_id: 'str' =None, lightning_interruptible: 'bool' =None, machine_id: 'str' =None, machine_image: 'str' =None, machine_image_version: 'str' =None, memory_zones: 'list[V1MemoryZone]' =None, multi_machine_job_id: 'str' =None, network_interfaces: 'list[V1NetworkInterface]' =None, nvlink_fm_partition: 'V1NvlinkFMPartitionBinding' =None, parent_resource_id: 'str' =None, parent_server_id: 'str' =None, persistent_disk_id: 'str' =None, placement_group_id: 'str' =None, port_forwarding_rules: 'list[V1PortForwardRule]' =None, port_overrides: 'V1PortOverrides' =None, private_address: 'str' =None, private_addresses: 'list[str]' =None, provider: 'str' =None, provider_config: 'str' =None, provider_instance_id: 'str' =None, provider_instance_url: 'str' =None, rank: 'int' =None, region: 'str' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, required_machine_id: 'str' =None, reservation_time_minutes: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, server_type: 'V1ServerType' =None, skip_graceful_shutdown: 'bool' =None, spot: 'bool' =None, ssh_public_keys: 'list[str]' =None, state: 'V1ServerState' =None, termination_time: 'datetime' =None, tls_cert: 'str' =None, tls_key: 'str' =None, user_cloud_init: 'str' =None, user_id: 'str' =None, volume_size: 'str' =None, volume_type: 'str' =None, volumes: 'list[V1Volume]' =None, workload_name: 'str' =None):  # noqa: E501
         """V1ServerSpec - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._address = None
@@ -251,6 +253,7 @@ class V1ServerSpec(object):
         self._region = None
         self._regions = None
         self._requested_run_duration_seconds = None
+        self._required_machine_id = None
         self._reservation_time_minutes = None
         self._resource_id = None
         self._resource_type = None
@@ -379,6 +382,8 @@ class V1ServerSpec(object):
             self.regions = regions
         if requested_run_duration_seconds is not None:
             self.requested_run_duration_seconds = requested_run_duration_seconds
+        if required_machine_id is not None:
+            self.required_machine_id = required_machine_id
         if reservation_time_minutes is not None:
             self.reservation_time_minutes = reservation_time_minutes
         if resource_id is not None:
@@ -1576,6 +1581,29 @@ class V1ServerSpec(object):
         """
 
         self._requested_run_duration_seconds = requested_run_duration_seconds
+
+    @property
+    def required_machine_id(self) -> 'str':
+        """Gets the required_machine_id of this V1ServerSpec.  # noqa: E501
+
+        Exact placement requirement that still passes normal scheduler checks.  # noqa: E501
+
+        :return: The required_machine_id of this V1ServerSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._required_machine_id
+
+    @required_machine_id.setter
+    def required_machine_id(self, required_machine_id: 'str'):
+        """Sets the required_machine_id of this V1ServerSpec.
+
+        Exact placement requirement that still passes normal scheduler checks.  # noqa: E501
+
+        :param required_machine_id: The required_machine_id of this V1ServerSpec.  # noqa: E501
+        :type: str
+        """
+
+        self._required_machine_id = required_machine_id
 
     @property
     def reservation_time_minutes(self) -> 'str':

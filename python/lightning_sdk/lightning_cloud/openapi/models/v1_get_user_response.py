@@ -95,7 +95,6 @@ class V1GetUserResponse(object):
         'test_user': 'bool',
         'user_metadata': 'str',
         'username': 'str',
-        'waitlisted': 'bool',
         'website': 'str'
     }
 
@@ -150,11 +149,10 @@ class V1GetUserResponse(object):
         'test_user': 'testUser',
         'user_metadata': 'userMetadata',
         'username': 'username',
-        'waitlisted': 'waitlisted',
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, can_see_project_migration_opt_in: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, eligible_for_credit_card_unlock: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, force_project_migration_at: 'datetime' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_billing_admin: 'bool' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, internal_model_apis_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, personal_project_migration_at: 'datetime' =None, personal_project_migration_error: 'str' =None, personal_project_migration_status: 'str' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, project_migration_opt_in_at: 'datetime' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, waitlisted: 'bool' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, api_key: 'str' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, can_see_project_migration_opt_in: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, eligible_for_credit_card_unlock: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, features: 'V1UserFeatures' =None, first_name: 'str' =None, force_project_migration_at: 'datetime' =None, general_audience_mode: 'bool' =None, id: 'str' =None, internal_billing_admin: 'bool' =None, internal_blog_admin: 'bool' =None, internal_docs_admin: 'bool' =None, internal_model_apis_admin: 'bool' =None, invite_code: 'str' =None, is_internal: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, organizations: 'list[V1Organization]' =None, personal_project_migration_at: 'datetime' =None, personal_project_migration_error: 'str' =None, personal_project_migration_status: 'str' =None, phone_number: 'str' =None, picture_url: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, project_migration_opt_in_at: 'datetime' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, sb: 'bool' =None, source: 'str' =None, status: 'Externalv1UserStatus' =None, storage_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, test_user: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1GetUserResponse - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
         self._allow_credits_auto_replenish = None
@@ -206,7 +204,6 @@ class V1GetUserResponse(object):
         self._test_user = None
         self._user_metadata = None
         self._username = None
-        self._waitlisted = None
         self._website = None
         self.discriminator = None
         if agree_to_terms_and_conditions is not None:
@@ -309,8 +306,6 @@ class V1GetUserResponse(object):
             self.user_metadata = user_metadata
         if username is not None:
             self.username = username
-        if waitlisted is not None:
-            self.waitlisted = waitlisted
         if website is not None:
             self.website = website
 
@@ -1367,27 +1362,6 @@ class V1GetUserResponse(object):
         """
 
         self._username = username
-
-    @property
-    def waitlisted(self) -> 'bool':
-        """Gets the waitlisted of this V1GetUserResponse.  # noqa: E501
-
-
-        :return: The waitlisted of this V1GetUserResponse.  # noqa: E501
-        :rtype: bool
-        """
-        return self._waitlisted
-
-    @waitlisted.setter
-    def waitlisted(self, waitlisted: 'bool'):
-        """Sets the waitlisted of this V1GetUserResponse.
-
-
-        :param waitlisted: The waitlisted of this V1GetUserResponse.  # noqa: E501
-        :type: bool
-        """
-
-        self._waitlisted = waitlisted
 
     @property
     def website(self) -> 'str':

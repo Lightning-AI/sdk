@@ -47,7 +47,6 @@ class GetMonthlySummaryResponseMonthlySummary(object):
     swagger_types = {
         'period_end': 'datetime',
         'period_start': 'datetime',
-        'total_credits_consumed': 'float',
         'total_credits_purchased': 'float',
         'total_credits_remaining': 'float'
     }
@@ -55,16 +54,14 @@ class GetMonthlySummaryResponseMonthlySummary(object):
     attribute_map = {
         'period_end': 'periodEnd',
         'period_start': 'periodStart',
-        'total_credits_consumed': 'totalCreditsConsumed',
         'total_credits_purchased': 'totalCreditsPurchased',
         'total_credits_remaining': 'totalCreditsRemaining'
     }
 
-    def __init__(self, period_end: 'datetime' =None, period_start: 'datetime' =None, total_credits_consumed: 'float' =None, total_credits_purchased: 'float' =None, total_credits_remaining: 'float' =None):  # noqa: E501
+    def __init__(self, period_end: 'datetime' =None, period_start: 'datetime' =None, total_credits_purchased: 'float' =None, total_credits_remaining: 'float' =None):  # noqa: E501
         """GetMonthlySummaryResponseMonthlySummary - a model defined in Swagger"""  # noqa: E501
         self._period_end = None
         self._period_start = None
-        self._total_credits_consumed = None
         self._total_credits_purchased = None
         self._total_credits_remaining = None
         self.discriminator = None
@@ -72,8 +69,6 @@ class GetMonthlySummaryResponseMonthlySummary(object):
             self.period_end = period_end
         if period_start is not None:
             self.period_start = period_start
-        if total_credits_consumed is not None:
-            self.total_credits_consumed = total_credits_consumed
         if total_credits_purchased is not None:
             self.total_credits_purchased = total_credits_purchased
         if total_credits_remaining is not None:
@@ -120,27 +115,6 @@ class GetMonthlySummaryResponseMonthlySummary(object):
         """
 
         self._period_start = period_start
-
-    @property
-    def total_credits_consumed(self) -> 'float':
-        """Gets the total_credits_consumed of this GetMonthlySummaryResponseMonthlySummary.  # noqa: E501
-
-
-        :return: The total_credits_consumed of this GetMonthlySummaryResponseMonthlySummary.  # noqa: E501
-        :rtype: float
-        """
-        return self._total_credits_consumed
-
-    @total_credits_consumed.setter
-    def total_credits_consumed(self, total_credits_consumed: 'float'):
-        """Sets the total_credits_consumed of this GetMonthlySummaryResponseMonthlySummary.
-
-
-        :param total_credits_consumed: The total_credits_consumed of this GetMonthlySummaryResponseMonthlySummary.  # noqa: E501
-        :type: float
-        """
-
-        self._total_credits_consumed = total_credits_consumed
 
     @property
     def total_credits_purchased(self) -> 'float':
