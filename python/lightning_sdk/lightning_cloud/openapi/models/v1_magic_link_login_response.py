@@ -48,25 +48,22 @@ class V1MagicLinkLoginResponse(object):
         'auth_start_url': 'str',
         'internal': 'bool',
         'sso_enabled': 'bool',
-        'verified': 'bool',
-        'waitlisted': 'bool'
+        'verified': 'bool'
     }
 
     attribute_map = {
         'auth_start_url': 'authStartUrl',
         'internal': 'internal',
         'sso_enabled': 'ssoEnabled',
-        'verified': 'verified',
-        'waitlisted': 'waitlisted'
+        'verified': 'verified'
     }
 
-    def __init__(self, auth_start_url: 'str' =None, internal: 'bool' =None, sso_enabled: 'bool' =None, verified: 'bool' =None, waitlisted: 'bool' =None):  # noqa: E501
+    def __init__(self, auth_start_url: 'str' =None, internal: 'bool' =None, sso_enabled: 'bool' =None, verified: 'bool' =None):  # noqa: E501
         """V1MagicLinkLoginResponse - a model defined in Swagger"""  # noqa: E501
         self._auth_start_url = None
         self._internal = None
         self._sso_enabled = None
         self._verified = None
-        self._waitlisted = None
         self.discriminator = None
         if auth_start_url is not None:
             self.auth_start_url = auth_start_url
@@ -76,8 +73,6 @@ class V1MagicLinkLoginResponse(object):
             self.sso_enabled = sso_enabled
         if verified is not None:
             self.verified = verified
-        if waitlisted is not None:
-            self.waitlisted = waitlisted
 
     @property
     def auth_start_url(self) -> 'str':
@@ -162,27 +157,6 @@ class V1MagicLinkLoginResponse(object):
         """
 
         self._verified = verified
-
-    @property
-    def waitlisted(self) -> 'bool':
-        """Gets the waitlisted of this V1MagicLinkLoginResponse.  # noqa: E501
-
-
-        :return: The waitlisted of this V1MagicLinkLoginResponse.  # noqa: E501
-        :rtype: bool
-        """
-        return self._waitlisted
-
-    @waitlisted.setter
-    def waitlisted(self, waitlisted: 'bool'):
-        """Sets the waitlisted of this V1MagicLinkLoginResponse.
-
-
-        :param waitlisted: The waitlisted of this V1MagicLinkLoginResponse.  # noqa: E501
-        :type: bool
-        """
-
-        self._waitlisted = waitlisted
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

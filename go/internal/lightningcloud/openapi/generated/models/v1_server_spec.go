@@ -197,6 +197,9 @@ type V1ServerSpec struct {
 	// Requested run duration for the machine, used to get machines using dynamic workload scheduler (DWS on GCP, non-spot 1/2/4xH100 can be gotten using this way only)
 	RequestedRunDurationSeconds string `json:"requestedRunDurationSeconds,omitempty"`
 
+	// Exact placement requirement that still passes normal scheduler checks.
+	RequiredMachineID string `json:"requiredMachineId,omitempty"`
+
 	// Time to keep the machine reserved after its workload is finished (applies if keep_after_stop is true)
 	ReservationTimeMinutes string `json:"reservationTimeMinutes,omitempty"`
 

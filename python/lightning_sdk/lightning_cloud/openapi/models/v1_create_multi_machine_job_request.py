@@ -51,7 +51,8 @@ class V1CreateMultiMachineJobRequest(object):
         'max_run_attempts': 'int',
         'name': 'str',
         'project_id': 'str',
-        'spec': 'V1JobSpec'
+        'spec': 'V1JobSpec',
+        'target_machine_ids': 'list[str]'
     }
 
     attribute_map = {
@@ -61,10 +62,11 @@ class V1CreateMultiMachineJobRequest(object):
         'max_run_attempts': 'maxRunAttempts',
         'name': 'name',
         'project_id': 'projectId',
-        'spec': 'spec'
+        'spec': 'spec',
+        'target_machine_ids': 'targetMachineIds'
     }
 
-    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, max_run_attempts: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, max_run_attempts: 'int' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, target_machine_ids: 'list[str]' =None):  # noqa: E501
         """V1CreateMultiMachineJobRequest - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._fault_tolerance = None
@@ -73,6 +75,7 @@ class V1CreateMultiMachineJobRequest(object):
         self._name = None
         self._project_id = None
         self._spec = None
+        self._target_machine_ids = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
@@ -88,6 +91,8 @@ class V1CreateMultiMachineJobRequest(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if target_machine_ids is not None:
+            self.target_machine_ids = target_machine_ids
 
     @property
     def cluster_id(self) -> 'str':
@@ -237,6 +242,29 @@ class V1CreateMultiMachineJobRequest(object):
         """
 
         self._spec = spec
+
+    @property
+    def target_machine_ids(self) -> 'list[str]':
+        """Gets the target_machine_ids of this V1CreateMultiMachineJobRequest.  # noqa: E501
+
+        Optional ordered machine ids. Entry i is the required host for rank i.  # noqa: E501
+
+        :return: The target_machine_ids of this V1CreateMultiMachineJobRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._target_machine_ids
+
+    @target_machine_ids.setter
+    def target_machine_ids(self, target_machine_ids: 'list[str]'):
+        """Sets the target_machine_ids of this V1CreateMultiMachineJobRequest.
+
+        Optional ordered machine ids. Entry i is the required host for rank i.  # noqa: E501
+
+        :param target_machine_ids: The target_machine_ids of this V1CreateMultiMachineJobRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._target_machine_ids = target_machine_ids
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

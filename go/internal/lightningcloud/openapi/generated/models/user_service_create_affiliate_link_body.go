@@ -36,9 +36,6 @@ type UserServiceCreateAffiliateLinkBody struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// skip waitlist
-	SkipWaitlist bool `json:"skipWaitlist,omitempty"`
-
 	// type
 	Type string `json:"type,omitempty"`
 }

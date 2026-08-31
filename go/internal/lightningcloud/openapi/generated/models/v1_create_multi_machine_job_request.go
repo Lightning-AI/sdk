@@ -43,6 +43,9 @@ type V1CreateMultiMachineJobRequest struct {
 
 	// Compute + run configuration
 	Spec *V1JobSpec `json:"spec,omitempty"`
+
+	// Optional ordered machine ids. Entry i is the required host for rank i.
+	TargetMachineIds []string `json:"targetMachineIds"`
 }
 
 // Validate validates this v1 create multi machine job request

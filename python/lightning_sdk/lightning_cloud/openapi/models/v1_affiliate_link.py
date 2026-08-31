@@ -52,7 +52,6 @@ class V1AffiliateLink(object):
         'max_uses': 'int',
         'name': 'str',
         'referred_incentives': 'dict(str, str)',
-        'skip_waitlist': 'bool',
         'type': 'str',
         'updated_at': 'datetime',
         'url': 'str',
@@ -68,7 +67,6 @@ class V1AffiliateLink(object):
         'max_uses': 'maxUses',
         'name': 'name',
         'referred_incentives': 'referredIncentives',
-        'skip_waitlist': 'skipWaitlist',
         'type': 'type',
         'updated_at': 'updatedAt',
         'url': 'url',
@@ -76,7 +74,7 @@ class V1AffiliateLink(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, code: 'str' =None, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, max_uses: 'int' =None, name: 'str' =None, referred_incentives: 'dict(str, str)' =None, skip_waitlist: 'bool' =None, type: 'str' =None, updated_at: 'datetime' =None, url: 'str' =None, usage_count: 'int' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, code: 'str' =None, created_at: 'datetime' =None, expires_at: 'datetime' =None, id: 'str' =None, max_uses: 'int' =None, name: 'str' =None, referred_incentives: 'dict(str, str)' =None, type: 'str' =None, updated_at: 'datetime' =None, url: 'str' =None, usage_count: 'int' =None, user_id: 'str' =None):  # noqa: E501
         """V1AffiliateLink - a model defined in Swagger"""  # noqa: E501
         self._code = None
         self._created_at = None
@@ -85,7 +83,6 @@ class V1AffiliateLink(object):
         self._max_uses = None
         self._name = None
         self._referred_incentives = None
-        self._skip_waitlist = None
         self._type = None
         self._updated_at = None
         self._url = None
@@ -106,8 +103,6 @@ class V1AffiliateLink(object):
             self.name = name
         if referred_incentives is not None:
             self.referred_incentives = referred_incentives
-        if skip_waitlist is not None:
-            self.skip_waitlist = skip_waitlist
         if type is not None:
             self.type = type
         if updated_at is not None:
@@ -265,27 +260,6 @@ class V1AffiliateLink(object):
         """
 
         self._referred_incentives = referred_incentives
-
-    @property
-    def skip_waitlist(self) -> 'bool':
-        """Gets the skip_waitlist of this V1AffiliateLink.  # noqa: E501
-
-
-        :return: The skip_waitlist of this V1AffiliateLink.  # noqa: E501
-        :rtype: bool
-        """
-        return self._skip_waitlist
-
-    @skip_waitlist.setter
-    def skip_waitlist(self, skip_waitlist: 'bool'):
-        """Sets the skip_waitlist of this V1AffiliateLink.
-
-
-        :param skip_waitlist: The skip_waitlist of this V1AffiliateLink.  # noqa: E501
-        :type: bool
-        """
-
-        self._skip_waitlist = skip_waitlist
 
     @property
     def type(self) -> 'str':

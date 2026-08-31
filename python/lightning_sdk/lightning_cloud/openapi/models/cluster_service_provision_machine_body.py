@@ -62,6 +62,7 @@ class ClusterServiceProvisionMachineBody(object):
         'provider_instance_id': 'str',
         'provider_region': 'str',
         'provisioning_method': 'str',
+        'purpose': 'str',
         'resources': 'V1Resources',
         'ssh_port': 'int',
         'ssh_username': 'str',
@@ -88,6 +89,7 @@ class ClusterServiceProvisionMachineBody(object):
         'provider_instance_id': 'providerInstanceId',
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
+        'purpose': 'purpose',
         'resources': 'resources',
         'ssh_port': 'sshPort',
         'ssh_username': 'sshUsername',
@@ -96,7 +98,7 @@ class ClusterServiceProvisionMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, bridge_network_cidr: 'str' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, bridge_network_cidr: 'str' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceProvisionMachineBody - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -115,6 +117,7 @@ class ClusterServiceProvisionMachineBody(object):
         self._provider_instance_id = None
         self._provider_region = None
         self._provisioning_method = None
+        self._purpose = None
         self._resources = None
         self._ssh_port = None
         self._ssh_username = None
@@ -156,6 +159,8 @@ class ClusterServiceProvisionMachineBody(object):
             self.provider_region = provider_region
         if provisioning_method is not None:
             self.provisioning_method = provisioning_method
+        if purpose is not None:
+            self.purpose = purpose
         if resources is not None:
             self.resources = resources
         if ssh_port is not None:
@@ -525,6 +530,27 @@ class ClusterServiceProvisionMachineBody(object):
         """
 
         self._provisioning_method = provisioning_method
+
+    @property
+    def purpose(self) -> 'str':
+        """Gets the purpose of this ClusterServiceProvisionMachineBody.  # noqa: E501
+
+
+        :return: The purpose of this ClusterServiceProvisionMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._purpose
+
+    @purpose.setter
+    def purpose(self, purpose: 'str'):
+        """Sets the purpose of this ClusterServiceProvisionMachineBody.
+
+
+        :param purpose: The purpose of this ClusterServiceProvisionMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._purpose = purpose
 
     @property
     def resources(self) -> 'V1Resources':
