@@ -174,6 +174,19 @@ def test_job_step_threads_placement_group_id():
 
 
 @patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_job_step_threads_max_run_attempts():
+    job = JobStep(name="job-0", machine=Machine.CPU, max_run_attempts=3)
+    proto = job.to_proto(MagicMock(), "", False)
+
+    assert proto.job.spec.max_run_attempts == 3
+
+
+def test_job_step_rejects_max_run_attempts_for_multi_machine():
+    with pytest.raises(ValueError, match="max_run_attempts is not supported for multi-machine jobs"):
+        JobStep(name="job-0", machine=Machine.CPU, num_machines=3, max_run_attempts=3)
+
+
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
 def test_job_step_supports_multiple_machines():
     job = JobStep(name="job-0", machine=Machine.CPU, num_machines=3)
     proto = job.to_proto(MagicMock(), "", False)

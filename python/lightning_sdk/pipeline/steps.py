@@ -205,6 +205,7 @@ class JobStep:
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
@@ -230,6 +231,9 @@ class JobStep:
             entrypoint: Container entrypoint. Defaults to ``sh -c``.
             path_mappings: Mappings from container paths to data-connection paths.
             max_runtime: Maximum runtime in seconds.
+            max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
+                unset (backend default). ``1`` means a single attempt (no retries).
+                ``N > 1`` allows up to ``N`` attempts. Only supported for single-machine jobs.
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
@@ -239,6 +243,8 @@ class JobStep:
         """
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
+        if num_machines > 1 and max_run_attempts:
+            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
         self.name = name
         self.machine = machine or Machine.CPU
         self.command = command
@@ -256,6 +262,7 @@ class JobStep:
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
+        self.max_run_attempts = max_run_attempts
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.scratch_disks = scratch_disks
@@ -297,6 +304,8 @@ class JobStep:
         if self.num_machines > 1:
             if self.scratch_disks:
                 raise ValueError("scratch_disks are not supported for multi-machine jobs")
+            if self.max_run_attempts:
+                raise ValueError("max_run_attempts is not supported for multi-machine jobs")
             body = MMTApiV2._create_mmt_body(
                 name=cast(str, self.name),
                 num_machines=self.num_machines,
@@ -337,6 +346,7 @@ class JobStep:
             entrypoint=self.entrypoint,
             path_mappings=self.path_mappings,
             max_runtime=self.max_runtime,
+            max_run_attempts=self.max_run_attempts,
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
             scratch_disks=self.scratch_disks,

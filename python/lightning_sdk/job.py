@@ -460,6 +460,9 @@ class Job(metaclass=TrackCallsMeta):
                     raise ValueError("scratch_disk path cannot contain '..'")
 
         self._num_machines = num_machines
+        extra_submit_kwargs: Dict[str, Any] = {}
+        if num_machines <= 1:
+            extra_submit_kwargs["max_run_attempts"] = max_run_attempts
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -475,11 +478,11 @@ class Job(metaclass=TrackCallsMeta):
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
-            max_run_attempts=max_run_attempts,
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
             num_machines=num_machines,
             scratch_disks=scratch_disks,
+            **extra_submit_kwargs,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
