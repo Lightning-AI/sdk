@@ -478,7 +478,6 @@ class Job(metaclass=TrackCallsMeta):
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
-            max_run_attempts=max_run_attempts,
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
             num_machines=num_machines,
