@@ -541,6 +541,8 @@ class LogsApi:
                         continue
                     except (WebSocketConnectionClosedException, OSError):
                         break  # fall through to the reconnect decision
+                    if isinstance(message, bytes):
+                        message = message.decode("utf-8", errors="replace")
                     if message == "":
                         break
                     entries = parse_log_entries(message)

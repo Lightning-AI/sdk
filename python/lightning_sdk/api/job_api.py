@@ -496,6 +496,8 @@ class JobApiV2:
                         return  # idle timeout on a snapshot: treat the stream as finished
                     except WebSocketConnectionClosedException:
                         break  # fall through to reconnect logic
+                    if isinstance(message, bytes):
+                        message = message.decode("utf-8", errors="replace")
                     if message == "":
                         break
                     yield from _decode_log_messages(message, timestamps=timestamps)
