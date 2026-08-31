@@ -1,6 +1,8 @@
 import os
 from unittest import mock
 
+import pytest
+
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceCreateCloudSpaceBody,
     CloudSpaceServiceStartCloudSpaceInstanceBody,
@@ -41,6 +43,7 @@ def list_cloudspaces_side_effect(existing_studios):
     return _list_cloudspaces_side_effect
 
 
+@pytest.mark.parametrize("machine_supported", [True, False])
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
     autospec=True,
@@ -99,6 +102,7 @@ def test_studio_start(
     mock_list_project_clusters,
     mock_list_clusters,
     mock_list_accelerators,
+    machine_supported,
 ):
     # Setup state from internal_studio_start_mocker
     status = {"st-abc": None}
@@ -207,7 +211,7 @@ def test_studio_start(
     mock_list_cloudspaces.side_effect = list_cloudspaces_side_effect(existing_studios)
     mock_create_cloudspace.side_effect = _create_cloudspace_side_effect
     mock_create_lightning_run.side_effect = _create_lightning_run_side_effect
-    mock_machine_is_supported.return_value = True
+    mock_machine_is_supported.return_value = machine_supported
 
     # Setup teamspace and org mocks
     mock_get_teamspace.return_value = V1Project(
@@ -225,7 +229,12 @@ def test_studio_start(
     assert studio.machine is None
     assert studio.teamspace.start_studios_on_interruptible is True
 
-    studio.start()
+    if machine_supported:
+        studio.start()
+    else:
+        # unvetted machines emit a warning but still start
+        with pytest.warns(UserWarning, match="custom instance type"):
+            studio.start()
 
     assert studio.status == Status.Running
     assert studio.interruptible is True
