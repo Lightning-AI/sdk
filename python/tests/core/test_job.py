@@ -158,6 +158,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
+        max_run_attempts=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -259,6 +260,27 @@ def test_job_exposes_private_provisioning_metadata(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_exposes_run_attempt_metadata(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(
+        id="job-123",
+        name="test-job",
+        spec=V1JobSpec(max_run_attempts=3, current_run_attempt=2, parent_job_id="job-parent"),
+    )
+
+    assert job.max_run_attempts == 3
+    assert job.current_run_attempt == 2
+    assert job.parent_job_id == "job-parent"
+
+    unset = Job("unset-job", teamspace, _fetch_job=False)
+    unset._job = V1Job(id="job-456", name="unset-job", spec=V1JobSpec())
+    assert unset.max_run_attempts is None
+    assert unset.current_run_attempt is None
+    assert unset.parent_job_id is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_exposes_start_and_stop_times(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
@@ -326,6 +348,40 @@ def test_submit_job_threads_placement_group_id(internal_studio_init_mocker):
     assert submit_mock.call_args.kwargs["placement_group_id"] == "pg-1"
 
 
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_job_threads_max_run_attempts(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        max_run_attempts=3,
+    )
+
+    assert submit_mock.call_args.kwargs["max_run_attempts"] == 3
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_rejects_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+
+    with pytest.raises(ValueError, match="max_run_attempts is not supported for multi-machine jobs"):
+        job._submit(
+            machine=Machine.CPU,
+            image="image-abc",
+            command="echo hello",
+            cloud_account="c-abc",
+            num_machines=2,
+            max_run_attempts=3,
+        )
+
+
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])
 @pytest.mark.parametrize("env", [None, {"key": "value"}])
 @pytest.mark.parametrize("interruptible", [True, False])
@@ -360,6 +416,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
+        max_run_attempts=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -748,6 +805,7 @@ def test_submit_jobv2_studio_resolve(
         entrypoint=None,
         path_mappings=None,
         max_runtime=None,
+        max_run_attempts=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -846,6 +904,7 @@ def test_submit_job_v2_image_from_studio(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        max_run_attempts=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -891,6 +950,7 @@ def test_run_job_with_cloud_provider(
         entrypoint="sh -c",
         path_mappings=None,
         max_runtime=None,
+        max_run_attempts=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,

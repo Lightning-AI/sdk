@@ -147,6 +147,7 @@ class JobApiV2:
         entrypoint: Optional[str],
         path_mappings: Optional[Dict[str, str]],
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -171,6 +172,8 @@ class JobApiV2:
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
                 (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
                 (spot) machines. ``None`` means no reservation is requested.
+            max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
+                unset (backend default). ``1`` means a single attempt (no retries).
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -203,6 +206,7 @@ class JobApiV2:
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
+            max_run_attempts=max_run_attempts,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=sanitized_scratch_disks,
             placement_group_id=placement_group_id,
@@ -227,6 +231,7 @@ class JobApiV2:
         path_mappings: Optional[Dict[str, str]],
         reuse_snapshot: bool,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         machine_image_version: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -250,6 +255,8 @@ class JobApiV2:
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
                 (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
                 (spot) machines. ``None`` means no reservation is requested.
+            max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
+                unset (backend default). ``1`` means a single attempt (no retries).
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -272,6 +279,8 @@ class JobApiV2:
         optional_spec_kwargs = {}
         if max_runtime:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
+        if max_run_attempts:
+            optional_spec_kwargs["max_run_attempts"] = max_run_attempts
 
         # don't do default dicts, as they'll be mutable. Create a fresh one here
         scratch_disks = scratch_disks or {}

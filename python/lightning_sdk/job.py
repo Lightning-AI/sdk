@@ -224,6 +224,7 @@ class Job(metaclass=TrackCallsMeta):
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -263,6 +264,9 @@ class Job(metaclass=TrackCallsMeta):
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
                 (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
                 (spot) machines. ``None`` means no reservation is requested.
+            max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
+                unset (backend default). ``1`` means a single attempt (no retries).
+                ``N > 1`` allows up to ``N`` attempts.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
@@ -288,6 +292,8 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
+        if num_machines > 1 and max_run_attempts:
+            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
 
         if image is None:
             if not isinstance(studio, Studio):
@@ -365,6 +371,7 @@ class Job(metaclass=TrackCallsMeta):
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
+            max_run_attempts=max_run_attempts,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
@@ -388,6 +395,7 @@ class Job(metaclass=TrackCallsMeta):
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -397,6 +405,8 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
+        if num_machines > 1 and max_run_attempts:
+            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
 
         if studio is not None:
             studio_id = studio._studio.id
@@ -465,6 +475,7 @@ class Job(metaclass=TrackCallsMeta):
             entrypoint=entrypoint,
             path_mappings=path_mappings,
             max_runtime=max_runtime,
+            max_run_attempts=max_run_attempts,
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
             num_machines=num_machines,
@@ -589,6 +600,26 @@ class Job(metaclass=TrackCallsMeta):
     @property
     def placement_group_id(self) -> Optional[str]:
         return self._guaranteed_job.spec.placement_group_id
+
+    @property
+    def max_run_attempts(self) -> Optional[int]:
+        """Max number of run attempts for this job, or ``None`` if unset."""
+        spec = getattr(self._guaranteed_job, "spec", None)
+        value = getattr(spec, "max_run_attempts", None)
+        return value or None
+
+    @property
+    def current_run_attempt(self) -> Optional[int]:
+        """Current run attempt for this job, or ``None`` if unset."""
+        spec = getattr(self._guaranteed_job, "spec", None)
+        value = getattr(spec, "current_run_attempt", None)
+        return value or None
+
+    @property
+    def parent_job_id(self) -> Optional[str]:
+        """Parent job id when this job is a retry attempt, or ``None``."""
+        spec = getattr(self._guaranteed_job, "spec", None)
+        return getattr(spec, "parent_job_id", None) or None
 
     @property
     def rank(self) -> Optional[int]:
