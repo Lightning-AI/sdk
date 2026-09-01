@@ -30,9 +30,9 @@ type MMT struct {
 	startedAt   time.Time
 	stoppedAt   time.Time
 
-	maxRunAttempts           int64
-	currentRunAttempt        int64
-	faultTolerance           MMTFaultToleranceStrategy
+	maxRunAttempts    int64
+	currentRunAttempt int64
+	faultTolerance    MMTFaultToleranceStrategy
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -748,10 +748,10 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 		studioID:    model.CloudspaceID,
 		totalCost:   model.TotalCost,
 
-	maxRunAttempts:          model.MaxRunAttempts,
-	currentRunAttempt:       model.CurrentRunAttempt,
-	faultTolerance:          mmtFaultToleranceFromModel(model.FaultTolerance),
-}
+		maxRunAttempts:    model.MaxRunAttempts,
+		currentRunAttempt: model.CurrentRunAttempt,
+		faultTolerance:    mmtFaultToleranceFromModel(model.FaultTolerance),
+	}
 	if model.State != nil {
 		result.status = string(*model.State)
 	}

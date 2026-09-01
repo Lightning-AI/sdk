@@ -199,10 +199,7 @@ def test_job_step_threads_max_run_attempts_and_fault_tolerance_for_multi_machine
     # max_run_attempts must live on the MMT body, NOT the per-machine JobSpec
     assert proto.mmt.spec.max_run_attempts is None
     assert proto.mmt.fault_tolerance is not None
-    assert (
-        proto.mmt.fault_tolerance.strategy
-        == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
-    )
+    assert proto.mmt.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
 def test_job_step_rejects_fault_tolerance_strategy_for_single_machine():
@@ -438,10 +435,7 @@ def test_mmt_step_threads_max_run_attempts_and_fault_tolerance():
     # max_run_attempts must live on the MMT body, NOT the per-machine JobSpec
     assert proto.mmt.spec.max_run_attempts is None
     assert proto.mmt.fault_tolerance is not None
-    assert (
-        proto.mmt.fault_tolerance.strategy
-        == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
-    )
+    assert proto.mmt.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
 @patch.object(teamspace, "TeamspaceApi", new=MagicMock())

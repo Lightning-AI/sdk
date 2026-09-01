@@ -274,8 +274,8 @@ class Job(metaclass=TrackCallsMeta):
                 ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
                 multi-machine job level (not the per-machine ``JobSpec``).
             fault_tolerance_strategy: Fault tolerance strategy for multi-machine jobs. ``None``
-                (or :class:`MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
-                :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported. Only
+                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
+                :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported. Only
                 valid for multi-machine jobs (``num_machines > 1``).
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
@@ -475,7 +475,7 @@ class Job(metaclass=TrackCallsMeta):
         extra_submit_kwargs: Dict[str, Any] = {}
         if num_machines > 1:
             extra_submit_kwargs["fault_tolerance_strategy"] = fault_tolerance_strategy
-            
+
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -650,9 +650,9 @@ class Job(metaclass=TrackCallsMeta):
 
         Returns ``None`` for standalone jobs (fault tolerance only applies to
         multi-machine jobs). For multi-machine jobs the stored strategy is
-        mapped back to the public :class:`MMTFaultToleranceStrategy` enum; an
+        mapped back to the public :class:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy` enum; an
         unset/``UNSPECIFIED`` strategy (or a job whose payload predates the
-        field) is reported as :attr:`MMTFaultToleranceStrategy.UNSPECIFIED`.
+        field) is reported as :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`.
         """
         if not self.is_multi_machine:
             return None

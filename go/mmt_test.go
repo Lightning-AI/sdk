@@ -444,17 +444,17 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"unexpected artifact path mapping: %+v", artifacts)
 
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"id":                      "mmt-advanced",
-			"name":                    "dist-train-advanced",
-			"projectId":               "project-1",
-			"machines":                4,
-			"state":                   "pending",
-		"maxRunAttempts":           5,
-		"currentRunAttempt":        2,
-		"faultTolerance": map[string]any{
-			"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
-		},
-	})
+			"id":                "mmt-advanced",
+			"name":              "dist-train-advanced",
+			"projectId":         "project-1",
+			"machines":          4,
+			"state":             "pending",
+			"maxRunAttempts":    5,
+			"currentRunAttempt": 2,
+			"faultTolerance": map[string]any{
+				"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
+			},
+		})
 	}))
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)

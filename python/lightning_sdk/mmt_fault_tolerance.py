@@ -40,12 +40,8 @@ def _to_fault_tolerance(
     currently supported beyond the default.
     """
     if strategy == MMTFaultToleranceStrategy.RECREATE_ALL_NODES:
-        return V1MultiMachineJobFaultTolerance(
-            strategy=V1MultiMachineJobFaultToleranceStrategy.RECREATE_ALL_NODES
-        )
-    return V1MultiMachineJobFaultTolerance(
-        strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
-    )
+        return V1MultiMachineJobFaultTolerance(strategy=V1MultiMachineJobFaultToleranceStrategy.RECREATE_ALL_NODES)
+    return V1MultiMachineJobFaultTolerance(strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED)
 
 
 def _from_fault_tolerance(

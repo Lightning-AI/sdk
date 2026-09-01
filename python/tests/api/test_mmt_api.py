@@ -64,9 +64,7 @@ def test_mmt_v2_submit_job(_mock_auth):
         spec=spec,
         cluster_id="c-abc",
         machines=5,
-        fault_tolerance=V1MultiMachineJobFaultTolerance(
-            strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
-        ),
+        fault_tolerance=V1MultiMachineJobFaultTolerance(strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED),
     )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
@@ -114,9 +112,7 @@ def test_mmt_v2_submit_job(_mock_auth):
         spec=spec,
         cluster_id="c-abc",
         machines=2,
-        fault_tolerance=V1MultiMachineJobFaultTolerance(
-            strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
-        ),
+        fault_tolerance=V1MultiMachineJobFaultTolerance(strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED),
     )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
@@ -328,10 +324,7 @@ def test_mmt_v2_submit_job_threads_max_run_attempts_and_fault_tolerance(_mock_au
     # max_run_attempts must live on the body, NOT on the per-machine JobSpec
     assert body.spec.max_run_attempts is None
     assert body.fault_tolerance is not None
-    assert (
-        body.fault_tolerance.strategy
-        == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
-    )
+    assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
