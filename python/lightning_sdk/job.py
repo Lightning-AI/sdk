@@ -13,7 +13,10 @@ from lightning_sdk.api.utils import (
     raise_access_error_if_not_allowed,
     resolve_logs_path,
 )
-from lightning_sdk.mmt_fault_tolerance import MMTFaultToleranceStrategy
+from lightning_sdk.mmt_fault_tolerance import (
+    MMTFaultToleranceStrategy,
+    _from_fault_tolerance,
+)
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -617,17 +620,45 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def max_run_attempts(self) -> Optional[int]:
-        """Max number of run attempts for this job, or ``None`` if unset."""
+        """Max number of run attempts for this job, or ``None`` if unset.
+
+        For multi-machine jobs this reads the multi-machine job body; for
+        standalone jobs it reads the per-job ``spec``.
+        """
+        if self.is_multi_machine:
+            return getattr(self._guaranteed_job, "max_run_attempts", None) or None
         spec = getattr(self._guaranteed_job, "spec", None)
         value = getattr(spec, "max_run_attempts", None)
         return value or None
 
     @property
     def current_run_attempt(self) -> Optional[int]:
-        """Current run attempt for this job, or ``None`` if unset."""
+        """Current run attempt for this job, or ``None`` if unset.
+
+        For multi-machine jobs this reads the multi-machine job body; for
+        standalone jobs it reads the per-job ``spec``.
+        """
+        if self.is_multi_machine:
+            return getattr(self._guaranteed_job, "current_run_attempt", None) or None
         spec = getattr(self._guaranteed_job, "spec", None)
         value = getattr(spec, "current_run_attempt", None)
         return value or None
+
+    @property
+    def fault_tolerance(self) -> Optional[MMTFaultToleranceStrategy]:
+        """Fault tolerance strategy for this multi-machine job, or ``None``.
+
+        Returns ``None`` for standalone jobs (fault tolerance only applies to
+        multi-machine jobs). For multi-machine jobs the stored strategy is
+        mapped back to the public :class:`MMTFaultToleranceStrategy` enum; an
+        unset/``UNSPECIFIED`` strategy (or a job whose payload predates the
+        field) is reported as :attr:`MMTFaultToleranceStrategy.UNSPECIFIED`.
+        """
+        if not self.is_multi_machine:
+            return None
+        return _from_fault_tolerance(getattr(self._guaranteed_job, "fault_tolerance", None)) or (
+            MMTFaultToleranceStrategy.UNSPECIFIED
+        )
 
     @property
     def rank(self) -> Optional[int]:

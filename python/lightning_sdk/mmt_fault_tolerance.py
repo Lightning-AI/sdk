@@ -13,7 +13,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1MultiMachineJobFaultToleranceStrategy,
 )
 
-__all__ = ["MMTFaultToleranceStrategy", "_to_fault_tolerance"]
+__all__ = ["MMTFaultToleranceStrategy", "_to_fault_tolerance", "_from_fault_tolerance"]
 
 
 class MMTFaultToleranceStrategy(str, Enum):
@@ -33,9 +33,11 @@ def _to_fault_tolerance(
 ) -> Optional[V1MultiMachineJobFaultTolerance]:
     """Map a public :class:`MMTFaultToleranceStrategy` to the generated API model.
 
-    Returns ``None`` for ``None`` / :attr:`MMTFaultToleranceStrategy.UNSPECIFIED`
-    (the backend treats an unset strategy as ``UNSPECIFIED``). Raises
-    :class:`ValueError` for any unsupported strategy value.
+    Always returns a :class:`V1MultiMachineJobFaultTolerance`. ``None`` and
+    :attr:`MMTFaultToleranceStrategy.UNSPECIFIED` (and any unsupported value)
+    map to the ``UNSPECIFIED`` strategy, which the backend treats as "no fault
+    tolerance". Only :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is
+    currently supported beyond the default.
     """
     if strategy == MMTFaultToleranceStrategy.RECREATE_ALL_NODES:
         return V1MultiMachineJobFaultTolerance(
@@ -44,3 +46,23 @@ def _to_fault_tolerance(
     return V1MultiMachineJobFaultTolerance(
         strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
     )
+
+
+def _from_fault_tolerance(
+    fault_tolerance: Optional[V1MultiMachineJobFaultTolerance],
+) -> Optional[MMTFaultToleranceStrategy]:
+    """Map a generated fault tolerance model back to the public enum.
+
+    Returns ``None`` when ``fault_tolerance`` is ``None`` (e.g. a job whose
+    payload predates the field). Otherwise maps the stored strategy to the
+    public :class:`MMTFaultToleranceStrategy`; any value other than
+    :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` (including
+    ``UNSPECIFIED`` and unknown backend values) is reported as
+    :attr:`MMTFaultToleranceStrategy.UNSPECIFIED`.
+    """
+    if fault_tolerance is None:
+        return None
+    strategy = getattr(fault_tolerance, "strategy", None)
+    if strategy == V1MultiMachineJobFaultToleranceStrategy.RECREATE_ALL_NODES:
+        return MMTFaultToleranceStrategy.RECREATE_ALL_NODES
+    return MMTFaultToleranceStrategy.UNSPECIFIED

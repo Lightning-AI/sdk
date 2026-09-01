@@ -29,6 +29,11 @@ type MMT struct {
 	totalCost   float32
 	startedAt   time.Time
 	stoppedAt   time.Time
+
+	maxRunAttempts           int64
+	currentRunAttempt        int64
+	parentMultiMachineJobID  string
+	faultTolerance           MMTFaultToleranceStrategy
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -101,6 +106,23 @@ func mmtFaultToleranceModel(strategy MMTFaultToleranceStrategy) (*models.V1Multi
 		return &models.V1MultiMachineJobFaultTolerance{Strategy: &s}, nil
 	default:
 		return nil, fmt.Errorf("unsupported multi-machine job fault tolerance strategy: %q. Only Unspecified and RecreateAllNodes are supported", strategy)
+	}
+}
+
+// mmtFaultToleranceFromModel maps a generated fault tolerance model back to
+// the public MMTFaultToleranceStrategy. A nil model (e.g. a job whose payload
+// predates the field) maps to Unspecified. Any value other than
+// RecreateAllNodes (including UNSPECIFIED and unknown backend values) also
+// maps to Unspecified.
+func mmtFaultToleranceFromModel(ft *models.V1MultiMachineJobFaultTolerance) MMTFaultToleranceStrategy {
+	if ft == nil || ft.Strategy == nil {
+		return MMTFaultToleranceStrategyUnspecified
+	}
+	switch *ft.Strategy {
+	case models.V1MultiMachineJobFaultToleranceStrategyMULTIMACHINEJOBFAULTTOLERANCESTRATEGYRECREATEALLNODES:
+		return MMTFaultToleranceStrategyRecreateAllNodes
+	default:
+		return MMTFaultToleranceStrategyUnspecified
 	}
 }
 
@@ -309,6 +331,43 @@ func (m *MMT) StoppedAt() time.Time {
 		return time.Time{}
 	}
 	return m.stoppedAt
+}
+
+// MaxRunAttempts returns the max number of run attempts for this multi-machine
+// job, read from the multi-machine job body. 0 means unset.
+func (m *MMT) MaxRunAttempts() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.maxRunAttempts
+}
+
+// CurrentRunAttempt returns the current run attempt for this multi-machine job,
+// read from the multi-machine job body. 0 means unset.
+func (m *MMT) CurrentRunAttempt() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.currentRunAttempt
+}
+
+// ParentMultiMachineJobID returns the parent multi-machine job id when this
+// MMT is a retry attempt, or "" if it is not a retry.
+func (m *MMT) ParentMultiMachineJobID() string {
+	if m == nil {
+		return ""
+	}
+	return m.parentMultiMachineJobID
+}
+
+// FaultTolerance returns the fault tolerance strategy for this multi-machine
+// job. The zero value (MMTFaultToleranceStrategyUnspecified) means no fault
+// tolerance is configured.
+func (m *MMT) FaultTolerance() MMTFaultToleranceStrategy {
+	if m == nil {
+		return MMTFaultToleranceStrategyUnspecified
+	}
+	return m.faultTolerance
 }
 
 // GetMMT returns an existing MMT by name or ID.
@@ -698,6 +757,11 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 		numMachines: model.Machines,
 		studioID:    model.CloudspaceID,
 		totalCost:   model.TotalCost,
+
+		maxRunAttempts:          model.MaxRunAttempts,
+		currentRunAttempt:       model.CurrentRunAttempt,
+		parentMultiMachineJobID: model.ParentMultiMachineJobID,
+		faultTolerance:          mmtFaultToleranceFromModel(model.FaultTolerance),
 	}
 	if model.State != nil {
 		result.status = string(*model.State)

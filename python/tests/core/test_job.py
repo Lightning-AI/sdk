@@ -11,6 +11,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Job,
     V1JobSpec,
     V1MultiMachineJob,
+    V1MultiMachineJobFaultTolerance,
+    V1MultiMachineJobFaultToleranceStrategy,
     V1MultiMachineJobStatus,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -272,16 +274,78 @@ def test_job_exposes_run_attempt_metadata(internal_studio_init_mocker):
     assert job.max_run_attempts == 3
     assert job.current_run_attempt == 2
     assert job._guaranteed_job.spec.parent_job_id == "job-parent"
+    assert job._guaranteed_job.parent_multi_machine_job_id is None  # MMT-only field
 
     unset = Job("unset-job", teamspace, _fetch_job=False)
     unset._job = V1Job(id="job-456", name="unset-job", spec=V1JobSpec())
     assert unset.max_run_attempts is None
     assert unset.current_run_attempt is None
     assert unset._guaranteed_job.spec.parent_job_id is None
+    assert unset._guaranteed_job.parent_multi_machine_job_id is None
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_exposes_start_and_stop_times(internal_studio_init_mocker):
+def test_job_exposes_mmt_level_run_attempt_metadata(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-mmt", teamspace, _fetch_job=False, _num_machines=2)
+    job._job = V1MultiMachineJob(
+        id="mmt-123",
+        name="test-mmt",
+        machines=2,
+        max_run_attempts=5,
+        current_run_attempt=3,
+        parent_multi_machine_job_id="mmt-parent",
+        fault_tolerance=V1MultiMachineJobFaultTolerance(
+            strategy=V1MultiMachineJobFaultToleranceStrategy.RECREATE_ALL_NODES
+        ),
+        spec=V1JobSpec(),  # spec-level retry fields intentionally left blank for MMTs
+    )
+
+    # Retry fields must be read from the MMT body, not the (blank) spec.
+    assert job.is_multi_machine
+    assert job.max_run_attempts == 5
+    assert job.current_run_attempt == 3
+    assert job.parent_multi_machine_job_id == "mmt-parent"
+    assert job.parent_job_id is None  # standalone-only field
+    assert job.fault_tolerance == MMTFaultToleranceStrategy.RECREATE_ALL_NODES
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_fault_tolerance_defaults_to_unspecified_for_mmt(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+
+    # Explicitly UNSPECIFIED strategy.
+    unspecified = Job("mmt-unspecified", teamspace, _fetch_job=False, _num_machines=2)
+    unspecified._job = V1MultiMachineJob(
+        id="mmt-1",
+        name="mmt-unspecified",
+        machines=2,
+        fault_tolerance=V1MultiMachineJobFaultTolerance(
+            strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
+        ),
+        spec=V1JobSpec(),
+    )
+    assert unspecified.fault_tolerance == MMTFaultToleranceStrategy.UNSPECIFIED
+
+    # Field absent (e.g. a job whose payload predates the feature) -> still UNSPECIFIED.
+    absent = Job("mmt-absent", teamspace, _fetch_job=False, _num_machines=2)
+    absent._job = V1MultiMachineJob(id="mmt-2", name="mmt-absent", machines=2, spec=V1JobSpec())
+    assert absent.fault_tolerance == MMTFaultToleranceStrategy.UNSPECIFIED
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_fault_tolerance_is_none_for_standalone(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(id="job-123", name="test-job", spec=V1JobSpec(max_run_attempts=3))
+    assert not job.is_multi_machine
+    assert job.fault_tolerance is None
+
+
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
     job._prevent_refetch_latest = True

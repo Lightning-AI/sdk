@@ -365,6 +365,30 @@ func TestMMTExposesStartAndStopTimes(t *testing.T) {
 		"StoppedAt = %v, want 2026-08-02T13:00:00Z", existing.StoppedAt())
 }
 
+func TestMMTFaultToleranceDefaultsToUnspecified(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "mmt-1",
+			"name":      "dist-train",
+			"projectId": "project-1",
+			"machines":  4,
+			"state":     "stopped",
+			// faultTolerance intentionally absent (payload predates the field).
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
+	require.NoErrorf(t, err,
+		"GetMMT returned error")
+	assert.Falsef(t, existing.FaultTolerance() != lit.MMTFaultToleranceStrategyUnspecified,
+		"FaultTolerance = %q, want Unspecified", existing.FaultTolerance())
+	assert.Falsef(t, existing.MaxRunAttempts() != 0 || existing.CurrentRunAttempt() != 0 || existing.ParentMultiMachineJobID() != "",
+		"unexpected retry fields: %d %d %q", existing.MaxRunAttempts(), existing.CurrentRunAttempt(), existing.ParentMultiMachineJobID())
+}
+
 func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -420,11 +444,17 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"unexpected artifact path mapping: %+v", artifacts)
 
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"id":        "mmt-advanced",
-			"name":      "dist-train-advanced",
-			"projectId": "project-1",
-			"machines":  4,
-			"state":     "pending",
+			"id":                      "mmt-advanced",
+			"name":                    "dist-train-advanced",
+			"projectId":               "project-1",
+			"machines":                4,
+			"state":                   "pending",
+			"maxRunAttempts":           5,
+			"currentRunAttempt":        2,
+			"parentMultiMachineJobId":  "mmt-parent",
+			"faultTolerance": map[string]any{
+				"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
+			},
 		})
 	}))
 	defer server.Close()
@@ -457,6 +487,17 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 		"RunMMT returned error")
 	assert.Falsef(t, created.ID() != "mmt-advanced" || created.Status() != "pending" || created.NumMachines() != 4,
 		"unexpected created mmt: %s %s %d", created.ID(), created.Status(), created.NumMachines())
+
+	// MMT-level retry / fault-tolerance fields are read from the body, not the
+	// (blank) per-machine JobSpec.
+	assert.Falsef(t, created.MaxRunAttempts() != 5,
+		"MaxRunAttempts = %d, want 5", created.MaxRunAttempts())
+	assert.Falsef(t, created.CurrentRunAttempt() != 2,
+		"CurrentRunAttempt = %d, want 2", created.CurrentRunAttempt())
+	assert.Falsef(t, created.ParentMultiMachineJobID() != "mmt-parent",
+		"ParentMultiMachineJobID = %q, want mmt-parent", created.ParentMultiMachineJobID())
+	assert.Falsef(t, created.FaultTolerance() != lit.MMTFaultToleranceStrategyRecreateAllNodes,
+		"FaultTolerance = %q, want %q", created.FaultTolerance(), lit.MMTFaultToleranceStrategyRecreateAllNodes)
 
 }
 
