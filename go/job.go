@@ -40,6 +40,8 @@ type Job struct {
 
 	artifactsSource      string
 	artifactsDestination string
+	maxRunAttempts       int64
+	currentRunAttempt    int64
 }
 
 // JobDict is the JSON-friendly public representation of a job.
@@ -103,6 +105,7 @@ type jobOptions struct {
 	artifactsSource  string
 	artifactsDest    string
 	maxRuntime       int
+	maxRunAttempts   int64
 	scratchDisks     []ScratchDisk
 }
 
@@ -154,6 +157,9 @@ type JobOptions struct {
 	ArtifactsDestination string
 	// MaxRuntime limits the job runtime in seconds.
 	MaxRuntime int
+	// MaxRunAttempts is the max number of run attempts for this job.
+	// 0 means unset (backend default). 1 means a single attempt (no retries).
+	MaxRunAttempts int64
 	// ScratchDisks mounts temporary scratch storage for studio-backed jobs.
 	ScratchDisks []ScratchDisk
 }
@@ -304,6 +310,24 @@ func (j *Job) ArtifactsDestination() string {
 		return ""
 	}
 	return j.artifactsDestination
+}
+
+// MaxRunAttempts returns the max number of run attempts for this job.
+// 0 means unset.
+func (j *Job) MaxRunAttempts() int64 {
+	if j == nil {
+		return 0
+	}
+	return j.maxRunAttempts
+}
+
+// CurrentRunAttempt returns the current run attempt for this job.
+// 0 means unset.
+func (j *Job) CurrentRunAttempt() int64 {
+	if j == nil {
+		return 0
+	}
+	return j.currentRunAttempt
 }
 
 // GetJob returns an existing job by name or ID.
@@ -640,6 +664,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.artifactsSource = opts[0].ArtifactsSource
 		resolved.artifactsDest = opts[0].ArtifactsDestination
 		resolved.maxRuntime = opts[0].MaxRuntime
+		resolved.maxRunAttempts = opts[0].MaxRunAttempts
 		resolved.scratchDisks = opts[0].ScratchDisks
 	}
 	return resolved
@@ -735,6 +760,8 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		result.studioID = model.Spec.CloudspaceID
 		result.artifactsSource = model.Spec.ArtifactsSource
 		result.artifactsDestination = model.Spec.ArtifactsDestination
+		result.maxRunAttempts = model.Spec.MaxRunAttempts
+		result.currentRunAttempt = model.Spec.CurrentRunAttempt
 	}
 	return result
 }
@@ -767,6 +794,7 @@ func jobSpec(machine, command string, opts jobOptions) *models.V1JobSpec {
 		ImageSecretRef:              opts.imageCredentials,
 		InstanceName:                machine,
 		PathMappings:                jobPathMappings(opts),
+		MaxRunAttempts:              opts.maxRunAttempts,
 		RequestedRunDurationSeconds: maxRuntime(opts.maxRuntime),
 		Spot:                        opts.interruptible,
 		Volumes:                     scratchVolumes(opts.scratchDisks),

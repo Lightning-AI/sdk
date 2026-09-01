@@ -38,6 +38,33 @@ func TestJobExposesStartAndStopTimes(t *testing.T) {
 		"StoppedAt = %v, want zero time", existing.StoppedAt())
 }
 
+func TestJobExposesRunAttemptFields(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-retry",
+			"name":      "train",
+			"projectId": "project-1",
+			"state":     "pending",
+			"spec": map[string]any{
+				"maxRunAttempts":    3,
+				"currentRunAttempt": 2,
+				"parentJobId":       "job-parent",
+			},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	existing, err := lit.GetJob("train", lit.JobOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Falsef(t, existing.MaxRunAttempts() != 3,
+		"MaxRunAttempts = %d, want 3", existing.MaxRunAttempts())
+	assert.Falsef(t, existing.CurrentRunAttempt() != 2,
+		"CurrentRunAttempt = %d, want 2", existing.CurrentRunAttempt())
+}
+
 func TestJobGetWithIDUsesSimpleStruct(t *testing.T) {
 	j, err := lit.GetJob("train", lit.JobOptions{ID: "job-1", Teamspace: mustTeamspace(t, "project-1", "")})
 	require.NoErrorf(t, err,
@@ -288,6 +315,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 				ImageClusterCredentials     bool   `json:"imageClusterCredentials"`
 				ImageSecretRef              string `json:"imageSecretRef"`
 				RequestedRunDurationSeconds string `json:"requestedRunDurationSeconds"`
+				MaxRunAttempts              int64  `json:"maxRunAttempts"`
 				PathMappings                []struct {
 					ContainerPath  string `json:"containerPath"`
 					ConnectionName string `json:"connectionName"`
@@ -308,6 +336,8 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 			"imageSecretRef = %q, want docker-secret", body.Spec.ImageSecretRef)
 		assert.Falsef(t, body.Spec.RequestedRunDurationSeconds != "7200",
 			"requestedRunDurationSeconds = %q, want 7200", body.Spec.RequestedRunDurationSeconds)
+		assert.Falsef(t, body.Spec.MaxRunAttempts != 3,
+			"maxRunAttempts = %d, want 3", body.Spec.MaxRunAttempts)
 		assert.Falsef(t, len(body.Spec.PathMappings) != 2,
 			"pathMappings length = %d, want 2", len(body.Spec.PathMappings))
 
@@ -330,6 +360,9 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 				"image":                "registry.example/train:latest",
 				"artifactsSource":      "/outputs",
 				"artifactsDestination": "efs:data:outputs/run-1",
+				"maxRunAttempts":       3,
+				"currentRunAttempt":    1,
+				"parentJobId":          "",
 			},
 		})
 	}))
@@ -349,6 +382,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 			ArtifactsSource:      "/outputs",
 			ArtifactsDestination: "efs:data:outputs/run-1",
 			MaxRuntime:           7200,
+			MaxRunAttempts:       3,
 			PathMappings: []lit.JobPathMapping{{
 				ContainerPath:  "/data",
 				ConnectionName: "dataset",
@@ -364,6 +398,8 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 	if got, want := created.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
 		assert.Fail(t, fmt.Sprintf("created artifact path = %q, want %q", got, want))
 	}
+	assert.Falsef(t, created.MaxRunAttempts() != 3 || created.CurrentRunAttempt() != 1,
+		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())
 }
 
 func TestJobRunMapsScratchDisksForStudioJobs(t *testing.T) {

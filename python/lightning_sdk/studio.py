@@ -781,6 +781,7 @@ class Studio(metaclass=TrackCallsMeta):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         reuse_snapshot: bool = True,
+        max_run_attempts: Optional[int] = None,
     ) -> "Job":
         """Run async workloads using the compute environment from your studio.
 
@@ -792,6 +793,8 @@ class Studio(metaclass=TrackCallsMeta):
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             reuse_snapshot: Whether the job should reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
+            max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
+                unset (backend default). ``1`` means a single attempt (no retries).
 
         Returns:
             Job: The submitted :class:`Job` instance.
@@ -809,6 +812,7 @@ class Studio(metaclass=TrackCallsMeta):
             env=env,
             interruptible=interruptible,
             reuse_snapshot=reuse_snapshot,
+            max_run_attempts=max_run_attempts,
         )
 
     def run_mmt(
