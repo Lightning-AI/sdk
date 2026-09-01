@@ -10,6 +10,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1MultiMachineJob,
 )
 from lightning_sdk.machine import Machine
+from lightning_sdk.job import Job
 from lightning_sdk.mmt import MMT
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
@@ -100,6 +101,8 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         reuse_snapshot=True,
         placement_group_id=None,
         scratch_disks=None,
+        max_run_attempts=None,
+        fault_tolerance_strategy=None,
     )
 
 
@@ -120,6 +123,49 @@ def test_submit_mmt_threads_placement_group_id(internal_studio_init_mocker):
     )
 
     assert submit_mock.call_args.kwargs["placement_group_id"] == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_mmt_threads_max_run_attempts_and_fault_tolerance(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = MMT("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        num_machines=3,
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        max_run_attempts=4,
+        fault_tolerance_strategy=MMTFaultToleranceStrategy.RECREATE_ALL_NODES,
+    )
+
+    assert submit_mock.call_args.kwargs["max_run_attempts"] == 4
+    assert (
+        submit_mock.call_args.kwargs["fault_tolerance_strategy"]
+        == MMTFaultToleranceStrategy.RECREATE_ALL_NODES
+    )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_rejects_fault_tolerance_strategy_for_single_machine(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+
+    with pytest.raises(ValueError, match="fault_tolerance_strategy is only supported for multi-machine jobs"):
+        job._submit(
+            machine=Machine.CPU,
+            image="image-abc",
+            command="echo hello",
+            cloud_account="c-abc",
+            fault_tolerance_strategy=MMTFaultToleranceStrategy.RECREATE_ALL_NODES,
+        )
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -216,6 +262,8 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         reuse_snapshot=True,
         placement_group_id=None,
         scratch_disks=None,
+        max_run_attempts=None,
+        fault_tolerance_strategy=None,
     )
 
 

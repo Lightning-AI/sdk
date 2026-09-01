@@ -28,6 +28,7 @@ from lightning_sdk.pipeline.utils import DEFAULT, _get_studio, _to_wait_for, _va
 from lightning_sdk.studio import CloudAccountApi, Studio
 
 if TYPE_CHECKING:
+    from lightning_sdk.mmt_fault_tolerance import MMTFaultToleranceStrategy
     from lightning_sdk.organization import Organization
     from lightning_sdk.teamspace import CloudProvider, Teamspace
     from lightning_sdk.user import User
@@ -206,6 +207,7 @@ class JobStep:
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
+        fault_tolerance_strategy: Optional["MMTFaultToleranceStrategy"] = None,
         wait_for: Union[str, List[str], None] = DEFAULT,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
@@ -233,7 +235,12 @@ class JobStep:
             max_runtime: Maximum runtime in seconds.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
-                ``N > 1`` allows up to ``N`` attempts. Only supported for single-machine jobs.
+                ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
+                multi-machine job level (not the per-machine ``JobSpec``).
+            fault_tolerance_strategy: Fault tolerance strategy for multi-machine jobs. ``None``
+                (or :class:`MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
+                :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported. Only
+                valid for multi-machine jobs (``num_machines > 1``).
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
@@ -243,8 +250,8 @@ class JobStep:
         """
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
+        if num_machines <= 1 and fault_tolerance_strategy is not None:
+            raise ValueError("fault_tolerance_strategy is only supported for multi-machine jobs")
         self.name = name
         self.machine = machine or Machine.CPU
         self.command = command
@@ -263,6 +270,7 @@ class JobStep:
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
         self.max_run_attempts = max_run_attempts
+        self.fault_tolerance_strategy = fault_tolerance_strategy
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.scratch_disks = scratch_disks
@@ -304,8 +312,6 @@ class JobStep:
         if self.num_machines > 1:
             if self.scratch_disks:
                 raise ValueError("scratch_disks are not supported for multi-machine jobs")
-            if self.max_run_attempts:
-                raise ValueError("max_run_attempts is not supported for multi-machine jobs")
             body = MMTApiV2._create_mmt_body(
                 name=cast(str, self.name),
                 num_machines=self.num_machines,
@@ -324,6 +330,8 @@ class JobStep:
                 machine_image_version=machine_image_version,
                 reuse_snapshot=self.reuse_snapshot,
                 placement_group_id=self.placement_group_id,
+                max_run_attempts=self.max_run_attempts,
+                fault_tolerance_strategy=self.fault_tolerance_strategy,
             )
             return V1PipelineStep(
                 name=self.name,
@@ -382,6 +390,8 @@ class MMTStep:
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
+        fault_tolerance_strategy: Optional["MMTFaultToleranceStrategy"] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
@@ -406,6 +416,12 @@ class MMTStep:
             entrypoint: Container entrypoint. Defaults to ``sh -c``.
             path_mappings: Mappings from container paths to data-connection paths.
             max_runtime: Maximum runtime in seconds.
+            max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0``
+                means unset (legacy, no retries); ``1`` means a single attempt (no retries). Set at
+                the multi-machine job level, not on the per-machine ``JobSpec``.
+            fault_tolerance_strategy: Fault tolerance strategy for the multi-machine job. ``None``
+                (or :class:`MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
+                :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported.
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -428,6 +444,8 @@ class MMTStep:
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
+        self.max_run_attempts = max_run_attempts
+        self.fault_tolerance_strategy = fault_tolerance_strategy
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.placement_group_id = placement_group_id
@@ -482,6 +500,8 @@ class MMTStep:
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
             placement_group_id=self.placement_group_id,
+            max_run_attempts=self.max_run_attempts,
+            fault_tolerance_strategy=self.fault_tolerance_strategy,
         )
 
         return V1PipelineStep(

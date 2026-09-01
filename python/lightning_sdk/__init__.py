@@ -7,7 +7,7 @@ from lightning_sdk.helpers import VersionChecker, set_tqdm_envvars_noninteractiv
 from lightning_sdk.job import Job
 from lightning_sdk.k8s_cluster import K8sCluster
 from lightning_sdk.machine import CloudProvider, Machine
-from lightning_sdk.mmt import MMT
+from lightning_sdk.mmt import MMT, MMTFaultToleranceStrategy
 from lightning_sdk.organization import MonthlySummary, Organization
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
@@ -16,6 +16,7 @@ from lightning_sdk.user import User
 
 __all__ = [
     "MMT",
+    "MMTFaultToleranceStrategy",
     "Agent",
     "CloudProvider",
     "ConnectionType",

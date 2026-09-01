@@ -372,9 +372,13 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
 
 		var body struct {
-			Name     string `json:"name"`
-			Machines int64  `json:"machines"`
-			Spec     struct {
+			Name           string `json:"name"`
+			Machines       int64  `json:"machines"`
+			MaxRunAttempts int64  `json:"maxRunAttempts"`
+			FaultTolerance *struct {
+				Strategy string `json:"strategy"`
+			} `json:"faultTolerance"`
+			Spec struct {
 				Entrypoint                  string `json:"entrypoint"`
 				ImageClusterCredentials     bool   `json:"imageClusterCredentials"`
 				ImageSecretRef              string `json:"imageSecretRef"`
@@ -390,6 +394,12 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"decode mmt body")
 		assert.Falsef(t, body.Name != "dist-train-advanced" || body.Machines != 4,
 			"unexpected mmt header: %+v", body)
+		assert.Falsef(t, body.MaxRunAttempts != 5,
+			"maxRunAttempts = %d, want 5", body.MaxRunAttempts)
+		require.NotNil(t, body.FaultTolerance,
+			"faultTolerance was not set on the mmt body")
+		assert.Falsef(t, body.FaultTolerance.Strategy != "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
+			"faultTolerance.strategy = %q, want RECREATE_ALL_NODES", body.FaultTolerance.Strategy)
 		assert.Falsef(t, body.Spec.Entrypoint != "python",
 			"entrypoint = %q, want python", body.Spec.Entrypoint)
 		assert.True(t, body.Spec.ImageClusterCredentials,
@@ -432,6 +442,8 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			CloudAccountAuth:     true,
 			Entrypoint:           "python",
 			MaxRuntime:           7200,
+			MaxRunAttempts:       5,
+			FaultTolerance:       lit.MMTFaultToleranceStrategyRecreateAllNodes,
 			ArtifactsSource:      "/outputs",
 			ArtifactsDestination: "efs:data:outputs/run-1",
 			PathMappings: []lit.MMTPathMapping{{
@@ -446,6 +458,30 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 	assert.Falsef(t, created.ID() != "mmt-advanced" || created.Status() != "pending" || created.NumMachines() != 4,
 		"unexpected created mmt: %s %s %d", created.ID(), created.Status(), created.NumMachines())
 
+}
+
+func TestMMTRunRejectsUnsupportedFaultToleranceStrategy(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	_, err := lit.RunMMT(
+		"dist-train",
+		4,
+		"gpu",
+		"torchrun train.py",
+		lit.MMTOptions{
+			Teamspace:      mustTeamspace(t, "project-1", ""),
+			Image:          "pytorch/pytorch:latest",
+			FaultTolerance: lit.MMTFaultToleranceStrategy("MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_NODE"),
+		},
+	)
+	require.Error(t, err,
+		"RunMMT returned nil error for unsupported fault tolerance strategy")
+	assert.Falsef(t, !strings.Contains(err.Error(), "unsupported multi-machine job fault tolerance strategy"),
+		"RunMMT error = %q, want unsupported strategy validation", err)
 }
 
 func TestMMTRunRejectsSingleMachine(t *testing.T) {

@@ -73,6 +73,37 @@ type MMTPathMapping struct {
 	ConnectionPath string
 }
 
+// MMTFaultToleranceStrategy selects the fault tolerance strategy for a
+// multi-machine job. Only RecreateAllNodes is currently supported beyond the
+// default (Unspecified). The strategy is set at the multi-machine job level,
+// not on the per-machine JobSpec.
+type MMTFaultToleranceStrategy string
+
+const (
+	// MMTFaultToleranceStrategyUnspecified leaves the fault tolerance strategy
+	// unset (the backend default).
+	MMTFaultToleranceStrategyUnspecified MMTFaultToleranceStrategy = ""
+	// MMTFaultToleranceStrategyRecreateAllNodes recreates the full cluster on
+	// failure.
+	MMTFaultToleranceStrategyRecreateAllNodes MMTFaultToleranceStrategy = "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
+)
+
+// mmtFaultToleranceModel maps a public MMTFaultToleranceStrategy to the
+// generated API model. It returns nil for Unspecified (the backend treats an
+// unset strategy as UNSPECIFIED) and the mapped model for RecreateAllNodes.
+// Unsupported values return an error.
+func mmtFaultToleranceModel(strategy MMTFaultToleranceStrategy) (*models.V1MultiMachineJobFaultTolerance, error) {
+	switch strategy {
+	case MMTFaultToleranceStrategyUnspecified:
+		return nil, nil
+	case MMTFaultToleranceStrategyRecreateAllNodes:
+		s := models.V1MultiMachineJobFaultToleranceStrategyMULTIMACHINEJOBFAULTTOLERANCESTRATEGYRECREATEALLNODES
+		return &models.V1MultiMachineJobFaultTolerance{Strategy: &s}, nil
+	default:
+		return nil, fmt.Errorf("unsupported multi-machine job fault tolerance strategy: %q. Only Unspecified and RecreateAllNodes are supported", strategy)
+	}
+}
+
 type mmtOptions struct {
 	id               string
 	teamspaceID      string
@@ -95,6 +126,8 @@ type mmtOptions struct {
 	artifactsSource  string
 	artifactsDest    string
 	maxRuntime       int
+	maxRunAttempts   int64
+	faultTolerance   MMTFaultToleranceStrategy
 }
 
 type mmtWaitOptions struct {
@@ -143,6 +176,15 @@ type MMTOptions struct {
 	ArtifactsDestination string
 	// MaxRuntime limits the MMT runtime in seconds.
 	MaxRuntime int
+	// MaxRunAttempts is the max number of run attempts for this multi-machine
+	// job. 0 means unset (legacy, no retries); 1 means a single attempt (no
+	// retries). Set at the multi-machine job level, not on the per-machine
+	// JobSpec.
+	MaxRunAttempts int64
+	// FaultTolerance selects the fault tolerance strategy for the MMT. The
+	// zero value (Unspecified) leaves the strategy unset; only
+	// RecreateAllNodes is currently supported.
+	FaultTolerance MMTFaultToleranceStrategy
 }
 
 // MMTWaitOptions configures polling behavior while waiting for an MMT.
@@ -328,11 +370,17 @@ func RunMMT(name string, numMachines int64, machine Machine, command string, opt
 	if resolved.teamspaceID == "" {
 		return nil, errors.New("mmt run requires teamspace or studio")
 	}
+	faultTolerance, err := mmtFaultToleranceModel(resolved.faultTolerance)
+	if err != nil {
+		return nil, err
+	}
 	body := &models.JobsServiceCreateMultiMachineJobBody{
-		ClusterID: resolved.cloud,
-		Machines:  numMachines,
-		Name:      name,
-		Spec:      mmtJobSpec(numMachines, string(machine), command, resolved),
+		ClusterID:      resolved.cloud,
+		Machines:       numMachines,
+		Name:           name,
+		Spec:           mmtJobSpec(numMachines, string(machine), command, resolved),
+		MaxRunAttempts: resolved.maxRunAttempts,
+		FaultTolerance: faultTolerance,
 	}
 	resp, err := api.JobsService.JobsServiceCreateMultiMachineJob(
 		jobs_service.NewJobsServiceCreateMultiMachineJobParamsWithContext(context.Background()).WithProjectID(resolved.teamspaceID).WithBody(body),
@@ -593,6 +641,8 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.artifactsSource = opts[0].ArtifactsSource
 		resolved.artifactsDest = opts[0].ArtifactsDestination
 		resolved.maxRuntime = opts[0].MaxRuntime
+		resolved.maxRunAttempts = opts[0].MaxRunAttempts
+		resolved.faultTolerance = opts[0].FaultTolerance
 	}
 	return resolved
 }

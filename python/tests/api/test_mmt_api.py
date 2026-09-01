@@ -10,6 +10,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1EnvVar,
     V1JobSpec,
     V1MultiMachineJob,
+    V1MultiMachineJobFaultTolerance,
+    V1MultiMachineJobFaultToleranceStrategy,
     V1PathMapping,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
@@ -57,7 +59,15 @@ def test_mmt_v2_submit_job(_mock_auth):
         image_secret_ref="",
         path_mappings=[],
     )
-    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=5)
+    body = JobsServiceCreateMultiMachineJobBody(
+        name="test-job",
+        spec=spec,
+        cluster_id="c-abc",
+        machines=5,
+        fault_tolerance=V1MultiMachineJobFaultTolerance(
+            strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
+        ),
+    )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
@@ -99,7 +109,15 @@ def test_mmt_v2_submit_job(_mock_auth):
         ],
         requested_run_duration_seconds="500",
     )
-    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
+    body = JobsServiceCreateMultiMachineJobBody(
+        name="test-job",
+        spec=spec,
+        cluster_id="c-abc",
+        machines=2,
+        fault_tolerance=V1MultiMachineJobFaultTolerance(
+            strategy=V1MultiMachineJobFaultToleranceStrategy.UNSPECIFIED
+        ),
+    )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
@@ -274,3 +292,103 @@ def test_get_studio_name_returns_none_when_cloudspace_missing():
     job_api._client.cloud_space_service_get_cloud_space.assert_called_once_with(
         project_id="ts-abc", id="deleted-studio"
     )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_threads_max_run_attempts_and_fault_tolerance(_mock_auth):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=4,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        max_run_attempts=5,
+        fault_tolerance_strategy=MMTFaultToleranceStrategy.RECREATE_ALL_NODES,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.max_run_attempts == 5
+    # max_run_attempts must live on the body, NOT on the per-machine JobSpec
+    assert body.spec.max_run_attempts is None
+    assert body.fault_tolerance is not None
+    assert (
+        body.fault_tolerance.strategy
+        == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
+    )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_defaults_unset_fault_tolerance_to_unspecified(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=4,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    # max_run_attempts is omitted (None) when not provided...
+    assert body.max_run_attempts is None
+    # ...but fault_tolerance always defaults to UNSPECIFIED (never None).
+    assert body.fault_tolerance is not None
+    assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_UNSPECIFIED"
+
+
+def test_mmt_v2_submit_job_defaults_unsupported_fault_tolerance_strategy_to_unspecified():
+    job_api = MMTApiV2()
+    # An unsupported strategy value (e.g. RECREATE_NODE) is no longer rejected;
+    # it falls back to the UNSPECIFIED default rather than failing the request.
+    unsupported = "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_NODE"
+    body = MMTApiV2._create_mmt_body(
+        name="test-job",
+        num_machines=4,
+        command="echo hello",
+        cloud_account="c-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        reuse_snapshot=True,
+        fault_tolerance_strategy=unsupported,
+    )
+
+    assert body.fault_tolerance is not None
+    assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_UNSPECIFIED"

@@ -13,6 +13,7 @@ from lightning_sdk.api.utils import (
     raise_access_error_if_not_allowed,
     resolve_logs_path,
 )
+from lightning_sdk.mmt_fault_tolerance import MMTFaultToleranceStrategy
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -225,6 +226,7 @@ class Job(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
+        fault_tolerance_strategy: Optional[MMTFaultToleranceStrategy] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -266,7 +268,12 @@ class Job(metaclass=TrackCallsMeta):
                 (spot) machines. ``None`` means no reservation is requested.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
-                ``N > 1`` allows up to ``N`` attempts.
+                ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
+                multi-machine job level (not the per-machine ``JobSpec``).
+            fault_tolerance_strategy: Fault tolerance strategy for multi-machine jobs. ``None``
+                (or :class:`MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
+                :attr:`MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported. Only
+                valid for multi-machine jobs (``num_machines > 1``).
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
@@ -292,8 +299,8 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
+        if num_machines <= 1 and fault_tolerance_strategy is not None:
+            raise ValueError("fault_tolerance_strategy is only supported for multi-machine jobs")
 
         if image is None:
             if not isinstance(studio, Studio):
@@ -372,6 +379,7 @@ class Job(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             max_run_attempts=max_run_attempts,
+            fault_tolerance_strategy=fault_tolerance_strategy,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
@@ -396,6 +404,7 @@ class Job(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
+        fault_tolerance_strategy: Optional[MMTFaultToleranceStrategy] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -405,8 +414,8 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
+        if num_machines <= 1 and fault_tolerance_strategy is not None:
+            raise ValueError("fault_tolerance_strategy is only supported for multi-machine jobs")
 
         if studio is not None:
             studio_id = studio._studio.id
@@ -461,8 +470,9 @@ class Job(metaclass=TrackCallsMeta):
 
         self._num_machines = num_machines
         extra_submit_kwargs: Dict[str, Any] = {}
-        if num_machines <= 1:
-            extra_submit_kwargs["max_run_attempts"] = max_run_attempts
+        if num_machines > 1:
+            extra_submit_kwargs["fault_tolerance_strategy"] = fault_tolerance_strategy
+            
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -482,6 +492,7 @@ class Job(metaclass=TrackCallsMeta):
             placement_group_id=placement_group_id,
             num_machines=num_machines,
             scratch_disks=scratch_disks,
+            max_run_attempts=max_run_attempts,
             **extra_submit_kwargs,
         )
         if num_machines <= 1 and submitted.name != self._name:

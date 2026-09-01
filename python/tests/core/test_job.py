@@ -367,18 +367,48 @@ def test_submit_job_threads_max_run_attempts(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_submit_rejects_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
+def test_submit_threads_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    # _submit routes num_machines > 1 to the MMT api, so mock that instance
+    # (Job defaults to _num_machines=1, which would otherwise route to the
+    # standalone api and leave the MMT api unmocked).
+    job._mmt_job_api.submit_job = submit_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        num_machines=2,
+        max_run_attempts=3,
+        fault_tolerance_strategy=MMTFaultToleranceStrategy.RECREATE_ALL_NODES,
+    )
+
+    assert submit_mock.call_args.kwargs["max_run_attempts"] == 3
+    assert (
+        submit_mock.call_args.kwargs["fault_tolerance_strategy"]
+        == MMTFaultToleranceStrategy.RECREATE_ALL_NODES
+    )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_rejects_fault_tolerance_strategy_for_single_machine(internal_studio_init_mocker):
+    from lightning_sdk.mmt import MMTFaultToleranceStrategy
+
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
 
-    with pytest.raises(ValueError, match="max_run_attempts is not supported for multi-machine jobs"):
+    with pytest.raises(ValueError, match="fault_tolerance_strategy is only supported for multi-machine jobs"):
         job._submit(
             machine=Machine.CPU,
             image="image-abc",
             command="echo hello",
             cloud_account="c-abc",
-            num_machines=2,
-            max_run_attempts=3,
+            fault_tolerance_strategy=MMTFaultToleranceStrategy.RECREATE_ALL_NODES,
         )
 
 
@@ -806,6 +836,7 @@ def test_submit_jobv2_studio_resolve(
         path_mappings=None,
         max_runtime=None,
         max_run_attempts=None,
+        fault_tolerance_strategy=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -905,6 +936,7 @@ def test_submit_job_v2_image_from_studio(
         path_mappings=None,
         max_runtime=None,
         max_run_attempts=None,
+        fault_tolerance_strategy=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
@@ -951,6 +983,7 @@ def test_run_job_with_cloud_provider(
         path_mappings=None,
         max_runtime=None,
         max_run_attempts=None,
+        fault_tolerance_strategy=None,
         reuse_snapshot=True,
         scratch_disks=None,
         placement_group_id=None,
