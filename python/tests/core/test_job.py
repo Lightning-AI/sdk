@@ -271,13 +271,13 @@ def test_job_exposes_run_attempt_metadata(internal_studio_init_mocker):
 
     assert job.max_run_attempts == 3
     assert job.current_run_attempt == 2
-    assert job.parent_job_id == "job-parent"
+    assert job._guaranteed_job.spec.parent_job_id == "job-parent"
 
     unset = Job("unset-job", teamspace, _fetch_job=False)
     unset._job = V1Job(id="job-456", name="unset-job", spec=V1JobSpec())
     assert unset.max_run_attempts is None
     assert unset.current_run_attempt is None
-    assert unset.parent_job_id is None
+    assert unset._guaranteed_job.spec.parent_job_id is None
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

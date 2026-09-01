@@ -63,8 +63,6 @@ func TestJobExposesRunAttemptFields(t *testing.T) {
 		"MaxRunAttempts = %d, want 3", existing.MaxRunAttempts())
 	assert.Falsef(t, existing.CurrentRunAttempt() != 2,
 		"CurrentRunAttempt = %d, want 2", existing.CurrentRunAttempt())
-	assert.Falsef(t, existing.ParentJobID() != "job-parent",
-		"ParentJobID = %q, want job-parent", existing.ParentJobID())
 }
 
 func TestJobGetWithIDUsesSimpleStruct(t *testing.T) {
@@ -400,8 +398,8 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 	if got, want := created.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
 		assert.Fail(t, fmt.Sprintf("created artifact path = %q, want %q", got, want))
 	}
-	assert.Falsef(t, created.MaxRunAttempts() != 3 || created.CurrentRunAttempt() != 1 || created.ParentJobID() != "",
-		"unexpected run-attempt fields: %d %d %q", created.MaxRunAttempts(), created.CurrentRunAttempt(), created.ParentJobID())
+	assert.Falsef(t, created.MaxRunAttempts() != 3 || created.CurrentRunAttempt() != 1,
+		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())
 }
 
 func TestJobRunMapsScratchDisksForStudioJobs(t *testing.T) {

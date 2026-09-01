@@ -619,12 +619,6 @@ class Job(metaclass=TrackCallsMeta):
         return value or None
 
     @property
-    def parent_job_id(self) -> Optional[str]:
-        """Parent job id when this job is a retry attempt, or ``None``."""
-        spec = getattr(self._guaranteed_job, "spec", None)
-        return getattr(spec, "parent_job_id", None) or None
-
-    @property
     def rank(self) -> Optional[int]:
         if self.is_multi_machine:
             return None

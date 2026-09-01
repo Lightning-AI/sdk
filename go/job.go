@@ -42,7 +42,6 @@ type Job struct {
 	artifactsDestination string
 	maxRunAttempts       int64
 	currentRunAttempt    int64
-	parentJobID          string
 }
 
 // JobDict is the JSON-friendly public representation of a job.
@@ -329,14 +328,6 @@ func (j *Job) CurrentRunAttempt() int64 {
 		return 0
 	}
 	return j.currentRunAttempt
-}
-
-// ParentJobID returns the parent job id when this job is a retry attempt.
-func (j *Job) ParentJobID() string {
-	if j == nil {
-		return ""
-	}
-	return j.parentJobID
 }
 
 // GetJob returns an existing job by name or ID.
@@ -771,7 +762,6 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		result.artifactsDestination = model.Spec.ArtifactsDestination
 		result.maxRunAttempts = model.Spec.MaxRunAttempts
 		result.currentRunAttempt = model.Spec.CurrentRunAttempt
-		result.parentJobID = model.Spec.ParentJobID
 	}
 	return result
 }
