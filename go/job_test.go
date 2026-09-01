@@ -47,10 +47,9 @@ func TestJobExposesRunAttemptFields(t *testing.T) {
 			"projectId": "project-1",
 			"state":     "pending",
 			"spec": map[string]any{
-				"maxRunAttempts":    3,
-				"currentRunAttempt": 2,
-				"parentJobId":       "job-parent",
-			},
+			"maxRunAttempts":    3,
+			"currentRunAttempt": 2,
+		},
 		})
 	}))
 	defer server.Close()
@@ -360,10 +359,9 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 				"image":                "registry.example/train:latest",
 				"artifactsSource":      "/outputs",
 				"artifactsDestination": "efs:data:outputs/run-1",
-				"maxRunAttempts":       3,
-				"currentRunAttempt":    1,
-				"parentJobId":          "",
-			},
+			"maxRunAttempts":       3,
+			"currentRunAttempt":    1,
+		},
 		})
 	}))
 	defer server.Close()

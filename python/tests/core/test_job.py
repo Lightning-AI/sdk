@@ -274,14 +274,14 @@ def test_job_exposes_run_attempt_metadata(internal_studio_init_mocker):
     assert job.max_run_attempts == 3
     assert job.current_run_attempt == 2
     assert job._guaranteed_job.spec.parent_job_id == "job-parent"
-    assert job._guaranteed_job.parent_multi_machine_job_id is None  # MMT-only field
+    assert getattr(job._guaranteed_job, "parent_multi_machine_job_id", None) is None  # MMT-only field
 
     unset = Job("unset-job", teamspace, _fetch_job=False)
     unset._job = V1Job(id="job-456", name="unset-job", spec=V1JobSpec())
     assert unset.max_run_attempts is None
     assert unset.current_run_attempt is None
     assert unset._guaranteed_job.spec.parent_job_id is None
-    assert unset._guaranteed_job.parent_multi_machine_job_id is None
+    assert getattr(unset._guaranteed_job, "parent_multi_machine_job_id", None) is None
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -307,9 +307,9 @@ def test_job_exposes_mmt_level_run_attempt_metadata(internal_studio_init_mocker)
     assert job.is_multi_machine
     assert job.max_run_attempts == 5
     assert job.current_run_attempt == 3
-    assert job.parent_multi_machine_job_id == "mmt-parent"
-    assert job.parent_job_id is None  # standalone-only field
     assert job.fault_tolerance == MMTFaultToleranceStrategy.RECREATE_ALL_NODES
+    assert getattr(job._guaranteed_job, "parent_multi_machine_job_id", None) == "mmt-parent"
+    assert job._guaranteed_job.spec.parent_job_id is None  # standalone-only field
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())

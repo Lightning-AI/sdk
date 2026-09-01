@@ -32,7 +32,6 @@ type MMT struct {
 
 	maxRunAttempts           int64
 	currentRunAttempt        int64
-	parentMultiMachineJobID  string
 	faultTolerance           MMTFaultToleranceStrategy
 }
 
@@ -349,15 +348,6 @@ func (m *MMT) CurrentRunAttempt() int64 {
 		return 0
 	}
 	return m.currentRunAttempt
-}
-
-// ParentMultiMachineJobID returns the parent multi-machine job id when this
-// MMT is a retry attempt, or "" if it is not a retry.
-func (m *MMT) ParentMultiMachineJobID() string {
-	if m == nil {
-		return ""
-	}
-	return m.parentMultiMachineJobID
 }
 
 // FaultTolerance returns the fault tolerance strategy for this multi-machine
@@ -758,11 +748,10 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 		studioID:    model.CloudspaceID,
 		totalCost:   model.TotalCost,
 
-		maxRunAttempts:          model.MaxRunAttempts,
-		currentRunAttempt:       model.CurrentRunAttempt,
-		parentMultiMachineJobID: model.ParentMultiMachineJobID,
-		faultTolerance:          mmtFaultToleranceFromModel(model.FaultTolerance),
-	}
+	maxRunAttempts:          model.MaxRunAttempts,
+	currentRunAttempt:       model.CurrentRunAttempt,
+	faultTolerance:          mmtFaultToleranceFromModel(model.FaultTolerance),
+}
 	if model.State != nil {
 		result.status = string(*model.State)
 	}

@@ -385,8 +385,8 @@ func TestMMTFaultToleranceDefaultsToUnspecified(t *testing.T) {
 		"GetMMT returned error")
 	assert.Falsef(t, existing.FaultTolerance() != lit.MMTFaultToleranceStrategyUnspecified,
 		"FaultTolerance = %q, want Unspecified", existing.FaultTolerance())
-	assert.Falsef(t, existing.MaxRunAttempts() != 0 || existing.CurrentRunAttempt() != 0 || existing.ParentMultiMachineJobID() != "",
-		"unexpected retry fields: %d %d %q", existing.MaxRunAttempts(), existing.CurrentRunAttempt(), existing.ParentMultiMachineJobID())
+	assert.Falsef(t, existing.MaxRunAttempts() != 0 || existing.CurrentRunAttempt() != 0,
+		"unexpected retry fields: %d %d", existing.MaxRunAttempts(), existing.CurrentRunAttempt())
 }
 
 func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
@@ -449,13 +449,12 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"projectId":               "project-1",
 			"machines":                4,
 			"state":                   "pending",
-			"maxRunAttempts":           5,
-			"currentRunAttempt":        2,
-			"parentMultiMachineJobId":  "mmt-parent",
-			"faultTolerance": map[string]any{
-				"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
-			},
-		})
+		"maxRunAttempts":           5,
+		"currentRunAttempt":        2,
+		"faultTolerance": map[string]any{
+			"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
+		},
+	})
 	}))
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
@@ -494,8 +493,6 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 		"MaxRunAttempts = %d, want 5", created.MaxRunAttempts())
 	assert.Falsef(t, created.CurrentRunAttempt() != 2,
 		"CurrentRunAttempt = %d, want 2", created.CurrentRunAttempt())
-	assert.Falsef(t, created.ParentMultiMachineJobID() != "mmt-parent",
-		"ParentMultiMachineJobID = %q, want mmt-parent", created.ParentMultiMachineJobID())
 	assert.Falsef(t, created.FaultTolerance() != lit.MMTFaultToleranceStrategyRecreateAllNodes,
 		"FaultTolerance = %q, want %q", created.FaultTolerance(), lit.MMTFaultToleranceStrategyRecreateAllNodes)
 
