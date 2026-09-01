@@ -274,9 +274,10 @@ class Job(metaclass=TrackCallsMeta):
                 ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
                 multi-machine job level (not the per-machine ``JobSpec``).
             fault_tolerance_strategy: Fault tolerance strategy for multi-machine jobs. ``None``
-                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
-                :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported. Only
-                valid for multi-machine jobs (``num_machines > 1``).
+                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`)
+                leaves the strategy unset;
+                only :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES`
+                is currently supported. Only valid for multi-machine jobs (``num_machines > 1``).
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.

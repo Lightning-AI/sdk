@@ -839,8 +839,10 @@ class Studio(metaclass=TrackCallsMeta):
                 unset (legacy, no retries); ``1`` means a single attempt (no retries). Set at the
                 multi-machine job level, not on the per-machine ``JobSpec``.
             fault_tolerance_strategy: Fault tolerance strategy for the multi-machine job. ``None``
-                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`) leaves the strategy unset; only
-                :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES` is currently supported.
+                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`)
+                leaves the strategy unset;
+                only :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES`
+                is currently supported.
 
         Returns:
             MMT: The submitted :class:`MMT` instance.
