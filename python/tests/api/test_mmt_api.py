@@ -368,7 +368,6 @@ def test_mmt_v2_submit_job_defaults_unset_fault_tolerance_to_unspecified(_mock_a
 
 
 def test_mmt_v2_submit_job_defaults_unsupported_fault_tolerance_strategy_to_unspecified():
-    job_api = MMTApiV2()
     # An unsupported strategy value (e.g. RECREATE_NODE) is no longer rejected;
     # it falls back to the UNSPECIFIED default rather than failing the request.
     unsupported = "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_NODE"

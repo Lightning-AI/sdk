@@ -12,3 +12,10 @@ Multi-Machine Training
 .. autoclass:: MMTMachine
    :members:
    :show-inheritance:
+
+.. currentmodule:: lightning_sdk.mmt_fault_tolerance
+
+.. autoclass:: MMTFaultToleranceStrategy
+   :members:
+   :undoc-members:
+   :show-inheritance:
