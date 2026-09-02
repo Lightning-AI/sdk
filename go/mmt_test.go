@@ -491,11 +491,11 @@ func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {
 			"faultTolerance = %+v, want nil", body.FaultTolerance)
 
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"id":       "mmt-no-retries",
-			"name":     "dist-train",
+			"id":        "mmt-no-retries",
+			"name":      "dist-train",
 			"projectId": "project-1",
 			"machines":  4,
-			"state":    "pending",
+			"state":     "pending",
 		})
 	}))
 	defer server.Close()

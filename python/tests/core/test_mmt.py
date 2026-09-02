@@ -3,7 +3,6 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.api.logs_api import LogEntry
-from lightning_sdk.job import Job
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateMultiMachineJobBody,
     V1Job,
