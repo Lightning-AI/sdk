@@ -2,7 +2,6 @@ import warnings
 from typing import TYPE_CHECKING, Dict, Optional, Protocol, Union, cast
 
 from lightning_sdk.job import Job, JobDict
-from lightning_sdk.mmt_fault_tolerance import MMTFaultToleranceStrategy
 from lightning_sdk.status import Status
 
 if TYPE_CHECKING:
@@ -12,7 +11,7 @@ if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
     from lightning_sdk.user import User
 
-__all__ = ["MMT", "MMTFaultToleranceStrategy", "MMTMachine"]
+__all__ = ["MMT", "MMTMachine"]
 
 _MMT_DEPRECATION_MESSAGE = (
     "lightning_sdk.MMT is deprecated. Use lightning_sdk.Job instead "
@@ -121,7 +120,6 @@ class MMT(Job):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
-        fault_tolerance_strategy: Optional["MMTFaultToleranceStrategy"] = None,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
     ) -> "MMT":
@@ -148,7 +146,6 @@ class MMT(Job):
                 path_mappings=path_mappings,
                 max_runtime=max_runtime,
                 max_run_attempts=max_run_attempts,
-                fault_tolerance_strategy=fault_tolerance_strategy,
                 reuse_snapshot=reuse_snapshot,
                 placement_group_id=placement_group_id,
                 num_machines=num_machines,

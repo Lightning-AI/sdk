@@ -365,30 +365,6 @@ func TestMMTExposesStartAndStopTimes(t *testing.T) {
 		"StoppedAt = %v, want 2026-08-02T13:00:00Z", existing.StoppedAt())
 }
 
-func TestMMTFaultToleranceDefaultsToUnspecified(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"id":        "mmt-1",
-			"name":      "dist-train",
-			"projectId": "project-1",
-			"machines":  4,
-			"state":     "stopped",
-			// faultTolerance intentionally absent (payload predates the field).
-		})
-	}))
-	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
-
-	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
-	require.NoErrorf(t, err,
-		"GetMMT returned error")
-	assert.Falsef(t, existing.FaultTolerance() != lit.MMTFaultToleranceStrategyUnspecified,
-		"FaultTolerance = %q, want Unspecified", existing.FaultTolerance())
-	assert.Falsef(t, existing.MaxRunAttempts() != 0 || existing.CurrentRunAttempt() != 0,
-		"unexpected retry fields: %d %d", existing.MaxRunAttempts(), existing.CurrentRunAttempt())
-}
-
 func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -451,9 +427,6 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"state":             "pending",
 			"maxRunAttempts":    5,
 			"currentRunAttempt": 2,
-			"faultTolerance": map[string]any{
-				"strategy": "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
-			},
 		})
 	}))
 	defer server.Close()
@@ -472,7 +445,6 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			Entrypoint:           "python",
 			MaxRuntime:           7200,
 			MaxRunAttempts:       5,
-			FaultTolerance:       lit.MMTFaultToleranceStrategyRecreateAllNodes,
 			ArtifactsSource:      "/outputs",
 			ArtifactsDestination: "efs:data:outputs/run-1",
 			PathMappings: []lit.MMTPathMapping{{
@@ -487,20 +459,44 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 	assert.Falsef(t, created.ID() != "mmt-advanced" || created.Status() != "pending" || created.NumMachines() != 4,
 		"unexpected created mmt: %s %s %d", created.ID(), created.Status(), created.NumMachines())
 
-	// MMT-level retry / fault-tolerance fields are read from the body, not the
-	// (blank) per-machine JobSpec.
+	// MMT-level retry fields are read from the body, not the (blank) per-machine
+	// JobSpec.
 	assert.Falsef(t, created.MaxRunAttempts() != 5,
 		"MaxRunAttempts = %d, want 5", created.MaxRunAttempts())
 	assert.Falsef(t, created.CurrentRunAttempt() != 2,
 		"CurrentRunAttempt = %d, want 2", created.CurrentRunAttempt())
-	assert.Falsef(t, created.FaultTolerance() != lit.MMTFaultToleranceStrategyRecreateAllNodes,
-		"FaultTolerance = %q, want %q", created.FaultTolerance(), lit.MMTFaultToleranceStrategyRecreateAllNodes)
 
 }
 
-func TestMMTRunRejectsUnsupportedFaultToleranceStrategy(t *testing.T) {
+func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/multi-machine-jobs",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		var body struct {
+			Name           string `json:"name"`
+			Machines       int64  `json:"machines"`
+			MaxRunAttempts int64  `json:"maxRunAttempts"`
+			FaultTolerance *struct {
+				Strategy string `json:"strategy"`
+			} `json:"faultTolerance"`
+		}
+		require.NoErrorf(t, json.NewDecoder(r.Body).Decode(&body),
+			"decode mmt body")
+		assert.Falsef(t, body.MaxRunAttempts != 1,
+			"maxRunAttempts = %d, want 1", body.MaxRunAttempts)
+		// A single attempt (no retries) must not set fault tolerance.
+		assert.Nil(t, body.FaultTolerance,
+			"faultTolerance = %+v, want nil", body.FaultTolerance)
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":       "mmt-no-retries",
+			"name":     "dist-train",
+			"projectId": "project-1",
+			"machines":  4,
+			"state":    "pending",
+		})
 	}))
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
@@ -513,13 +509,11 @@ func TestMMTRunRejectsUnsupportedFaultToleranceStrategy(t *testing.T) {
 		lit.MMTOptions{
 			Teamspace:      mustTeamspace(t, "project-1", ""),
 			Image:          "pytorch/pytorch:latest",
-			FaultTolerance: lit.MMTFaultToleranceStrategy("MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_NODE"),
+			MaxRunAttempts: 1,
 		},
 	)
-	require.Error(t, err,
-		"RunMMT returned nil error for unsupported fault tolerance strategy")
-	assert.Falsef(t, !strings.Contains(err.Error(), "unsupported multi-machine job fault tolerance strategy"),
-		"RunMMT error = %q, want unsupported strategy validation", err)
+	require.NoErrorf(t, err,
+		"RunMMT returned error")
 }
 
 func TestMMTRunRejectsSingleMachine(t *testing.T) {

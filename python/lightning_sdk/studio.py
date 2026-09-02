@@ -32,7 +32,7 @@ from lightning_sdk.utils.resolve import (
 
 if TYPE_CHECKING:
     from lightning_sdk.job import Job
-    from lightning_sdk.mmt import MMT, MMTFaultToleranceStrategy
+    from lightning_sdk.mmt import MMT
 
 _logger = _setup_logger(__name__)
 _ENV_NAME_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -824,7 +824,6 @@ class Studio(metaclass=TrackCallsMeta):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         max_run_attempts: Optional[int] = None,
-        fault_tolerance_strategy: Optional["MMTFaultToleranceStrategy"] = None,
     ) -> "MMT":
         """Run async workloads using the compute environment from your studio.
 
@@ -836,13 +835,10 @@ class Studio(metaclass=TrackCallsMeta):
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
             max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0`` means
-                unset (legacy, no retries); ``1`` means a single attempt (no retries). Set at the
-                multi-machine job level, not on the per-machine ``JobSpec``.
-            fault_tolerance_strategy: Fault tolerance strategy for the multi-machine job. ``None``
-                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`)
-                leaves the strategy unset;
-                only :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES`
-                is currently supported.
+                unset (legacy, no retries); ``1`` means a single attempt (no retries). When greater than
+                ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set automatically on the
+                multi-machine job body. Set at the multi-machine job level, not on the per-machine
+                ``JobSpec``.
 
         Returns:
             MMT: The submitted :class:`MMT` instance.
@@ -861,7 +857,6 @@ class Studio(metaclass=TrackCallsMeta):
             env=env,
             interruptible=interruptible,
             max_run_attempts=max_run_attempts,
-            fault_tolerance_strategy=fault_tolerance_strategy,
         )
 
     def add_ports(self, ports: Union[int, List[int], Dict[str, int]]) -> List[V1Endpoint]:

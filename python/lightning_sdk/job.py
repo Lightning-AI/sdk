@@ -13,10 +13,6 @@ from lightning_sdk.api.utils import (
     raise_access_error_if_not_allowed,
     resolve_logs_path,
 )
-from lightning_sdk.mmt_fault_tolerance import (
-    MMTFaultToleranceStrategy,
-    _from_fault_tolerance,
-)
 from lightning_sdk.status import Status
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
@@ -229,7 +225,6 @@ class Job(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
-        fault_tolerance_strategy: Optional[MMTFaultToleranceStrategy] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -272,12 +267,9 @@ class Job(metaclass=TrackCallsMeta):
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
                 ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
-                multi-machine job level (not the per-machine ``JobSpec``).
-            fault_tolerance_strategy: Fault tolerance strategy for multi-machine jobs. ``None``
-                (or :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`)
-                leaves the strategy unset;
-                only :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.RECREATE_ALL_NODES`
-                is currently supported. Only valid for multi-machine jobs (``num_machines > 1``).
+                multi-machine job level (not the per-machine ``JobSpec``). When greater than ``1``
+                for a multi-machine job, the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
@@ -303,8 +295,6 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines <= 1 and fault_tolerance_strategy is not None:
-            raise ValueError("fault_tolerance_strategy is only supported for multi-machine jobs")
 
         if image is None:
             if not isinstance(studio, Studio):
@@ -383,7 +373,6 @@ class Job(metaclass=TrackCallsMeta):
             path_mappings=path_mappings,
             max_runtime=max_runtime,
             max_run_attempts=max_run_attempts,
-            fault_tolerance_strategy=fault_tolerance_strategy,
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
@@ -408,7 +397,6 @@ class Job(metaclass=TrackCallsMeta):
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
         max_run_attempts: Optional[int] = None,
-        fault_tolerance_strategy: Optional[MMTFaultToleranceStrategy] = None,
         reuse_snapshot: bool = True,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
@@ -418,8 +406,6 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines <= 1 and fault_tolerance_strategy is not None:
-            raise ValueError("fault_tolerance_strategy is only supported for multi-machine jobs")
 
         if studio is not None:
             studio_id = studio._studio.id
@@ -473,9 +459,6 @@ class Job(metaclass=TrackCallsMeta):
                     raise ValueError("scratch_disk path cannot contain '..'")
 
         self._num_machines = num_machines
-        extra_submit_kwargs: Dict[str, Any] = {}
-        if num_machines > 1:
-            extra_submit_kwargs["fault_tolerance_strategy"] = fault_tolerance_strategy
 
         submitted = self._job_api.submit_job(
             name=self.name,
@@ -497,7 +480,6 @@ class Job(metaclass=TrackCallsMeta):
             num_machines=num_machines,
             scratch_disks=scratch_disks,
             max_run_attempts=max_run_attempts,
-            **extra_submit_kwargs,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
@@ -644,22 +626,6 @@ class Job(metaclass=TrackCallsMeta):
         spec = getattr(self._guaranteed_job, "spec", None)
         value = getattr(spec, "current_run_attempt", None)
         return value or None
-
-    @property
-    def fault_tolerance(self) -> Optional[MMTFaultToleranceStrategy]:
-        """Fault tolerance strategy for this multi-machine job, or ``None``.
-
-        Returns ``None`` for standalone jobs (fault tolerance only applies to
-        multi-machine jobs). For multi-machine jobs the stored strategy is
-        mapped back to the public :class:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy` enum; an
-        unset/``UNSPECIFIED`` strategy (or a job whose payload predates the
-        field) is reported as :attr:`~lightning_sdk.mmt_fault_tolerance.MMTFaultToleranceStrategy.UNSPECIFIED`.
-        """
-        if not self.is_multi_machine:
-            return None
-        return _from_fault_tolerance(getattr(self._guaranteed_job, "fault_tolerance", None)) or (
-            MMTFaultToleranceStrategy.UNSPECIFIED
-        )
 
     @property
     def rank(self) -> Optional[int]:
