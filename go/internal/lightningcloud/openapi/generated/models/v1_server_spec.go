@@ -103,6 +103,12 @@ type V1ServerSpec struct {
 	// Keeps cleanup tied to the gate that admitted IB membership.
 	IbMembershipSource string `json:"ibMembershipSource,omitempty"`
 
+	// Keeps cleanup in the same mode used for membership creation: true sends a
+	// preview/test request, while false permits a live request. When unset,
+	// legacy global admissions inherit the configured global mode and legacy
+	// user-feature admissions remain preview-only.
+	IbMembershipTestMode *bool `json:"ibMembershipTestMode,omitempty"`
+
 	// Per-VM inband /32 (from the host's 10.15.x overlay pool) assigned by the
 	// baremetal-agent. Empty for non-inband instances. Read by the VAST
 	// client-IP registration hooks; not consumed elsewhere.

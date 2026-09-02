@@ -52,7 +52,8 @@ class V1SharedArtifact(object):
         'filename': 'str',
         'id': 'str',
         'private': 'bool',
-        'url': 'str'
+        'url': 'str',
+        'visibility': 'V1ResourceVisibility'
     }
 
     attribute_map = {
@@ -63,10 +64,11 @@ class V1SharedArtifact(object):
         'filename': 'filename',
         'id': 'id',
         'private': 'private',
-        'url': 'url'
+        'url': 'url',
+        'visibility': 'visibility'
     }
 
-    def __init__(self, cluster_id: 'str' =None, content_type: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, filename: 'str' =None, id: 'str' =None, private: 'bool' =None, url: 'str' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, content_type: 'str' =None, created_at: 'datetime' =None, downloads: 'str' =None, filename: 'str' =None, id: 'str' =None, private: 'bool' =None, url: 'str' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1SharedArtifact - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._content_type = None
@@ -76,6 +78,7 @@ class V1SharedArtifact(object):
         self._id = None
         self._private = None
         self._url = None
+        self._visibility = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
@@ -93,6 +96,8 @@ class V1SharedArtifact(object):
             self.private = private
         if url is not None:
             self.url = url
+        if visibility is not None:
+            self.visibility = visibility
 
     @property
     def cluster_id(self) -> 'str':
@@ -261,6 +266,27 @@ class V1SharedArtifact(object):
         """
 
         self._url = url
+
+    @property
+    def visibility(self) -> 'V1ResourceVisibility':
+        """Gets the visibility of this V1SharedArtifact.  # noqa: E501
+
+
+        :return: The visibility of this V1SharedArtifact.  # noqa: E501
+        :rtype: V1ResourceVisibility
+        """
+        return self._visibility
+
+    @visibility.setter
+    def visibility(self, visibility: 'V1ResourceVisibility'):
+        """Sets the visibility of this V1SharedArtifact.
+
+
+        :param visibility: The visibility of this V1SharedArtifact.  # noqa: E501
+        :type: V1ResourceVisibility
+        """
+
+        self._visibility = visibility
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

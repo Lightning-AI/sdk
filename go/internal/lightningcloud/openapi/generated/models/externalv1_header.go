@@ -16,10 +16,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// V1Header v1 header
+// Externalv1Header externalv1 header
 //
-// swagger:model v1Header
-type V1Header struct {
+// swagger:model externalv1Header
+type Externalv1Header struct {
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -31,18 +31,18 @@ type V1Header struct {
 	Value string `json:"value,omitempty"`
 }
 
-// Validate validates this v1 header
-func (m *V1Header) Validate(formats strfmt.Registry) error {
+// Validate validates this externalv1 header
+func (m *Externalv1Header) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this v1 header based on context it is used
-func (m *V1Header) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this externalv1 header based on context it is used
+func (m *Externalv1Header) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *V1Header) MarshalBinary() ([]byte, error) {
+func (m *Externalv1Header) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -50,8 +50,8 @@ func (m *V1Header) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *V1Header) UnmarshalBinary(b []byte) error {
-	var res V1Header
+func (m *Externalv1Header) UnmarshalBinary(b []byte) error {
+	var res Externalv1Header
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
