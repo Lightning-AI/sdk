@@ -45,14 +45,14 @@ class V1ListLicenseResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'licenses': 'list[V1License]'
+        'licenses': 'list[Externalv1License]'
     }
 
     attribute_map = {
         'licenses': 'licenses'
     }
 
-    def __init__(self, licenses: 'list[V1License]' =None):  # noqa: E501
+    def __init__(self, licenses: 'list[Externalv1License]' =None):  # noqa: E501
         """V1ListLicenseResponse - a model defined in Swagger"""  # noqa: E501
         self._licenses = None
         self.discriminator = None
@@ -60,22 +60,22 @@ class V1ListLicenseResponse(object):
             self.licenses = licenses
 
     @property
-    def licenses(self) -> 'list[V1License]':
+    def licenses(self) -> 'list[Externalv1License]':
         """Gets the licenses of this V1ListLicenseResponse.  # noqa: E501
 
 
         :return: The licenses of this V1ListLicenseResponse.  # noqa: E501
-        :rtype: list[V1License]
+        :rtype: list[Externalv1License]
         """
         return self._licenses
 
     @licenses.setter
-    def licenses(self, licenses: 'list[V1License]'):
+    def licenses(self, licenses: 'list[Externalv1License]'):
         """Sets the licenses of this V1ListLicenseResponse.
 
 
         :param licenses: The licenses of this V1ListLicenseResponse.  # noqa: E501
-        :type: list[V1License]
+        :type: list[Externalv1License]
         """
 
         self._licenses = licenses

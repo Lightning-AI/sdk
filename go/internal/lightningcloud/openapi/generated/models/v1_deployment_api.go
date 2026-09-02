@@ -31,7 +31,7 @@ type V1DeploymentAPI struct {
 	Description string `json:"description,omitempty"`
 
 	// headers
-	Headers []*V1Header `json:"headers"`
+	Headers []*Externalv1Header `json:"headers"`
 
 	// id
 	ID string `json:"id,omitempty"`

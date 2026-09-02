@@ -47,6 +47,9 @@ class V1GetTempBucketCredentialsResponse(object):
     swagger_types = {
         'access_key_id': 'str',
         'account_id': 'str',
+        'endpoint': 'str',
+        'expires_at': 'datetime',
+        'region': 'str',
         'secret_access_key': 'str',
         'session_token': 'str'
     }
@@ -54,14 +57,20 @@ class V1GetTempBucketCredentialsResponse(object):
     attribute_map = {
         'access_key_id': 'accessKeyId',
         'account_id': 'accountId',
+        'endpoint': 'endpoint',
+        'expires_at': 'expiresAt',
+        'region': 'region',
         'secret_access_key': 'secretAccessKey',
         'session_token': 'sessionToken'
     }
 
-    def __init__(self, access_key_id: 'str' =None, account_id: 'str' =None, secret_access_key: 'str' =None, session_token: 'str' =None):  # noqa: E501
+    def __init__(self, access_key_id: 'str' =None, account_id: 'str' =None, endpoint: 'str' =None, expires_at: 'datetime' =None, region: 'str' =None, secret_access_key: 'str' =None, session_token: 'str' =None):  # noqa: E501
         """V1GetTempBucketCredentialsResponse - a model defined in Swagger"""  # noqa: E501
         self._access_key_id = None
         self._account_id = None
+        self._endpoint = None
+        self._expires_at = None
+        self._region = None
         self._secret_access_key = None
         self._session_token = None
         self.discriminator = None
@@ -69,6 +78,12 @@ class V1GetTempBucketCredentialsResponse(object):
             self.access_key_id = access_key_id
         if account_id is not None:
             self.account_id = account_id
+        if endpoint is not None:
+            self.endpoint = endpoint
+        if expires_at is not None:
+            self.expires_at = expires_at
+        if region is not None:
+            self.region = region
         if secret_access_key is not None:
             self.secret_access_key = secret_access_key
         if session_token is not None:
@@ -115,6 +130,73 @@ class V1GetTempBucketCredentialsResponse(object):
         """
 
         self._account_id = account_id
+
+    @property
+    def endpoint(self) -> 'str':
+        """Gets the endpoint of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+
+        A Studio's AWS_CONFIG_FILE carries the R2 endpoint and region = auto in its default profile, and botocore applies both to any client built there unless it is passed an endpoint explicitly. Callers must use these two rather than let the SDK resolve them, or the request is signed for the wrong region and sent to Cloudflare, which rejects an AWS key with InvalidAccessKeyId.  # noqa: E501
+
+        :return: The endpoint of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self, endpoint: 'str'):
+        """Sets the endpoint of this V1GetTempBucketCredentialsResponse.
+
+        A Studio's AWS_CONFIG_FILE carries the R2 endpoint and region = auto in its default profile, and botocore applies both to any client built there unless it is passed an endpoint explicitly. Callers must use these two rather than let the SDK resolve them, or the request is signed for the wrong region and sent to Cloudflare, which rejects an AWS key with InvalidAccessKeyId.  # noqa: E501
+
+        :param endpoint: The endpoint of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._endpoint = endpoint
+
+    @property
+    def expires_at(self) -> 'datetime':
+        """Gets the expires_at of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+
+        Unset when the connection is backed by static keys, which never expire.  # noqa: E501
+
+        :return: The expires_at of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expires_at
+
+    @expires_at.setter
+    def expires_at(self, expires_at: 'datetime'):
+        """Sets the expires_at of this V1GetTempBucketCredentialsResponse.
+
+        Unset when the connection is backed by static keys, which never expire.  # noqa: E501
+
+        :param expires_at: The expires_at of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expires_at = expires_at
+
+    @property
+    def region(self) -> 'str':
+        """Gets the region of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+
+
+        :return: The region of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._region
+
+    @region.setter
+    def region(self, region: 'str'):
+        """Sets the region of this V1GetTempBucketCredentialsResponse.
+
+
+        :param region: The region of this V1GetTempBucketCredentialsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._region = region
 
     @property
     def secret_access_key(self) -> 'str':

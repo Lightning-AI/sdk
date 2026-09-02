@@ -47,7 +47,7 @@ class ProductLicenseServiceApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def product_license_service_create_license(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'V1License':  # noqa: E501
+    def product_license_service_create_license(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'Externalv1License':  # noqa: E501
         """product_license_service_create_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -57,7 +57,7 @@ class ProductLicenseServiceApi(object):
 
         :param async_req bool
         :param V1CreateLicenseRequest body: (required)
-        :return: V1License
+        :return: Externalv1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -68,7 +68,7 @@ class ProductLicenseServiceApi(object):
             (data) = self.product_license_service_create_license_with_http_info(body, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_create_license_with_http_info(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'V1License':  # noqa: E501
+    def product_license_service_create_license_with_http_info(self, body: 'V1CreateLicenseRequest', **kwargs) -> 'Externalv1License':  # noqa: E501
         """product_license_service_create_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -78,7 +78,7 @@ class ProductLicenseServiceApi(object):
 
         :param async_req bool
         :param V1CreateLicenseRequest body: (required)
-        :return: V1License
+        :return: Externalv1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -136,7 +136,7 @@ class ProductLicenseServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1License',  # noqa: E501
+            response_type='Externalv1License',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -237,7 +237,7 @@ class ProductLicenseServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def product_license_service_get_license(self, id: 'str', **kwargs) -> 'V1License':  # noqa: E501
+    def product_license_service_get_license(self, id: 'str', **kwargs) -> 'Externalv1License':  # noqa: E501
         """product_license_service_get_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -247,7 +247,7 @@ class ProductLicenseServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :return: V1License
+        :return: Externalv1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -258,7 +258,7 @@ class ProductLicenseServiceApi(object):
             (data) = self.product_license_service_get_license_with_http_info(id, **kwargs)  # noqa: E501
             return data
 
-    def product_license_service_get_license_with_http_info(self, id: 'str', **kwargs) -> 'V1License':  # noqa: E501
+    def product_license_service_get_license_with_http_info(self, id: 'str', **kwargs) -> 'Externalv1License':  # noqa: E501
         """product_license_service_get_license  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -268,7 +268,7 @@ class ProductLicenseServiceApi(object):
 
         :param async_req bool
         :param str id: (required)
-        :return: V1License
+        :return: Externalv1License
                  If the method is called asynchronously,
                  returns the request thread.
         """
@@ -322,7 +322,7 @@ class ProductLicenseServiceApi(object):
             body=body_params,
             post_params=form_params,
             files=local_var_files,
-            response_type='V1License',  # noqa: E501
+            response_type='Externalv1License',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

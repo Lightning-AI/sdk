@@ -12,8 +12,10 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1GetTempBucketCredentialsResponse v1 get temp bucket credentials response
@@ -27,6 +29,20 @@ type V1GetTempBucketCredentialsResponse struct {
 	// account Id
 	AccountID string `json:"accountId,omitempty"`
 
+	// A Studio's AWS_CONFIG_FILE carries the R2 endpoint and region = auto in its
+	// default profile, and botocore applies both to any client built there unless
+	// it is passed an endpoint explicitly. Callers must use these two rather than
+	// let the SDK resolve them, or the request is signed for the wrong region and
+	// sent to Cloudflare, which rejects an AWS key with InvalidAccessKeyId.
+	Endpoint string `json:"endpoint,omitempty"`
+
+	// Unset when the connection is backed by static keys, which never expire.
+	// Format: date-time
+	ExpiresAt strfmt.DateTime `json:"expiresAt,omitempty"`
+
+	// region
+	Region string `json:"region,omitempty"`
+
 	// secret access key
 	SecretAccessKey string `json:"secretAccessKey,omitempty"`
 
@@ -36,6 +52,27 @@ type V1GetTempBucketCredentialsResponse struct {
 
 // Validate validates this v1 get temp bucket credentials response
 func (m *V1GetTempBucketCredentialsResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateExpiresAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *V1GetTempBucketCredentialsResponse) validateExpiresAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.ExpiresAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("expiresAt", "body", "date-time", m.ExpiresAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

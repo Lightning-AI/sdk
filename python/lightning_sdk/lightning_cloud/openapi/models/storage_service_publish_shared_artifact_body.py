@@ -48,22 +48,25 @@ class StorageServicePublishSharedArtifactBody(object):
         'cluster_id': 'str',
         'content_type': 'str',
         'filename': 'str',
-        'private': 'bool'
+        'private': 'bool',
+        'visibility': 'V1ResourceVisibility'
     }
 
     attribute_map = {
         'cluster_id': 'clusterId',
         'content_type': 'contentType',
         'filename': 'filename',
-        'private': 'private'
+        'private': 'private',
+        'visibility': 'visibility'
     }
 
-    def __init__(self, cluster_id: 'str' =None, content_type: 'str' =None, filename: 'str' =None, private: 'bool' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, content_type: 'str' =None, filename: 'str' =None, private: 'bool' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """StorageServicePublishSharedArtifactBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._content_type = None
         self._filename = None
         self._private = None
+        self._visibility = None
         self.discriminator = None
         if cluster_id is not None:
             self.cluster_id = cluster_id
@@ -73,6 +76,8 @@ class StorageServicePublishSharedArtifactBody(object):
             self.filename = filename
         if private is not None:
             self.private = private
+        if visibility is not None:
+            self.visibility = visibility
 
     @property
     def cluster_id(self) -> 'str':
@@ -157,6 +162,27 @@ class StorageServicePublishSharedArtifactBody(object):
         """
 
         self._private = private
+
+    @property
+    def visibility(self) -> 'V1ResourceVisibility':
+        """Gets the visibility of this StorageServicePublishSharedArtifactBody.  # noqa: E501
+
+
+        :return: The visibility of this StorageServicePublishSharedArtifactBody.  # noqa: E501
+        :rtype: V1ResourceVisibility
+        """
+        return self._visibility
+
+    @visibility.setter
+    def visibility(self, visibility: 'V1ResourceVisibility'):
+        """Sets the visibility of this StorageServicePublishSharedArtifactBody.
+
+
+        :param visibility: The visibility of this StorageServicePublishSharedArtifactBody.  # noqa: E501
+        :type: V1ResourceVisibility
+        """
+
+        self._visibility = visibility
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
