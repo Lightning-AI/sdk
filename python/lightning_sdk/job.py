@@ -266,7 +266,10 @@ class Job(metaclass=TrackCallsMeta):
                 (spot) machines. ``None`` means no reservation is requested.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
-                ``N > 1`` allows up to ``N`` attempts.
+                ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
+                multi-machine job level (not the per-machine ``JobSpec``). When greater than ``1``
+                for a multi-machine job, the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body.
             reuse_snapshot: Whether to reuse a Studio snapshot when multiple jobs for the same Studio are
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
@@ -292,8 +295,6 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
 
         if image is None:
             if not isinstance(studio, Studio):
@@ -405,8 +406,6 @@ class Job(metaclass=TrackCallsMeta):
             raise ValueError("A job needs to run on at least one machine")
         if num_machines > 1 and scratch_disks:
             raise ValueError("scratch_disks are not supported for multi-machine jobs")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
 
         if studio is not None:
             studio_id = studio._studio.id
@@ -460,9 +459,7 @@ class Job(metaclass=TrackCallsMeta):
                     raise ValueError("scratch_disk path cannot contain '..'")
 
         self._num_machines = num_machines
-        extra_submit_kwargs: Dict[str, Any] = {}
-        if num_machines <= 1:
-            extra_submit_kwargs["max_run_attempts"] = max_run_attempts
+
         submitted = self._job_api.submit_job(
             name=self.name,
             command=command,
@@ -482,7 +479,7 @@ class Job(metaclass=TrackCallsMeta):
             placement_group_id=placement_group_id,
             num_machines=num_machines,
             scratch_disks=scratch_disks,
-            **extra_submit_kwargs,
+            max_run_attempts=max_run_attempts,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
@@ -606,14 +603,26 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def max_run_attempts(self) -> Optional[int]:
-        """Max number of run attempts for this job, or ``None`` if unset."""
+        """Max number of run attempts for this job, or ``None`` if unset.
+
+        For multi-machine jobs this reads the multi-machine job body; for
+        standalone jobs it reads the per-job ``spec``.
+        """
+        if self.is_multi_machine:
+            return getattr(self._guaranteed_job, "max_run_attempts", None) or None
         spec = getattr(self._guaranteed_job, "spec", None)
         value = getattr(spec, "max_run_attempts", None)
         return value or None
 
     @property
     def current_run_attempt(self) -> Optional[int]:
-        """Current run attempt for this job, or ``None`` if unset."""
+        """Current run attempt for this job, or ``None`` if unset.
+
+        For multi-machine jobs this reads the multi-machine job body; for
+        standalone jobs it reads the per-job ``spec``.
+        """
+        if self.is_multi_machine:
+            return getattr(self._guaranteed_job, "current_run_attempt", None) or None
         spec = getattr(self._guaranteed_job, "spec", None)
         value = getattr(spec, "current_run_attempt", None)
         return value or None

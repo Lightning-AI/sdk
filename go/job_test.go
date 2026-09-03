@@ -49,7 +49,6 @@ func TestJobExposesRunAttemptFields(t *testing.T) {
 			"spec": map[string]any{
 				"maxRunAttempts":    3,
 				"currentRunAttempt": 2,
-				"parentJobId":       "job-parent",
 			},
 		})
 	}))
@@ -362,7 +361,6 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 				"artifactsDestination": "efs:data:outputs/run-1",
 				"maxRunAttempts":       3,
 				"currentRunAttempt":    1,
-				"parentJobId":          "",
 			},
 		})
 	}))

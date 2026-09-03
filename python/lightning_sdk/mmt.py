@@ -119,6 +119,7 @@ class MMT(Job):
         entrypoint: Optional[str] = None,
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
     ) -> "MMT":
@@ -144,6 +145,7 @@ class MMT(Job):
                 entrypoint=entrypoint,
                 path_mappings=path_mappings,
                 max_runtime=max_runtime,
+                max_run_attempts=max_run_attempts,
                 reuse_snapshot=reuse_snapshot,
                 placement_group_id=placement_group_id,
                 num_machines=num_machines,

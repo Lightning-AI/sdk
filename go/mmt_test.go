@@ -372,9 +372,13 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
 
 		var body struct {
-			Name     string `json:"name"`
-			Machines int64  `json:"machines"`
-			Spec     struct {
+			Name           string `json:"name"`
+			Machines       int64  `json:"machines"`
+			MaxRunAttempts int64  `json:"maxRunAttempts"`
+			FaultTolerance *struct {
+				Strategy string `json:"strategy"`
+			} `json:"faultTolerance"`
+			Spec struct {
 				Entrypoint                  string `json:"entrypoint"`
 				ImageClusterCredentials     bool   `json:"imageClusterCredentials"`
 				ImageSecretRef              string `json:"imageSecretRef"`
@@ -390,6 +394,12 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"decode mmt body")
 		assert.Falsef(t, body.Name != "dist-train-advanced" || body.Machines != 4,
 			"unexpected mmt header: %+v", body)
+		assert.Falsef(t, body.MaxRunAttempts != 5,
+			"maxRunAttempts = %d, want 5", body.MaxRunAttempts)
+		require.NotNil(t, body.FaultTolerance,
+			"faultTolerance was not set on the mmt body")
+		assert.Falsef(t, body.FaultTolerance.Strategy != "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES",
+			"faultTolerance.strategy = %q, want RECREATE_ALL_NODES", body.FaultTolerance.Strategy)
 		assert.Falsef(t, body.Spec.Entrypoint != "python",
 			"entrypoint = %q, want python", body.Spec.Entrypoint)
 		assert.True(t, body.Spec.ImageClusterCredentials,
@@ -410,11 +420,13 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			"unexpected artifact path mapping: %+v", artifacts)
 
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"id":        "mmt-advanced",
-			"name":      "dist-train-advanced",
-			"projectId": "project-1",
-			"machines":  4,
-			"state":     "pending",
+			"id":                "mmt-advanced",
+			"name":              "dist-train-advanced",
+			"projectId":         "project-1",
+			"machines":          4,
+			"state":             "pending",
+			"maxRunAttempts":    5,
+			"currentRunAttempt": 2,
 		})
 	}))
 	defer server.Close()
@@ -432,6 +444,7 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 			CloudAccountAuth:     true,
 			Entrypoint:           "python",
 			MaxRuntime:           7200,
+			MaxRunAttempts:       5,
 			ArtifactsSource:      "/outputs",
 			ArtifactsDestination: "efs:data:outputs/run-1",
 			PathMappings: []lit.MMTPathMapping{{
@@ -446,6 +459,61 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 	assert.Falsef(t, created.ID() != "mmt-advanced" || created.Status() != "pending" || created.NumMachines() != 4,
 		"unexpected created mmt: %s %s %d", created.ID(), created.Status(), created.NumMachines())
 
+	// MMT-level retry fields are read from the body, not the (blank) per-machine
+	// JobSpec.
+	assert.Falsef(t, created.MaxRunAttempts() != 5,
+		"MaxRunAttempts = %d, want 5", created.MaxRunAttempts())
+	assert.Falsef(t, created.CurrentRunAttempt() != 2,
+		"CurrentRunAttempt = %d, want 2", created.CurrentRunAttempt())
+
+}
+
+func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/multi-machine-jobs",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		var body struct {
+			Name           string `json:"name"`
+			Machines       int64  `json:"machines"`
+			MaxRunAttempts int64  `json:"maxRunAttempts"`
+			FaultTolerance *struct {
+				Strategy string `json:"strategy"`
+			} `json:"faultTolerance"`
+		}
+		require.NoErrorf(t, json.NewDecoder(r.Body).Decode(&body),
+			"decode mmt body")
+		assert.Falsef(t, body.MaxRunAttempts != 1,
+			"maxRunAttempts = %d, want 1", body.MaxRunAttempts)
+		// A single attempt (no retries) must not set fault tolerance.
+		assert.Nil(t, body.FaultTolerance,
+			"faultTolerance = %+v, want nil", body.FaultTolerance)
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "mmt-no-retries",
+			"name":      "dist-train",
+			"projectId": "project-1",
+			"machines":  4,
+			"state":     "pending",
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	_, err := lit.RunMMT(
+		"dist-train",
+		4,
+		"gpu",
+		"torchrun train.py",
+		lit.MMTOptions{
+			Teamspace:      mustTeamspace(t, "project-1", ""),
+			Image:          "pytorch/pytorch:latest",
+			MaxRunAttempts: 1,
+		},
+	)
+	require.NoErrorf(t, err,
+		"RunMMT returned error")
 }
 
 func TestMMTRunRejectsSingleMachine(t *testing.T) {

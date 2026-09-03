@@ -272,12 +272,36 @@ def test_job_exposes_run_attempt_metadata(internal_studio_init_mocker):
     assert job.max_run_attempts == 3
     assert job.current_run_attempt == 2
     assert job._guaranteed_job.spec.parent_job_id == "job-parent"
+    assert getattr(job._guaranteed_job, "parent_multi_machine_job_id", None) is None  # MMT-only field
 
     unset = Job("unset-job", teamspace, _fetch_job=False)
     unset._job = V1Job(id="job-456", name="unset-job", spec=V1JobSpec())
     assert unset.max_run_attempts is None
     assert unset.current_run_attempt is None
     assert unset._guaranteed_job.spec.parent_job_id is None
+    assert getattr(unset._guaranteed_job, "parent_multi_machine_job_id", None) is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_exposes_mmt_level_run_attempt_metadata(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-mmt", teamspace, _fetch_job=False, _num_machines=2)
+    job._job = V1MultiMachineJob(
+        id="mmt-123",
+        name="test-mmt",
+        machines=2,
+        max_run_attempts=5,
+        current_run_attempt=3,
+        parent_multi_machine_job_id="mmt-parent",
+        spec=V1JobSpec(),  # spec-level retry fields intentionally left blank for MMTs
+    )
+
+    # Retry fields must be read from the MMT body, not the (blank) spec.
+    assert job.is_multi_machine
+    assert job.max_run_attempts == 5
+    assert job.current_run_attempt == 3
+    assert getattr(job._guaranteed_job, "parent_multi_machine_job_id", None) == "mmt-parent"
+    assert job._guaranteed_job.spec.parent_job_id is None  # standalone-only field
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -367,19 +391,74 @@ def test_submit_job_threads_max_run_attempts(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_submit_rejects_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
+def test_submit_threads_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    # _submit routes num_machines > 1 to the MMT api, so mock that instance
+    # (Job defaults to _num_machines=1, which would otherwise route to the
+    # standalone api and leave the MMT api unmocked).
+    job._mmt_job_api.submit_job = submit_mock
 
-    with pytest.raises(ValueError, match="max_run_attempts is not supported for multi-machine jobs"):
-        job._submit(
-            machine=Machine.CPU,
-            image="image-abc",
-            command="echo hello",
-            cloud_account="c-abc",
-            num_machines=2,
-            max_run_attempts=3,
-        )
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        num_machines=2,
+        max_run_attempts=3,
+    )
+
+    assert submit_mock.call_args.kwargs["max_run_attempts"] == 3
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_auto_derives_fault_tolerance_for_multi_machine_with_retries(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-mmt", teamspace, _fetch_job=False)
+    create_mock = mock.MagicMock()
+    # _submit routes num_machines > 1 to the MMT api; mock the create call so we
+    # can inspect the derived body.
+    job._mmt_job_api._client = mock.MagicMock()
+    job._mmt_job_api._client.jobs_service_create_multi_machine_job = create_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        num_machines=2,
+        max_run_attempts=3,
+    )
+
+    body = create_mock.call_args.kwargs["body"]
+    assert body.max_run_attempts == 3
+    # num_machines > 1 and max_run_attempts > 1 auto-derives RECREATE_ALL_NODES.
+    assert body.fault_tolerance is not None
+    assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_omits_fault_tolerance_for_multi_machine_without_retries(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-mmt", teamspace, _fetch_job=False)
+    create_mock = mock.MagicMock()
+    job._mmt_job_api._client = mock.MagicMock()
+    job._mmt_job_api._client.jobs_service_create_multi_machine_job = create_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        num_machines=2,
+        max_run_attempts=1,
+    )
+
+    body = create_mock.call_args.kwargs["body"]
+    assert body.max_run_attempts == 1
+    # A single attempt (no retries) must not set fault tolerance.
+    assert body.fault_tolerance is None
 
 
 @pytest.mark.parametrize("machine", [Machine.L4, Machine.DATA_PREP_MAX])

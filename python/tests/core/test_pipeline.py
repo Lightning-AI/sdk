@@ -181,9 +181,23 @@ def test_job_step_threads_max_run_attempts():
     assert proto.job.spec.max_run_attempts == 3
 
 
-def test_job_step_rejects_max_run_attempts_for_multi_machine():
-    with pytest.raises(ValueError, match="max_run_attempts is not supported for multi-machine jobs"):
-        JobStep(name="job-0", machine=Machine.CPU, num_machines=3, max_run_attempts=3)
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_job_step_auto_derives_fault_tolerance_for_multi_machine():
+    job = JobStep(
+        name="job-0",
+        machine=Machine.CPU,
+        num_machines=3,
+        max_run_attempts=5,
+    )
+    proto = job.to_proto(MagicMock(), "", False)
+
+    assert proto.type == V1PipelineStepType.MMT
+    assert proto.mmt.max_run_attempts == 5
+    # max_run_attempts must live on the MMT body, NOT the per-machine JobSpec
+    assert proto.mmt.spec.max_run_attempts is None
+    # num_machines > 1 and max_run_attempts > 1 auto-derives RECREATE_ALL_NODES.
+    assert proto.mmt.fault_tolerance is not None
+    assert proto.mmt.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
 @patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
@@ -390,6 +404,23 @@ def test_mmt_step_threads_placement_group_id():
     proto = mmt.to_proto(MagicMock(), "", False)
 
     assert proto.mmt.spec.placement_group_id == "pg-1"
+
+
+@patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
+def test_mmt_step_auto_derives_fault_tolerance():
+    mmt = MMTStep(
+        name="mmt-0",
+        machine=Machine.CPU,
+        max_run_attempts=5,
+    )
+    proto = mmt.to_proto(MagicMock(), "", False)
+
+    assert proto.mmt.max_run_attempts == 5
+    # max_run_attempts must live on the MMT body, NOT the per-machine JobSpec
+    assert proto.mmt.spec.max_run_attempts is None
+    # max_run_attempts > 1 auto-derives RECREATE_ALL_NODES.
+    assert proto.mmt.fault_tolerance is not None
+    assert proto.mmt.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
 @patch.object(teamspace, "TeamspaceApi", new=MagicMock())

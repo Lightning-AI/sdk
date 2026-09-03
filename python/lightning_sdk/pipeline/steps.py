@@ -233,7 +233,10 @@ class JobStep:
             max_runtime: Maximum runtime in seconds.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
-                ``N > 1`` allows up to ``N`` attempts. Only supported for single-machine jobs.
+                ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the
+                multi-machine job level (not the per-machine ``JobSpec``). When greater than ``1``
+                for a multi-machine job, the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body.
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
@@ -243,8 +246,6 @@ class JobStep:
         """
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
-        if num_machines > 1 and max_run_attempts:
-            raise ValueError("max_run_attempts is not supported for multi-machine jobs")
         self.name = name
         self.machine = machine or Machine.CPU
         self.command = command
@@ -304,8 +305,6 @@ class JobStep:
         if self.num_machines > 1:
             if self.scratch_disks:
                 raise ValueError("scratch_disks are not supported for multi-machine jobs")
-            if self.max_run_attempts:
-                raise ValueError("max_run_attempts is not supported for multi-machine jobs")
             body = MMTApiV2._create_mmt_body(
                 name=cast(str, self.name),
                 num_machines=self.num_machines,
@@ -324,6 +323,7 @@ class JobStep:
                 machine_image_version=machine_image_version,
                 reuse_snapshot=self.reuse_snapshot,
                 placement_group_id=self.placement_group_id,
+                max_run_attempts=self.max_run_attempts,
             )
             return V1PipelineStep(
                 name=self.name,
@@ -382,6 +382,7 @@ class MMTStep:
         entrypoint: str = "sh -c",
         path_mappings: Optional[Dict[str, str]] = None,
         max_runtime: Optional[int] = None,
+        max_run_attempts: Optional[int] = None,
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
@@ -406,6 +407,11 @@ class MMTStep:
             entrypoint: Container entrypoint. Defaults to ``sh -c``.
             path_mappings: Mappings from container paths to data-connection paths.
             max_runtime: Maximum runtime in seconds.
+            max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0``
+                means unset (legacy, no retries); ``1`` means a single attempt (no retries). When
+                greater than ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body. Set at the multi-machine job level,
+                not on the per-machine ``JobSpec``.
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             placement_group_id: Optional placement group identifier for colocating the job.
@@ -428,6 +434,7 @@ class MMTStep:
         self.entrypoint = entrypoint
         self.path_mappings = path_mappings
         self.max_runtime = max_runtime
+        self.max_run_attempts = max_run_attempts
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.placement_group_id = placement_group_id
@@ -482,6 +489,7 @@ class MMTStep:
             machine_image_version=machine_image_version,
             reuse_snapshot=self.reuse_snapshot,
             placement_group_id=self.placement_group_id,
+            max_run_attempts=self.max_run_attempts,
         )
 
         return V1PipelineStep(

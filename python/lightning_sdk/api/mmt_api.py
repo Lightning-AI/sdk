@@ -16,6 +16,8 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Job,
     V1JobSpec,
     V1MultiMachineJob,
+    V1MultiMachineJobFaultTolerance,
+    V1MultiMachineJobFaultToleranceStrategy,
     V1MultiMachineJobState,
 )
 from lightning_sdk.machine import Machine
@@ -51,6 +53,7 @@ class MMTApiV2:
         reuse_snapshot: bool,
         placement_group_id: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
+        max_run_attempts: Optional[int] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -75,6 +78,11 @@ class MMTApiV2:
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
             scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
+            max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0``
+                means unset (legacy, no retries); ``1`` means a single attempt (no retries). When
+                greater than ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body. Set at the multi-machine job level,
+                not on the per-machine ``JobSpec``.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -98,6 +106,7 @@ class MMTApiV2:
             max_runtime=max_runtime,
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
+            max_run_attempts=max_run_attempts,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -122,6 +131,7 @@ class MMTApiV2:
         max_runtime: Optional[int] = None,
         machine_image_version: Optional[str] = None,
         placement_group_id: Optional[str] = None,
+        max_run_attempts: Optional[int] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -145,6 +155,11 @@ class MMTApiV2:
                 (spot) machines. ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
+            max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0``
+                means unset (legacy, no retries); ``1`` means a single attempt (no retries). When
+                greater than ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
+                automatically on the multi-machine job body. Set at the multi-machine job level,
+                not on the per-machine ``JobSpec``.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -182,8 +197,23 @@ class MMTApiV2:
             placement_group_id=placement_group_id,
             **optional_spec_kwargs,
         )
+        # max_run_attempts and fault_tolerance live on the multi-machine job body,
+        # NOT on the per-machine JobSpec. Fault tolerance is auto-derived: when the
+        # job is multi-machine and allows retries (max_run_attempts > 1) the only
+        # currently supported strategy (RECREATE_ALL_NODES) is set automatically;
+        # otherwise the field is left unset.
+        fault_tolerance = None
+        if num_machines > 1 and (max_run_attempts or 0) > 1:
+            fault_tolerance = V1MultiMachineJobFaultTolerance(
+                strategy=V1MultiMachineJobFaultToleranceStrategy.RECREATE_ALL_NODES
+            )
         return JobsServiceCreateMultiMachineJobBody(
-            name=name, spec=spec, cluster_id=cloud_account or "", machines=num_machines
+            name=name,
+            spec=spec,
+            cluster_id=cloud_account or "",
+            machines=num_machines,
+            max_run_attempts=max_run_attempts,
+            fault_tolerance=fault_tolerance,
         )
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1MultiMachineJob:

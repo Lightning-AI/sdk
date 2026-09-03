@@ -823,6 +823,7 @@ class Studio(metaclass=TrackCallsMeta):
         command: str,
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
+        max_run_attempts: Optional[int] = None,
     ) -> "MMT":
         """Run async workloads using the compute environment from your studio.
 
@@ -833,6 +834,11 @@ class Studio(metaclass=TrackCallsMeta):
             command: The command to run inside your job.
             env: Environment variables to set inside the job.
             interruptible: Whether the job should run on interruptible instances. They are cheaper but can be preempted.
+            max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0`` means
+                unset (legacy, no retries); ``1`` means a single attempt (no retries). When greater than
+                ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set automatically on the
+                multi-machine job body. Set at the multi-machine job level, not on the per-machine
+                ``JobSpec``.
 
         Returns:
             MMT: The submitted :class:`MMT` instance.
@@ -850,6 +856,7 @@ class Studio(metaclass=TrackCallsMeta):
             cloud=self.cloud_account,
             env=env,
             interruptible=interruptible,
+            max_run_attempts=max_run_attempts,
         )
 
     def add_ports(self, ports: Union[int, List[int], Dict[str, int]]) -> List[V1Endpoint]:

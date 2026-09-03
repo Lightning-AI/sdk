@@ -29,6 +29,9 @@ type MMT struct {
 	totalCost   float32
 	startedAt   time.Time
 	stoppedAt   time.Time
+
+	maxRunAttempts    int64
+	currentRunAttempt int64
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -95,6 +98,7 @@ type mmtOptions struct {
 	artifactsSource  string
 	artifactsDest    string
 	maxRuntime       int
+	maxRunAttempts   int64
 }
 
 type mmtWaitOptions struct {
@@ -143,6 +147,12 @@ type MMTOptions struct {
 	ArtifactsDestination string
 	// MaxRuntime limits the MMT runtime in seconds.
 	MaxRuntime int
+	// MaxRunAttempts is the max number of run attempts for this multi-machine
+	// job. 0 means unset (legacy, no retries); 1 means a single attempt (no
+	// retries). When greater than 1 the RECREATE_ALL_NODES fault tolerance
+	// strategy is set automatically on the multi-machine job body. Set at the
+	// multi-machine job level, not on the per-machine JobSpec.
+	MaxRunAttempts int64
 }
 
 // MMTWaitOptions configures polling behavior while waiting for an MMT.
@@ -269,6 +279,24 @@ func (m *MMT) StoppedAt() time.Time {
 	return m.stoppedAt
 }
 
+// MaxRunAttempts returns the max number of run attempts for this multi-machine
+// job, read from the multi-machine job body. 0 means unset.
+func (m *MMT) MaxRunAttempts() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.maxRunAttempts
+}
+
+// CurrentRunAttempt returns the current run attempt for this multi-machine job,
+// read from the multi-machine job body. 0 means unset.
+func (m *MMT) CurrentRunAttempt() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.currentRunAttempt
+}
+
 // GetMMT returns an existing MMT by name or ID.
 func GetMMT(name string, opts ...MMTOptions) (*MMT, error) {
 	resolved := applyMMTOptions(opts...)
@@ -328,11 +356,22 @@ func RunMMT(name string, numMachines int64, machine Machine, command string, opt
 	if resolved.teamspaceID == "" {
 		return nil, errors.New("mmt run requires teamspace or studio")
 	}
+	// Fault tolerance is auto-derived: when the job is multi-machine and allows
+	// retries (max_run_attempts > 1) the only currently supported strategy
+	// (RECREATE_ALL_NODES) is set automatically; otherwise the field is left
+	// unset.
+	var faultTolerance *models.V1MultiMachineJobFaultTolerance
+	if numMachines > 1 && resolved.maxRunAttempts > 1 {
+		s := models.V1MultiMachineJobFaultToleranceStrategyMULTIMACHINEJOBFAULTTOLERANCESTRATEGYRECREATEALLNODES
+		faultTolerance = &models.V1MultiMachineJobFaultTolerance{Strategy: &s}
+	}
 	body := &models.JobsServiceCreateMultiMachineJobBody{
-		ClusterID: resolved.cloud,
-		Machines:  numMachines,
-		Name:      name,
-		Spec:      mmtJobSpec(numMachines, string(machine), command, resolved),
+		ClusterID:      resolved.cloud,
+		Machines:       numMachines,
+		Name:           name,
+		Spec:           mmtJobSpec(numMachines, string(machine), command, resolved),
+		MaxRunAttempts: resolved.maxRunAttempts,
+		FaultTolerance: faultTolerance,
 	}
 	resp, err := api.JobsService.JobsServiceCreateMultiMachineJob(
 		jobs_service.NewJobsServiceCreateMultiMachineJobParamsWithContext(context.Background()).WithProjectID(resolved.teamspaceID).WithBody(body),
@@ -593,6 +632,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.artifactsSource = opts[0].ArtifactsSource
 		resolved.artifactsDest = opts[0].ArtifactsDestination
 		resolved.maxRuntime = opts[0].MaxRuntime
+		resolved.maxRunAttempts = opts[0].MaxRunAttempts
 	}
 	return resolved
 }
@@ -648,6 +688,9 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 		numMachines: model.Machines,
 		studioID:    model.CloudspaceID,
 		totalCost:   model.TotalCost,
+
+		maxRunAttempts:    model.MaxRunAttempts,
+		currentRunAttempt: model.CurrentRunAttempt,
 	}
 	if model.State != nil {
 		result.status = string(*model.State)

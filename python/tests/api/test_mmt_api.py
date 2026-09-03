@@ -57,7 +57,12 @@ def test_mmt_v2_submit_job(_mock_auth):
         image_secret_ref="",
         path_mappings=[],
     )
-    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=5)
+    body = JobsServiceCreateMultiMachineJobBody(
+        name="test-job",
+        spec=spec,
+        cluster_id="c-abc",
+        machines=5,
+    )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
     create_job_mock = mock.MagicMock()
@@ -99,7 +104,12 @@ def test_mmt_v2_submit_job(_mock_auth):
         ],
         requested_run_duration_seconds="500",
     )
-    body = JobsServiceCreateMultiMachineJobBody(name="test-job", spec=spec, cluster_id="c-abc", machines=2)
+    body = JobsServiceCreateMultiMachineJobBody(
+        name="test-job",
+        spec=spec,
+        cluster_id="c-abc",
+        machines=2,
+    )
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
@@ -274,3 +284,102 @@ def test_get_studio_name_returns_none_when_cloudspace_missing():
     job_api._client.cloud_space_service_get_cloud_space.assert_called_once_with(
         project_id="ts-abc", id="deleted-studio"
     )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_auto_derives_fault_tolerance_from_max_run_attempts(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=4,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        max_run_attempts=5,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.max_run_attempts == 5
+    # max_run_attempts must live on the body, NOT on the per-machine JobSpec
+    assert body.spec.max_run_attempts is None
+    # max_run_attempts > 1 for a multi-machine job auto-derives RECREATE_ALL_NODES.
+    assert body.fault_tolerance is not None
+    assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_unset(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=4,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    # max_run_attempts is omitted (None) when not provided...
+    assert body.max_run_attempts is None
+    # ...and fault_tolerance is omitted (None) when no retries are requested.
+    assert body.fault_tolerance is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_leq_one(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=4,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        max_run_attempts=1,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.max_run_attempts == 1
+    # A single attempt (no retries) must not set fault tolerance.
+    assert body.fault_tolerance is None
