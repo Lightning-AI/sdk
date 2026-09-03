@@ -24,6 +24,7 @@ from lightning_sdk.cli.groups import (
     edit,
     file,
     folder,
+    instance,
     job,
     machine,
     mmt,
@@ -50,7 +51,7 @@ from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
-        {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
+        {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "instance", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit"]},
@@ -130,6 +131,7 @@ main_cli.add_command(completion)
 main_cli.add_command(job)
 main_cli.add_command(mmt)
 main_cli.add_command(machine)
+main_cli.add_command(instance)
 main_cli.add_command(api)
 main_cli.add_command(deployment)
 main_cli.add_command(container)
@@ -157,6 +159,7 @@ main_cli.add_command(build_hidden_alias_group("apis", api))
 main_cli.add_command(build_hidden_alias_group("jobs", job))
 main_cli.add_command(build_hidden_alias_group("mmts", mmt))
 main_cli.add_command(build_hidden_alias_group("machines", machine))
+main_cli.add_command(build_hidden_alias_group("instances", instance))
 main_cli.add_command(build_hidden_alias_group("deployments", deployment))
 main_cli.add_command(build_hidden_alias_group("containers", container))
 main_cli.add_command(build_hidden_alias_group("models", model))
@@ -225,6 +228,7 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             {
                 "containers": ("lightning container list", container.commands["list"]),
                 "jobs": ("lightning job list", job.commands["list"]),
+                "instances": ("lightning instance list", instance.commands["list"]),
                 "machines": ("lightning machine list", machine.commands["list"]),
                 "mmts": ("lightning mmt list", mmt.commands["list"]),
                 "studios": ("lightning studio list", studio.commands["list"]),

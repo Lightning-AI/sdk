@@ -18,6 +18,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceApi,
     AuthServiceApi,
     BillingServiceApi,
+    CloudInstancesServiceApi,
     CloudSpaceEnvironmentTemplateServiceApi,
     CloudSpaceServiceApi,
     ClusterServiceApi,
@@ -116,6 +117,7 @@ class GridRestClient(
     CloudSpaceEnvironmentTemplateServiceApi,
     SDKCommandHistoryServiceApi,
     K8SClusterServiceApi,
+    CloudInstancesServiceApi,
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None, with_auth: bool = True):
