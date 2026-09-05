@@ -33,6 +33,9 @@ type JobsServiceCreateJobBody struct {
 
 	// spec
 	Spec *V1JobSpec `json:"spec,omitempty"`
+
+	// Tag names, created in the teamspace if they don't exist yet
+	Tags []string `json:"tags"`
 }
 
 // Validate validates this jobs service create job body

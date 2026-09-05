@@ -1913,6 +1913,7 @@ class SandboxesServiceApi(object):
         :param str name:
         :param str sort_order:
         :param str purpose: Purpose filter, matching ListSandboxesRequest.purpose semantics: unset returns every snapshot EXCEPT those captured from product-purposed sandboxes; set returns only snapshots whose source sandbox had that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
+        :param str source_sandbox_id:
         :return: V1ListSandboxSnapshotsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1940,12 +1941,13 @@ class SandboxesServiceApi(object):
         :param str name:
         :param str sort_order:
         :param str purpose: Purpose filter, matching ListSandboxesRequest.purpose semantics: unset returns every snapshot EXCEPT those captured from product-purposed sandboxes; set returns only snapshots whose source sandbox had that purpose.   - SANDBOX_PURPOSE_UNSPECIFIED: User-created; always visible in list surfaces.  - SANDBOX_PURPOSE_NOTEBOOK: Kernel backend spawned by Lightning Notebooks; hidden from default list views.
+        :param str source_sandbox_id:
         :return: V1ListSandboxSnapshotsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['organization_id', 'page_token', 'limit', 'project_id', 'name', 'sort_order', 'purpose']  # noqa: E501
+        all_params = ['organization_id', 'page_token', 'limit', 'project_id', 'name', 'sort_order', 'purpose', 'source_sandbox_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1980,6 +1982,8 @@ class SandboxesServiceApi(object):
             query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
         if 'purpose' in params:
             query_params.append(('purpose', params['purpose']))  # noqa: E501
+        if 'source_sandbox_id' in params:
+            query_params.append(('sourceSandboxId', params['source_sandbox_id']))  # noqa: E501
 
         header_params = {}
 

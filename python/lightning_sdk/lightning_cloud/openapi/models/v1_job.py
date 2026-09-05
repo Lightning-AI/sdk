@@ -74,6 +74,7 @@ class V1Job(object):
         'started_at': 'datetime',
         'state': 'str',
         'stopped_at': 'datetime',
+        'tags': 'list[V1WorkloadTag]',
         'timings': 'dict(str, V1JobTiming)',
         'total_cost': 'float',
         'total_size_bytes': 'str',
@@ -114,6 +115,7 @@ class V1Job(object):
         'started_at': 'startedAt',
         'state': 'state',
         'stopped_at': 'stoppedAt',
+        'tags': 'tags',
         'timings': 'timings',
         'total_cost': 'totalCost',
         'total_size_bytes': 'totalSizeBytes',
@@ -124,7 +126,7 @@ class V1Job(object):
         'visibility': 'visibility'
     }
 
-    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, replace_requested: 'bool' =None, replace_requested_at: 'datetime' =None, requires_maintenance: 'bool' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_id: 'str' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, deployment_id: 'str' =None, endpoint: 'V1Endpoint' =None, id: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, is_healthy: 'bool' =None, message: 'str' =None, multi_machine_job_id: 'str' =None, name: 'str' =None, overprovisioned: 'bool' =None, pipeline_id: 'str' =None, private_ip_address: 'str' =None, project_id: 'str' =None, public_ip_address: 'str' =None, ready_at: 'datetime' =None, release_id: 'str' =None, replace_requested: 'bool' =None, replace_requested_at: 'datetime' =None, requires_maintenance: 'bool' =None, restart_count: 'int' =None, restart_timings: 'list[V1RestartTiming]' =None, server_error: 'str' =None, spec: 'V1JobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, timings: 'dict(str, V1JobTiming)' =None, total_cost: 'float' =None, total_size_bytes: 'str' =None, updated_at: 'datetime' =None, urls: 'list[str]' =None, user_id: 'str' =None, user_logs_started_at: 'datetime' =None, visibility: 'V1ResourceVisibility' =None):  # noqa: E501
         """V1Job - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_id = None
         self._created_at = None
@@ -155,6 +157,7 @@ class V1Job(object):
         self._started_at = None
         self._state = None
         self._stopped_at = None
+        self._tags = None
         self._timings = None
         self._total_cost = None
         self._total_size_bytes = None
@@ -222,6 +225,8 @@ class V1Job(object):
             self.state = state
         if stopped_at is not None:
             self.stopped_at = stopped_at
+        if tags is not None:
+            self.tags = tags
         if timings is not None:
             self.timings = timings
         if total_cost is not None:
@@ -855,6 +860,27 @@ class V1Job(object):
         """
 
         self._stopped_at = stopped_at
+
+    @property
+    def tags(self) -> 'list[V1WorkloadTag]':
+        """Gets the tags of this V1Job.  # noqa: E501
+
+
+        :return: The tags of this V1Job.  # noqa: E501
+        :rtype: list[V1WorkloadTag]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1WorkloadTag]'):
+        """Sets the tags of this V1Job.
+
+
+        :param tags: The tags of this V1Job.  # noqa: E501
+        :type: list[V1WorkloadTag]
+        """
+
+        self._tags = tags
 
     @property
     def timings(self) -> 'dict(str, V1JobTiming)':

@@ -633,6 +633,99 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def billing_service_get_activity_filter_values(self, **kwargs) -> 'V1GetActivityFilterValuesResponse':  # noqa: E501
+        """Returns the set of values (projects, users, resource types, resource ids) an org admin or teamspace viewer can filter the activity page by, for the given scope and time range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_activity_filter_values(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id: if this is non empty the request is project scoped
+        :return: V1GetActivityFilterValuesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_activity_filter_values_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_activity_filter_values_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_activity_filter_values_with_http_info(self, **kwargs) -> 'V1GetActivityFilterValuesResponse':  # noqa: E501
+        """Returns the set of values (projects, users, resource types, resource ids) an org admin or teamspace viewer can filter the activity page by, for the given scope and time range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_activity_filter_values_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id: if this is non empty the request is project scoped
+        :return: V1GetActivityFilterValuesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'project_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_activity_filter_values" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/usage-report/filter-values', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetActivityFilterValuesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def billing_service_get_assistant_session_daily_aggregated(self, **kwargs) -> 'V1GetAssistantSessionDailyAggregatedResponse':  # noqa: E501
         """Aggregated assistant session endpoint to get credits spending information. Provides credits consumption data by particular project according to filters given.  # noqa: E501
 
@@ -1346,6 +1439,8 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param bool include_unassigned_project: Rows in the daily rollup table can have an empty project_id/user_id (some legitimately, some due to bugs upstream). By default such rows are neither specifically included nor excluded by project_id/user_id filters (see below).  Optional, only used by the daily rollup billing activity endpoint. If project_id is also set, also include rows with no project_id, in addition to the matched project. If project_id is not set, restricts results to rows with no project_id.
+        :param bool include_unassigned_user: Optional, only used by the daily rollup billing activity endpoint. If user_id is also set, also include rows with no user_id, in addition to the matched user. If user_id is not set, restricts results to rows with no user_id.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1379,12 +1474,14 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param bool include_unassigned_project: Rows in the daily rollup table can have an empty project_id/user_id (some legitimately, some due to bugs upstream). By default such rows are neither specifically included nor excluded by project_id/user_id filters (see below).  Optional, only used by the daily rollup billing activity endpoint. If project_id is also set, also include rows with no project_id, in addition to the matched project. If project_id is not set, restricts results to rows with no project_id.
+        :param bool include_unassigned_user: Optional, only used by the daily rollup billing activity endpoint. If user_id is also set, also include rows with no user_id, in addition to the matched user. If user_id is not set, restricts results to rows with no user_id.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type', 'include_unassigned_project', 'include_unassigned_user']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1431,6 +1528,10 @@ class BillingServiceApi(object):
             query_params.append(('searchAfterResourceId', params['search_after_resource_id']))  # noqa: E501
         if 'search_after_resource_type' in params:
             query_params.append(('searchAfterResourceType', params['search_after_resource_type']))  # noqa: E501
+        if 'include_unassigned_project' in params:
+            query_params.append(('includeUnassignedProject', params['include_unassigned_project']))  # noqa: E501
+        if 'include_unassigned_user' in params:
+            query_params.append(('includeUnassignedUser', params['include_unassigned_user']))  # noqa: E501
 
         header_params = {}
 
@@ -1693,6 +1794,8 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param bool include_unassigned_project: Rows in the daily rollup table can have an empty project_id/user_id (some legitimately, some due to bugs upstream). By default such rows are neither specifically included nor excluded by project_id/user_id filters (see below).  Optional, only used by the daily rollup billing activity endpoint. If project_id is also set, also include rows with no project_id, in addition to the matched project. If project_id is not set, restricts results to rows with no project_id.
+        :param bool include_unassigned_user: Optional, only used by the daily rollup billing activity endpoint. If user_id is also set, also include rows with no user_id, in addition to the matched user. If user_id is not set, restricts results to rows with no user_id.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1726,12 +1829,14 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: resource type is necessary since daily rollup table is keyed on resource_id, not billable_resource_id, which is not unique across different resource types  Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param bool include_unassigned_project: Rows in the daily rollup table can have an empty project_id/user_id (some legitimately, some due to bugs upstream). By default such rows are neither specifically included nor excluded by project_id/user_id filters (see below).  Optional, only used by the daily rollup billing activity endpoint. If project_id is also set, also include rows with no project_id, in addition to the matched project. If project_id is not set, restricts results to rows with no project_id.
+        :param bool include_unassigned_user: Optional, only used by the daily rollup billing activity endpoint. If user_id is also set, also include rows with no user_id, in addition to the matched user. If user_id is not set, restricts results to rows with no user_id.
         :return: V1UsageReport
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type']  # noqa: E501
+        all_params = ['org_id', 'project_id', 'cluster_id', 'resource_type', 'resource_id', '_from', 'to', 'user_id', 'time_zone', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type', 'include_unassigned_project', 'include_unassigned_user']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1778,6 +1883,10 @@ class BillingServiceApi(object):
             query_params.append(('searchAfterResourceId', params['search_after_resource_id']))  # noqa: E501
         if 'search_after_resource_type' in params:
             query_params.append(('searchAfterResourceType', params['search_after_resource_type']))  # noqa: E501
+        if 'include_unassigned_project' in params:
+            query_params.append(('includeUnassignedProject', params['include_unassigned_project']))  # noqa: E501
+        if 'include_unassigned_user' in params:
+            query_params.append(('includeUnassignedUser', params['include_unassigned_user']))  # noqa: E501
 
         header_params = {}
 

@@ -68,6 +68,8 @@ type ClientService interface {
 
 	JobsServiceCreateMultiMachineJob(params *JobsServiceCreateMultiMachineJobParams, opts ...ClientOption) (*JobsServiceCreateMultiMachineJobOK, error)
 
+	JobsServiceCreateWorkloadTag(params *JobsServiceCreateWorkloadTagParams, opts ...ClientOption) (*JobsServiceCreateWorkloadTagOK, error)
+
 	JobsServiceDeleteDeployment(params *JobsServiceDeleteDeploymentParams, opts ...ClientOption) (*JobsServiceDeleteDeploymentOK, error)
 
 	JobsServiceDeleteDeploymentAlertingPolicy(params *JobsServiceDeleteDeploymentAlertingPolicyParams, opts ...ClientOption) (*JobsServiceDeleteDeploymentAlertingPolicyOK, error)
@@ -77,6 +79,8 @@ type ClientService interface {
 	JobsServiceDeleteJob(params *JobsServiceDeleteJobParams, opts ...ClientOption) (*JobsServiceDeleteJobOK, error)
 
 	JobsServiceDeleteMultiMachineJob(params *JobsServiceDeleteMultiMachineJobParams, opts ...ClientOption) (*JobsServiceDeleteMultiMachineJobOK, error)
+
+	JobsServiceDeleteWorkloadTag(params *JobsServiceDeleteWorkloadTagParams, opts ...ClientOption) (*JobsServiceDeleteWorkloadTagOK, error)
 
 	JobsServiceDownloadJobLogs(params *JobsServiceDownloadJobLogsParams, opts ...ClientOption) (*JobsServiceDownloadJobLogsOK, error)
 
@@ -146,6 +150,8 @@ type ClientService interface {
 
 	JobsServiceListOrgDeployments(params *JobsServiceListOrgDeploymentsParams, opts ...ClientOption) (*JobsServiceListOrgDeploymentsOK, error)
 
+	JobsServiceListWorkloadTags(params *JobsServiceListWorkloadTagsParams, opts ...ClientOption) (*JobsServiceListWorkloadTagsOK, error)
+
 	JobsServiceReloadDeploymentWeights(params *JobsServiceReloadDeploymentWeightsParams, opts ...ClientOption) (*JobsServiceReloadDeploymentWeightsOK, error)
 
 	JobsServiceReportDeploymentRoutingTelemetry(params *JobsServiceReportDeploymentRoutingTelemetryParams, opts ...ClientOption) (*JobsServiceReportDeploymentRoutingTelemetryOK, error)
@@ -159,6 +165,8 @@ type ClientService interface {
 	JobsServiceRestoreDeploymentRelease(params *JobsServiceRestoreDeploymentReleaseParams, opts ...ClientOption) (*JobsServiceRestoreDeploymentReleaseOK, error)
 
 	JobsServiceSearchJobLogs(params *JobsServiceSearchJobLogsParams, opts ...ClientOption) (*JobsServiceSearchJobLogsOK, error)
+
+	JobsServiceSetWorkloadTags(params *JobsServiceSetWorkloadTagsParams, opts ...ClientOption) (*JobsServiceSetWorkloadTagsOK, error)
 
 	JobsServiceUpdateDeployment(params *JobsServiceUpdateDeploymentParams, opts ...ClientOption) (*JobsServiceUpdateDeploymentOK, error)
 
@@ -177,6 +185,8 @@ type ClientService interface {
 	JobsServiceUpdateMultiMachineJob(params *JobsServiceUpdateMultiMachineJobParams, opts ...ClientOption) (*JobsServiceUpdateMultiMachineJobOK, error)
 
 	JobsServiceUpdateOrgDeploymentVisibility(params *JobsServiceUpdateOrgDeploymentVisibilityParams, opts ...ClientOption) (*JobsServiceUpdateOrgDeploymentVisibilityOK, error)
+
+	JobsServiceUpdateWorkloadTag(params *JobsServiceUpdateWorkloadTagParams, opts ...ClientOption) (*JobsServiceUpdateWorkloadTagOK, error)
 
 	JobsServiceValidateDeploymentImage(params *JobsServiceValidateDeploymentImageParams, opts ...ClientOption) (*JobsServiceValidateDeploymentImageOK, error)
 
@@ -394,6 +404,48 @@ func (a *Client) JobsServiceCreateMultiMachineJob(params *JobsServiceCreateMulti
 }
 
 /*
+JobsServiceCreateWorkloadTag jobs service create workload tag API
+*/
+func (a *Client) JobsServiceCreateWorkloadTag(params *JobsServiceCreateWorkloadTagParams, opts ...ClientOption) (*JobsServiceCreateWorkloadTagOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceCreateWorkloadTagParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_CreateWorkloadTag",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/workload-tags",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceCreateWorkloadTagReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceCreateWorkloadTagOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceCreateWorkloadTagDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 JobsServiceDeleteDeployment jobs service delete deployment API
 */
 func (a *Client) JobsServiceDeleteDeployment(params *JobsServiceDeleteDeploymentParams, opts ...ClientOption) (*JobsServiceDeleteDeploymentOK, error) {
@@ -599,6 +651,48 @@ func (a *Client) JobsServiceDeleteMultiMachineJob(params *JobsServiceDeleteMulti
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceDeleteMultiMachineJobDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceDeleteWorkloadTag jobs service delete workload tag API
+*/
+func (a *Client) JobsServiceDeleteWorkloadTag(params *JobsServiceDeleteWorkloadTagParams, opts ...ClientOption) (*JobsServiceDeleteWorkloadTagOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceDeleteWorkloadTagParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_DeleteWorkloadTag",
+		Method:             "DELETE",
+		PathPattern:        "/v1/projects/{projectId}/workload-tags/{id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceDeleteWorkloadTagReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceDeleteWorkloadTagOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceDeleteWorkloadTagDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2032,6 +2126,48 @@ func (a *Client) JobsServiceListOrgDeployments(params *JobsServiceListOrgDeploym
 }
 
 /*
+JobsServiceListWorkloadTags jobs service list workload tags API
+*/
+func (a *Client) JobsServiceListWorkloadTags(params *JobsServiceListWorkloadTagsParams, opts ...ClientOption) (*JobsServiceListWorkloadTagsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceListWorkloadTagsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_ListWorkloadTags",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/workload-tags",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceListWorkloadTagsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceListWorkloadTagsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceListWorkloadTagsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 JobsServiceReloadDeploymentWeights weights reload b y o m sidecar
 */
 func (a *Client) JobsServiceReloadDeploymentWeights(params *JobsServiceReloadDeploymentWeightsParams, opts ...ClientOption) (*JobsServiceReloadDeploymentWeightsOK, error) {
@@ -2321,6 +2457,48 @@ func (a *Client) JobsServiceSearchJobLogs(params *JobsServiceSearchJobLogsParams
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceSearchJobLogsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceSetWorkloadTags jobs service set workload tags API
+*/
+func (a *Client) JobsServiceSetWorkloadTags(params *JobsServiceSetWorkloadTagsParams, opts ...ClientOption) (*JobsServiceSetWorkloadTagsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceSetWorkloadTagsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_SetWorkloadTags",
+		Method:             "PUT",
+		PathPattern:        "/v1/projects/{projectId}/workloads/{workloadType}/{workloadId}/tags",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceSetWorkloadTagsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceSetWorkloadTagsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceSetWorkloadTagsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2699,6 +2877,48 @@ func (a *Client) JobsServiceUpdateOrgDeploymentVisibility(params *JobsServiceUpd
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceUpdateOrgDeploymentVisibilityDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceUpdateWorkloadTag jobs service update workload tag API
+*/
+func (a *Client) JobsServiceUpdateWorkloadTag(params *JobsServiceUpdateWorkloadTagParams, opts ...ClientOption) (*JobsServiceUpdateWorkloadTagOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceUpdateWorkloadTagParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_UpdateWorkloadTag",
+		Method:             "PUT",
+		PathPattern:        "/v1/projects/{projectId}/workload-tags/{id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceUpdateWorkloadTagReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceUpdateWorkloadTagOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceUpdateWorkloadTagDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

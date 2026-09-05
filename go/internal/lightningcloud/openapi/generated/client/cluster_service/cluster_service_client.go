@@ -166,6 +166,8 @@ type ClientService interface {
 
 	ClusterServicePurchaseOrgCapacityBlock(params *ClusterServicePurchaseOrgCapacityBlockParams, opts ...ClientOption) (*ClusterServicePurchaseOrgCapacityBlockOK, error)
 
+	ClusterServiceRenewDockerstoreCredentials(params *ClusterServiceRenewDockerstoreCredentialsParams, opts ...ClientOption) (*ClusterServiceRenewDockerstoreCredentialsOK, error)
+
 	ClusterServiceRenewSandboxSnapshotCredentials(params *ClusterServiceRenewSandboxSnapshotCredentialsParams, opts ...ClientOption) (*ClusterServiceRenewSandboxSnapshotCredentialsOK, error)
 
 	ClusterServiceReportMachineSystemMetrics(params *ClusterServiceReportMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceReportMachineSystemMetricsOK, error)
@@ -2469,6 +2471,48 @@ func (a *Client) ClusterServicePurchaseOrgCapacityBlock(params *ClusterServicePu
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServicePurchaseOrgCapacityBlockDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceRenewDockerstoreCredentials cluster service renew dockerstore credentials API
+*/
+func (a *Client) ClusterServiceRenewDockerstoreCredentials(params *ClusterServiceRenewDockerstoreCredentialsParams, opts ...ClientOption) (*ClusterServiceRenewDockerstoreCredentialsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceRenewDockerstoreCredentialsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_RenewDockerstoreCredentials",
+		Method:             "POST",
+		PathPattern:        "/v1/core/servers/{serverId}/dockerstore-credentials",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceRenewDockerstoreCredentialsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceRenewDockerstoreCredentialsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceRenewDockerstoreCredentialsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

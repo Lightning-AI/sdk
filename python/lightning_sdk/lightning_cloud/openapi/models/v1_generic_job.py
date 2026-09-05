@@ -54,6 +54,7 @@ class V1GenericJob(object):
         'project_id': 'str',
         'spec': 'V1GenericJobSpec',
         'state': 'str',
+        'tags': 'list[V1WorkloadTag]',
         'type': 'str',
         'user_id': 'str'
     }
@@ -68,11 +69,12 @@ class V1GenericJob(object):
         'project_id': 'projectId',
         'spec': 'spec',
         'state': 'state',
+        'tags': 'tags',
         'type': 'type',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, state: 'str' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, state: 'str' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1GenericJob - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_id = None
         self._cluster_id = None
@@ -83,6 +85,7 @@ class V1GenericJob(object):
         self._project_id = None
         self._spec = None
         self._state = None
+        self._tags = None
         self._type = None
         self._user_id = None
         self.discriminator = None
@@ -104,6 +107,8 @@ class V1GenericJob(object):
             self.spec = spec
         if state is not None:
             self.state = state
+        if tags is not None:
+            self.tags = tags
         if type is not None:
             self.type = type
         if user_id is not None:
@@ -297,6 +302,27 @@ class V1GenericJob(object):
         """
 
         self._state = state
+
+    @property
+    def tags(self) -> 'list[V1WorkloadTag]':
+        """Gets the tags of this V1GenericJob.  # noqa: E501
+
+
+        :return: The tags of this V1GenericJob.  # noqa: E501
+        :rtype: list[V1WorkloadTag]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[V1WorkloadTag]'):
+        """Sets the tags of this V1GenericJob.
+
+
+        :param tags: The tags of this V1GenericJob.  # noqa: E501
+        :type: list[V1WorkloadTag]
+        """
+
+        self._tags = tags
 
     @property
     def type(self) -> 'str':
