@@ -813,6 +813,7 @@ class UserServiceApi(object):
 
         :param async_req bool
         :param bool unseen: if true, only return unseen features
+        :param str org_id: org whose billing tier decides which targeted features are returned; empty returns only untargeted ones
         :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -834,12 +835,13 @@ class UserServiceApi(object):
 
         :param async_req bool
         :param bool unseen: if true, only return unseen features
+        :param str org_id: org whose billing tier decides which targeted features are returned; empty returns only untargeted ones
         :return: V1ListNotificationDialogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['unseen']  # noqa: E501
+        all_params = ['unseen', 'org_id']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -862,6 +864,8 @@ class UserServiceApi(object):
         query_params = []
         if 'unseen' in params:
             query_params.append(('unseen', params['unseen']))  # noqa: E501
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
 
         header_params = {}
 

@@ -45,6 +45,7 @@ class V1NewFeature(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'badge_text': 'str',
         'banner_end_time': 'datetime',
         'banner_text': 'str',
         'banner_url_copy': 'str',
@@ -52,17 +53,20 @@ class V1NewFeature(object):
         'cta_text': 'str',
         'description': 'str',
         'feature_name': 'str',
+        'hide_close_button': 'bool',
         'highlights': 'list[str]',
         'id': 'str',
         'image_url': 'str',
         'learn_more_url': 'str',
         'poster_url': 'str',
+        'show_on_page_load': 'bool',
         'title': 'str',
         'video_url': 'str',
         'viewed': 'bool'
     }
 
     attribute_map = {
+        'badge_text': 'badgeText',
         'banner_end_time': 'bannerEndTime',
         'banner_text': 'bannerText',
         'banner_url_copy': 'bannerUrlCopy',
@@ -70,18 +74,21 @@ class V1NewFeature(object):
         'cta_text': 'ctaText',
         'description': 'description',
         'feature_name': 'featureName',
+        'hide_close_button': 'hideCloseButton',
         'highlights': 'highlights',
         'id': 'id',
         'image_url': 'imageUrl',
         'learn_more_url': 'learnMoreUrl',
         'poster_url': 'posterUrl',
+        'show_on_page_load': 'showOnPageLoad',
         'title': 'title',
         'video_url': 'videoUrl',
         'viewed': 'viewed'
     }
 
-    def __init__(self, banner_end_time: 'datetime' =None, banner_text: 'str' =None, banner_url_copy: 'str' =None, created_at: 'datetime' =None, cta_text: 'str' =None, description: 'str' =None, feature_name: 'str' =None, highlights: 'list[str]' =None, id: 'str' =None, image_url: 'str' =None, learn_more_url: 'str' =None, poster_url: 'str' =None, title: 'str' =None, video_url: 'str' =None, viewed: 'bool' =None):  # noqa: E501
+    def __init__(self, badge_text: 'str' =None, banner_end_time: 'datetime' =None, banner_text: 'str' =None, banner_url_copy: 'str' =None, created_at: 'datetime' =None, cta_text: 'str' =None, description: 'str' =None, feature_name: 'str' =None, hide_close_button: 'bool' =None, highlights: 'list[str]' =None, id: 'str' =None, image_url: 'str' =None, learn_more_url: 'str' =None, poster_url: 'str' =None, show_on_page_load: 'bool' =None, title: 'str' =None, video_url: 'str' =None, viewed: 'bool' =None):  # noqa: E501
         """V1NewFeature - a model defined in Swagger"""  # noqa: E501
+        self._badge_text = None
         self._banner_end_time = None
         self._banner_text = None
         self._banner_url_copy = None
@@ -89,15 +96,19 @@ class V1NewFeature(object):
         self._cta_text = None
         self._description = None
         self._feature_name = None
+        self._hide_close_button = None
         self._highlights = None
         self._id = None
         self._image_url = None
         self._learn_more_url = None
         self._poster_url = None
+        self._show_on_page_load = None
         self._title = None
         self._video_url = None
         self._viewed = None
         self.discriminator = None
+        if badge_text is not None:
+            self.badge_text = badge_text
         if banner_end_time is not None:
             self.banner_end_time = banner_end_time
         if banner_text is not None:
@@ -112,6 +123,8 @@ class V1NewFeature(object):
             self.description = description
         if feature_name is not None:
             self.feature_name = feature_name
+        if hide_close_button is not None:
+            self.hide_close_button = hide_close_button
         if highlights is not None:
             self.highlights = highlights
         if id is not None:
@@ -122,12 +135,35 @@ class V1NewFeature(object):
             self.learn_more_url = learn_more_url
         if poster_url is not None:
             self.poster_url = poster_url
+        if show_on_page_load is not None:
+            self.show_on_page_load = show_on_page_load
         if title is not None:
             self.title = title
         if video_url is not None:
             self.video_url = video_url
         if viewed is not None:
             self.viewed = viewed
+
+    @property
+    def badge_text(self) -> 'str':
+        """Gets the badge_text of this V1NewFeature.  # noqa: E501
+
+
+        :return: The badge_text of this V1NewFeature.  # noqa: E501
+        :rtype: str
+        """
+        return self._badge_text
+
+    @badge_text.setter
+    def badge_text(self, badge_text: 'str'):
+        """Sets the badge_text of this V1NewFeature.
+
+
+        :param badge_text: The badge_text of this V1NewFeature.  # noqa: E501
+        :type: str
+        """
+
+        self._badge_text = badge_text
 
     @property
     def banner_end_time(self) -> 'datetime':
@@ -277,6 +313,27 @@ class V1NewFeature(object):
         self._feature_name = feature_name
 
     @property
+    def hide_close_button(self) -> 'bool':
+        """Gets the hide_close_button of this V1NewFeature.  # noqa: E501
+
+
+        :return: The hide_close_button of this V1NewFeature.  # noqa: E501
+        :rtype: bool
+        """
+        return self._hide_close_button
+
+    @hide_close_button.setter
+    def hide_close_button(self, hide_close_button: 'bool'):
+        """Sets the hide_close_button of this V1NewFeature.
+
+
+        :param hide_close_button: The hide_close_button of this V1NewFeature.  # noqa: E501
+        :type: bool
+        """
+
+        self._hide_close_button = hide_close_button
+
+    @property
     def highlights(self) -> 'list[str]':
         """Gets the highlights of this V1NewFeature.  # noqa: E501
 
@@ -380,6 +437,27 @@ class V1NewFeature(object):
         """
 
         self._poster_url = poster_url
+
+    @property
+    def show_on_page_load(self) -> 'bool':
+        """Gets the show_on_page_load of this V1NewFeature.  # noqa: E501
+
+
+        :return: The show_on_page_load of this V1NewFeature.  # noqa: E501
+        :rtype: bool
+        """
+        return self._show_on_page_load
+
+    @show_on_page_load.setter
+    def show_on_page_load(self, show_on_page_load: 'bool'):
+        """Sets the show_on_page_load of this V1NewFeature.
+
+
+        :param show_on_page_load: The show_on_page_load of this V1NewFeature.  # noqa: E501
+        :type: bool
+        """
+
+        self._show_on_page_load = show_on_page_load
 
     @property
     def title(self) -> 'str':

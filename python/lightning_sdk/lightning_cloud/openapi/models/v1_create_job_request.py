@@ -48,22 +48,25 @@ class V1CreateJobRequest(object):
         'endpoint': 'V1Endpoint',
         'name': 'str',
         'project_id': 'str',
-        'spec': 'V1JobSpec'
+        'spec': 'V1JobSpec',
+        'tags': 'list[str]'
     }
 
     attribute_map = {
         'endpoint': 'endpoint',
         'name': 'name',
         'project_id': 'projectId',
-        'spec': 'spec'
+        'spec': 'spec',
+        'tags': 'tags'
     }
 
-    def __init__(self, endpoint: 'V1Endpoint' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, endpoint: 'V1Endpoint' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1JobSpec' =None, tags: 'list[str]' =None):  # noqa: E501
         """V1CreateJobRequest - a model defined in Swagger"""  # noqa: E501
         self._endpoint = None
         self._name = None
         self._project_id = None
         self._spec = None
+        self._tags = None
         self.discriminator = None
         if endpoint is not None:
             self.endpoint = endpoint
@@ -73,6 +76,8 @@ class V1CreateJobRequest(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if tags is not None:
+            self.tags = tags
 
     @property
     def endpoint(self) -> 'V1Endpoint':
@@ -157,6 +162,27 @@ class V1CreateJobRequest(object):
         """
 
         self._spec = spec
+
+    @property
+    def tags(self) -> 'list[str]':
+        """Gets the tags of this V1CreateJobRequest.  # noqa: E501
+
+
+        :return: The tags of this V1CreateJobRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[str]'):
+        """Sets the tags of this V1CreateJobRequest.
+
+
+        :param tags: The tags of this V1CreateJobRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._tags = tags
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
