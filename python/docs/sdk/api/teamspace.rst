@@ -7,6 +7,10 @@ Teamspace
    :members:
    :show-inheritance:
 
+.. autoclass:: BucketCredentials
+   :members:
+   :show-inheritance:
+
 .. autoclass:: SecretType
    :members:
    :undoc-members:
