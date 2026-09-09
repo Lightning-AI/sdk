@@ -17,6 +17,7 @@ from lightning_sdk.cli.groups import (
     auth,
     base_studio,
     config,
+    connection,
     container,
     cp,
     dataset,
@@ -146,6 +147,7 @@ main_cli.add_command(teamspace)
 main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
 main_cli.add_command(dataset)
+main_cli.add_command(connection)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 main_cli.add_command(edit)

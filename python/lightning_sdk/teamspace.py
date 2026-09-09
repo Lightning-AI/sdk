@@ -11,6 +11,7 @@ import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, SecretType, TeamspaceApi
 from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
+from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
     V1Model,
@@ -381,6 +382,25 @@ class Teamspace(metaclass=TrackCallsMeta):
             )
 
         self._teamspace_api.delete_secret(self.id, key)
+
+    def bucket_credentials(self, connection: str) -> BucketCredentials:
+        """Get short-lived credentials for the bucket behind a data connection.
+
+        The credentials expire, so call this again for a fresh set rather than caching
+        them; ``BucketCredentials.expires_at`` is the deadline to refresh against. To
+        hand them to a tool that refreshes on its own, see ``lightning connection
+        credentials``, which speaks AWS's ``credential_process`` protocol.
+
+        Args:
+            connection: Name of the data connection, as it appears in the teamspace drive.
+
+        Returns:
+            BucketCredentials: The credentials, with the region and endpoint to use them against.
+
+        Raises:
+            ValueError: If the teamspace has no data connection with that name.
+        """
+        return self._teamspace_api.get_temp_bucket_credentials(self.id, connection)
 
     def list_machines(self, cloud_account: Optional[str] = None, machine: Optional[str] = None) -> List[Machine]:
         """List available machines across cloud accounts.
