@@ -21,7 +21,10 @@ def test_vm_help() -> None:
         "Usage: lightning vm [OPTIONS] COMMAND [ARGS]...",
         "Create and manage virtual machines.",
         "create",
+        "delete",
+        "inspect",
         "list",
+        "ssh",
     )
 
 
@@ -91,3 +94,82 @@ def test_list_renders_table(monkeypatch) -> None:
     assert "1.2.3.4" in result.output
     assert "lit-h100-8" in result.output
     api.list_vms.assert_called_once_with("ts-1", "org-1")
+
+
+from lightning_sdk.cli.vm.delete import delete_vm  # noqa: E402
+from lightning_sdk.cli.vm.inspect import inspect_vm  # noqa: E402
+from lightning_sdk.cli.vm.ssh import ssh_vm  # noqa: E402
+
+
+def _patch_lookup(monkeypatch, module: str, vm: V1Instance) -> MagicMock:
+    api = MagicMock()
+    monkeypatch.setattr(f"lightning_sdk.cli.vm.{module}.resolve_teamspace", lambda teamspace: _teamspace())
+    monkeypatch.setattr(f"lightning_sdk.cli.vm.{module}.VMApi", MagicMock(return_value=api))
+    monkeypatch.setattr(f"lightning_sdk.cli.vm.{module}.resolve_vm", lambda api, teamspace, name: vm)
+    return api
+
+
+@mock_command_logging
+def test_inspect_prints_json(monkeypatch) -> None:
+    vm = V1Instance(id="vm-1", name="sim-1", status="running", ssh_command="ssh -p 1 u@h")
+    _patch_lookup(monkeypatch, "inspect", vm)
+
+    result = CliRunner().invoke(inspect_vm, ["sim-1"])
+
+    assert result.exit_code == 0, result.output
+    assert '"id": "vm-1"' in result.output
+    assert '"ssh_command": "ssh -p 1 u@h"' in result.output
+
+
+@mock_command_logging
+def test_delete_prompts_and_aborts(monkeypatch) -> None:
+    vm = V1Instance(id="vm-1", name="sim-1")
+    api = _patch_lookup(monkeypatch, "delete", vm)
+
+    result = CliRunner().invoke(delete_vm, ["sim-1"], input="n\n")
+
+    assert result.exit_code != 0
+    api.delete_vm.assert_not_called()
+
+
+@mock_command_logging
+def test_delete_with_yes(monkeypatch) -> None:
+    vm = V1Instance(id="vm-1", name="sim-1")
+    api = _patch_lookup(monkeypatch, "delete", vm)
+
+    result = CliRunner().invoke(delete_vm, ["sim-1", "--yes"])
+
+    assert result.exit_code == 0, result.output
+    assert "Deleted VM sim-1" in result.output
+    api.delete_vm.assert_called_once_with("vm-1", "org-1")
+
+
+@mock_command_logging
+def test_ssh_execs_command_with_extra_args(monkeypatch) -> None:
+    vm = V1Instance(id="vm-1", name="sim-1", status="running", ssh_command="ssh -p 20032 ubuntu@1.2.3.4")
+    api = _patch_lookup(monkeypatch, "ssh", vm)
+    execvp = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.vm.ssh.os.execvp", execvp)
+
+    result = CliRunner().invoke(ssh_vm, ["sim-1", "--", "-L", "8888:localhost:8888"])
+
+    assert result.exit_code == 0, result.output
+    execvp.assert_called_once_with("ssh", ["ssh", "-p", "20032", "ubuntu@1.2.3.4", "-L", "8888:localhost:8888"])
+    api.wait_for_status.assert_not_called()
+
+
+@mock_command_logging
+def test_ssh_waits_when_not_running(monkeypatch) -> None:
+    pending = V1Instance(id="vm-1", name="sim-1", status="provisioning")
+    api = _patch_lookup(monkeypatch, "ssh", pending)
+    api.wait_for_status.return_value = V1Instance(
+        id="vm-1", name="sim-1", status="running", ssh_command="ssh -p 20032 ubuntu@1.2.3.4"
+    )
+    execvp = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.vm.ssh.os.execvp", execvp)
+
+    result = CliRunner().invoke(ssh_vm, ["sim-1", "--timeout", "30"])
+
+    assert result.exit_code == 0, result.output
+    api.wait_for_status.assert_called_once_with("vm-1", "org-1", timeout=30)
+    execvp.assert_called_once()
