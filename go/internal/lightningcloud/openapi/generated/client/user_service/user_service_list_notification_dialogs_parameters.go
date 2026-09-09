@@ -66,6 +66,12 @@ UserServiceListNotificationDialogsParams contains all the parameters to send to 
 */
 type UserServiceListNotificationDialogsParams struct {
 
+	/* OrgID.
+
+	   org whose billing tier decides which targeted features are returned; empty returns only untargeted ones
+	*/
+	OrgID *string
+
 	/* Unseen.
 
 	   if true, only return unseen features
@@ -125,6 +131,17 @@ func (o *UserServiceListNotificationDialogsParams) SetHTTPClient(client *http.Cl
 	o.HTTPClient = client
 }
 
+// WithOrgID adds the orgID to the user service list notification dialogs params
+func (o *UserServiceListNotificationDialogsParams) WithOrgID(orgID *string) *UserServiceListNotificationDialogsParams {
+	o.SetOrgID(orgID)
+	return o
+}
+
+// SetOrgID adds the orgId to the user service list notification dialogs params
+func (o *UserServiceListNotificationDialogsParams) SetOrgID(orgID *string) {
+	o.OrgID = orgID
+}
+
 // WithUnseen adds the unseen to the user service list notification dialogs params
 func (o *UserServiceListNotificationDialogsParams) WithUnseen(unseen *bool) *UserServiceListNotificationDialogsParams {
 	o.SetUnseen(unseen)
@@ -143,6 +160,23 @@ func (o *UserServiceListNotificationDialogsParams) WriteToRequest(r runtime.Clie
 		return err
 	}
 	var res []error
+
+	if o.OrgID != nil {
+
+		// query param orgId
+		var qrOrgID string
+
+		if o.OrgID != nil {
+			qrOrgID = *o.OrgID
+		}
+		qOrgID := qrOrgID
+		if qOrgID != "" {
+
+			if err := r.SetQueryParam("orgId", qOrgID); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.Unseen != nil {
 

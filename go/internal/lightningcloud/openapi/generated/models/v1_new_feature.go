@@ -23,6 +23,9 @@ import (
 // swagger:model v1NewFeature
 type V1NewFeature struct {
 
+	// badge text
+	BadgeText string `json:"badgeText,omitempty"`
+
 	// time to stop showing the banner
 	// Format: date-time
 	BannerEndTime strfmt.DateTime `json:"bannerEndTime,omitempty"`
@@ -46,6 +49,9 @@ type V1NewFeature struct {
 	// feature name
 	FeatureName string `json:"featureName,omitempty"`
 
+	// hide close button
+	HideCloseButton bool `json:"hideCloseButton,omitempty"`
+
 	// list of highlights for the feature
 	Highlights []string `json:"highlights"`
 
@@ -60,6 +66,9 @@ type V1NewFeature struct {
 
 	// placeholder meanwhile  video is loading
 	PosterURL string `json:"posterUrl,omitempty"`
+
+	// show on page load
+	ShowOnPageLoad bool `json:"showOnPageLoad,omitempty"`
 
 	// title
 	Title string `json:"title,omitempty"`

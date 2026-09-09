@@ -80,6 +80,9 @@ type V1JobSpec struct {
 	// Read only
 	InstanceType string `json:"instanceType,omitempty"`
 
+	// Whether to keep the machine running after the job is stopped
+	KeepMachineAfterStop bool `json:"keepMachineAfterStop,omitempty"`
+
 	// Allows us to bind a job to a machine or virtual machine
 	MachineID string `json:"machineId,omitempty"`
 

@@ -42,7 +42,6 @@ class CreateCheckoutSessionRequestWalletType(object):
     allowed enum values
     """
     PROJECT = "Project"
-    USER = "User"
     ORG = "Org"
     """
     Attributes:

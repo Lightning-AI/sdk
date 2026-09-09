@@ -51,6 +51,7 @@ class JobsServiceCreateMultiMachineJobBody(object):
         'max_run_attempts': 'int',
         'name': 'str',
         'spec': 'V1JobSpec',
+        'tags': 'list[str]',
         'target_machine_ids': 'list[str]'
     }
 
@@ -61,10 +62,11 @@ class JobsServiceCreateMultiMachineJobBody(object):
         'max_run_attempts': 'maxRunAttempts',
         'name': 'name',
         'spec': 'spec',
+        'tags': 'tags',
         'target_machine_ids': 'targetMachineIds'
     }
 
-    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, max_run_attempts: 'int' =None, name: 'str' =None, spec: 'V1JobSpec' =None, target_machine_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, cluster_id: 'str' =None, fault_tolerance: 'V1MultiMachineJobFaultTolerance' =None, machines: 'int' =None, max_run_attempts: 'int' =None, name: 'str' =None, spec: 'V1JobSpec' =None, tags: 'list[str]' =None, target_machine_ids: 'list[str]' =None):  # noqa: E501
         """JobsServiceCreateMultiMachineJobBody - a model defined in Swagger"""  # noqa: E501
         self._cluster_id = None
         self._fault_tolerance = None
@@ -72,6 +74,7 @@ class JobsServiceCreateMultiMachineJobBody(object):
         self._max_run_attempts = None
         self._name = None
         self._spec = None
+        self._tags = None
         self._target_machine_ids = None
         self.discriminator = None
         if cluster_id is not None:
@@ -86,6 +89,8 @@ class JobsServiceCreateMultiMachineJobBody(object):
             self.name = name
         if spec is not None:
             self.spec = spec
+        if tags is not None:
+            self.tags = tags
         if target_machine_ids is not None:
             self.target_machine_ids = target_machine_ids
 
@@ -216,6 +221,27 @@ class JobsServiceCreateMultiMachineJobBody(object):
         """
 
         self._spec = spec
+
+    @property
+    def tags(self) -> 'list[str]':
+        """Gets the tags of this JobsServiceCreateMultiMachineJobBody.  # noqa: E501
+
+
+        :return: The tags of this JobsServiceCreateMultiMachineJobBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[str]'):
+        """Sets the tags of this JobsServiceCreateMultiMachineJobBody.
+
+
+        :param tags: The tags of this JobsServiceCreateMultiMachineJobBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._tags = tags
 
     @property
     def target_machine_ids(self) -> 'list[str]':

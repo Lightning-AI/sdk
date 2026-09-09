@@ -47,20 +47,23 @@ class JobsServiceCreateJobBody(object):
     swagger_types = {
         'endpoint': 'V1Endpoint',
         'name': 'str',
-        'spec': 'V1JobSpec'
+        'spec': 'V1JobSpec',
+        'tags': 'list[str]'
     }
 
     attribute_map = {
         'endpoint': 'endpoint',
         'name': 'name',
-        'spec': 'spec'
+        'spec': 'spec',
+        'tags': 'tags'
     }
 
-    def __init__(self, endpoint: 'V1Endpoint' =None, name: 'str' =None, spec: 'V1JobSpec' =None):  # noqa: E501
+    def __init__(self, endpoint: 'V1Endpoint' =None, name: 'str' =None, spec: 'V1JobSpec' =None, tags: 'list[str]' =None):  # noqa: E501
         """JobsServiceCreateJobBody - a model defined in Swagger"""  # noqa: E501
         self._endpoint = None
         self._name = None
         self._spec = None
+        self._tags = None
         self.discriminator = None
         if endpoint is not None:
             self.endpoint = endpoint
@@ -68,6 +71,8 @@ class JobsServiceCreateJobBody(object):
             self.name = name
         if spec is not None:
             self.spec = spec
+        if tags is not None:
+            self.tags = tags
 
     @property
     def endpoint(self) -> 'V1Endpoint':
@@ -131,6 +136,27 @@ class JobsServiceCreateJobBody(object):
         """
 
         self._spec = spec
+
+    @property
+    def tags(self) -> 'list[str]':
+        """Gets the tags of this JobsServiceCreateJobBody.  # noqa: E501
+
+
+        :return: The tags of this JobsServiceCreateJobBody.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[str]'):
+        """Sets the tags of this JobsServiceCreateJobBody.
+
+
+        :param tags: The tags of this JobsServiceCreateJobBody.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._tags = tags
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

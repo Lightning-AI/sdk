@@ -67,6 +67,7 @@ class V1CreateDeploymentRequest(object):
         'reuse_servers': 'bool',
         'spec': 'V1JobSpec',
         'strategy': 'V1DeploymentStrategy',
+        'tags': 'list[str]',
         'vm_instances_config': 'V1VMInstancesConfig'
     }
 
@@ -93,10 +94,11 @@ class V1CreateDeploymentRequest(object):
         'reuse_servers': 'reuseServers',
         'spec': 'spec',
         'strategy': 'strategy',
+        'tags': 'tags',
         'vm_instances_config': 'vmInstancesConfig'
     }
 
-    def __init__(self, acknowledged_warnings: 'list[str]' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, k8s_deployment_config: 'V1K8sDeploymentConfig' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None, vm_instances_config: 'V1VMInstancesConfig' =None):  # noqa: E501
+    def __init__(self, acknowledged_warnings: 'list[str]' =None, api_standard: 'str' =None, apis: 'list[V1DeploymentAPI]' =None, autoscaling: 'V1AutoscalingSpec' =None, byom_spec: 'V1BYOMSpec' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, endpoint: 'V1Endpoint' =None, from_litserve: 'bool' =None, from_onboarding: 'bool' =None, k8s_deployment_config: 'V1K8sDeploymentConfig' =None, name: 'str' =None, parameter_spec: 'V1ParameterizationSpec' =None, parent_template_id: 'str' =None, pipeline_reuse_deployment_between_runs: 'bool' =None, project_id: 'str' =None, recipients: 'Externalv1ResourceScopedAlertingRecipients' =None, release_notes: 'str' =None, replicas: 'int' =None, reuse_servers: 'bool' =None, spec: 'V1JobSpec' =None, strategy: 'V1DeploymentStrategy' =None, tags: 'list[str]' =None, vm_instances_config: 'V1VMInstancesConfig' =None):  # noqa: E501
         """V1CreateDeploymentRequest - a model defined in Swagger"""  # noqa: E501
         self._acknowledged_warnings = None
         self._api_standard = None
@@ -120,6 +122,7 @@ class V1CreateDeploymentRequest(object):
         self._reuse_servers = None
         self._spec = None
         self._strategy = None
+        self._tags = None
         self._vm_instances_config = None
         self.discriminator = None
         if acknowledged_warnings is not None:
@@ -166,6 +169,8 @@ class V1CreateDeploymentRequest(object):
             self.spec = spec
         if strategy is not None:
             self.strategy = strategy
+        if tags is not None:
+            self.tags = tags
         if vm_instances_config is not None:
             self.vm_instances_config = vm_instances_config
 
@@ -630,6 +635,27 @@ class V1CreateDeploymentRequest(object):
         """
 
         self._strategy = strategy
+
+    @property
+    def tags(self) -> 'list[str]':
+        """Gets the tags of this V1CreateDeploymentRequest.  # noqa: E501
+
+
+        :return: The tags of this V1CreateDeploymentRequest.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags: 'list[str]'):
+        """Sets the tags of this V1CreateDeploymentRequest.
+
+
+        :param tags: The tags of this V1CreateDeploymentRequest.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._tags = tags
 
     @property
     def vm_instances_config(self) -> 'V1VMInstancesConfig':

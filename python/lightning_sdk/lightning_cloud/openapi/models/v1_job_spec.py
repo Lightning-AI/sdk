@@ -61,6 +61,7 @@ class V1JobSpec(object):
         'include_credentials': 'bool',
         'instance_name': 'str',
         'instance_type': 'str',
+        'keep_machine_after_stop': 'bool',
         'machine_id': 'str',
         'machine_image_version': 'str',
         'max_run_attempts': 'int',
@@ -101,6 +102,7 @@ class V1JobSpec(object):
         'include_credentials': 'includeCredentials',
         'instance_name': 'instanceName',
         'instance_type': 'instanceType',
+        'keep_machine_after_stop': 'keepMachineAfterStop',
         'machine_id': 'machineId',
         'machine_image_version': 'machineImageVersion',
         'max_run_attempts': 'maxRunAttempts',
@@ -124,7 +126,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, parent_job_id: 'str' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, keep_machine_after_stop: 'bool' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, parent_job_id: 'str' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -142,6 +144,7 @@ class V1JobSpec(object):
         self._include_credentials = None
         self._instance_name = None
         self._instance_type = None
+        self._keep_machine_after_stop = None
         self._machine_id = None
         self._machine_image_version = None
         self._max_run_attempts = None
@@ -196,6 +199,8 @@ class V1JobSpec(object):
             self.instance_name = instance_name
         if instance_type is not None:
             self.instance_type = instance_type
+        if keep_machine_after_stop is not None:
+            self.keep_machine_after_stop = keep_machine_after_stop
         if machine_id is not None:
             self.machine_id = machine_id
         if machine_image_version is not None:
@@ -582,6 +587,27 @@ class V1JobSpec(object):
         """
 
         self._instance_type = instance_type
+
+    @property
+    def keep_machine_after_stop(self) -> 'bool':
+        """Gets the keep_machine_after_stop of this V1JobSpec.  # noqa: E501
+
+
+        :return: The keep_machine_after_stop of this V1JobSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._keep_machine_after_stop
+
+    @keep_machine_after_stop.setter
+    def keep_machine_after_stop(self, keep_machine_after_stop: 'bool'):
+        """Sets the keep_machine_after_stop of this V1JobSpec.
+
+
+        :param keep_machine_after_stop: The keep_machine_after_stop of this V1JobSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._keep_machine_after_stop = keep_machine_after_stop
 
     @property
     def machine_id(self) -> 'str':

@@ -99,6 +99,13 @@ type V1VMHealth struct {
 	// status details
 	StatusDetails string `json:"statusDetails,omitempty"`
 
+	// Failure returned while checking the Studio SSH endpoint.
+	UserSSHError string `json:"userSshError,omitempty"`
+
+	// Studio SSH endpoint reachability on guest port 2222. This is separate from
+	// ssh_reachable, which checks the guest's administrative SSH service on port 22.
+	UserSSHReachable bool `json:"userSshReachable,omitempty"`
+
 	// vm Id
 	VMID string `json:"vmId,omitempty"`
 

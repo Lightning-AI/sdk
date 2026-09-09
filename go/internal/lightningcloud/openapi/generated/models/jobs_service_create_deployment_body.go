@@ -87,6 +87,9 @@ type JobsServiceCreateDeploymentBody struct {
 	// The release strategy
 	Strategy *V1DeploymentStrategy `json:"strategy,omitempty"`
 
+	// Tag names, created in the teamspace if they don't exist yet
+	Tags []string `json:"tags"`
+
 	// Kind-specific config. At most one should be set; unset defaults to vm-instances.
 	VMInstancesConfig V1VMInstancesConfig `json:"vmInstancesConfig,omitempty"`
 }

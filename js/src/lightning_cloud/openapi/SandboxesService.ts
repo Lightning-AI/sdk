@@ -144,6 +144,7 @@ export class SandboxesService<
        * @default "SANDBOX_PURPOSE_UNSPECIFIED"
        */
       purpose?: "SANDBOX_PURPOSE_UNSPECIFIED" | "SANDBOX_PURPOSE_NOTEBOOK";
+      sourceSandboxId?: string;
     },
     params: RequestParams = {},
   ) =>
