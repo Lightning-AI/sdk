@@ -12,6 +12,7 @@ package models
 import (
 	"context"
 	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -52,6 +53,9 @@ type V1GenericJob struct {
 	// state
 	State string `json:"state,omitempty"`
 
+	// tags
+	Tags []*V1WorkloadTag `json:"tags"`
+
 	// type
 	Type string `json:"type,omitempty"`
 
@@ -68,6 +72,10 @@ func (m *V1GenericJob) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSpec(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -112,11 +120,45 @@ func (m *V1GenericJob) validateSpec(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1GenericJob) validateTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tags); i++ {
+		if swag.IsZero(m.Tags[i]) { // not required
+			continue
+		}
+
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validate this v1 generic job based on the context it is used
 func (m *V1GenericJob) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateSpec(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTags(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,6 +188,35 @@ func (m *V1GenericJob) contextValidateSpec(ctx context.Context, formats strfmt.R
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1GenericJob) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Tags); i++ {
+
+		if m.Tags[i] != nil {
+
+			if swag.IsZero(m.Tags[i]) { // not required
+				return nil
+			}
+
+			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil

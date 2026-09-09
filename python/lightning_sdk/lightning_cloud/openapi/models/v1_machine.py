@@ -55,6 +55,8 @@ class V1Machine(object):
         'env': 'list[V1EnvVar]',
         'health': 'V1MachineHealth',
         'id': 'str',
+        'idrac_address': 'str',
+        'inband_subnet': 'str',
         'instance_type': 'str',
         'management_api_url': 'str',
         'mode': 'str',
@@ -66,8 +68,10 @@ class V1Machine(object):
         'private_address': 'str',
         'project_id': 'str',
         'provider': 'str',
+        'provider_availability_zone': 'str',
         'provider_fabric_group': 'str',
         'provider_instance_id': 'str',
+        'provider_node_id': 'str',
         'provider_region': 'str',
         'provisioning_method': 'str',
         'purpose': 'str',
@@ -99,6 +103,8 @@ class V1Machine(object):
         'env': 'env',
         'health': 'health',
         'id': 'id',
+        'idrac_address': 'idracAddress',
+        'inband_subnet': 'inbandSubnet',
         'instance_type': 'instanceType',
         'management_api_url': 'managementApiUrl',
         'mode': 'mode',
@@ -110,8 +116,10 @@ class V1Machine(object):
         'private_address': 'privateAddress',
         'project_id': 'projectId',
         'provider': 'provider',
+        'provider_availability_zone': 'providerAvailabilityZone',
         'provider_fabric_group': 'providerFabricGroup',
         'provider_instance_id': 'providerInstanceId',
+        'provider_node_id': 'providerNodeId',
         'provider_region': 'providerRegion',
         'provisioning_method': 'provisioningMethod',
         'purpose': 'purpose',
@@ -132,7 +140,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, only_spot: 'bool' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, idrac_address: 'str' =None, inband_subnet: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, only_spot: 'bool' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_availability_zone: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_node_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -144,6 +152,8 @@ class V1Machine(object):
         self._env = None
         self._health = None
         self._id = None
+        self._idrac_address = None
+        self._inband_subnet = None
         self._instance_type = None
         self._management_api_url = None
         self._mode = None
@@ -155,8 +165,10 @@ class V1Machine(object):
         self._private_address = None
         self._project_id = None
         self._provider = None
+        self._provider_availability_zone = None
         self._provider_fabric_group = None
         self._provider_instance_id = None
+        self._provider_node_id = None
         self._provider_region = None
         self._provisioning_method = None
         self._purpose = None
@@ -196,6 +208,10 @@ class V1Machine(object):
             self.health = health
         if id is not None:
             self.id = id
+        if idrac_address is not None:
+            self.idrac_address = idrac_address
+        if inband_subnet is not None:
+            self.inband_subnet = inband_subnet
         if instance_type is not None:
             self.instance_type = instance_type
         if management_api_url is not None:
@@ -218,10 +234,14 @@ class V1Machine(object):
             self.project_id = project_id
         if provider is not None:
             self.provider = provider
+        if provider_availability_zone is not None:
+            self.provider_availability_zone = provider_availability_zone
         if provider_fabric_group is not None:
             self.provider_fabric_group = provider_fabric_group
         if provider_instance_id is not None:
             self.provider_instance_id = provider_instance_id
+        if provider_node_id is not None:
+            self.provider_node_id = provider_node_id
         if provider_region is not None:
             self.provider_region = provider_region
         if provisioning_method is not None:
@@ -470,6 +490,48 @@ class V1Machine(object):
         self._id = id
 
     @property
+    def idrac_address(self) -> 'str':
+        """Gets the idrac_address of this V1Machine.  # noqa: E501
+
+
+        :return: The idrac_address of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._idrac_address
+
+    @idrac_address.setter
+    def idrac_address(self, idrac_address: 'str'):
+        """Sets the idrac_address of this V1Machine.
+
+
+        :param idrac_address: The idrac_address of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._idrac_address = idrac_address
+
+    @property
+    def inband_subnet(self) -> 'str':
+        """Gets the inband_subnet of this V1Machine.  # noqa: E501
+
+
+        :return: The inband_subnet of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._inband_subnet
+
+    @inband_subnet.setter
+    def inband_subnet(self, inband_subnet: 'str'):
+        """Sets the inband_subnet of this V1Machine.
+
+
+        :param inband_subnet: The inband_subnet of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._inband_subnet = inband_subnet
+
+    @property
     def instance_type(self) -> 'str':
         """Gets the instance_type of this V1Machine.  # noqa: E501
 
@@ -701,6 +763,27 @@ class V1Machine(object):
         self._provider = provider
 
     @property
+    def provider_availability_zone(self) -> 'str':
+        """Gets the provider_availability_zone of this V1Machine.  # noqa: E501
+
+
+        :return: The provider_availability_zone of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_availability_zone
+
+    @provider_availability_zone.setter
+    def provider_availability_zone(self, provider_availability_zone: 'str'):
+        """Sets the provider_availability_zone of this V1Machine.
+
+
+        :param provider_availability_zone: The provider_availability_zone of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_availability_zone = provider_availability_zone
+
+    @property
     def provider_fabric_group(self) -> 'str':
         """Gets the provider_fabric_group of this V1Machine.  # noqa: E501
 
@@ -741,6 +824,27 @@ class V1Machine(object):
         """
 
         self._provider_instance_id = provider_instance_id
+
+    @property
+    def provider_node_id(self) -> 'str':
+        """Gets the provider_node_id of this V1Machine.  # noqa: E501
+
+
+        :return: The provider_node_id of this V1Machine.  # noqa: E501
+        :rtype: str
+        """
+        return self._provider_node_id
+
+    @provider_node_id.setter
+    def provider_node_id(self, provider_node_id: 'str'):
+        """Sets the provider_node_id of this V1Machine.
+
+
+        :param provider_node_id: The provider_node_id of this V1Machine.  # noqa: E501
+        :type: str
+        """
+
+        self._provider_node_id = provider_node_id
 
     @property
     def provider_region(self) -> 'str':

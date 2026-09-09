@@ -44,6 +44,9 @@ type V1CreateMultiMachineJobRequest struct {
 	// Compute + run configuration
 	Spec *V1JobSpec `json:"spec,omitempty"`
 
+	// Tag names, created in the teamspace if they don't exist yet
+	Tags []string `json:"tags"`
+
 	// Optional ordered machine ids. Entry i is the required host for rank i.
 	TargetMachineIds []string `json:"targetMachineIds"`
 }

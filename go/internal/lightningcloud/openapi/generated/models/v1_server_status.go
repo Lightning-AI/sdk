@@ -90,6 +90,9 @@ type V1ServerStatus struct {
 	// How many times the workload container has restarted
 	WorkloadContainerRestartsCount string `json:"workloadContainerRestartsCount,omitempty"`
 
+	// How the guest workload was started: "docker", "runc", or "runsc".
+	WorkloadRuntime string `json:"workloadRuntime,omitempty"`
+
 	// workload state
 	WorkloadState string `json:"workloadState,omitempty"`
 

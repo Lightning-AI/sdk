@@ -70,6 +70,9 @@ type V1AWSDirectV1 struct {
 	// The CIDR block prefix that will be used to create the private subnets for this cluster's VPC, defaults to 10.192
 	SubnetCIDRPrefix string `json:"subnetCIDRPrefix,omitempty"`
 
+	// Support local AZs for this cluster, e.g. us-west-2-phx-2a
+	SupportLocalAvailabilityZones bool `json:"supportLocalAvailabilityZones,omitempty"`
+
 	// Run instances from launch templates only (JPMC setup)
 	UseLaunchTemplates bool `json:"useLaunchTemplates,omitempty"`
 

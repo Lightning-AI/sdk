@@ -83,6 +83,12 @@ type JobsServiceListAllJobsParams struct {
 	// Format: int64
 	Limit *int64
 
+	/* MatchAllTags.
+
+	   Require every tag in tag_ids rather than any
+	*/
+	MatchAllTags *bool
+
 	// OrgID.
 	OrgID *string
 
@@ -113,6 +119,12 @@ type JobsServiceListAllJobsParams struct {
 
 	// States.
 	States []string
+
+	/* TagIds.
+
+	   Match any of these tags
+	*/
+	TagIds []string
 
 	// UserID.
 	UserID *string
@@ -206,6 +218,17 @@ func (o *JobsServiceListAllJobsParams) SetLimit(limit *int64) {
 	o.Limit = limit
 }
 
+// WithMatchAllTags adds the matchAllTags to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithMatchAllTags(matchAllTags *bool) *JobsServiceListAllJobsParams {
+	o.SetMatchAllTags(matchAllTags)
+	return o
+}
+
+// SetMatchAllTags adds the matchAllTags to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetMatchAllTags(matchAllTags *bool) {
+	o.MatchAllTags = matchAllTags
+}
+
 // WithOrgID adds the orgID to the jobs service list all jobs params
 func (o *JobsServiceListAllJobsParams) WithOrgID(orgID *string) *JobsServiceListAllJobsParams {
 	o.SetOrgID(orgID)
@@ -283,6 +306,17 @@ func (o *JobsServiceListAllJobsParams) SetStates(states []string) {
 	o.States = states
 }
 
+// WithTagIds adds the tagIds to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithTagIds(tagIds []string) *JobsServiceListAllJobsParams {
+	o.SetTagIds(tagIds)
+	return o
+}
+
+// SetTagIds adds the tagIds to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetTagIds(tagIds []string) {
+	o.TagIds = tagIds
+}
+
 // WithUserID adds the userID to the jobs service list all jobs params
 func (o *JobsServiceListAllJobsParams) WithUserID(userID *string) *JobsServiceListAllJobsParams {
 	o.SetUserID(userID)
@@ -325,6 +359,23 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 		if qLimit != "" {
 
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.MatchAllTags != nil {
+
+		// query param matchAllTags
+		var qrMatchAllTags bool
+
+		if o.MatchAllTags != nil {
+			qrMatchAllTags = *o.MatchAllTags
+		}
+		qMatchAllTags := swag.FormatBool(qrMatchAllTags)
+		if qMatchAllTags != "" {
+
+			if err := r.SetQueryParam("matchAllTags", qMatchAllTags); err != nil {
 				return err
 			}
 		}
@@ -443,6 +494,17 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 		}
 	}
 
+	if o.TagIds != nil {
+
+		// binding items for tagIds
+		joinedTagIds := o.bindParamTagIds(reg)
+
+		// query array param tagIds
+		if err := r.SetQueryParam("tagIds", joinedTagIds...); err != nil {
+			return err
+		}
+	}
+
 	if o.UserID != nil {
 
 		// query param userId
@@ -498,4 +560,21 @@ func (o *JobsServiceListAllJobsParams) bindParamStates(formats strfmt.Registry) 
 	statesIS := swag.JoinByFormat(statesIC, "multi")
 
 	return statesIS
+}
+
+// bindParamJobsServiceListAllJobs binds the parameter tagIds
+func (o *JobsServiceListAllJobsParams) bindParamTagIds(formats strfmt.Registry) []string {
+	tagIdsIR := o.TagIds
+
+	var tagIdsIC []string
+	for _, tagIdsIIR := range tagIdsIR { // explode []string
+
+		tagIdsIIV := tagIdsIIR // string as string
+		tagIdsIC = append(tagIdsIC, tagIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	tagIdsIS := swag.JoinByFormat(tagIdsIC, "multi")
+
+	return tagIdsIS
 }

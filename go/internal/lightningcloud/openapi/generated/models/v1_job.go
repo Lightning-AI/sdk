@@ -127,6 +127,9 @@ type V1Job struct {
 	// Format: date-time
 	StoppedAt strfmt.DateTime `json:"stoppedAt,omitempty"`
 
+	// Read only, set through SetWorkloadTags
+	Tags []*V1WorkloadTag `json:"tags"`
+
 	// User-generated startup timing measurements
 	Timings map[string]V1JobTiming `json:"timings,omitempty"`
 
@@ -197,6 +200,10 @@ func (m *V1Job) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStoppedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -382,6 +389,36 @@ func (m *V1Job) validateStoppedAt(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1Job) validateTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tags); i++ {
+		if swag.IsZero(m.Tags[i]) { // not required
+			continue
+		}
+
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *V1Job) validateTimings(formats strfmt.Registry) error {
 	if swag.IsZero(m.Timings) { // not required
 		return nil
@@ -475,6 +512,10 @@ func (m *V1Job) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateTags(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTimings(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -563,6 +604,35 @@ func (m *V1Job) contextValidateSpec(ctx context.Context, formats strfmt.Registry
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1Job) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Tags); i++ {
+
+		if m.Tags[i] != nil {
+
+			if swag.IsZero(m.Tags[i]) { // not required
+				return nil
+			}
+
+			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil

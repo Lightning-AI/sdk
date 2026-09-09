@@ -12,6 +12,7 @@ package models
 import (
 	"context"
 	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -76,6 +77,9 @@ type V1MultiMachineJob struct {
 	// status
 	Status *V1MultiMachineJobStatus `json:"status,omitempty"`
 
+	// Read only, set through SetWorkloadTags
+	Tags []*V1WorkloadTag `json:"tags"`
+
 	// Optional ordered machine ids. Entry i is the required host for rank i.
 	TargetMachineIds []string `json:"targetMachineIds"`
 
@@ -115,6 +119,10 @@ func (m *V1MultiMachineJob) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -255,6 +263,36 @@ func (m *V1MultiMachineJob) validateStatus(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1MultiMachineJob) validateTags(formats strfmt.Registry) error {
+	if swag.IsZero(m.Tags) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Tags); i++ {
+		if swag.IsZero(m.Tags[i]) { // not required
+			continue
+		}
+
+		if m.Tags[i] != nil {
+			if err := m.Tags[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *V1MultiMachineJob) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -288,6 +326,10 @@ func (m *V1MultiMachineJob) ContextValidate(ctx context.Context, formats strfmt.
 	}
 
 	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTags(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -417,6 +459,35 @@ func (m *V1MultiMachineJob) contextValidateStatus(ctx context.Context, formats s
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1MultiMachineJob) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Tags); i++ {
+
+		if m.Tags[i] != nil {
+
+			if swag.IsZero(m.Tags[i]) { // not required
+				return nil
+			}
+
+			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -68,6 +68,8 @@ class V1VMHealth(object):
         'ssh_error': 'str',
         'ssh_reachable': 'bool',
         'status_details': 'str',
+        'user_ssh_error': 'str',
+        'user_ssh_reachable': 'bool',
         'vm_id': 'str',
         'xids': 'list[V1XidEvent]'
     }
@@ -96,11 +98,13 @@ class V1VMHealth(object):
         'ssh_error': 'sshError',
         'ssh_reachable': 'sshReachable',
         'status_details': 'statusDetails',
+        'user_ssh_error': 'userSshError',
+        'user_ssh_reachable': 'userSshReachable',
         'vm_id': 'vmId',
         'xids': 'xids'
     }
 
-    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, guest_channel_error: 'str' =None, guest_channel_reachable: 'bool' =None, guest_transport: 'str' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
+    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, guest_channel_error: 'str' =None, guest_channel_reachable: 'bool' =None, guest_transport: 'str' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, user_ssh_error: 'str' =None, user_ssh_reachable: 'bool' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
         """V1VMHealth - a model defined in Swagger"""  # noqa: E501
         self._alive = None
         self._ch_log_failures = None
@@ -125,6 +129,8 @@ class V1VMHealth(object):
         self._ssh_error = None
         self._ssh_reachable = None
         self._status_details = None
+        self._user_ssh_error = None
+        self._user_ssh_reachable = None
         self._vm_id = None
         self._xids = None
         self.discriminator = None
@@ -174,6 +180,10 @@ class V1VMHealth(object):
             self.ssh_reachable = ssh_reachable
         if status_details is not None:
             self.status_details = status_details
+        if user_ssh_error is not None:
+            self.user_ssh_error = user_ssh_error
+        if user_ssh_reachable is not None:
+            self.user_ssh_reachable = user_ssh_reachable
         if vm_id is not None:
             self.vm_id = vm_id
         if xids is not None:
@@ -675,6 +685,52 @@ class V1VMHealth(object):
         """
 
         self._status_details = status_details
+
+    @property
+    def user_ssh_error(self) -> 'str':
+        """Gets the user_ssh_error of this V1VMHealth.  # noqa: E501
+
+        Failure returned while checking the Studio SSH endpoint.  # noqa: E501
+
+        :return: The user_ssh_error of this V1VMHealth.  # noqa: E501
+        :rtype: str
+        """
+        return self._user_ssh_error
+
+    @user_ssh_error.setter
+    def user_ssh_error(self, user_ssh_error: 'str'):
+        """Sets the user_ssh_error of this V1VMHealth.
+
+        Failure returned while checking the Studio SSH endpoint.  # noqa: E501
+
+        :param user_ssh_error: The user_ssh_error of this V1VMHealth.  # noqa: E501
+        :type: str
+        """
+
+        self._user_ssh_error = user_ssh_error
+
+    @property
+    def user_ssh_reachable(self) -> 'bool':
+        """Gets the user_ssh_reachable of this V1VMHealth.  # noqa: E501
+
+        Studio SSH endpoint reachability on guest port 2222. This is separate from ssh_reachable, which checks the guest's administrative SSH service on port 22.  # noqa: E501
+
+        :return: The user_ssh_reachable of this V1VMHealth.  # noqa: E501
+        :rtype: bool
+        """
+        return self._user_ssh_reachable
+
+    @user_ssh_reachable.setter
+    def user_ssh_reachable(self, user_ssh_reachable: 'bool'):
+        """Sets the user_ssh_reachable of this V1VMHealth.
+
+        Studio SSH endpoint reachability on guest port 2222. This is separate from ssh_reachable, which checks the guest's administrative SSH service on port 22.  # noqa: E501
+
+        :param user_ssh_reachable: The user_ssh_reachable of this V1VMHealth.  # noqa: E501
+        :type: bool
+        """
+
+        self._user_ssh_reachable = user_ssh_reachable
 
     @property
     def vm_id(self) -> 'str':

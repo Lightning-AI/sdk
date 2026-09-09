@@ -64,6 +64,7 @@ class V1ServerStatus(object):
         'stopped_at': 'datetime',
         'updated_at': 'datetime',
         'workload_container_restarts_count': 'str',
+        'workload_runtime': 'str',
         'workload_state': 'str',
         'workload_state_details': 'str',
         'workload_taken_at': 'datetime'
@@ -89,12 +90,13 @@ class V1ServerStatus(object):
         'stopped_at': 'stoppedAt',
         'updated_at': 'updatedAt',
         'workload_container_restarts_count': 'workloadContainerRestartsCount',
+        'workload_runtime': 'workloadRuntime',
         'workload_state': 'workloadState',
         'workload_state_details': 'workloadStateDetails',
         'workload_taken_at': 'workloadTakenAt'
     }
 
-    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, requires_maintenance: 'bool' =None, retried_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, requires_maintenance: 'bool' =None, retried_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_runtime: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
         """V1ServerStatus - a model defined in Swagger"""  # noqa: E501
         self._alert = None
         self._allocate_duration_seconds = None
@@ -115,6 +117,7 @@ class V1ServerStatus(object):
         self._stopped_at = None
         self._updated_at = None
         self._workload_container_restarts_count = None
+        self._workload_runtime = None
         self._workload_state = None
         self._workload_state_details = None
         self._workload_taken_at = None
@@ -157,6 +160,8 @@ class V1ServerStatus(object):
             self.updated_at = updated_at
         if workload_container_restarts_count is not None:
             self.workload_container_restarts_count = workload_container_restarts_count
+        if workload_runtime is not None:
+            self.workload_runtime = workload_runtime
         if workload_state is not None:
             self.workload_state = workload_state
         if workload_state_details is not None:
@@ -564,6 +569,29 @@ class V1ServerStatus(object):
         """
 
         self._workload_container_restarts_count = workload_container_restarts_count
+
+    @property
+    def workload_runtime(self) -> 'str':
+        """Gets the workload_runtime of this V1ServerStatus.  # noqa: E501
+
+        How the guest workload was started: \"docker\", \"runc\", or \"runsc\".  # noqa: E501
+
+        :return: The workload_runtime of this V1ServerStatus.  # noqa: E501
+        :rtype: str
+        """
+        return self._workload_runtime
+
+    @workload_runtime.setter
+    def workload_runtime(self, workload_runtime: 'str'):
+        """Sets the workload_runtime of this V1ServerStatus.
+
+        How the guest workload was started: \"docker\", \"runc\", or \"runsc\".  # noqa: E501
+
+        :param workload_runtime: The workload_runtime of this V1ServerStatus.  # noqa: E501
+        :type: str
+        """
+
+        self._workload_runtime = workload_runtime
 
     @property
     def workload_state(self) -> 'str':

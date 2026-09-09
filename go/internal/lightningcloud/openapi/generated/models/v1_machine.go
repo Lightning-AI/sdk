@@ -56,6 +56,12 @@ type V1Machine struct {
 	// id
 	ID string `json:"id,omitempty"`
 
+	// Out-of-band management address
+	IdracAddress string `json:"idracAddress,omitempty"`
+
+	// Host VM subnet assigned by the provider
+	InbandSubnet string `json:"inbandSubnet,omitempty"`
+
 	// instance type
 	InstanceType string `json:"instanceType,omitempty"`
 
@@ -89,11 +95,17 @@ type V1Machine struct {
 	// provider
 	Provider string `json:"provider,omitempty"`
 
+	// Provider availability zone (for example, "C1")
+	ProviderAvailabilityZone string `json:"providerAvailabilityZone,omitempty"`
+
 	// Physical cluster, machines connected to the same switch or just a few hops away (high qos)
 	ProviderFabricGroup string `json:"providerFabricGroup,omitempty"`
 
 	// Where applicable
 	ProviderInstanceID string `json:"providerInstanceId,omitempty"`
+
+	// Provider inventory node identifier
+	ProviderNodeID string `json:"providerNodeId,omitempty"`
 
 	// provider region
 	ProviderRegion string `json:"providerRegion,omitempty"`

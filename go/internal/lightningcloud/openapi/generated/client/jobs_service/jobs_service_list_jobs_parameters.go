@@ -117,6 +117,12 @@ type JobsServiceListJobsParams struct {
 	*/
 	State *string
 
+	/* TagIds.
+
+	   Match any of these tags
+	*/
+	TagIds []string
+
 	// UserID.
 	UserID *string
 
@@ -297,6 +303,17 @@ func (o *JobsServiceListJobsParams) SetState(state *string) {
 	o.State = state
 }
 
+// WithTagIds adds the tagIds to the jobs service list jobs params
+func (o *JobsServiceListJobsParams) WithTagIds(tagIds []string) *JobsServiceListJobsParams {
+	o.SetTagIds(tagIds)
+	return o
+}
+
+// SetTagIds adds the tagIds to the jobs service list jobs params
+func (o *JobsServiceListJobsParams) SetTagIds(tagIds []string) {
+	o.TagIds = tagIds
+}
+
 // WithUserID adds the userID to the jobs service list jobs params
 func (o *JobsServiceListJobsParams) WithUserID(userID *string) *JobsServiceListJobsParams {
 	o.SetUserID(userID)
@@ -474,6 +491,17 @@ func (o *JobsServiceListJobsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		}
 	}
 
+	if o.TagIds != nil {
+
+		// binding items for tagIds
+		joinedTagIds := o.bindParamTagIds(reg)
+
+		// query array param tagIds
+		if err := r.SetQueryParam("tagIds", joinedTagIds...); err != nil {
+			return err
+		}
+	}
+
 	if o.UserID != nil {
 
 		// query param userId
@@ -495,4 +523,21 @@ func (o *JobsServiceListJobsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamJobsServiceListJobs binds the parameter tagIds
+func (o *JobsServiceListJobsParams) bindParamTagIds(formats strfmt.Registry) []string {
+	tagIdsIR := o.TagIds
+
+	var tagIdsIC []string
+	for _, tagIdsIIR := range tagIdsIR { // explode []string
+
+		tagIdsIIV := tagIdsIIR // string as string
+		tagIdsIC = append(tagIdsIC, tagIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	tagIdsIS := swag.JoinByFormat(tagIdsIC, "multi")
+
+	return tagIdsIS
 }

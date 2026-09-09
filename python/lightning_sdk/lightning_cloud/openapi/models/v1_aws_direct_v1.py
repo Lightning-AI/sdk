@@ -59,6 +59,7 @@ class V1AWSDirectV1(object):
         'role_arn': 'str',
         'source_cidr_ips': 'list[str]',
         'subnet_cidr_prefix': 'str',
+        'support_local_availability_zones': 'bool',
         'use_launch_templates': 'bool',
         'use_multiple_subnets_per_availability_zone': 'bool'
     }
@@ -78,11 +79,12 @@ class V1AWSDirectV1(object):
         'role_arn': 'roleArn',
         'source_cidr_ips': 'sourceCidrIps',
         'subnet_cidr_prefix': 'subnetCIDRPrefix',
+        'support_local_availability_zones': 'supportLocalAvailabilityZones',
         'use_launch_templates': 'useLaunchTemplates',
         'use_multiple_subnets_per_availability_zone': 'useMultipleSubnetsPerAvailabilityZone'
     }
 
-    def __init__(self, ami_owner_id: 'str' =None, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, inventory_database: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, subnet_cidr_prefix: 'str' =None, use_launch_templates: 'bool' =None, use_multiple_subnets_per_availability_zone: 'bool' =None):  # noqa: E501
+    def __init__(self, ami_owner_id: 'str' =None, bucket_endpoint: 'str' =None, bucket_name: 'str' =None, cloud_formation_disabled: 'bool' =None, efs_enabled: 'bool' =None, external_id: 'str' =None, inventory_database: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, regional_load_balancers: 'list[V1RegionalLoadBalancer]' =None, regions: 'list[str]' =None, role_arn: 'str' =None, source_cidr_ips: 'list[str]' =None, subnet_cidr_prefix: 'str' =None, support_local_availability_zones: 'bool' =None, use_launch_templates: 'bool' =None, use_multiple_subnets_per_availability_zone: 'bool' =None):  # noqa: E501
         """V1AWSDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._ami_owner_id = None
         self._bucket_endpoint = None
@@ -98,6 +100,7 @@ class V1AWSDirectV1(object):
         self._role_arn = None
         self._source_cidr_ips = None
         self._subnet_cidr_prefix = None
+        self._support_local_availability_zones = None
         self._use_launch_templates = None
         self._use_multiple_subnets_per_availability_zone = None
         self.discriminator = None
@@ -129,6 +132,8 @@ class V1AWSDirectV1(object):
             self.source_cidr_ips = source_cidr_ips
         if subnet_cidr_prefix is not None:
             self.subnet_cidr_prefix = subnet_cidr_prefix
+        if support_local_availability_zones is not None:
+            self.support_local_availability_zones = support_local_availability_zones
         if use_launch_templates is not None:
             self.use_launch_templates = use_launch_templates
         if use_multiple_subnets_per_availability_zone is not None:
@@ -429,6 +434,27 @@ class V1AWSDirectV1(object):
         """
 
         self._subnet_cidr_prefix = subnet_cidr_prefix
+
+    @property
+    def support_local_availability_zones(self) -> 'bool':
+        """Gets the support_local_availability_zones of this V1AWSDirectV1.  # noqa: E501
+
+
+        :return: The support_local_availability_zones of this V1AWSDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._support_local_availability_zones
+
+    @support_local_availability_zones.setter
+    def support_local_availability_zones(self, support_local_availability_zones: 'bool'):
+        """Sets the support_local_availability_zones of this V1AWSDirectV1.
+
+
+        :param support_local_availability_zones: The support_local_availability_zones of this V1AWSDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._support_local_availability_zones = support_local_availability_zones
 
     @property
     def use_launch_templates(self) -> 'bool':
