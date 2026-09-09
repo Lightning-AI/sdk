@@ -34,6 +34,7 @@ from lightning_sdk.cli.groups import (
     studio,
     teamspace,
     user,
+    vm,
 )
 from lightning_sdk.cli.legacy_redirects import (
     build_hidden_alias_group,
@@ -132,6 +133,7 @@ main_cli.add_command(mmt)
 main_cli.add_command(machine)
 main_cli.add_command(api)
 main_cli.add_command(deployment)
+main_cli.add_command(vm)
 main_cli.add_command(container)
 main_cli.add_command(model)
 main_cli.add_command(pipeline)
