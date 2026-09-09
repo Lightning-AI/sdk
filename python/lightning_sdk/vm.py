@@ -1,12 +1,13 @@
 """High-level VM (cloud instance) object."""
 
+import os
 from datetime import datetime
 from typing import List, Optional, Union
 
-from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.api.vm_api import VMApi
 from lightning_sdk.lightning_cloud.openapi import V1Instance
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
@@ -28,6 +29,26 @@ def _require_org_id(teamspace: Teamspace) -> str:
             "Pick an organization teamspace with --teamspace owner/teamspace."
         )
     return owner.id
+
+
+def _default_machine_cluster(org_id: str) -> str:
+    from_env = os.getenv("LIGHTNING_CLUSTER_ID")
+    if from_env:
+        return from_env
+
+    clusters = VMApi().list_machine_clusters(org_id)
+    if not clusters:
+        raise ValueError(
+            "No machine cluster is available to this organization; "
+            "pass cloud_account=... (or --cloud) with a cluster id."
+        )
+    if len(clusters) > 1:
+        candidates = ", ".join(sorted(cluster.id for cluster in clusters))
+        raise ValueError(
+            f"This organization has several machine clusters ({candidates}); "
+            "pass cloud_account=... (or --cloud) with the one to use."
+        )
+    return clusters[0].id
 
 
 def _resolve(
@@ -62,9 +83,12 @@ class VM(metaclass=TrackCallsMeta):
         self._org_id = _require_org_id(self._teamspace)
         self._api = VMApi()
 
-        instance = self._api.get_vm_by_name(name_or_id, self._teamspace.id, self._org_id)
+        instance = self._api.get_vm_by_name(name_or_id, self._teamspace.id)
         if instance is None:
-            instance = self._api.get_vm(name_or_id, self._org_id)
+            try:
+                instance = self._api.get_vm(name_or_id, self._org_id)
+            except ApiException as ex:
+                raise ValueError(f"Failed to look up VM '{name_or_id}': {ex.reason or ex}") from ex
         if instance is None:
             raise ValueError(
                 f"VM '{name_or_id}' was not found in teamspace "
@@ -101,7 +125,7 @@ class VM(metaclass=TrackCallsMeta):
         api = VMApi()
         if isinstance(machine, str):
             machine = Machine.from_str(machine)
-        cluster_id = cloud_account or TeamspaceApi()._determine_cloud_account(resolved.id)
+        cluster_id = cloud_account or _default_machine_cluster(org_id)
         instance = api.create_vm(
             name=name,
             org_id=org_id,
@@ -126,7 +150,7 @@ class VM(metaclass=TrackCallsMeta):
         resolved = _resolve(teamspace, org, user)
         org_id = _require_org_id(resolved)
         api = VMApi()
-        return [VM._from_instance(i, resolved, org_id, api) for i in api.list_vms(resolved.id, org_id)]
+        return [VM._from_instance(i, resolved, org_id, api) for i in api.list_vms(resolved.id)]
 
     def refresh(self) -> "VM":
         """Re-fetch the VM from the API."""

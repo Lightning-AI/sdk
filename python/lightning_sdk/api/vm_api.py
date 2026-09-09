@@ -3,7 +3,12 @@
 import time
 from typing import Callable, List, Optional
 
-from lightning_sdk.lightning_cloud.openapi import V1CreateInstanceRequest, V1Instance
+from lightning_sdk.lightning_cloud.openapi import (
+    V1ClusterState,
+    V1CreateInstanceRequest,
+    V1ExternalCluster,
+    V1Instance,
+)
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -56,19 +61,19 @@ class VMApi:
                 return None
             raise ex
 
-    def get_vm_by_name(self, name: str, teamspace_id: str, org_id: str) -> Optional[V1Instance]:
+    def get_vm_by_name(self, name: str, teamspace_id: str) -> Optional[V1Instance]:
         """Get a VM by name within a teamspace, returning None if not found."""
-        for vm in self.list_vms(teamspace_id, org_id):
-            if vm.name == name:
-                return vm
-        return None
+        matches = [vm for vm in self.list_vms(teamspace_id) if vm.name == name]
+        if len(matches) > 1:
+            raise ValueError(f"Multiple VMs named {name!r}; use the VM id instead.")
+        return matches[0] if matches else None
 
-    def list_vms(self, teamspace_id: str, org_id: str) -> List[V1Instance]:
+    def list_vms(self, teamspace_id: str) -> List[V1Instance]:
         """List all VMs in a teamspace, paginating through all pages."""
         vms: List[V1Instance] = []
         page_token = None
         while True:
-            kwargs = {"organization_id": org_id, "project_id": teamspace_id, "limit": "100"}
+            kwargs = {"project_id": teamspace_id, "limit": "100"}
             if page_token:
                 kwargs["page_token"] = page_token
             response = self._client.cloud_instances_service_list_instances(**kwargs)
@@ -77,6 +82,15 @@ class VMApi:
             if not page_token:
                 break
         return vms
+
+    def list_machine_clusters(self, org_id: str) -> List[V1ExternalCluster]:
+        """List the organization's running machine clusters."""
+        response = self._client.cluster_service_list_clusters(org_id=org_id)
+        return [
+            cluster
+            for cluster in (response.clusters or [])
+            if cluster.spec.machine_v1 is not None and cluster.status.phase == V1ClusterState.RUNNING
+        ]
 
     def delete_vm(self, vm_id: str, org_id: str) -> None:
         """Delete a VM by id."""

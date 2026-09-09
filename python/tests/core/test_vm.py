@@ -5,6 +5,7 @@ import pytest
 
 from lightning_sdk.api.utils import _machine_to_compute_name
 from lightning_sdk.lightning_cloud.openapi import V1Instance
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 from lightning_sdk.organization import Organization
 from lightning_sdk.user import User
@@ -50,7 +51,7 @@ def test_init_loads_by_name(monkeypatch):
 
     assert vm.id == "vm-1"
     assert vm.status == "running"
-    api.get_vm_by_name.assert_called_once_with("sim-1", "ts-1", "org-1")
+    api.get_vm_by_name.assert_called_once_with("sim-1", "ts-1")
 
 
 def test_init_falls_back_to_id(monkeypatch):
@@ -75,14 +76,22 @@ def test_init_raises_when_missing(monkeypatch):
         VM("ghost")
 
 
+def test_init_wraps_api_errors_from_the_id_fallback(monkeypatch):
+    api = MagicMock()
+    api.get_vm_by_name.return_value = None
+    api.get_vm.side_effect = ApiException(status=500, reason="Internal Server Error")
+    _patch_resolution(monkeypatch, _org_teamspace(), api)
+
+    with pytest.raises(ValueError, match="Internal Server Error"):
+        VM("vm-1")
+
+
 def test_create_resolves_machine_and_cloud_account(monkeypatch):
+    monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
     api = MagicMock()
     api.create_vm.return_value = V1Instance(id="vm-1", name="sim-1", status="pending")
+    api.list_machine_clusters.return_value = [SimpleNamespace(id="cl-default")]
     _patch_resolution(monkeypatch, _org_teamspace(), api)
-    determine = MagicMock(return_value="cl-default")
-    monkeypatch.setattr(
-        "lightning_sdk.vm.TeamspaceApi", MagicMock(return_value=SimpleNamespace(_determine_cloud_account=determine))
-    )
 
     vm = VM.create("sim-1", machine=Machine.H100, volume_size=500)
 
@@ -94,7 +103,41 @@ def test_create_resolves_machine_and_cloud_account(monkeypatch):
     assert kwargs["cluster_id"] == "cl-default"
     assert kwargs["instance_type"] == _machine_to_compute_name(Machine.H100)
     assert kwargs["volume_size"] == 500
-    determine.assert_called_once_with("ts-1")
+    api.list_machine_clusters.assert_called_once_with("org-1")
+
+
+def test_create_uses_cluster_id_from_the_environment(monkeypatch):
+    monkeypatch.setenv("LIGHTNING_CLUSTER_ID", "cl-env")
+    api = MagicMock()
+    api.create_vm.return_value = V1Instance(id="vm-1", name="sim-1", status="pending")
+    _patch_resolution(monkeypatch, _org_teamspace(), api)
+
+    VM.create("sim-1", machine=Machine.H100)
+
+    assert api.create_vm.call_args.kwargs["cluster_id"] == "cl-env"
+    api.list_machine_clusters.assert_not_called()
+
+
+def test_create_errors_when_no_machine_cluster(monkeypatch):
+    monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
+    api = MagicMock()
+    api.list_machine_clusters.return_value = []
+    _patch_resolution(monkeypatch, _org_teamspace(), api)
+
+    with pytest.raises(ValueError, match="No machine cluster is available"):
+        VM.create("sim-1", machine=Machine.H100)
+    api.create_vm.assert_not_called()
+
+
+def test_create_errors_when_multiple_machine_clusters(monkeypatch):
+    monkeypatch.delenv("LIGHTNING_CLUSTER_ID", raising=False)
+    api = MagicMock()
+    api.list_machine_clusters.return_value = [SimpleNamespace(id="cl-a"), SimpleNamespace(id="cl-b")]
+    _patch_resolution(monkeypatch, _org_teamspace(), api)
+
+    with pytest.raises(ValueError, match="cl-a, cl-b"):
+        VM.create("sim-1", machine=Machine.H100)
+    api.create_vm.assert_not_called()
 
 
 def test_create_with_explicit_cloud_account_and_wait(monkeypatch):
@@ -130,7 +173,7 @@ def test_list(monkeypatch):
     vms = VM.list()
 
     assert [vm.name for vm in vms] == ["x", "y"]
-    api.list_vms.assert_called_once_with("ts-1", "org-1")
+    api.list_vms.assert_called_once_with("ts-1")
 
 
 def test_refresh_wait_delete(monkeypatch):

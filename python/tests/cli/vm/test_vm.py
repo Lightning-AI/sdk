@@ -4,14 +4,22 @@ from unittest.mock import MagicMock
 from click.testing import CliRunner
 
 from lightning_sdk.cli.vm.create import create_vm
+from lightning_sdk.cli.vm.delete import delete_vm
+from lightning_sdk.cli.vm.inspect import inspect_vm
 from lightning_sdk.cli.vm.list import list_vms
+from lightning_sdk.cli.vm.ssh import ssh_vm
 from lightning_sdk.lightning_cloud.openapi import V1Instance
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+from lightning_sdk.user import User
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
 def _teamspace() -> SimpleNamespace:
     return SimpleNamespace(id="ts-1", name="research", owner=SimpleNamespace(id="org-1", name="ecorp"))
+
+
+def _flat(output: str) -> str:
+    return " ".join(output.replace("\u2502", " ").split())
 
 
 @mock_command_logging
@@ -93,12 +101,7 @@ def test_list_renders_table(monkeypatch) -> None:
     assert "running" in result.output
     assert "1.2.3.4" in result.output
     assert "lit-h100-8" in result.output
-    api.list_vms.assert_called_once_with("ts-1", "org-1")
-
-
-from lightning_sdk.cli.vm.delete import delete_vm  # noqa: E402
-from lightning_sdk.cli.vm.inspect import inspect_vm  # noqa: E402
-from lightning_sdk.cli.vm.ssh import ssh_vm  # noqa: E402
+    api.list_vms.assert_called_once_with("ts-1")
 
 
 def _patch_lookup(monkeypatch, module: str, vm: V1Instance) -> MagicMock:
@@ -173,3 +176,73 @@ def test_ssh_waits_when_not_running(monkeypatch) -> None:
     assert result.exit_code == 0, result.output
     api.wait_for_status.assert_called_once_with("vm-1", "org-1", timeout=30)
     execvp.assert_called_once()
+
+
+@mock_command_logging
+def test_create_rejects_out_of_range_volume_size(monkeypatch) -> None:
+    create = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.vm.create.resolve_teamspace", lambda teamspace: _teamspace())
+    monkeypatch.setattr("lightning_sdk.cli.vm.create.VM", SimpleNamespace(create=create))
+
+    result = CliRunner().invoke(create_vm, ["sim-1", "--machine", "H100", "--volume-size", "100"])
+
+    assert result.exit_code != 0
+    assert "400" in result.output
+    create.assert_not_called()
+
+
+@mock_command_logging
+def test_create_timeout_mentions_cleanup(monkeypatch) -> None:
+    timeout = TimeoutError("VM vm-1 did not reach status 'running' within 30s (last: 'pending')")
+    monkeypatch.setattr("lightning_sdk.cli.vm.create.resolve_teamspace", lambda teamspace: _teamspace())
+    monkeypatch.setattr("lightning_sdk.cli.vm.create.VM", SimpleNamespace(create=MagicMock(side_effect=timeout)))
+
+    result = CliRunner().invoke(create_vm, ["sim-1", "--machine", "H100", "--wait"])
+
+    assert result.exit_code != 0
+    assert "did not reach status" in _flat(result.output)
+    assert "lightning vm delete" in _flat(result.output)
+
+
+@mock_command_logging
+def test_list_rejects_user_owned_teamspace(monkeypatch) -> None:
+    owner = MagicMock(spec=User)
+    owner.name = "alice"
+    user_teamspace = SimpleNamespace(id="ts-2", name="personal", owner=owner)
+    monkeypatch.setattr("lightning_sdk.cli.vm.list.iter_teamspaces", lambda teamspace, all_teamspaces: [user_teamspace])
+    monkeypatch.setattr("lightning_sdk.cli.vm.list.VMApi", MagicMock())
+
+    result = CliRunner().invoke(list_vms, [])
+
+    assert result.exit_code != 0
+    assert "owned by a user" in _flat(result.output)
+
+
+@mock_command_logging
+def test_inspect_reports_not_found(monkeypatch) -> None:
+    api = MagicMock()
+    api.get_vm_by_name.return_value = None
+    api.get_vm.return_value = None
+    monkeypatch.setattr("lightning_sdk.cli.vm.inspect.resolve_teamspace", lambda teamspace: _teamspace())
+    monkeypatch.setattr("lightning_sdk.cli.vm.inspect.VMApi", MagicMock(return_value=api))
+
+    result = CliRunner().invoke(inspect_vm, ["ghost"])
+
+    assert result.exit_code != 0
+    assert "was not found in teamspace 'ecorp/research'" in _flat(result.output)
+
+
+@mock_command_logging
+def test_inspect_surfaces_server_error_on_lookup(monkeypatch) -> None:
+    api = MagicMock()
+    api.get_vm_by_name.return_value = None
+    api.get_vm.side_effect = ApiException(status=500, reason="Internal Server Error")
+    monkeypatch.setattr("lightning_sdk.cli.vm.inspect.resolve_teamspace", lambda teamspace: _teamspace())
+    monkeypatch.setattr("lightning_sdk.cli.vm.inspect.VMApi", MagicMock(return_value=api))
+
+    result = CliRunner().invoke(inspect_vm, ["vm-1"])
+
+    assert result.exit_code != 0
+    assert "Internal Server Error" in _flat(result.output)
+    assert "Traceback" not in result.output
+    assert not isinstance(result.exception, ApiException)

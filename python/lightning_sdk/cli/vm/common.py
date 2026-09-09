@@ -20,7 +20,7 @@ MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
 )
 
-_SSH_KEY_HINT = " Generate one with 'lightning ssh generate' or add it under Settings → Keys."
+_SSH_KEY_HINT = " Generate one with 'lightning ssh generate'."
 
 
 def resolve_teamspace(teamspace: Optional[str]) -> Teamspace:
@@ -57,9 +57,15 @@ def org_id_for(teamspace: Teamspace) -> str:
 
 def resolve_vm(api: VMApi, teamspace: Teamspace, name_or_id: str) -> V1Instance:
     org_id = org_id_for(teamspace)
-    vm = api.get_vm_by_name(name_or_id, teamspace.id, org_id)
+    try:
+        vm = api.get_vm_by_name(name_or_id, teamspace.id)
+    except ValueError as ex:
+        raise click.ClickException(str(ex)) from ex
     if vm is None:
-        vm = api.get_vm(name_or_id, org_id)
+        try:
+            vm = api.get_vm(name_or_id, org_id)
+        except ApiException as ex:
+            raise friendly_error(ex) from ex
     if vm is None:
         raise click.ClickException(
             f"VM {name_or_id!r} was not found in teamspace '{teamspace.owner.name}/{teamspace.name}'."

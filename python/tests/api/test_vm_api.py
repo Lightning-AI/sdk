@@ -3,7 +3,16 @@ from unittest.mock import MagicMock
 import pytest
 
 from lightning_sdk.api.vm_api import VMApi, VMFailedError, VMNotFoundError
-from lightning_sdk.lightning_cloud.openapi import V1Instance, V1ListInstancesResponse
+from lightning_sdk.lightning_cloud.openapi import (
+    V1ClusterState,
+    V1ClusterStatus,
+    V1ExternalCluster,
+    V1ExternalClusterSpec,
+    V1Instance,
+    V1ListClustersResponse,
+    V1ListInstancesResponse,
+    V1MachineDirectV1,
+)
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
@@ -74,11 +83,11 @@ def test_list_vms_follows_pagination(monkeypatch):
         V1ListInstancesResponse(instances=[V1Instance(id="b")], next_page_token=""),
     ]
 
-    result = api.list_vms("ts-1", "org-1")
+    result = api.list_vms("ts-1")
 
     assert [vm.id for vm in result] == ["a", "b"]
     calls = api._client.cloud_instances_service_list_instances.call_args_list
-    assert calls[0].kwargs == {"organization_id": "org-1", "project_id": "ts-1", "limit": "100"}
+    assert calls[0].kwargs == {"project_id": "ts-1", "limit": "100"}
     assert calls[1].kwargs["page_token"] == "p2"
 
 
@@ -88,8 +97,39 @@ def test_get_vm_by_name_filters_list(monkeypatch):
         instances=[V1Instance(id="a", name="x"), V1Instance(id="b", name="sim-1")], next_page_token=""
     )
 
-    assert api.get_vm_by_name("sim-1", "ts-1", "org-1").id == "b"
-    assert api.get_vm_by_name("nope", "ts-1", "org-1") is None
+    assert api.get_vm_by_name("sim-1", "ts-1").id == "b"
+    assert api.get_vm_by_name("nope", "ts-1") is None
+
+
+def test_get_vm_by_name_rejects_duplicates(monkeypatch):
+    api = _api(monkeypatch)
+    api._client.cloud_instances_service_list_instances.return_value = V1ListInstancesResponse(
+        instances=[V1Instance(id="a", name="sim-1"), V1Instance(id="b", name="sim-1")], next_page_token=""
+    )
+
+    with pytest.raises(ValueError, match="Multiple VMs named 'sim-1'"):
+        api.get_vm_by_name("sim-1", "ts-1")
+
+
+def _cluster(cluster_id: str, machine: bool, phase: str) -> V1ExternalCluster:
+    spec = V1ExternalClusterSpec(machine_v1=V1MachineDirectV1() if machine else None)
+    return V1ExternalCluster(id=cluster_id, spec=spec, status=V1ClusterStatus(phase=phase))
+
+
+def test_list_machine_clusters_filters_to_running_machine_clusters(monkeypatch):
+    api = _api(monkeypatch)
+    api._client.cluster_service_list_clusters.return_value = V1ListClustersResponse(
+        clusters=[
+            _cluster("cl-machine", machine=True, phase=V1ClusterState.RUNNING),
+            _cluster("cl-kubernetes", machine=False, phase=V1ClusterState.RUNNING),
+            _cluster("cl-stopped", machine=True, phase=V1ClusterState.FAILED),
+        ]
+    )
+
+    result = api.list_machine_clusters("org-1")
+
+    assert [cluster.id for cluster in result] == ["cl-machine"]
+    api._client.cluster_service_list_clusters.assert_called_once_with(org_id="org-1")
 
 
 def test_delete_vm(monkeypatch):

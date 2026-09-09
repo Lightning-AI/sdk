@@ -26,7 +26,8 @@ def list_vms(teamspace: Optional[str] = None, all_teamspaces: bool = False) -> N
     api = VMApi()
     rows = []
     for resolved_teamspace in iter_teamspaces(teamspace, all_teamspaces):
-        for vm in api.list_vms(resolved_teamspace.id, org_id_for(resolved_teamspace)):
+        org_id_for(resolved_teamspace)
+        for vm in api.list_vms(resolved_teamspace.id):
             rows.append((resolved_teamspace, vm))
 
     table = Table(pad_edge=True)
