@@ -4,7 +4,7 @@ from typing import Optional, Sequence, Union
 
 import rich_click as click
 
-from lightning_sdk.cli.job.run import _MACHINE_VALUES, _resolve_envs, _resolve_path_mapping
+from lightning_sdk.cli.job.run import _MACHINE_VALUES, _resolve_envs, _resolve_path_mapping, _resolve_tags
 from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
@@ -129,6 +129,18 @@ from lightning_sdk.mmt import MMT
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option(
+    "--tags",
+    "--tag",
+    "tags",
+    default=(),
+    multiple=True,
+    help=(
+        "Tag to apply to the job. "
+        "Can be a comma-separated list or passed multiple times. "
+        "Tags that don't exist in the teamspace yet are created."
+    ),
+)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_mmt(
     name: Optional[str] = None,
@@ -148,6 +160,7 @@ def run_mmt(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    tags: Sequence[str] = (),
     as_json: bool = False,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
@@ -188,6 +201,7 @@ def run_mmt(
         cloud_account_auth=cloud_account_auth,
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
+        tags=_resolve_tags(tags),
     )
 
     if as_json:

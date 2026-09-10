@@ -101,6 +101,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         placement_group_id=None,
         scratch_disks=None,
         max_run_attempts=None,
+        tags=None,
     )
 
 
@@ -237,6 +238,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         placement_group_id=None,
         scratch_disks=None,
         max_run_attempts=None,
+        tags=None,
     )
 
 
