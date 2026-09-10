@@ -15,6 +15,10 @@ from lightning_sdk.user import User
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 
+def _plain(output: str) -> str:
+    return " ".join(output.split())
+
+
 def _teamspace() -> SimpleNamespace:
     return SimpleNamespace(id="ts-1", name="research", owner=SimpleNamespace(id="org-1", name="ecorp"))
 
@@ -81,8 +85,8 @@ def test_create_surfaces_server_message(monkeypatch) -> None:
     result = CliRunner().invoke(create_vm, ["sim-1", "--machine", "H100"])
 
     assert result.exit_code != 0
-    assert "add an SSH key to your account first" in result.output
-    assert "lightning ssh generate" in result.output
+    assert "add an SSH key to your account first" in _plain(result.output)
+    assert "lightning ssh generate" in _plain(result.output)
 
 
 @mock_command_logging
