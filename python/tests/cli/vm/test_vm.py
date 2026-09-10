@@ -106,7 +106,8 @@ def test_list_renders_table(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.vm.list.iter_teamspaces", lambda teamspace, all_teamspaces: [_teamspace()])
     monkeypatch.setattr("lightning_sdk.cli.vm.list.VMApi", MagicMock(return_value=api))
 
-    result = CliRunner().invoke(list_vms, [], terminal_width=200)
+    monkeypatch.setenv("COLUMNS", "200")
+    result = CliRunner().invoke(list_vms, [])
 
     assert result.exit_code == 0, result.output
     assert "sim-1" in result.output
