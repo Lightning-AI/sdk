@@ -122,6 +122,9 @@ type V1JobSpec struct {
 	// Requested run duration for the job, used to get its machine using dynamic workload scheduler (DWS on GCP, recommended way to get non-spot 1/2/4xH100)
 	RequestedRunDurationSeconds string `json:"requestedRunDurationSeconds,omitempty"`
 
+	// The timeout in minutes to reserve machines for the job
+	ReserveMachinesTimeoutMinutes int64 `json:"reserveMachinesTimeoutMinutes,omitempty"`
+
 	// Read only
 	Resources *V1Resources `json:"resources,omitempty"`
 
