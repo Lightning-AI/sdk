@@ -6,15 +6,13 @@ from typing import Iterable, Optional
 import rich_click as click
 
 from lightning_sdk.api.vm_api import VMApi
-from lightning_sdk.cli.utils.save_to_config import save_teamspace_to_config
-from lightning_sdk.cli.utils.teamspace_selection import TeamspacesMenu
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace
 from lightning_sdk.lightning_cloud.openapi import V1Instance
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
-from lightning_sdk.organization import Organization
+from lightning_sdk.models import _list_teamspaces
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _get_authed_user
 
 MACHINE_VALUES = tuple(
     [machine.name for machine in Machine.__dict__.values() if isinstance(machine, Machine) and machine._include_in_cli]
@@ -23,27 +21,13 @@ MACHINE_VALUES = tuple(
 _SSH_KEY_HINT = " Generate one with 'lightning ssh generate'."
 
 
-def resolve_teamspace(teamspace: Optional[str]) -> Teamspace:
-    resolved_teamspace = TeamspacesMenu()(teamspace=teamspace)
-    save_teamspace_to_config(resolved_teamspace, overwrite=False)
-    return resolved_teamspace
-
-
 def iter_teamspaces(teamspace: Optional[str], all_teamspaces: bool) -> Iterable[Teamspace]:
     if not all_teamspaces or teamspace:
         yield resolve_teamspace(teamspace)
         return
 
-    user = _get_authed_user()
-    menu = TeamspacesMenu()
-    possible_teamspaces = menu._get_possible_teamspaces(user)
-    for teamspace_name in possible_teamspaces.values():
-        owner = menu._owner
-        yield Teamspace(
-            teamspace_name,
-            org=owner if isinstance(owner, Organization) else None,
-            user=owner if isinstance(owner, User) else None,
-        )
+    for teamspace_slug in _list_teamspaces():
+        yield resolve_teamspace(teamspace_slug)
 
 
 def org_id_for(teamspace: Teamspace) -> str:

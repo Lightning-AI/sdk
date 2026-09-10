@@ -1,10 +1,11 @@
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import click
 from click.testing import CliRunner
 
+from lightning_sdk.cli.vm import register_commands
 from lightning_sdk.cli.vm.create import create_vm
-from lightning_sdk.cli.vm.delete import delete_vm
 from lightning_sdk.cli.vm.inspect import inspect_vm
 from lightning_sdk.cli.vm.list import list_vms
 from lightning_sdk.cli.vm.ssh import ssh_vm
@@ -124,12 +125,18 @@ def test_inspect_prints_json(monkeypatch) -> None:
     assert '"ssh_command": "ssh -p 1 u@h"' in result.output
 
 
+def _vm_group() -> click.Group:
+    group = click.Group(name="vm")
+    register_commands(group)
+    return group
+
+
 @mock_command_logging
 def test_delete_prompts_and_aborts(monkeypatch) -> None:
     vm = V1Instance(id="vm-1", name="sim-1")
     api = _patch_lookup(monkeypatch, "delete", vm)
 
-    result = CliRunner().invoke(delete_vm, ["sim-1"], input="n\n")
+    result = CliRunner().invoke(_vm_group(), ["delete", "sim-1"], input="n\n")
 
     assert result.exit_code != 0
     api.delete_vm.assert_not_called()
@@ -140,10 +147,10 @@ def test_delete_with_yes(monkeypatch) -> None:
     vm = V1Instance(id="vm-1", name="sim-1")
     api = _patch_lookup(monkeypatch, "delete", vm)
 
-    result = CliRunner().invoke(delete_vm, ["sim-1", "--yes"])
+    result = CliRunner().invoke(_vm_group(), ["delete", "sim-1", "--yes"])
 
     assert result.exit_code == 0, result.output
-    assert "Deleted VM sim-1" in result.output
+    assert "VM deleted" in result.output
     api.delete_vm.assert_called_once_with("vm-1", "org-1")
 
 

@@ -51,7 +51,7 @@ from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
-        {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
+        {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "vm", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit"]},
