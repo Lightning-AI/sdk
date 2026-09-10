@@ -1,3 +1,4 @@
+import re
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -23,8 +24,14 @@ def _teamspace() -> SimpleNamespace:
     return SimpleNamespace(id="ts-1", name="research", owner=SimpleNamespace(id="org-1", name="ecorp"))
 
 
+_ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+_BOX_RE = re.compile(r"[\u2500-\u257f]")
+
+
 def _flat(output: str) -> str:
-    return " ".join(output.replace("\u2502", " ").split())
+    text = _ANSI_RE.sub("", output)
+    text = _BOX_RE.sub(" ", text)
+    return " ".join(text.split())
 
 
 @mock_command_logging
@@ -99,7 +106,7 @@ def test_list_renders_table(monkeypatch) -> None:
     monkeypatch.setattr("lightning_sdk.cli.vm.list.iter_teamspaces", lambda teamspace, all_teamspaces: [_teamspace()])
     monkeypatch.setattr("lightning_sdk.cli.vm.list.VMApi", MagicMock(return_value=api))
 
-    result = CliRunner().invoke(list_vms, [])
+    result = CliRunner().invoke(list_vms, [], terminal_width=200)
 
     assert result.exit_code == 0, result.output
     assert "sim-1" in result.output
