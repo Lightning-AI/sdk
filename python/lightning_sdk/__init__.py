@@ -2,6 +2,7 @@ from lightning_sdk.__version__ import __version__
 from lightning_sdk.agents import Agent
 from lightning_sdk.api.teamspace_api import SecretType
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
+from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.deployment import Deployment
 from lightning_sdk.helpers import VersionChecker, set_tqdm_envvars_noninteractive
 from lightning_sdk.job import Job
@@ -17,6 +18,7 @@ from lightning_sdk.user import User
 __all__ = [
     "MMT",
     "Agent",
+    "BucketCredentials",
     "CloudProvider",
     "ConnectionType",
     "Deployment",
