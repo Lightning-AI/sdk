@@ -14,11 +14,13 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpace,
     V1ClusterAccelerator,
     V1ListProjectClusterAcceleratorsResponse,
+    V1ListWorkloadTagsResponse,
     V1Project,
     V1ProjectClusterBinding,
     V1Resources,
     V1Secret,
     V1SecretType,
+    V1WorkloadTag,
 )
 
 
@@ -1247,3 +1249,98 @@ def test_create_model_version_keeps_metadata():
     )
     body = teamspace_api._client.models_store_create_model_version.call_args.kwargs["body"]
     assert body.metadata == {"accuracy": "0.81", "notes": "3 epochs"}
+
+
+def _tags_client(*tags: V1WorkloadTag) -> mock.MagicMock:
+    client = mock.MagicMock()
+    client.jobs_service_list_workload_tags.return_value = V1ListWorkloadTagsResponse(tags=list(tags))
+    return client
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_jobs_filters_on_tag_ids():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.MagicMock()
+
+    teamspace_api.list_jobs("ts-abc", tag_ids=["tag-1", "tag-2"])
+
+    teamspace_api._client.jobs_service_list_jobs.assert_called_once_with(
+        project_id="ts-abc", standalone=True, tag_ids=["tag-1", "tag-2"]
+    )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_jobs_omits_the_tag_filter_when_unset():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.MagicMock()
+
+    teamspace_api.list_jobs("ts-abc")
+
+    teamspace_api._client.jobs_service_list_jobs.assert_called_once_with(project_id="ts-abc", standalone=True)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_mmts_filters_on_tag_ids_client_side():
+    tagged = mock.MagicMock(tags=[V1WorkloadTag(id="tag-1", name="prod")])
+    also_tagged = mock.MagicMock(tags=[V1WorkloadTag(id="tag-2", name="staging")])
+    untagged = mock.MagicMock(tags=None)
+
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.MagicMock()
+    teamspace_api._client.jobs_service_list_multi_machine_jobs.return_value = mock.MagicMock(
+        multi_machine_jobs=[tagged, also_tagged, untagged]
+    )
+
+    assert teamspace_api.list_mmts("ts-abc", tag_ids=["tag-1"]) == [tagged]
+    assert teamspace_api.list_mmts("ts-abc") == [tagged, also_tagged, untagged]
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@pytest.mark.parametrize("name", ["team a", "TEAM A", "  team   a  ", "Team\tA"])
+def test_resolve_tag_ids_matches_names_the_way_the_platform_stores_them(name):
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = _tags_client(V1WorkloadTag(id="tag-1", name="team a"))
+
+    assert teamspace_api.resolve_tag_ids("ts-abc", [name]) == ["tag-1"]
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_resolve_tag_ids_keeps_the_order_the_names_were_given():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = _tags_client(
+        V1WorkloadTag(id="tag-1", name="prod"),
+        V1WorkloadTag(id="tag-2", name="staging"),
+    )
+
+    assert teamspace_api.resolve_tag_ids("ts-abc", ["staging", "prod"]) == ["tag-2", "tag-1"]
+    teamspace_api._client.jobs_service_list_workload_tags.assert_called_once_with(project_id="ts-abc")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_resolve_tag_ids_rejects_an_unknown_tag():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = _tags_client(
+        V1WorkloadTag(id="tag-2", name="staging"),
+        V1WorkloadTag(id="tag-1", name="prod"),
+    )
+
+    with pytest.raises(ValueError, match=r"no tag named 'nightly'\. Tags in this teamspace: prod, staging$"):
+        teamspace_api.resolve_tag_ids("ts-abc", ["nightly"])
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_resolve_tag_ids_says_when_the_teamspace_has_no_tags():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = _tags_client()
+
+    with pytest.raises(ValueError, match=r"Tags in this teamspace: none$"):
+        teamspace_api.resolve_tag_ids("ts-abc", ["prod"])
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_workload_tags_tolerates_a_teamspace_with_no_tags():
+    teamspace_api = TeamspaceApi()
+    teamspace_api._client = mock.MagicMock()
+    teamspace_api._client.jobs_service_list_workload_tags.return_value = V1ListWorkloadTagsResponse(tags=None)
+
+    assert teamspace_api.list_workload_tags("ts-abc") == []

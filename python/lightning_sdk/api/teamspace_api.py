@@ -3,7 +3,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -50,10 +50,16 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Secret,
     V1SecretType,
     V1UpstreamOpenAI,
+    V1WorkloadTag,
 )
 from lightning_sdk.machine import Machine
 
 __all__ = ["SecretType", "TeamspaceApi"]
+
+
+def _format_tag_name(name: str) -> str:
+    """Match tag names the way the platform stores them: lowercased with whitespace collapsed."""
+    return " ".join(str(name).split()).lower()
 
 
 class SecretType(Enum):
@@ -507,27 +513,76 @@ class TeamspaceApi:
             progress_bar=progress_bar,
         )
 
-    def list_jobs(self, teamspace_id: str) -> List[V1Job]:
+    def list_jobs(self, teamspace_id: str, tag_ids: Optional[List[str]] = None) -> List[V1Job]:
         """Return all v2 jobs in the teamspace.
 
         Args:
             teamspace_id: ID of the teamspace to list jobs in.
+            tag_ids: Only return jobs carrying at least one of these tag ids. ``None`` returns every job.
 
         Returns:
             List of ``V1Job`` objects.
         """
-        return self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True).jobs
+        optional_kwargs: Dict[str, Any] = {}
+        if tag_ids:
+            optional_kwargs["tag_ids"] = list(tag_ids)
 
-    def list_mmts(self, teamspace_id: str) -> List[V1MultiMachineJob]:
+        return self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True, **optional_kwargs).jobs
+
+    def list_workload_tags(self, teamspace_id: str) -> List[V1WorkloadTag]:
+        """Return every job tag defined in the teamspace.
+
+        Args:
+            teamspace_id: ID of the teamspace to list tags in.
+
+        Returns:
+            List of ``V1WorkloadTag`` objects.
+        """
+        return self._client.jobs_service_list_workload_tags(project_id=teamspace_id).tags or []
+
+    def resolve_tag_ids(self, teamspace_id: str, tags: Sequence[str]) -> List[str]:
+        """Translate tag names into the ids the jobs service filters on.
+
+        Args:
+            teamspace_id: ID of the teamspace the tags belong to.
+            tags: Tag names to look up, matched the way the platform stores them.
+
+        Returns:
+            The matching tag ids, in the order the names were given.
+
+        Raises:
+            ValueError: If the teamspace has no tag by one of these names.
+        """
+        known = {_format_tag_name(tag.name): tag for tag in self.list_workload_tags(teamspace_id=teamspace_id)}
+
+        tag_ids = []
+        for tag in tags:
+            match = known.get(_format_tag_name(tag))
+            if match is None:
+                available = ", ".join(sorted(tag.name for tag in known.values())) or "none"
+                raise ValueError(f"Teamspace has no tag named {tag!r}. Tags in this teamspace: {available}")
+            tag_ids.append(match.id)
+
+        return tag_ids
+
+    def list_mmts(self, teamspace_id: str, tag_ids: Optional[List[str]] = None) -> List[V1MultiMachineJob]:
         """Return all v2 multi-machine training jobs.
 
         Args:
             teamspace_id: ID of the teamspace to list multi-machine jobs in.
+            tag_ids: Only return jobs carrying at least one of these tag ids. ``None`` returns every job.
 
         Returns:
             List of ``V1MultiMachineJob`` objects.
         """
-        return self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
+        mmts = self._client.jobs_service_list_multi_machine_jobs(project_id=teamspace_id).multi_machine_jobs
+        if not tag_ids:
+            return mmts
+
+        # ListMultiMachineJobs takes no tag filter, unlike ListJobs, but it does return the tags
+        # on each job, so the same any-of match is applied here instead.
+        wanted = set(tag_ids)
+        return [mmt for mmt in mmts if wanted.intersection(tag.id for tag in mmt.tags or [])]
 
     def list_machines(
         self,
