@@ -2,12 +2,13 @@
 
 from contextlib import suppress
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional, Sequence, cast
 
 import rich_click as click
 from rich.console import Console
 from rich.table import Table
 
+from lightning_sdk.cli.job.run import _resolve_tags
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
@@ -40,25 +41,38 @@ from lightning_sdk.models import _list_teamspaces
     ),
     help="the attribute to sort the jobs by.",
 )
+@click.option(
+    "--tags",
+    "--tag",
+    "tags",
+    default=(),
+    multiple=True,
+    help=(
+        "Only list jobs carrying at least one of these tags. Can be a comma-separated list or passed multiple times."
+    ),
+)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def list_jobs(
     teamspace: Optional[str] = None,
     all: bool = False,  # noqa: A002
     sort_by: Optional[str] = None,
+    tags: Sequence[str] = (),
     as_json: bool = False,
 ) -> None:
     """List jobs for a given teamspace.
 
     Includes both single- and multi-machine jobs.
     """
+    wanted_tags = _resolve_tags(tags)
+
     resources: list[Job] = []
     if all and not teamspace:
         for teamspace_slug in _list_teamspaces():
             resolved = resolve_teamspace(teamspace_slug)
-            resources.extend(resolved.jobs)
+            resources.extend(resolved.list_jobs(tags=wanted_tags))
     else:
         resolved = resolve_teamspace(teamspace)
-        resources.extend(resolved.jobs)
+        resources.extend(resolved.list_jobs(tags=wanted_tags))
 
     rows = []
     for job in resources:
@@ -76,6 +90,7 @@ def list_jobs(
                     "machine": str(job.machine),
                     "num_machines": getattr(job, "num_machines", 1),
                     "total_cost": round(job.total_cost, 3),
+                    "tags": list(job.tags),
                     "_cloud_account": str(getattr(job, "cloud_account", "") or ""),
                 }
             )
@@ -110,6 +125,7 @@ def list_jobs(
         "Machine",
         "Num Machines",
         "Total Cost",
+        "Tags",
     ):
         table.add_column(column)
     for row in rows:
@@ -124,6 +140,7 @@ def list_jobs(
             str(row["machine"] or ""),
             str(row["num_machines"]),
             f"{row['total_cost']:.3f}",
+            ", ".join(cast(List[str], row["tags"])),
         )
     Console().print(table)
 
