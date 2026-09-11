@@ -3,7 +3,7 @@ import os
 import warnings
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 from tqdm.auto import tqdm
 
@@ -289,17 +289,43 @@ class Teamspace(metaclass=TrackCallsMeta):
         Raises:
             PermissionError: If the authenticated user cannot access Jobs in this teamspace.
         """
+        return self.list_jobs()
+
+    @property
+    def tags(self) -> Tuple[str, ...]:
+        """Every job tag defined in this teamspace.
+
+        Returns:
+            tuple[str, ...]: The tag names, as the platform stores them.
+        """
+        return tuple(tag.name for tag in self._teamspace_api.list_workload_tags(teamspace_id=self.id))
+
+    def list_jobs(self, tags: Optional[Sequence[str]] = None) -> Tuple["Job", ...]:
+        """The standalone and multi-machine jobs in this teamspace, optionally filtered by tag.
+
+        Args:
+            tags: Only return jobs carrying at least one of these tags. ``None`` returns every job.
+
+        Returns:
+            tuple[Job, ...]: The matching Jobs, standalone ones first.
+
+        Raises:
+            PermissionError: If the authenticated user cannot access Jobs in this teamspace.
+            ValueError: If the teamspace has no tag by one of the given names.
+        """
         from lightning_sdk.job import Job
 
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
 
+        tag_ids = self._teamspace_api.resolve_tag_ids(teamspace_id=self.id, tags=tags) if tags else None
+
         jobs = []
-        for j2 in self._teamspace_api.list_jobs(teamspace_id=self.id):
+        for j2 in self._teamspace_api.list_jobs(teamspace_id=self.id, tag_ids=tag_ids):
             # _fetch_job = False to prevent refetching on init since we already got it
             job = Job(name=j2.name, teamspace=self, _fetch_job=False)
             job._attach_job(j2)
             jobs.append(job)
-        for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id):
+        for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id, tag_ids=tag_ids):
             job = Job(name=m2.name, teamspace=self, _fetch_job=False)
             job._attach_job(m2)
             jobs.append(job)
