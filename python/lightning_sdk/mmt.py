@@ -1,5 +1,5 @@
 import warnings
-from typing import TYPE_CHECKING, Dict, Optional, Protocol, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Protocol, Union, cast
 
 from lightning_sdk.job import Job, JobDict
 from lightning_sdk.status import Status
@@ -122,6 +122,7 @@ class MMT(Job):
         max_run_attempts: Optional[int] = None,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
+        tags: Optional[List[str]] = None,
     ) -> "MMT":
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
@@ -149,5 +150,6 @@ class MMT(Job):
                 reuse_snapshot=reuse_snapshot,
                 placement_group_id=placement_group_id,
                 num_machines=num_machines,
+                tags=tags,
             ),
         )

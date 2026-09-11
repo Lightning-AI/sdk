@@ -184,6 +184,58 @@ def test_job_v2_submit_job_omits_unset_max_run_attempts(mocker_auth):
     assert body.spec.max_run_attempts is None
 
 
+def test_job_v2_submit_job_threads_tags(mocker_auth):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        tags=["prod", "team a"],
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.tags == ["prod", "team a"]
+
+
+def test_job_v2_submit_job_omits_unset_tags(mocker_auth):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        tags=[],
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.tags is None
+
+
 def test_get_job_by_name(mocker_auth):
     job_api = JobApiV2()
 
