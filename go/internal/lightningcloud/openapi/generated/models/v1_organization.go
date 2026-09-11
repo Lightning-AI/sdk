@@ -170,6 +170,9 @@ type V1Organization struct {
 	// preferred studio provider
 	PreferredStudioProvider string `json:"preferredStudioProvider,omitempty"`
 
+	// show max mmt capacity
+	ShowMaxMmtCapacity bool `json:"showMaxMmtCapacity,omitempty"`
+
 	// show model apis tab
 	ShowModelApisTab bool `json:"showModelApisTab,omitempty"`
 
