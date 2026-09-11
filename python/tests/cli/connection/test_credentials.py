@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timezone
 from unittest import mock
 
+import rich_click as click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.connection.credentials import connection_credentials
@@ -17,7 +18,7 @@ def _run(credentials, *args):
     teamspace.bucket_credentials.return_value = credentials
 
     with mock.patch(
-        "lightning_sdk.cli.connection.credentials._resolve_teamspace",
+        "lightning_sdk.cli.connection.credentials.resolve_teamspace",
         return_value=teamspace,
     ):
         return CliRunner().invoke(connection_credentials, list(args)), teamspace
@@ -100,7 +101,7 @@ def test_an_unknown_connection_name_fails_with_the_lookup_error():
     teamspace.bucket_credentials.side_effect = ValueError("No data connection named 'nope' in this teamspace.")
 
     with mock.patch(
-        "lightning_sdk.cli.connection.credentials._resolve_teamspace",
+        "lightning_sdk.cli.connection.credentials.resolve_teamspace",
         return_value=teamspace,
     ):
         result = CliRunner().invoke(connection_credentials, ["nope"])
@@ -110,9 +111,10 @@ def test_an_unknown_connection_name_fails_with_the_lookup_error():
 
 
 def test_an_unresolvable_teamspace_says_which_flag_to_pass():
+    """The shared resolver owns this message, so the command just has to not swallow it."""
     with mock.patch(
-        "lightning_sdk.cli.connection.credentials._resolve_teamspace",
-        return_value=None,
+        "lightning_sdk.cli.connection.credentials.resolve_teamspace",
+        side_effect=click.UsageError("Could not resolve a teamspace. Pass --teamspace OWNER/TEAMSPACE."),
     ):
         result = CliRunner().invoke(connection_credentials, ["training-data"])
 

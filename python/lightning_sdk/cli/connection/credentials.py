@@ -6,8 +6,8 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.utils.logging import LightningCommand
+from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace, teamspace_option
 from lightning_sdk.data_connection import BucketCredentials
-from lightning_sdk.utils.resolve import _resolve_teamspace
 
 
 def _profile_stanza(name: str, credentials: BucketCredentials, command: str) -> str:
@@ -28,11 +28,7 @@ def _profile_stanza(name: str, credentials: BucketCredentials, command: str) -> 
 
 @click.command("credentials", cls=LightningCommand)
 @click.argument("connection")
-@click.option(
-    "--teamspace",
-    default=None,
-    help="The teamspace the data connection belongs to. Should be of format <OWNER>/<TEAMSPACE_NAME>.",
-)
+@teamspace_option
 @click.option(
     "--format",
     "output_format",
@@ -44,7 +40,11 @@ def _profile_stanza(name: str, credentials: BucketCredentials, command: str) -> 
     ),
 )
 def connection_credentials(
-    connection: str, teamspace: Optional[str] = None, output_format: str = "credential-process"
+    connection: str,
+    teamspace: Optional[str],
+    org: Optional[str],
+    user: Optional[str],
+    output_format: str = "credential-process",
 ) -> None:
     """Print short-lived credentials for a data connection's bucket.
 
@@ -59,11 +59,7 @@ def connection_credentials(
     Then use it:
       aws s3 ls s3://my-bucket --profile my-bucket
     """
-    resolved_teamspace = _resolve_teamspace(teamspace=teamspace, org=None, user=None)
-    if resolved_teamspace is None:
-        raise click.ClickException(
-            "Could not determine which teamspace to use. Pass --teamspace <OWNER>/<TEAMSPACE_NAME>."
-        )
+    resolved_teamspace = resolve_teamspace(teamspace=teamspace, org=org, user=user)
 
     try:
         credentials = resolved_teamspace.bucket_credentials(connection)

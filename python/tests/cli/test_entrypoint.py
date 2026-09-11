@@ -162,6 +162,7 @@ def test_help():
 
     # DATA & FILES
     assert "cp        Copy between local, Studios, Drive." in text
+    assert "connect…  Work with teamspace data connections." in text
 
     # Deprecated commands should not appear
     assert "file      Upload and download files." not in text

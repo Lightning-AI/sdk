@@ -54,7 +54,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
-        {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit"]},
+        {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
