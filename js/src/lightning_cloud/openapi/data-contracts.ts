@@ -677,6 +677,11 @@ export interface V1Sandbox {
    * @format uint64
    */
   idleTimeout?: string;
+  /**
+   * Set only when this UpdateSandbox(resume=true) restored from a snapshot.
+   * Unset on get / list / create and on the already-running no-op.
+   */
+  restore?: V1SandboxRestore;
 }
 
 export interface V1SandboxCommand {
@@ -777,6 +782,14 @@ export interface V1SandboxResourceMetricSample {
   memoryUsedBytes?: string;
   /** @format uint64 */
   memoryLimitBytes?: string;
+}
+
+export interface V1SandboxRestore {
+  /**
+   * The restored auto-snapshot's includes_memory. Not whether the agent
+   * applied the checkpoint, and not whether Jupyter came back.
+   */
+  memory?: boolean;
 }
 
 export interface V1SandboxSnapshot {

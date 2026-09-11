@@ -75,6 +75,7 @@ class V1JobSpec(object):
         'readiness_probe': 'V1JobHealthCheckConfig',
         'regions': 'list[str]',
         'requested_run_duration_seconds': 'str',
+        'reserve_machines_timeout_minutes': 'int',
         'resources': 'V1Resources',
         'restart_policy': 'str',
         'run_id': 'str',
@@ -116,6 +117,7 @@ class V1JobSpec(object):
         'readiness_probe': 'readinessProbe',
         'regions': 'regions',
         'requested_run_duration_seconds': 'requestedRunDurationSeconds',
+        'reserve_machines_timeout_minutes': 'reserveMachinesTimeoutMinutes',
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
         'run_id': 'runId',
@@ -126,7 +128,7 @@ class V1JobSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, keep_machine_after_stop: 'bool' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, parent_job_id: 'str' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
+    def __init__(self, artifacts_destination: 'str' =None, artifacts_source: 'str' =None, cloudspace_id: 'str' =None, cluster_id: 'str' =None, command: 'str' =None, current_run_attempt: 'int' =None, data_paths: 'list[V1DataPath]' =None, disable_artifacts_persistence: 'bool' =None, entrypoint: 'str' =None, env: 'list[V1EnvVar]' =None, image: 'str' =None, image_cluster_credentials: 'bool' =None, image_secret_ref: 'str' =None, include_credentials: 'bool' =None, instance_name: 'str' =None, instance_type: 'str' =None, keep_machine_after_stop: 'bool' =None, machine_id: 'str' =None, machine_image_version: 'str' =None, max_run_attempts: 'int' =None, modified_volume: 'bool' =None, parent_job_id: 'str' =None, path_mappings: 'list[V1PathMapping]' =None, pipeline_id: 'str' =None, placement_group_id: 'str' =None, quantity: 'int' =None, rank: 'int' =None, readiness_probe: 'V1JobHealthCheckConfig' =None, regions: 'list[str]' =None, requested_run_duration_seconds: 'str' =None, reserve_machines_timeout_minutes: 'int' =None, resources: 'V1Resources' =None, restart_policy: 'str' =None, run_id: 'str' =None, shutdown_delay_seconds: 'int' =None, shutdown_timeout_seconds: 'int' =None, spot: 'bool' =None, use_tls: 'bool' =None, volumes: 'list[V1Volume]' =None):  # noqa: E501
         """V1JobSpec - a model defined in Swagger"""  # noqa: E501
         self._artifacts_destination = None
         self._artifacts_source = None
@@ -158,6 +160,7 @@ class V1JobSpec(object):
         self._readiness_probe = None
         self._regions = None
         self._requested_run_duration_seconds = None
+        self._reserve_machines_timeout_minutes = None
         self._resources = None
         self._restart_policy = None
         self._run_id = None
@@ -227,6 +230,8 @@ class V1JobSpec(object):
             self.regions = regions
         if requested_run_duration_seconds is not None:
             self.requested_run_duration_seconds = requested_run_duration_seconds
+        if reserve_machines_timeout_minutes is not None:
+            self.reserve_machines_timeout_minutes = reserve_machines_timeout_minutes
         if resources is not None:
             self.resources = resources
         if restart_policy is not None:
@@ -885,6 +890,27 @@ class V1JobSpec(object):
         """
 
         self._requested_run_duration_seconds = requested_run_duration_seconds
+
+    @property
+    def reserve_machines_timeout_minutes(self) -> 'int':
+        """Gets the reserve_machines_timeout_minutes of this V1JobSpec.  # noqa: E501
+
+
+        :return: The reserve_machines_timeout_minutes of this V1JobSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._reserve_machines_timeout_minutes
+
+    @reserve_machines_timeout_minutes.setter
+    def reserve_machines_timeout_minutes(self, reserve_machines_timeout_minutes: 'int'):
+        """Sets the reserve_machines_timeout_minutes of this V1JobSpec.
+
+
+        :param reserve_machines_timeout_minutes: The reserve_machines_timeout_minutes of this V1JobSpec.  # noqa: E501
+        :type: int
+        """
+
+        self._reserve_machines_timeout_minutes = reserve_machines_timeout_minutes
 
     @property
     def resources(self) -> 'V1Resources':

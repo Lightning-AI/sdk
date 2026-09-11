@@ -11,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi.api.analytics_service_api import Anal
 from lightning_sdk.lightning_cloud.openapi.api.assistants_service_api import AssistantsServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.auth_service_api import AuthServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.billing_service_api import BillingServiceApi
+from lightning_sdk.lightning_cloud.openapi.api.cloud_instances_service_api import CloudInstancesServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_environment_template_service_api import CloudSpaceEnvironmentTemplateServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
 from lightning_sdk.lightning_cloud.openapi.api.cluster_service_api import ClusterServiceApi
