@@ -41,6 +41,10 @@ interactive workspace, and use :class:`~lightning_sdk.Machine` when selecting co
 Jobs run code in managed cloud compute. Use :meth:`lightning_sdk.Job.run` for
 single-node work and :meth:`lightning_sdk.MMT.run` for multi-machine training.
 
+Cloud instances are plain VMs. Use :class:`~lightning_sdk.CloudInstance` when you
+want raw compute that Lightning provisions and hands to you over SSH, with no
+Studio or job runtime on top of it.
+
 Deployments turn model servers and applications into managed services. Use
 :class:`~lightning_sdk.Deployment` with the deployment helper classes in
 :doc:`api/deployment` for environment variables, secrets, authentication,
@@ -75,6 +79,7 @@ Reference Pages
    api/studio
    api/job
    api/machine
+   api/cloud-instance
    api/teamspace
    api/mmt
    api/deployment

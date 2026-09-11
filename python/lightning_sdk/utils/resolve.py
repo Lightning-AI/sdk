@@ -166,6 +166,70 @@ def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organiz
         raise RuntimeError(f"Failed to resolve organization '{org}': {ae}") from ae
 
 
+def _resolve_org_from_configured_teamspace() -> Optional["Organization"]:
+    """Return the organisation owning the configured default teamspace, if any.
+
+    Returns:
+        Optional[Organization]: The owning organisation, or ``None`` when the default
+        teamspace is user-owned or not configured.
+    """
+    from lightning_sdk.utils.config import Config, DefaultConfigKeys
+
+    config = Config()
+    if config.get_value(DefaultConfigKeys.teamspace_owner_type) != "organization":
+        return None
+
+    owner = config.get_value(DefaultConfigKeys.teamspace_owner)
+    if not owner:
+        return None
+
+    from lightning_sdk.organization import Organization
+
+    try:
+        return Organization(name=owner)
+    except (ApiException, ValueError):
+        return None
+
+
+def _resolve_org_id(org: Optional[Union[str, "Organization"]] = None) -> str:
+    """Resolve an organisation ID for org-scoped resources.
+
+    Falls back to the ``LIGHTNING_ORG`` env var and the configured default, and finally
+    to the only organisation the authenticated user is a member of.
+
+    Args:
+        org: An ``Organization`` instance, a name string, or ``None`` to auto-resolve.
+
+    Returns:
+        str: The resolved organisation ID.
+
+    Raises:
+        ValueError: If no organisation can be determined unambiguously.
+    """
+    resolved = _resolve_org(org)
+    if resolved is not None:
+        return resolved.id
+
+    # an org-owned default teamspace names the org the user is working in
+    configured = _resolve_org_from_configured_teamspace()
+    if configured is not None:
+        return configured.id
+
+    orgs = UserApi()._get_organizations_for_authed_user()
+    if len(orgs) == 1:
+        return orgs[0].id
+    if not orgs:
+        raise ValueError(
+            "You are not a member of any organization. Create one at "
+            f"{_get_cloud_url()} or pass an existing organization explicitly."
+        )
+    names = ", ".join(sorted(o.name for o in orgs))
+    raise ValueError(
+        f"You are a member of multiple organizations, so the organization can't be inferred. "
+        f"Specify one of: {names}"
+    )
+
+
 def _resolve_user_name(name: Optional[str]) -> Optional[str]:
     """Return the username, falling back to the env var and config when ``None``.
 

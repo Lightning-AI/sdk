@@ -98,6 +98,7 @@ Common Workflows
 * Configure accounts, organizations, teamspaces, cloud accounts, and SSH with
   :doc:`config`, :doc:`api-key`, and :doc:`ssh`.
 * Manage lower-level sandbox sessions with :doc:`sandbox`.
+* Run plain cloud VMs you SSH into yourself with :doc:`instance`.
 
 Command details
 ---------------
@@ -112,6 +113,7 @@ reference.
    job
    mmt
    machine
+   instance
    deployment
    container
    model

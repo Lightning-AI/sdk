@@ -17,6 +17,7 @@ SDK tutorials
    examples/mmts
    examples/teamspaces
    examples/sandboxes
+   examples/instances
 
 CLI examples
 ============
@@ -29,5 +30,6 @@ CLI examples
    examples/mmts-cli
    examples/teamspaces-cli
    examples/sandboxes-cli
+   examples/instances-cli
    examples/logs-cli
    examples/api-cli

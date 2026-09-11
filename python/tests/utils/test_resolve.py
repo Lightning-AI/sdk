@@ -1,5 +1,6 @@
 import os
 import tempfile
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -14,6 +15,8 @@ from lightning_sdk.utils.resolve import (
     _get_studio_url,
     _parse_model_and_version,
     _resolve_org,
+    _resolve_org_from_configured_teamspace,
+    _resolve_org_id,
     _resolve_org_name,
     _resolve_teamspace,
     _resolve_teamspace_name,
@@ -508,3 +511,58 @@ def test_in_studio():
 
 def test_not_in_studio():
     assert in_studio() is False
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_id_prefers_the_explicit_org():
+    org = mock.Mock(id="org-explicit")
+    with mock.patch("lightning_sdk.utils.resolve._resolve_org", return_value=org):
+        assert _resolve_org_id("my-org") == "org-explicit"
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_id_falls_back_to_the_configured_teamspace_owner():
+    org = mock.Mock(id="org-from-teamspace")
+    with (
+        mock.patch("lightning_sdk.utils.resolve._resolve_org", return_value=None),
+        mock.patch("lightning_sdk.utils.resolve._resolve_org_from_configured_teamspace", return_value=org),
+        mock.patch("lightning_sdk.utils.resolve.UserApi") as user_api,
+    ):
+        assert _resolve_org_id() == "org-from-teamspace"
+        user_api.assert_not_called()
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_id_falls_back_to_the_only_membership():
+    with (
+        mock.patch("lightning_sdk.utils.resolve._resolve_org", return_value=None),
+        mock.patch("lightning_sdk.utils.resolve._resolve_org_from_configured_teamspace", return_value=None),
+        mock.patch("lightning_sdk.utils.resolve.UserApi") as user_api,
+    ):
+        user_api.return_value._get_organizations_for_authed_user.return_value = [mock.Mock(id="org-only")]
+        assert _resolve_org_id() == "org-only"
+
+
+@pytest.mark.parametrize(
+    ("orgs", "message"),
+    [
+        ([], "not a member of any organization"),
+        ([SimpleNamespace(name="a"), SimpleNamespace(name="b")], "member of multiple organizations"),
+    ],
+)
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_id_reports_ambiguity(orgs, message):
+    with (
+        mock.patch("lightning_sdk.utils.resolve._resolve_org", return_value=None),
+        mock.patch("lightning_sdk.utils.resolve._resolve_org_from_configured_teamspace", return_value=None),
+        mock.patch("lightning_sdk.utils.resolve.UserApi") as user_api,
+    ):
+        user_api.return_value._get_organizations_for_authed_user.return_value = orgs
+        with pytest.raises(ValueError, match=message):
+            _resolve_org_id()
+
+
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_org_from_configured_teamspace_ignores_user_owned_teamspaces():
+    with mock.patch("lightning_sdk.utils.config.Config.get_value", return_value="user"):
+        assert _resolve_org_from_configured_teamspace() is None
