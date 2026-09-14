@@ -49,7 +49,6 @@ class V1UserRequestedComputeConfig(object):
         'cluster_override': 'str',
         'count': 'int',
         'cpu_image_override': 'str',
-        'disk_size': 'int',
         'gpu_image_override': 'str',
         'id': 'str',
         'name': 'str',
@@ -65,7 +64,6 @@ class V1UserRequestedComputeConfig(object):
         'cluster_override': 'clusterOverride',
         'count': 'count',
         'cpu_image_override': 'cpuImageOverride',
-        'disk_size': 'diskSize',
         'gpu_image_override': 'gpuImageOverride',
         'id': 'id',
         'name': 'name',
@@ -76,13 +74,12 @@ class V1UserRequestedComputeConfig(object):
         'spot': 'spot'
     }
 
-    def __init__(self, affinity_identifier: 'str' =None, cluster_override: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, disk_size: 'int' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, placement_group_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
+    def __init__(self, affinity_identifier: 'str' =None, cluster_override: 'str' =None, count: 'int' =None, cpu_image_override: 'str' =None, gpu_image_override: 'str' =None, id: 'str' =None, name: 'str' =None, placement_group_id: 'str' =None, requested_run_duration_seconds: 'str' =None, same_compute_on_resume: 'bool' =None, shm_size: 'int' =None, spot: 'bool' =None):  # noqa: E501
         """V1UserRequestedComputeConfig - a model defined in Swagger"""  # noqa: E501
         self._affinity_identifier = None
         self._cluster_override = None
         self._count = None
         self._cpu_image_override = None
-        self._disk_size = None
         self._gpu_image_override = None
         self._id = None
         self._name = None
@@ -100,8 +97,6 @@ class V1UserRequestedComputeConfig(object):
             self.count = count
         if cpu_image_override is not None:
             self.cpu_image_override = cpu_image_override
-        if disk_size is not None:
-            self.disk_size = disk_size
         if gpu_image_override is not None:
             self.gpu_image_override = gpu_image_override
         if id is not None:
@@ -206,27 +201,6 @@ class V1UserRequestedComputeConfig(object):
         """
 
         self._cpu_image_override = cpu_image_override
-
-    @property
-    def disk_size(self) -> 'int':
-        """Gets the disk_size of this V1UserRequestedComputeConfig.  # noqa: E501
-
-
-        :return: The disk_size of this V1UserRequestedComputeConfig.  # noqa: E501
-        :rtype: int
-        """
-        return self._disk_size
-
-    @disk_size.setter
-    def disk_size(self, disk_size: 'int'):
-        """Sets the disk_size of this V1UserRequestedComputeConfig.
-
-
-        :param disk_size: The disk_size of this V1UserRequestedComputeConfig.  # noqa: E501
-        :type: int
-        """
-
-        self._disk_size = disk_size
 
     @property
     def gpu_image_override(self) -> 'str':
