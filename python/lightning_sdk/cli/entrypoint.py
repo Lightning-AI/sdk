@@ -17,6 +17,7 @@ from lightning_sdk.cli.groups import (
     auth,
     base_studio,
     config,
+    connection,
     container,
     cp,
     dataset,
@@ -53,7 +54,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
-        {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit"]},
+        {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
@@ -146,6 +147,7 @@ main_cli.add_command(teamspace)
 main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
 main_cli.add_command(dataset)
+main_cli.add_command(connection)
 main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 main_cli.add_command(edit)
