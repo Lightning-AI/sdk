@@ -130,6 +130,8 @@ type ClientService interface {
 
 	ClusterServiceGetMachineSystemMetrics(params *ClusterServiceGetMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceGetMachineSystemMetricsOK, error)
 
+	ClusterServiceGetMultiMachineCapacity(params *ClusterServiceGetMultiMachineCapacityParams, opts ...ClientOption) (*ClusterServiceGetMultiMachineCapacityOK, error)
+
 	ClusterServiceGetProjectCluster(params *ClusterServiceGetProjectClusterParams, opts ...ClientOption) (*ClusterServiceGetProjectClusterOK, error)
 
 	ClusterServiceInterruptServer(params *ClusterServiceInterruptServerParams, opts ...ClientOption) (*ClusterServiceInterruptServerOK, error)
@@ -1715,6 +1717,48 @@ func (a *Client) ClusterServiceGetMachineSystemMetrics(params *ClusterServiceGet
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceGetMachineSystemMetricsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceGetMultiMachineCapacity cluster service get multi machine capacity API
+*/
+func (a *Client) ClusterServiceGetMultiMachineCapacity(params *ClusterServiceGetMultiMachineCapacityParams, opts ...ClientOption) (*ClusterServiceGetMultiMachineCapacityOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceGetMultiMachineCapacityParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_GetMultiMachineCapacity",
+		Method:             "GET",
+		PathPattern:        "/v1/projects/{projectId}/clusters/{id}/multi-machine-capacity",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceGetMultiMachineCapacityReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceGetMultiMachineCapacityOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceGetMultiMachineCapacityDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

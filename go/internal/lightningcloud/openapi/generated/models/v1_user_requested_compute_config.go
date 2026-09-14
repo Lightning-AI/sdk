@@ -36,9 +36,6 @@ type V1UserRequestedComputeConfig struct {
 	// cpu_image_override is used to specify a custom image used to launch the resource when running on a cpu machine.
 	CPUImageOverride string `json:"cpuImageOverride,omitempty"`
 
-	// Workspace size in GB, uses node's storage
-	DiskSize int32 `json:"diskSize,omitempty"`
-
 	// gpu_image_override is used to specify a custom image used to launch the resource when running on a cpu machine.
 	GpuImageOverride string `json:"gpuImageOverride,omitempty"`
 

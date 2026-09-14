@@ -51,6 +51,7 @@ class V1CloudSpaceInstanceConfig(object):
         'ide': 'str',
         'idle_shutdown_seconds': 'int',
         'publish_with_compute_name': 'str',
+        'target_workspace_disk_size_gb': 'str',
         'tutorial_shown': 'bool'
     }
 
@@ -61,10 +62,11 @@ class V1CloudSpaceInstanceConfig(object):
         'ide': 'ide',
         'idle_shutdown_seconds': 'idleShutdownSeconds',
         'publish_with_compute_name': 'publishWithComputeName',
+        'target_workspace_disk_size_gb': 'targetWorkspaceDiskSizeGb',
         'tutorial_shown': 'tutorialShown'
     }
 
-    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None, tutorial_shown: 'bool' =None):  # noqa: E501
+    def __init__(self, compute_config: 'V1UserRequestedComputeConfig' =None, data_connection_mounts: 'list[V1DataConnectionMount]' =None, disable_auto_shutdown: 'bool' =None, ide: 'str' =None, idle_shutdown_seconds: 'int' =None, publish_with_compute_name: 'str' =None, target_workspace_disk_size_gb: 'str' =None, tutorial_shown: 'bool' =None):  # noqa: E501
         """V1CloudSpaceInstanceConfig - a model defined in Swagger"""  # noqa: E501
         self._compute_config = None
         self._data_connection_mounts = None
@@ -72,6 +74,7 @@ class V1CloudSpaceInstanceConfig(object):
         self._ide = None
         self._idle_shutdown_seconds = None
         self._publish_with_compute_name = None
+        self._target_workspace_disk_size_gb = None
         self._tutorial_shown = None
         self.discriminator = None
         if compute_config is not None:
@@ -86,6 +89,8 @@ class V1CloudSpaceInstanceConfig(object):
             self.idle_shutdown_seconds = idle_shutdown_seconds
         if publish_with_compute_name is not None:
             self.publish_with_compute_name = publish_with_compute_name
+        if target_workspace_disk_size_gb is not None:
+            self.target_workspace_disk_size_gb = target_workspace_disk_size_gb
         if tutorial_shown is not None:
             self.tutorial_shown = tutorial_shown
 
@@ -214,6 +219,29 @@ class V1CloudSpaceInstanceConfig(object):
         """
 
         self._publish_with_compute_name = publish_with_compute_name
+
+    @property
+    def target_workspace_disk_size_gb(self) -> 'str':
+        """Gets the target_workspace_disk_size_gb of this V1CloudSpaceInstanceConfig.  # noqa: E501
+
+        Desired workspace disk size in GB. Lightning bare-metal GPU instances may use a smaller disk when the target does not fit.  # noqa: E501
+
+        :return: The target_workspace_disk_size_gb of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :rtype: str
+        """
+        return self._target_workspace_disk_size_gb
+
+    @target_workspace_disk_size_gb.setter
+    def target_workspace_disk_size_gb(self, target_workspace_disk_size_gb: 'str'):
+        """Sets the target_workspace_disk_size_gb of this V1CloudSpaceInstanceConfig.
+
+        Desired workspace disk size in GB. Lightning bare-metal GPU instances may use a smaller disk when the target does not fit.  # noqa: E501
+
+        :param target_workspace_disk_size_gb: The target_workspace_disk_size_gb of this V1CloudSpaceInstanceConfig.  # noqa: E501
+        :type: str
+        """
+
+        self._target_workspace_disk_size_gb = target_workspace_disk_size_gb
 
     @property
     def tutorial_shown(self) -> 'bool':

@@ -46,6 +46,7 @@ class V1Organization(object):
     """
     swagger_types = {
         'alerts_config': 'V1OrgAlertsConfig',
+        'allow_billing_activity_page_v2': 'bool',
         'allow_budgeting': 'bool',
         'allow_cloud_space_publish': 'bool',
         'allow_credits_auto_replenish': 'bool',
@@ -92,6 +93,7 @@ class V1Organization(object):
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
         'preferred_studio_provider': 'str',
+        'show_max_mmt_capacity': 'bool',
         'show_model_apis_tab': 'bool',
         'skip_phone_verification': 'bool',
         'start_studios_on_spot_instance': 'bool',
@@ -108,6 +110,7 @@ class V1Organization(object):
 
     attribute_map = {
         'alerts_config': 'alertsConfig',
+        'allow_billing_activity_page_v2': 'allowBillingActivityPageV2',
         'allow_budgeting': 'allowBudgeting',
         'allow_cloud_space_publish': 'allowCloudSpacePublish',
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
@@ -154,6 +157,7 @@ class V1Organization(object):
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
         'preferred_studio_provider': 'preferredStudioProvider',
+        'show_max_mmt_capacity': 'showMaxMmtCapacity',
         'show_model_apis_tab': 'showModelApisTab',
         'skip_phone_verification': 'skipPhoneVerification',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
@@ -168,9 +172,10 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_billing_activity_page_v2: 'bool' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_max_mmt_capacity: 'bool' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
+        self._allow_billing_activity_page_v2 = None
         self._allow_budgeting = None
         self._allow_cloud_space_publish = None
         self._allow_credits_auto_replenish = None
@@ -217,6 +222,7 @@ class V1Organization(object):
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
         self._preferred_studio_provider = None
+        self._show_max_mmt_capacity = None
         self._show_model_apis_tab = None
         self._skip_phone_verification = None
         self._start_studios_on_spot_instance = None
@@ -232,6 +238,8 @@ class V1Organization(object):
         self.discriminator = None
         if alerts_config is not None:
             self.alerts_config = alerts_config
+        if allow_billing_activity_page_v2 is not None:
+            self.allow_billing_activity_page_v2 = allow_billing_activity_page_v2
         if allow_budgeting is not None:
             self.allow_budgeting = allow_budgeting
         if allow_cloud_space_publish is not None:
@@ -324,6 +332,8 @@ class V1Organization(object):
             self.preferred_deployment_provider = preferred_deployment_provider
         if preferred_studio_provider is not None:
             self.preferred_studio_provider = preferred_studio_provider
+        if show_max_mmt_capacity is not None:
+            self.show_max_mmt_capacity = show_max_mmt_capacity
         if show_model_apis_tab is not None:
             self.show_model_apis_tab = show_model_apis_tab
         if skip_phone_verification is not None:
@@ -369,6 +379,27 @@ class V1Organization(object):
         """
 
         self._alerts_config = alerts_config
+
+    @property
+    def allow_billing_activity_page_v2(self) -> 'bool':
+        """Gets the allow_billing_activity_page_v2 of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_billing_activity_page_v2 of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_billing_activity_page_v2
+
+    @allow_billing_activity_page_v2.setter
+    def allow_billing_activity_page_v2(self, allow_billing_activity_page_v2: 'bool'):
+        """Sets the allow_billing_activity_page_v2 of this V1Organization.
+
+
+        :param allow_billing_activity_page_v2: The allow_billing_activity_page_v2 of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_billing_activity_page_v2 = allow_billing_activity_page_v2
 
     @property
     def allow_budgeting(self) -> 'bool':
@@ -1337,6 +1368,27 @@ class V1Organization(object):
         """
 
         self._preferred_studio_provider = preferred_studio_provider
+
+    @property
+    def show_max_mmt_capacity(self) -> 'bool':
+        """Gets the show_max_mmt_capacity of this V1Organization.  # noqa: E501
+
+
+        :return: The show_max_mmt_capacity of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._show_max_mmt_capacity
+
+    @show_max_mmt_capacity.setter
+    def show_max_mmt_capacity(self, show_max_mmt_capacity: 'bool'):
+        """Sets the show_max_mmt_capacity of this V1Organization.
+
+
+        :param show_max_mmt_capacity: The show_max_mmt_capacity of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._show_max_mmt_capacity = show_max_mmt_capacity
 
     @property
     def show_model_apis_tab(self) -> 'bool':

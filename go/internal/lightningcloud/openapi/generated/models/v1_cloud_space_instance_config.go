@@ -42,6 +42,9 @@ type V1CloudSpaceInstanceConfig struct {
 	// publish with compute name
 	PublishWithComputeName string `json:"publishWithComputeName,omitempty"`
 
+	// Desired workspace disk size in GB. Lightning bare-metal GPU instances may use a smaller disk when the target does not fit.
+	TargetWorkspaceDiskSizeGb string `json:"targetWorkspaceDiskSizeGb,omitempty"`
+
 	// tutorial shown
 	TutorialShown bool `json:"tutorialShown,omitempty"`
 }
