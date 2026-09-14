@@ -8,6 +8,7 @@ ______________________________________________________________________
 
 <p align="center">
   <a href="#quick-start">Quick start</a> •
+  <a href="#agent-skills">Agent skills</a> •
   <a href="#packages">Packages</a> •
   <a href="#development">Development</a> •
   <a href="https://lightning.ai/docs/platform/developers/sdk">Docs</a>
@@ -250,6 +251,15 @@ lightning sandbox create \
 export SANDBOX_ID=sbx_1234567890
 lightning sandbox run "$SANDBOX_ID" -- python -c "print('hello from Lightning')"
 lightning sandbox delete "$SANDBOX_ID"
+```
+
+# Agent skills
+
+Lightning AI distributes [official skills](https://github.com/Lightning-AI/skills)
+to help coding agents use the platform. The skills can be installed via `npx skills`:
+
+```bash
+npx skills add Lightning-AI/skills
 ```
 
 # Packages

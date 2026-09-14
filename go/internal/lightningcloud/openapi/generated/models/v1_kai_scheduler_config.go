@@ -22,7 +22,7 @@ import (
 // swagger:model v1KaiSchedulerConfig
 type V1KaiSchedulerConfig struct {
 
-	// pod spec.priorityClassName (e.g. "train")
+	// value for the pod label "priorityClassName" (e.g. "train")
 	PriorityClassName string `json:"priorityClassName,omitempty"`
 
 	// value for the pod label "kai.scheduler/queue" (e.g. "video-queue")

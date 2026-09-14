@@ -24,6 +24,7 @@ from lightning_sdk.api.utils import (
     _tree_path_info,
     cached_lightning_client,
 )
+from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     DataConnectionServiceCreateDataConnectionBody,
@@ -1099,3 +1100,51 @@ class TeamspaceApi:
         create_request.efs = V1EfsConfig(file_system_id=source, region=region)
 
         self._client.data_connection_service_create_data_connection(create_request, teamspace_id)
+
+    def resolve_data_connection_id(self, teamspace_id: str, name: str) -> str:
+        """Look up the ID of a data connection by its name.
+
+        Args:
+            teamspace_id: ID of the teamspace the connection belongs to.
+            name: Name of the data connection as it appears in the teamspace drive.
+
+        Returns:
+            The ID of the matching data connection.
+
+        Raises:
+            ValueError: If the teamspace has no data connection with that name.
+        """
+        connections = self._client.data_connection_service_list_data_connections(teamspace_id).data_connections or []
+
+        for connection in connections:
+            if connection.name == name:
+                return connection.id
+
+        available = ", ".join(sorted(connection.name for connection in connections)) or "none"
+        raise ValueError(f"No data connection named {name!r} in this teamspace. Available connections: {available}.")
+
+    def get_temp_bucket_credentials(self, teamspace_id: str, name: str) -> BucketCredentials:
+        """Vend short-lived bucket credentials for a data connection.
+
+        The credentials expire, so callers that outlive them have to come back for a
+        fresh set rather than holding these. The result carries its own deadline in
+        ``expires_at``, which is the value to refresh against.
+
+        Args:
+            teamspace_id: ID of the teamspace the connection belongs to.
+            name: Name of the data connection as it appears in the teamspace drive.
+
+        Returns:
+            The credentials, along with the region and endpoint they are scoped to.
+        """
+        connection_id = self.resolve_data_connection_id(teamspace_id, name)
+        response = self._client.data_connection_service_get_temp_bucket_credentials(teamspace_id, connection_id)
+
+        return BucketCredentials(
+            access_key_id=response.access_key_id,
+            secret_access_key=response.secret_access_key,
+            session_token=response.session_token,
+            expires_at=response.expires_at,
+            region=response.region,
+            endpoint=response.endpoint,
+        )

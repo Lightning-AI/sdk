@@ -27,6 +27,9 @@ type V1Organization struct {
 	// alerts config
 	AlertsConfig *V1OrgAlertsConfig `json:"alertsConfig,omitempty"`
 
+	// feature flag gates new billing usage page at org level too
+	AllowBillingActivityPageV2 bool `json:"allowBillingActivityPageV2,omitempty"`
+
 	// allow budgeting
 	AllowBudgeting bool `json:"allowBudgeting,omitempty"`
 
@@ -169,6 +172,9 @@ type V1Organization struct {
 
 	// preferred studio provider
 	PreferredStudioProvider string `json:"preferredStudioProvider,omitempty"`
+
+	// show max mmt capacity
+	ShowMaxMmtCapacity bool `json:"showMaxMmtCapacity,omitempty"`
 
 	// show model apis tab
 	ShowModelApisTab bool `json:"showModelApisTab,omitempty"`
