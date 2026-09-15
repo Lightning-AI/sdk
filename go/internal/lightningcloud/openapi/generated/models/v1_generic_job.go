@@ -50,8 +50,16 @@ type V1GenericJob struct {
 	// spec
 	Spec *V1GenericJobSpec `json:"spec,omitempty"`
 
+	// started at
+	// Format: date-time
+	StartedAt strfmt.DateTime `json:"startedAt,omitempty"`
+
 	// state
 	State string `json:"state,omitempty"`
+
+	// stopped at
+	// Format: date-time
+	StoppedAt strfmt.DateTime `json:"stoppedAt,omitempty"`
 
 	// tags
 	Tags []*V1WorkloadTag `json:"tags"`
@@ -72,6 +80,14 @@ func (m *V1GenericJob) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSpec(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStartedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStoppedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -115,6 +131,30 @@ func (m *V1GenericJob) validateSpec(formats strfmt.Registry) error {
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1GenericJob) validateStartedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.StartedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("startedAt", "body", "date-time", m.StartedAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *V1GenericJob) validateStoppedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.StoppedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("stoppedAt", "body", "date-time", m.StoppedAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

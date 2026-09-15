@@ -53,7 +53,9 @@ class V1GenericJob(object):
         'name': 'str',
         'project_id': 'str',
         'spec': 'V1GenericJobSpec',
+        'started_at': 'datetime',
         'state': 'str',
+        'stopped_at': 'datetime',
         'tags': 'list[V1WorkloadTag]',
         'type': 'str',
         'user_id': 'str'
@@ -68,13 +70,15 @@ class V1GenericJob(object):
         'name': 'name',
         'project_id': 'projectId',
         'spec': 'spec',
+        'started_at': 'startedAt',
         'state': 'state',
+        'stopped_at': 'stoppedAt',
         'tags': 'tags',
         'type': 'type',
         'user_id': 'userId'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, state: 'str' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1GenericJob - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_id = None
         self._cluster_id = None
@@ -84,7 +88,9 @@ class V1GenericJob(object):
         self._name = None
         self._project_id = None
         self._spec = None
+        self._started_at = None
         self._state = None
+        self._stopped_at = None
         self._tags = None
         self._type = None
         self._user_id = None
@@ -105,8 +111,12 @@ class V1GenericJob(object):
             self.project_id = project_id
         if spec is not None:
             self.spec = spec
+        if started_at is not None:
+            self.started_at = started_at
         if state is not None:
             self.state = state
+        if stopped_at is not None:
+            self.stopped_at = stopped_at
         if tags is not None:
             self.tags = tags
         if type is not None:
@@ -283,6 +293,27 @@ class V1GenericJob(object):
         self._spec = spec
 
     @property
+    def started_at(self) -> 'datetime':
+        """Gets the started_at of this V1GenericJob.  # noqa: E501
+
+
+        :return: The started_at of this V1GenericJob.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._started_at
+
+    @started_at.setter
+    def started_at(self, started_at: 'datetime'):
+        """Sets the started_at of this V1GenericJob.
+
+
+        :param started_at: The started_at of this V1GenericJob.  # noqa: E501
+        :type: datetime
+        """
+
+        self._started_at = started_at
+
+    @property
     def state(self) -> 'str':
         """Gets the state of this V1GenericJob.  # noqa: E501
 
@@ -302,6 +333,27 @@ class V1GenericJob(object):
         """
 
         self._state = state
+
+    @property
+    def stopped_at(self) -> 'datetime':
+        """Gets the stopped_at of this V1GenericJob.  # noqa: E501
+
+
+        :return: The stopped_at of this V1GenericJob.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._stopped_at
+
+    @stopped_at.setter
+    def stopped_at(self, stopped_at: 'datetime'):
+        """Sets the stopped_at of this V1GenericJob.
+
+
+        :param stopped_at: The stopped_at of this V1GenericJob.  # noqa: E501
+        :type: datetime
+        """
+
+        self._stopped_at = stopped_at
 
     @property
     def tags(self) -> 'list[V1WorkloadTag]':

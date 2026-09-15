@@ -66,6 +66,9 @@ JobsServiceListAllJobsParams contains all the parameters to send to the API endp
 */
 type JobsServiceListAllJobsParams struct {
 
+	// CloudspaceID.
+	CloudspaceID *string
+
 	/* JobTypes.
 
 	     - JOB_TYPE_APP_INSTANCE: Lightning app instances
@@ -194,6 +197,17 @@ func (o *JobsServiceListAllJobsParams) WithHTTPClient(client *http.Client) *Jobs
 // SetHTTPClient adds the HTTPClient to the jobs service list all jobs params
 func (o *JobsServiceListAllJobsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithCloudspaceID adds the cloudspaceID to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithCloudspaceID(cloudspaceID *string) *JobsServiceListAllJobsParams {
+	o.SetCloudspaceID(cloudspaceID)
+	return o
+}
+
+// SetCloudspaceID adds the cloudspaceId to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetCloudspaceID(cloudspaceID *string) {
+	o.CloudspaceID = cloudspaceID
 }
 
 // WithJobTypes adds the jobTypes to the jobs service list all jobs params
@@ -335,6 +349,23 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
+
+	if o.CloudspaceID != nil {
+
+		// query param cloudspaceId
+		var qrCloudspaceID string
+
+		if o.CloudspaceID != nil {
+			qrCloudspaceID = *o.CloudspaceID
+		}
+		qCloudspaceID := qrCloudspaceID
+		if qCloudspaceID != "" {
+
+			if err := r.SetQueryParam("cloudspaceId", qCloudspaceID); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.JobTypes != nil {
 

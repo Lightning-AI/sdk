@@ -3756,6 +3756,7 @@ class JobsServiceApi(object):
         :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :param str org_id:
         :param str user_id:
+        :param str cloudspace_id:
         :param str sort_by: Column name to sort by
         :param str sort_order: ascending or descending
         :param list[str] tag_ids: Match any of these tags
@@ -3788,6 +3789,7 @@ class JobsServiceApi(object):
         :param list[str] job_types:  - JOB_TYPE_APP_INSTANCE: Lightning app instances  - JOB_TYPE_BATCH_JOB: Regular jobs  - JOB_TYPE_DEPLOYMENT: Deployments  - JOB_TYPE_PIPELINE: Pipelines  - JOB_TYPE_SLURM_JOB: Slurm jobs  - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs  - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
         :param str org_id:
         :param str user_id:
+        :param str cloudspace_id:
         :param str sort_by: Column name to sort by
         :param str sort_order: ascending or descending
         :param list[str] tag_ids: Match any of these tags
@@ -3797,7 +3799,7 @@ class JobsServiceApi(object):
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'page_token', 'limit', 'search_query', 'states', 'job_types', 'org_id', 'user_id', 'sort_by', 'sort_order', 'tag_ids', 'match_all_tags']  # noqa: E501
+        all_params = ['project_id', 'page_token', 'limit', 'search_query', 'states', 'job_types', 'org_id', 'user_id', 'cloudspace_id', 'sort_by', 'sort_order', 'tag_ids', 'match_all_tags']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3836,6 +3838,8 @@ class JobsServiceApi(object):
             query_params.append(('orgId', params['org_id']))  # noqa: E501
         if 'user_id' in params:
             query_params.append(('userId', params['user_id']))  # noqa: E501
+        if 'cloudspace_id' in params:
+            query_params.append(('cloudspaceId', params['cloudspace_id']))  # noqa: E501
         if 'sort_by' in params:
             query_params.append(('sortBy', params['sort_by']))  # noqa: E501
         if 'sort_order' in params:

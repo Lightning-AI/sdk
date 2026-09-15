@@ -682,6 +682,12 @@ export interface V1Sandbox {
    * Unset on get / list / create and on the already-running no-op.
    */
   restore?: V1SandboxRestore;
+  /**
+   * Mirrors CreateSandboxRequest.memory_snapshot_compatible as stored on the
+   * sandbox. When false, a pause captures the filesystem only and resume
+   * cold-boots the processes.
+   */
+  memorySnapshotCompatible?: boolean;
 }
 
 export interface V1SandboxCommand {
@@ -893,6 +899,12 @@ export interface V1SandboxSnapshot {
    * Not a stable contract: display it, do not parse it.
    */
   failureReason?: string;
+  /**
+   * The source sandbox's memory_snapshot_compatible at capture time. False
+   * here explains an auto-snapshot with includes_memory=false: memory was
+   * never requested.
+   */
+  sourceSandboxMemoryCompatible?: boolean;
 }
 
 /**
