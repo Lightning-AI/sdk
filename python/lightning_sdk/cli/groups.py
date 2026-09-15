@@ -185,9 +185,9 @@ def license() -> None:  # noqa: A001
     """View and manage product licenses."""
 
 
-@click.group(name="dataset", cls=LightningGroup, hidden=True)
+@click.group(name="dataset", cls=LightningGroup)
 def dataset() -> None:
-    """Download datasets."""
+    """Upload and download datasets."""
 
 
 @click.group(name="connection", cls=LightningGroup)
