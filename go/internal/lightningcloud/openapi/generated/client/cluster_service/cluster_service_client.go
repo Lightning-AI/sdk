@@ -122,6 +122,8 @@ type ClientService interface {
 
 	ClusterServiceGetClusterCredentials(params *ClusterServiceGetClusterCredentialsParams, opts ...ClientOption) (*ClusterServiceGetClusterCredentialsOK, error)
 
+	ClusterServiceGetClusterDetails(params *ClusterServiceGetClusterDetailsParams, opts ...ClientOption) (*ClusterServiceGetClusterDetailsOK, error)
+
 	ClusterServiceGetClusterHealth(params *ClusterServiceGetClusterHealthParams, opts ...ClientOption) (*ClusterServiceGetClusterHealthOK, error)
 
 	ClusterServiceGetMachine(params *ClusterServiceGetMachineParams, opts ...ClientOption) (*ClusterServiceGetMachineOK, error)
@@ -1549,6 +1551,48 @@ func (a *Client) ClusterServiceGetClusterCredentials(params *ClusterServiceGetCl
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceGetClusterCredentialsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceGetClusterDetails gets cluster details is internal only placement machine vs g c p burst pending unscheduled creates and shadow reservation utilization
+*/
+func (a *Client) ClusterServiceGetClusterDetails(params *ClusterServiceGetClusterDetailsParams, opts ...ClientOption) (*ClusterServiceGetClusterDetailsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceGetClusterDetailsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_GetClusterDetails",
+		Method:             "GET",
+		PathPattern:        "/v1/core/clusters/{clusterId}/details",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceGetClusterDetailsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceGetClusterDetailsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceGetClusterDetailsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
