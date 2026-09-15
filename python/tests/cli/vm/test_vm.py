@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -100,8 +101,21 @@ def test_create_surfaces_server_message(monkeypatch) -> None:
 def test_list_renders_table(monkeypatch) -> None:
     api = MagicMock()
     api.list_vms.return_value = [
-        V1Instance(id="vm-1", name="sim-1", status="running", instance_type="lit-h100-1", ssh_host="1.2.3.4"),
-        V1Instance(id="vm-2", name="sim-2", status="pending", instance_type="lit-h100-8"),
+        V1Instance(
+            id="vm-1",
+            name="sim-1",
+            status="running",
+            instance_type="lit-h100-1",
+            ssh_host="1.2.3.4",
+            created_at="2026-09-15T16:00:01.225419Z",
+        ),
+        V1Instance(
+            id="vm-2",
+            name="sim-2",
+            status="pending",
+            instance_type="lit-h100-8",
+            created_at=datetime(2026, 9, 14, 8, 30),
+        ),
     ]
     monkeypatch.setattr("lightning_sdk.cli.vm.list.iter_teamspaces", lambda teamspace, all_teamspaces: [_teamspace()])
     monkeypatch.setattr("lightning_sdk.cli.vm.list.VMApi", MagicMock(return_value=api))
@@ -114,6 +128,8 @@ def test_list_renders_table(monkeypatch) -> None:
     assert "running" in result.output
     assert "1.2.3.4" in result.output
     assert "lit-h100-8" in result.output
+    assert "2026-09-15 16:00" in result.output
+    assert "2026-09-14 08:30" in result.output
     api.list_vms.assert_called_once_with("ts-1")
 
 

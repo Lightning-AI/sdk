@@ -1,5 +1,6 @@
 """VM list command."""
 
+from datetime import datetime
 from typing import Optional
 
 import rich_click as click
@@ -39,7 +40,7 @@ def list_vms(teamspace: Optional[str] = None, all_teamspaces: bool = False) -> N
     table.add_column("SSH host", no_wrap=True)
 
     for resolved_teamspace, vm in sorted(rows, key=lambda row: row[1].name or ""):
-        created = vm.created_at.strftime("%Y-%m-%d %H:%M") if vm.created_at else ""
+        created = _created_label(vm.created_at)
         table.add_row(
             vm.name or "",
             f"{resolved_teamspace.owner.name}/{resolved_teamspace.name}",
@@ -50,3 +51,11 @@ def list_vms(teamspace: Optional[str] = None, all_teamspaces: bool = False) -> N
         )
 
     click.echo(rich_to_str(table), color=True)
+
+
+def _created_label(value: object) -> str:
+    if not value:
+        return ""
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M")
+    return str(value)[:16].replace("T", " ")
