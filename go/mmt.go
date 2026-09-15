@@ -32,6 +32,7 @@ type MMT struct {
 
 	maxRunAttempts    int64
 	currentRunAttempt int64
+	tags              []string
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -295,6 +296,15 @@ func (m *MMT) CurrentRunAttempt() int64 {
 		return 0
 	}
 	return m.currentRunAttempt
+}
+
+// Tags returns the teamspace tags applied to this multi-machine job, in the
+// order the platform returns them.
+func (m *MMT) Tags() []string {
+	if m == nil {
+		return nil
+	}
+	return append([]string(nil), m.tags...)
 }
 
 // GetMMT returns an existing MMT by name or ID.
@@ -691,6 +701,7 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 
 		maxRunAttempts:    model.MaxRunAttempts,
 		currentRunAttempt: model.CurrentRunAttempt,
+		tags:              tagNames(model.Tags),
 	}
 	if model.State != nil {
 		result.status = string(*model.State)

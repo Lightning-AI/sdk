@@ -42,6 +42,7 @@ type Job struct {
 	artifactsDestination string
 	maxRunAttempts       int64
 	currentRunAttempt    int64
+	tags                 []string
 }
 
 // JobDict is the JSON-friendly public representation of a job.
@@ -328,6 +329,15 @@ func (j *Job) CurrentRunAttempt() int64 {
 		return 0
 	}
 	return j.currentRunAttempt
+}
+
+// Tags returns the teamspace tags applied to this job, in the order the
+// platform returns them.
+func (j *Job) Tags() []string {
+	if j == nil {
+		return nil
+	}
+	return append([]string(nil), j.tags...)
 }
 
 // GetJob returns an existing job by name or ID.
@@ -752,6 +762,7 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		totalCost:   model.TotalCost,
 		startedAt:   time.Time(model.StartedAt),
 		stoppedAt:   time.Time(model.StoppedAt),
+		tags:        tagNames(model.Tags),
 	}
 	if model.Spec != nil {
 		result.machine = model.Spec.InstanceName

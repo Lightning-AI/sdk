@@ -442,11 +442,22 @@ func (t *Teamspace) Studios() ([]*Studio, error) {
 
 // Jobs lists single-machine jobs in the teamspace.
 func (t *Teamspace) Jobs() ([]*Job, error) {
+	return t.ListJobs()
+}
+
+// ListJobs lists single-machine jobs in the teamspace. When tags are given,
+// only jobs carrying at least one of them are returned. Tag names are matched
+// the way the platform stores them: lowercased with whitespace collapsed.
+func (t *Teamspace) ListJobs(tags ...string) ([]*Job, error) {
 	id, err := t.requireID("jobs")
 	if err != nil {
 		return nil, err
 	}
 	api, err := sdkclient.New()
+	if err != nil {
+		return nil, err
+	}
+	tagIDs, err := resolveTagIDs(api, id, tags)
 	if err != nil {
 		return nil, err
 	}
@@ -457,6 +468,9 @@ func (t *Teamspace) Jobs() ([]*Job, error) {
 		params := jobs_service.NewJobsServiceListJobsParamsWithContext(context.Background()).
 			WithProjectID(id).
 			WithStandalone(&standalone)
+		if len(tagIDs) > 0 {
+			params = params.WithTagIds(tagIDs)
+		}
 		if pageToken != "" {
 			params = params.WithPageToken(&pageToken)
 		}
@@ -482,16 +496,27 @@ func (t *Teamspace) Jobs() ([]*Job, error) {
 
 // MMTs lists multi-machine jobs in the teamspace.
 func (t *Teamspace) MMTs() ([]*MMT, error) {
-	return t.MultiMachineJobs()
+	return t.ListMMTs()
 }
 
 // MultiMachineJobs lists multi-machine jobs in the teamspace.
 func (t *Teamspace) MultiMachineJobs() ([]*MMT, error) {
+	return t.ListMMTs()
+}
+
+// ListMMTs lists multi-machine jobs in the teamspace. When tags are given,
+// only jobs carrying at least one of them are returned. Tag names are matched
+// the way the platform stores them: lowercased with whitespace collapsed.
+func (t *Teamspace) ListMMTs(tags ...string) ([]*MMT, error) {
 	id, err := t.requireID("multi-machine jobs")
 	if err != nil {
 		return nil, err
 	}
 	api, err := sdkclient.New()
+	if err != nil {
+		return nil, err
+	}
+	tagIDs, err := resolveTagIDs(api, id, tags)
 	if err != nil {
 		return nil, err
 	}
@@ -505,14 +530,114 @@ func (t *Teamspace) MultiMachineJobs() ([]*MMT, error) {
 	if resp.Payload == nil {
 		return nil, fmt.Errorf("list multi-machine jobs returned empty payload")
 	}
+	// ListMultiMachineJobs takes no tag filter, unlike ListJobs, but it does return the tags
+	// on each job, so the same any-of match is applied here instead.
+	wanted := make(map[string]bool, len(tagIDs))
+	for _, tagID := range tagIDs {
+		wanted[tagID] = true
+	}
 	var result []*MMT
 	for _, model := range resp.Payload.MultiMachineJobs {
-		if model == nil {
+		if model == nil || (len(wanted) > 0 && !hasAnyTag(model.Tags, wanted)) {
 			continue
 		}
 		result = append(result, t.mmtFromModel(model))
 	}
 	return result, nil
+}
+
+// Tags lists the names of every job tag defined in the teamspace.
+func (t *Teamspace) Tags() ([]string, error) {
+	id, err := t.requireID("tags")
+	if err != nil {
+		return nil, err
+	}
+	api, err := sdkclient.New()
+	if err != nil {
+		return nil, err
+	}
+	workloadTags, err := listWorkloadTags(api, id)
+	if err != nil {
+		return nil, err
+	}
+	return tagNames(workloadTags), nil
+}
+
+func listWorkloadTags(api *sdkapi.LightningSdkAPI, teamspaceID string) ([]*models.V1WorkloadTag, error) {
+	resp, err := api.JobsService.JobsServiceListWorkloadTags(
+		jobs_service.NewJobsServiceListWorkloadTagsParamsWithContext(context.Background()).
+			WithProjectID(teamspaceID),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Payload == nil {
+		return nil, fmt.Errorf("list tags returned empty payload")
+	}
+	result := make([]*models.V1WorkloadTag, 0, len(resp.Payload.Tags))
+	for _, tag := range resp.Payload.Tags {
+		if tag != nil {
+			result = append(result, tag)
+		}
+	}
+	return result, nil
+}
+
+// resolveTagIDs translates tag names into the ids the jobs service filters on,
+// in the order the names were given. No tags resolves to no filter without a
+// lookup.
+func resolveTagIDs(api *sdkapi.LightningSdkAPI, teamspaceID string, tags []string) ([]string, error) {
+	if len(tags) == 0 {
+		return nil, nil
+	}
+	workloadTags, err := listWorkloadTags(api, teamspaceID)
+	if err != nil {
+		return nil, err
+	}
+	known := make(map[string]*models.V1WorkloadTag, len(workloadTags))
+	for _, tag := range workloadTags {
+		known[formatTagName(tag.Name)] = tag
+	}
+	tagIDs := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		match, ok := known[formatTagName(tag)]
+		if !ok {
+			available := tagNames(workloadTags)
+			sort.Strings(available)
+			list := "none"
+			if len(available) > 0 {
+				list = strings.Join(available, ", ")
+			}
+			return nil, fmt.Errorf("teamspace has no tag named %q; tags in this teamspace: %s", tag, list)
+		}
+		tagIDs = append(tagIDs, match.ID)
+	}
+	return tagIDs, nil
+}
+
+// formatTagName matches tag names the way the platform stores them: lowercased
+// with whitespace collapsed.
+func formatTagName(name string) string {
+	return strings.ToLower(strings.Join(strings.Fields(name), " "))
+}
+
+func tagNames(tags []*models.V1WorkloadTag) []string {
+	names := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		if tag != nil {
+			names = append(names, tag.Name)
+		}
+	}
+	return names
+}
+
+func hasAnyTag(tags []*models.V1WorkloadTag, wanted map[string]bool) bool {
+	for _, tag := range tags {
+		if tag != nil && wanted[tag.ID] {
+			return true
+		}
+	}
+	return false
 }
 
 // Secrets returns redacted secret names for the teamspace.
