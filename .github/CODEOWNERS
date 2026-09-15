@@ -1,8 +1,8 @@
-* @justusschock @ethanwharris @k223kim @rusenask
+* @justusschock @ethanwharris @k223kim @rusenask @tejapulagam
 
 /.github/ @justusschock @ethanwharris @owbone @rusenask
 
-/python/docs/ @justusschock @dhedey @ethanwharris @owbone @rusenask
+/python/docs/ @justusschock @dhedey @ethanwharris @owbone @rusenask @tejapulagam
 
 /python/lightning_sdk/llm/ @justusschock @ethanwharris @k223kim @rusenask @Danidapena
 /python/lightning_sdk/pipeline/ @justusschock @ethanwharris @tchaton
@@ -12,7 +12,7 @@
 /python/lightning_sdk/base_studio.py @justusschock @ethanwharris @vivequeramji
 /python/lightning_sdk/deployment.py @justusschock @ethanwharris @rusenask @tchaton
 /python/lightning_sdk/filesystem.py @justusschock @ethanwharris @k223kim @owbone
-/python/lightning_sdk/serve.py @justusschock @ethanwharris @k223kim @rusenask @tchaton
+/python/lightning_sdk/serve.py @justusschock @ethanwharris @k223kim @rusenask @tchaton @tejapulagam
 
 /js/ @justusschock @ethanwharris @k223kim @rusenask
 /go/ @justusschock @owbone @ethanwharris @rusenask
