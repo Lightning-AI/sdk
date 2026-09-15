@@ -60,6 +60,7 @@ class V1SandboxSnapshot(object):
         'size_bytes': 'str',
         'source_sandbox_id': 'str',
         'source_sandbox_instance_type': 'str',
+        'source_sandbox_memory_compatible': 'bool',
         'source_sandbox_name': 'str',
         'source_sandbox_network_policy': 'V1NetworkPolicy',
         'source_sandbox_persistent': 'bool',
@@ -85,6 +86,7 @@ class V1SandboxSnapshot(object):
         'size_bytes': 'sizeBytes',
         'source_sandbox_id': 'sourceSandboxId',
         'source_sandbox_instance_type': 'sourceSandboxInstanceType',
+        'source_sandbox_memory_compatible': 'sourceSandboxMemoryCompatible',
         'source_sandbox_name': 'sourceSandboxName',
         'source_sandbox_network_policy': 'sourceSandboxNetworkPolicy',
         'source_sandbox_persistent': 'sourceSandboxPersistent',
@@ -94,7 +96,7 @@ class V1SandboxSnapshot(object):
         'updated_at': 'updatedAt'
     }
 
-    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, failure_reason: 'str' =None, filesystem_size_bytes: 'str' =None, id: 'str' =None, includes_memory: 'bool' =None, memory_size_bytes: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, created_at: 'datetime' =None, expires_at: 'datetime' =None, failure_reason: 'str' =None, filesystem_size_bytes: 'str' =None, id: 'str' =None, includes_memory: 'bool' =None, memory_size_bytes: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, rootfs_digest: 'str' =None, runtime: 'str' =None, runtime_image: 'str' =None, size_bytes: 'str' =None, source_sandbox_id: 'str' =None, source_sandbox_instance_type: 'str' =None, source_sandbox_memory_compatible: 'bool' =None, source_sandbox_name: 'str' =None, source_sandbox_network_policy: 'V1NetworkPolicy' =None, source_sandbox_persistent: 'bool' =None, source_sandbox_purpose: 'V1SandboxPurpose' =None, status: 'str' =None, tar_excludes: 'list[str]' =None, updated_at: 'datetime' =None):  # noqa: E501
         """V1SandboxSnapshot - a model defined in Swagger"""  # noqa: E501
         self._created_at = None
         self._expires_at = None
@@ -111,6 +113,7 @@ class V1SandboxSnapshot(object):
         self._size_bytes = None
         self._source_sandbox_id = None
         self._source_sandbox_instance_type = None
+        self._source_sandbox_memory_compatible = None
         self._source_sandbox_name = None
         self._source_sandbox_network_policy = None
         self._source_sandbox_persistent = None
@@ -149,6 +152,8 @@ class V1SandboxSnapshot(object):
             self.source_sandbox_id = source_sandbox_id
         if source_sandbox_instance_type is not None:
             self.source_sandbox_instance_type = source_sandbox_instance_type
+        if source_sandbox_memory_compatible is not None:
+            self.source_sandbox_memory_compatible = source_sandbox_memory_compatible
         if source_sandbox_name is not None:
             self.source_sandbox_name = source_sandbox_name
         if source_sandbox_network_policy is not None:
@@ -488,6 +493,29 @@ class V1SandboxSnapshot(object):
         """
 
         self._source_sandbox_instance_type = source_sandbox_instance_type
+
+    @property
+    def source_sandbox_memory_compatible(self) -> 'bool':
+        """Gets the source_sandbox_memory_compatible of this V1SandboxSnapshot.  # noqa: E501
+
+        The source sandbox's memory_snapshot_compatible at capture time. False here explains an auto-snapshot with includes_memory=false: memory was never requested.  # noqa: E501
+
+        :return: The source_sandbox_memory_compatible of this V1SandboxSnapshot.  # noqa: E501
+        :rtype: bool
+        """
+        return self._source_sandbox_memory_compatible
+
+    @source_sandbox_memory_compatible.setter
+    def source_sandbox_memory_compatible(self, source_sandbox_memory_compatible: 'bool'):
+        """Sets the source_sandbox_memory_compatible of this V1SandboxSnapshot.
+
+        The source sandbox's memory_snapshot_compatible at capture time. False here explains an auto-snapshot with includes_memory=false: memory was never requested.  # noqa: E501
+
+        :param source_sandbox_memory_compatible: The source_sandbox_memory_compatible of this V1SandboxSnapshot.  # noqa: E501
+        :type: bool
+        """
+
+        self._source_sandbox_memory_compatible = source_sandbox_memory_compatible
 
     @property
     def source_sandbox_name(self) -> 'str':
