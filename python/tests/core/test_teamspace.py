@@ -33,6 +33,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1R2DataConnection,
     V1Resources,
     V1S3FolderDataConnection,
+    V1WorkloadTag,
 )
 from lightning_sdk.machine import Machine
 from lightning_sdk.mmt import MMT
@@ -1993,3 +1994,109 @@ def test_upload_dataset_with_explicit_version(
         dataset_id="ds-existing-1",
         version="experiment-v1",
     )
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.resolve_tag_ids", return_value=["tag-1", "tag-2"])
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_jobs_by_tag_resolves_names_once_and_filters_both_job_kinds(
+    list_jobs_mock,
+    list_mmts_mock,
+    resolve_tag_ids_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    list_jobs_mock.return_value = [V1Job(name="tagged-job")]
+    list_mmts_mock.return_value = [V1MultiMachineJob(name="tagged-mmt")]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    listed_jobs = ts.list_jobs(tags=["prod", "staging"])
+
+    resolve_tag_ids_mock.assert_called_once_with(teamspace_id=ts.id, tags=["prod", "staging"])
+    list_jobs_mock.assert_called_once_with(teamspace_id=ts.id, tag_ids=["tag-1", "tag-2"])
+    list_mmts_mock.assert_called_once_with(teamspace_id=ts.id, tag_ids=["tag-1", "tag-2"])
+    assert [job.name for job in listed_jobs] == ["tagged-job", "tagged-mmt"]
+    assert listed_jobs[-1].is_multi_machine
+
+
+@pytest.mark.parametrize("tags", [None, []])
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.resolve_tag_ids")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts", return_value=[])
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs", return_value=[])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_jobs_without_tags_skips_the_tag_lookup(
+    list_jobs_mock,
+    list_mmts_mock,
+    resolve_tag_ids_mock,
+    tags,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    ts.list_jobs(tags=tags)
+
+    resolve_tag_ids_mock.assert_not_called()
+    list_jobs_mock.assert_called_once_with(teamspace_id=ts.id, tag_ids=None)
+    list_mmts_mock.assert_called_once_with(teamspace_id=ts.id, tag_ids=None)
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts", return_value=[])
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs", return_value=[])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_jobs_property_is_list_jobs_without_a_filter(
+    list_jobs_mock,
+    list_mmts_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    assert ts.jobs == ()
+    list_jobs_mock.assert_called_once_with(teamspace_id=ts.id, tag_ids=None)
+
+
+@mock.patch(
+    "lightning_sdk.api.teamspace_api.TeamspaceApi.resolve_tag_ids",
+    side_effect=ValueError("Teamspace has no tag named 'nightly'. Tags in this teamspace: prod"),
+)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_list_jobs_with_an_unknown_tag_fails_before_listing(
+    list_jobs_mock,
+    list_mmts_mock,
+    resolve_tag_ids_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    with pytest.raises(ValueError, match="no tag named 'nightly'"):
+        ts.list_jobs(tags=["nightly"])
+
+    list_jobs_mock.assert_not_called()
+    list_mmts_mock.assert_not_called()
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_workload_tags")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_tags_are_the_tag_names(
+    list_workload_tags_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    list_workload_tags_mock.return_value = [
+        V1WorkloadTag(id="tag-1", name="prod"),
+        V1WorkloadTag(id="tag-2", name="team a"),
+    ]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    assert ts.tags == ("prod", "team a")
+    list_workload_tags_mock.assert_called_once_with(teamspace_id=ts.id)
