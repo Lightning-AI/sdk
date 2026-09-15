@@ -1144,6 +1144,18 @@ def resolve_path_mappings(mappings: Dict[str, str]) -> List[V1PathMapping]:
     return path_mappings_list
 
 
+def resolve_tags(tags: Optional[Sequence[str]]) -> Optional[List[str]]:
+    """Catch blank tag names before they reach the platform, which owns every other naming rule."""
+    if not tags:
+        return None
+
+    cleaned = [str(tag).strip() for tag in tags]
+    if not all(cleaned):
+        raise ValueError("tags cannot contain empty names")
+
+    return cleaned
+
+
 class AccessibleResource(Enum):
     Studios = "studio"
     Drive = "drive"

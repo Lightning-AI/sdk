@@ -15,6 +15,7 @@ from lightning_sdk.api.utils import (
     cached_lightning_client,
     remove_datetime_prefix,
     resolve_path_mappings,
+    resolve_tags,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.login import Auth
@@ -152,6 +153,7 @@ class JobApiV2:
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        tags: Optional[List[str]] = None,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -178,6 +180,8 @@ class JobApiV2:
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
             num_machines: Must be 1 for single-machine jobs. Kept for parity with ``MMTApiV2.submit_job``.
+            tags: Optional teamspace tag names to apply to the job. Tags that don't exist in the
+                teamspace yet are created, which requires permission to create tags.
 
         Returns:
             The newly created ``V1Job`` object.
@@ -210,6 +214,7 @@ class JobApiV2:
             reuse_snapshot=reuse_snapshot,
             scratch_disks=sanitized_scratch_disks,
             placement_group_id=placement_group_id,
+            tags=tags,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -235,6 +240,7 @@ class JobApiV2:
         machine_image_version: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
+        tags: Optional[List[str]] = None,
     ) -> JobsServiceCreateJobBody:
         """Build the request body for creating a v2 job.
 
@@ -260,6 +266,7 @@ class JobApiV2:
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
+            tags: Optional teamspace tag names to apply to the job.
 
         Returns:
             A fully populated ``JobsServiceCreateJobBody`` ready to be sent to the jobs service.
@@ -303,7 +310,7 @@ class JobApiV2:
             volumes=[V1Volume(path=k, size_gb=v, ephemeral=True) for k, v in scratch_disks.items()],
             **optional_spec_kwargs,
         )
-        return JobsServiceCreateJobBody(name=name, spec=spec)
+        return JobsServiceCreateJobBody(name=name, spec=spec, tags=resolve_tags(tags))
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1Job:
         """Fetch a v2 job by its unique name within a teamspace.

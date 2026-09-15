@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Optional, Tuple, TypedDict, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Tuple, TypedDict, Union, cast
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
@@ -127,6 +127,7 @@ class JobDict(TypedDict):
     status: Status
     machine: Union["Machine", str]
     total_cost: float
+    tags: List[str]
 
 
 class Job(metaclass=TrackCallsMeta):
@@ -229,6 +230,7 @@ class Job(metaclass=TrackCallsMeta):
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        tags: Optional[List[str]] = None,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -274,6 +276,10 @@ class Job(metaclass=TrackCallsMeta):
                 submitted. Turning this off may result in longer startup times. Defaults to True.
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
+            tags: Teamspace tag names to apply to the job. Tags that don't exist in the teamspace
+                yet are created, which requires permission to create tags. Names are normalised by
+                the platform (lowercased, whitespace collapsed), so ``job.tags`` may read back
+                slightly differently from what was passed in.
 
         Returns:
             Job: The newly submitted Job instance.
@@ -376,6 +382,7 @@ class Job(metaclass=TrackCallsMeta):
             reuse_snapshot=reuse_snapshot,
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
+            tags=tags,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -401,6 +408,7 @@ class Job(metaclass=TrackCallsMeta):
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        tags: Optional[List[str]] = None,
     ) -> "Job":
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
@@ -480,6 +488,7 @@ class Job(metaclass=TrackCallsMeta):
             num_machines=num_machines,
             scratch_disks=scratch_disks,
             max_run_attempts=max_run_attempts,
+            tags=tags,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
@@ -600,6 +609,11 @@ class Job(metaclass=TrackCallsMeta):
     @property
     def placement_group_id(self) -> Optional[str]:
         return self._guaranteed_job.spec.placement_group_id
+
+    @property
+    def tags(self) -> Tuple[str, ...]:
+        """The teamspace tags applied to this job, in the order the platform returns them."""
+        return tuple(tag.name for tag in getattr(self._latest_job, "tags", None) or [])
 
     @property
     def max_run_attempts(self) -> Optional[int]:
@@ -1065,6 +1079,7 @@ class Job(metaclass=TrackCallsMeta):
             "status": self.status,
             "machine": self.machine,
             "total_cost": self.total_cost,
+            "tags": list(self.tags),
         }
 
     def json(self) -> str:

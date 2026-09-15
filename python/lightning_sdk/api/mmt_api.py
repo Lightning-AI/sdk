@@ -7,6 +7,7 @@ from lightning_sdk.api.utils import (
     _machine_to_compute_name,
     cached_lightning_client,
     resolve_path_mappings,
+    resolve_tags,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
 from lightning_sdk.lightning_cloud.openapi import (
@@ -54,6 +55,7 @@ class MMTApiV2:
         placement_group_id: Optional[str] = None,
         scratch_disks: Optional[Dict[str, int]] = None,
         max_run_attempts: Optional[int] = None,
+        tags: Optional[List[str]] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -83,6 +85,8 @@ class MMTApiV2:
                 greater than ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
                 automatically on the multi-machine job body. Set at the multi-machine job level,
                 not on the per-machine ``JobSpec``.
+            tags: Optional teamspace tag names to apply to the job. Tags that don't exist in the
+                teamspace yet are created, which requires permission to create tags.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -107,6 +111,7 @@ class MMTApiV2:
             reuse_snapshot=reuse_snapshot,
             placement_group_id=placement_group_id,
             max_run_attempts=max_run_attempts,
+            tags=tags,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -132,6 +137,7 @@ class MMTApiV2:
         machine_image_version: Optional[str] = None,
         placement_group_id: Optional[str] = None,
         max_run_attempts: Optional[int] = None,
+        tags: Optional[List[str]] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -160,6 +166,7 @@ class MMTApiV2:
                 greater than ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set
                 automatically on the multi-machine job body. Set at the multi-machine job level,
                 not on the per-machine ``JobSpec``.
+            tags: Optional teamspace tag names to apply to the job.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -214,6 +221,7 @@ class MMTApiV2:
             machines=num_machines,
             max_run_attempts=max_run_attempts,
             fault_tolerance=fault_tolerance,
+            tags=resolve_tags(tags),
         )
 
     def get_job_by_name(self, name: str, teamspace_id: str) -> V1MultiMachineJob:

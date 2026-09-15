@@ -1,7 +1,7 @@
 """Job run command."""
 
 import json
-from typing import Dict, Mapping, Optional, Sequence, Union
+from typing import Dict, List, Mapping, Optional, Sequence, Union
 
 import rich_click as click
 
@@ -134,6 +134,18 @@ _MACHINE_VALUES = tuple(
         "Instead of a comma-separated list, consider passing --path-mapping multiple times."
     ),
 )
+@click.option(
+    "--tags",
+    "--tag",
+    "tags",
+    default=(),
+    multiple=True,
+    help=(
+        "Tag to apply to the job. "
+        "Can be a comma-separated list or passed multiple times. "
+        "Tags that don't exist in the teamspace yet are created."
+    ),
+)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 def run_job(
     name: Optional[str] = None,
@@ -153,6 +165,7 @@ def run_job(
     entrypoint: str = "sh -c",
     path_mapping: Sequence[str] = (),
     path_mappings: str = "",
+    tags: Sequence[str] = (),
     as_json: bool = False,
 ) -> None:
     """Run async workloads using a docker image or studio.
@@ -198,6 +211,7 @@ def run_job(
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
         num_machines=num_machines,
+        tags=_resolve_tags(tags),
     )
 
     if as_json:
@@ -235,6 +249,15 @@ def _resolve_path_mapping(path_mappings: str) -> Dict[str, str]:
         path_mappings_dict[splits[0].strip()] = splits[1].strip()
 
     return path_mappings_dict
+
+
+def _resolve_tags(tags: Sequence[str]) -> List[str]:
+    """Flatten repeated and comma-separated --tags values into the list the SDK expects."""
+    resolved: List[str] = []
+    for value in tags:
+        resolved.extend(tag.strip() for tag in value.split(",") if tag.strip())
+
+    return resolved
 
 
 def _resolve_envs(envs: str) -> Dict[str, str]:

@@ -211,6 +211,7 @@ class JobStep:
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
+        tags: Optional[List[str]] = None,
     ) -> None:
         """Configure a job step in a pipeline.
 
@@ -242,6 +243,8 @@ class JobStep:
             scratch_disks: Extra volumes to mount under ``/teamspace/scratch``.
             placement_group_id: Optional placement group identifier for colocating the job.
             num_machines: Number of machines to allocate. Defaults to one.
+            tags: Teamspace tag names to apply to the job. Tags that don't exist in the teamspace
+                yet are created, which requires permission to create tags.
 
         """
         if num_machines < 1:
@@ -269,6 +272,7 @@ class JobStep:
         self.scratch_disks = scratch_disks
         self.placement_group_id = placement_group_id
         self.num_machines = num_machines
+        self.tags = tags
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -324,6 +328,7 @@ class JobStep:
                 reuse_snapshot=self.reuse_snapshot,
                 placement_group_id=self.placement_group_id,
                 max_run_attempts=self.max_run_attempts,
+                tags=self.tags,
             )
             return V1PipelineStep(
                 name=self.name,
@@ -351,6 +356,7 @@ class JobStep:
             reuse_snapshot=self.reuse_snapshot,
             scratch_disks=self.scratch_disks,
             placement_group_id=self.placement_group_id,
+            tags=self.tags,
         )
         return V1PipelineStep(
             name=self.name,
@@ -386,6 +392,7 @@ class MMTStep:
         wait_for: Optional[Union[str, List[str]]] = DEFAULT,
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
+        tags: Optional[List[str]] = None,
     ) -> None:
         """Configure a multi-machine training step in a pipeline.
 
@@ -415,6 +422,8 @@ class MMTStep:
             wait_for: Names of steps that must complete before this step starts.
             reuse_snapshot: Whether to reuse a studio snapshot across jobs. Defaults to True.
             placement_group_id: Optional placement group identifier for colocating the job.
+            tags: Teamspace tag names to apply to the job. Tags that don't exist in the teamspace
+                yet are created, which requires permission to create tags.
 
         """
         self.machine = machine or Machine.CPU
@@ -438,6 +447,7 @@ class MMTStep:
         self.wait_for = wait_for
         self.reuse_snapshot = reuse_snapshot
         self.placement_group_id = placement_group_id
+        self.tags = tags
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -490,6 +500,7 @@ class MMTStep:
             reuse_snapshot=self.reuse_snapshot,
             placement_group_id=self.placement_group_id,
             max_run_attempts=self.max_run_attempts,
+            tags=self.tags,
         )
 
         return V1PipelineStep(

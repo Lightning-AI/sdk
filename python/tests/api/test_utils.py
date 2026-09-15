@@ -19,6 +19,7 @@ from lightning_sdk.api.utils import (
     _raise_for_download_status,
     _stream_download_to_file,
     resolve_path_mappings,
+    resolve_tags,
 )
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateMultiPartUploadBody,
@@ -983,3 +984,18 @@ def test_resolve_logs_path_explicit_file(tmp_path):
 def test_resolve_logs_path_missing_parent_raises(tmp_path):
     with pytest.raises(FileNotFoundError):
         utils.resolve_logs_path(tmp_path / "nope" / "custom.log", "job-x.log")
+
+
+@pytest.mark.parametrize("tags", [[""], ["ok", "   "]])
+def test_resolve_tags_rejects_blank_names(tags):
+    with pytest.raises(ValueError, match="tags cannot contain empty names"):
+        resolve_tags(tags)
+
+
+@pytest.mark.parametrize("tags", [None, []])
+def test_resolve_tags_leaves_unset_tags_unset(tags):
+    assert resolve_tags(tags) is None
+
+
+def test_resolve_tags_strips_surrounding_whitespace():
+    assert resolve_tags(["  prod  ", "team a"]) == ["prod", "team a"]

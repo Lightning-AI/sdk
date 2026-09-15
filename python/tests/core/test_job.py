@@ -12,6 +12,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1JobSpec,
     V1MultiMachineJob,
     V1MultiMachineJobStatus,
+    V1WorkloadTag,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
@@ -163,6 +164,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         scratch_disks=None,
         placement_group_id=None,
         num_machines=1,
+        tags=None,
     )
 
 
@@ -500,6 +502,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         scratch_disks=None,
         placement_group_id=None,
         num_machines=1,
+        tags=None,
     )
 
 
@@ -889,6 +892,7 @@ def test_submit_jobv2_studio_resolve(
         scratch_disks=None,
         placement_group_id=None,
         num_machines=1,
+        tags=None,
     )
 
 
@@ -988,6 +992,7 @@ def test_submit_job_v2_image_from_studio(
         scratch_disks=None,
         placement_group_id=None,
         num_machines=1,
+        tags=None,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -1034,6 +1039,7 @@ def test_run_job_with_cloud_provider(
         scratch_disks=None,
         placement_group_id=None,
         num_machines=1,
+        tags=None,
     )
 
 
@@ -1085,10 +1091,12 @@ def test_job_v2_dict_json(internal_studio_init_mocker, internal_studio_api_mocke
     assert job_dict["status"] == Status.Running
     assert job_dict["machine"] == Machine.CPU
     assert job_dict["total_cost"] == 3.51
+    assert job_dict["tags"] == []
 
     assert job.json() == (
         '{\n    "command": "some command",\n    "image": null,\n    "machine": "CPU",\n    '
-        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "teamspace": "org-abc/ts-abc",\n    '
+        '"name": "my-job",\n    "status": "Running",\n    "studio": "st-abc",\n    "tags": [],\n    '
+        '"teamspace": "org-abc/ts-abc",\n    '
         '"total_cost": 3.51\n}'
     )
 
@@ -1446,3 +1454,32 @@ def test_job_logs_follow_delegates_to_api(job_api_get_job_by_name_mocker, intern
         idle_timeout=None,
         timestamps=True,
     )
+
+
+def test_job_tags_read_the_names_off_the_job():
+    job = _bare_job("tagged")
+    job._prevent_refetch_latest = True
+    job._job.tags = [V1WorkloadTag(id="tag-1", name="prod"), V1WorkloadTag(id="tag-2", name="team a")]
+
+    assert job.tags == ("prod", "team a")
+
+
+def test_job_tags_are_empty_when_the_job_is_untagged():
+    job = _bare_job("untagged")
+    job._prevent_refetch_latest = True
+
+    assert job.tags == ()
+
+
+@mock.patch("lightning_sdk.job._get_org_id", return_value="org-abc")
+def test_submit_forwards_tags(_get_org_id_mock):
+    job = _bare_job("test-job")
+    job._teamspace = mock.MagicMock(id="ts-abc", default_cloud_account="c-abc")
+    job._cloud_account_api = mock.MagicMock()
+    job._cloud_account_api.resolve_cloud_account.return_value = "c-abc"
+    job._standalone_job_api.submit_job.return_value = V1Job(name="test-job", spec=V1JobSpec())
+    job._attach_job = mock.MagicMock()
+
+    job._submit(machine=Machine.CPU, image="ubuntu", cloud_account="c-abc", tags=["prod", "team a"])
+
+    assert job._standalone_job_api.submit_job.call_args.kwargs["tags"] == ["prod", "team a"]

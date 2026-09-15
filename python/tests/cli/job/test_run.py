@@ -176,3 +176,28 @@ def test_run_job_json(monkeypatch) -> None:
         "teamspace": "acme/ts",
         "link": "https://lightning.ai/acme/ts/jobs/job-abc",
     }
+
+
+@pytest.mark.parametrize(
+    ("cli_args", "expected"),
+    [
+        ([], []),
+        (["--tags", "prod,team a"], ["prod", "team a"]),
+        (["--tags", "prod", "--tags", "team a"], ["prod", "team a"]),
+        (["--tag", "prod"], ["prod"]),
+        (["--tags", " prod , , team a "], ["prod", "team a"]),
+    ],
+)
+@mock_command_logging
+def test_run_job_with_tags(monkeypatch, cli_args, expected) -> None:
+    mock_job = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.job.run.Job", mock_job)
+    monkeypatch.setattr("lightning_sdk.cli.job.run.resolve_teamspace", MagicMock(return_value="teamspace"))
+
+    result = CliRunner().invoke(
+        run_job,
+        ["--name", "test-job", "--image", "ubuntu", "--command", "echo hi", *cli_args],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert mock_job.run.call_args.kwargs["tags"] == expected
