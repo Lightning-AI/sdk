@@ -30,6 +30,7 @@ from lightning_sdk.cli.studio import register_commands as register_studio_comman
 from lightning_sdk.cli.teamspace import register_commands as register_teamspace_commands
 from lightning_sdk.cli.user import register_commands as register_user_commands
 from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
+from lightning_sdk.cli.vm import register_commands as register_vm_commands
 
 
 @click.group(name="studio", cls=LightningGroup)
@@ -89,6 +90,11 @@ def api(ctx: click.Context) -> None:
 @click.group(name="deployment", cls=LightningGroup)
 def deployment() -> None:
     """Deploy autoscaling inference APIs."""
+
+
+@click.group(name="vm", cls=LightningGroup)
+def vm() -> None:
+    """Create and manage virtual machines."""
 
 
 @click.group(name="sandbox", cls=LightningGroup)
@@ -266,6 +272,7 @@ register_teamspace_commands(teamspace)
 register_config_commands(config)
 register_api_commands(api)
 register_deployment_commands(deployment)
+register_vm_commands(vm)
 register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)

@@ -14,6 +14,7 @@ from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
 from lightning_sdk.user import User
+from lightning_sdk.vm import VM
 
 __all__ = [
     "MMT",
@@ -33,6 +34,7 @@ __all__ = [
     "Studio",
     "Teamspace",
     "User",
+    "VM",
     "__version__",
 ]
 
