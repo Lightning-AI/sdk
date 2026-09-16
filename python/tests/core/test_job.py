@@ -1538,4 +1538,3 @@ def test_set_tags_calls_mmt_api_for_multi_machine():
     job.set_tags(["prod"])
 
     job._mmt_job_api.set_tags.assert_called_once_with(job_id="job-1", teamspace_id="ts-abc", tags=["prod"])
-
