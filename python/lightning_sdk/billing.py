@@ -4,10 +4,9 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from lightning_sdk.api.billing_api import BillingActivity, BillingActivityFilterValues, BillingApi
-from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
-
 from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
 
 
 @dataclass
