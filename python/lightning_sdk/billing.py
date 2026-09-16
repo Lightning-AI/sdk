@@ -220,3 +220,65 @@ class Billing:
             search_after_resource_id=cursor.search_after_resource_id,
             search_after_resource_type=cursor.search_after_resource_type,
         )
+
+    def get_detailed_activity_json(
+        self,
+        filters: Optional[BillingActivityFilters] = None,
+        cursor: Optional[BillingActivityCursor] = None,
+    ) -> str:
+        """Get the detailed billing activity report for the configured scope as a JSON string.
+
+        Args:
+            filters: Optional filters to narrow down the report.
+            cursor: Optional pagination cursor to continue a previous query.
+
+        Returns:
+            str: The JSON string representation of the detailed activity report.
+        """
+        filters = filters or BillingActivityFilters()
+        cursor = cursor or BillingActivityCursor()
+
+        return self._billing_api.get_detailed_activity_json(
+            org_id=self._org.id,
+            project_ids=self._project_ids(),
+            resource_types=filters.resource_types,
+            resource_ids=filters.resource_ids,
+            user_ids=filters.user_ids,
+            start=filters.start,
+            end=filters.end,
+            limit=filters.limit,
+            search_after=cursor.search_after,
+            search_after_resource_id=cursor.search_after_resource_id,
+            search_after_resource_type=cursor.search_after_resource_type,
+        )
+
+    def get_summary_activity_json(
+        self,
+        filters: Optional[BillingActivityFilters] = None,
+        cursor: Optional[BillingActivityCursor] = None,
+    ) -> str:
+        """Get the summarized billing activity report for the configured scope as a JSON string.
+
+        Args:
+            filters: Optional filters to narrow down the report.
+            cursor: Optional pagination cursor to continue a previous query.
+
+        Returns:
+            str: The JSON string representation of the summary activity report.
+        """
+        filters = filters or BillingActivityFilters()
+        cursor = cursor or BillingActivityCursor()
+
+        return self._billing_api.get_summary_activity_json(
+            org_id=self._org.id,
+            project_ids=self._project_ids(),
+            resource_types=filters.resource_types,
+            resource_ids=filters.resource_ids,
+            user_ids=filters.user_ids,
+            start=filters.start,
+            end=filters.end,
+            limit=filters.limit,
+            search_after=cursor.search_after,
+            search_after_resource_id=cursor.search_after_resource_id,
+            search_after_resource_type=cursor.search_after_resource_type,
+        )
