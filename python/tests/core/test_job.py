@@ -1512,8 +1512,6 @@ def test_rename_raises_when_name_unchanged():
 
 
 def test_rename_warns_when_server_changes_name():
-    import warnings
-
     job = _bare_job("old-name")
     job._standalone_job_api.rename_job.return_value = V1Job(id="job-1", name="suffixed-name-1", spec=V1JobSpec())
 
@@ -1539,9 +1537,7 @@ def test_set_tags_calls_mmt_api_for_multi_machine():
 
     job.set_tags(["prod"])
 
-    job._mmt_job_api.set_tags.assert_called_once_with(
-        job_id="job-1", teamspace_id="ts-abc", tags=["prod"]
-    )
+    job._mmt_job_api.set_tags.assert_called_once_with(job_id="job-1", teamspace_id="ts-abc", tags=["prod"])
 
 
 def test_add_tag_appends_to_existing_tags():
@@ -1573,9 +1569,7 @@ def test_remove_tag_removes_existing_tag():
 
     job.remove_tag("prod")
 
-    job._standalone_job_api.set_tags.assert_called_once_with(
-        job_id="job-1", teamspace_id="ts-abc", tags=["gpu"]
-    )
+    job._standalone_job_api.set_tags.assert_called_once_with(job_id="job-1", teamspace_id="ts-abc", tags=["gpu"])
 
 
 def test_remove_tag_noops_when_tag_not_present():
