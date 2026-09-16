@@ -30,7 +30,7 @@ def test_untag_job_removes_tags() -> None:
 
     assert result.exit_code == 0
     assert "Tags on 'my-job': gpu" in result.output
-    job.remove_tag.assert_called_once_with("prod")
+    job.set_tags.assert_called_once_with(["gpu"])
 
 
 @mock_command_logging

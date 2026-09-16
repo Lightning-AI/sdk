@@ -550,28 +550,6 @@ class Job(metaclass=TrackCallsMeta):
             tags=tags,
         )
 
-    def add_tag(self, tag: str) -> None:
-        """Add a tag to this job without affecting existing tags.
-
-        Args:
-            tag: The tag name to add.
-        """
-        current = list(self.tags)
-        if tag not in current:
-            current.append(tag)
-            self.set_tags(current)
-
-    def remove_tag(self, tag: str) -> None:
-        """Remove a tag from this job without affecting other tags.
-
-        Args:
-            tag: The tag name to remove.
-        """
-        current = list(self.tags)
-        if tag in current:
-            current.remove(tag)
-            self.set_tags(current)
-
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Completed, Status.Failed):
             return

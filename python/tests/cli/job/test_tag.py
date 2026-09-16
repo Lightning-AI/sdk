@@ -30,9 +30,8 @@ def test_tag_job_adds_tags() -> None:
 
     assert result.exit_code == 0
     assert "Tags set on 'my-job': prod, gpu" in result.output
-    assert job.add_tag.call_count == 2
-    job.add_tag.assert_any_call("prod")
-    job.add_tag.assert_any_call("gpu")
+    job.set_tags.assert_called_once()
+    assert set(job.set_tags.call_args[0][0]) == {"prod", "gpu"}
 
 
 @mock_command_logging
