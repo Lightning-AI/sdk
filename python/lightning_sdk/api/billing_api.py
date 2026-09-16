@@ -1,3 +1,11 @@
+"""Low-level client and response types for the billing/usage-report endpoints.
+
+:class:`BillingApi` wraps both the generated OpenAPI client (for the JSON usage report and
+filter-values endpoints) and hand-rolled authenticated HTTP requests (for the CSV download
+endpoints, which aren't exposed by the generated client). The ``lightning_sdk.billing`` module
+provides the higher-level, user-facing interface built on top of this one.
+"""
+
 import csv
 import json
 import tempfile
@@ -240,7 +248,15 @@ def _build_activity_query_params(
 
 
 class BillingApi:
-    """Internal API client for billing requests (mainly http requests)."""
+    """Internal API client for billing/usage-report requests.
+
+    Combines calls through the generated OpenAPI client (:meth:`get_activity`,
+    :meth:`get_activity_filter_values`) with raw authenticated HTTP requests for the CSV
+    download endpoints (:meth:`download_detailed_activity_csv`,
+    :meth:`download_summary_activity_csv`), which aren't exposed by the generated client.
+    The JSON variants (:meth:`get_detailed_activity_json`, :meth:`get_summary_activity_json`)
+    are built on top of the CSV downloads.
+    """
 
     def __init__(self) -> None:
         self._client = cached_lightning_client()

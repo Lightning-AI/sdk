@@ -1,3 +1,11 @@
+"""Public API for querying an organization's (or teamspace's) billing/usage activity.
+
+:class:`Billing` is the entry point: construct it with an organization and/or one or more
+teamspaces to scope subsequent queries to, then use :meth:`Billing.get_activity` and friends
+to fetch usage data. :class:`BillingActivityFilters` and :class:`BillingActivityCursor` narrow
+down and paginate those queries, respectively.
+"""
+
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -104,6 +112,7 @@ class Billing:
         self._org: "Organization" = resolved_org
 
     def _project_ids(self) -> Optional[List[str]]:
+        """IDs of the configured teamspace(s), or ``None`` to scope to the whole organization."""
         if not self._teamspaces:
             return None
         return [teamspace.id for teamspace in self._teamspaces]

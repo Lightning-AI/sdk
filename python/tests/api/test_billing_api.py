@@ -11,7 +11,6 @@ from lightning_sdk.api.billing_api import (
     _build_activity_query_params,
 )
 
-
 # ---- dataclasses: _from_api ------------------------------------------------
 
 
