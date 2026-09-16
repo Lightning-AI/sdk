@@ -156,6 +156,13 @@ go test ./...
 
 The Go module currently lives in [`go.mod`](go.mod) and targets Go 1.22.
 
+### H200 machines
+
+H200 supports one, two, four, and eight GPUs via `MachineH200`, `MachineH200X2`,
+`MachineH200X4`, and `MachineH200X8`. For Lightning Compute H200 141 GB machines,
+use `MachineH200141GB`, `MachineH200141GBX2`, `MachineH200141GBX4`, or
+`MachineH200141GBX8`. Existing cloud-provider identifiers remain unchanged.
+
 # License
 
 Apache-2.0. See [`../LICENSE`](../LICENSE).

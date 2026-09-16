@@ -105,7 +105,13 @@ class Machine:
     H100_X_8: ClassVar["Machine"]
 
     H200: ClassVar["Machine"]
+    H200_X_2: ClassVar["Machine"]
+    H200_X_4: ClassVar["Machine"]
     H200_X_8: ClassVar["Machine"]
+    H200_141GB: ClassVar["Machine"]
+    H200_141GB_X_2: ClassVar["Machine"]
+    H200_141GB_X_4: ClassVar["Machine"]
+    H200_141GB_X_8: ClassVar["Machine"]
     B200_X_8: ClassVar["Machine"]
 
     # Specialized Machines
@@ -206,13 +212,17 @@ class Machine:
         else:
             accelerator_resources_count = accelerator.resources.cpu
 
-        return Machine.from_str(
+        identifiers = (
             accelerator.slug_multi_cloud,
             accelerator.slug,
             accelerator.instance_id,
             accelerator.secondary_instance_id,
-            f"lit-{accelerator.family.lower()}-{accelerator_resources_count}",
         )
+        predefined = Machine._predefined_from_str(*identifiers)
+        if predefined is not None:
+            return predefined
+        family_slug = "h200x" if accelerator.family == "H200" else accelerator.family.lower()
+        return Machine.from_str(*identifiers, f"lit-{family_slug}-{accelerator_resources_count}")
 
 
 # CPU machines
@@ -292,7 +302,13 @@ Machine.H100_X_4 = Machine(name="H100_X_4", slug="lit-h100-4", family="H100", ac
 Machine.H100_X_8 = Machine(name="H100_X_8", slug="lit-h100-8", family="H100", accelerator_count=8)
 # available H200 machines
 Machine.H200 = Machine(name="H200", slug="lit-h200x-1", family="H200", accelerator_count=1)
+Machine.H200_X_2 = Machine(name="H200_X_2", slug="lit-h200x-2", family="H200", accelerator_count=2)
+Machine.H200_X_4 = Machine(name="H200_X_4", slug="lit-h200x-4", family="H200", accelerator_count=4)
 Machine.H200_X_8 = Machine(name="H200_X_8", slug="lit-h200x-8", family="H200", accelerator_count=8)
+Machine.H200_141GB = Machine(name="H200_141GB", slug="lit-h200-141gb-1", family="H200", accelerator_count=1)
+Machine.H200_141GB_X_2 = Machine(name="H200_141GB_X_2", slug="lit-h200-141gb-2", family="H200", accelerator_count=2)
+Machine.H200_141GB_X_4 = Machine(name="H200_141GB_X_4", slug="lit-h200-141gb-4", family="H200", accelerator_count=4)
+Machine.H200_141GB_X_8 = Machine(name="H200_141GB_X_8", slug="lit-h200-141gb-8", family="H200", accelerator_count=8)
 # available B200 machines
 Machine.B200_X_8 = Machine(name="B200_X_8", slug="lit-b200x-8", family="B200", accelerator_count=8)
 
