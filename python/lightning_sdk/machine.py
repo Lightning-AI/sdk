@@ -108,10 +108,6 @@ class Machine:
     H200_X_2: ClassVar["Machine"]
     H200_X_4: ClassVar["Machine"]
     H200_X_8: ClassVar["Machine"]
-    H200_141GB: ClassVar["Machine"]
-    H200_141GB_X_2: ClassVar["Machine"]
-    H200_141GB_X_4: ClassVar["Machine"]
-    H200_141GB_X_8: ClassVar["Machine"]
     B200_X_8: ClassVar["Machine"]
 
     # Specialized Machines
@@ -169,6 +165,7 @@ class Machine:
                     getattr(m, "name", None),
                     getattr(m, "instance_type", None),
                     getattr(m, "slug", None),
+                    f"lit-h200-141gb-{m.accelerator_count}" if m.family == "H200" else None,
                 ):
                     return m
         return None
@@ -305,10 +302,6 @@ Machine.H200 = Machine(name="H200", slug="lit-h200x-1", family="H200", accelerat
 Machine.H200_X_2 = Machine(name="H200_X_2", slug="lit-h200x-2", family="H200", accelerator_count=2)
 Machine.H200_X_4 = Machine(name="H200_X_4", slug="lit-h200x-4", family="H200", accelerator_count=4)
 Machine.H200_X_8 = Machine(name="H200_X_8", slug="lit-h200x-8", family="H200", accelerator_count=8)
-Machine.H200_141GB = Machine(name="H200_141GB", slug="lit-h200-141gb-1", family="H200", accelerator_count=1)
-Machine.H200_141GB_X_2 = Machine(name="H200_141GB_X_2", slug="lit-h200-141gb-2", family="H200", accelerator_count=2)
-Machine.H200_141GB_X_4 = Machine(name="H200_141GB_X_4", slug="lit-h200-141gb-4", family="H200", accelerator_count=4)
-Machine.H200_141GB_X_8 = Machine(name="H200_141GB_X_8", slug="lit-h200-141gb-8", family="H200", accelerator_count=8)
 # available B200 machines
 Machine.B200_X_8 = Machine(name="B200_X_8", slug="lit-b200x-8", family="B200", accelerator_count=8)
 

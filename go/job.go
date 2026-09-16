@@ -388,9 +388,13 @@ func RunJob(name string, machine Machine, command string, opts ...JobOptions) (*
 	if resolved.teamspaceID == "" {
 		return nil, errors.New("job run requires teamspace or studio")
 	}
+	computeName, err := resolveMachineComputeName(api, string(machine), resolved.teamspaceID, resolved.cloud)
+	if err != nil {
+		return nil, err
+	}
 	body := &models.JobsServiceCreateJobBody{
 		Name: name,
-		Spec: jobSpec(string(machine), command, resolved),
+		Spec: jobSpec(computeName, command, resolved),
 	}
 	resp, err := api.JobsService.JobsServiceCreateJob(
 		jobs_service.NewJobsServiceCreateJobParamsWithContext(context.Background()).WithProjectID(resolved.teamspaceID).WithBody(body),
@@ -630,6 +634,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -651,7 +656,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.publicIP = opts[0].PublicIP
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}

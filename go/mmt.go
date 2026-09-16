@@ -365,11 +365,15 @@ func RunMMT(name string, numMachines int64, machine Machine, command string, opt
 		s := models.V1MultiMachineJobFaultToleranceStrategyMULTIMACHINEJOBFAULTTOLERANCESTRATEGYRECREATEALLNODES
 		faultTolerance = &models.V1MultiMachineJobFaultTolerance{Strategy: &s}
 	}
+	computeName, err := resolveMachineComputeName(api, string(machine), resolved.teamspaceID, resolved.cloud)
+	if err != nil {
+		return nil, err
+	}
 	body := &models.JobsServiceCreateMultiMachineJobBody{
 		ClusterID:      resolved.cloud,
 		Machines:       numMachines,
 		Name:           name,
-		Spec:           mmtJobSpec(numMachines, string(machine), command, resolved),
+		Spec:           mmtJobSpec(numMachines, computeName, command, resolved),
 		MaxRunAttempts: resolved.maxRunAttempts,
 		FaultTolerance: faultTolerance,
 	}
@@ -606,6 +610,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -619,7 +624,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.image = opts[0].Image
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}

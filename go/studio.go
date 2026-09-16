@@ -206,6 +206,10 @@ func CreateStudio(name string, opts ...StudioOptions) (*Studio, error) {
 	if resolved.teamspaceID == "" {
 		return nil, errors.New("studio create requires teamspace")
 	}
+	resolved.machine, err = resolveMachineComputeName(api, resolved.machine, resolved.teamspaceID, resolved.cloud)
+	if err != nil {
+		return nil, err
+	}
 	body := &models.CloudSpaceServiceCreateCloudSpaceBody{
 		ClusterID:   resolved.cloud,
 		ComputeName: resolved.machine,
@@ -406,10 +410,14 @@ func (s *Studio) Start(opts ...StartStudioOptions) error {
 			return err
 		}
 	}
+	computeName, err := resolveMachineComputeName(api, machine, s.teamspaceID, s.cloud)
+	if err != nil {
+		return err
+	}
 	body := &models.CloudSpaceServiceStartCloudSpaceInstanceBody{
 		ComputeConfig: &models.V1UserRequestedComputeConfig{
 			ClusterOverride:             s.cloud,
-			Name:                        machine,
+			Name:                        computeName,
 			RequestedRunDurationSeconds: maxRuntime(resolved.maxRuntime),
 			Spot:                        interruptible,
 		},
@@ -444,10 +452,14 @@ func (s *Studio) SwitchMachine(machine Machine, opts ...SwitchMachineOptions) er
 	if err != nil {
 		return err
 	}
+	computeName, err := resolveMachineComputeName(api, machineName, s.teamspaceID, firstNonEmpty(resolved.cloud, s.cloud))
+	if err != nil {
+		return err
+	}
 	body := &models.CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody{
 		ComputeConfig: &models.V1UserRequestedComputeConfig{
 			ClusterOverride: resolved.cloud,
-			Name:            machineName,
+			Name:            computeName,
 			Spot:            resolved.interruptible,
 		},
 	}
@@ -1212,7 +1224,7 @@ func applyStudioOptions(opts ...StudioOptions) studioOptions {
 				resolved.ownerName = owner.Name()
 			}
 		}
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		resolved.machine = string(opts[0].Machine)
 		resolved.autoSleep = opts[0].AutoSleep
 		resolved.autoSleepTime = opts[0].AutoSleepTime

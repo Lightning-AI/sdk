@@ -106,14 +106,6 @@ const (
 	MachineH200X4 Machine = "lit-h200x-4"
 	// MachineH200X8 selects an eight-GPU NVIDIA H200 machine.
 	MachineH200X8 Machine = "lit-h200x-8"
-	// MachineH200141GB selects a 1-GPU Lightning Compute H200 machine.
-	MachineH200141GB Machine = "lit-h200-141gb-1"
-	// MachineH200141GBX2 selects a 2-GPU Lightning Compute H200 machine.
-	MachineH200141GBX2 Machine = "lit-h200-141gb-2"
-	// MachineH200141GBX4 selects a 4-GPU Lightning Compute H200 machine.
-	MachineH200141GBX4 Machine = "lit-h200-141gb-4"
-	// MachineH200141GBX8 selects an 8-GPU Lightning Compute H200 machine.
-	MachineH200141GBX8 Machine = "lit-h200-141gb-8"
 	// MachineB200X8 selects an eight-GPU NVIDIA B200 machine.
 	MachineB200X8 Machine = "lit-b200x-8"
 )
@@ -164,10 +156,6 @@ var knownMachineNames = map[string]Machine{
 	"h100_x_8":        MachineH100X8,
 	"h200_x_2":        MachineH200X2,
 	"h200_x_4":        MachineH200X4,
-	"h200_141gb":      MachineH200141GB,
-	"h200_141gb_x_2":  MachineH200141GBX2,
-	"h200_141gb_x_4":  MachineH200141GBX4,
-	"h200_141gb_x_8":  MachineH200141GBX8,
 	"h200":            MachineH200,
 	"h200_x_8":        MachineH200X8,
 	"b200_x_8":        MachineB200X8,
@@ -230,10 +218,10 @@ var knownMachineSlugs = map[string]Machine{
 	"lit-h100-8":                  MachineH100X8,
 	"lit-h200x-2":                 MachineH200X2,
 	"lit-h200x-4":                 MachineH200X4,
-	"lit-h200-141gb-1":            MachineH200141GB,
-	"lit-h200-141gb-2":            MachineH200141GBX2,
-	"lit-h200-141gb-4":            MachineH200141GBX4,
-	"lit-h200-141gb-8":            MachineH200141GBX8,
+	"lit-h200-141gb-1":            MachineH200,
+	"lit-h200-141gb-2":            MachineH200X2,
+	"lit-h200-141gb-4":            MachineH200X4,
+	"lit-h200-141gb-8":            MachineH200X8,
 	"lit-h200x-1":                 MachineH200,
 	"lit-h200x-8":                 MachineH200X8,
 	"lit-b200x-8":                 MachineB200X8,

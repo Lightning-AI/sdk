@@ -434,6 +434,8 @@ class Job(metaclass=TrackCallsMeta):
             default_cloud_account=self._teamspace.default_cloud_account,
         )
 
+        machine = self._cloud_account_api.resolve_machine(machine, self._teamspace.id, cloud_account)
+
         if max_runtime:
             self._standalone_job_api.warn_if_max_runtime_noop(
                 max_runtime=max_runtime,

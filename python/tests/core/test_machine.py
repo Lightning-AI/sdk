@@ -241,12 +241,12 @@ def test_h200_machine_round_trip(count, baremetal):
     from lightning_sdk.api.utils import _machine_to_compute_name
 
     suffix = "" if count == 1 else f"_X_{count}"
-    name = f"H200{'_141GB' if baremetal else ''}{suffix}"
+    name = f"H200{suffix}"
     slug = f"lit-h200-141gb-{count}" if baremetal else f"lit-h200x-{count}"
     machine = getattr(Machine, name)
     assert machine.family == "H200"
     assert machine.accelerator_count == count
-    assert _machine_to_compute_name(machine) == slug
+    assert _machine_to_compute_name(machine) == f"lit-h200x-{count}"
     assert Machine.from_str(name) is machine
     assert Machine.from_str(slug) is machine
     assert Machine.from_str("unknown", slug) is machine

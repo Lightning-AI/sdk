@@ -436,6 +436,8 @@ class Studio(metaclass=TrackCallsMeta):
                 f"Cannot start a {self._cls_name} that is not stopped. {self._cls_name} {self.name} is {status}."
             )
 
+        new_machine = self._cloud_account_api.resolve_machine(new_machine, self._teamspace.id, self.cloud_account)
+
         # Show progress bar during startup
         if self.show_progress:
             from lightning_sdk.utils.progress import StudioProgressTracker
@@ -563,6 +565,10 @@ class Studio(metaclass=TrackCallsMeta):
                 cloud=cloud_provider,
                 default_cloud_account=None,
             )
+
+        machine = self._cloud_account_api.resolve_machine(
+            machine, self._teamspace.id, cloud_account or self._studio.cluster_id
+        )
 
         if self.show_progress:
             from lightning_sdk.utils.progress import StudioProgressTracker
