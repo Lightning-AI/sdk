@@ -1,6 +1,14 @@
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.agents import Agent
+from lightning_sdk.api.billing_api import (
+    BillingActivity,
+    BillingActivityFilterValues,
+    BillingDailyUsage,
+    BillingNamedFilterValue,
+    BillingResourceUsage,
+)
 from lightning_sdk.api.teamspace_api import SecretType
+from lightning_sdk.billing import Billing, BillingActivityCursor, BillingActivityFilters
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.deployment import Deployment
@@ -19,6 +27,14 @@ from lightning_sdk.vm import VM
 __all__ = [
     "MMT",
     "Agent",
+    "Billing",
+    "BillingActivity",
+    "BillingActivityCursor",
+    "BillingActivityFilterValues",
+    "BillingActivityFilters",
+    "BillingDailyUsage",
+    "BillingNamedFilterValue",
+    "BillingResourceUsage",
     "BucketCredentials",
     "CloudProvider",
     "ConnectionType",
