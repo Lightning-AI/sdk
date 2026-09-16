@@ -373,6 +373,42 @@ class JobApiV2:
                 break
             time.sleep(1)
 
+    def rename_job(self, job_id: str, teamspace_id: str, new_name: str) -> V1Job:
+        """Rename a standalone job (not part of a deployment, MMT, or pipeline).
+
+        Args:
+            job_id: The unique identifier of the job to rename.
+            teamspace_id: The ID of the teamspace that owns the job.
+            new_name: The new name for the job.
+
+        Returns:
+            The updated ``V1Job`` object.
+        """
+        update_body = JobsServiceUpdateJobBody(name=new_name)
+        job: V1Job = self._client.jobs_service_update_job(body=update_body, project_id=teamspace_id, id=job_id)
+        return job
+
+    def set_tags(self, job_id: str, teamspace_id: str, tags: List[str]) -> None:
+        """Replace the job's tags with the given tag names.
+
+        Tags that don't exist in the teamspace yet are created.
+        Pass an empty list to remove all tags.
+
+        Args:
+            job_id: The unique identifier of the job.
+            teamspace_id: The ID of the teamspace that owns the job.
+            tags: The list of tag names to set on the job.
+        """
+        from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+        body = JobsServiceSetWorkloadTagsBody(tags=tags)
+        self._client.jobs_service_set_workload_tags(
+            body=body,
+            project_id=teamspace_id,
+            workload_type="job",
+            workload_id=job_id,
+        )
+
     def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str] = None) -> None:
         """Permanently delete a v2 job.
 

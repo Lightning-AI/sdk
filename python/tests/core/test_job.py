@@ -1483,3 +1483,106 @@ def test_submit_forwards_tags(_get_org_id_mock):
     job._submit(machine=Machine.CPU, image="ubuntu", cloud_account="c-abc", tags=["prod", "team a"])
 
     assert job._standalone_job_api.submit_job.call_args.kwargs["tags"] == ["prod", "team a"]
+
+
+def test_rename_calls_api_and_updates_name():
+    job = _bare_job("old-name")
+    job._standalone_job_api.rename_job.return_value = V1Job(id="job-1", name="new-name", spec=V1JobSpec())
+
+    job.rename("new-name")
+
+    job._standalone_job_api.rename_job.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", new_name="new-name"
+    )
+    assert job._name == "new-name"
+
+
+def test_rename_raises_on_empty_name():
+    job = _bare_job("old-name")
+
+    with pytest.raises(ValueError, match="A job needs to have a name!"):
+        job.rename("")
+
+
+def test_rename_raises_when_name_unchanged():
+    job = _bare_job("same-name")
+
+    with pytest.raises(ValueError, match="Job is already named 'same-name'"):
+        job.rename("same-name")
+
+
+def test_rename_warns_when_server_changes_name():
+    import warnings
+
+    job = _bare_job("old-name")
+    job._standalone_job_api.rename_job.return_value = V1Job(id="job-1", name="suffixed-name-1", spec=V1JobSpec())
+
+    with pytest.warns(UserWarning, match="was already taken"):
+        job.rename("suffixed-name")
+
+    assert job._name == "suffixed-name-1"
+
+
+def test_set_tags_calls_api():
+    job = _bare_job("tagged-job")
+
+    job.set_tags(["prod", "gpu"])
+
+    job._standalone_job_api.set_tags.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", tags=["prod", "gpu"]
+    )
+
+
+def test_set_tags_calls_mmt_api_for_multi_machine():
+    job = _bare_job("mmt-job", num_machines=4)
+    job._mmt_job_api = mock.MagicMock()
+
+    job.set_tags(["prod"])
+
+    job._mmt_job_api.set_tags.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", tags=["prod"]
+    )
+
+
+def test_add_tag_appends_to_existing_tags():
+    job = _bare_job("tagged-job")
+    job._prevent_refetch_latest = True
+    job._job.tags = [V1WorkloadTag(id="t-1", name="prod")]
+
+    job.add_tag("gpu")
+
+    job._standalone_job_api.set_tags.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", tags=["prod", "gpu"]
+    )
+
+
+def test_add_tag_noops_when_tag_already_present():
+    job = _bare_job("tagged-job")
+    job._prevent_refetch_latest = True
+    job._job.tags = [V1WorkloadTag(id="t-1", name="prod"), V1WorkloadTag(id="t-2", name="gpu")]
+
+    job.add_tag("prod")
+
+    job._standalone_job_api.set_tags.assert_not_called()
+
+
+def test_remove_tag_removes_existing_tag():
+    job = _bare_job("tagged-job")
+    job._prevent_refetch_latest = True
+    job._job.tags = [V1WorkloadTag(id="t-1", name="prod"), V1WorkloadTag(id="t-2", name="gpu")]
+
+    job.remove_tag("prod")
+
+    job._standalone_job_api.set_tags.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", tags=["gpu"]
+    )
+
+
+def test_remove_tag_noops_when_tag_not_present():
+    job = _bare_job("tagged-job")
+    job._prevent_refetch_latest = True
+    job._job.tags = [V1WorkloadTag(id="t-1", name="prod")]
+
+    job.remove_tag("gpu")
+
+    job._standalone_job_api.set_tags.assert_not_called()

@@ -8,9 +8,12 @@ def register_commands(group: click.Group) -> None:
     from lightning_sdk.cli.job.inspect import inspect_job
     from lightning_sdk.cli.job.list import list_jobs
     from lightning_sdk.cli.job.logs import logs_job
+    from lightning_sdk.cli.job.rename import rename_job
     from lightning_sdk.cli.job.run import run_job
     from lightning_sdk.cli.job.ssh import ssh_job
     from lightning_sdk.cli.job.stop import stop_job
+    from lightning_sdk.cli.job.tag import tag_job
+    from lightning_sdk.cli.job.untag import untag_job
     from lightning_sdk.cli.utils.delete import register_delete_command
     from lightning_sdk.job import Job
 
@@ -18,8 +21,11 @@ def register_commands(group: click.Group) -> None:
     group.add_command(list_jobs, name="list")
     group.add_command(inspect_job, name="inspect")
     group.add_command(logs_job, name="logs")
+    group.add_command(rename_job, name="rename")
     group.add_command(ssh_job, name="ssh")
     group.add_command(stop_job, name="stop")
+    group.add_command(tag_job, name="tag")
+    group.add_command(untag_job, name="untag")
     register_delete_command(
         group,
         Job,

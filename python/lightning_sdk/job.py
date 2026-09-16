@@ -501,6 +501,75 @@ class Job(metaclass=TrackCallsMeta):
         self._name = submitted.name
         return self
 
+    def rename(self, new_name: str) -> None:
+        """Rename this job.
+
+        Only standalone jobs (not launched from a deployment, MMT, or pipeline) can be
+        renamed. An empty name or a name that matches the current name raises a
+        ``ValueError``.
+
+        Args:
+            new_name: The new name for the job.
+
+        Raises:
+            ValueError: If ``new_name`` is empty or matches the current name.
+        """
+        if not new_name:
+            raise ValueError("A job needs to have a name!")
+        if new_name == self._name:
+            raise ValueError(f"Job is already named '{new_name}'")
+
+        updated = self._standalone_job_api.rename_job(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            new_name=new_name,
+        )
+        if updated.name != new_name:
+            warnings.warn(
+                f"Job name '{new_name}' was already taken in this teamspace; "
+                f"the job was renamed to '{updated.name}' instead.",
+                stacklevel=2,
+            )
+        self._attach_job(updated)
+        self._name = updated.name
+
+    def set_tags(self, tags: List[str]) -> None:
+        """Replace this job's tag set with the given tag names.
+
+        Tags that don't exist in the teamspace yet are created, which requires
+        permission to create tags. Pass an empty list to remove all tags.
+
+        Args:
+            tags: The list of tag names to set on the job.
+        """
+        self._job_api.set_tags(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            tags=tags,
+        )
+
+    def add_tag(self, tag: str) -> None:
+        """Add a tag to this job without affecting existing tags.
+
+        Args:
+            tag: The tag name to add.
+        """
+        current = list(self.tags)
+        if tag not in current:
+            current.append(tag)
+            self.set_tags(current)
+
+    def remove_tag(self, tag: str) -> None:
+        """Remove a tag from this job without affecting other tags.
+
+        Args:
+            tag: The tag name to remove.
+        """
+        current = list(self.tags)
+        if tag in current:
+            current.remove(tag)
+            self.set_tags(current)
+
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Completed, Status.Failed):
             return
