@@ -232,12 +232,15 @@ class Billing:
 
     def get_detailed_activity_json(
         self,
+        target_path: Optional[Union[str, Path]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
     ) -> str:
         """Get the detailed billing activity report for the configured scope as a JSON string.
 
         Args:
+            target_path: If given, also write the JSON string to this local filesystem path.
+                Otherwise, nothing is written to disk.
             filters: Optional filters to narrow down the report.
             cursor: Optional pagination cursor to continue a previous query.
 
@@ -249,6 +252,7 @@ class Billing:
 
         return self._billing_api.get_detailed_activity_json(
             org_id=self._org.id,
+            target_path=target_path,
             project_ids=self._project_ids(),
             resource_types=filters.resource_types,
             resource_ids=filters.resource_ids,
@@ -263,12 +267,15 @@ class Billing:
 
     def get_summary_activity_json(
         self,
+        target_path: Optional[Union[str, Path]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
     ) -> str:
         """Get the summarized billing activity report for the configured scope as a JSON string.
 
         Args:
+            target_path: If given, also write the JSON string to this local filesystem path.
+                Otherwise, nothing is written to disk.
             filters: Optional filters to narrow down the report.
             cursor: Optional pagination cursor to continue a previous query.
 
@@ -280,6 +287,7 @@ class Billing:
 
         return self._billing_api.get_summary_activity_json(
             org_id=self._org.id,
+            target_path=target_path,
             project_ids=self._project_ids(),
             resource_types=filters.resource_types,
             resource_ids=filters.resource_ids,

@@ -424,6 +424,7 @@ class BillingApi:
     def get_detailed_activity_json(
         self,
         org_id: str,
+        target_path: Optional[Union[str, Path]] = None,
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         resource_ids: Optional[List[str]] = None,
@@ -439,10 +440,11 @@ class BillingApi:
 
         Downloads the same report as :meth:`download_detailed_activity_csv` to a temporary file,
         converts it to JSON (a list of row objects), removes the temporary file, and returns the
-        JSON string.
+        JSON string. If ``target_path`` is given, the JSON is also written there.
 
         Args:
             org_id: ID of the organization to query.
+            target_path: If given, also write the JSON string to this local filesystem path.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
             resource_types: Restrict to these resource types. If omitted, all resource types
@@ -480,13 +482,19 @@ class BillingApi:
                 search_after_resource_id=search_after_resource_id,
                 search_after_resource_type=search_after_resource_type,
             )
-            return _convert_csv_to_json(tmp_csv_path)
+            json_str = _convert_csv_to_json(tmp_csv_path)
         finally:
             tmp_csv_path.unlink(missing_ok=True)
+
+        if target_path is not None:
+            Path(target_path).write_text(json_str)
+
+        return json_str
 
     def get_summary_activity_json(
         self,
         org_id: str,
+        target_path: Optional[Union[str, Path]] = None,
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         resource_ids: Optional[List[str]] = None,
@@ -502,10 +510,11 @@ class BillingApi:
 
         Downloads the same report as :meth:`download_summary_activity_csv` to a temporary file,
         converts it to JSON (a list of row objects), removes the temporary file, and returns the
-        JSON string.
+        JSON string. If ``target_path`` is given, the JSON is also written there.
 
         Args:
             org_id: ID of the organization to query.
+            target_path: If given, also write the JSON string to this local filesystem path.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
             resource_types: Restrict to these resource types. If omitted, all resource types
@@ -543,9 +552,14 @@ class BillingApi:
                 search_after_resource_id=search_after_resource_id,
                 search_after_resource_type=search_after_resource_type,
             )
-            return _convert_csv_to_json(tmp_csv_path)
+            json_str = _convert_csv_to_json(tmp_csv_path)
         finally:
             tmp_csv_path.unlink(missing_ok=True)
+
+        if target_path is not None:
+            Path(target_path).write_text(json_str)
+
+        return json_str
 
     def get_activity(
         self,
