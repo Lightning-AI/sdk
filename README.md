@@ -312,7 +312,7 @@ requirements and development checks.
 
 # Community
 
-Read the [SDK docs](https://lightning.ai/docs/overview/sdk-reference), build on
+Read the [SDK docs](https://lightning.ai/docs/platform/developers/sdk), build on
 [Lightning AI](https://lightning.ai), and use the Apache-2.0 license terms in
 [`LICENSE`](LICENSE).
 
