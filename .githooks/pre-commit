@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+HOOK_FILE="$(git rev-parse --git-common-dir)/hooks/pre-commit"
+
+if [ ! -f "$HOOK_FILE" ] || ! grep -q "pre_commit" "$HOOK_FILE" 2>/dev/null; then
+    if command -v pre-commit > /dev/null; then
+        git config --local --unset core.hooksPath 2>/dev/null || true
+        pre-commit install --config "$REPO_ROOT/.pre-commit-config.yaml"
+        git config --local core.hooksPath .githooks
+    else
+        echo "pre-commit not found. Install it (pip install pre-commit) or use --no-verify." 1>&2
+        exit 1
+    fi
+fi
+
+exec "$HOOK_FILE" "$@"
