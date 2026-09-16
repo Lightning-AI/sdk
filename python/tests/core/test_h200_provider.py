@@ -119,7 +119,7 @@ def test_deployment_create_and_update_resolve_h200(cloud_api, cloud):
         )
 
 
-@pytest.mark.parametrize("driver, expected", [(None, "lit-h200-141gb-1"), ("AWS", "lit-h200x-1")])
+@pytest.mark.parametrize(("driver", "expected"), [(None, "lit-h200-141gb-1"), ("AWS", "lit-h200x-1")])
 def test_machine_config_respects_driver_override(cloud_api, driver, expected):
     cloud_api.get_cloud_account_non_org.return_value = SimpleNamespace(
         spec=SimpleNamespace(driver=driver, machine_v1=object())
