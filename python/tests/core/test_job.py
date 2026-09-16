@@ -175,7 +175,6 @@ def test_submit_calls_max_runtime_noop_warning(_get_org_id_mock):
     job._teamspace = mock.MagicMock(id="ts-abc", default_cloud_account="c-abc")
     job._cloud_account_api = mock.MagicMock()
     job._cloud_account_api.resolve_cloud_account.return_value = "c-abc"
-    job._cloud_account_api.resolve_machine.return_value = Machine.CPU
     job._standalone_job_api = mock.MagicMock()
     job._standalone_job_api.submit_job.return_value = V1Job(name="test-job", spec=V1JobSpec())
     job._mmt_job_api = mock.MagicMock()

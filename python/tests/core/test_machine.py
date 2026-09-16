@@ -236,17 +236,17 @@ def test_machine_from_accelerator(accelerator: V1ClusterAccelerator, expected_ma
 
 
 @pytest.mark.parametrize("count", [1, 2, 4, 8])
-@pytest.mark.parametrize("baremetal", [False, True])
-def test_h200_machine_round_trip(count, baremetal):
+@pytest.mark.parametrize("spelling", ["lit-h200-{count}", "lit-h200-141gb-{count}", "lit-h200x-{count}"])
+def test_h200_machine_round_trip(count, spelling):
     from lightning_sdk.api.utils import _machine_to_compute_name
 
     suffix = "" if count == 1 else f"_X_{count}"
     name = f"H200{suffix}"
-    slug = f"lit-h200-141gb-{count}" if baremetal else f"lit-h200x-{count}"
+    slug = spelling.format(count=count)
     machine = getattr(Machine, name)
     assert machine.family == "H200"
     assert machine.accelerator_count == count
-    assert _machine_to_compute_name(machine) == f"lit-h200x-{count}"
+    assert _machine_to_compute_name(machine) == f"lit-h200-{count}"
     assert Machine.from_str(name) is machine
     assert Machine.from_str(slug) is machine
     assert Machine.from_str("unknown", slug) is machine
@@ -255,22 +255,40 @@ def test_h200_machine_round_trip(count, baremetal):
         accelerator_type="GPU",
         family="H200",
         resources=V1Resources(gpu=count),
-        slug=f"gpu-h200-{count}x" if baremetal else "provider-specific",
+        slug="provider-specific",
         slug_multi_cloud=slug,
-        instance_id=slug if baremetal else "provider-instance",
+        instance_id=slug,
     )
     assert Machine._from_accelerator(accelerator) is machine
 
 
-@pytest.mark.parametrize("count", [1, 2, 4, 8])
-def test_h200_machine_from_provider_accelerator(count):
-    accelerator = V1ClusterAccelerator(
-        accelerator_type="GPU",
-        family="H200",
-        resources=V1Resources(gpu=count),
-        slug="provider-specific",
-        slug_multi_cloud="",
-        instance_id="provider-instance",
-    )
-    suffix = "" if count == 1 else f"_X_{count}"
-    assert Machine._from_accelerator(accelerator) is getattr(Machine, f"H200{suffix}")
+@pytest.mark.parametrize("count", [1, 8])
+@pytest.mark.parametrize("spelling", ["lit-b200-{count}", "lit-b200x-{count}"])
+def test_b200_machine_round_trip(count, spelling):
+    from lightning_sdk.api.utils import _machine_to_compute_name
+
+    name = "B200" if count == 1 else f"B200_X_{count}"
+    machine = getattr(Machine, name)
+    assert machine.family == "B200"
+    assert machine.accelerator_count == count
+    assert _machine_to_compute_name(machine) == f"lit-b200-{count}"
+    assert Machine.from_str(spelling.format(count=count)) is machine
+
+
+def test_b200_baremetal_slug_round_trip():
+    assert Machine.from_str("lit-b200-180gb-8") is Machine.B200_X_8
+
+
+@pytest.mark.parametrize(("family", "counts"), [("H200", [1, 2, 4, 8]), ("B200", [1, 8])])
+def test_machine_from_provider_specific_accelerator(family, counts):
+    for count in counts:
+        accelerator = V1ClusterAccelerator(
+            accelerator_type="GPU",
+            family=family,
+            resources=V1Resources(gpu=count),
+            slug="provider-specific",
+            slug_multi_cloud="",
+            instance_id="provider-instance",
+        )
+        suffix = "" if count == 1 else f"_X_{count}"
+        assert Machine._from_accelerator(accelerator) is getattr(Machine, f"{family}{suffix}")

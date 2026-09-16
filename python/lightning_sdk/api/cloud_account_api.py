@@ -1,6 +1,5 @@
-from dataclasses import replace
 from functools import lru_cache
-from typing import TYPE_CHECKING, Dict, List, Optional, Union, overload
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import (
@@ -13,7 +12,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 
 if TYPE_CHECKING:
-    from lightning_sdk.machine import CloudProvider, Machine
+    from lightning_sdk.machine import CloudProvider
     from lightning_sdk.teamspace import ConnectionType
 
 # Preferred cloud-account IDs when multiple accounts share a provider alias.
@@ -35,38 +34,6 @@ class CloudAccountApi:
 
     def __init__(self) -> None:
         self._client = cached_lightning_client()
-
-    @overload
-    def resolve_machine(self, machine: "Machine", teamspace_id: str, cloud_account_id: Optional[str]) -> "Machine":
-        ...
-
-    @overload
-    def resolve_machine(
-        self, machine: str, teamspace_id: str, cloud_account_id: Optional[str]
-    ) -> Union["Machine", str]:
-        ...
-
-    def resolve_machine(
-        self, machine: Union["Machine", str], teamspace_id: str, cloud_account_id: Optional[str]
-    ) -> Union["Machine", str]:
-        from lightning_sdk.machine import Machine
-
-        resolved = Machine._predefined_from_str(machine) if isinstance(machine, str) else machine
-        if resolved is None or resolved.family != "H200" or resolved.instance_type is not None:
-            return machine
-        if cloud_account_id is None:
-            return machine
-        cloud = self.get_cloud_account_non_org(teamspace_id, cloud_account_id)
-        if (
-            cloud is not None
-            and cloud.spec is not None
-            and (
-                cloud.spec.driver == V1CloudProvider.MACHINE
-                or (not cloud.spec.driver and cloud.spec.machine_v1 is not None)
-            )
-        ):
-            return replace(resolved, instance_type=f"lit-h200-141gb-{resolved.accelerator_count}")
-        return resolved
 
     def get_cloud_account(self, cloud_account_id: str, teamspace_id: str, org_id: str) -> Externalv1Cluster:
         """Return a cloud account by ID.

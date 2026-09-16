@@ -99,15 +99,17 @@ const (
 	// MachineH100X8 selects an eight-GPU NVIDIA H100 machine.
 	MachineH100X8 Machine = "lit-h100-8"
 	// MachineH200 selects a single-GPU NVIDIA H200 machine.
-	MachineH200 Machine = "lit-h200x-1"
-	// MachineH200X2 selects a 2-GPU NVIDIA H200 machine.
-	MachineH200X2 Machine = "lit-h200x-2"
-	// MachineH200X4 selects a 4-GPU NVIDIA H200 machine.
-	MachineH200X4 Machine = "lit-h200x-4"
+	MachineH200 Machine = "lit-h200-1"
+	// MachineH200X2 selects a two-GPU NVIDIA H200 machine.
+	MachineH200X2 Machine = "lit-h200-2"
+	// MachineH200X4 selects a four-GPU NVIDIA H200 machine.
+	MachineH200X4 Machine = "lit-h200-4"
 	// MachineH200X8 selects an eight-GPU NVIDIA H200 machine.
-	MachineH200X8 Machine = "lit-h200x-8"
+	MachineH200X8 Machine = "lit-h200-8"
+	// MachineB200 selects a single-GPU NVIDIA B200 machine.
+	MachineB200 Machine = "lit-b200-1"
 	// MachineB200X8 selects an eight-GPU NVIDIA B200 machine.
-	MachineB200X8 Machine = "lit-b200x-8"
+	MachineB200X8 Machine = "lit-b200-8"
 )
 
 var knownMachineNames = map[string]Machine{
@@ -154,10 +156,11 @@ var knownMachineNames = map[string]Machine{
 	"h100_x_2":        MachineH100X2,
 	"h100_x_4":        MachineH100X4,
 	"h100_x_8":        MachineH100X8,
+	"h200":            MachineH200,
 	"h200_x_2":        MachineH200X2,
 	"h200_x_4":        MachineH200X4,
-	"h200":            MachineH200,
 	"h200_x_8":        MachineH200X8,
+	"b200":            MachineB200,
 	"b200_x_8":        MachineB200X8,
 }
 
@@ -216,14 +219,22 @@ var knownMachineSlugs = map[string]Machine{
 	"lit-h100-2":                  MachineH100X2,
 	"lit-h100-4":                  MachineH100X4,
 	"lit-h100-8":                  MachineH100X8,
-	"lit-h200x-2":                 MachineH200X2,
-	"lit-h200x-4":                 MachineH200X4,
+	"lit-h200-1":                  MachineH200,
+	"lit-h200-2":                  MachineH200X2,
+	"lit-h200-4":                  MachineH200X4,
+	"lit-h200-8":                  MachineH200X8,
 	"lit-h200-141gb-1":            MachineH200,
 	"lit-h200-141gb-2":            MachineH200X2,
 	"lit-h200-141gb-4":            MachineH200X4,
 	"lit-h200-141gb-8":            MachineH200X8,
 	"lit-h200x-1":                 MachineH200,
+	"lit-h200x-2":                 MachineH200X2,
+	"lit-h200x-4":                 MachineH200X4,
 	"lit-h200x-8":                 MachineH200X8,
+	"lit-b200-1":                  MachineB200,
+	"lit-b200-8":                  MachineB200X8,
+	"lit-b200-180gb-8":            MachineB200X8,
+	"lit-b200x-1":                 MachineB200,
 	"lit-b200x-8":                 MachineB200X8,
 }
 
@@ -272,11 +283,9 @@ func machineSlugForFamily(family string, count int64) string {
 		case 16:
 			return "cpu-16"
 		}
-	case "T4", "L4", "L40S", "A100", "H100":
+	case "T4", "L4", "L40S", "A100", "H100", "H200":
 		switch count {
-		case 1:
-			return fmt.Sprintf("lit-%s-1", strings.ToLower(normalized))
-		case 2, 4, 8:
+		case 1, 2, 4, 8:
 			return fmt.Sprintf("lit-%s-%d", strings.ToLower(normalized), count)
 		}
 	case "RTX_PRO":
@@ -292,14 +301,10 @@ func machineSlugForFamily(family string, count int64) string {
 		}
 	case "A10G":
 		return "lit-a10g-1"
-	case "H200":
-		switch count {
-		case 1, 2, 4, 8:
-			return fmt.Sprintf("lit-h200x-%d", count)
-		}
 	case "B200":
-		if count == 8 {
-			return "lit-b200x-8"
+		switch count {
+		case 1, 8:
+			return fmt.Sprintf("lit-b200-%d", count)
 		}
 	}
 	return ""

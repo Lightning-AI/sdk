@@ -1,6 +1,23 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, ClassVar, Optional, Tuple
+from typing import Any, ClassVar, Dict, Optional, Tuple
+
+# Backend slugs that name a machine already listed below. Baremetal SKUs carry the GPU
+# memory in the slug, and H200/B200 shipped with the count spelled "x8" before the slugs
+# were unified. Mirrors LegacyMultiCloudSlugs in grid's pkg/cluster/accelerators.go.
+_SLUG_ALIASES: Dict[str, str] = {
+    "lit-h200-141gb-1": "lit-h200-1",
+    "lit-h200-141gb-2": "lit-h200-2",
+    "lit-h200-141gb-4": "lit-h200-4",
+    "lit-h200-141gb-8": "lit-h200-8",
+    "lit-h200x-1": "lit-h200-1",
+    "lit-h200x-2": "lit-h200-2",
+    "lit-h200x-4": "lit-h200-4",
+    "lit-h200x-8": "lit-h200-8",
+    "lit-b200-180gb-8": "lit-b200-8",
+    "lit-b200x-1": "lit-b200-1",
+    "lit-b200x-8": "lit-b200-8",
+}
 
 
 class CloudProvider(Enum):
@@ -108,6 +125,8 @@ class Machine:
     H200_X_2: ClassVar["Machine"]
     H200_X_4: ClassVar["Machine"]
     H200_X_8: ClassVar["Machine"]
+
+    B200: ClassVar["Machine"]
     B200_X_8: ClassVar["Machine"]
 
     # Specialized Machines
@@ -161,11 +180,10 @@ class Machine:
         )
         for m in possible_values:
             for machine_id in [machine, *additional_machine_ids]:
-                if machine_id and machine_id in (
+                if machine_id and _SLUG_ALIASES.get(machine_id, machine_id) in (
                     getattr(m, "name", None),
                     getattr(m, "instance_type", None),
                     getattr(m, "slug", None),
-                    f"lit-h200-141gb-{m.accelerator_count}" if m.family == "H200" else None,
                 ):
                     return m
         return None
@@ -209,17 +227,13 @@ class Machine:
         else:
             accelerator_resources_count = accelerator.resources.cpu
 
-        identifiers = (
+        return Machine.from_str(
             accelerator.slug_multi_cloud,
             accelerator.slug,
             accelerator.instance_id,
             accelerator.secondary_instance_id,
+            f"lit-{accelerator.family.lower()}-{accelerator_resources_count}",
         )
-        predefined = Machine._predefined_from_str(*identifiers)
-        if predefined is not None:
-            return predefined
-        family_slug = "h200x" if accelerator.family == "H200" else accelerator.family.lower()
-        return Machine.from_str(*identifiers, f"lit-{family_slug}-{accelerator_resources_count}")
 
 
 # CPU machines
@@ -298,12 +312,13 @@ Machine.H100_X_2 = Machine(name="H100_X_2", slug="lit-h100-2", family="H100", ac
 Machine.H100_X_4 = Machine(name="H100_X_4", slug="lit-h100-4", family="H100", accelerator_count=4)
 Machine.H100_X_8 = Machine(name="H100_X_8", slug="lit-h100-8", family="H100", accelerator_count=8)
 # available H200 machines
-Machine.H200 = Machine(name="H200", slug="lit-h200x-1", family="H200", accelerator_count=1)
-Machine.H200_X_2 = Machine(name="H200_X_2", slug="lit-h200x-2", family="H200", accelerator_count=2)
-Machine.H200_X_4 = Machine(name="H200_X_4", slug="lit-h200x-4", family="H200", accelerator_count=4)
-Machine.H200_X_8 = Machine(name="H200_X_8", slug="lit-h200x-8", family="H200", accelerator_count=8)
+Machine.H200 = Machine(name="H200", slug="lit-h200-1", family="H200", accelerator_count=1)
+Machine.H200_X_2 = Machine(name="H200_X_2", slug="lit-h200-2", family="H200", accelerator_count=2)
+Machine.H200_X_4 = Machine(name="H200_X_4", slug="lit-h200-4", family="H200", accelerator_count=4)
+Machine.H200_X_8 = Machine(name="H200_X_8", slug="lit-h200-8", family="H200", accelerator_count=8)
 # available B200 machines
-Machine.B200_X_8 = Machine(name="B200_X_8", slug="lit-b200x-8", family="B200", accelerator_count=8)
+Machine.B200 = Machine(name="B200", slug="lit-b200-1", family="B200", accelerator_count=1)
+Machine.B200_X_8 = Machine(name="B200_X_8", slug="lit-b200-8", family="B200", accelerator_count=8)
 
 
 DEFAULT_MACHINE = Machine.CPU.name

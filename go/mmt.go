@@ -365,15 +365,11 @@ func RunMMT(name string, numMachines int64, machine Machine, command string, opt
 		s := models.V1MultiMachineJobFaultToleranceStrategyMULTIMACHINEJOBFAULTTOLERANCESTRATEGYRECREATEALLNODES
 		faultTolerance = &models.V1MultiMachineJobFaultTolerance{Strategy: &s}
 	}
-	computeName, err := resolveMachineComputeName(api, string(machine), resolved.teamspaceID, resolved.cloud)
-	if err != nil {
-		return nil, err
-	}
 	body := &models.JobsServiceCreateMultiMachineJobBody{
 		ClusterID:      resolved.cloud,
 		Machines:       numMachines,
 		Name:           name,
-		Spec:           mmtJobSpec(numMachines, computeName, command, resolved),
+		Spec:           mmtJobSpec(numMachines, string(machine), command, resolved),
 		MaxRunAttempts: resolved.maxRunAttempts,
 		FaultTolerance: faultTolerance,
 	}

@@ -38,6 +38,7 @@ def test_machines_output() -> None:
 │ A100_X_2        │
 │ A100_X_4        │
 │ A100_X_8        │
+│ B200            │
 │ B200_X_8        │
 │ CPU             │
 │ CPU_SMALL       │

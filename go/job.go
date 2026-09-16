@@ -388,13 +388,9 @@ func RunJob(name string, machine Machine, command string, opts ...JobOptions) (*
 	if resolved.teamspaceID == "" {
 		return nil, errors.New("job run requires teamspace or studio")
 	}
-	computeName, err := resolveMachineComputeName(api, string(machine), resolved.teamspaceID, resolved.cloud)
-	if err != nil {
-		return nil, err
-	}
 	body := &models.JobsServiceCreateJobBody{
 		Name: name,
-		Spec: jobSpec(computeName, command, resolved),
+		Spec: jobSpec(string(machine), command, resolved),
 	}
 	resp, err := api.JobsService.JobsServiceCreateJob(
 		jobs_service.NewJobsServiceCreateJobParamsWithContext(context.Background()).WithProjectID(resolved.teamspaceID).WithBody(body),

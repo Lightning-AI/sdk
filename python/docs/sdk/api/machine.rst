@@ -4,10 +4,10 @@ Machine
 .. currentmodule:: lightning_sdk
 
 H200 machines support one, two, four, and eight GPUs via ``Machine.H200``,
-``Machine.H200_X_2``, ``Machine.H200_X_4``, and ``Machine.H200_X_8``.
+``Machine.H200_X_2``, ``Machine.H200_X_4``, and ``Machine.H200_X_8``; B200 machines
+support one and eight via ``Machine.B200`` and ``Machine.B200_X_8``.
 Use the same names on every cloud, or ``--gpus H200:2`` in the CLI.
-The SDK selects the Lightning Compute identifier internally for machine-provider
-cloud accounts. Availability depends on the selected cloud and account.
+Availability depends on the selected cloud and account.
 
 .. autoclass:: Machine
    :members:

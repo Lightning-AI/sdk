@@ -313,8 +313,6 @@ class Deployment(metaclass=TrackCallsMeta):
         if machine is None:
             machine = Machine.CPU
 
-        machine = self._cloud_account_api.resolve_machine(machine, self._teamspace.id, _cloud_account)
-
         if commands is not None and command is not None:
             raise ValueError("Commands and command are mutually exclusive")
 
@@ -450,15 +448,6 @@ class Deployment(metaclass=TrackCallsMeta):
 
         if command is None and commands is not None:
             command = compose_commands(commands)
-
-        if machine is None and cloud_account:
-            current_machine = Machine._predefined_from_str(self._deployment.spec.instance_name)
-            if current_machine is not None and current_machine.family == "H200":
-                machine = current_machine
-        if machine is not None:
-            machine = self._cloud_account_api.resolve_machine(
-                machine, self._teamspace.id, cloud_account or self._deployment.spec.cluster_id
-            )
 
         self._deployment = self._deployment_api.update_deployment(
             self._deployment,
