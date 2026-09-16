@@ -32,8 +32,7 @@ def tag_job(name: str, tags: tuple[str, ...], teamspace: Optional[str] = None, a
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job(name, resolved_teamspace)
-    for tag in tags:
-        job.add_tag(tag)
+    job.set_tags(list({*job.tags, *tags}))
     current_tags = list(job.tags)
     if as_json:
         echo_json({"name": job.name, "tags": current_tags})

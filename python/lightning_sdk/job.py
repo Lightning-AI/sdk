@@ -519,6 +519,8 @@ class Job(metaclass=TrackCallsMeta):
         if new_name == self._name:
             raise ValueError(f"Job is already named '{new_name}'")
 
+        if self.is_multi_machine:
+            raise NotImplementedError("Renaming multi-machine jobs is not supported")
         updated = self._standalone_job_api.rename_job(
             job_id=self._guaranteed_job.id,
             teamspace_id=self._teamspace.id,

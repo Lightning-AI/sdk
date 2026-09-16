@@ -32,8 +32,7 @@ def untag_job(name: str, tags: tuple[str, ...], teamspace: Optional[str] = None,
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     job = resolve_job(name, resolved_teamspace)
-    for tag in tags:
-        job.remove_tag(tag)
+    job.set_tags([t for t in job.tags if t not in tags])
     current_tags = list(job.tags)
     if as_json:
         echo_json({"name": job.name, "tags": current_tags})
