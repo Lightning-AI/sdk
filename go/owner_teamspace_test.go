@@ -211,6 +211,108 @@ func TestTeamspaceListsStudiosJobsAndMMTs(t *testing.T) {
 	}
 }
 
+func TestTeamspaceListsJobsAndMMTsByTag(t *testing.T) {
+	var seen []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seen = append(seen, r.Method+" "+r.URL.Path)
+		w.Header().Set("Content-Type", "application/json")
+		switch r.Method + " " + r.URL.Path {
+		case "GET /v1/projects/project-1/workload-tags":
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"tags": []map[string]any{
+					{"id": "tag-1", "name": "prod"},
+					{"id": "tag-2", "name": "team a"},
+				},
+			})
+		case "GET /v1/projects/project-1/jobs":
+			assert.Equal(t, "true", r.URL.Query().Get("standalone"))
+			assert.Equal(t, []string{"tag-2", "tag-1"}, r.URL.Query()["tagIds"])
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"jobs": []map[string]any{
+					{"id": "job-1", "name": "train", "projectId": "project-1", "tags": []map[string]any{{"id": "tag-2", "name": "team a"}}},
+				},
+			})
+		case "GET /v1/projects/project-1/multi-machine-jobs":
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"multiMachineJobs": []map[string]any{
+					{"id": "mmt-1", "name": "tagged", "projectId": "project-1", "tags": []map[string]any{{"id": "tag-1", "name": "prod"}}},
+					{"id": "mmt-2", "name": "other-tag", "projectId": "project-1", "tags": []map[string]any{{"id": "tag-3", "name": "staging"}}},
+					{"id": "mmt-3", "name": "untagged", "projectId": "project-1"},
+				},
+			})
+		default:
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		}
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	ts := mustTeamspace(t, "project-1", "default", "alice")
+
+	jobs, err := ts.Jobs(lit.WithJobTags("  Team   A ", "PROD"))
+	require.NoError(t, err)
+	require.Len(t, jobs, 1)
+	assert.Equal(t, "job-1", jobs[0].ID())
+	assert.Equal(t, []string{"team a"}, jobs[0].Tags())
+
+	mmts, err := ts.MMTs(lit.WithJobTags("prod"))
+	require.NoError(t, err)
+	require.Len(t, mmts, 1)
+	assert.Equal(t, "mmt-1", mmts[0].ID())
+	assert.Equal(t, []string{"prod"}, mmts[0].Tags())
+
+	tags, err := ts.Tags()
+	require.NoError(t, err)
+	assert.Equal(t, []string{"prod", "team a"}, tags)
+
+	assert.Equal(t, []string{
+		"GET /v1/projects/project-1/workload-tags",
+		"GET /v1/projects/project-1/jobs",
+		"GET /v1/projects/project-1/workload-tags",
+		"GET /v1/projects/project-1/multi-machine-jobs",
+		"GET /v1/projects/project-1/workload-tags",
+	}, seen)
+}
+
+func TestTeamspaceJobsRejectsUnknownTagBeforeListing(t *testing.T) {
+	tags := []map[string]any{
+		{"id": "tag-2", "name": "staging"},
+		{"id": "tag-1", "name": "prod"},
+	}
+	var seen []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seen = append(seen, r.Method+" "+r.URL.Path)
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method+" "+r.URL.Path != "GET /v1/projects/project-1/workload-tags" {
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{"tags": tags})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	ts := mustTeamspace(t, "project-1", "default", "alice")
+
+	_, err := ts.Jobs(lit.WithJobTags("nightly"))
+	assert.EqualError(t, err, `teamspace has no tag named "nightly"; tags in this teamspace: prod, staging`)
+
+	_, err = ts.MMTs(lit.WithJobTags("nightly"))
+	assert.EqualError(t, err, `teamspace has no tag named "nightly"; tags in this teamspace: prod, staging`)
+
+	tags = nil
+	_, err = ts.Jobs(lit.WithJobTags("prod"))
+	assert.EqualError(t, err, `teamspace has no tag named "prod"; tags in this teamspace: none`)
+
+	assert.Equal(t, []string{
+		"GET /v1/projects/project-1/workload-tags",
+		"GET /v1/projects/project-1/workload-tags",
+		"GET /v1/projects/project-1/workload-tags",
+	}, seen)
+}
+
 func TestTeamspaceRefreshAndCloudAccountsUseGeneratedRoutes(t *testing.T) {
 	var seen []string
 
