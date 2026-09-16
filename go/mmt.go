@@ -301,10 +301,7 @@ func (m *MMT) CurrentRunAttempt() int64 {
 // Tags returns the teamspace tags applied to this multi-machine job, in the
 // order the platform returns them.
 func (m *MMT) Tags() []string {
-	if m == nil {
-		return nil
-	}
-	return append([]string(nil), m.tags...)
+	return slices.Clone(m.tags)
 }
 
 // GetMMT returns an existing MMT by name or ID.
