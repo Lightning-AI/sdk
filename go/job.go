@@ -334,10 +334,7 @@ func (j *Job) CurrentRunAttempt() int64 {
 // Tags returns the teamspace tags applied to this job, in the order the
 // platform returns them.
 func (j *Job) Tags() []string {
-	if j == nil {
-		return nil
-	}
-	return append([]string(nil), j.tags...)
+	return slices.Clone(j.tags)
 }
 
 // GetJob returns an existing job by name or ID.
