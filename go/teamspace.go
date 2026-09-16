@@ -440,15 +440,35 @@ func (t *Teamspace) Studios() ([]*Studio, error) {
 	}
 }
 
-// Jobs lists single-machine jobs in the teamspace.
-func (t *Teamspace) Jobs() ([]*Job, error) {
-	return t.ListJobs()
+// ListJobsOption filters the jobs returned by Teamspace.Jobs, Teamspace.MMTs
+// and Teamspace.MultiMachineJobs.
+type ListJobsOption func(*listJobsOptions)
+
+type listJobsOptions struct {
+	tags []string
 }
 
-// ListJobs lists single-machine jobs in the teamspace. When tags are given,
-// only jobs carrying at least one of them are returned. Tag names are matched
-// the way the platform stores them: lowercased with whitespace collapsed.
-func (t *Teamspace) ListJobs(tags ...string) ([]*Job, error) {
+// WithJobTags keeps only jobs carrying at least one of the given tags. Tag
+// names are matched the way the platform stores them: lowercased with
+// whitespace collapsed. Naming a tag the teamspace does not define is an error.
+func WithJobTags(tags ...string) ListJobsOption {
+	return func(o *listJobsOptions) {
+		o.tags = append(o.tags, tags...)
+	}
+}
+
+func applyListJobsOptions(opts []ListJobsOption) listJobsOptions {
+	var o listJobsOptions
+	for _, opt := range opts {
+		if opt != nil {
+			opt(&o)
+		}
+	}
+	return o
+}
+
+// Jobs lists single-machine jobs in the teamspace.
+func (t *Teamspace) Jobs(opts ...ListJobsOption) ([]*Job, error) {
 	id, err := t.requireID("jobs")
 	if err != nil {
 		return nil, err
@@ -457,7 +477,7 @@ func (t *Teamspace) ListJobs(tags ...string) ([]*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	tagIDs, err := resolveTagIDs(api, id, tags)
+	tagIDs, err := resolveTagIDs(api, id, applyListJobsOptions(opts).tags)
 	if err != nil {
 		return nil, err
 	}
@@ -495,19 +515,12 @@ func (t *Teamspace) ListJobs(tags ...string) ([]*Job, error) {
 }
 
 // MMTs lists multi-machine jobs in the teamspace.
-func (t *Teamspace) MMTs() ([]*MMT, error) {
-	return t.ListMMTs()
+func (t *Teamspace) MMTs(opts ...ListJobsOption) ([]*MMT, error) {
+	return t.MultiMachineJobs(opts...)
 }
 
 // MultiMachineJobs lists multi-machine jobs in the teamspace.
-func (t *Teamspace) MultiMachineJobs() ([]*MMT, error) {
-	return t.ListMMTs()
-}
-
-// ListMMTs lists multi-machine jobs in the teamspace. When tags are given,
-// only jobs carrying at least one of them are returned. Tag names are matched
-// the way the platform stores them: lowercased with whitespace collapsed.
-func (t *Teamspace) ListMMTs(tags ...string) ([]*MMT, error) {
+func (t *Teamspace) MultiMachineJobs(opts ...ListJobsOption) ([]*MMT, error) {
 	id, err := t.requireID("multi-machine jobs")
 	if err != nil {
 		return nil, err
@@ -516,7 +529,7 @@ func (t *Teamspace) ListMMTs(tags ...string) ([]*MMT, error) {
 	if err != nil {
 		return nil, err
 	}
-	tagIDs, err := resolveTagIDs(api, id, tags)
+	tagIDs, err := resolveTagIDs(api, id, applyListJobsOptions(opts).tags)
 	if err != nil {
 		return nil, err
 	}

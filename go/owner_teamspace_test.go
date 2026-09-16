@@ -250,13 +250,13 @@ func TestTeamspaceListsJobsAndMMTsByTag(t *testing.T) {
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 
-	jobs, err := ts.ListJobs("  Team   A ", "PROD")
+	jobs, err := ts.Jobs(lit.WithJobTags("  Team   A ", "PROD"))
 	require.NoError(t, err)
 	require.Len(t, jobs, 1)
 	assert.Equal(t, "job-1", jobs[0].ID())
 	assert.Equal(t, []string{"team a"}, jobs[0].Tags())
 
-	mmts, err := ts.ListMMTs("prod")
+	mmts, err := ts.MMTs(lit.WithJobTags("prod"))
 	require.NoError(t, err)
 	require.Len(t, mmts, 1)
 	assert.Equal(t, "mmt-1", mmts[0].ID())
@@ -275,7 +275,7 @@ func TestTeamspaceListsJobsAndMMTsByTag(t *testing.T) {
 	}, seen)
 }
 
-func TestTeamspaceListJobsRejectsUnknownTagBeforeListing(t *testing.T) {
+func TestTeamspaceJobsRejectsUnknownTagBeforeListing(t *testing.T) {
 	tags := []map[string]any{
 		{"id": "tag-2", "name": "staging"},
 		{"id": "tag-1", "name": "prod"},
@@ -296,14 +296,14 @@ func TestTeamspaceListJobsRejectsUnknownTagBeforeListing(t *testing.T) {
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 
-	_, err := ts.ListJobs("nightly")
+	_, err := ts.Jobs(lit.WithJobTags("nightly"))
 	assert.EqualError(t, err, `teamspace has no tag named "nightly"; tags in this teamspace: prod, staging`)
 
-	_, err = ts.ListMMTs("nightly")
+	_, err = ts.MMTs(lit.WithJobTags("nightly"))
 	assert.EqualError(t, err, `teamspace has no tag named "nightly"; tags in this teamspace: prod, staging`)
 
 	tags = nil
-	_, err = ts.ListJobs("prod")
+	_, err = ts.Jobs(lit.WithJobTags("prod"))
 	assert.EqualError(t, err, `teamspace has no tag named "prod"; tags in this teamspace: none`)
 
 	assert.Equal(t, []string{

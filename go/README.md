@@ -139,7 +139,7 @@ fmt.Println(job.Name(), job.Status(), job.Machine())
 ## List jobs by tag
 
 ```go
-jobs, err := teamspace.ListJobs("prod", "nightly")
+jobs, err := teamspace.Jobs(lit.WithJobTags("prod", "nightly"))
 if err != nil {
 	log.Fatal(err)
 }
@@ -149,8 +149,8 @@ for _, job := range jobs {
 }
 ```
 
-Jobs carrying at least one of the tags are returned. `teamspace.ListMMTs(...)`
-filters multi-machine jobs the same way, and `teamspace.Tags()` lists the tags
+Jobs carrying at least one of the tags are returned. `teamspace.MMTs(...)`
+accepts the same option for multi-machine jobs, and `teamspace.Tags()` lists the tags
 defined in the teamspace.
 
 # API shape
