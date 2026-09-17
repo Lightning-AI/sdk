@@ -250,8 +250,8 @@ class Billing:
         target_path: Optional[Union[str, Path]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> str:
-        """Get the detailed billing activity report for the configured scope as a JSON string.
+    ) -> list[dict[str, str]]:
+        """Get the detailed billing activity report for the configured scope as a Python object.
 
         Args:
             target_path: If given, also write the JSON string to this local filesystem path.
@@ -260,7 +260,7 @@ class Billing:
             cursor: Optional pagination cursor to continue a previous query.
 
         Returns:
-            str: The JSON string representation of the detailed activity report.
+            list[dict[str, str]]: The detailed activity report, as a list of row objects.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()
@@ -285,8 +285,8 @@ class Billing:
         target_path: Optional[Union[str, Path]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> str:
-        """Get the summarized billing activity report for the configured scope as a JSON string.
+    ) -> list[dict[str, str]]:
+        """Get the summarized billing activity report for the configured scope as a Python object.
 
         Args:
             target_path: If given, also write the JSON string to this local filesystem path.
@@ -295,7 +295,7 @@ class Billing:
             cursor: Optional pagination cursor to continue a previous query.
 
         Returns:
-            str: The JSON string representation of the summary activity report.
+            list[dict[str, str]]: The summary activity report, as a list of row objects.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()

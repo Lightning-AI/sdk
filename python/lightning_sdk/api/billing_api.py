@@ -436,12 +436,13 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> str:
-        """Get the detailed billing activity report as a JSON string.
+    ) -> list[dict[str, str]]:
+        """Get the detailed billing activity report as a Python object.
 
         Downloads the same report as :meth:`download_detailed_activity_csv` to a temporary file,
-        converts it to JSON (a list of row objects), removes the temporary file, and returns the
-        JSON string. If ``target_path`` is given, the JSON is also written there.
+        converts it to JSON (a list of row objects), removes the temporary file, and returns it
+        parsed as a Python object. If ``target_path`` is given, the JSON string is also written
+        there.
 
         Args:
             org_id: ID of the organization to query.
@@ -465,7 +466,7 @@ class BillingApi:
                 ``search_after``. Required alongside ``search_after_resource_id``.
 
         Returns:
-            str: The JSON string representation of the detailed activity report.
+            list[dict[str, str]]: The detailed activity report, as a list of row objects.
         """
         tmp_fd, tmp_csv_name = tempfile.mkstemp(suffix=".csv")
         os.close(tmp_fd)
@@ -492,7 +493,7 @@ class BillingApi:
         if target_path is not None:
             Path(target_path).write_text(json_str)
 
-        return json_str
+        return json.loads(json_str)
 
     def get_summary_activity_json(
         self,
@@ -508,12 +509,13 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> str:
-        """Get the summarized billing activity report as a JSON string.
+    ) -> list[dict[str, str]]:
+        """Get the summarized billing activity report as a Python object.
 
         Downloads the same report as :meth:`download_summary_activity_csv` to a temporary file,
-        converts it to JSON (a list of row objects), removes the temporary file, and returns the
-        JSON string. If ``target_path`` is given, the JSON is also written there.
+        converts it to JSON (a list of row objects), removes the temporary file, and returns it
+        parsed as a Python object. If ``target_path`` is given, the JSON string is also written
+        there.
 
         Args:
             org_id: ID of the organization to query.
@@ -537,7 +539,7 @@ class BillingApi:
                 ``search_after``. Required alongside ``search_after_resource_id``.
 
         Returns:
-            str: The JSON string representation of the summary activity report.
+            list[dict[str, str]]: The summary activity report, as a list of row objects.
         """
         tmp_fd, tmp_csv_name = tempfile.mkstemp(suffix=".csv")
         os.close(tmp_fd)
@@ -564,7 +566,7 @@ class BillingApi:
         if target_path is not None:
             Path(target_path).write_text(json_str)
 
-        return json_str
+        return json.loads(json_str)
 
     def get_activity(
         self,

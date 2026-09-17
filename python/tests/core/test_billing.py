@@ -74,11 +74,8 @@ def test_init_with_org_and_teamspace(mock_billing_api):
     other_org = _make_org("org-2")
     teamspace = _make_teamspace("ts-1", other_org)
 
-    billing = Billing(org=org, teamspace=teamspace)
-
-    # explicit org wins even though the teamspace belongs to a different org
-    assert billing._org is org
-    assert billing._teamspaces == [teamspace]
+    with pytest.raises(ValueError, match="belongs to organization"):
+        Billing(org=org, teamspace=teamspace)
 
 
 @mock.patch("lightning_sdk.billing._resolve_teamspace", return_value=None)
