@@ -55,6 +55,9 @@ Operational notes
 - ``MMT.run`` creates a new multi-machine job; ``MMT("name", teamspace=...)``
   fetches an existing one.
 - ``mmt.machines`` returns the per-machine job handles for detailed inspection.
+- Each machine writes its own artifacts, kept in the teamspace drive under
+  ``jobs/<machine name>``. There is no combined folder for the run, so download
+  them one machine at a time. The jobs tutorial covers reading artifacts.
 - ``MMT.run`` rejects ``num_machines`` values less than two.
 - Studio-backed MMT runs must use a Studio in the same teamspace and cloud
   account as the run.
