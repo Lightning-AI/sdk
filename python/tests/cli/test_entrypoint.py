@@ -52,7 +52,6 @@ def test_explicit_login_can_start_browser_authentication(monkeypatch, tmp_path) 
     def _complete_browser_auth(auth: Auth) -> None:
         nonlocal browser_auth_started
         browser_auth_started = True
-        auth.user_id = "user-id"
         auth.api_key = "api-key"
 
     monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
@@ -70,7 +69,6 @@ def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -
     def _complete_browser_auth(auth: Auth) -> None:
         nonlocal browser_auth_starts
         browser_auth_starts += 1
-        auth.user_id = "user-id"
         auth.api_key = "api-key"
 
     monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
@@ -80,7 +78,7 @@ def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -
     assert result.exit_code == 1
     assert "Run `lightning login`" in str(result.exception)
     assert browser_auth_starts == 0
-    assert Auth().authenticate().startswith("Basic ")
+    assert Auth().authenticate().startswith("Bearer ")
     assert browser_auth_starts == 1
 
 
