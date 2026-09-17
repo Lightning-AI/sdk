@@ -612,6 +612,55 @@ func (j *Job) ArtifactPath() string {
 	return fmt.Sprintf("/teamspace/jobs/%s/artifacts", j.name)
 }
 
+// artifactsDrivePath returns this job's artifact folder in the teamspace
+// drive, or "" when the job keeps no artifacts.
+func (j *Job) artifactsDrivePath() string {
+	if j == nil {
+		return ""
+	}
+	if j.image != "" {
+		return strings.TrimPrefix(artifactDestinationPath(j.artifactsDestination), "/teamspace/")
+	}
+	if j.name == "" {
+		return ""
+	}
+	return "jobs/" + j.name
+}
+
+// ArtifactsURI returns the lit:// address of this job's artifacts, which is
+// what "lightning ls" and "lightning cp" take. It is empty when the job keeps
+// no artifacts, which is the case for a container job launched without an
+// artifacts destination.
+func (j *Job) ArtifactsURI() string {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" || j.ownerName == "" || j.teamspace == "" {
+		return ""
+	}
+	return fmt.Sprintf("lit://%s/%s/%s", j.ownerName, j.teamspace, drivePath)
+}
+
+// ListArtifacts lists what this job wrote to the teamspace drive. path selects
+// a subfolder of the job's artifacts, or is empty for all of them. It returns
+// no entries when the job keeps no artifacts.
+func (j *Job) ListArtifacts(path string, recursive bool) ([]FileEntry, error) {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return nil, nil
+	}
+	return listDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), recursive)
+}
+
+// DownloadArtifacts downloads what this job wrote into targetDir. path selects
+// a subfolder of the job's artifacts, or is empty for all of them.
+func (j *Job) DownloadArtifacts(targetDir, path string) error {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return fmt.Errorf("job %q keeps no artifacts: a job running a container image only keeps them when it is "+
+			"launched with an artifacts destination pointing at a teamspace folder or connection", j.Name())
+	}
+	return downloadDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), targetDir)
+}
+
 // SharePath returns the share path for the job when available.
 func (j *Job) SharePath() string {
 	return ""

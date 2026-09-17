@@ -132,6 +132,49 @@ func TestMMTExposesFilesystemPaths(t *testing.T) {
 	}
 }
 
+func TestMMTArtifactsFanOutOverMachines(t *testing.T) {
+	var listed []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if strings.Contains(r.URL.Path, "/artifacts/trees/") {
+			listed = append(listed, r.URL.Path)
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"tree": []map[string]any{{"path": "last.ckpt", "type": "blob", "size": 4}},
+			})
+			return
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"jobs": []map[string]any{
+				{"id": "job-0", "name": "dist-train-0", "projectId": "project-1", "multiMachineJobId": "mmt-1"},
+				{"id": "job-1", "name": "dist-train-1", "projectId": "project-1", "multiMachineJobId": "mmt-1"},
+			},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	m, err := lit.GetMMT("dist-train", lit.MMTOptions{ID: "mmt-1", Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
+	require.NoErrorf(t, err,
+		"GetMMT returned error")
+
+	// An MMT has no single artifact folder; every machine writes its own.
+	assert.Empty(t, m.ArtifactsURI())
+
+	entries, err := m.ListArtifacts("", false)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
+
+	var paths []string
+	for _, entry := range entries {
+		paths = append(paths, entry.Path)
+	}
+	assert.Equal(t, []string{"dist-train-0/last.ckpt", "dist-train-1/last.ckpt"}, paths)
+	assert.Equal(t, []string{
+		"/v1/projects/project-1/artifacts/trees/jobs/dist-train-0",
+		"/v1/projects/project-1/artifacts/trees/jobs/dist-train-1",
+	}, listed)
+}
+
 func TestMMTUsesDefaultClientAndV2GeneratedRoutes(t *testing.T) {
 	var seen []string
 

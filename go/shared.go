@@ -45,6 +45,57 @@ type FileEntry struct {
 	LastModified string
 }
 
+// joinDrivePath appends a caller-supplied subfolder to a drive path.
+func joinDrivePath(drivePath, subPath string) string {
+	subPath = strings.Trim(subPath, "/")
+	if subPath == "" {
+		return drivePath
+	}
+	return drivePath + "/" + subPath
+}
+
+// listDriveFolder lists one folder of a teamspace's drive by teamspace ID,
+// for the resources that address the drive without resolving a Teamspace.
+func listDriveFolder(teamspaceID, drivePath string, recursive bool) ([]FileEntry, error) {
+	if teamspaceID == "" {
+		return nil, errors.New("listing drive files requires a teamspace")
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return nil, err
+	}
+	query := url.Values{}
+	if recursive {
+		query.Set("recursive", "true")
+	}
+	return listArtifactFolder(api, teamspaceArtifactTreePath(teamspaceID, drivePath), query)
+}
+
+// downloadDriveFolder is the download counterpart of listDriveFolder.
+func downloadDriveFolder(teamspaceID, drivePath, targetPath string) error {
+	if teamspaceID == "" {
+		return errors.New("downloading drive files requires a teamspace")
+	}
+	if targetPath == "" {
+		targetPath = drivePath
+	}
+	api, err := sdkclient.NewRaw()
+	if err != nil {
+		return err
+	}
+	treeQuery := url.Values{}
+	treeQuery.Set("recursive", "true")
+	return downloadArtifactFolder(
+		api,
+		drivePath,
+		targetPath,
+		teamspaceArtifactTreePath(teamspaceID, drivePath),
+		func(remoteFilePath string) string { return teamspaceArtifactBlobPath(teamspaceID, remoteFilePath) },
+		treeQuery,
+		url.Values{},
+	)
+}
+
 // listArtifactFolder lists every entry under treePath, following the
 // listing's cursor pages. query gains the cursor between pages.
 func listArtifactFolder(api *sdkclient.RawClient, treePath string, query url.Values) ([]FileEntry, error) {

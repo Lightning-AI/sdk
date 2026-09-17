@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestJobExposesStartAndStopTimes(t *testing.T) {
@@ -163,6 +164,78 @@ func TestJobExposesFilesystemPaths(t *testing.T) {
 	if got, want := persistedImageJob.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
 		assert.Fail(t, fmt.Sprintf("persisted image job artifact path = %q, want %q", got, want))
 	}
+}
+
+func TestJobArtifactsURIAddressesTheDrive(t *testing.T) {
+	teamspace := mustTeamspace(t, "project-1", "default", "alice")
+
+	studioJob, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio", Teamspace: teamspace})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	// The drive serves a job's files directly under its name, one folder
+	// above where ArtifactPath says a studio mounts them.
+	assert.Equal(t, "lit://alice/default/jobs/train", studioJob.ArtifactsURI())
+
+	persistedImageJob, err := lit.GetJob("image-train", lit.JobOptions{
+		ID:                   "job-image-persisted",
+		Teamspace:            teamspace,
+		Image:                "ubuntu:22.04",
+		ArtifactsDestination: "efs:data:outputs/run-1",
+	})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Equal(t, "lit://alice/default/efs_connections/data/outputs/run-1", persistedImageJob.ArtifactsURI())
+
+	imageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image", Teamspace: teamspace, Image: "ubuntu:22.04"})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Empty(t, imageJob.ArtifactsURI())
+}
+
+func TestJobArtifactHelpersUseTheDrivePath(t *testing.T) {
+	var listed []string
+	server := sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+		listed = append(listed, r.URL.Path+"?"+r.URL.RawQuery)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{"tree": []map[string]any{}})
+	})
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	job, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio", Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+
+	_, err = job.ListArtifacts("", false)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
+	_, err = job.ListArtifacts("checkpoints", true)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
+
+	assert.Equal(t, []string{
+		"/v1/projects/project-1/artifacts/trees/jobs/train?",
+		"/v1/projects/project-1/artifacts/trees/jobs/train/checkpoints?recursive=true",
+	}, listed)
+}
+
+func TestJobWithoutArtifactsListsNothingAndRefusesToDownload(t *testing.T) {
+	job, err := lit.GetJob("image-train", lit.JobOptions{
+		ID:        "job-image",
+		Teamspace: mustTeamspace(t, "project-1", "default", "alice"),
+		Image:     "ubuntu:22.04",
+	})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+
+	entries, err := job.ListArtifacts("", false)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
+	assert.Empty(t, entries)
+
+	err = job.DownloadArtifacts(t.TempDir(), "")
+	require.Error(t, err,
+		"DownloadArtifacts should refuse a job that keeps no artifacts")
+	assert.Contains(t, err.Error(), "keeps no artifacts")
 }
 
 func TestJobUsesDefaultClientAndV2GeneratedRoutes(t *testing.T) {
