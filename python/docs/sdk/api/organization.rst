@@ -19,6 +19,10 @@ Organization
    :members:
    :show-inheritance:
 
+.. autoclass:: lightning_sdk.api.billing_api.ActivityFileFormat
+   :members:
+   :show-inheritance:
+
 .. autoclass:: lightning_sdk.api.billing_api.BillingActivity
    :members:
    :show-inheritance:
