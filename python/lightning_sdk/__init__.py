@@ -1,6 +1,7 @@
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.agents import Agent
 from lightning_sdk.api.billing_api import (
+    ActivityFileFormat,
     BillingActivity,
     BillingActivityFilterValues,
     BillingDailyUsage,
@@ -25,6 +26,7 @@ from lightning_sdk.vm import VM
 
 __all__ = [
     "MMT",
+    "ActivityFileFormat",
     "Agent",
     "BillingActivity",
     "BillingActivityCursor",

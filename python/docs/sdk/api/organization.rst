@@ -19,26 +19,26 @@ Organization
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.ActivityFileFormat
+.. autoclass:: ActivityFileFormat
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.BillingActivity
+.. autoclass:: BillingActivity
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.BillingActivityFilterValues
+.. autoclass:: BillingActivityFilterValues
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.BillingResourceUsage
+.. autoclass:: BillingResourceUsage
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.BillingDailyUsage
+.. autoclass:: BillingDailyUsage
    :members:
    :show-inheritance:
 
-.. autoclass:: lightning_sdk.api.billing_api.BillingNamedFilterValue
+.. autoclass:: BillingNamedFilterValue
    :members:
    :show-inheritance:
