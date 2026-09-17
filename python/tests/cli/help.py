@@ -9,6 +9,8 @@ from click.testing import CliRunner
 from lightning_sdk.cli.entrypoint import main_cli
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+# OSC sequences (rich's hyperlinks) carry a per-render id, so they have to go too.
+_OSC_ESCAPE_RE = re.compile(r"\x1b\][^\x1b\x07]*(?:\x1b\\|\x07)")
 _CLI_NAMES = {"lightning", "lightning-sdk"}
 
 
@@ -40,7 +42,7 @@ def run_cli(command: str) -> SimpleNamespace:
 def command_text(command: str) -> str:
     result = run_cli(command)
     text = result.stdout + result.stderr
-    text = _ANSI_ESCAPE_RE.sub("", text)
+    text = _OSC_ESCAPE_RE.sub("", _ANSI_ESCAPE_RE.sub("", text))
 
     for marker in ("\nError in sys.excepthook:", "\nOriginal exception was:"):
         if marker in text:

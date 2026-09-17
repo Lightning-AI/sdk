@@ -24,6 +24,11 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_severit
 from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type import V1SDKCommandHistoryType
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
+HELP_OPTION_NAMES = ["-h", "--help"]
+# Commands that forward unknown options verbatim keep `--help` only: `-h` belongs to the
+# program they wrap (`sandbox run <id> du -h /data`, `vm ssh <vm> -h`).
+LONG_HELP_OPTION_NAMES = ["--help"]
+
 
 def _auth_header_without_browser() -> Optional[str]:
     auth = Auth()
@@ -120,6 +125,23 @@ def _gradient_rule(width: int) -> "Text":
     return t
 
 
+class _HelpOptionNamesMixin:
+    """Makes ``-h`` an alias of ``--help``, except where ``-h`` is the wrapped program's.
+
+    A command with ``ignore_unknown_options`` passes flags it does not recognise straight to
+    something else, so claiming ``-h`` there would swallow a common flag (``du -h``, ``ssh -h``).
+    Those commands are pinned to ``--help`` explicitly, because leaving the setting off would
+    inherit ``-h`` from the parent context instead.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        context_settings = dict(kwargs.get("context_settings") or {})
+        default = LONG_HELP_OPTION_NAMES if context_settings.get("ignore_unknown_options") else HELP_OPTION_NAMES
+        context_settings.setdefault("help_option_names", default)
+        kwargs["context_settings"] = context_settings
+        super().__init__(*args, **kwargs)
+
+
 class _GradientHelpMixin:
     """Injects the cyan→purple gradient rule after the header on every --help page."""
 
@@ -151,7 +173,7 @@ class _GradientHelpMixin:
         dynamic_self.format_epilog(ctx, formatter)
 
 
-class LightningCommand(_GradientHelpMixin, rich_click.RichCommand):
+class LightningCommand(_HelpOptionNamesMixin, _GradientHelpMixin, rich_click.RichCommand):
     """RichCommand with the gradient rule after the header."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -163,13 +185,13 @@ class LightningCommand(_GradientHelpMixin, rich_click.RichCommand):
                 parameter._custom_shell_complete = complete_teamspace
 
 
-class LightningGroup(_GradientHelpMixin, rich_click.RichGroup):  # type: ignore[misc]
+class LightningGroup(_HelpOptionNamesMixin, _GradientHelpMixin, rich_click.RichGroup):  # type: ignore[misc]
     """RichGroup with the gradient rule after the header."""
 
     command_class = LightningCommand
 
 
-class CommandLoggingGroup(rich_click.RichGroup):
+class CommandLoggingGroup(_HelpOptionNamesMixin, rich_click.RichGroup):
     def format_help(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
         from rich.padding import Padding
         from rich.table import Table
