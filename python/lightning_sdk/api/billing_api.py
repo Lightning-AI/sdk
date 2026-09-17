@@ -362,10 +362,10 @@ class BillingApi:
         """
         format = ActivityFileFormat(format)  # noqa: A001
 
-        if format is ActivityFileFormat.CSV and target_path is None:
-            raise ValueError("'target_path' is required when 'format' is ActivityFileFormat.CSV.")
-
         if format is ActivityFileFormat.CSV:
+            if target_path is None:
+                raise ValueError("'target_path' is required when 'format' is ActivityFileFormat.CSV.")
+
             self._download_activity_csv(
                 endpoint,
                 target_path=target_path,
