@@ -122,7 +122,7 @@ class BillingActivity:
         usage: Per-resource usage/cost, one entry per filtered resource.
         daily_usage: Usage/cost aggregated by day.
         has_more: Whether more entries are available past ``limit``. If ``True``, pass a
-            :class:`~lightning_sdk.billing.BillingActivityCursor` built from ``search_after``,
+            :class:`~lightning_sdk.organization.BillingActivityCursor` built from ``search_after``,
             ``search_after_resource_id``, and ``search_after_resource_type`` to fetch the next page.
         search_after: Cursor value to continue pagination from. Only set when ``limit`` was
             provided on the request.

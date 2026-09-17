@@ -2,14 +2,20 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.billing import Billing, BillingActivityCursor, BillingActivityFilters
-from lightning_sdk.organization import Organization
+from lightning_sdk.organization import BillingActivityCursor, BillingActivityFilters, Organization
 from lightning_sdk.teamspace import Teamspace
 
 
 def _make_org(org_id="org-1"):
     org = mock.MagicMock(spec=Organization)
     org.id = org_id
+    org.name = org_id
+    org._billing_api = mock.MagicMock()
+    org._resolve_billing_teamspaces = Organization._resolve_billing_teamspaces.__get__(org)
+    org.get_activity = Organization.get_activity.__get__(org)
+    org.get_activity_filter_values = Organization.get_activity_filter_values.__get__(org)
+    org.download_detailed_activity_csv = Organization.download_detailed_activity_csv.__get__(org)
+    org.download_summary_activity_csv = Organization.download_summary_activity_csv.__get__(org)
     return org
 
 
@@ -20,106 +26,62 @@ def _make_teamspace(teamspace_id, owner):
     return teamspace
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_requires_org_or_org_owned_teamspace(mock_billing_api):
-    with pytest.raises(ValueError, match="Could not resolve an organization"):
-        Billing()
+# ---- _resolve_billing_teamspaces ----------------------------------------
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_rejects_both_teamspace_and_teamspaces(mock_billing_api):
+def test_resolve_billing_teamspaces_rejects_both_teamspace_and_teamspaces():
     org = _make_org()
     teamspace = _make_teamspace("ts-1", org)
 
     with pytest.raises(ValueError, match="at most one"):
-        Billing(org=org, teamspace=teamspace, teamspaces=[teamspace])
+        org._resolve_billing_teamspaces(teamspace=teamspace, teamspaces=[teamspace])
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_with_org_only(mock_billing_api):
+def test_resolve_billing_teamspaces_none_when_no_teamspaces():
     org = _make_org("org-1")
 
-    billing = Billing(org=org)
-
-    assert billing._org is org
-    assert billing._teamspaces == []
+    assert org._resolve_billing_teamspaces() == []
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_with_single_teamspace_infers_org(mock_billing_api):
-    org = _make_org("org-1")
-    teamspace = _make_teamspace("ts-1", org)
-
-    billing = Billing(teamspace=teamspace)
-
-    assert billing._org is org
-    assert billing._teamspaces == [teamspace]
-
-
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_with_multiple_teamspaces(mock_billing_api):
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_resolve_billing_teamspaces_from_teamspaces(mock_resolve_teamspace):
     org = _make_org("org-1")
     ts1 = _make_teamspace("ts-1", org)
     ts2 = _make_teamspace("ts-2", org)
+    mock_resolve_teamspace.side_effect = [ts1, ts2]
 
-    billing = Billing(teamspaces=[ts1, ts2])
-
-    assert billing._org is org
-    assert billing._teamspaces == [ts1, ts2]
+    assert org._resolve_billing_teamspaces(teamspaces=[ts1, ts2]) == [ts1, ts2]
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_with_org_and_teamspace(mock_billing_api):
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_resolve_billing_teamspaces_rejects_teamspace_from_other_org(mock_resolve_teamspace):
     org = _make_org("org-1")
     other_org = _make_org("org-2")
     teamspace = _make_teamspace("ts-1", other_org)
+    mock_resolve_teamspace.return_value = teamspace
 
     with pytest.raises(ValueError, match="belongs to organization"):
-        Billing(org=org, teamspace=teamspace)
+        org._resolve_billing_teamspaces(teamspace=teamspace)
 
 
-@mock.patch("lightning_sdk.billing._resolve_teamspace", return_value=None)
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_init_raises_if_teamspace_cannot_be_resolved(mock_billing_api, mock_resolve_teamspace):
+@mock.patch("lightning_sdk.organization._resolve_teamspace", return_value=None)
+def test_resolve_billing_teamspaces_raises_if_teamspace_cannot_be_resolved(mock_resolve_teamspace):
     org = _make_org("org-1")
 
     with pytest.raises(ValueError, match="Could not resolve teamspace"):
-        Billing(org=org, teamspace="missing-teamspace")
-
-
-# ---- _project_ids -----------------------------------------------------------
-
-
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_project_ids_none_when_no_teamspaces(mock_billing_api):
-    org = _make_org("org-1")
-    billing = Billing(org=org)
-
-    assert billing._project_ids() is None
-
-
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_project_ids_from_teamspaces(mock_billing_api):
-    org = _make_org("org-1")
-    ts1 = _make_teamspace("ts-1", org)
-    ts2 = _make_teamspace("ts-2", org)
-    billing = Billing(teamspaces=[ts1, ts2])
-
-    assert billing._project_ids() == ["ts-1", "ts-2"]
+        org._resolve_billing_teamspaces(teamspace="missing-teamspace")
 
 
 # ---- get_activity -------------------------------------------------------
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_get_activity_defaults(mock_billing_api):
+def test_get_activity_defaults():
     org = _make_org("org-1")
-    billing = Billing(org=org)
 
-    result = billing.get_activity()
+    result = org.get_activity()
 
-    assert result is billing._billing_api.get_activity.return_value
-    billing._billing_api.get_activity.assert_called_once_with(
+    assert result is org._billing_api.get_activity.return_value
+    org._billing_api.get_activity.assert_called_once_with(
         org_id="org-1",
         project_ids=None,
         resource_types=None,
@@ -134,20 +96,20 @@ def test_get_activity_defaults(mock_billing_api):
     )
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_get_activity_with_filters_and_cursor(mock_billing_api):
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_get_activity_with_filters_and_cursor(mock_resolve_teamspace):
     org = _make_org("org-1")
     ts1 = _make_teamspace("ts-1", org)
-    billing = Billing(teamspace=ts1)
+    mock_resolve_teamspace.return_value = ts1
 
     filters = BillingActivityFilters(resource_types=["Studio"], resource_ids=["res-1"], user_ids=["user-1"], limit=5)
     cursor = BillingActivityCursor(
         search_after="2026-01-01", search_after_resource_id="res-1", search_after_resource_type="Studio"
     )
 
-    billing.get_activity(filters=filters, cursor=cursor)
+    org.get_activity(teamspace=ts1, filters=filters, cursor=cursor)
 
-    billing._billing_api.get_activity.assert_called_once_with(
+    org._billing_api.get_activity.assert_called_once_with(
         org_id="org-1",
         project_ids=["ts-1"],
         resource_types=["Studio"],
@@ -165,50 +127,35 @@ def test_get_activity_with_filters_and_cursor(mock_billing_api):
 # ---- get_activity_filter_values -----------------------------------------
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_get_activity_filter_values_org_scope(mock_billing_api):
+def test_get_activity_filter_values_org_scope():
     org = _make_org("org-1")
-    billing = Billing(org=org)
 
-    result = billing.get_activity_filter_values()
+    result = org.get_activity_filter_values()
 
-    assert result is billing._billing_api.get_activity_filter_values.return_value
-    billing._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id=None)
+    assert result is org._billing_api.get_activity_filter_values.return_value
+    org._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id=None)
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_get_activity_filter_values_single_teamspace_scope(mock_billing_api):
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_get_activity_filter_values_single_teamspace_scope(mock_resolve_teamspace):
     org = _make_org("org-1")
     teamspace = _make_teamspace("ts-1", org)
-    billing = Billing(teamspace=teamspace)
+    mock_resolve_teamspace.return_value = teamspace
 
-    billing.get_activity_filter_values()
+    org.get_activity_filter_values(teamspace=teamspace)
 
-    billing._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id="ts-1")
-
-
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_get_activity_filter_values_rejects_multiple_teamspaces(mock_billing_api):
-    org = _make_org("org-1")
-    ts1 = _make_teamspace("ts-1", org)
-    ts2 = _make_teamspace("ts-2", org)
-    billing = Billing(teamspaces=[ts1, ts2])
-
-    with pytest.raises(ValueError, match="only supports a single teamspace scope"):
-        billing.get_activity_filter_values()
+    org._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id="ts-1")
 
 
 # ---- download_detailed_activity_csv / download_summary_activity_csv -----
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_download_detailed_activity_csv_forwards_args(mock_billing_api):
+def test_download_detailed_activity_csv_forwards_args():
     org = _make_org("org-1")
-    billing = Billing(org=org)
 
-    billing.download_detailed_activity_csv("out.csv")
+    org.download_detailed_activity_csv("out.csv")
 
-    billing._billing_api.download_detailed_activity_csv.assert_called_once_with(
+    org._billing_api.download_detailed_activity_csv.assert_called_once_with(
         target_path="out.csv",
         org_id="org-1",
         project_ids=None,
@@ -224,16 +171,16 @@ def test_download_detailed_activity_csv_forwards_args(mock_billing_api):
     )
 
 
-@mock.patch("lightning_sdk.billing.BillingApi")
-def test_download_summary_activity_csv_forwards_args(mock_billing_api):
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_download_summary_activity_csv_forwards_args(mock_resolve_teamspace):
     org = _make_org("org-1")
     teamspace = _make_teamspace("ts-1", org)
-    billing = Billing(teamspace=teamspace)
+    mock_resolve_teamspace.return_value = teamspace
     filters = BillingActivityFilters(limit=100)
 
-    billing.download_summary_activity_csv("out.csv", filters=filters)
+    org.download_summary_activity_csv("out.csv", teamspace=teamspace, filters=filters)
 
-    billing._billing_api.download_summary_activity_csv.assert_called_once_with(
+    org._billing_api.download_summary_activity_csv.assert_called_once_with(
         target_path="out.csv",
         org_id="org-1",
         project_ids=["ts-1"],

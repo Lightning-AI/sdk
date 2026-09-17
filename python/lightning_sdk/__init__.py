@@ -8,7 +8,6 @@ from lightning_sdk.api.billing_api import (
     BillingResourceUsage,
 )
 from lightning_sdk.api.teamspace_api import SecretType
-from lightning_sdk.billing import Billing, BillingActivityCursor, BillingActivityFilters
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.deployment import Deployment
@@ -17,7 +16,7 @@ from lightning_sdk.job import Job
 from lightning_sdk.k8s_cluster import K8sCluster
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.mmt import MMT
-from lightning_sdk.organization import MonthlySummary, Organization
+from lightning_sdk.organization import BillingActivityCursor, BillingActivityFilters, MonthlySummary, Organization
 from lightning_sdk.status import Status
 from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
@@ -27,7 +26,6 @@ from lightning_sdk.vm import VM
 __all__ = [
     "MMT",
     "Agent",
-    "Billing",
     "BillingActivity",
     "BillingActivityCursor",
     "BillingActivityFilterValues",

@@ -51,7 +51,7 @@ Use :class:`~lightning_sdk.Teamspace`, :class:`~lightning_sdk.Organization`,
 and :class:`~lightning_sdk.User` when you need to resolve or switch the scope
 of an operation.
 
-Use :class:`~lightning_sdk.Billing` to query usage/cost activity for an
+Use :class:`~lightning_sdk.Organization` to query usage/cost activity for an
 organization, or one or more of its teamspaces, and to download or export
 that activity as a CSV or JSON report.
 
@@ -90,4 +90,3 @@ Reference Pages
    api/status
    api/models
    api/experiment
-   api/billing
