@@ -12,7 +12,7 @@ Three ways to get billing activity, at different grains:
       resource (e.g. a Studio or Job) can have many sessions in the queried range. Returns CSV
       or JSON depending on the ``format`` argument.
     - :meth:`BillingApi.get_resource_activity`: one row per resource that was active in the
-      queried range, with resolved names - a more concise view than the session-level report.
+      queried range, with resolved names, a more concise view than the session-level report.
       Returns CSV or JSON depending on the ``format`` argument.
 """
 
@@ -281,7 +281,7 @@ class BillingApi:
     :meth:`get_activity_filter_values`) with raw authenticated HTTP requests for the CSV
     download endpoints (:meth:`get_session_activity`, :meth:`get_resource_activity`), which
     aren't exposed by the generated client. Both return CSV or JSON depending on the ``format``
-    argument - the JSON variant is built on top of the CSV download, converting it in memory.
+    argument; the JSON variant is built on top of the CSV download, converting it in memory.
     """
 
     def __init__(self) -> None:
@@ -430,7 +430,7 @@ class BillingApi:
         """Get the session-level billing activity report, as CSV or JSON.
 
         One row per session. A resource (e.g. a Studio or Job) can have many sessions within
-        the queried time range, so this report is the finer-grained of the two - use
+        the queried time range, so this report is the finer-grained of the two; use
         :meth:`get_resource_activity` for one row per resource instead.
 
         Hits ``GET /v1/billing/usage-report/download/detailed`` with the same request shape as
@@ -446,9 +446,9 @@ class BillingApi:
 
         Args:
             org_id: ID of the organization to query.
-            format: File format to return the report in - CSV or JSON. Defaults to JSON.
+            format: File format to return the report in, CSV or JSON. Defaults to JSON.
             target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON - if given, the JSON string is also
+                is CSV. Optional when ``format`` is JSON; if given, the JSON string is also
                 written there.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
@@ -462,10 +462,10 @@ class BillingApi:
             end: Only include activity on or before this time. Defaults to resource deletion
                 time or now.
             limit: Maximum number of entries to return.
-            search_after: Pagination cursor - only include entries strictly after this time.
-            search_after_resource_id: Pagination cursor - resource ID to break ties with
+            search_after: Pagination cursor, only include entries strictly after this time.
+            search_after_resource_id: Pagination cursor, resource ID to break ties with
                 ``search_after``. Required alongside ``search_after_resource_type``.
-            search_after_resource_type: Pagination cursor - resource type to break ties with
+            search_after_resource_type: Pagination cursor, resource type to break ties with
                 ``search_after``. Required alongside ``search_after_resource_id``.
 
         Returns:
@@ -511,7 +511,7 @@ class BillingApi:
         """Get the resource-level billing activity report, as CSV or JSON.
 
         One row per resource (e.g. a Studio or Job) that was active in the queried time range,
-        rather than one row per session - use :meth:`get_session_activity` for the
+        rather than one row per session; use :meth:`get_session_activity` for the
         finer-grained, per-session breakdown of a resource's activity.
 
         Hits ``GET /v1/billing/usage-report/download/summary`` with the same request shape as
@@ -527,9 +527,9 @@ class BillingApi:
 
         Args:
             org_id: ID of the organization to query.
-            format: File format to return the report in - CSV or JSON. Defaults to JSON.
+            format: File format to return the report in, CSV or JSON. Defaults to JSON.
             target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON - if given, the JSON string is also
+                is CSV. Optional when ``format`` is JSON; if given, the JSON string is also
                 written there.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
@@ -543,10 +543,10 @@ class BillingApi:
             end: Only include activity on or before this time. Defaults to resource deletion
                 time or now.
             limit: Maximum number of entries to return.
-            search_after: Pagination cursor - only include entries strictly after this time.
-            search_after_resource_id: Pagination cursor - resource ID to break ties with
+            search_after: Pagination cursor, only include entries strictly after this time.
+            search_after_resource_id: Pagination cursor, resource ID to break ties with
                 ``search_after``. Required alongside ``search_after_resource_type``.
-            search_after_resource_type: Pagination cursor - resource type to break ties with
+            search_after_resource_type: Pagination cursor, resource type to break ties with
                 ``search_after``. Required alongside ``search_after_resource_id``.
 
         Returns:
@@ -590,7 +590,7 @@ class BillingApi:
         """Get billing activity for an organization, optionally scoped to specific teamspaces.
 
         Returns paginated, per-resource-per-day rollup rows keyed by raw IDs (no resolved
-        names) - the daily rollup billing activity endpoint. For a resolved-name, non-paginated
+        names); backed by the daily rollup billing activity endpoint. For a resolved-name, non-paginated
         report meant for reading or exporting, use :meth:`get_session_activity` (one row
         per session) or :meth:`get_resource_activity` (one row per resource) instead.
 
@@ -610,10 +610,10 @@ class BillingApi:
             end: Only include activity on or before this time. Defaults to resource deletion
                 time or now.
             limit: Maximum number of entries to return.
-            search_after: Pagination cursor - only include entries strictly after this time.
-            search_after_resource_id: Pagination cursor - resource ID to break ties with
+            search_after: Pagination cursor, only include entries strictly after this time.
+            search_after_resource_id: Pagination cursor, resource ID to break ties with
                 ``search_after``. Required alongside ``search_after_resource_type``.
-            search_after_resource_type: Pagination cursor - resource type to break ties with
+            search_after_resource_type: Pagination cursor, resource type to break ties with
                 ``search_after``. Required alongside ``search_after_resource_id``.
 
         Returns:

@@ -259,7 +259,7 @@ class Organization(Owner):
         """Get the session-level billing activity report for this organization, as CSV or JSON.
 
         One row per session. A resource (e.g. a Studio or Job) can have many sessions within
-        the queried time range, so this report is the finer-grained of the two - use
+        the queried time range, so this report is the finer-grained of the two; use
         :meth:`get_resource_activity` for one row per resource instead.
 
         Args:
@@ -309,7 +309,7 @@ class Organization(Owner):
         """Get the resource-level billing activity report for this organization, as CSV or JSON.
 
         One row per resource (e.g. a Studio or Job) that was active in the queried time range,
-        rather than one row per session - use :meth:`get_session_activity` for the
+        rather than one row per session; use :meth:`get_session_activity` for the
         finer-grained, per-session breakdown of a resource's activity.
 
         Args:
