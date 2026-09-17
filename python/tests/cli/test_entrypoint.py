@@ -8,7 +8,7 @@ from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login, main_cli
 from lightning_sdk.lightning_cloud.login import Auth
-from tests.cli.help import assert_help_contains, mock_command_logging, run_cli
+from tests.cli.help import assert_help_contains, command_text, mock_command_logging, run_cli
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _BOX_CHARS_RE = re.compile(r"[│╭╰╮─╯]")
@@ -222,6 +222,23 @@ def test_login_already_authed_can_get_username(monkeypatch):
     mock_auth_cls.assert_called_once()
     mock_auth_instance.clear.assert_not_called()
     mock_auth_instance.authenticate.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "lightning",
+        "lightning job",
+        "lightning job list",
+        "lightning jobs list",
+        "lightning login",
+        "lightning vm ssh",
+    ],
+)
+@mock_command_logging
+def test_short_help_flag_matches_long(command: str) -> None:
+    """`-h` is an alias of `--help` on every command and group."""
+    assert command_text(f"{command} -h") == command_text(f"{command} --help")
 
 
 @mock_command_logging
