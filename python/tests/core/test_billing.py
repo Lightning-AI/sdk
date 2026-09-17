@@ -1,3 +1,5 @@
+import io
+from datetime import datetime
 from unittest import mock
 
 import pytest
@@ -105,7 +107,7 @@ def test_get_activity_with_filters_and_cursor(mock_resolve_teamspace):
 
     filters = BillingActivityFilters(resource_types=["Studio"], resource_ids=["res-1"], user_ids=["user-1"], limit=5)
     cursor = BillingActivityCursor(
-        search_after="2026-01-01", search_after_resource_id="res-1", search_after_resource_type="Studio"
+        search_after=datetime(2026, 1, 1), search_after_resource_id="res-1", search_after_resource_type="Studio"
     )
 
     org.get_activity(teamspace=ts1, filters=filters, cursor=cursor)
@@ -119,7 +121,7 @@ def test_get_activity_with_filters_and_cursor(mock_resolve_teamspace):
         start=None,
         end=None,
         limit=5,
-        search_after="2026-01-01",
+        search_after=datetime(2026, 1, 1),
         search_after_resource_id="res-1",
         search_after_resource_type="Studio",
     )
@@ -153,13 +155,14 @@ def test_get_activity_filter_values_single_teamspace_scope(mock_resolve_teamspac
 
 def test_get_session_activity_forwards_args():
     org = _make_org("org-1")
+    writer = io.StringIO()
 
-    org.get_session_activity(format=ActivityFileFormat.CSV, target_path="out.csv")
+    org.get_session_activity(format=ActivityFileFormat.CSV, writer=writer)
 
     org._billing_api.get_session_activity.assert_called_once_with(
         org_id="org-1",
         format=ActivityFileFormat.CSV,
-        target_path="out.csv",
+        writer=writer,
         project_ids=None,
         resource_types=None,
         resource_ids=None,
@@ -175,13 +178,14 @@ def test_get_session_activity_forwards_args():
 
 def test_get_session_activity_defaults_to_json():
     org = _make_org("org-1")
+    writer = io.StringIO()
 
-    org.get_session_activity()
+    org.get_session_activity(writer=writer)
 
     org._billing_api.get_session_activity.assert_called_once_with(
         org_id="org-1",
         format=ActivityFileFormat.JSON,
-        target_path=None,
+        writer=writer,
         project_ids=None,
         resource_types=None,
         resource_ids=None,
@@ -201,15 +205,14 @@ def test_get_resource_activity_forwards_args(mock_resolve_teamspace):
     teamspace = _make_teamspace("ts-1", org)
     mock_resolve_teamspace.return_value = teamspace
     filters = BillingActivityFilters(limit=100)
+    writer = io.StringIO()
 
-    org.get_resource_activity(
-        format=ActivityFileFormat.CSV, target_path="out.csv", teamspace=teamspace, filters=filters
-    )
+    org.get_resource_activity(format=ActivityFileFormat.CSV, writer=writer, teamspace=teamspace, filters=filters)
 
     org._billing_api.get_resource_activity.assert_called_once_with(
         org_id="org-1",
         format=ActivityFileFormat.CSV,
-        target_path="out.csv",
+        writer=writer,
         project_ids=["ts-1"],
         resource_types=None,
         resource_ids=None,
@@ -225,13 +228,14 @@ def test_get_resource_activity_forwards_args(mock_resolve_teamspace):
 
 def test_get_resource_activity_defaults_to_json():
     org = _make_org("org-1")
+    writer = io.StringIO()
 
-    org.get_resource_activity()
+    org.get_resource_activity(writer=writer)
 
     org._billing_api.get_resource_activity.assert_called_once_with(
         org_id="org-1",
         format=ActivityFileFormat.JSON,
-        target_path=None,
+        writer=writer,
         project_ids=None,
         resource_types=None,
         resource_ids=None,
