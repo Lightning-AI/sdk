@@ -63,7 +63,7 @@ class FileEntry:
     Attributes:
         path: Path relative to the folder that was listed.
         is_dir: Whether the entry is a folder rather than a file.
-        size: Size in bytes, or ``None`` for folders and when the server omits it.
+        size: Size in bytes, or ``None`` for folders.
         cloud_account: Cloud account holding the file, when the server reports one.
         last_modified: When the file was last written, when the server reports it.
     """
@@ -87,7 +87,8 @@ def _file_entry(item: Dict[str, Any]) -> FileEntry:
     return FileEntry(
         path=item.get("path", ""),
         is_dir=is_dir,
-        size=None if is_dir else item.get("size"),
+        # An empty file has no size field at all, so a missing one means zero.
+        size=None if is_dir else item.get("size", 0),
         cloud_account=item.get("clusterId") or None,
         last_modified=_parse_tree_timestamp(last_modified),
     )

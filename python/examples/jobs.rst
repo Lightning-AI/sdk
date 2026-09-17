@@ -50,9 +50,8 @@ pass container-specific options only when you need them:
 Reading a job's artifacts
 -------------------------
 
-Whatever a job writes to disk is kept in the teamspace drive under
-``jobs/<job name>``, and stays there until the job is deleted. Read it from
-anywhere with the teamspace's download methods:
+Whatever a job writes to disk is kept in the teamspace drive, and stays there
+until the job is deleted. The job object reads it from anywhere:
 
 .. literalinclude:: ../../../examples/jobs.py
    :language: python
@@ -60,12 +59,15 @@ anywhere with the teamspace's download methods:
    :end-before: # sdk-job-artifacts-end
    :dedent: 8
 
-Use ``download_file`` instead when you only want one file, for example
-``teamspace.download_file(f"jobs/{job.name}/checkpoints/last.ckpt", "last.ckpt")``.
+``list_artifacts`` returns one entry per file or folder, with its ``path``,
+``size`` and ``last_modified``. Both it and ``download_artifacts`` take a
+``path`` to work on one subfolder, so a long training run does not have to come
+down whole::
 
-The same location is ``lit://<owner>/<teamspace>/jobs/<job name>`` from the CLI,
-which is the quickest way to see what a job produced before downloading any of
-it:
+   job.download_artifacts("./checkpoints", path="checkpoints")
+
+``job.artifacts_uri`` is the same location as a ``lit://`` address, which is
+what the CLI takes and what the Lightning web UI shows under the job:
 
 .. code-block:: console
 
@@ -73,16 +75,10 @@ it:
    $ lightning ls -r lit://owner/teamspace/jobs/my-job
    $ lightning cp lit://owner/teamspace/jobs/my-job/metrics.json .
 
-It is also what the Lightning web UI shows under the job, and ``job.artifacts_uri``
-returns it ready to paste.
-
-For a multi-machine job, each machine writes its own folder. Iterate over
-``mmt.machines`` and use each machine's name:
-
-.. code-block:: python
-
-   for machine in mmt.machines:
-       teamspace.download_folder(f"jobs/{machine.name}", f"./artifacts/{machine.name}")
+A multi-machine job has no single artifact folder, because every machine writes
+its own. ``mmt.download_artifacts`` handles that: it gives each machine a
+folder named after it, and ``mmt.list_artifacts`` prefixes each path the same
+way, so the listing and the download agree.
 
 Run the companion script directly when you want to execute the SDK example:
 
@@ -109,10 +105,13 @@ Operational notes
   ``lightning deployment logs <name>`` and ``lightning sandbox logs <id>``. Each
   takes ``--follow``, ``--tail``, ``--since``/``--until``, ``--query`` and
   ``--severity``.
-- A job's files sit directly under ``jobs/<job name>``. A Studio in the same
-  teamspace mounts them one folder deeper, at
-  ``/teamspace/jobs/<job name>/artifacts``, so paths copied out of a Studio do
-  not address the drive.
+- A container job only keeps artifacts when it was launched with
+  ``artifacts_destination``. Without it ``job.artifacts_uri`` is ``None``,
+  ``list_artifacts`` is empty, and ``download_artifacts`` raises.
+- A job's files sit directly under ``jobs/<job name>`` in the drive. A Studio in
+  the same teamspace mounts them one folder deeper, at
+  ``/teamspace/jobs/<job name>/artifacts``, so a path copied out of a Studio
+  does not address the drive.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.
 - Container-backed jobs cannot also pass ``studio=``.

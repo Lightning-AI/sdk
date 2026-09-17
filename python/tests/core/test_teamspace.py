@@ -2120,6 +2120,7 @@ def test_teamspace_list_files_converts_tree_entries(
             "lastModified": "2026-09-04T12:31:11Z",
         },
         {"path": "checkpoints", "type": "tree"},
+        {"path": "empty.txt", "type": "blob"},
     ]
     ts = Teamspace("ts-abc", org="org-abc")
 
@@ -2127,7 +2128,7 @@ def test_teamspace_list_files_converts_tree_entries(
 
     list_files_mock.assert_called_once_with(teamspace_id=ts.id, path="jobs/my-job", recursive=True, cloud_account=None)
 
-    blob, tree = entries
+    blob, tree, empty = entries
     assert (blob.path, blob.name, blob.is_dir, blob.size) == ("checkpoints/last.ckpt", "last.ckpt", False, 42)
     assert blob.cloud_account == "aws-prod"
     assert blob.last_modified == datetime(2026, 9, 4, 12, 31, 11, tzinfo=timezone.utc)
@@ -2139,3 +2140,6 @@ def test_teamspace_list_files_converts_tree_entries(
         None,
         None,
     )
+
+    # The server leaves out the size of an empty file rather than sending zero.
+    assert (empty.path, empty.is_dir, empty.size) == ("empty.txt", False, 0)
