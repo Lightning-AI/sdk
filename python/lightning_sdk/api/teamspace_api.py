@@ -719,12 +719,16 @@ class TeamspaceApi:
         )
         return r.json()
 
-    def _tree_entries(self, teamspace_id: str, path: str, recursive: bool) -> List[Dict]:
+    def _tree_entries(
+        self, teamspace_id: str, path: str, recursive: bool, cloud_account: Optional[str] = None
+    ) -> List[Dict]:
         """All entries under ``path``, following the listing's cursor until the last page."""
 
         def fetch_page(query_params: Dict[str, str]) -> Dict[str, Any]:
             if recursive:
                 query_params["recursive"] = "true"
+            if cloud_account:
+                query_params["clusterId"] = cloud_account
             return self.get_tree(teamspace_id, path, query_params=query_params)
 
         return _paged_tree_entries(fetch_page)
@@ -749,17 +753,21 @@ class TeamspaceApi:
         self,
         teamspace_id: str,
         path: str = "",
+        recursive: bool = True,
+        cloud_account: Optional[str] = None,
     ) -> List[Dict]:
-        """Recursively list all files in a directory tree.
+        """List the entries in a directory tree.
 
         Args:
             teamspace_id: ID of the teamspace to list files in.
             path: Root path inside the teamspace to list; defaults to the root directory.
+            recursive: When ``True``, descend into subdirectories.
+            cloud_account: Optional cloud account ID used to locate the artifacts.
 
         Returns:
-            List of file-info dicts from the recursive tree response.
+            List of file-info dicts from the tree response.
         """
-        return self._tree_entries(teamspace_id, path.strip("/"), recursive=True)
+        return self._tree_entries(teamspace_id, path.strip("/"), recursive=recursive, cloud_account=cloud_account)
 
     def upload_file(
         self,

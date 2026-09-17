@@ -1,6 +1,7 @@
 import os
 import warnings
 from contextlib import nullcontext
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -2100,3 +2101,41 @@ def test_teamspace_tags_are_the_tag_names(
 
     assert ts.tags == ("prod", "team a")
     list_workload_tags_mock.assert_called_once_with(teamspace_id=ts.id)
+
+
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_files")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_list_files_converts_tree_entries(
+    list_files_mock,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    list_files_mock.return_value = [
+        {
+            "path": "checkpoints/last.ckpt",
+            "type": "blob",
+            "size": 42,
+            "clusterId": "aws-prod",
+            "lastModified": "2026-09-04T12:31:11Z",
+        },
+        {"path": "checkpoints", "type": "tree"},
+    ]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    entries = ts.list_files("jobs/my-job", recursive=True)
+
+    list_files_mock.assert_called_once_with(teamspace_id=ts.id, path="jobs/my-job", recursive=True, cloud_account=None)
+
+    blob, tree = entries
+    assert (blob.path, blob.name, blob.is_dir, blob.size) == ("checkpoints/last.ckpt", "last.ckpt", False, 42)
+    assert blob.cloud_account == "aws-prod"
+    assert blob.last_modified == datetime(2026, 9, 4, 12, 31, 11, tzinfo=timezone.utc)
+
+    assert (tree.path, tree.is_dir, tree.size, tree.cloud_account, tree.last_modified) == (
+        "checkpoints",
+        True,
+        None,
+        None,
+        None,
+    )
