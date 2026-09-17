@@ -176,9 +176,9 @@ if err := teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts"); err != ni
 `teamspace.DownloadFile(...)` fetches a single file. The same location is
 `lit://<owner>/<teamspace>/jobs/<job name>` for `lightning ls` and `lightning cp`, and is what the Lightning web UI shows under the job.
 
-Note that the drive path has no `artifacts` segment — a job's files sit directly
-under its name. `job.ArtifactPath()` does have one, because that is the path a
-Studio mounts, not the path the drive serves.
+A job's files sit directly under its name. A Studio in the same teamspace mounts
+them one folder deeper, at `/teamspace/jobs/<job name>/artifacts`, so paths
+copied out of a Studio do not address the drive.
 
 Each machine of a multi-machine job writes its own folder, named after the
 machine. There is no combined folder for the run.

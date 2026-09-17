@@ -677,31 +677,6 @@ class Job(metaclass=TrackCallsMeta):
         return tuple(machines)
 
     @property
-    def artifact_path(self) -> Optional[str]:
-        """Where this job's artifacts appear inside a Studio in the same teamspace.
-
-        This is a mount path, so it only resolves from within a running Studio.
-        The same files are in the teamspace drive, and ``list_artifacts`` and
-        ``download_artifacts`` read them from anywhere::
-
-            job.download_artifacts("./artifacts")
-
-        ``artifacts_uri`` gives the drive address the CLI and the Lightning web
-        UI use. Note that it has no ``artifacts`` path segment: a job's files
-        sit directly under its name in the drive, one folder above where a
-        Studio mounts them.
-        """
-        if self.is_multi_machine:
-            raise NotImplementedError
-        drive_path = self._artifacts_drive_path
-        if drive_path is None:
-            return None
-        if self._guaranteed_job.spec.image != "":
-            return f"/teamspace/{drive_path}"
-        # A Studio mounts a job's artifacts one folder deeper than the drive serves them.
-        return f"/teamspace/{drive_path}/artifacts"
-
-    @property
     def _artifacts_drive_path(self) -> Optional[str]:
         """This job's artifact folder in the teamspace drive, or ``None`` if it keeps none."""
         if self.is_multi_machine:

@@ -588,30 +588,6 @@ func (j *Job) Link() string {
 	return jobLink(j.ownerName, j.teamspace, j.name)
 }
 
-// ArtifactPath returns where this job's artifacts appear inside a Studio in
-// the same teamspace. It is a mount path, so it only resolves from within a
-// running Studio. To read the artifacts from anywhere else, address them in
-// the teamspace drive, which is this path with the leading "/teamspace/"
-// removed:
-//
-//	teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts")
-//
-// The same location is lit://<owner>/<teamspace>/jobs/<name> for "lightning
-// ls" and "lightning cp". Note that the drive has no "artifacts" path segment
-// — a job's files sit directly under its name.
-func (j *Job) ArtifactPath() string {
-	if j == nil {
-		return ""
-	}
-	if j.image != "" {
-		return artifactDestinationPath(j.artifactsDestination)
-	}
-	if j.name == "" {
-		return ""
-	}
-	return fmt.Sprintf("/teamspace/jobs/%s/artifacts", j.name)
-}
-
 // artifactsDrivePath returns this job's artifact folder in the teamspace
 // drive, or "" when the job keeps no artifacts.
 func (j *Job) artifactsDrivePath() string {
@@ -619,7 +595,7 @@ func (j *Job) artifactsDrivePath() string {
 		return ""
 	}
 	if j.image != "" {
-		return strings.TrimPrefix(artifactDestinationPath(j.artifactsDestination), "/teamspace/")
+		return artifactDestinationPath(j.artifactsDestination)
 	}
 	if j.name == "" {
 		return ""
@@ -889,7 +865,7 @@ func artifactDestinationPath(destination string) string {
 	if len(parts) != 3 {
 		return ""
 	}
-	return fmt.Sprintf("/teamspace/%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
+	return fmt.Sprintf("%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
 }
 
 func scratchVolumes(disks []ScratchDisk) []*models.V1Volume {

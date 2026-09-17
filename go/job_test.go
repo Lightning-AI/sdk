@@ -143,26 +143,8 @@ func TestJobExposesFilesystemPaths(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got, want := studioJob.ArtifactPath(), "/teamspace/jobs/train/artifacts"; got != want {
-		assert.Fail(t, fmt.Sprintf("artifact path = %q, want %q", got, want))
-	}
 	if got := studioJob.SharePath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
-	}
-
-	imageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image", Image: "ubuntu:22.04"})
-	require.NoErrorf(t, err,
-		"GetJob returned error")
-
-	if got := imageJob.ArtifactPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("image job artifact path = %q, want empty", got))
-	}
-	persistedImageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image-persisted", Image: "ubuntu:22.04", ArtifactsDestination: "efs:data:outputs/run-1"})
-	require.NoErrorf(t, err,
-		"GetJob returned error")
-
-	if got, want := persistedImageJob.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
-		assert.Fail(t, fmt.Sprintf("persisted image job artifact path = %q, want %q", got, want))
 	}
 }
 
@@ -173,7 +155,7 @@ func TestJobArtifactsURIAddressesTheDrive(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 	// The drive serves a job's files directly under its name, one folder
-	// above where ArtifactPath says a studio mounts them.
+	// above where a studio mounts them.
 	assert.Equal(t, "lit://alice/default/jobs/train", studioJob.ArtifactsURI())
 
 	persistedImageJob, err := lit.GetJob("image-train", lit.JobOptions{
@@ -439,7 +421,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 		"gpu",
 		"train.py",
 		lit.JobOptions{
-			Teamspace:            mustTeamspace(t, "project-1", ""),
+			Teamspace:            mustTeamspace(t, "project-1", "default", "alice"),
 			Image:                "registry.example/train:latest",
 			ImageCredentials:     "docker-secret",
 			CloudAccountAuth:     true,
@@ -460,8 +442,8 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 	assert.Falsef(t, created.ID() != "job-advanced" || created.Status() != "pending",
 		"unexpected created job: %s %s", created.ID(), created.Status())
 
-	if got, want := created.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
-		assert.Fail(t, fmt.Sprintf("created artifact path = %q, want %q", got, want))
+	if got, want := created.ArtifactsURI(), "lit://alice/default/efs_connections/data/outputs/run-1"; got != want {
+		assert.Fail(t, fmt.Sprintf("created artifacts URI = %q, want %q", got, want))
 	}
 	assert.Falsef(t, created.MaxRunAttempts() != 3 || created.CurrentRunAttempt() != 1,
 		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())

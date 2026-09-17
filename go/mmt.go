@@ -576,11 +576,6 @@ func (m *MMT) JSON() (string, error) {
 	return string(body), nil
 }
 
-// ArtifactPath returns the artifact path for the MMT when available.
-func (m *MMT) ArtifactPath() string {
-	return ""
-}
-
 // ArtifactsURI is always empty for an MMT: each machine writes its own
 // artifacts, so there is no single address for the run. Use Machines and each
 // machine's ArtifactsURI.

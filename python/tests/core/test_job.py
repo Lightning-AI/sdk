@@ -898,47 +898,6 @@ def test_submit_jobv2_studio_resolve(
 
 
 @pytest.mark.parametrize(
-    (
-        "expected_artifacts_path",
-        "image",
-        "studio",
-        "artifacts_source",
-        "artifacts_destination",
-    ),
-    [
-        ("/teamspace/jobs/test-job/artifacts", None, "st-abc", None, None),
-        ("/teamspace/efs_connections/data/some-path", "ubuntu", None, "/output", "efs:data:some-path"),
-        (None, "ubuntu", None, None, None),
-    ],
-)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_submit_jobv2_studio_path(
-    internal_get_org_api_mocker,
-    internal_teamspace_api_mocker,
-    internal_studio_init_mocker,
-    internal_job_get_cloudspace_mocker,
-    job_api_get_job_by_name_mocker,
-    expected_artifacts_path,
-    image,
-    studio,
-    artifacts_source,
-    artifacts_destination,
-):
-    from lightning_sdk.job import Job
-
-    job = Job("test-job", Teamspace("ts-abc", org="org-abc"), _fetch_job=False)
-
-    job._job = V1Job(
-        name="test-job",
-        spec=V1JobSpec(
-            image=image or "", artifacts_source=artifacts_source, artifacts_destination=artifacts_destination
-        ),
-    )
-
-    assert job.artifact_path == expected_artifacts_path
-
-
-@pytest.mark.parametrize(
     ("expected_uri", "image", "artifacts_destination"),
     [
         ("lit://org-abc/ts-abc/jobs/test-job", None, None),

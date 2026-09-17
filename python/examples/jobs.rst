@@ -73,8 +73,8 @@ it:
    $ lightning ls -r lit://owner/teamspace/jobs/my-job
    $ lightning cp lit://owner/teamspace/jobs/my-job/metrics.json .
 
-It is also what the Lightning web UI shows under the job, and what a Studio in
-the same teamspace mounts at ``job.artifact_path``.
+It is also what the Lightning web UI shows under the job, and ``job.artifacts_uri``
+returns it ready to paste.
 
 For a multi-machine job, each machine writes its own folder. Iterate over
 ``mmt.machines`` and use each machine's name:
@@ -109,9 +109,10 @@ Operational notes
   ``lightning deployment logs <name>`` and ``lightning sandbox logs <id>``. Each
   takes ``--follow``, ``--tail``, ``--since``/``--until``, ``--query`` and
   ``--severity``.
-- The drive path has no ``artifacts`` segment: a job's files sit directly under
-  ``jobs/<job name>``. ``job.artifact_path`` does have one, because that is the
-  path a Studio mounts, not the path the drive serves.
+- A job's files sit directly under ``jobs/<job name>``. A Studio in the same
+  teamspace mounts them one folder deeper, at
+  ``/teamspace/jobs/<job name>/artifacts``, so paths copied out of a Studio do
+  not address the drive.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.
 - Container-backed jobs cannot also pass ``studio=``.

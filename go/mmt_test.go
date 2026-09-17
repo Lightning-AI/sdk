@@ -116,19 +116,8 @@ func TestMMTExposesFilesystemPaths(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetMMT returned error")
 
-	if got := studioMMT.ArtifactPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("mmt artifact path = %q, want empty", got))
-	}
 	if got := studioMMT.SharePath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
-	}
-
-	imageMMT, err := lit.GetMMT("image-dist-train", lit.MMTOptions{ID: "mmt-image", Image: "pytorch/pytorch:latest"})
-	require.NoErrorf(t, err,
-		"GetMMT returned error")
-
-	if got := imageMMT.ArtifactPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("image mmt artifact path = %q, want empty", got))
 	}
 }
 
