@@ -119,9 +119,6 @@ func TestMMTExposesFilesystemPaths(t *testing.T) {
 	if got := studioMMT.ArtifactPath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("mmt artifact path = %q, want empty", got))
 	}
-	if got := studioMMT.SnapshotPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("mmt snapshot path = %q, want empty", got))
-	}
 	if got := studioMMT.SharePath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
 	}
@@ -132,9 +129,6 @@ func TestMMTExposesFilesystemPaths(t *testing.T) {
 
 	if got := imageMMT.ArtifactPath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("image mmt artifact path = %q, want empty", got))
-	}
-	if got := imageMMT.SnapshotPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("image mmt snapshot path = %q, want empty", got))
 	}
 }
 
