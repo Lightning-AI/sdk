@@ -95,13 +95,28 @@ class Billing:
             resolved_teamspace = _resolve_teamspace(raw_teamspace, org=resolved_org, user=None)
             if resolved_teamspace is None:
                 raise ValueError(f"Could not resolve teamspace {raw_teamspace!r}.")
+            if (
+                resolved_org is not None
+                and isinstance(resolved_teamspace.owner, Organization)
+                and resolved_teamspace.owner.id != resolved_org.id
+            ):
+                raise ValueError(
+                    f"Teamspace '{resolved_teamspace.name}' belongs to organization "
+                    f"'{resolved_teamspace.owner.name}', not '{resolved_org.name}'."
+                )
             self._teamspaces.append(resolved_teamspace)
 
         if resolved_org is None:
             for resolved_teamspace in self._teamspaces:
-                if isinstance(resolved_teamspace.owner, Organization):
+                if not isinstance(resolved_teamspace.owner, Organization):
+                    continue
+                if resolved_org is None:
                     resolved_org = resolved_teamspace.owner
-                    break
+                elif resolved_teamspace.owner.id != resolved_org.id:
+                    raise ValueError(
+                        "All teamspaces must belong to the same organization, but got "
+                        f"'{resolved_org.name}' and '{resolved_teamspace.owner.name}'."
+                    )
 
         if resolved_org is None:
             raise ValueError(
