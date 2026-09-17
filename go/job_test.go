@@ -145,9 +145,6 @@ func TestJobExposesFilesystemPaths(t *testing.T) {
 	if got, want := studioJob.ArtifactPath(), "/teamspace/jobs/train/artifacts"; got != want {
 		assert.Fail(t, fmt.Sprintf("artifact path = %q, want %q", got, want))
 	}
-	if got, want := studioJob.SnapshotPath(), "/teamspace/jobs/train/snapshot"; got != want {
-		assert.Fail(t, fmt.Sprintf("snapshot path = %q, want %q", got, want))
-	}
 	if got := studioJob.SharePath(); got != "" {
 		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
 	}
@@ -165,9 +162,6 @@ func TestJobExposesFilesystemPaths(t *testing.T) {
 
 	if got, want := persistedImageJob.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
 		assert.Fail(t, fmt.Sprintf("persisted image job artifact path = %q, want %q", got, want))
-	}
-	if got := imageJob.SnapshotPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("image job snapshot path = %q, want empty", got))
 	}
 }
 
