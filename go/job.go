@@ -637,11 +637,6 @@ func (j *Job) DownloadArtifacts(targetDir, path string) error {
 	return downloadDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), targetDir)
 }
 
-// SharePath returns the share path for the job when available.
-func (j *Job) SharePath() string {
-	return ""
-}
-
 func jobLink(ownerName, teamspaceName, jobName string) string {
 	if ownerName == "" || teamspaceName == "" || jobName == "" {
 		return ""

@@ -138,16 +138,6 @@ func TestJobExposesPublicDictionaryAndJSON(t *testing.T) {
 
 }
 
-func TestJobExposesFilesystemPaths(t *testing.T) {
-	studioJob, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio"})
-	require.NoErrorf(t, err,
-		"GetJob returned error")
-
-	if got := studioJob.SharePath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
-	}
-}
-
 func TestJobArtifactsURIAddressesTheDrive(t *testing.T) {
 	teamspace := mustTeamspace(t, "project-1", "default", "alice")
 

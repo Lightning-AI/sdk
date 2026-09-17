@@ -756,12 +756,6 @@ class Job(metaclass=TrackCallsMeta):
         self.teamspace.download_folder(f"{drive_path}/{path}".rstrip("/"), str(target_dir))
 
     @property
-    def share_path(self) -> Optional[str]:
-        if self.is_multi_machine:
-            return None
-        raise NotImplementedError("Not implemented yet")
-
-    @property
     def logs(self) -> _Logs:
         """The job's logs.
 

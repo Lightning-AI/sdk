@@ -111,16 +111,6 @@ func TestMMTExposesPublicDictionaryAndJSON(t *testing.T) {
 	}
 }
 
-func TestMMTExposesFilesystemPaths(t *testing.T) {
-	studioMMT, err := lit.GetMMT("dist-train", lit.MMTOptions{ID: "mmt-studio"})
-	require.NoErrorf(t, err,
-		"GetMMT returned error")
-
-	if got := studioMMT.SharePath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
-	}
-}
-
 func TestMMTArtifactsFanOutOverMachines(t *testing.T) {
 	var listed []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

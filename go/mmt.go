@@ -620,11 +620,6 @@ func (m *MMT) DownloadArtifacts(targetDir, path string) error {
 	return nil
 }
 
-// SharePath returns the share path for the MMT when available.
-func (m *MMT) SharePath() string {
-	return ""
-}
-
 // Link returns the Lightning web URL for the MMT.
 func (m *MMT) Link() string {
 	if m == nil || m.ownerName == "" || m.teamspace == "" || m.name == "" {
