@@ -1,5 +1,6 @@
 """Job list command."""
 
+import re
 from contextlib import suppress
 from datetime import datetime
 from fnmatch import fnmatchcase
@@ -15,6 +16,7 @@ from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.job import Job
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.models import _list_teamspaces
 
 # The keys `--sort-by` and `--filter` both accept. Keep the two in parity: a key that can be sorted
@@ -31,6 +33,10 @@ LIST_KEYS = (
     "started",
     "stopped",
 )
+
+# Only a comma that introduces the next pair separates filters; one inside a pattern
+# (`name=job-[0,1]`) or a value (an image tag) belongs to that pattern.
+_FILTER_SEPARATOR = re.compile(r",(?=\s*(?:" + "|".join(re.escape(key) for key in LIST_KEYS) + r")\s*=)")
 
 # Keys whose row field is named differently from the key itself.
 _ROW_KEYS = {"cloud-account": "_cloud_account", "started": "started_at", "stopped": "stopped_at"}
@@ -194,7 +200,7 @@ def _resolve_filters(filters: Sequence[str]) -> Tuple[Tuple[str, str], ...]:
     """
     resolved = []
     for value in filters:
-        for entry in value.split(","):
+        for entry in _FILTER_SEPARATOR.split(value):
             raw = entry.strip()
             if not raw:
                 continue
@@ -228,15 +234,23 @@ def _creator(job: Job, usernames: Dict[str, Dict[str, str]]) -> str:
     ``usernames`` caches one lookup per teamspace across the whole listing.
     """
     user_id = getattr(getattr(job, "_job", None), "user_id", None)
-    teamspace_id = getattr(job.teamspace, "id", None)
+    teamspace = job.teamspace
+    teamspace_id = getattr(teamspace, "id", None)
     if not user_id or not teamspace_id:
         return ""
 
     if teamspace_id not in usernames:
-        # A teamspace whose members we cannot read still lists its jobs, so fall back to the raw id.
-        usernames[teamspace_id] = {}
-        with suppress(Exception):
+        try:
             usernames[teamspace_id] = TeamspaceApi().list_member_usernames(teamspace_id=teamspace_id)
+        except (ApiException, PermissionError, RuntimeError, ValueError) as error:
+            # A teamspace whose members we cannot read still lists its jobs. Fall back to raw ids,
+            # but say so: `--filter creator=<name>` silently matches nothing against an id.
+            usernames[teamspace_id] = {}
+            click.echo(
+                f"Warning: could not resolve creator names in {teamspace.owner.name}/{teamspace.name} "
+                f"({error}); showing raw user ids instead.",
+                err=True,
+            )
 
     return usernames[teamspace_id].get(user_id, user_id)
 

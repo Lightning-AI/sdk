@@ -245,7 +245,10 @@ def test_job_list_creator_falls_back_to_user_id_when_unresolvable(creators) -> N
         result = CliRunner().invoke(list_jobs, ["--json"])
 
     assert result.exit_code == 0, result.output
-    assert {row["creator"] for row in json.loads(result.output)} == {"user-1", "user-2"}
+    # The warning goes to stderr, so --json output stays machine-readable.
+    assert {row["creator"] for row in json.loads(result.stdout)} == {"user-1", "user-2"}
+    assert "could not resolve creator names in org/teamspace" in result.stderr
+    assert "no access to members" in result.stderr
 
 
 @mock_command_logging
@@ -322,6 +325,18 @@ def test_job_list_filters_by_glob_pattern() -> None:
 
 
 @mock_command_logging
+def test_job_list_filter_keeps_a_comma_inside_a_glob_pattern() -> None:
+    teamspace = _teamspace_with_jobs()
+    teamspace.list_jobs.return_value[0].name = "job-0"
+
+    with patch("lightning_sdk.cli.job.list.resolve_teamspace", return_value=teamspace):
+        result = CliRunner().invoke(list_jobs, ["--filter", "name=job-[0,1]", "--json"])
+
+    assert result.exit_code == 0, result.output
+    assert [row["name"] for row in json.loads(result.stdout)] == ["job-0"]
+
+
+@mock_command_logging
 def test_job_list_filter_matches_whole_value_and_ignores_case() -> None:
     teamspace = _teamspace_with_jobs()
 
@@ -351,7 +366,13 @@ def test_job_list_comma_separated_and_repeated_filters_must_all_match() -> None:
 def test_job_list_filter_flattens_comma_separated_values() -> None:
     assert _resolve_filters(["name=train-*,status=running"]) == (("name", "train-*"), ("status", "running"))
     assert _resolve_filters(["name=a", "status=b"]) == (("name", "a"), ("status", "b"))
-    assert _resolve_filters(["  creator = justus  ,, "]) == (("creator", "justus"),)
+    assert _resolve_filters(["  creator = justus "]) == (("creator", "justus"),)
+    # Only a comma introducing the next KEY= pair separates filters; the rest belong to the pattern.
+    assert _resolve_filters(["name=job-[0,1]"]) == (("name", "job-[0,1]"),)
+    assert _resolve_filters(["image=repo/img:a,b,status=running"]) == (
+        ("image", "repo/img:a,b"),
+        ("status", "running"),
+    )
     # An empty pattern is a real filter: it keeps only the jobs with no value for that key.
     assert _resolve_filters(["studio="]) == (("studio", ""),)
     assert _resolve_filters([""]) == ()
