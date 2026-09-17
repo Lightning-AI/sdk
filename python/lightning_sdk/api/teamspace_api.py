@@ -530,6 +530,20 @@ class TeamspaceApi:
 
         return self._client.jobs_service_list_jobs(project_id=teamspace_id, standalone=True, **optional_kwargs).jobs
 
+    def list_member_usernames(self, teamspace_id: str) -> Dict[str, str]:
+        """Map user id to username for every member of the teamspace.
+
+        One request resolves every creator in a job listing, which avoids a per-job user lookup.
+
+        Args:
+            teamspace_id: ID of the teamspace to list members of.
+
+        Returns:
+            A mapping from user id to username, skipping members the API returns incompletely.
+        """
+        memberships = self._client.projects_service_list_project_memberships(project_id=teamspace_id).memberships or []
+        return {member.user_id: member.username for member in memberships if member.user_id and member.username}
+
     def list_workload_tags(self, teamspace_id: str) -> List[V1WorkloadTag]:
         """Return every job tag defined in the teamspace.
 
