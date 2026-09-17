@@ -25,6 +25,9 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_sdk_command_history_type im
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
 HELP_OPTION_NAMES = ["-h", "--help"]
+# Commands that forward unknown options verbatim keep `--help` only: `-h` belongs to the
+# program they wrap (`sandbox run <id> du -h /data`, `vm ssh <vm> -h`).
+LONG_HELP_OPTION_NAMES = ["--help"]
 
 
 def _auth_header_without_browser() -> Optional[str]:
@@ -123,11 +126,18 @@ def _gradient_rule(width: int) -> "Text":
 
 
 class _HelpOptionNamesMixin:
-    """Makes ``-h`` an alias of ``--help`` on every Lightning command and group."""
+    """Makes ``-h`` an alias of ``--help``, except where ``-h`` is the wrapped program's.
+
+    A command with ``ignore_unknown_options`` passes flags it does not recognise straight to
+    something else, so claiming ``-h`` there would swallow a common flag (``du -h``, ``ssh -h``).
+    Those commands are pinned to ``--help`` explicitly, because leaving the setting off would
+    inherit ``-h`` from the parent context instead.
+    """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         context_settings = dict(kwargs.get("context_settings") or {})
-        context_settings.setdefault("help_option_names", HELP_OPTION_NAMES)
+        default = LONG_HELP_OPTION_NAMES if context_settings.get("ignore_unknown_options") else HELP_OPTION_NAMES
+        context_settings.setdefault("help_option_names", default)
         kwargs["context_settings"] = context_settings
         super().__init__(*args, **kwargs)
 

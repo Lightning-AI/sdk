@@ -4,9 +4,12 @@ import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
+import rich_click as click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login, main_cli
+from lightning_sdk.cli.sandbox.commands import run_sandbox_command
+from lightning_sdk.cli.vm.ssh import ssh_vm
 from lightning_sdk.lightning_cloud.login import Auth
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging, run_cli
 
@@ -225,6 +228,22 @@ def test_login_already_authed_can_get_username(monkeypatch):
 
 
 @pytest.mark.parametrize(
+    ("command", "args", "forwarded_to", "expected"),
+    [
+        (ssh_vm, ["myvm", "-h"], "ssh_args", ("-h",)),
+        (run_sandbox_command, ["sbx-42", "du", "-h", "/data"], "command_args", ("du", "-h", "/data")),
+    ],
+)
+@mock_command_logging
+def test_pass_through_commands_forward_h_to_the_wrapped_program(command, args, forwarded_to, expected) -> None:
+    """`-h` is a flag of the program being wrapped, so these commands must not treat it as help."""
+    # The parent context is where `-h` would otherwise be inherited from.
+    context = command.make_context(command.name, args, parent=click.Context(main_cli))
+
+    assert context.params[forwarded_to] == expected
+
+
+@pytest.mark.parametrize(
     "command",
     [
         "lightning",
@@ -232,12 +251,11 @@ def test_login_already_authed_can_get_username(monkeypatch):
         "lightning job list",
         "lightning jobs list",
         "lightning login",
-        "lightning vm ssh",
     ],
 )
 @mock_command_logging
 def test_short_help_flag_matches_long(command: str) -> None:
-    """`-h` is an alias of `--help` on every command and group."""
+    """`-h` is an alias of `--help`, except on the pass-through commands tested above."""
     assert command_text(f"{command} -h") == command_text(f"{command} --help")
 
 
