@@ -65,8 +65,8 @@ _ROW_KEYS = {"cloud-account": "_cloud_account", "started": "started_at", "stoppe
     multiple=True,
     metavar="KEY=PATTERN",
     help=(
-        "Only list jobs whose KEY matches PATTERN, a glob. Can be a comma-separated list or passed multiple "
-        "times, and every filter has to match: [cyan]--filter 'name=train-*,status=running'[/cyan]. "
+        "Only list jobs whose KEY matches PATTERN, a case-insensitive glob. Can be a comma-separated list "
+        "or passed multiple times, and every filter has to match. "
         f"KEY is one of: {', '.join(LIST_KEYS)}."
     ),
 )
@@ -92,6 +92,12 @@ def list_jobs(
     """List jobs for a given teamspace.
 
     Includes both single- and multi-machine jobs.
+
+    Example:
+        lightning job list --filter 'name=train-*'
+        lightning job list --filter 'creator=justus,status=running'
+        lightning job list --all --sort-by started
+
     """
     wanted_tags = _resolve_tags(tags)
     wanted_filters = _resolve_filters(filters)
