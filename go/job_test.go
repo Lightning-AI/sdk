@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestJobExposesStartAndStopTimes(t *testing.T) {
@@ -137,32 +138,76 @@ func TestJobExposesPublicDictionaryAndJSON(t *testing.T) {
 
 }
 
-func TestJobExposesFilesystemPaths(t *testing.T) {
-	studioJob, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio"})
+func TestJobArtifactsURIAddressesTheDrive(t *testing.T) {
+	teamspace := mustTeamspace(t, "project-1", "default", "alice")
+
+	studioJob, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio", Teamspace: teamspace})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	// The drive serves a job's files directly under its name, one folder
+	// above where a studio mounts them.
+	assert.Equal(t, "lit://alice/default/jobs/train", studioJob.ArtifactsURI())
+
+	persistedImageJob, err := lit.GetJob("image-train", lit.JobOptions{
+		ID:                   "job-image-persisted",
+		Teamspace:            teamspace,
+		Image:                "ubuntu:22.04",
+		ArtifactsDestination: "efs:data:outputs/run-1",
+	})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Equal(t, "lit://alice/default/efs_connections/data/outputs/run-1", persistedImageJob.ArtifactsURI())
+
+	imageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image", Teamspace: teamspace, Image: "ubuntu:22.04"})
+	require.NoErrorf(t, err,
+		"GetJob returned error")
+	assert.Empty(t, imageJob.ArtifactsURI())
+}
+
+func TestJobArtifactHelpersUseTheDrivePath(t *testing.T) {
+	var listed []string
+	server := sdktest.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
+		listed = append(listed, r.URL.Path+"?"+r.URL.RawQuery)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{"tree": []map[string]any{}})
+	})
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	job, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio", Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got, want := studioJob.ArtifactPath(), "/teamspace/jobs/train/artifacts"; got != want {
-		assert.Fail(t, fmt.Sprintf("artifact path = %q, want %q", got, want))
-	}
-	if got := studioJob.SharePath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("share path = %q, want empty", got))
-	}
+	_, err = job.ListArtifacts("", false)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
+	_, err = job.ListArtifacts("checkpoints", true)
+	require.NoErrorf(t, err,
+		"ListArtifacts returned error")
 
-	imageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image", Image: "ubuntu:22.04"})
+	assert.Equal(t, []string{
+		"/v1/projects/project-1/artifacts/trees/jobs/train?",
+		"/v1/projects/project-1/artifacts/trees/jobs/train/checkpoints?recursive=true",
+	}, listed)
+}
+
+func TestJobWithoutArtifactsListsNothingAndRefusesToDownload(t *testing.T) {
+	job, err := lit.GetJob("image-train", lit.JobOptions{
+		ID:        "job-image",
+		Teamspace: mustTeamspace(t, "project-1", "default", "alice"),
+		Image:     "ubuntu:22.04",
+	})
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got := imageJob.ArtifactPath(); got != "" {
-		assert.Fail(t, fmt.Sprintf("image job artifact path = %q, want empty", got))
-	}
-	persistedImageJob, err := lit.GetJob("image-train", lit.JobOptions{ID: "job-image-persisted", Image: "ubuntu:22.04", ArtifactsDestination: "efs:data:outputs/run-1"})
+	entries, err := job.ListArtifacts("", false)
 	require.NoErrorf(t, err,
-		"GetJob returned error")
+		"ListArtifacts returned error")
+	assert.Empty(t, entries)
 
-	if got, want := persistedImageJob.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
-		assert.Fail(t, fmt.Sprintf("persisted image job artifact path = %q, want %q", got, want))
-	}
+	err = job.DownloadArtifacts(t.TempDir(), "")
+	require.Error(t, err,
+		"DownloadArtifacts should refuse a job that keeps no artifacts")
+	assert.Contains(t, err.Error(), "keeps no artifacts")
 }
 
 func TestJobUsesDefaultClientAndV2GeneratedRoutes(t *testing.T) {
@@ -366,7 +411,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 		"gpu",
 		"train.py",
 		lit.JobOptions{
-			Teamspace:            mustTeamspace(t, "project-1", ""),
+			Teamspace:            mustTeamspace(t, "project-1", "default", "alice"),
 			Image:                "registry.example/train:latest",
 			ImageCredentials:     "docker-secret",
 			CloudAccountAuth:     true,
@@ -387,8 +432,8 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 	assert.Falsef(t, created.ID() != "job-advanced" || created.Status() != "pending",
 		"unexpected created job: %s %s", created.ID(), created.Status())
 
-	if got, want := created.ArtifactPath(), "/teamspace/efs_connections/data/outputs/run-1"; got != want {
-		assert.Fail(t, fmt.Sprintf("created artifact path = %q, want %q", got, want))
+	if got, want := created.ArtifactsURI(), "lit://alice/default/efs_connections/data/outputs/run-1"; got != want {
+		assert.Fail(t, fmt.Sprintf("created artifacts URI = %q, want %q", got, want))
 	}
 	assert.Falsef(t, created.MaxRunAttempts() != 3 || created.CurrentRunAttempt() != 1,
 		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())

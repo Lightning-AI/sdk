@@ -155,11 +155,13 @@ defined in the teamspace.
 
 ## Read a job's artifacts
 
-Whatever a job writes to disk is kept in the teamspace drive under
-`jobs/<job name>`, and stays there until the job is deleted:
+Whatever a job writes to disk is kept in the teamspace drive, and stays there
+until the job is deleted. The job handle reads it from anywhere:
 
 ```go
-entries, err := teamspace.ListFiles("jobs/"+job.Name(), true)
+fmt.Println("Artifacts:", job.ArtifactsURI())
+
+entries, err := job.ListArtifacts("", true)
 if err != nil {
 	log.Fatal(err)
 }
@@ -168,20 +170,28 @@ for _, entry := range entries {
 	fmt.Println(entry.Path, entry.Size)
 }
 
-if err := teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts"); err != nil {
+if err := job.DownloadArtifacts("./artifacts", ""); err != nil {
 	log.Fatal(err)
 }
 ```
 
-`teamspace.DownloadFile(...)` fetches a single file. The same location is
-`lit://<owner>/<teamspace>/jobs/<job name>` for `lightning ls` and `lightning cp`, and is what the Lightning web UI shows under the job.
+The first argument of `ListArtifacts` and the second of `DownloadArtifacts`
+name a subfolder to work on, so a long training run does not have to come down
+whole: `job.DownloadArtifacts("./checkpoints", "checkpoints")`.
 
-Note that the drive path has no `artifacts` segment — a job's files sit directly
-under its name. `job.ArtifactPath()` does have one, because that is the path a
-Studio mounts, not the path the drive serves.
+`job.ArtifactsURI()` is the same location as a `lit://` address, which is what
+`lightning ls` and `lightning cp` take and what the Lightning web UI shows under
+the job. It is empty for a container job launched without an artifacts
+destination, because such a job keeps nothing.
 
-Each machine of a multi-machine job writes its own folder, named after the
-machine. There is no combined folder for the run.
+An MMT has no single artifact folder, because every machine writes its own.
+`mmt.DownloadArtifacts` gives each machine a folder named after it, and
+`mmt.ListArtifacts` prefixes each path the same way, so the listing and the
+download agree.
+
+A job's files sit directly under its name in the drive. A Studio in the same
+teamspace mounts them one folder deeper, at `/teamspace/jobs/<job name>/artifacts`,
+so a path copied out of a Studio does not address the drive.
 
 # API shape
 
@@ -193,7 +203,8 @@ machine. There is no combined folder for the run.
 | studios                     | `GetStudio(...)`, `CreateStudio(...)`, `studio.Start(...)`, `studio.SwitchMachine(...)`    |
 | jobs                        | `GetJob(...)`, `RunJob(...)`, `job.Wait(...)`, `job.Stop(...)`, `job.Delete(...)`          |
 | multi-machine training jobs | `GetMMT(...)`, `RunMMT(...)`                                                               |
-| job artifacts and files     | `teamspace.ListFiles(...)`, `teamspace.DownloadFolder(...)`, `teamspace.DownloadFile(...)` |
+| job artifacts               | `job.ArtifactsURI()`, `job.ListArtifacts(...)`, `job.DownloadArtifacts(...)`               |
+| teamspace drive files       | `teamspace.ListFiles(...)`, `teamspace.DownloadFolder(...)`, `teamspace.DownloadFile(...)` |
 | machines                    | `MachineCPU`, `MachineL4`, `MachineA100`, and other `Machine*` constants                   |
 
 # Development

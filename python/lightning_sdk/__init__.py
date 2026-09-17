@@ -8,6 +8,7 @@ from lightning_sdk.api.billing_api import (
     BillingResourceUsage,
 )
 from lightning_sdk.api.teamspace_api import SecretType
+from lightning_sdk.api.utils import FileEntry
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__  # noqa: F401
 from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.deployment import Deployment
@@ -37,6 +38,7 @@ __all__ = [
     "CloudProvider",
     "ConnectionType",
     "Deployment",
+    "FileEntry",
     "FolderLocation",
     "Job",
     "K8sCluster",

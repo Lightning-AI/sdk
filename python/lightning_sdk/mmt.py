@@ -31,10 +31,6 @@ class MMTMachine(Protocol):
         ...
 
     @property
-    def artifact_path(self) -> Optional[str]:
-        ...
-
-    @property
     def status(self) -> Status:
         ...
 

@@ -588,18 +588,9 @@ func (j *Job) Link() string {
 	return jobLink(j.ownerName, j.teamspace, j.name)
 }
 
-// ArtifactPath returns where this job's artifacts appear inside a Studio in
-// the same teamspace. It is a mount path, so it only resolves from within a
-// running Studio. To read the artifacts from anywhere else, address them in
-// the teamspace drive, which is this path with the leading "/teamspace/"
-// removed:
-//
-//	teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts")
-//
-// The same location is lit://<owner>/<teamspace>/jobs/<name> for "lightning
-// ls" and "lightning cp". Note that the drive has no "artifacts" path segment
-// — a job's files sit directly under its name.
-func (j *Job) ArtifactPath() string {
+// artifactsDrivePath returns this job's artifact folder in the teamspace
+// drive, or "" when the job keeps no artifacts.
+func (j *Job) artifactsDrivePath() string {
 	if j == nil {
 		return ""
 	}
@@ -609,12 +600,41 @@ func (j *Job) ArtifactPath() string {
 	if j.name == "" {
 		return ""
 	}
-	return fmt.Sprintf("/teamspace/jobs/%s/artifacts", j.name)
+	return "jobs/" + j.name
 }
 
-// SharePath returns the share path for the job when available.
-func (j *Job) SharePath() string {
-	return ""
+// ArtifactsURI returns the lit:// address of this job's artifacts, which is
+// what "lightning ls" and "lightning cp" take. It is empty when the job keeps
+// no artifacts, which is the case for a container job launched without an
+// artifacts destination.
+func (j *Job) ArtifactsURI() string {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" || j.ownerName == "" || j.teamspace == "" {
+		return ""
+	}
+	return fmt.Sprintf("lit://%s/%s/%s", j.ownerName, j.teamspace, drivePath)
+}
+
+// ListArtifacts lists what this job wrote to the teamspace drive. path selects
+// a subfolder of the job's artifacts, or is empty for all of them. It returns
+// no entries when the job keeps no artifacts.
+func (j *Job) ListArtifacts(path string, recursive bool) ([]FileEntry, error) {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return nil, nil
+	}
+	return listDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), recursive)
+}
+
+// DownloadArtifacts downloads what this job wrote into targetDir. path selects
+// a subfolder of the job's artifacts, or is empty for all of them.
+func (j *Job) DownloadArtifacts(targetDir, path string) error {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return fmt.Errorf("job %q keeps no artifacts: a job running a container image only keeps them when it is "+
+			"launched with an artifacts destination pointing at a teamspace folder or connection", j.Name())
+	}
+	return downloadDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), targetDir)
 }
 
 func jobLink(ownerName, teamspaceName, jobName string) string {
@@ -840,7 +860,7 @@ func artifactDestinationPath(destination string) string {
 	if len(parts) != 3 {
 		return ""
 	}
-	return fmt.Sprintf("/teamspace/%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
+	return fmt.Sprintf("%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
 }
 
 func scratchVolumes(disks []ScratchDisk) []*models.V1Volume {

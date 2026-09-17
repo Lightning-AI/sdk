@@ -10,7 +10,13 @@ from tqdm.auto import tqdm
 import lightning_sdk
 from lightning_sdk.agents import Agent
 from lightning_sdk.api import CloudAccountApi, SecretType, TeamspaceApi
-from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access_error_if_not_allowed
+from lightning_sdk.api.utils import (
+    AccessibleResource,
+    Experiment,
+    FileEntry,
+    _file_entry,
+    raise_access_error_if_not_allowed,
+)
 from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterType,
@@ -855,6 +861,29 @@ class Teamspace(metaclass=TrackCallsMeta):
             teamspace_id=self._teamspace.id,
             cloud_account=cloud_account,
         )
+
+    def list_files(
+        self, remote_path: str = "", recursive: bool = False, cloud_account: Optional[str] = None
+    ) -> List[FileEntry]:
+        """List the entries of a directory in the Teamspace drive.
+
+        Args:
+            remote_path: Path of the directory inside the Teamspace drive. Defaults to the
+                drive root, which lists its top-level folders (``studios``, ``jobs``, ...).
+            recursive: When ``True``, descend into subdirectories. Each returned path is
+                then relative to ``remote_path``.
+            cloud_account: Cloud account to use. Defaults to ``None``.
+
+        Returns:
+            List[FileEntry]: One entry per file or folder, in the order the server returns them.
+        """
+        entries = self._teamspace_api.list_files(
+            teamspace_id=self._teamspace.id,
+            path=remote_path,
+            recursive=recursive,
+            cloud_account=cloud_account,
+        )
+        return [_file_entry(entry) for entry in entries]
 
     def download_folder(
         self, remote_path: str, target_path: Optional[str] = None, cloud_account: Optional[str] = None

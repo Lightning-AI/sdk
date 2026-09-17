@@ -84,8 +84,12 @@ def main() -> None:
         teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
         job = Job(args.name, teamspace=teamspace)
 
-        teamspace.download_folder(f"jobs/{job.name}", args.target)
-        print(f"Downloaded artifacts of {job.name} into {args.target}")
+        print(f"Artifacts: {job.artifacts_uri}")
+        for entry in job.list_artifacts(recursive=True):
+            if not entry.is_dir:
+                print(f"  {entry.path} ({entry.size} bytes)")
+
+        job.download_artifacts(args.target)
         # sdk-job-artifacts-end
 
 

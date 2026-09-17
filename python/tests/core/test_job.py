@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -897,44 +898,121 @@ def test_submit_jobv2_studio_resolve(
 
 
 @pytest.mark.parametrize(
-    (
-        "expected_artifacts_path",
-        "image",
-        "studio",
-        "artifacts_source",
-        "artifacts_destination",
-    ),
+    ("expected_uri", "image", "artifacts_destination"),
     [
-        ("/teamspace/jobs/test-job/artifacts", None, "st-abc", None, None),
-        ("/teamspace/efs_connections/data/some-path", "ubuntu", None, "/output", "efs:data:some-path"),
-        (None, "ubuntu", None, None, None),
+        ("lit://org-abc/ts-abc/jobs/test-job", None, None),
+        ("lit://org-abc/ts-abc/efs_connections/data/some-path", "ubuntu", "efs:data:some-path"),
+        (None, "ubuntu", None),
     ],
 )
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_submit_jobv2_studio_path(
+def test_job_artifacts_uri(
     internal_get_org_api_mocker,
     internal_teamspace_api_mocker,
     internal_studio_init_mocker,
     internal_job_get_cloudspace_mocker,
     job_api_get_job_by_name_mocker,
-    expected_artifacts_path,
+    expected_uri,
     image,
-    studio,
-    artifacts_source,
     artifacts_destination,
 ):
     from lightning_sdk.job import Job
 
     job = Job("test-job", Teamspace("ts-abc", org="org-abc"), _fetch_job=False)
-
     job._job = V1Job(
         name="test-job",
-        spec=V1JobSpec(
-            image=image or "", artifacts_source=artifacts_source, artifacts_destination=artifacts_destination
-        ),
+        spec=V1JobSpec(image=image or "", artifacts_destination=artifacts_destination),
     )
 
-    assert job.artifact_path == expected_artifacts_path
+    assert job.artifacts_uri == expected_uri
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_artifact_helpers_address_the_drive_path(
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    from lightning_sdk.job import Job
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(name="test-job", spec=V1JobSpec(image=""))
+
+    with mock.patch.object(Teamspace, "list_files") as list_files:
+        job.list_artifacts()
+        job.list_artifacts(path="checkpoints", recursive=True)
+
+    assert list_files.call_args_list == [
+        mock.call("jobs/test-job", recursive=False),
+        mock.call("jobs/test-job/checkpoints", recursive=True),
+    ]
+
+    with mock.patch.object(Teamspace, "download_folder") as download_folder:
+        job.download_artifacts("./out")
+
+    download_folder.assert_called_once_with("jobs/test-job", "./out")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_without_artifacts_lists_nothing_and_refuses_to_download(
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    from lightning_sdk.job import Job
+
+    job = Job("test-job", Teamspace("ts-abc", org="org-abc"), _fetch_job=False)
+    job._job = V1Job(name="test-job", spec=V1JobSpec(image="ubuntu"))
+
+    assert job.list_artifacts() == []
+    with pytest.raises(RuntimeError, match="keeps no artifacts"):
+        job.download_artifacts("./out")
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_multi_machine_job_artifacts_fan_out_over_machines(
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_studio_init_mocker,
+    internal_job_get_cloudspace_mocker,
+    job_api_get_job_by_name_mocker,
+):
+    from lightning_sdk.api.utils import FileEntry
+    from lightning_sdk.job import Job
+
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    mmt = Job("test-mmt", teamspace, _fetch_job=False, _num_machines=2)
+    mmt._job = V1Job(name="test-mmt", spec=V1JobSpec(image=""))
+
+    machines = []
+    for rank in range(2):
+        machine = Job(f"test-mmt-{rank}", teamspace, _fetch_job=False)
+        machine._job = V1Job(name=f"test-mmt-{rank}", spec=V1JobSpec(image=""))
+        machines.append(machine)
+
+    assert mmt.artifacts_uri is None
+
+    with mock.patch.object(Job, "machines", new=mock.PropertyMock(return_value=tuple(machines))), mock.patch.object(
+        Teamspace, "list_files", return_value=[FileEntry(path="last.ckpt", is_dir=False)]
+    ):
+        entries = mmt.list_artifacts()
+
+    assert [entry.path for entry in entries] == ["test-mmt-0/last.ckpt", "test-mmt-1/last.ckpt"]
+
+    with mock.patch.object(Job, "machines", new=mock.PropertyMock(return_value=tuple(machines))), mock.patch.object(
+        Teamspace, "download_folder"
+    ) as download_folder:
+        mmt.download_artifacts("./out")
+
+    assert download_folder.call_args_list == [
+        mock.call("jobs/test-mmt-0", str(Path("out/test-mmt-0"))),
+        mock.call("jobs/test-mmt-1", str(Path("out/test-mmt-1"))),
+    ]
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
