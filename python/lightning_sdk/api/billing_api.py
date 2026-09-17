@@ -8,6 +8,7 @@ provides the higher-level, user-facing interface built on top of this one.
 
 import csv
 import json
+import os
 import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -466,7 +467,9 @@ class BillingApi:
         Returns:
             str: The JSON string representation of the detailed activity report.
         """
-        tmp_csv_path = Path(tempfile.mkstemp(suffix=".csv")[1])
+        tmp_fd, tmp_csv_name = tempfile.mkstemp(suffix=".csv")
+        os.close(tmp_fd)
+        tmp_csv_path = Path(tmp_csv_name)
         try:
             self.download_detailed_activity_csv(
                 target_path=tmp_csv_path,
@@ -536,7 +539,9 @@ class BillingApi:
         Returns:
             str: The JSON string representation of the summary activity report.
         """
-        tmp_csv_path = Path(tempfile.mkstemp(suffix=".csv")[1])
+        tmp_fd, tmp_csv_name = tempfile.mkstemp(suffix=".csv")
+        os.close(tmp_fd)
+        tmp_csv_path = Path(tmp_csv_name)
         try:
             self.download_summary_activity_csv(
                 target_path=tmp_csv_path,
