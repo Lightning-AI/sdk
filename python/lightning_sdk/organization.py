@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.api import OrgApi
-from lightning_sdk.api.billing_api import BillingActivity, BillingActivityFilterValues, BillingApi
+from lightning_sdk.api.billing_api import ActivityFileFormat, BillingActivity, BillingActivityFilterValues, BillingApi
 from lightning_sdk.api.org_api import MonthlySummary
 from lightning_sdk.owner import Owner
 from lightning_sdk.utils.resolve import _resolve_org_name, _resolve_teamspace
@@ -195,6 +195,11 @@ class Organization(Owner):
     ) -> BillingActivity:
         """Get billing activity for this organization, or one or more of its teamspaces.
 
+        Returns paginated, per resource rollup rows keyed by raw IDs (no resolved
+        names). For a resolved-name, non-paginated report meant for reading or exporting, use
+        :meth:`get_session_activity` (one row per session) or
+        :meth:`get_resource_activity` (one row per resource) instead.
+
         Args:
             teamspace: A single teamspace to scope the query to.
             teamspaces: Multiple teamspaces to scope the query to. Provide at most one of
@@ -242,93 +247,26 @@ class Organization(Owner):
 
         return self._billing_api.get_activity_filter_values(org_id=self.id, project_id=project_id)
 
-    def download_detailed_activity_csv(
+    def get_session_activity(
         self,
-        target_path: Union[str, Path],
-        teamspace: Optional[Union[str, "Teamspace"]] = None,
-        teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
-        filters: Optional[BillingActivityFilters] = None,
-        cursor: Optional[BillingActivityCursor] = None,
-    ) -> None:
-        """Download the detailed billing activity report for this organization as a CSV file.
-
-        Args:
-            target_path: Local filesystem path to write the downloaded CSV to.
-            teamspace: A single teamspace to scope the report to.
-            teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
-                ``teamspace``/``teamspaces``.
-            filters: Optional filters to narrow down the report.
-            cursor: Optional pagination cursor to continue a previous query.
-        """
-        filters = filters or BillingActivityFilters()
-        cursor = cursor or BillingActivityCursor()
-        resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
-
-        self._billing_api.download_detailed_activity_csv(
-            target_path=target_path,
-            org_id=self.id,
-            project_ids=[t.id for t in resolved_teamspaces] or None,
-            resource_types=filters.resource_types,
-            resource_ids=filters.resource_ids,
-            user_ids=filters.user_ids,
-            start=filters.start,
-            end=filters.end,
-            limit=filters.limit,
-            search_after=cursor.search_after,
-            search_after_resource_id=cursor.search_after_resource_id,
-            search_after_resource_type=cursor.search_after_resource_type,
-        )
-
-    def download_summary_activity_csv(
-        self,
-        target_path: Union[str, Path],
-        teamspace: Optional[Union[str, "Teamspace"]] = None,
-        teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
-        filters: Optional[BillingActivityFilters] = None,
-        cursor: Optional[BillingActivityCursor] = None,
-    ) -> None:
-        """Download the summarized billing activity report for this organization as a CSV file.
-
-        Args:
-            target_path: Local filesystem path to write the downloaded CSV to.
-            teamspace: A single teamspace to scope the report to.
-            teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
-                ``teamspace``/``teamspaces``.
-            filters: Optional filters to narrow down the report.
-            cursor: Optional pagination cursor to continue a previous query.
-        """
-        filters = filters or BillingActivityFilters()
-        cursor = cursor or BillingActivityCursor()
-        resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
-
-        self._billing_api.download_summary_activity_csv(
-            target_path=target_path,
-            org_id=self.id,
-            project_ids=[t.id for t in resolved_teamspaces] or None,
-            resource_types=filters.resource_types,
-            resource_ids=filters.resource_ids,
-            user_ids=filters.user_ids,
-            start=filters.start,
-            end=filters.end,
-            limit=filters.limit,
-            search_after=cursor.search_after,
-            search_after_resource_id=cursor.search_after_resource_id,
-            search_after_resource_type=cursor.search_after_resource_type,
-        )
-
-    def get_detailed_activity_json(
-        self,
+        format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
         target_path: Optional[Union[str, Path]] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> list[dict[str, str]]:
-        """Get the detailed billing activity report for this organization as a Python object.
+    ) -> Optional[list[dict[str, str]]]:
+        """Get the session-level billing activity report for this organization, as CSV or JSON.
+
+        One row per session. A resource (e.g. a Studio or Job) can have many sessions within
+        the queried time range, so this report is the finer-grained of the two - use
+        :meth:`get_resource_activity` for one row per resource instead.
 
         Args:
-            target_path: If given, also write the JSON string to this local filesystem path.
-                Otherwise, nothing is written to disk.
+            format: File format to return the report in, either CSV or JSON. Defaults to JSON.
+            target_path: Local filesystem path to write the report to. Required when ``format``
+                is CSV. Optional when ``format`` is JSON. If given, the JSON string is also
+                written there.
             teamspace: A single teamspace to scope the report to.
             teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
                 ``teamspace``/``teamspaces``.
@@ -336,14 +274,16 @@ class Organization(Owner):
             cursor: Optional pagination cursor to continue a previous query.
 
         Returns:
-            list[dict[str, str]]: The detailed activity report, as a list of row objects.
+            Optional[list[dict[str, str]]]: The session activity report, as a list of row
+            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()
         resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
 
-        return self._billing_api.get_detailed_activity_json(
+        return self._billing_api.get_session_activity(
             org_id=self.id,
+            format=format,
             target_path=target_path,
             project_ids=[t.id for t in resolved_teamspaces] or None,
             resource_types=filters.resource_types,
@@ -357,19 +297,26 @@ class Organization(Owner):
             search_after_resource_type=cursor.search_after_resource_type,
         )
 
-    def get_summary_activity_json(
+    def get_resource_activity(
         self,
+        format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
         target_path: Optional[Union[str, Path]] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> list[dict[str, str]]:
-        """Get the summarized billing activity report for this organization as a Python object.
+    ) -> Optional[list[dict[str, str]]]:
+        """Get the resource-level billing activity report for this organization, as CSV or JSON.
+
+        One row per resource (e.g. a Studio or Job) that was active in the queried time range,
+        rather than one row per session - use :meth:`get_session_activity` for the
+        finer-grained, per-session breakdown of a resource's activity.
 
         Args:
-            target_path: If given, also write the JSON string to this local filesystem path.
-                Otherwise, nothing is written to disk.
+            format: File format to return the report in, either CSV or JSON. Defaults to JSON.
+            target_path: Local filesystem path to write the report to. Required when ``format``
+                is CSV. Optional when ``format`` is JSON. If given, the JSON string is also
+                written there.
             teamspace: A single teamspace to scope the report to.
             teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
                 ``teamspace``/``teamspaces``.
@@ -377,14 +324,16 @@ class Organization(Owner):
             cursor: Optional pagination cursor to continue a previous query.
 
         Returns:
-            list[dict[str, str]]: The summary activity report, as a list of row objects.
+            Optional[list[dict[str, str]]]: The resource activity report, as a list of row
+            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()
         resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
 
-        return self._billing_api.get_summary_activity_json(
+        return self._billing_api.get_resource_activity(
             org_id=self.id,
+            format=format,
             target_path=target_path,
             project_ids=[t.id for t in resolved_teamspaces] or None,
             resource_types=filters.resource_types,

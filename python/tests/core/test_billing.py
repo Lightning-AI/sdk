@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.billing_api import ActivityFileFormat
 from lightning_sdk.organization import BillingActivityCursor, BillingActivityFilters, Organization
 from lightning_sdk.teamspace import Teamspace
 
@@ -14,8 +15,8 @@ def _make_org(org_id="org-1"):
     org._resolve_billing_teamspaces = Organization._resolve_billing_teamspaces.__get__(org)
     org.get_activity = Organization.get_activity.__get__(org)
     org.get_activity_filter_values = Organization.get_activity_filter_values.__get__(org)
-    org.download_detailed_activity_csv = Organization.download_detailed_activity_csv.__get__(org)
-    org.download_summary_activity_csv = Organization.download_summary_activity_csv.__get__(org)
+    org.get_session_activity = Organization.get_session_activity.__get__(org)
+    org.get_resource_activity = Organization.get_resource_activity.__get__(org)
     return org
 
 
@@ -147,17 +148,40 @@ def test_get_activity_filter_values_single_teamspace_scope(mock_resolve_teamspac
     org._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id="ts-1")
 
 
-# ---- download_detailed_activity_csv / download_summary_activity_csv -----
+# ---- get_session_activity / get_resource_activity -----------------------
 
 
-def test_download_detailed_activity_csv_forwards_args():
+def test_get_session_activity_forwards_args():
     org = _make_org("org-1")
 
-    org.download_detailed_activity_csv("out.csv")
+    org.get_session_activity(format=ActivityFileFormat.CSV, target_path="out.csv")
 
-    org._billing_api.download_detailed_activity_csv.assert_called_once_with(
-        target_path="out.csv",
+    org._billing_api.get_session_activity.assert_called_once_with(
         org_id="org-1",
+        format=ActivityFileFormat.CSV,
+        target_path="out.csv",
+        project_ids=None,
+        resource_types=None,
+        resource_ids=None,
+        user_ids=None,
+        start=None,
+        end=None,
+        limit=None,
+        search_after=None,
+        search_after_resource_id=None,
+        search_after_resource_type=None,
+    )
+
+
+def test_get_session_activity_defaults_to_json():
+    org = _make_org("org-1")
+
+    org.get_session_activity()
+
+    org._billing_api.get_session_activity.assert_called_once_with(
+        org_id="org-1",
+        format=ActivityFileFormat.JSON,
+        target_path=None,
         project_ids=None,
         resource_types=None,
         resource_ids=None,
@@ -172,17 +196,20 @@ def test_download_detailed_activity_csv_forwards_args():
 
 
 @mock.patch("lightning_sdk.organization._resolve_teamspace")
-def test_download_summary_activity_csv_forwards_args(mock_resolve_teamspace):
+def test_get_resource_activity_forwards_args(mock_resolve_teamspace):
     org = _make_org("org-1")
     teamspace = _make_teamspace("ts-1", org)
     mock_resolve_teamspace.return_value = teamspace
     filters = BillingActivityFilters(limit=100)
 
-    org.download_summary_activity_csv("out.csv", teamspace=teamspace, filters=filters)
+    org.get_resource_activity(
+        format=ActivityFileFormat.CSV, target_path="out.csv", teamspace=teamspace, filters=filters
+    )
 
-    org._billing_api.download_summary_activity_csv.assert_called_once_with(
-        target_path="out.csv",
+    org._billing_api.get_resource_activity.assert_called_once_with(
         org_id="org-1",
+        format=ActivityFileFormat.CSV,
+        target_path="out.csv",
         project_ids=["ts-1"],
         resource_types=None,
         resource_ids=None,
@@ -190,6 +217,28 @@ def test_download_summary_activity_csv_forwards_args(mock_resolve_teamspace):
         start=None,
         end=None,
         limit=100,
+        search_after=None,
+        search_after_resource_id=None,
+        search_after_resource_type=None,
+    )
+
+
+def test_get_resource_activity_defaults_to_json():
+    org = _make_org("org-1")
+
+    org.get_resource_activity()
+
+    org._billing_api.get_resource_activity.assert_called_once_with(
+        org_id="org-1",
+        format=ActivityFileFormat.JSON,
+        target_path=None,
+        project_ids=None,
+        resource_types=None,
+        resource_ids=None,
+        user_ids=None,
+        start=None,
+        end=None,
+        limit=None,
         search_after=None,
         search_after_resource_id=None,
         search_after_resource_type=None,
