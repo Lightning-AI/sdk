@@ -153,17 +153,48 @@ Jobs carrying at least one of the tags are returned. `teamspace.MMTs(...)`
 accepts the same option for multi-machine jobs, and `teamspace.Tags()` lists the tags
 defined in the teamspace.
 
+## Read a job's artifacts
+
+Whatever a job writes to disk is kept in the teamspace drive under
+`jobs/<job name>`, and stays there until the job is deleted:
+
+```go
+entries, err := teamspace.ListFiles("jobs/"+job.Name(), true)
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, entry := range entries {
+	fmt.Println(entry.Path, entry.Size)
+}
+
+if err := teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts"); err != nil {
+	log.Fatal(err)
+}
+```
+
+`teamspace.DownloadFile(...)` fetches a single file. The same location is
+`lit://<owner>/<teamspace>/jobs/<job name>` for `lightning ls` and `lightning cp`, and is what the Lightning web UI shows under the job.
+
+Note that the drive path has no `artifacts` segment — a job's files sit directly
+under its name. `job.ArtifactPath()` does have one, because that is the path a
+Studio mounts, not the path the drive serves.
+
+Each machine of a multi-machine job writes its own folder, named after the
+machine. There is no combined folder for the run.
+
 # API shape
 
-| Area                        | Entry point                                                                             |
-| --------------------------- | --------------------------------------------------------------------------------------- |
-| users                       | `GetUser(...)`                                                                          |
-| organizations               | `GetOrganization(...)`                                                                  |
-| teamspaces                  | `GetTeamspace(...)`, `CreateTeamspace(...)`                                             |
-| studios                     | `GetStudio(...)`, `CreateStudio(...)`, `studio.Start(...)`, `studio.SwitchMachine(...)` |
-| jobs                        | `GetJob(...)`, `RunJob(...)`, `job.Wait(...)`, `job.Stop(...)`, `job.Delete(...)`       |
-| multi-machine training jobs | `GetMMT(...)`, `RunMMT(...)`                                                            |
-| machines                    | `MachineCPU`, `MachineL4`, `MachineA100`, and other `Machine*` constants                |
+| Area                        | Entry point                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| users                       | `GetUser(...)`                                                                             |
+| organizations               | `GetOrganization(...)`                                                                     |
+| teamspaces                  | `GetTeamspace(...)`, `CreateTeamspace(...)`                                                |
+| studios                     | `GetStudio(...)`, `CreateStudio(...)`, `studio.Start(...)`, `studio.SwitchMachine(...)`    |
+| jobs                        | `GetJob(...)`, `RunJob(...)`, `job.Wait(...)`, `job.Stop(...)`, `job.Delete(...)`          |
+| multi-machine training jobs | `GetMMT(...)`, `RunMMT(...)`                                                               |
+| job artifacts and files     | `teamspace.ListFiles(...)`, `teamspace.DownloadFolder(...)`, `teamspace.DownloadFile(...)` |
+| machines                    | `MachineCPU`, `MachineL4`, `MachineA100`, and other `Machine*` constants                   |
 
 # Development
 

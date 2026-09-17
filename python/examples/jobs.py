@@ -32,6 +32,10 @@ def _parser() -> argparse.ArgumentParser:
         help="Command to run.",
     )
 
+    artifacts = subcommands.add_parser("artifacts", help="Read a finished job's artifacts.")
+    artifacts.add_argument("--name", default="sdk-tutorial-job", help="Job name.")
+    artifacts.add_argument("--target", default="./artifacts", help="Local directory to download into.")
+
     return parser
 
 
@@ -75,6 +79,14 @@ def main() -> None:
         job.wait(interval=10)
         print(f"{job.name} finished with status {job.status}")
         # sdk-image-job-end
+    elif args.example == "artifacts":
+        # sdk-job-artifacts-start
+        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        job = Job(args.name, teamspace=teamspace)
+
+        teamspace.download_folder(f"jobs/{job.name}", args.target)
+        print(f"Downloaded artifacts of {job.name} into {args.target}")
+        # sdk-job-artifacts-end
 
 
 if __name__ == "__main__":

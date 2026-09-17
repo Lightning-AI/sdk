@@ -580,11 +580,6 @@ func (m *MMT) ArtifactPath() string {
 	return ""
 }
 
-// SnapshotPath returns the snapshot path for the MMT when available.
-func (m *MMT) SnapshotPath() string {
-	return ""
-}
-
 // SharePath returns the share path for the MMT when available.
 func (m *MMT) SharePath() string {
 	return ""

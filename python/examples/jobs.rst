@@ -47,12 +47,50 @@ pass container-specific options only when you need them:
    :end-before: # sdk-image-job-end
    :dedent: 8
 
+Reading a job's artifacts
+-------------------------
+
+Whatever a job writes to disk is kept in the teamspace drive under
+``jobs/<job name>``, and stays there until the job is deleted. Read it from
+anywhere with the teamspace's download methods:
+
+.. literalinclude:: ../../../examples/jobs.py
+   :language: python
+   :start-after: # sdk-job-artifacts-start
+   :end-before: # sdk-job-artifacts-end
+   :dedent: 8
+
+Use ``download_file`` instead when you only want one file, for example
+``teamspace.download_file(f"jobs/{job.name}/checkpoints/last.ckpt", "last.ckpt")``.
+
+The same location is ``lit://<owner>/<teamspace>/jobs/<job name>`` from the CLI,
+which is the quickest way to see what a job produced before downloading any of
+it:
+
+.. code-block:: console
+
+   $ lightning ls lit://owner/teamspace/jobs/my-job
+   $ lightning ls -r lit://owner/teamspace/jobs/my-job
+   $ lightning cp lit://owner/teamspace/jobs/my-job/metrics.json .
+
+It is also what the Lightning web UI shows under the job, and what a Studio in
+the same teamspace mounts at ``job.artifact_path``.
+
+For a multi-machine job, each machine writes its own folder. Iterate over
+``mmt.machines`` and use each machine's name:
+
+.. code-block:: python
+
+   for machine in mmt.machines:
+       teamspace.download_folder(f"jobs/{machine.name}", f"./artifacts/{machine.name}")
+
 Run the companion script directly when you want to execute the SDK example:
 
 .. code-block:: console
 
    $ python python/examples/jobs.py --teamspace teamspace --org owner studio --studio sdk-tutorial-studio
    $ python python/examples/jobs.py --teamspace teamspace --org owner image
+   $ python python/examples/jobs.py --teamspace teamspace --org owner artifacts --name sdk-tutorial-job
 
 Operational notes
 -----------------
@@ -71,6 +109,9 @@ Operational notes
   ``lightning deployment logs <name>`` and ``lightning sandbox logs <id>``. Each
   takes ``--follow``, ``--tail``, ``--since``/``--until``, ``--query`` and
   ``--severity``.
+- The drive path has no ``artifacts`` segment: a job's files sit directly under
+  ``jobs/<job name>``. ``job.artifact_path`` does have one, because that is the
+  path a Studio mounts, not the path the drive serves.
 - Studio-backed jobs must run in the same teamspace and cloud account as the
   Studio.
 - Container-backed jobs cannot also pass ``studio=``.

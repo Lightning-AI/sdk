@@ -588,7 +588,17 @@ func (j *Job) Link() string {
 	return jobLink(j.ownerName, j.teamspace, j.name)
 }
 
-// ArtifactPath returns the teamspace artifact path for the job.
+// ArtifactPath returns where this job's artifacts appear inside a Studio in
+// the same teamspace. It is a mount path, so it only resolves from within a
+// running Studio. To read the artifacts from anywhere else, address them in
+// the teamspace drive, which is this path with the leading "/teamspace/"
+// removed:
+//
+//	teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts")
+//
+// The same location is lit://<owner>/<teamspace>/jobs/<name> for "lightning
+// ls" and "lightning cp". Note that the drive has no "artifacts" path segment
+// — a job's files sit directly under its name.
 func (j *Job) ArtifactPath() string {
 	if j == nil {
 		return ""
@@ -600,14 +610,6 @@ func (j *Job) ArtifactPath() string {
 		return ""
 	}
 	return fmt.Sprintf("/teamspace/jobs/%s/artifacts", j.name)
-}
-
-// SnapshotPath returns the teamspace snapshot path for the job.
-func (j *Job) SnapshotPath() string {
-	if j == nil || j.name == "" || j.image != "" {
-		return ""
-	}
-	return fmt.Sprintf("/teamspace/jobs/%s/snapshot", j.name)
 }
 
 // SharePath returns the share path for the job when available.

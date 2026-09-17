@@ -676,6 +676,21 @@ class Job(metaclass=TrackCallsMeta):
 
     @property
     def artifact_path(self) -> Optional[str]:
+        """Where this job's artifacts appear inside a Studio in the same teamspace.
+
+        This is a mount path, so it only resolves from within a running Studio.
+        To read the artifacts from anywhere else, address them in the teamspace
+        drive, which is this path with the leading ``/teamspace/`` removed::
+
+            teamspace.download_folder(f"jobs/{job.name}", "./artifacts")
+
+        The same location is ``lit://<owner>/<teamspace>/jobs/<name>`` for
+        ``lightning ls`` and ``lightning cp``, and is what the Lightning web UI
+        shows under the job.
+
+        One thing catches people out: the drive has no ``artifacts`` path
+        segment. A job's files sit directly under its name.
+        """
         if self.is_multi_machine:
             raise NotImplementedError
         if self._guaranteed_job.spec.image != "":
@@ -689,14 +704,6 @@ class Job(metaclass=TrackCallsMeta):
             return None
 
         return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
-
-    @property
-    def snapshot_path(self) -> Optional[str]:
-        if self.is_multi_machine:
-            raise NotImplementedError
-        if self._guaranteed_job.spec.image != "":
-            return None
-        return f"/teamspace/jobs/{self._guaranteed_job.name}/snapshot"
 
     @property
     def share_path(self) -> Optional[str]:
