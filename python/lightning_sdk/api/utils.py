@@ -330,6 +330,17 @@ class _BlobUploader:
         if self.extra_headers:
             headers.update(self.extra_headers)
 
+        if self.filesize == 0:
+            # requests derives the body length with a truth test, so a zero-length
+            # stream is indistinguishable from one whose length it cannot know and
+            # falls back to "Transfer-Encoding: chunked". Presigned storage PUTs
+            # reject that with 501, which then trips the retry ladder below and
+            # costs minutes per empty file. Sending the empty body directly takes
+            # requests' no-body path, which sets "Content-Length: 0" instead.
+            r = requests.put(urls[0]["url"], data=b"", timeout=30, headers=headers or None)
+            self._raise_for_upload_status(r)
+            return
+
         with open(self.local_path, "rb") as f:
             if self.show_progress:
                 with tqdm.wrapattr(
@@ -350,19 +361,33 @@ class _BlobUploader:
             else:
                 r = requests.put(urls[0]["url"], data=f, timeout=30, headers=headers or None)
 
-        if r.status_code != 200:
-            # Retry transient server errors / throttling, and also 401/403 from
-            # storage: every attempt signs a fresh URL, which heals expired
-            # signatures and newly issued storage credentials that haven't
-            # propagated yet (e.g. right after a lightning_storage folder is
-            # created). The backoff decorator only retries HTTPError/
-            # RequestException, so raise an HTTPError for these instead of
-            # failing immediately.
-            if r.status_code >= 500 or r.status_code in (401, 403, 429):
-                raise HTTPError(
-                    f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
-                )
-            raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
+        self._raise_for_upload_status(r)
+
+    def _raise_for_upload_status(self, r: requests.Response) -> None:
+        """Turn a non-200 storage PUT response into the right exception type.
+
+        Args:
+            r: The response from the presigned storage PUT.
+
+        Raises:
+            HTTPError: On statuses worth retrying, so the backoff-wrapped caller
+                signs a fresh URL and tries again.
+            RuntimeError: On any other non-200 status.
+        """
+        if r.status_code == 200:
+            return
+        # Retry transient server errors / throttling, and also 401/403 from
+        # storage: every attempt signs a fresh URL, which heals expired
+        # signatures and newly issued storage credentials that haven't
+        # propagated yet (e.g. right after a lightning_storage folder is
+        # created). The backoff decorator only retries HTTPError/
+        # RequestException, so raise an HTTPError for these instead of
+        # failing immediately.
+        if r.status_code >= 500 or r.status_code in (401, 403, 429):
+            raise HTTPError(
+                f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
+            )
+        raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
 
     def _upload_part_with_recovery(self, url_info: Dict[str, Any], upload_id: str) -> Dict[str, Any]:
         """Upload one part, falling back to re-signing its URL on failure.

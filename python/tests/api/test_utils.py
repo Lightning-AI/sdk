@@ -30,6 +30,8 @@ from lightning_sdk.lightning_cloud.openapi import (
 from lightning_sdk.machine import Machine
 
 _TEST_ENDPOINT_BASE = "https://api.example.com/v1/projects/test-project-id/artifacts"
+# Tests that prepare a real request need a URL requests can parse, not a bare placeholder.
+_TEST_SIGNED_PUT_URL = "https://storage.example.com/signed-put-url"
 
 
 def _make_mocked_blob_uploader(monkeypatch, file_path, remote_path, **kwargs):
@@ -289,6 +291,127 @@ def test_blob_uploader_single_part_no_completion(tmp_path, monkeypatch):
     assert post_mock.call_count == 1
     assert post_mock.call_args.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
     put_mock.assert_called_once()
+
+
+def _capturing_put(captured):
+    """A ``requests.put`` stand-in that records the headers requests would really send.
+
+    The other upload tests assert on the arguments handed to a ``Mock``, which never
+    builds a request and so cannot see headers requests derives from the body. Preparing
+    the request here is what makes the body-length assertions below meaningful, and is
+    why these tests need a fully-qualified signed URL rather than a bare placeholder.
+    """
+
+    def put(url, data=None, headers=None, **_):
+        prepared = requests.Request("PUT", url, data=data, headers=headers).prepare()
+        captured.append(prepared)
+        return Mock(status_code=200)
+
+    return put
+
+
+@pytest.mark.parametrize("progress_bar", [False, True])
+def test_blob_uploader_single_part_sends_length_for_empty_file(tmp_path, monkeypatch, progress_bar):
+    """An empty file uploads with an explicit zero length instead of a chunked body.
+
+    requests falls back to chunked transfer encoding whenever it cannot determine a
+    body's length, and a zero-length body is indistinguishable from an unknown one by
+    its truth value. Presigned storage PUTs answer chunked uploads with 501, so an empty
+    file has to declare its length.
+    """
+    file_path = tmp_path / "__init__.py"
+    file_path.write_bytes(b"")
+
+    uploader = _make_mocked_blob_uploader(monkeypatch, file_path=str(file_path), remote_path="app/__init__.py")
+    uploader.show_progress = progress_bar
+
+    captured = []
+    monkeypatch.setattr(
+        lightning_sdk.api.utils.requests,
+        "post",
+        Mock(return_value=_blob_upload_response("app/__init__.py", "", [{"url": _TEST_SIGNED_PUT_URL}])),
+    )
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", _capturing_put(captured))
+
+    uploader()
+
+    assert len(captured) == 1
+    assert captured[0].headers["Content-Length"] == "0"
+    assert "Transfer-Encoding" not in captured[0].headers
+
+
+@pytest.mark.parametrize("progress_bar", [False, True])
+def test_blob_uploader_single_part_sends_length_for_non_empty_file(tmp_path, monkeypatch, progress_bar):
+    """A file with content still declares its byte count rather than streaming chunked."""
+    file_path = tmp_path / "main.py"
+    file_path.write_bytes(b"print('hi')\n")
+
+    uploader = _make_mocked_blob_uploader(monkeypatch, file_path=str(file_path), remote_path="app/main.py")
+    uploader.show_progress = progress_bar
+
+    captured = []
+    monkeypatch.setattr(
+        lightning_sdk.api.utils.requests,
+        "post",
+        Mock(return_value=_blob_upload_response("app/main.py", "", [{"url": _TEST_SIGNED_PUT_URL}])),
+    )
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", _capturing_put(captured))
+
+    uploader()
+
+    assert len(captured) == 1
+    assert captured[0].headers["Content-Length"] == "12"
+    assert "Transfer-Encoding" not in captured[0].headers
+
+
+def test_blob_uploader_single_part_empty_file_keeps_signed_headers(tmp_path, monkeypatch):
+    """The empty-file path still applies the presigned and extra headers the upload needs."""
+    file_path = tmp_path / "empty.bin"
+    file_path.write_bytes(b"")
+
+    uploader = _make_mocked_blob_uploader(
+        monkeypatch,
+        file_path=str(file_path),
+        remote_path="remote-path",
+        content_type="text/plain",
+        extra_headers={"x-ms-blob-type": "BlockBlob"},
+    )
+
+    captured = []
+    monkeypatch.setattr(
+        lightning_sdk.api.utils.requests,
+        "post",
+        Mock(
+            return_value=_blob_upload_response(
+                "remote-path", "", [{"url": _TEST_SIGNED_PUT_URL, "headers": {"Content-Type": "text/plain"}}]
+            )
+        ),
+    )
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", _capturing_put(captured))
+
+    uploader()
+
+    assert captured[0].headers["Content-Type"] == "text/plain"
+    assert captured[0].headers["x-ms-blob-type"] == "BlockBlob"
+    assert captured[0].headers["Content-Length"] == "0"
+
+
+def test_blob_uploader_single_part_empty_file_raises_on_client_error(tmp_path, monkeypatch):
+    """A non-retryable status on the empty-file path fails instead of passing silently."""
+    file_path = tmp_path / "empty.bin"
+    file_path.write_bytes(b"")
+
+    uploader = _make_mocked_blob_uploader(monkeypatch, file_path=str(file_path), remote_path="remote-path")
+
+    monkeypatch.setattr(
+        lightning_sdk.api.utils.requests,
+        "post",
+        Mock(return_value=_blob_upload_response("remote-path", "", [{"url": _TEST_SIGNED_PUT_URL}])),
+    )
+    monkeypatch.setattr(lightning_sdk.api.utils.requests, "put", Mock(return_value=Mock(status_code=404)))
+
+    with pytest.raises(RuntimeError, match="404"):
+        uploader()
 
 
 def _make_mocked_model_uploader(monkeypatch, file_path, remote_path):
