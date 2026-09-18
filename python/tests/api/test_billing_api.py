@@ -1,9 +1,7 @@
+import io
 import json
 from datetime import datetime, timezone
-from pathlib import Path
 from unittest import mock
-
-import pytest
 
 from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
@@ -299,30 +297,22 @@ def test_get_session_activity_csv(mock_authenticate, mock_requests_get, tmp_path
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "4"}
-    mock_response.iter_content = mock.Mock(return_value=[b"data"])
+    mock_response.text = "data"
     mock_requests_get.return_value = mock_response
 
     billing_api = BillingApi()
-    target_path = tmp_path / "detailed.csv"
+    writer = io.StringIO()
 
-    result = billing_api.get_session_activity(
-        org_id="org-1", format=ActivityFileFormat.CSV, target_path=str(target_path)
-    )
+    result = billing_api.get_session_activity(org_id="org-1", format=ActivityFileFormat.CSV, writer=writer)
 
     assert result is None
+    assert writer.getvalue() == "data"
     mock_authenticate.assert_called_once_with()
     mock_requests_get.assert_called_once()
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/detailed")
     assert call_args[1]["params"] == {"orgId": "org-1"}
     assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
-
-
-def test_get_session_activity_csv_requires_target_path():
-    billing_api = BillingApi()
-
-    with pytest.raises(ValueError, match="target_path"):
-        billing_api.get_session_activity(org_id="org-1", format=ActivityFileFormat.CSV)
 
 
 @mock.patch("requests.get", autospec=True)
@@ -335,16 +325,16 @@ def test_get_session_activity_json_default_format(mock_authenticate, mock_reques
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "21"}
-    mock_response.iter_content = mock.Mock(return_value=[b"id,name\nres-1,studio\n"])
+    mock_response.text = "id,name\nres-1,studio\n"
     mock_requests_get.return_value = mock_response
 
     billing_api = BillingApi()
-    target_path = tmp_path / "detailed.json"
+    writer = io.StringIO()
 
-    result = billing_api.get_session_activity(org_id="org-1", target_path=str(target_path))
+    result = billing_api.get_session_activity(org_id="org-1", writer=writer)
 
-    assert result == [{"id": "res-1", "name": "studio"}]
-    assert json.loads(Path(target_path).read_text()) == [{"id": "res-1", "name": "studio"}]
+    assert result is None
+    assert json.loads(writer.getvalue()) == [{"id": "res-1", "name": "studio"}]
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/detailed")
 
@@ -359,32 +349,26 @@ def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_pat
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "4"}
-    mock_response.iter_content = mock.Mock(return_value=[b"data"])
+    mock_response.text = "data"
     mock_requests_get.return_value = mock_response
 
     billing_api = BillingApi()
-    target_path = tmp_path / "summary.csv"
+    writer = io.StringIO()
 
     result = billing_api.get_resource_activity(
         org_id="org-1",
         format=ActivityFileFormat.CSV,
-        target_path=str(target_path),
+        writer=writer,
         project_ids=["proj-1"],
         limit=5,
     )
 
     assert result is None
+    assert writer.getvalue() == "data"
     mock_authenticate.assert_called_once_with()
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/summary")
     assert call_args[1]["params"] == {"orgId": "org-1", "projectIds": ["proj-1"], "limit": 5}
-
-
-def test_get_resource_activity_csv_requires_target_path():
-    billing_api = BillingApi()
-
-    with pytest.raises(ValueError, match="target_path"):
-        billing_api.get_resource_activity(org_id="org-1", format=ActivityFileFormat.CSV)
 
 
 @mock.patch("requests.get", autospec=True)
@@ -397,15 +381,15 @@ def test_get_resource_activity_json_default_format(mock_authenticate, mock_reque
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "21"}
-    mock_response.iter_content = mock.Mock(return_value=[b"id,name\nres-1,studio\n"])
+    mock_response.text = "id,name\nres-1,studio\n"
     mock_requests_get.return_value = mock_response
 
     billing_api = BillingApi()
-    target_path = tmp_path / "summary.json"
+    writer = io.StringIO()
 
-    result = billing_api.get_resource_activity(org_id="org-1", target_path=str(target_path))
+    result = billing_api.get_resource_activity(org_id="org-1", writer=writer)
 
-    assert result == [{"id": "res-1", "name": "studio"}]
-    assert json.loads(Path(target_path).read_text()) == [{"id": "res-1", "name": "studio"}]
+    assert result is None
+    assert json.loads(writer.getvalue()) == [{"id": "res-1", "name": "studio"}]
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/summary")

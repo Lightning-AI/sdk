@@ -17,21 +17,18 @@ Three ways to get billing activity, at different grains:
 """
 
 import csv
+import io
 import json
-import os
-import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import IO, Any, Dict, List, Optional
 
 import requests
 
 from lightning_sdk.api.utils import (
     _authenticate_and_get_auth_headers,
     _raise_for_download_status,
-    _stream_download_to_file,
     cached_lightning_client,
 )
 
@@ -228,14 +225,6 @@ class ActivityFileFormat(str, Enum):
         return self.value
 
 
-def _convert_csv_to_json(csv_path: Union[str, Path]) -> str:
-    """Convert a CSV file to a JSON string containing a list of row objects."""
-    with open(csv_path, newline="") as csv_file:
-        rows = list(csv.DictReader(csv_file))
-
-    return json.dumps(rows, indent=2)
-
-
 def _build_activity_query_params(
     org_id: str,
     project_ids: Optional[List[str]] = None,
@@ -290,7 +279,6 @@ class BillingApi:
     def _download_activity_csv(
         self,
         endpoint: str,
-        target_path: Union[str, Path],
         org_id: str,
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
@@ -302,7 +290,8 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> None:
+    ) -> str:
+        """Download a billing activity report and return its raw CSV text."""
         query_params = _build_activity_query_params(
             org_id=org_id,
             project_ids=project_ids,
@@ -327,14 +316,14 @@ class BillingApi:
 
         _raise_for_download_status(r, endpoint)
 
-        _stream_download_to_file(r, target_path, endpoint)
+        return r.text
 
     def _get_activity_report(
         self,
         endpoint: str,
         org_id: str,
         format: ActivityFileFormat,  # noqa: A002
-        target_path: Optional[Union[str, Path]],
+        writer: IO[str],
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         resource_ids: Optional[List[str]] = None,
@@ -345,77 +334,47 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> Optional[list[dict[str, str]]]:
+    ) -> None:
         """Get a CSV-download-backed billing activity report, as CSV or JSON.
 
         Shared by :meth:`get_session_activity` and :meth:`get_resource_activity`, which only
         differ in which download endpoint they hit.
 
-        If ``format`` is :attr:`ActivityFileFormat.CSV`, the report is downloaded straight to
-        ``target_path`` and ``None`` is returned. If ``format`` is :attr:`ActivityFileFormat.JSON`,
-        the report is downloaded to a temporary file, converted to JSON (a list of row objects),
-        and returned parsed as a Python object; if ``target_path`` is also given, the JSON string
-        is additionally written there.
-
-        Raises:
-            ValueError: If ``format`` is CSV and ``target_path`` is not given.
+        If ``format`` is :attr:`ActivityFileFormat.CSV`, the raw CSV text is written to
+        ``writer``. If ``format`` is :attr:`ActivityFileFormat.JSON`, the CSV is parsed and the
+        equivalent JSON is written to ``writer`` instead. To get the JSON as a string rather
+        than writing it to a file, pass an ``io.StringIO()`` as ``writer`` and read it back with
+        ``.getvalue()``.
         """
         format = ActivityFileFormat(format)  # noqa: A001
 
+        csv_text = self._download_activity_csv(
+            endpoint,
+            org_id=org_id,
+            project_ids=project_ids,
+            resource_types=resource_types,
+            resource_ids=resource_ids,
+            user_ids=user_ids,
+            start=start,
+            end=end,
+            limit=limit,
+            search_after=search_after,
+            search_after_resource_id=search_after_resource_id,
+            search_after_resource_type=search_after_resource_type,
+        )
+
         if format is ActivityFileFormat.CSV:
-            if target_path is None:
-                raise ValueError("'target_path' is required when 'format' is ActivityFileFormat.CSV.")
+            writer.write(csv_text)
+            return
 
-            self._download_activity_csv(
-                endpoint,
-                target_path=target_path,
-                org_id=org_id,
-                project_ids=project_ids,
-                resource_types=resource_types,
-                resource_ids=resource_ids,
-                user_ids=user_ids,
-                start=start,
-                end=end,
-                limit=limit,
-                search_after=search_after,
-                search_after_resource_id=search_after_resource_id,
-                search_after_resource_type=search_after_resource_type,
-            )
-            return None
-
-        tmp_fd, tmp_csv_name = tempfile.mkstemp(suffix=".csv")
-        os.close(tmp_fd)
-        tmp_csv_path = Path(tmp_csv_name)
-        try:
-            self._download_activity_csv(
-                endpoint,
-                target_path=tmp_csv_path,
-                org_id=org_id,
-                project_ids=project_ids,
-                resource_types=resource_types,
-                resource_ids=resource_ids,
-                user_ids=user_ids,
-                start=start,
-                end=end,
-                limit=limit,
-                search_after=search_after,
-                search_after_resource_id=search_after_resource_id,
-                search_after_resource_type=search_after_resource_type,
-            )
-            json_str = _convert_csv_to_json(tmp_csv_path)
-        finally:
-            tmp_csv_path.unlink(missing_ok=True)
-
-        if target_path is not None:
-            Path(target_path).write_text(json_str)
-
-        return json.loads(json_str)
+        rows = list(csv.DictReader(io.StringIO(csv_text)))
+        json.dump(rows, writer, indent=2)
 
     def get_session_activity(
         self,
         org_id: str,
+        writer: IO[str],
         format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
-        target_path: Optional[Union[str, Path]] = None,
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         resource_ids: Optional[List[str]] = None,
@@ -426,7 +385,7 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> Optional[list[dict[str, str]]]:
+    ) -> None:
         """Get the session-level billing activity report, as CSV or JSON.
 
         One row per session. A resource (e.g. a Studio or Job) can have many sessions within
@@ -438,18 +397,17 @@ class BillingApi:
         client, so this issues a raw authenticated HTTP request directly against ``self._client``'s
         configured host (see ``StudioApi.download_file`` for the established pattern of doing so).
 
-        If ``format`` is :attr:`ActivityFileFormat.CSV`, the report is downloaded straight to
-        ``target_path`` and ``None`` is returned. If ``format`` is :attr:`ActivityFileFormat.JSON`
-        (the default), the report is downloaded to a temporary file, converted to JSON (a list of
-        row objects), and returned parsed as a Python object; if ``target_path`` is also given,
-        the JSON string is additionally written there.
+        If ``format`` is :attr:`ActivityFileFormat.CSV`, the raw CSV text is written straight to
+        ``writer``. If ``format`` is :attr:`ActivityFileFormat.JSON` (the default), the CSV is
+        parsed and the equivalent JSON is written to ``writer`` instead. ``writer`` can be any
+        writable text stream: an open file, an ``io.StringIO`` buffer, ``sys.stdout``, etc. To
+        get the JSON as a string rather than writing it to a file, pass an ``io.StringIO()`` and
+        read it back with ``.getvalue()``.
 
         Args:
             org_id: ID of the organization to query.
+            writer: Writable text stream to write the report to.
             format: File format to return the report in, CSV or JSON. Defaults to JSON.
-            target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON; if given, the JSON string is also
-                written there.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
             resource_types: Restrict to these resource types. If omitted, all resource types
@@ -467,19 +425,12 @@ class BillingApi:
                 ``search_after``. Required alongside ``search_after_resource_type``.
             search_after_resource_type: Pagination cursor, resource type to break ties with
                 ``search_after``. Required alongside ``search_after_resource_id``.
-
-        Returns:
-            Optional[list[dict[str, str]]]: The session activity report, as a list of row
-            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
-
-        Raises:
-            ValueError: If ``format`` is CSV and ``target_path`` is not given.
         """
-        return self._get_activity_report(
+        self._get_activity_report(
             "/v1/billing/usage-report/download/detailed",
             org_id=org_id,
             format=format,
-            target_path=target_path,
+            writer=writer,
             project_ids=project_ids,
             resource_types=resource_types,
             resource_ids=resource_ids,
@@ -495,8 +446,8 @@ class BillingApi:
     def get_resource_activity(
         self,
         org_id: str,
+        writer: IO[str],
         format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
-        target_path: Optional[Union[str, Path]] = None,
         project_ids: Optional[List[str]] = None,
         resource_types: Optional[List[str]] = None,
         resource_ids: Optional[List[str]] = None,
@@ -507,7 +458,7 @@ class BillingApi:
         search_after: Optional[datetime] = None,
         search_after_resource_id: Optional[str] = None,
         search_after_resource_type: Optional[str] = None,
-    ) -> Optional[list[dict[str, str]]]:
+    ) -> None:
         """Get the resource-level billing activity report, as CSV or JSON.
 
         One row per resource (e.g. a Studio or Job) that was active in the queried time range,
@@ -519,18 +470,17 @@ class BillingApi:
         client, so this issues a raw authenticated HTTP request directly against ``self._client``'s
         configured host (see ``StudioApi.download_file`` for the established pattern of doing so).
 
-        If ``format`` is :attr:`ActivityFileFormat.CSV`, the report is downloaded straight to
-        ``target_path`` and ``None`` is returned. If ``format`` is :attr:`ActivityFileFormat.JSON`
-        (the default), the report is downloaded to a temporary file, converted to JSON (a list of
-        row objects), and returned parsed as a Python object; if ``target_path`` is also given,
-        the JSON string is additionally written there.
+        If ``format`` is :attr:`ActivityFileFormat.CSV`, the raw CSV text is written straight to
+        ``writer``. If ``format`` is :attr:`ActivityFileFormat.JSON` (the default), the CSV is
+        parsed and the equivalent JSON is written to ``writer`` instead. ``writer`` can be any
+        writable text stream: an open file, an ``io.StringIO`` buffer, ``sys.stdout``, etc. To
+        get the JSON as a string rather than writing it to a file, pass an ``io.StringIO()`` and
+        read it back with ``.getvalue()``.
 
         Args:
             org_id: ID of the organization to query.
+            writer: Writable text stream to write the report to.
             format: File format to return the report in, CSV or JSON. Defaults to JSON.
-            target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON; if given, the JSON string is also
-                written there.
             project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
                 all teamspaces in the organization is returned.
             resource_types: Restrict to these resource types. If omitted, all resource types
@@ -548,19 +498,12 @@ class BillingApi:
                 ``search_after``. Required alongside ``search_after_resource_type``.
             search_after_resource_type: Pagination cursor, resource type to break ties with
                 ``search_after``. Required alongside ``search_after_resource_id``.
-
-        Returns:
-            Optional[list[dict[str, str]]]: The resource activity report, as a list of row
-            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
-
-        Raises:
-            ValueError: If ``format`` is CSV and ``target_path`` is not given.
         """
-        return self._get_activity_report(
+        self._get_activity_report(
             "/v1/billing/usage-report/download/summary",
             org_id=org_id,
             format=format,
-            target_path=target_path,
+            writer=writer,
             project_ids=project_ids,
             resource_types=resource_types,
             resource_ids=resource_ids,

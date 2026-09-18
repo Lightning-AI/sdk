@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import IO, TYPE_CHECKING, List, Optional, Union
 
 from lightning_sdk.api import OrgApi
 from lightning_sdk.api.billing_api import ActivityFileFormat, BillingActivity, BillingActivityFilterValues, BillingApi
@@ -249,13 +248,13 @@ class Organization(Owner):
 
     def get_session_activity(
         self,
+        writer: IO[str],
         format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
-        target_path: Optional[Union[str, Path]] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> Optional[list[dict[str, str]]]:
+    ) -> None:
         """Get the session-level billing activity report for this organization, as CSV or JSON.
 
         One row per session. A resource (e.g. a Studio or Job) can have many sessions within
@@ -263,28 +262,25 @@ class Organization(Owner):
         :meth:`get_resource_activity` for one row per resource instead.
 
         Args:
+            writer: Writable text stream to write the report to, e.g. an open file, an
+                ``io.StringIO`` buffer, or ``sys.stdout``. To get the JSON as a string rather
+                than writing it to a file, pass an ``io.StringIO()`` and read it back with
+                ``.getvalue()``.
             format: File format to return the report in, either CSV or JSON. Defaults to JSON.
-            target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON. If given, the JSON string is also
-                written there.
             teamspace: A single teamspace to scope the report to.
             teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
                 ``teamspace``/``teamspaces``.
             filters: Optional filters to narrow down the report.
             cursor: Optional pagination cursor to continue a previous query.
-
-        Returns:
-            Optional[list[dict[str, str]]]: The session activity report, as a list of row
-            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()
         resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
 
-        return self._billing_api.get_session_activity(
+        self._billing_api.get_session_activity(
             org_id=self.id,
             format=format,
-            target_path=target_path,
+            writer=writer,
             project_ids=[t.id for t in resolved_teamspaces] or None,
             resource_types=filters.resource_types,
             resource_ids=filters.resource_ids,
@@ -299,13 +295,13 @@ class Organization(Owner):
 
     def get_resource_activity(
         self,
+        writer: IO[str],
         format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
-        target_path: Optional[Union[str, Path]] = None,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
         teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
         filters: Optional[BillingActivityFilters] = None,
         cursor: Optional[BillingActivityCursor] = None,
-    ) -> Optional[list[dict[str, str]]]:
+    ) -> None:
         """Get the resource-level billing activity report for this organization, as CSV or JSON.
 
         One row per resource (e.g. a Studio or Job) that was active in the queried time range,
@@ -313,28 +309,25 @@ class Organization(Owner):
         finer-grained, per-session breakdown of a resource's activity.
 
         Args:
+            writer: Writable text stream to write the report to, e.g. an open file, an
+                ``io.StringIO`` buffer, or ``sys.stdout``. To get the JSON as a string rather
+                than writing it to a file, pass an ``io.StringIO()`` and read it back with
+                ``.getvalue()``.
             format: File format to return the report in, either CSV or JSON. Defaults to JSON.
-            target_path: Local filesystem path to write the report to. Required when ``format``
-                is CSV. Optional when ``format`` is JSON. If given, the JSON string is also
-                written there.
             teamspace: A single teamspace to scope the report to.
             teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
                 ``teamspace``/``teamspaces``.
             filters: Optional filters to narrow down the report.
             cursor: Optional pagination cursor to continue a previous query.
-
-        Returns:
-            Optional[list[dict[str, str]]]: The resource activity report, as a list of row
-            objects, when ``format`` is JSON. ``None`` when ``format`` is CSV.
         """
         filters = filters or BillingActivityFilters()
         cursor = cursor or BillingActivityCursor()
         resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
 
-        return self._billing_api.get_resource_activity(
+        self._billing_api.get_resource_activity(
             org_id=self.id,
             format=format,
-            target_path=target_path,
+            writer=writer,
             project_ids=[t.id for t in resolved_teamspaces] or None,
             resource_types=filters.resource_types,
             resource_ids=filters.resource_ids,
