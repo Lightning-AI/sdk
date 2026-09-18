@@ -136,7 +136,7 @@ pygments_style = None
 
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
-    "github_url": "https://github.com/Lightning-AI/lightning-sdk",
+    "github_url": "https://github.com/Lightning-AI/sdk",
     "show_toc_level": 2,
 }
 
