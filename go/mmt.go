@@ -417,6 +417,15 @@ func (m *MMT) Stop() error {
 	return nil
 }
 
+// SetTags replaces the MMT's tag set with the given tag names. Tags that don't
+// exist in the teamspace yet are created. Pass zero names to remove all tags.
+func (m *MMT) SetTags(tagNames ...string) error {
+	if m == nil || m.teamspaceID == "" || m.id == "" {
+		return errors.New("mmt set tags requires teamspace ID and MMT ID")
+	}
+	return setWorkloadTags(m.teamspaceID, "multi_machine_job", m.id, tagNames)
+}
+
 // Delete deletes the MMT.
 func (m *MMT) Delete() error {
 	if m == nil || m.teamspaceID == "" || m.id == "" {

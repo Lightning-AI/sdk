@@ -413,3 +413,39 @@ def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_leq_one(_
     assert body.max_run_attempts == 1
     # A single attempt (no retries) must not set fault tolerance.
     assert body.fault_tolerance is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_set_tags_sends_request(_mock_auth):
+    from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+    job_api = MMTApiV2()
+    set_tags_mock = mock.MagicMock()
+    job_api._client.jobs_service_set_workload_tags = set_tags_mock
+
+    job_api.set_tags(job_id="mmt-1", teamspace_id="ts-abc", tags=["prod", "gpu"])
+
+    set_tags_mock.assert_called_once_with(
+        project_id="ts-abc",
+        workload_type="multi_machine_job",
+        workload_id="mmt-1",
+        body=JobsServiceSetWorkloadTagsBody(tags=["prod", "gpu"]),
+    )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_set_tags_sends_empty_list(_mock_auth):
+    from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+    job_api = MMTApiV2()
+    set_tags_mock = mock.MagicMock()
+    job_api._client.jobs_service_set_workload_tags = set_tags_mock
+
+    job_api.set_tags(job_id="mmt-1", teamspace_id="ts-abc", tags=[])
+
+    set_tags_mock.assert_called_once_with(
+        project_id="ts-abc",
+        workload_type="multi_machine_job",
+        workload_id="mmt-1",
+        body=JobsServiceSetWorkloadTagsBody(tags=[]),
+    )

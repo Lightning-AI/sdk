@@ -444,6 +444,66 @@ func (j *Job) Stop() error {
 	return nil
 }
 
+// Rename changes the job's display name. Only standalone jobs (those not
+// launched from a deployment, MMT, or pipeline) can be renamed.
+func (j *Job) Rename(newName string) error {
+	if j == nil || j.teamspaceID == "" || j.id == "" {
+		return errors.New("job rename requires teamspace ID and job ID")
+	}
+	if newName == "" {
+		return errors.New("job rename requires name")
+	}
+	if newName == j.name {
+		return nil
+	}
+	api, err := sdkclient.New()
+	if err != nil {
+		return err
+	}
+	resp, err := api.JobsService.JobsServiceUpdateJob(
+		jobs_service.NewJobsServiceUpdateJobParamsWithContext(context.Background()).
+			WithProjectID(j.teamspaceID).
+			WithID(j.id).
+			WithBody(&models.JobsServiceUpdateJobBody{Name: newName}),
+	)
+	if err != nil {
+		return err
+	}
+	updated := jobFromModel(resp.Payload, jobOptions{teamspaceName: j.teamspace, ownerName: j.ownerName})
+	if updated != nil {
+		if updated.studioID == "" {
+			updated.studioID = j.studioID
+		}
+		*j = *updated
+	}
+	return nil
+}
+
+// SetTags replaces the job's tag set with the given tag names. Tags that don't
+// exist in the teamspace yet are created. Pass zero names to remove all tags.
+func (j *Job) SetTags(tagNames ...string) error {
+	if j == nil || j.teamspaceID == "" || j.id == "" {
+		return errors.New("job set tags requires teamspace ID and job ID")
+	}
+	return setWorkloadTags(j.teamspaceID, "job", j.id, tagNames)
+}
+
+// setWorkloadTags is the shared implementation for setting workload tags.
+func setWorkloadTags(projectID, workloadType, workloadID string, tagNames []string) error {
+	api, err := sdkclient.New()
+	if err != nil {
+		return err
+	}
+	_, err = api.JobsService.JobsServiceSetWorkloadTags(
+		jobs_service.NewJobsServiceSetWorkloadTagsParamsWithContext(context.Background()).
+			WithProjectID(projectID).
+			WithWorkloadType(workloadType).
+			WithWorkloadID(workloadID).
+			WithBody(&models.JobsServiceSetWorkloadTagsBody{Tags: tagNames}),
+	)
+	return err
+}
+
 // Delete deletes the job.
 func (j *Job) Delete() error {
 	if j == nil || j.teamspaceID == "" || j.id == "" {

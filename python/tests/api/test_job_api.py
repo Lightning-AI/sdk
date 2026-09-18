@@ -777,3 +777,53 @@ def test_get_logs_finished_delegates_to_download_logs(mocker, mocker_auth):
     )
 
     assert job_api.get_logs_finished("job-1", "ts-abc") == "hi\n"
+
+
+def test_rename_job_sends_request_and_returns_job(mocker_auth):
+    job_api = JobApiV2()
+    update_mock = mock.MagicMock()
+    update_mock.return_value = V1Job(id="job-1", name="renamed-job", spec=V1JobSpec())
+    job_api._client.jobs_service_update_job = update_mock
+
+    result = job_api.rename_job(job_id="job-1", teamspace_id="ts-abc", new_name="renamed-job")
+
+    assert result.name == "renamed-job"
+    update_mock.assert_called_once_with(
+        project_id="ts-abc",
+        id="job-1",
+        body=JobsServiceUpdateJobBody(name="renamed-job"),
+    )
+
+
+def test_set_tags_sends_request(mocker_auth):
+    from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+    job_api = JobApiV2()
+    set_tags_mock = mock.MagicMock()
+    job_api._client.jobs_service_set_workload_tags = set_tags_mock
+
+    job_api.set_tags(job_id="job-1", teamspace_id="ts-abc", tags=["prod", "team a"])
+
+    set_tags_mock.assert_called_once_with(
+        project_id="ts-abc",
+        workload_type="job",
+        workload_id="job-1",
+        body=JobsServiceSetWorkloadTagsBody(tags=["prod", "team a"]),
+    )
+
+
+def test_set_tags_sends_empty_list(mocker_auth):
+    from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+    job_api = JobApiV2()
+    set_tags_mock = mock.MagicMock()
+    job_api._client.jobs_service_set_workload_tags = set_tags_mock
+
+    job_api.set_tags(job_id="job-1", teamspace_id="ts-abc", tags=[])
+
+    set_tags_mock.assert_called_once_with(
+        project_id="ts-abc",
+        workload_type="job",
+        workload_id="job-1",
+        body=JobsServiceSetWorkloadTagsBody(tags=[]),
+    )
