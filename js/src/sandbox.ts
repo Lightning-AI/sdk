@@ -139,6 +139,7 @@ function toSandboxData(v: V1Sandbox): SandboxData {
     persistent: v.persistent ?? false,
     projectId: v.projectId ?? "",
     storageGb: v.storageGb !== undefined && v.storageGb !== "" ? Number(v.storageGb) : 0,
+    dockerDataRootOnDisk: v.dockerDataRootOnDisk ?? false,
     timeout: v.timeout !== undefined && v.timeout !== "" ? Number(v.timeout) : 0,
     networkPolicy: v.networkPolicy,
     warm: v.warm,
@@ -232,6 +233,7 @@ export class Sandbox {
   readonly persistent: boolean;
   readonly projectId: string;
   readonly storageGb: number;
+  readonly dockerDataRootOnDisk: boolean;
   /** Maximum lifetime in milliseconds (0 = no timeout). */
   readonly timeout: number;
   /** Egress firewall policy in effect for the sandbox. */
@@ -288,6 +290,7 @@ export class Sandbox {
     this.persistent = data.persistent ?? false;
     this.projectId = data.projectId ?? "";
     this.storageGb = data.storageGb ?? 0;
+    this.dockerDataRootOnDisk = data.dockerDataRootOnDisk ?? false;
     this.timeout = data.timeout ?? 0;
     this.networkPolicy = fromV1NetworkPolicy(data.networkPolicy);
     this.warm = fromV1WarmStatus(data.warm);
@@ -380,6 +383,7 @@ export class Sandbox {
     if (params.snapshotId) body.snapshotId = params.snapshotId;
     if (params.timeout !== undefined) body.timeout = String(params.timeout);
     if (params.storageGb !== undefined) body.storageGb = String(params.storageGb);
+    if (params.dockerDataRootOnDisk !== undefined) body.dockerDataRootOnDisk = params.dockerDataRootOnDisk;
     const policy = toV1NetworkPolicy(params.networkPolicy);
     if (policy !== undefined) body.networkPolicy = policy;
     const warm = toV1Warm(params.warm);

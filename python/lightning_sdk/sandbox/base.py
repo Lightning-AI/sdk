@@ -184,6 +184,7 @@ def create_sandbox(
     image: str | None = None,
     image_secret_ref: str | None = None,
     docker: bool = False,
+    docker_data_root_on_disk: bool = False,
     spot: bool = False,
     ports: list[int | str] | None = None,
     project_id: str | None = None,
@@ -289,6 +290,8 @@ def create_sandbox(
     v1_warm = to_v1_warm(warm)
     if v1_warm is not None:
         body.warm = v1_warm
+    if docker_data_root_on_disk:
+        body.docker_data_root_on_disk = True
 
     sb: SandboxesServiceApi = sandbox_api.sandboxes()
     try:
@@ -503,6 +506,11 @@ class SandboxInstance(metaclass=TrackCallsMeta):
     def image_secret_ref(self) -> str:
         """Name of the project Secret used to pull :attr:`image` (empty for public/curated images)."""
         return getattr(self._v1, "image_secret_ref", "") or ""
+
+    @property
+    def docker_data_root_on_disk(self) -> bool:
+        """Whether ``/var/lib/docker`` is on the writable disk instead of tmpfs."""
+        return bool(getattr(self._v1, "docker_data_root_on_disk", False))
 
     @property
     def snapshot_id(self) -> str:

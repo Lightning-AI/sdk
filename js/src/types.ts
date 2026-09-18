@@ -54,6 +54,7 @@ export interface SandboxData {
   projectId: string;
   /** Writable disk size in GB (0 when inheriting the instance-type default). */
   storageGb: number;
+  dockerDataRootOnDisk: boolean;
   /** Maximum lifetime in milliseconds (0 = no timeout). */
   timeout: number;
   /** Raw egress policy as returned by the API (undefined = open egress). */
@@ -163,6 +164,11 @@ export interface CreateSandboxParams {
    * `cpu-1`; 10 / 40 / 60 / 80 GB for `cpu-2` / `cpu-4` / `cpu-8` / `cpu-16`).
    */
   storageGb?: number;
+  /**
+   * Bind `/var/lib/docker` onto the writable disk (quota'd by `storageGb`)
+   * instead of the default tmpfs.
+   */
+  dockerDataRootOnDisk?: boolean;
 }
 
 /** Parameters for resuming a stopped/paused persistent sandbox by id. */

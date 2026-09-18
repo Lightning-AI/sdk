@@ -264,6 +264,13 @@ def list_sandboxes(
     help="Provision a Docker-enabled sandbox (starts dockerd at boot; selects the "
     "runtime's -docker variant). Mutually exclusive with --image and --snapshot-id.",
 )
+@click.option(
+    "--docker-data-root-on-disk",
+    is_flag=True,
+    default=False,
+    help="Bind /var/lib/docker onto the writable disk (quota'd by storage_gb) "
+    "instead of the default tmpfs. Use when Docker needs space, e.g., building images.",
+)
 @click.option("--spot/--no-spot", default=False, help="Create the sandbox on spot capacity.")
 @click.option("--port", "ports", multiple=True, help="Port to expose. Can be passed multiple times.")
 @click.option("--teamspace", help="Teamspace to own persistent sandbox state (format: owner/teamspace).")
@@ -290,6 +297,7 @@ def create_sandbox(
     image: str | None,
     image_secret_ref: str | None,
     docker: bool,
+    docker_data_root_on_disk: bool,
     spot: bool,
     ports: Sequence[str],
     teamspace: str | None,
@@ -344,6 +352,7 @@ def create_sandbox(
         image=image,
         image_secret_ref=image_secret_ref,
         docker=docker,
+        docker_data_root_on_disk=docker_data_root_on_disk,
         spot=spot,
         ports=_parse_ports(ports),
         teamspace=teamspace,
