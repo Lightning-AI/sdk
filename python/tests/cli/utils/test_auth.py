@@ -57,7 +57,7 @@ def test_browser_authentication_blocks_subclass_callback_server() -> None:
         def _run_server(self) -> None:
             self.browser_started = True
 
-    auth = CustomAuth(user_id="", api_key="", auth_token="")
+    auth = CustomAuth(api_key="", auth_token="")
 
     with browser_authentication(False), pytest.raises(ValueError, match="lightning login"):
         auth.authenticate()
@@ -68,7 +68,6 @@ def test_browser_authentication_blocks_subclass_callback_server() -> None:
 def test_litserve_auth_uses_saved_credentials_without_starting_callback_server() -> None:
     """Deployment authentication must not start callback auth when credentials exist."""
     auth = _AuthLitServe(_AuthMode.DEPLOY)
-    auth.user_id = "user"
     auth.api_key = "key"
 
     with patch.object(
@@ -76,7 +75,7 @@ def test_litserve_auth_uses_saved_credentials_without_starting_callback_server()
         "_run_server",
         side_effect=AssertionError("callback server must not start"),
     ):
-        assert auth.authenticate().startswith("Basic ")
+        assert auth.authenticate().startswith("Bearer ")
 
 
 def test_litserve_auth_instructs_login_when_callback_auth_would_be_required() -> None:
