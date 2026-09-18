@@ -215,6 +215,11 @@ go test ./...
 
 The Go module currently lives in [`go.mod`](go.mod) and targets Go 1.22.
 
+### H200 and B200 machines
+
+Use `MachineH200`, `MachineH200X2`, `MachineH200X4` and `MachineH200X8`, or
+`MachineB200` and `MachineB200X8`, on every cloud.
+
 # License
 
 Apache-2.0. See [`../LICENSE`](../LICENSE).

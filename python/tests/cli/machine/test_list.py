@@ -38,6 +38,7 @@ def test_machines_output() -> None:
 │ A100_X_2        │
 │ A100_X_4        │
 │ A100_X_8        │
+│ B200            │
 │ B200_X_8        │
 │ CPU             │
 │ CPU_SMALL       │
@@ -53,6 +54,8 @@ def test_machines_output() -> None:
 │ H100_X_4        │
 │ H100_X_8        │
 │ H200            │
+│ H200_X_2        │
+│ H200_X_4        │
 │ H200_X_8        │
 │ L4              │
 │ L40S            │

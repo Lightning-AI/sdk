@@ -653,6 +653,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -666,7 +667,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.image = opts[0].Image
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}

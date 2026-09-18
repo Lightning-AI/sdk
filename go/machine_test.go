@@ -23,9 +23,11 @@ func TestMachineConstantsUsePythonMultiCloudSlugs(t *testing.T) {
 		lit.MachineA10040GBX8:    "lit-a100-40gb-8",
 		lit.MachineA10080GBX4:    "lit-a100-80gb-4",
 		lit.MachineH100X8:        "lit-h100-8",
-		lit.MachineH200:          "lit-h200x-1",
-		lit.MachineH200X8:        "lit-h200x-8",
-		lit.MachineB200X8:        "lit-b200x-8",
+		lit.MachineH200:          "lit-h200-1",
+		lit.MachineH200X4:        "lit-h200-4",
+		lit.MachineH200X8:        "lit-h200-8",
+		lit.MachineB200:          "lit-b200-1",
+		lit.MachineB200X8:        "lit-b200-8",
 		lit.MachineDataPrepUltra: "data-prep-ultra-extra-large",
 	}
 

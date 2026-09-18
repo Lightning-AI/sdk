@@ -720,6 +720,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -741,7 +742,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.publicIP = opts[0].PublicIP
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}

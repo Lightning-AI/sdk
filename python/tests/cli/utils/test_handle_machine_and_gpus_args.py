@@ -49,3 +49,10 @@ def test_get_machine_from_gpus_simple_and_with_count():
 def test_get_machine_from_gpus_invalid(bad):
     with pytest.raises(ValueError, match="Invalid GPU"):
         _get_machine_from_gpus(bad)
+
+
+@pytest.mark.parametrize("count", [1, 2, 4, 8])
+@pytest.mark.parametrize("family", ["H200"])
+def test_get_h200_machine_from_gpus(family, count):
+    suffix = "" if count == 1 else f"_X_{count}"
+    assert _get_machine_from_gpus(f"{family}:{count}") == f"{family}{suffix}"

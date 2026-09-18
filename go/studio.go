@@ -1212,7 +1212,7 @@ func applyStudioOptions(opts ...StudioOptions) studioOptions {
 				resolved.ownerName = owner.Name()
 			}
 		}
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		resolved.machine = string(opts[0].Machine)
 		resolved.autoSleep = opts[0].AutoSleep
 		resolved.autoSleepTime = opts[0].AutoSleepTime
