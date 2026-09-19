@@ -1553,6 +1553,7 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param list[str] job_ids: filter by specific job IDs
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1582,12 +1583,13 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param list[str] job_ids: filter by specific job IDs
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['user_ids', 'org_id', 'project_id', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids']  # noqa: E501
+        all_params = ['user_ids', 'org_id', 'project_id', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids', 'job_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1628,6 +1630,9 @@ class LitLoggerServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'job_ids' in params:
+            query_params.append(('jobIds', params['job_ids']))  # noqa: E501
+            collection_formats['jobIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -1901,6 +1906,7 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param list[str] job_ids: filter by specific job IDs
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1929,12 +1935,13 @@ class LitLoggerServiceApi(object):
         :param int offset:
         :param str order_by:
         :param list[str] ids: filter by specific metric stream IDs
+        :param list[str] job_ids: filter by specific job IDs
         :return: V1ListMetricsStreamsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids']  # noqa: E501
+        all_params = ['project_id', 'user_ids', 'cloud_space_id', 'app_id', 'limit', 'offset', 'order_by', 'ids', 'job_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1977,6 +1984,9 @@ class LitLoggerServiceApi(object):
         if 'ids' in params:
             query_params.append(('ids', params['ids']))  # noqa: E501
             collection_formats['ids'] = 'multi'  # noqa: E501
+        if 'job_ids' in params:
+            query_params.append(('jobIds', params['job_ids']))  # noqa: E501
+            collection_formats['jobIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 

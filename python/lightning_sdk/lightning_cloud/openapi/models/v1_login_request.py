@@ -47,25 +47,30 @@ class V1LoginRequest(object):
     swagger_types = {
         'api_key': 'str',
         'duration': 'str',
+        'issue_session': 'bool',
         'username': 'str'
     }
 
     attribute_map = {
         'api_key': 'apiKey',
         'duration': 'duration',
+        'issue_session': 'issueSession',
         'username': 'username'
     }
 
-    def __init__(self, api_key: 'str' =None, duration: 'str' =None, username: 'str' =None):  # noqa: E501
+    def __init__(self, api_key: 'str' =None, duration: 'str' =None, issue_session: 'bool' =None, username: 'str' =None):  # noqa: E501
         """V1LoginRequest - a model defined in Swagger"""  # noqa: E501
         self._api_key = None
         self._duration = None
+        self._issue_session = None
         self._username = None
         self.discriminator = None
         if api_key is not None:
             self.api_key = api_key
         if duration is not None:
             self.duration = duration
+        if issue_session is not None:
+            self.issue_session = issue_session
         if username is not None:
             self.username = username
 
@@ -110,6 +115,29 @@ class V1LoginRequest(object):
         """
 
         self._duration = duration
+
+    @property
+    def issue_session(self) -> 'bool':
+        """Gets the issue_session of this V1LoginRequest.  # noqa: E501
+
+        Issue a server-side session cookie alongside the token. Browser sign-in only: API and CLI callers drop the cookie, and each one left behind counts against the user's session cap.  # noqa: E501
+
+        :return: The issue_session of this V1LoginRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._issue_session
+
+    @issue_session.setter
+    def issue_session(self, issue_session: 'bool'):
+        """Sets the issue_session of this V1LoginRequest.
+
+        Issue a server-side session cookie alongside the token. Browser sign-in only: API and CLI callers drop the cookie, and each one left behind counts against the user's session cap.  # noqa: E501
+
+        :param issue_session: The issue_session of this V1LoginRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._issue_session = issue_session
 
     @property
     def username(self) -> 'str':
