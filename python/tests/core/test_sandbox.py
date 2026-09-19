@@ -649,9 +649,7 @@ def test_resolve_teamspace_id_falls_back_to_memberships(mocker):
     from lightning_sdk.lightning_cloud.openapi import V1ListMembershipsResponse, V1Membership
 
     mocker.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-    m_resolve = mocker.patch(
-        "lightning_sdk.utils.resolve._resolve_teamspace", side_effect=Exception("fail")
-    )
+    m_resolve = mocker.patch("lightning_sdk.utils.resolve._resolve_teamspace", side_effect=Exception("fail"))
 
     membership = V1Membership(
         name="teamspace",
