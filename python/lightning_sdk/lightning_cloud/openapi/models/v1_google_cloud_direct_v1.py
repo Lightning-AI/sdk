@@ -62,6 +62,7 @@ class V1GoogleCloudDirectV1(object):
         'service_account_email': 'str',
         'source_cidr_ips': 'list[str]',
         'subnets': 'list[V1SubnetSpec]',
+        'uniform_disk_setup': 'bool',
         'vpcs': 'list[V1GCPDirectVPC]'
     }
 
@@ -83,10 +84,11 @@ class V1GoogleCloudDirectV1(object):
         'service_account_email': 'serviceAccountEmail',
         'source_cidr_ips': 'sourceCidrIps',
         'subnets': 'subnets',
+        'uniform_disk_setup': 'uniformDiskSetup',
         'vpcs': 'vpcs'
     }
 
-    def __init__(self, bucket_name: 'str' =None, check_reservations: 'bool' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, filestore_firewall_mode_enabled: 'bool' =None, inventory_dataset: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
+    def __init__(self, bucket_name: 'str' =None, check_reservations: 'bool' =None, compute_project_role: 'str' =None, compute_service_account_email: 'str' =None, credentials_secret_id: 'str' =None, credentials_service_account_email: 'str' =None, custom_subnet_mode: 'bool' =None, filestore_firewall_mode_enabled: 'bool' =None, inventory_dataset: 'str' =None, inventory_table: 'str' =None, primary_region: 'str' =None, project_id: 'str' =None, project_sa_enabled: 'bool' =None, regions: 'list[str]' =None, service_account_email: 'str' =None, source_cidr_ips: 'list[str]' =None, subnets: 'list[V1SubnetSpec]' =None, uniform_disk_setup: 'bool' =None, vpcs: 'list[V1GCPDirectVPC]' =None):  # noqa: E501
         """V1GoogleCloudDirectV1 - a model defined in Swagger"""  # noqa: E501
         self._bucket_name = None
         self._check_reservations = None
@@ -105,6 +107,7 @@ class V1GoogleCloudDirectV1(object):
         self._service_account_email = None
         self._source_cidr_ips = None
         self._subnets = None
+        self._uniform_disk_setup = None
         self._vpcs = None
         self.discriminator = None
         if bucket_name is not None:
@@ -141,6 +144,8 @@ class V1GoogleCloudDirectV1(object):
             self.source_cidr_ips = source_cidr_ips
         if subnets is not None:
             self.subnets = subnets
+        if uniform_disk_setup is not None:
+            self.uniform_disk_setup = uniform_disk_setup
         if vpcs is not None:
             self.vpcs = vpcs
 
@@ -506,6 +511,27 @@ class V1GoogleCloudDirectV1(object):
         """
 
         self._subnets = subnets
+
+    @property
+    def uniform_disk_setup(self) -> 'bool':
+        """Gets the uniform_disk_setup of this V1GoogleCloudDirectV1.  # noqa: E501
+
+
+        :return: The uniform_disk_setup of this V1GoogleCloudDirectV1.  # noqa: E501
+        :rtype: bool
+        """
+        return self._uniform_disk_setup
+
+    @uniform_disk_setup.setter
+    def uniform_disk_setup(self, uniform_disk_setup: 'bool'):
+        """Sets the uniform_disk_setup of this V1GoogleCloudDirectV1.
+
+
+        :param uniform_disk_setup: The uniform_disk_setup of this V1GoogleCloudDirectV1.  # noqa: E501
+        :type: bool
+        """
+
+        self._uniform_disk_setup = uniform_disk_setup
 
     @property
     def vpcs(self) -> 'list[V1GCPDirectVPC]':
