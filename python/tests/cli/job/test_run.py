@@ -87,6 +87,32 @@ def test_run_job_with_multiple_machines_uses_job() -> None:
     assert "Submitted job distributed." in result.output
 
 
+@mock_command_logging
+def test_run_job_with_reserve_machines_timeout_minutes() -> None:
+    submitted = MagicMock(name="test-job")
+    submitted.name = "test-job"
+    with patch("lightning_sdk.cli.job.run.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.run.Job.run",
+        return_value=submitted,
+    ) as run_sdk_job:
+        result = CliRunner().invoke(
+            run_job,
+            [
+                "--name",
+                "test-job",
+                "--image",
+                "ubuntu",
+                "--command",
+                "echo hi",
+                "--reserve-machines-timeout-minutes",
+                "30",
+            ],
+        )
+
+    assert result.exit_code == 0, result.output
+    assert run_sdk_job.call_args.kwargs["reserve_machines_timeout_minutes"] == 30
+
+
 @pytest.mark.parametrize(
     ("input_mappings", "expected"),
     [
