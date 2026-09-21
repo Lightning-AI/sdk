@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from lightning_sdk.api.job_api import JobApiV2, V1ClusterAccelerator
+from lightning_sdk.api.job_api import JobApiV2, V1ClusterAccelerator, _reserve_machines_spec_kwargs
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
@@ -56,6 +56,7 @@ class MMTApiV2:
         scratch_disks: Optional[Dict[str, int]] = None,
         max_run_attempts: Optional[int] = None,
         tags: Optional[List[str]] = None,
+        reserve_machines_timeout_minutes: Optional[int] = None,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -87,6 +88,8 @@ class MMTApiV2:
                 not on the per-machine ``JobSpec``.
             tags: Optional teamspace tag names to apply to the job. Tags that don't exist in the
                 teamspace yet are created, which requires permission to create tags.
+            reserve_machines_timeout_minutes: Minutes to keep the machines reserved after the
+                job stops. ``None`` or ``0`` releases the machines immediately.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -112,6 +115,7 @@ class MMTApiV2:
             placement_group_id=placement_group_id,
             max_run_attempts=max_run_attempts,
             tags=tags,
+            reserve_machines_timeout_minutes=reserve_machines_timeout_minutes,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -138,6 +142,7 @@ class MMTApiV2:
         placement_group_id: Optional[str] = None,
         max_run_attempts: Optional[int] = None,
         tags: Optional[List[str]] = None,
+        reserve_machines_timeout_minutes: Optional[int] = None,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -167,6 +172,8 @@ class MMTApiV2:
                 automatically on the multi-machine job body. Set at the multi-machine job level,
                 not on the per-machine ``JobSpec``.
             tags: Optional teamspace tag names to apply to the job.
+            reserve_machines_timeout_minutes: Minutes to keep the machines reserved after the
+                job stops. ``None`` or ``0`` releases the machines immediately.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -186,6 +193,7 @@ class MMTApiV2:
         optional_spec_kwargs = {}
         if max_runtime:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
+        optional_spec_kwargs.update(_reserve_machines_spec_kwargs(reserve_machines_timeout_minutes))
 
         spec = V1JobSpec(
             cloudspace_id=studio_id or "",

@@ -144,6 +144,96 @@ def test_mmt_v2_submit_job_threads_placement_group_id(_mock_auth):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_threads_reserve_machines_timeout_minutes(_mock_auth):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=2,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        reserve_machines_timeout_minutes=15,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.reserve_machines_timeout_minutes == 15
+    assert body.spec.keep_machine_after_stop is True
+
+
+@pytest.mark.parametrize("timeout", [None, 0])
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_omits_unset_reserve_machines_timeout_minutes(_mock_auth, timeout):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=2,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        reserve_machines_timeout_minutes=timeout,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.reserve_machines_timeout_minutes is None
+    assert body.spec.keep_machine_after_stop is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+def test_mmt_v2_submit_job_rejects_negative_reserve_machines_timeout_minutes(_mock_auth):
+    job_api = MMTApiV2()
+    job_api._client.jobs_service_create_multi_machine_job = mock.MagicMock()
+
+    with pytest.raises(ValueError, match="reserve_machines_timeout_minutes must be >= 0"):
+        job_api.submit_job(
+            name="test-job",
+            num_machines=2,
+            cloud_account="c-abc",
+            teamspace_id="ts-abc",
+            studio_id="",
+            image="image-abc",
+            machine=Machine.CPU,
+            interruptible=False,
+            env=None,
+            command="echo hello",
+            image_credentials=None,
+            cloud_account_auth=False,
+            entrypoint="sh -c",
+            path_mappings=None,
+            max_runtime=None,
+            reuse_snapshot=True,
+            reserve_machines_timeout_minutes=-5,
+        )
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
 def test_mmt_v2_submit_job_threads_tags(_mock_auth):
     mmt_api = MMTApiV2()
     create_job_mock = mock.MagicMock()

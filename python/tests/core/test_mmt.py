@@ -102,6 +102,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         scratch_disks=None,
         max_run_attempts=None,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 
@@ -122,6 +123,34 @@ def test_submit_mmt_threads_placement_group_id(internal_studio_init_mocker):
     )
 
     assert submit_mock.call_args.kwargs["placement_group_id"] == "pg-1"
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_mmt_threads_reserve_machines_timeout_minutes(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = MMT("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        num_machines=2,
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        reserve_machines_timeout_minutes=15,
+    )
+
+    assert submit_mock.call_args.kwargs["reserve_machines_timeout_minutes"] == 15
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmt_exposes_reserve_machines_timeout_minutes(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+    job._job = V1MultiMachineJob(id="mmt-123", spec=V1JobSpec(reserve_machines_timeout_minutes=15))
+
+    assert job.reserve_machines_timeout_minutes == 15
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -239,6 +268,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         scratch_disks=None,
         max_run_attempts=None,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 

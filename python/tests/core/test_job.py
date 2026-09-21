@@ -166,6 +166,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         placement_group_id=None,
         num_machines=1,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 
@@ -394,6 +395,46 @@ def test_submit_job_threads_max_run_attempts(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_submit_job_threads_reserve_machines_timeout_minutes(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(
+        machine=Machine.CPU,
+        image="image-abc",
+        command="echo hello",
+        cloud_account="c-abc",
+        reserve_machines_timeout_minutes=30,
+    )
+
+    assert submit_mock.call_args.kwargs["reserve_machines_timeout_minutes"] == 30
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_exposes_reserve_machines_timeout_minutes(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(
+        id="job-123",
+        name="test-job",
+        spec=V1JobSpec(reserve_machines_timeout_minutes=30, keep_machine_after_stop=True),
+    )
+
+    assert job.reserve_machines_timeout_minutes == 30
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_reserve_machines_timeout_minutes_is_none_when_unset(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    job._job = V1Job(id="job-123", name="test-job", spec=V1JobSpec())
+
+    assert job.reserve_machines_timeout_minutes is None
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_submit_threads_max_run_attempts_for_multi_machine(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
@@ -504,6 +545,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         placement_group_id=None,
         num_machines=1,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 
@@ -894,6 +936,7 @@ def test_submit_jobv2_studio_resolve(
         placement_group_id=None,
         num_machines=1,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 
@@ -1068,6 +1111,7 @@ def test_submit_job_v2_image_from_studio(
         placement_group_id=None,
         num_machines=1,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -1115,6 +1159,7 @@ def test_run_job_with_cloud_provider(
         placement_group_id=None,
         num_machines=1,
         tags=None,
+        reserve_machines_timeout_minutes=None,
     )
 
 

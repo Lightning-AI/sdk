@@ -119,6 +119,7 @@ class MMT(Job):
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
+        reserve_machines_timeout_minutes: Optional[int] = None,
     ) -> "MMT":
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
@@ -147,5 +148,6 @@ class MMT(Job):
                 placement_group_id=placement_group_id,
                 num_machines=num_machines,
                 tags=tags,
+                reserve_machines_timeout_minutes=reserve_machines_timeout_minutes,
             ),
         )

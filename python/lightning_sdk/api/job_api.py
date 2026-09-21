@@ -45,6 +45,23 @@ _DOWNLOAD_LOGS_MIN_BACKOFF = 0.5
 _DOWNLOAD_LOGS_MAX_BACKOFF = 8.0
 
 
+def _reserve_machines_spec_kwargs(timeout_minutes: Optional[int]) -> Dict[str, Any]:
+    """Map a user timeout onto JobSpec fields sent to the backend.
+
+    ``None`` or ``0`` omits both fields (release the machine on stop). A value
+    greater than 0 sets ``reserve_machines_timeout_minutes`` and, until the
+    backend drops the compatibility bit, also ``keep_machine_after_stop=True``.
+    """
+    if not timeout_minutes:
+        return {}
+    if timeout_minutes < 0:
+        raise ValueError("reserve_machines_timeout_minutes must be >= 0")
+    return {
+        "reserve_machines_timeout_minutes": timeout_minutes,
+        "keep_machine_after_stop": True,
+    }
+
+
 def _job_logs_ws_url(
     teamspace_id: str,
     job_id: str,
@@ -154,6 +171,7 @@ class JobApiV2:
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
+        reserve_machines_timeout_minutes: Optional[int] = None,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -182,6 +200,8 @@ class JobApiV2:
             num_machines: Must be 1 for single-machine jobs. Kept for parity with ``MMTApiV2.submit_job``.
             tags: Optional teamspace tag names to apply to the job. Tags that don't exist in the
                 teamspace yet are created, which requires permission to create tags.
+            reserve_machines_timeout_minutes: Minutes to keep the machine reserved after the
+                job stops. ``None`` or ``0`` releases the machine immediately.
 
         Returns:
             The newly created ``V1Job`` object.
@@ -215,6 +235,7 @@ class JobApiV2:
             scratch_disks=sanitized_scratch_disks,
             placement_group_id=placement_group_id,
             tags=tags,
+            reserve_machines_timeout_minutes=reserve_machines_timeout_minutes,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -241,6 +262,7 @@ class JobApiV2:
         scratch_disks: Optional[Dict[str, int]] = None,
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
+        reserve_machines_timeout_minutes: Optional[int] = None,
     ) -> JobsServiceCreateJobBody:
         """Build the request body for creating a v2 job.
 
@@ -267,6 +289,8 @@ class JobApiV2:
             scratch_disks: Optional mapping of scratch-disk mount paths to their sizes in GiB.
             placement_group_id: Optional placement group identifier for colocating the job.
             tags: Optional teamspace tag names to apply to the job.
+            reserve_machines_timeout_minutes: Minutes to keep the machine reserved after the
+                job stops. ``None`` or ``0`` releases the machine immediately.
 
         Returns:
             A fully populated ``JobsServiceCreateJobBody`` ready to be sent to the jobs service.
@@ -288,6 +312,7 @@ class JobApiV2:
             optional_spec_kwargs["requested_run_duration_seconds"] = str(max_runtime)
         if max_run_attempts:
             optional_spec_kwargs["max_run_attempts"] = max_run_attempts
+        optional_spec_kwargs.update(_reserve_machines_spec_kwargs(reserve_machines_timeout_minutes))
 
         # don't do default dicts, as they'll be mutable. Create a fresh one here
         scratch_disks = scratch_disks or {}

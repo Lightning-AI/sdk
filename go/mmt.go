@@ -32,9 +32,10 @@ type MMT struct {
 	startedAt   time.Time
 	stoppedAt   time.Time
 
-	maxRunAttempts    int64
-	currentRunAttempt int64
-	tags              []string
+	maxRunAttempts                int64
+	currentRunAttempt             int64
+	reserveMachinesTimeoutMinutes int64
+	tags                          []string
 }
 
 // MachineDict is the JSON-friendly public representation of one MMT machine.
@@ -80,28 +81,29 @@ type MMTPathMapping struct {
 }
 
 type mmtOptions struct {
-	id               string
-	teamspaceID      string
-	teamspaceName    string
-	ownerName        string
-	studioID         string
-	status           string
-	numMachines      int64
-	machine          string
-	command          string
-	image            string
-	totalCost        float32
-	env              map[string]string
-	cloud            string
-	interruptible    bool
-	imageCredentials string
-	cloudAccountAuth bool
-	entrypoint       *string
-	pathMappings     []MMTPathMapping
-	artifactsSource  string
-	artifactsDest    string
-	maxRuntime       int
-	maxRunAttempts   int64
+	id                            string
+	teamspaceID                   string
+	teamspaceName                 string
+	ownerName                     string
+	studioID                      string
+	status                        string
+	numMachines                   int64
+	machine                       string
+	command                       string
+	image                         string
+	totalCost                     float32
+	env                           map[string]string
+	cloud                         string
+	interruptible                 bool
+	imageCredentials              string
+	cloudAccountAuth              bool
+	entrypoint                    *string
+	pathMappings                  []MMTPathMapping
+	artifactsSource               string
+	artifactsDest                 string
+	maxRuntime                    int
+	maxRunAttempts                int64
+	reserveMachinesTimeoutMinutes int64
 }
 
 type mmtWaitOptions struct {
@@ -156,6 +158,9 @@ type MMTOptions struct {
 	// strategy is set automatically on the multi-machine job body. Set at the
 	// multi-machine job level, not on the per-machine JobSpec.
 	MaxRunAttempts int64
+	// ReserveMachinesTimeoutMinutes is minutes to keep the machines reserved
+	// after the job stops. 0 means the machines are released immediately.
+	ReserveMachinesTimeoutMinutes int64
 }
 
 // MMTWaitOptions configures polling behavior while waiting for an MMT.
@@ -300,6 +305,15 @@ func (m *MMT) CurrentRunAttempt() int64 {
 	return m.currentRunAttempt
 }
 
+// ReserveMachinesTimeoutMinutes returns minutes the machines are kept reserved
+// after the job stops. 0 means unset (the machines are released immediately).
+func (m *MMT) ReserveMachinesTimeoutMinutes() int64 {
+	if m == nil {
+		return 0
+	}
+	return m.reserveMachinesTimeoutMinutes
+}
+
 // Tags returns the teamspace tags applied to this multi-machine job, in the
 // order the platform returns them.
 func (m *MMT) Tags() []string {
@@ -356,6 +370,9 @@ func RunMMT(name string, numMachines int64, machine Machine, command string, opt
 		return nil, errors.New("mmt run cannot use less than 2 machines")
 	}
 	if err := validateMMTComputeEnvironment(command, resolved); err != nil {
+		return nil, err
+	}
+	if err := validateReserveMachinesTimeoutMinutes(resolved.reserveMachinesTimeoutMinutes); err != nil {
 		return nil, err
 	}
 	api, err := sdkclient.New()
@@ -681,6 +698,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.artifactsDest = opts[0].ArtifactsDestination
 		resolved.maxRuntime = opts[0].MaxRuntime
 		resolved.maxRunAttempts = opts[0].MaxRunAttempts
+		resolved.reserveMachinesTimeoutMinutes = opts[0].ReserveMachinesTimeoutMinutes
 	}
 	return resolved
 }
@@ -755,6 +773,7 @@ func mmtFromModel(model *models.V1MultiMachineJob, opts mmtOptions) *MMT {
 		if result.studioID == "" {
 			result.studioID = model.Spec.CloudspaceID
 		}
+		result.reserveMachinesTimeoutMinutes = model.Spec.ReserveMachinesTimeoutMinutes
 	}
 	return result
 }
@@ -798,19 +817,21 @@ func (m *MMT) jobFromModel(model *models.V1Job) *Job {
 
 func mmtJobSpec(numMachines int64, machine, command string, opts mmtOptions) *models.V1JobSpec {
 	return &models.V1JobSpec{
-		CloudspaceID:                opts.studioID,
-		ClusterID:                   opts.cloud,
-		Command:                     command,
-		Entrypoint:                  resolveEntrypoint(command, opts.entrypoint, opts.image),
-		Env:                         envVars(opts.env),
-		Image:                       opts.image,
-		ImageClusterCredentials:     opts.cloudAccountAuth,
-		ImageSecretRef:              opts.imageCredentials,
-		InstanceName:                machine,
-		PathMappings:                mmtPathMappings(opts),
-		Quantity:                    numMachines,
-		RequestedRunDurationSeconds: maxRuntime(opts.maxRuntime),
-		Spot:                        opts.interruptible,
+		CloudspaceID:                  opts.studioID,
+		ClusterID:                     opts.cloud,
+		Command:                       command,
+		Entrypoint:                    resolveEntrypoint(command, opts.entrypoint, opts.image),
+		Env:                           envVars(opts.env),
+		Image:                         opts.image,
+		ImageClusterCredentials:       opts.cloudAccountAuth,
+		ImageSecretRef:                opts.imageCredentials,
+		InstanceName:                  machine,
+		PathMappings:                  mmtPathMappings(opts),
+		Quantity:                      numMachines,
+		RequestedRunDurationSeconds:   maxRuntime(opts.maxRuntime),
+		KeepMachineAfterStop:          opts.reserveMachinesTimeoutMinutes > 0,
+		ReserveMachinesTimeoutMinutes: opts.reserveMachinesTimeoutMinutes,
+		Spot:                          opts.interruptible,
 	}
 }
 

@@ -214,6 +214,13 @@ func maxRuntime(seconds int) string {
 	return strconv.Itoa(seconds)
 }
 
+func validateReserveMachinesTimeoutMinutes(timeoutMinutes int64) error {
+	if timeoutMinutes < 0 {
+		return errors.New("reserve_machines_timeout_minutes must be >= 0")
+	}
+	return nil
+}
+
 func resolveEntrypoint(command string, entrypoint *string, image string) string {
 	if entrypoint != nil {
 		return *entrypoint

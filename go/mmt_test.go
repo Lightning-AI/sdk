@@ -484,6 +484,75 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 
 }
 
+func TestMMTRunMapsReserveMachinesTimeoutMinutes(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/multi-machine-jobs",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		var body struct {
+			Spec struct {
+				KeepMachineAfterStop          *bool  `json:"keepMachineAfterStop"`
+				ReserveMachinesTimeoutMinutes *int64 `json:"reserveMachinesTimeoutMinutes"`
+			} `json:"spec"`
+		}
+		require.NoErrorf(t, json.NewDecoder(r.Body).Decode(&body),
+			"decode mmt body")
+		require.NotNil(t, body.Spec.KeepMachineAfterStop, "keepMachineAfterStop was omitted")
+		assert.True(t, *body.Spec.KeepMachineAfterStop, "keepMachineAfterStop = false, want true")
+		require.NotNil(t, body.Spec.ReserveMachinesTimeoutMinutes, "reserveMachinesTimeoutMinutes was omitted")
+		assert.Falsef(t, *body.Spec.ReserveMachinesTimeoutMinutes != 15,
+			"reserveMachinesTimeoutMinutes = %d, want 15", *body.Spec.ReserveMachinesTimeoutMinutes)
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "mmt-reserve",
+			"name":      "dist-train-reserve",
+			"projectId": "project-1",
+			"machines":  2,
+			"state":     "pending",
+			"spec": map[string]any{
+				"keepMachineAfterStop":          true,
+				"reserveMachinesTimeoutMinutes": 15,
+			},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	created, err := lit.RunMMT(
+		"dist-train-reserve",
+		2,
+		"gpu",
+		"train.py",
+		lit.MMTOptions{
+			Teamspace:                     mustTeamspace(t, "project-1", ""),
+			Image:                         "registry.example/train:latest",
+			ReserveMachinesTimeoutMinutes: 15,
+		},
+	)
+	require.NoErrorf(t, err,
+		"RunMMT returned error")
+	assert.Falsef(t, created.ReserveMachinesTimeoutMinutes() != 15,
+		"ReserveMachinesTimeoutMinutes = %d, want 15", created.ReserveMachinesTimeoutMinutes())
+}
+
+func TestMMTRunRejectsNegativeReserveMachinesTimeoutMinutes(t *testing.T) {
+	_, err := lit.RunMMT(
+		"dist-train-bad",
+		2,
+		"gpu",
+		"train.py",
+		lit.MMTOptions{
+			Teamspace:                     mustTeamspace(t, "project-1", ""),
+			Image:                         "registry.example/train:latest",
+			ReserveMachinesTimeoutMinutes: -1,
+		},
+	)
+	require.Error(t, err)
+	assert.True(t, strings.Contains(err.Error(), "reserve_machines_timeout_minutes must be >= 0"),
+		"error = %q, want reserve_machines_timeout_minutes must be >= 0", err)
+}
+
 func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
