@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -416,6 +417,15 @@ func (m *MMT) Stop() error {
 	return nil
 }
 
+// SetTags replaces the MMT's tag set with the given tag names. Tags that don't
+// exist in the teamspace yet are created. Pass zero names to remove all tags.
+func (m *MMT) SetTags(tagNames ...string) error {
+	if m == nil || m.teamspaceID == "" || m.id == "" {
+		return errors.New("mmt set tags requires teamspace ID and MMT ID")
+	}
+	return setWorkloadTags(m.teamspaceID, "multi_machine_job", m.id, tagNames)
+}
+
 // Delete deletes the MMT.
 func (m *MMT) Delete() error {
 	if m == nil || m.teamspaceID == "" || m.id == "" {
@@ -575,14 +585,48 @@ func (m *MMT) JSON() (string, error) {
 	return string(body), nil
 }
 
-// ArtifactPath returns the artifact path for the MMT when available.
-func (m *MMT) ArtifactPath() string {
+// ArtifactsURI is always empty for an MMT: each machine writes its own
+// artifacts, so there is no single address for the run. Use Machines and each
+// machine's ArtifactsURI.
+func (m *MMT) ArtifactsURI() string {
 	return ""
 }
 
-// SharePath returns the share path for the MMT when available.
-func (m *MMT) SharePath() string {
-	return ""
+// ListArtifacts lists what every machine of this MMT wrote to the teamspace
+// drive. Each path is prefixed with the name of the machine that wrote it, so
+// the listing matches the layout DownloadArtifacts writes.
+func (m *MMT) ListArtifacts(path string, recursive bool) ([]FileEntry, error) {
+	machines, err := m.Machines()
+	if err != nil {
+		return nil, err
+	}
+	var entries []FileEntry
+	for _, machine := range machines {
+		machineEntries, err := machine.ListArtifacts(path, recursive)
+		if err != nil {
+			return nil, err
+		}
+		for _, entry := range machineEntries {
+			entry.Path = machine.Name() + "/" + entry.Path
+			entries = append(entries, entry)
+		}
+	}
+	return entries, nil
+}
+
+// DownloadArtifacts downloads what every machine of this MMT wrote, each into
+// its own folder named after the machine under targetDir.
+func (m *MMT) DownloadArtifacts(targetDir, path string) error {
+	machines, err := m.Machines()
+	if err != nil {
+		return err
+	}
+	for _, machine := range machines {
+		if err := machine.DownloadArtifacts(filepath.Join(targetDir, machine.Name()), path); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Link returns the Lightning web URL for the MMT.
@@ -609,6 +653,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -622,7 +667,7 @@ func applyMMTOptions(opts ...MMTOptions) mmtOptions {
 		resolved.image = opts[0].Image
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}

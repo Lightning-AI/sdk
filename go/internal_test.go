@@ -50,3 +50,15 @@ func TestStudioKeepsInternalTeamspaceOwnerChain(t *testing.T) {
 		"unexpected studio teamspace chain: %+v", s.teamspace)
 
 }
+
+// An explicit Cloud wins, but an absent one must not wipe out the default the
+// teamspace or studio already supplied.
+func TestOptionsKeepInheritedCloudAccount(t *testing.T) {
+	ts, err := GetTeamspace("default", TeamspaceOptions{ID: "project-1", DefaultCloudAccount: "teamspace-account"})
+	require.NoError(t, err)
+
+	assert.Equal(t, "teamspace-account", applyJobOptions(JobOptions{Teamspace: ts}).cloud)
+	assert.Equal(t, "explicit-account", applyJobOptions(JobOptions{Teamspace: ts, Cloud: "explicit-account"}).cloud)
+	assert.Equal(t, "teamspace-account", applyMMTOptions(MMTOptions{Teamspace: ts}).cloud)
+	assert.Equal(t, "explicit-account", applyMMTOptions(MMTOptions{Teamspace: ts, Cloud: "explicit-account"}).cloud)
+}

@@ -1,5 +1,6 @@
 import warnings
-from pathlib import PurePath
+from dataclasses import replace
+from pathlib import Path, PurePath
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional, Tuple, TypedDict, Union, cast
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
@@ -8,6 +9,7 @@ from lightning_sdk.api.logs_api import LogsApi
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import (
     AccessibleResource,
+    FileEntry,
     _get_cloud_url,
     logs_filename,
     raise_access_error_if_not_allowed,
@@ -501,6 +503,55 @@ class Job(metaclass=TrackCallsMeta):
         self._name = submitted.name
         return self
 
+    def rename(self, new_name: str) -> None:
+        """Rename this job.
+
+        Only standalone jobs (not launched from a deployment, MMT, or pipeline) can be
+        renamed. An empty name or a name that matches the current name raises a
+        ``ValueError``.
+
+        Args:
+            new_name: The new name for the job.
+
+        Raises:
+            ValueError: If ``new_name`` is empty or matches the current name.
+        """
+        if not new_name:
+            raise ValueError("A job needs to have a name!")
+        if new_name == self._name:
+            raise ValueError(f"Job is already named '{new_name}'")
+
+        if self.is_multi_machine:
+            raise NotImplementedError("Renaming multi-machine jobs is not supported")
+        updated = self._standalone_job_api.rename_job(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            new_name=new_name,
+        )
+        if updated.name != new_name:
+            warnings.warn(
+                f"Job name '{new_name}' was already taken in this teamspace; "
+                f"the job was renamed to '{updated.name}' instead.",
+                stacklevel=2,
+            )
+        self._attach_job(updated)
+        self._name = updated.name
+
+    def set_tags(self, tags: List[str]) -> None:
+        """Replace this job's tag set with the given tag names.
+
+        Tags that don't exist in the teamspace yet are created, which requires
+        permission to create tags. Pass an empty list to remove all tags.
+
+        Args:
+            tags: The list of tag names to set on the job.
+        """
+        self._job_api.set_tags(
+            job_id=self._guaranteed_job.id,
+            teamspace_id=self._teamspace.id,
+            tags=tags,
+        )
+
     def stop(self) -> None:
         if self.status in (Status.Stopped, Status.Completed, Status.Failed):
             return
@@ -675,41 +726,83 @@ class Job(metaclass=TrackCallsMeta):
         return tuple(machines)
 
     @property
-    def artifact_path(self) -> Optional[str]:
-        """Where this job's artifacts appear inside a Studio in the same teamspace.
-
-        This is a mount path, so it only resolves from within a running Studio.
-        To read the artifacts from anywhere else, address them in the teamspace
-        drive, which is this path with the leading ``/teamspace/`` removed::
-
-            teamspace.download_folder(f"jobs/{job.name}", "./artifacts")
-
-        The same location is ``lit://<owner>/<teamspace>/jobs/<name>`` for
-        ``lightning ls`` and ``lightning cp``, and is what the Lightning web UI
-        shows under the job.
-
-        One thing catches people out: the drive has no ``artifacts`` path
-        segment. A job's files sit directly under its name.
-        """
+    def _artifacts_drive_path(self) -> Optional[str]:
+        """This job's artifact folder in the teamspace drive, or ``None`` if it keeps none."""
         if self.is_multi_machine:
-            raise NotImplementedError
-        if self._guaranteed_job.spec.image != "":
-            if self._guaranteed_job.spec.artifacts_destination:
-                (
-                    connection_type,
-                    connection_name,
-                    connection_path,
-                ) = self._guaranteed_job.spec.artifacts_destination.split(":")
-                return f"/teamspace/{connection_type}_connections/{connection_name}/{connection_path}"
             return None
+        if self._guaranteed_job.spec.image != "":
+            if not self._guaranteed_job.spec.artifacts_destination:
+                return None
+            (
+                connection_type,
+                connection_name,
+                connection_path,
+            ) = self._guaranteed_job.spec.artifacts_destination.split(":")
+            return f"{connection_type}_connections/{connection_name}/{connection_path}"
 
-        return f"/teamspace/jobs/{self._guaranteed_job.name}/artifacts"
+        return f"jobs/{self._guaranteed_job.name}"
 
     @property
-    def share_path(self) -> Optional[str]:
-        if self.is_multi_machine:
+    def artifacts_uri(self) -> Optional[str]:
+        """The ``lit://`` address of this job's artifacts, for ``lightning ls`` and ``lightning cp``.
+
+        ``None`` when the job keeps no artifacts, which is the case for a
+        container job launched without ``artifacts_destination``, and for a
+        multi-machine job, whose machines each have their own — iterate over
+        ``job.machines``.
+        """
+        drive_path = self._artifacts_drive_path
+        if drive_path is None:
             return None
-        raise NotImplementedError("Not implemented yet")
+        return f"lit://{self.teamspace.owner.name}/{self.teamspace.name}/{drive_path}"
+
+    def list_artifacts(self, path: str = "", recursive: bool = False) -> List[FileEntry]:
+        """List what this job wrote to the teamspace drive.
+
+        Args:
+            path: Subfolder of the job's artifacts to list. Defaults to all of them.
+            recursive: When ``True``, descend into subfolders.
+
+        Returns:
+            List[FileEntry]: One entry per file or folder, empty when the job keeps no
+            artifacts. For a multi-machine job every machine is listed, and each path is
+            prefixed with the machine's name.
+        """
+        if self.is_multi_machine:
+            return [
+                replace(entry, path=f"{machine.name}/{entry.path}")
+                for machine in self.machines
+                for entry in machine.list_artifacts(path=path, recursive=recursive)
+            ]
+
+        drive_path = self._artifacts_drive_path
+        if drive_path is None:
+            return []
+        return self.teamspace.list_files(f"{drive_path}/{path}".rstrip("/"), recursive=recursive)
+
+    def download_artifacts(self, target_dir: Union[str, "Path"] = ".", path: str = "") -> None:
+        """Download what this job wrote to a local directory.
+
+        Args:
+            target_dir: Local directory to download into. Created if it does not exist.
+            path: Subfolder of the job's artifacts to download. Defaults to all of them.
+
+        Raises:
+            RuntimeError: If the job keeps no artifacts. A container job only keeps them
+                when it was launched with ``artifacts_destination``.
+        """
+        if self.is_multi_machine:
+            for machine in self.machines:
+                machine.download_artifacts(Path(target_dir) / machine.name, path=path)
+            return
+
+        drive_path = self._artifacts_drive_path
+        if drive_path is None:
+            raise RuntimeError(
+                f"Job {self.name!r} keeps no artifacts. A job running a container image only keeps them when it is "
+                "launched with artifacts_destination pointing at a teamspace folder or connection."
+            )
+        self.teamspace.download_folder(f"{drive_path}/{path}".rstrip("/"), str(target_dir))
 
     @property
     def logs(self) -> _Logs:

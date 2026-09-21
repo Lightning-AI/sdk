@@ -11,6 +11,10 @@ Teamspace
    :members:
    :show-inheritance:
 
+.. autoclass:: FileEntry
+   :members:
+   :show-inheritance:
+
 .. autoclass:: SecretType
    :members:
    :undoc-members:

@@ -7,6 +7,7 @@ import re
 import tempfile
 import warnings
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from functools import lru_cache, partial
@@ -53,6 +54,53 @@ from lightning_sdk.machine import Machine
 @runtime_checkable
 class Experiment(Protocol):
     id: str
+
+
+@dataclass(frozen=True)
+class FileEntry:
+    """One entry in a teamspace drive listing.
+
+    Attributes:
+        path: Path relative to the folder that was listed.
+        is_dir: Whether the entry is a folder rather than a file.
+        size: Size in bytes, or ``None`` for folders.
+        cloud_account: Cloud account holding the file, when the server reports one.
+        last_modified: When the file was last written, when the server reports it.
+    """
+
+    path: str
+    is_dir: bool
+    size: Optional[int] = None
+    cloud_account: Optional[str] = None
+    last_modified: Optional[datetime] = None
+
+    @property
+    def name(self) -> str:
+        """The entry's own name, without any leading folders."""
+        return self.path.rsplit("/", 1)[-1]
+
+
+def _file_entry(item: Dict[str, Any]) -> FileEntry:
+    """Convert one raw tree entry into a :class:`FileEntry`."""
+    is_dir = item.get("type") != "blob"
+    last_modified = item.get("lastModified")
+    return FileEntry(
+        path=item.get("path", ""),
+        is_dir=is_dir,
+        # An empty file has no size field at all, so a missing one means zero.
+        size=None if is_dir else item.get("size", 0),
+        cloud_account=item.get("clusterId") or None,
+        last_modified=_parse_tree_timestamp(last_modified),
+    )
+
+
+def _parse_tree_timestamp(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 class _DummyBody:

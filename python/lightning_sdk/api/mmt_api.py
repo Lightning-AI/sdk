@@ -287,6 +287,27 @@ class MMTApiV2:
                 break
             time.sleep(1)
 
+    def set_tags(self, job_id: str, teamspace_id: str, tags: List[str]) -> None:
+        """Replace the multi-machine job's tags with the given tag names.
+
+        Tags that don't exist in the teamspace yet are created.
+        Pass an empty list to remove all tags.
+
+        Args:
+            job_id: The unique identifier of the multi-machine job.
+            teamspace_id: The ID of the teamspace that owns the job.
+            tags: The list of tag names to set on the job.
+        """
+        from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
+
+        body = JobsServiceSetWorkloadTagsBody(tags=tags)
+        self._client.jobs_service_set_workload_tags(
+            body=body,
+            project_id=teamspace_id,
+            workload_type="multi_machine_job",
+            workload_id=job_id,
+        )
+
     def delete_job(self, job_id: str, teamspace_id: str, cloudspace_id: Optional[str] = None) -> None:
         """Permanently delete a multi-machine job.
 

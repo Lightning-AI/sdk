@@ -444,6 +444,66 @@ func (j *Job) Stop() error {
 	return nil
 }
 
+// Rename changes the job's display name. Only standalone jobs (those not
+// launched from a deployment, MMT, or pipeline) can be renamed.
+func (j *Job) Rename(newName string) error {
+	if j == nil || j.teamspaceID == "" || j.id == "" {
+		return errors.New("job rename requires teamspace ID and job ID")
+	}
+	if newName == "" {
+		return errors.New("job rename requires name")
+	}
+	if newName == j.name {
+		return nil
+	}
+	api, err := sdkclient.New()
+	if err != nil {
+		return err
+	}
+	resp, err := api.JobsService.JobsServiceUpdateJob(
+		jobs_service.NewJobsServiceUpdateJobParamsWithContext(context.Background()).
+			WithProjectID(j.teamspaceID).
+			WithID(j.id).
+			WithBody(&models.JobsServiceUpdateJobBody{Name: newName}),
+	)
+	if err != nil {
+		return err
+	}
+	updated := jobFromModel(resp.Payload, jobOptions{teamspaceName: j.teamspace, ownerName: j.ownerName})
+	if updated != nil {
+		if updated.studioID == "" {
+			updated.studioID = j.studioID
+		}
+		*j = *updated
+	}
+	return nil
+}
+
+// SetTags replaces the job's tag set with the given tag names. Tags that don't
+// exist in the teamspace yet are created. Pass zero names to remove all tags.
+func (j *Job) SetTags(tagNames ...string) error {
+	if j == nil || j.teamspaceID == "" || j.id == "" {
+		return errors.New("job set tags requires teamspace ID and job ID")
+	}
+	return setWorkloadTags(j.teamspaceID, "job", j.id, tagNames)
+}
+
+// setWorkloadTags is the shared implementation for setting workload tags.
+func setWorkloadTags(projectID, workloadType, workloadID string, tagNames []string) error {
+	api, err := sdkclient.New()
+	if err != nil {
+		return err
+	}
+	_, err = api.JobsService.JobsServiceSetWorkloadTags(
+		jobs_service.NewJobsServiceSetWorkloadTagsParamsWithContext(context.Background()).
+			WithProjectID(projectID).
+			WithWorkloadType(workloadType).
+			WithWorkloadID(workloadID).
+			WithBody(&models.JobsServiceSetWorkloadTagsBody{Tags: tagNames}),
+	)
+	return err
+}
+
 // Delete deletes the job.
 func (j *Job) Delete() error {
 	if j == nil || j.teamspaceID == "" || j.id == "" {
@@ -588,18 +648,9 @@ func (j *Job) Link() string {
 	return jobLink(j.ownerName, j.teamspace, j.name)
 }
 
-// ArtifactPath returns where this job's artifacts appear inside a Studio in
-// the same teamspace. It is a mount path, so it only resolves from within a
-// running Studio. To read the artifacts from anywhere else, address them in
-// the teamspace drive, which is this path with the leading "/teamspace/"
-// removed:
-//
-//	teamspace.DownloadFolder("jobs/"+job.Name(), "./artifacts")
-//
-// The same location is lit://<owner>/<teamspace>/jobs/<name> for "lightning
-// ls" and "lightning cp". Note that the drive has no "artifacts" path segment
-// — a job's files sit directly under its name.
-func (j *Job) ArtifactPath() string {
+// artifactsDrivePath returns this job's artifact folder in the teamspace
+// drive, or "" when the job keeps no artifacts.
+func (j *Job) artifactsDrivePath() string {
 	if j == nil {
 		return ""
 	}
@@ -609,12 +660,41 @@ func (j *Job) ArtifactPath() string {
 	if j.name == "" {
 		return ""
 	}
-	return fmt.Sprintf("/teamspace/jobs/%s/artifacts", j.name)
+	return "jobs/" + j.name
 }
 
-// SharePath returns the share path for the job when available.
-func (j *Job) SharePath() string {
-	return ""
+// ArtifactsURI returns the lit:// address of this job's artifacts, which is
+// what "lightning ls" and "lightning cp" take. It is empty when the job keeps
+// no artifacts, which is the case for a container job launched without an
+// artifacts destination.
+func (j *Job) ArtifactsURI() string {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" || j.ownerName == "" || j.teamspace == "" {
+		return ""
+	}
+	return fmt.Sprintf("lit://%s/%s/%s", j.ownerName, j.teamspace, drivePath)
+}
+
+// ListArtifacts lists what this job wrote to the teamspace drive. path selects
+// a subfolder of the job's artifacts, or is empty for all of them. It returns
+// no entries when the job keeps no artifacts.
+func (j *Job) ListArtifacts(path string, recursive bool) ([]FileEntry, error) {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return nil, nil
+	}
+	return listDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), recursive)
+}
+
+// DownloadArtifacts downloads what this job wrote into targetDir. path selects
+// a subfolder of the job's artifacts, or is empty for all of them.
+func (j *Job) DownloadArtifacts(targetDir, path string) error {
+	drivePath := j.artifactsDrivePath()
+	if drivePath == "" {
+		return fmt.Errorf("job %q keeps no artifacts: a job running a container image only keeps them when it is "+
+			"launched with an artifacts destination pointing at a teamspace folder or connection", j.Name())
+	}
+	return downloadDriveFolder(j.teamspaceID, joinDrivePath(drivePath, path), targetDir)
 }
 
 func jobLink(ownerName, teamspaceName, jobName string) string {
@@ -640,6 +720,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		}
 		if opts[0].Studio != nil {
 			resolved.studioID = opts[0].Studio.ID()
+			resolved.cloud = firstNonEmpty(opts[0].Cloud, opts[0].Studio.Cloud(), resolved.cloud)
 			if resolved.teamspaceID == "" {
 				resolved.teamspaceID = opts[0].Studio.TeamspaceID()
 				resolved.teamspaceName = opts[0].Studio.Teamspace()
@@ -661,7 +742,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.publicIP = opts[0].PublicIP
 		resolved.totalCost = opts[0].TotalCost
 		resolved.env = opts[0].Env
-		resolved.cloud = opts[0].Cloud
+		resolved.cloud = firstNonEmpty(opts[0].Cloud, resolved.cloud)
 		if opts[0].Interruptible != nil {
 			resolved.interruptible = *opts[0].Interruptible
 		}
@@ -840,7 +921,7 @@ func artifactDestinationPath(destination string) string {
 	if len(parts) != 3 {
 		return ""
 	}
-	return fmt.Sprintf("/teamspace/%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
+	return fmt.Sprintf("%s_connections/%s/%s", parts[0], parts[1], strings.TrimLeft(parts[2], "/"))
 }
 
 func scratchVolumes(disks []ScratchDisk) []*models.V1Volume {
