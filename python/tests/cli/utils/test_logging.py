@@ -9,12 +9,17 @@ This module tests:
 """
 
 import contextlib
+import os
+import pathlib
+import subprocess
 import sys
 from unittest import mock
 
 import click
 import click.testing
+import pytest
 
+import lightning_sdk
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.cli.utils.logging import (
     CommandLoggingGroup,
@@ -471,3 +476,97 @@ class TestCommandLoggingGroup:
 
         assert result.exit_code == 0
         assert "Hello" in result.output
+
+
+# The tests above prove _notify_exception renders a clean panel and that logging_excepthook calls
+# it. Neither says the hook is ever reached: Click formats ClickException itself and lets every
+# other error escape, so the panel depends on an ordinary error travelling all the way out of
+# main() to the interpreter. These cover that last link, which is invisible to CliRunner because
+# the runner catches exceptions before the interpreter ever sees them.
+
+# Rejected before any network call, so it exercises the failure path offline.
+_FAILING_COMMAND = ["cp", "lit:///a/b", "lit:///c/d"]
+
+
+class TestErrorsReachTheExcepthook:
+    """A plain error from a command has to reach sys.excepthook for the CLI panel to appear."""
+
+    def test_running_a_command_installs_the_excepthook(self, monkeypatch):
+        """The group callback points sys.excepthook at the handler that prints the panel."""
+        from lightning_sdk.cli.entrypoint import main_cli
+
+        monkeypatch.setattr(sys, "excepthook", sys.__excepthook__)
+        monkeypatch.setattr("lightning_sdk.cli.utils.logging._log_command", mock.Mock())
+
+        click.testing.CliRunner().invoke(main_cli, _FAILING_COMMAND, prog_name="lightning")
+
+        assert sys.excepthook is logging_excepthook
+
+    def test_click_lets_a_plain_error_escape(self, monkeypatch):
+        """Click formats only ClickException, so an SDK error must come out of main() unchanged."""
+        from lightning_sdk.cli.entrypoint import main_cli
+
+        monkeypatch.setattr(sys, "excepthook", sys.__excepthook__)
+        monkeypatch.setattr("lightning_sdk.cli.utils.logging._log_command", mock.Mock())
+
+        with pytest.raises(ValueError, match="Cannot copy between two remote URLs"):
+            main_cli.main(_FAILING_COMMAND, prog_name="lightning", standalone_mode=True)
+
+
+# Driving a real interpreter is the only way to see what a user sees: the hook runs after the
+# exception has left every frame a test could wrap. _log_command is started rather than scoped
+# for the same reason - a with block would unwind before the hook fires, letting it hit the network.
+# The driver lives in a temp dir, so sys.path[0] is that dir and an installed copy of the package
+# would win over this checkout; _PACKAGE_ROOT pins the subprocess to the same one pytest imported.
+_CLI_FAILURE_DRIVER = """
+import sys
+from unittest import mock
+
+mock.patch("lightning_sdk.cli.utils.logging._log_command").start()
+from lightning_sdk.cli.entrypoint import main_cli
+
+sys.argv = ["lightning", *{args!r}]
+main_cli()
+"""
+
+
+_PACKAGE_ROOT = str(pathlib.Path(lightning_sdk.__file__).resolve().parents[1])
+
+
+def _run_cli_driver(tmp_path, debug):
+    driver = tmp_path / "driver.py"
+    driver.write_text(_CLI_FAILURE_DRIVER.format(args=_FAILING_COMMAND))
+    result = subprocess.run(
+        [sys.executable, str(driver)],
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "PYTHONPATH": _PACKAGE_ROOT,
+            "LIGHTNING_API_KEY": "dummy-api-key",
+            "COLUMNS": "200",
+            "LIGHTNING_DEBUG": debug,
+        },
+        check=False,
+    )
+    return result.returncode, result.stdout + result.stderr
+
+
+def test_cli_reports_errors_as_a_panel_not_a_traceback(tmp_path):
+    """End to end: a failing command prints the error panel and no traceback."""
+    returncode, output = _run_cli_driver(tmp_path, debug="")
+
+    assert returncode == 1
+    assert "Lightning CLI Error" in output
+    assert "Cannot copy between two remote URLs" in output
+    assert "Traceback (most recent call last)" not in output
+    assert "LIGHTNING_DEBUG=1" in output
+
+
+def test_cli_shows_the_traceback_when_debug_is_set(tmp_path):
+    """LIGHTNING_DEBUG=1 is the documented way back to the traceback, so it has to work."""
+    returncode, output = _run_cli_driver(tmp_path, debug="1")
+
+    assert returncode == 1
+    assert "Full traceback" in output
+    assert "Cannot copy between two remote URLs" in output

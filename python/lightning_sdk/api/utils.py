@@ -119,6 +119,8 @@ _MAX_BATCH_SIZE = 50
 _MAX_WORKERS = 10
 # S3, R2, and GCS all cap multipart uploads at 10,000 parts
 _MAX_UPLOAD_PARTS = 10000
+# 5xx statuses that reject the request itself rather than signalling a transient fault
+_NON_RETRYABLE_UPLOAD_STATUSES = (501, 505)
 
 
 def _local_file_matches_size(local_path: str, expected_size: Optional[int]) -> bool:
@@ -378,39 +380,55 @@ class _BlobUploader:
         if self.extra_headers:
             headers.update(self.extra_headers)
 
-        with open(self.local_path, "rb") as f:
+        with contextlib.ExitStack() as stack:
+            handle = stack.enter_context(open(self.local_path, "rb"))
+            body: Any = handle
             if self.show_progress:
-                with tqdm.wrapattr(
-                    f,
-                    "read",
-                    desc=f"Uploading {os.path.split(self.local_path)[1]}",
-                    total=self.filesize,
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=1024,
-                ) as wrapped_file:
-                    r = requests.put(
-                        urls[0]["url"],
-                        data=_IterableFileWrapper(wrapped_file),
-                        timeout=30,
-                        headers=headers or None,
+                body = _IterableFileWrapper(
+                    stack.enter_context(
+                        tqdm.wrapattr(
+                            handle,
+                            "read",
+                            desc=f"Uploading {os.path.split(self.local_path)[1]}",
+                            total=self.filesize,
+                            unit="B",
+                            unit_scale=True,
+                            unit_divisor=1024,
+                        )
                     )
-            else:
-                r = requests.put(urls[0]["url"], data=f, timeout=30, headers=headers or None)
-
-        if r.status_code != 200:
-            # Retry transient server errors / throttling, and also 401/403 from
-            # storage: every attempt signs a fresh URL, which heals expired
-            # signatures and newly issued storage credentials that haven't
-            # propagated yet (e.g. right after a lightning_storage folder is
-            # created). The backoff decorator only retries HTTPError/
-            # RequestException, so raise an HTTPError for these instead of
-            # failing immediately.
-            if r.status_code >= 500 or r.status_code in (401, 403, 429):
-                raise HTTPError(
-                    f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
                 )
-            raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
+            if self.filesize == 0:
+                # requests infers length by truth test, so an empty stream would go out
+                # "Transfer-Encoding: chunked", which presigned PUTs reject with 501.
+                body = b""
+            r = requests.put(urls[0]["url"], data=body, timeout=30, headers=headers or None)
+
+        self._raise_for_upload_status(r)
+
+    def _raise_for_upload_status(self, r: requests.Response) -> None:
+        """Turn a non-200 storage PUT response into the right exception type.
+
+        Args:
+            r: The response from the presigned storage PUT.
+
+        Raises:
+            HTTPError: On statuses worth retrying, so the backoff-wrapped caller
+                signs a fresh URL and tries again.
+            RuntimeError: On any other non-200 status.
+        """
+        if r.status_code == 200:
+            return
+        # 401/403 are worth retrying here because each attempt signs a fresh URL, which
+        # heals expired signatures and storage credentials that haven't propagated yet.
+        # Backoff only retries HTTPError/RequestException, hence the type split.
+        retryable = r.status_code not in _NON_RETRYABLE_UPLOAD_STATUSES and (
+            r.status_code >= 500 or r.status_code in (401, 403, 429)
+        )
+        if retryable:
+            raise HTTPError(
+                f"Transient error uploading file '{self.local_path}'. Status code: {r.status_code}", response=r
+            )
+        raise RuntimeError(f"Failed to upload file '{self.local_path}'. Status code: {r.status_code}")
 
     def _upload_part_with_recovery(self, url_info: Dict[str, Any], upload_id: str) -> Dict[str, Any]:
         """Upload one part, falling back to re-signing its URL on failure.
