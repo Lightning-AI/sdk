@@ -38,6 +38,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1HealthCheckHttpGet,
     V1Job,
     V1JobHealthCheckConfig,
+    V1JobLogsPage,
     V1JobLogsResponse,
     V1JobSpec,
     V1ReloadDeploymentWeightsResponse,
@@ -619,7 +620,8 @@ class DeploymentApi:
             rank: Optional distributed job rank.
 
         Returns:
-            V1JobLogsResponse: Log page metadata and follow URL.
+            V1JobLogsResponse: Log page metadata and follow URL. Deployment jobs without
+            legacy page metadata receive a single page backed by the complete log download.
         """
         kwargs = {
             "deployment_id": deployment_id,
@@ -628,7 +630,27 @@ class DeploymentApi:
             "rank": rank,
         }
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        return self._client.jobs_service_get_job_logs(project_id=teamspace_id, id=job_id, **kwargs)
+        logs = self._client.jobs_service_get_job_logs(project_id=teamspace_id, id=job_id, **kwargs)
+        if logs.pages or not deployment_id or since or until:
+            return logs
+
+        try:
+            download = self._client.jobs_service_download_job_logs(
+                project_id=teamspace_id,
+                id=job_id,
+                deployment_id=deployment_id,
+                rank=rank or 0,
+                cloudspace_id="",
+            )
+        except ApiException:
+            return logs
+        if not download.url:
+            return logs
+
+        return V1JobLogsResponse(
+            follow_url=logs.follow_url,
+            pages=[V1JobLogsPage(page_number="0", url=download.url)],
+        )
 
     def iter_job_log_entries(
         self,
