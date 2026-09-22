@@ -89,4 +89,5 @@ Reference Pages
    api/user
    api/status
    api/models
+   api/datasets
    api/experiment
