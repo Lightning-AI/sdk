@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.lightning_cloud.openapi import (
     Externalv1CloudSpaceInstanceStatus,
     V1AWSDirectV1,
@@ -19,6 +20,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Project,
     V1ProjectSettings,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import CloudProvider, Machine
 from lightning_sdk.studio import Studio
 
@@ -249,3 +251,27 @@ def test_studio_switch_cloud_account_not_global(
     studio.switch_machine(Machine.T4, cloud_provider=CloudProvider.GCP)
 
     assert studio.cloud_account == "aws-private"
+
+
+def test_get_cloud_account_provider_mapping_forbidden():
+    api = CloudAccountApi.__new__(CloudAccountApi)
+    api._client = None
+    with mock.patch.object(
+        api,
+        "list_global_cloud_accounts",
+        side_effect=ApiException(status=403, reason="Forbidden"),
+    ):
+        mapping = api.get_cloud_account_provider_mapping(teamspace_id="ts-abc", global_only=True)
+
+    assert mapping == {}
+
+
+def test_get_cloud_account_provider_mapping_api_error_raises():
+    api = CloudAccountApi.__new__(CloudAccountApi)
+    api._client = None
+    with mock.patch.object(
+        api,
+        "list_global_cloud_accounts",
+        side_effect=ApiException(status=500, reason="Internal Server Error"),
+    ), pytest.raises(ApiException):
+        api.get_cloud_account_provider_mapping(teamspace_id="ts-abc", global_only=True)
