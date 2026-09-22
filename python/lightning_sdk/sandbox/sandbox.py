@@ -33,7 +33,16 @@ def _resolve_teamspace_id(teamspace: str | Teamspace | None) -> str | None:
         try:
             resolved = _resolve_teamspace(teamspace_name, org=owner, user=None)
         except Exception:
-            resolved = _resolve_teamspace(teamspace_name, org=None, user=owner)
+            try:
+                resolved = _resolve_teamspace(teamspace_name, org=None, user=owner)
+            except Exception:
+                resolved = None
+                from lightning_sdk.api.teamspace_api import TeamspaceApi
+
+                res = TeamspaceApi()._client.projects_service_list_memberships(filter_by_user_id=True)
+                for m in res.memberships:
+                    if m.name == teamspace_name or m.display_name == teamspace_name:
+                        return m.project_id
     else:
         resolved = _resolve_teamspace(teamspace=teamspace, org=None, user=None)
 
