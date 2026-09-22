@@ -120,6 +120,11 @@ deployment.start(
 print(deployment.status)
 ```
 
+**Note:** `ApiKeyAuth` gates the endpoint on a personal Lightning API key. A
+scoped API key is not one, so deploying with a scoped key leaves that key unable
+to call the endpoint it just created. Use `TokenAuth` when the deploying key is
+also the caller.
+
 ## Start sandboxes warm
 
 A warm recipe says what the sandbox should already have done — packages
@@ -185,6 +190,10 @@ lightning deployment create nginx-demo \
   --replicas 1 \
   --api-key-auth
 ```
+
+**Note:** `--api-key-auth` gates the endpoint on a personal Lightning API key.
+Deploying from automation with a scoped API key leaves that key unable to call
+the endpoint. Use `--token-auth` when the deploying key is also the caller.
 
 Inspect and stream logs:
 
