@@ -439,6 +439,7 @@ class TeamspaceApi:
         remote_paths: List[str],
         teamspace_id: str,
         progress_bar: bool = True,
+        completed_files: Optional[set] = None,
     ) -> None:
         """Upload files to the model store.
 
@@ -450,10 +451,17 @@ class TeamspaceApi:
                 must be the same length as ``file_paths``.
             teamspace_id: ID of the teamspace owning the model.
             progress_bar: Whether to display a progress bar during upload.
+            completed_files: Set of remote paths already uploaded (for resume support).
         """
         main_pbar = tqdm(total=len(file_paths), desc="Uploading files...", position=0) if progress_bar else None
         assert len(file_paths) == len(remote_paths), "File paths and remote paths must have the same length"
+        if completed_files is None:
+            completed_files = set()
         for filepath, remote_path in zip(file_paths, remote_paths):
+            if remote_path in completed_files:
+                if main_pbar:
+                    main_pbar.update(1)
+                continue
             self.upload_model_file(
                 model_id=model_id,
                 version=version,

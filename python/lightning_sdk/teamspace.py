@@ -1,4 +1,6 @@
+import contextlib
 import glob
+import json
 import os
 import warnings
 from enum import Enum
@@ -585,6 +587,10 @@ class Teamspace(metaclass=TrackCallsMeta):
     ) -> UploadedModelInfo:
         """Upload a local checkpoint file to the model store.
 
+        If a previous upload for the same model was interrupted, it is automatically
+        resumed: already-uploaded files are skipped and only the remaining files
+        are uploaded under the same model version.
+
         Args:
             path: Path to the model file or folder to upload.
             name: Name tag of the model to upload.
@@ -638,31 +644,116 @@ class Teamspace(metaclass=TrackCallsMeta):
             raise TypeError(f"Metadata must be a dictionary, but provided {type(metadata)}")
         metadata.update({"lightning-sdk": lightning_sdk.__version__})
 
-        model = self._teamspace_api.create_model(
-            name=name,
-            version=version,
-            metadata=metadata,
-            private=True,
+        prev_state = _load_model_upload_state(teamspace_id=self.id, model_name=name)
+
+        if prev_state:
+            model_id = prev_state["model_id"]
+            model_version = prev_state["version"]
+            completed_files = set(prev_state.get("completed_files", []))
+            try:
+                existing = self._teamspace_api.get_model_version(name=name, version=model_version, teamspace_id=self.id)
+                if existing.upload_complete:
+                    # Already completed, just clean up and return
+                    _dump_model_upload_state(
+                        teamspace_id=self.id,
+                        model_name=name,
+                        state_dict={},
+                    )
+                    return UploadedModelInfo(
+                        name=name,
+                        version=model_version,
+                        teamspace=self.name,
+                        cloud_account=cloud_account,
+                    )
+            except Exception:
+                # Version no longer exists, so we start over
+                prev_state = None
+
+        if not prev_state:
+            model = self._teamspace_api.create_model(
+                name=name,
+                version=version,
+                metadata=metadata,
+                private=True,
+                teamspace_id=self.id,
+                cloud_account=cloud_account,
+                experiment=experiment,
+            )
+            model_id = model.model_id
+            model_version = model.version
+            completed_files = set()
+
+        # Save initial state for resume
+        _dump_model_upload_state(
             teamspace_id=self.id,
-            cloud_account=cloud_account,
-            experiment=experiment,
+            model_name=name,
+            state_dict={
+                "model_id": model_id,
+                "version": model_version,
+                "completed_files": list(completed_files),
+            },
         )
-        self._teamspace_api.upload_model_files(
-            model_id=model.model_id,
-            version=model.version,
-            file_paths=file_paths,
-            remote_paths=relative_paths,
-            teamspace_id=self.id,
-            progress_bar=progress_bar,
-        )
+
+        # Filter out already completed files
+        remaining_file_paths = []
+        remaining_relative_paths = []
+        for fp, rp in zip(file_paths, relative_paths):
+            if rp not in completed_files:
+                remaining_file_paths.append(fp)
+                remaining_relative_paths.append(rp)
+
+        if remaining_file_paths:
+            updated_completed = list(completed_files)
+            for i, (fp, rp) in enumerate(zip(remaining_file_paths, remaining_relative_paths)):
+                try:
+                    self._teamspace_api.upload_model_file(
+                        model_id=model_id,
+                        version=model_version,
+                        local_path=fp,
+                        remote_path=rp,
+                        teamspace_id=self.id,
+                        progress_bar=progress_bar,
+                    )
+                except Exception:
+                    # Save state before re-raising
+                    updated_completed.extend(remaining_relative_paths[:i])
+                    _dump_model_upload_state(
+                        teamspace_id=self.id,
+                        model_name=name,
+                        state_dict={
+                            "model_id": model_id,
+                            "version": model_version,
+                            "completed_files": updated_completed,
+                        },
+                    )
+                    raise
+                updated_completed.append(rp)
+                _dump_model_upload_state(
+                    teamspace_id=self.id,
+                    model_name=name,
+                    state_dict={
+                        "model_id": model_id,
+                        "version": model_version,
+                        "completed_files": updated_completed,
+                    },
+                )
+
         self._teamspace_api._complete_model_upload(
-            model_id=model.model_id,
-            version=model.version,
+            model_id=model_id,
+            version=model_version,
             teamspace_id=self.id,
         )
+
+        # Clean up state file on success
+        _dump_model_upload_state(
+            teamspace_id=self.id,
+            model_name=name,
+            state_dict={},
+        )
+
         return UploadedModelInfo(
             name=name,
-            version=model.version,
+            version=model_version,
             teamspace=self.name,
             cloud_account=cloud_account,
         )
@@ -1001,6 +1092,60 @@ class Teamspace(metaclass=TrackCallsMeta):
         resolved_cloud_account = resolved_cloud_accounts[0]
 
         self._teamspace_api.new_connection(self.id, name, source, resolved_cloud_account, writable, region or "")
+
+
+_MODEL_UPLOAD_STATUS_PATH = "~/.lightning/models/uploads"
+
+
+def _model_upload_state_path(teamspace_id: str, model_name: str) -> Path:
+    """Path to the state file for a model upload."""
+    return Path(
+        os.path.abspath(
+            os.path.expandvars(
+                os.path.expanduser(
+                    os.path.join(
+                        _MODEL_UPLOAD_STATUS_PATH,
+                        teamspace_id,
+                        model_name + ".json",
+                    )
+                )
+            )
+        )
+    )
+
+
+def _dump_model_upload_state(
+    teamspace_id: str,
+    model_name: str,
+    state_dict: Dict[str, str],
+) -> None:
+    """Dump the model upload state so we can safely resume later."""
+    curr_path = _model_upload_state_path(teamspace_id, model_name)
+    if state_dict:
+        curr_path.parent.mkdir(parents=True, exist_ok=True)
+        curr_path.write_text(json.dumps(state_dict, indent=4))
+        return
+    if curr_path.exists():
+        curr_path.unlink()
+    dirpath = curr_path.parent
+    if dirpath.exists():
+        with contextlib.suppress(OSError):
+            os.removedirs(dirpath)
+
+
+def _load_model_upload_state(
+    teamspace_id: str,
+    model_name: str,
+) -> Optional[Dict]:
+    """Load a prior model upload state from the state file, if it exists.
+
+    Returns:
+        The state dict (with "model_id", "version", "completed_files"), or None.
+    """
+    curr_path = _model_upload_state_path(teamspace_id, model_name)
+    if not curr_path.is_file():
+        return None
+    return json.loads(curr_path.read_text())
 
 
 def _list_files(path: Union[str, Path]) -> Tuple[List[Path], List[str]]:
