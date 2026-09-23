@@ -143,12 +143,12 @@ from lightning_sdk.mmt import MMT
 )
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 @click.option(
-    "--reserve-machines-timeout-minutes",
-    "--reserve_machines_timeout_minutes",
+    "--keep-minutes",
+    "--keep_minutes",
     default=None,
     type=click.IntRange(min=0),
     help=(
-        "Minutes to keep the machines reserved after the job stops. "
+        "Minutes to keep the machines after the job stops. "
         "Omit or pass 0 to release the machines immediately."
     ),
 )
@@ -172,7 +172,7 @@ def run_mmt(
     path_mappings: str = "",
     tags: Sequence[str] = (),
     as_json: bool = False,
-    reserve_machines_timeout_minutes: Optional[int] = None,
+    keep_minutes: Optional[int] = None,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
     if name is None:
@@ -213,7 +213,7 @@ def run_mmt(
         entrypoint=entrypoint,
         path_mappings=path_mappings_dict,
         tags=_resolve_tags(tags),
-        reserve_machines_timeout_minutes=reserve_machines_timeout_minutes,
+        keep_minutes=keep_minutes,
     )
 
     if as_json:

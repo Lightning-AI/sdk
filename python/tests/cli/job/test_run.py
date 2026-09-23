@@ -88,7 +88,7 @@ def test_run_job_with_multiple_machines_uses_job() -> None:
 
 
 @mock_command_logging
-def test_run_job_with_reserve_machines_timeout_minutes() -> None:
+def test_run_job_with_keep_minutes() -> None:
     submitted = MagicMock(name="test-job")
     submitted.name = "test-job"
     with patch("lightning_sdk.cli.job.run.resolve_teamspace", return_value=MagicMock()), patch(
@@ -104,13 +104,13 @@ def test_run_job_with_reserve_machines_timeout_minutes() -> None:
                 "ubuntu",
                 "--command",
                 "echo hi",
-                "--reserve-machines-timeout-minutes",
+                "--keep-minutes",
                 "30",
             ],
         )
 
     assert result.exit_code == 0, result.output
-    assert run_sdk_job.call_args.kwargs["reserve_machines_timeout_minutes"] == 30
+    assert run_sdk_job.call_args.kwargs["keep_minutes"] == 30
 
 
 @pytest.mark.parametrize(

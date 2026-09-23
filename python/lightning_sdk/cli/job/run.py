@@ -148,12 +148,12 @@ _MACHINE_VALUES = tuple(
 )
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output the created job as JSON.")
 @click.option(
-    "--reserve-machines-timeout-minutes",
-    "--reserve_machines_timeout_minutes",
+    "--keep-minutes",
+    "--keep_minutes",
     default=None,
     type=click.IntRange(min=0),
     help=(
-        "Minutes to keep the machine reserved after the job stops. "
+        "Minutes to keep the machine after the job stops. "
         "Omit or pass 0 to release the machine immediately."
     ),
 )
@@ -177,7 +177,7 @@ def run_job(
     path_mappings: str = "",
     tags: Sequence[str] = (),
     as_json: bool = False,
-    reserve_machines_timeout_minutes: Optional[int] = None,
+    keep_minutes: Optional[int] = None,
 ) -> None:
     """Run async workloads using a docker image or studio.
 
@@ -223,7 +223,7 @@ def run_job(
         path_mappings=path_mappings_dict,
         num_machines=num_machines,
         tags=_resolve_tags(tags),
-        reserve_machines_timeout_minutes=reserve_machines_timeout_minutes,
+        keep_minutes=keep_minutes,
     )
 
     if as_json:
