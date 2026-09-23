@@ -1822,6 +1822,25 @@ def test_set_env_empty_new_env(mock_update_cloudspace):
             ],
             False,
         ),
+        # Right family, wrong count: the account offers 8x H200 but no single-GPU H200,
+        # so there is no accelerator to draw capacity from.
+        (
+            Machine.H200,
+            [
+                V1ClusterAccelerator(
+                    instance_id="p5e.48xlarge",
+                    slug_multi_cloud="lit-h200-8",
+                    enabled=True,
+                    resources=V1Resources(gpu=8),
+                    family="H200",
+                    accelerator_type="GPU",
+                    out_of_capacity=False,
+                )
+            ],
+            False,
+        ),
+        # Nothing enabled on the account at all.
+        (Machine.T4, [], False),
     ],
 )
 @mock.patch(
@@ -1961,6 +1980,38 @@ def test_machine_is_supported(mock_get_machines, machine, accelerators, expected
     mock_get_machines.assert_called_once_with(
         mock.ANY, teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc"
     )
+
+
+@mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi._get_machines_for_cloud_account",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_supported_machines_resolves_account_accelerators(mock_get_machines):
+    """The account's accelerators come back as catalog machines, so callers can name them."""
+    mock_get_machines.return_value = [
+        V1ClusterAccelerator(
+            instance_id="p5e.48xlarge",
+            slug_multi_cloud="lit-h200-8",
+            enabled=True,
+            resources=V1Resources(gpu=8),
+            family="H200",
+            accelerator_type="GPU",
+        ),
+        V1ClusterAccelerator(
+            instance_id="cpu-4",
+            slug_multi_cloud="cpu-4",
+            enabled=True,
+            resources=V1Resources(cpu=4),
+            family="CPU",
+            accelerator_type="CPU",
+        ),
+    ]
+
+    machines = StudioApi().supported_machines(teamspace_id="ts-abc", cloud_account_id="cluster-abc", org_id="org-abc")
+
+    assert [m.name for m in machines] == ["H200_X_8", "CPU"]
+    assert [m.accelerator_count for m in machines] == [8, 4]
 
 
 @mock.patch(

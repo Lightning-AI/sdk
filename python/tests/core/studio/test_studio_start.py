@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.exceptions import NotSupportedError
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceCreateCloudSpaceBody,
     CloudSpaceServiceStartCloudSpaceInstanceBody,
@@ -43,7 +44,18 @@ def list_cloudspaces_side_effect(existing_studios):
     return _list_cloudspaces_side_effect
 
 
-@pytest.mark.parametrize("machine_supported", [True, False])
+@pytest.mark.parametrize(
+    ("machine_supported", "requested_machine", "expectation"),
+    [
+        # The account offers the default machine, so it just starts.
+        (True, None, "starts"),
+        # A catalog machine the account doesn't offer: the platform would fall back to the
+        # default machine, so the SDK has to refuse rather than hand back the wrong hardware.
+        (False, None, "raises"),
+        # A custom instance type is unvetted by design and still passes through.
+        (False, "custom-instance-xl", "warns"),
+    ],
+)
 @mock.patch(
     "lightning_sdk.lightning_cloud.openapi.api.cluster_service_api.ClusterServiceApi.cluster_service_list_default_cluster_accelerators",
     autospec=True,
@@ -103,6 +115,8 @@ def test_studio_start(
     mock_list_clusters,
     mock_list_accelerators,
     machine_supported,
+    requested_machine,
+    expectation,
 ):
     # Setup state from internal_studio_start_mocker
     status = {"st-abc": None}
@@ -229,12 +243,19 @@ def test_studio_start(
     assert studio.machine is None
     assert studio.teamspace.start_studios_on_interruptible is True
 
-    if machine_supported:
-        studio.start()
-    else:
-        # unvetted machines emit a warning but still start
+    if expectation == "raises":
+        with pytest.raises(NotSupportedError, match="not available on cloud account") as excinfo:
+            studio.start(requested_machine)
+        # The message has to name what the account does offer, or the user is left guessing.
+        assert "Available CPU machines: CPU." in str(excinfo.value)
+        assert studio.status == Status.Stopped
+        return
+
+    if expectation == "warns":
         with pytest.warns(UserWarning, match="custom instance type"):
-            studio.start()
+            studio.start(requested_machine)
+    else:
+        studio.start(requested_machine)
 
     assert studio.status == Status.Running
     assert studio.interruptible is True
@@ -863,12 +884,17 @@ def test_studio_start_different_machine(
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
 @mock.patch(
+    "lightning_sdk.api.studio_api.StudioApi.machine_has_capacity",
+    autospec=True,
+)
+@mock.patch(
     "lightning_sdk.api.studio_api.StudioApi.machine_is_supported",
     autospec=True,
 )
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
     mock_machine_is_supported,
+    mock_machine_has_capacity,
     mock_get_teamspace,
     mock_get_org,
     mock_get_cloud_space,
@@ -1008,6 +1034,7 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
         display_name="org-abc", name="org-abc", id="org-abc", preferred_cluster="c-abc"
     )
     mock_machine_is_supported.return_value = True
+    mock_machine_has_capacity.return_value = True
 
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     assert studio.status == Status.Stopped

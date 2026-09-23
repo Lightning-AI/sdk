@@ -61,8 +61,12 @@ def list_cloudspaces_side_effect(existing_studios):
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.api.studio_api.StudioApi.machine_has_capacity", autospec=True, return_value=True)
+@mock.patch("lightning_sdk.api.studio_api.StudioApi.machine_is_supported", autospec=True, return_value=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_switch_cloud_account(
+    mock_machine_is_supported,
+    mock_machine_has_capacity,
     mock_switch_cloudspace_instance,
     mock_update_cloudspace_instance_config,
     mock_list_clusters,
@@ -166,8 +170,12 @@ def test_studio_switch_cloud_account(
     "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_switch_cloud_space_instance",
     autospec=True,
 )
+@mock.patch("lightning_sdk.api.studio_api.StudioApi.machine_has_capacity", autospec=True, return_value=True)
+@mock.patch("lightning_sdk.api.studio_api.StudioApi.machine_is_supported", autospec=True, return_value=True)
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_studio_switch_cloud_account_not_global(
+    mock_machine_is_supported,
+    mock_machine_has_capacity,
     mock_switch_cloudspace_instance,
     mock_update_cloudspace_instance_config,
     mock_list_clusters,

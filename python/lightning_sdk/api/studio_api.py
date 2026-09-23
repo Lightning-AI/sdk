@@ -552,6 +552,29 @@ class StudioApi:
 
         progress.complete("Machine switch completed successfully")
 
+    @staticmethod
+    def _accelerator_count(accelerator: V1ClusterAccelerator) -> Optional[int]:
+        """Number of GPUs (or CPUs, for a CPU accelerator) the accelerator provides."""
+        if accelerator.accelerator_type == "GPU":
+            return accelerator.resources.gpu
+        return accelerator.resources.cpu
+
+    def _find_accelerator(
+        self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str
+    ) -> Optional[V1ClusterAccelerator]:
+        """Return the cloud account's accelerator matching the machine, or ``None`` if it offers none."""
+        accelerators = self._get_machines_for_cloud_account(
+            teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
+        )
+
+        for accelerator in accelerators:
+            if (
+                machine.accelerator_count == self._accelerator_count(accelerator)
+                and machine.family == accelerator.family
+            ):
+                return accelerator
+        return None
+
     def machine_is_supported(self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str) -> bool:
         """Check if the machine is available in provided cloud_account.
 
@@ -564,21 +587,13 @@ class StudioApi:
         Returns:
             ``True`` if the machine type is available, ``False`` otherwise.
         """
-        accelerators = self._get_machines_for_cloud_account(
-            teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
-        )
-
-        for accelerator in accelerators:
-            if accelerator.accelerator_type == "GPU":
-                accelerator_resources_count = accelerator.resources.gpu
-            else:
-                accelerator_resources_count = accelerator.resources.cpu
-            if machine.accelerator_count == accelerator_resources_count and machine.family == accelerator.family:
-                return True
-        return False
+        return self._find_accelerator(machine, teamspace_id, cloud_account_id, org_id) is not None
 
     def machine_has_capacity(self, machine: Machine, teamspace_id: str, cloud_account_id: str, org_id: str) -> bool:
         """Check capacity of the requested machine.
+
+        A machine the cloud account does not offer at all has no capacity, so callers that want to
+        tell "no such machine here" from "temporarily full" must check ``machine_is_supported`` first.
 
         Args:
             machine: Machine type to check capacity for.
@@ -587,24 +602,30 @@ class StudioApi:
             org_id: Organization ID required for cluster accelerator lookups.
 
         Returns:
-            ``True`` if the machine has capacity, ``False`` if it is out of capacity.
+            ``True`` if the machine has capacity, ``False`` if it is out of capacity or not offered.
         """
-        accelerators = self._get_machines_for_cloud_account(
-            teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
-        )
+        accelerator = self._find_accelerator(machine, teamspace_id, cloud_account_id, org_id)
+        if accelerator is None:
+            return False
+        return not accelerator.out_of_capacity
 
-        for accelerator in accelerators:
-            if accelerator.accelerator_type == "GPU":
-                accelerator_resources_count = accelerator.resources.gpu
-            else:
-                accelerator_resources_count = accelerator.resources.cpu
-            if (
-                machine.accelerator_count == accelerator_resources_count
-                and machine.family == accelerator.family
-                and accelerator.out_of_capacity
-            ):
-                return False
-        return True
+    def supported_machines(self, teamspace_id: str, cloud_account_id: str, org_id: str) -> List[Machine]:
+        """List the machines the given cloud account actually offers.
+
+        Args:
+            teamspace_id: ID of the owning teamspace.
+            cloud_account_id: Cloud account ID to list machines for.
+            org_id: Organization ID required for cluster accelerator lookups.
+
+        Returns:
+            The enabled machines, resolved to catalog machines where the slug is known.
+        """
+        return [
+            Machine._from_accelerator(accelerator)
+            for accelerator in self._get_machines_for_cloud_account(
+                teamspace_id=teamspace_id, cloud_account_id=cloud_account_id, org_id=org_id
+            )
+        ]
 
     def get_machine(self, studio_id: str, teamspace_id: str, cloud_account_id: str, org_id: str) -> Machine:
         """Get the current machine type the given Studio is running on.
