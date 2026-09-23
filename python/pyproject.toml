@@ -70,6 +70,7 @@ dev = [
     # keep ruff in sync with the ruff-pre-commit rev in ../.pre-commit-config.yaml
     "ruff==0.1.0",
     "pre-commit>=4.0",
+    # mypy + stubs, the same group the mypy pre-commit hook runs
     { include-group = "typing" },
 ]
 
