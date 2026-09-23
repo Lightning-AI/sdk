@@ -152,7 +152,7 @@ _MACHINE_VALUES = tuple(
     "--keep_minutes",
     default=None,
     type=click.IntRange(min=0),
-    help=("Minutes to keep the machine after the job stops. " "Omit or pass 0 to release the machine immediately."),
+    help=("Minutes to keep the machine after the job stops. Omit or pass 0 to release the machine immediately."),
 )
 def run_job(
     name: Optional[str] = None,
