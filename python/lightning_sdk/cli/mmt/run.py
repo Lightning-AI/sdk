@@ -147,10 +147,7 @@ from lightning_sdk.mmt import MMT
     "--keep_minutes",
     default=None,
     type=click.IntRange(min=0),
-    help=(
-        "Minutes to keep the machines after the job stops. "
-        "Omit or pass 0 to release the machines immediately."
-    ),
+    help=("Minutes to keep the machines after the job stops. " "Omit or pass 0 to release the machines immediately."),
 )
 def run_mmt(
     name: Optional[str] = None,
