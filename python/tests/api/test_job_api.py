@@ -184,7 +184,7 @@ def test_job_v2_submit_job_omits_unset_max_run_attempts(mocker_auth):
     assert body.spec.max_run_attempts is None
 
 
-def test_job_v2_submit_job_threads_reserve_machines_timeout_minutes(mocker_auth):
+def test_job_v2_submit_job_threads_keep_minutes(mocker_auth):
     job_api = JobApiV2()
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_job = create_job_mock
@@ -203,7 +203,7 @@ def test_job_v2_submit_job_threads_reserve_machines_timeout_minutes(mocker_auth)
         cloud_account_auth=False,
         entrypoint="sh -c",
         path_mappings=None,
-        reserve_machines_timeout_minutes=30,
+        keep_minutes=30,
     )
 
     body = create_job_mock.call_args.kwargs["body"]
@@ -212,7 +212,7 @@ def test_job_v2_submit_job_threads_reserve_machines_timeout_minutes(mocker_auth)
 
 
 @pytest.mark.parametrize("timeout", [None, 0])
-def test_job_v2_submit_job_omits_unset_reserve_machines_timeout_minutes(mocker_auth, timeout):
+def test_job_v2_submit_job_omits_unset_keep_minutes(mocker_auth, timeout):
     job_api = JobApiV2()
     create_job_mock = mock.MagicMock()
     job_api._client.jobs_service_create_job = create_job_mock
@@ -231,7 +231,7 @@ def test_job_v2_submit_job_omits_unset_reserve_machines_timeout_minutes(mocker_a
         cloud_account_auth=False,
         entrypoint="sh -c",
         path_mappings=None,
-        reserve_machines_timeout_minutes=timeout,
+        keep_minutes=timeout,
     )
 
     body = create_job_mock.call_args.kwargs["body"]
@@ -239,11 +239,11 @@ def test_job_v2_submit_job_omits_unset_reserve_machines_timeout_minutes(mocker_a
     assert body.spec.keep_machine_after_stop is None
 
 
-def test_job_v2_submit_job_rejects_negative_reserve_machines_timeout_minutes(mocker_auth):
+def test_job_v2_submit_job_rejects_negative_keep_minutes(mocker_auth):
     job_api = JobApiV2()
     job_api._client.jobs_service_create_job = mock.MagicMock()
 
-    with pytest.raises(ValueError, match="reserve_machines_timeout_minutes must be >= 0"):
+    with pytest.raises(ValueError, match="keep_minutes must be >= 0"):
         job_api.submit_job(
             name="test-job",
             cloud_account="c-abc",
@@ -258,7 +258,7 @@ def test_job_v2_submit_job_rejects_negative_reserve_machines_timeout_minutes(moc
             cloud_account_auth=False,
             entrypoint="sh -c",
             path_mappings=None,
-            reserve_machines_timeout_minutes=-1,
+            keep_minutes=-1,
         )
 
 

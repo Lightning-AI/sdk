@@ -182,8 +182,8 @@ def test_job_step_threads_max_run_attempts():
 
 
 @patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
-def test_job_step_threads_reserve_machines_timeout_minutes():
-    job = JobStep(name="job-0", machine=Machine.CPU, reserve_machines_timeout_minutes=30)
+def test_job_step_threads_keep_minutes():
+    job = JobStep(name="job-0", machine=Machine.CPU, keep_minutes=30)
     proto = job.to_proto(MagicMock(), "", False)
 
     assert proto.job.spec.reserve_machines_timeout_minutes == 30
@@ -416,8 +416,8 @@ def test_mmt_step_threads_placement_group_id():
 
 
 @patch("lightning_sdk.pipeline.steps.CloudAccountApi", new=MagicMock())
-def test_mmt_step_threads_reserve_machines_timeout_minutes():
-    mmt = MMTStep(name="mmt-0", machine=Machine.CPU, reserve_machines_timeout_minutes=15)
+def test_mmt_step_threads_keep_minutes():
+    mmt = MMTStep(name="mmt-0", machine=Machine.CPU, keep_minutes=15)
     proto = mmt.to_proto(MagicMock(), "", False)
 
     assert proto.mmt.spec.reserve_machines_timeout_minutes == 15

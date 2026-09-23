@@ -214,9 +214,9 @@ func maxRuntime(seconds int) string {
 	return strconv.Itoa(seconds)
 }
 
-func validateReserveMachinesTimeoutMinutes(timeoutMinutes int64) error {
-	if timeoutMinutes < 0 {
-		return errors.New("reserve_machines_timeout_minutes must be >= 0")
+func validateKeepMinutes(keepMinutes int64) error {
+	if keepMinutes < 0 {
+		return errors.New("keep_minutes must be >= 0")
 	}
 	return nil
 }

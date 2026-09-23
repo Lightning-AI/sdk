@@ -484,7 +484,7 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 
 }
 
-func TestMMTRunMapsReserveMachinesTimeoutMinutes(t *testing.T) {
+func TestMMTRunMapsKeepMinutes(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/multi-machine-jobs",
@@ -525,32 +525,32 @@ func TestMMTRunMapsReserveMachinesTimeoutMinutes(t *testing.T) {
 		"gpu",
 		"train.py",
 		lit.MMTOptions{
-			Teamspace:                     mustTeamspace(t, "project-1", ""),
-			Image:                         "registry.example/train:latest",
-			ReserveMachinesTimeoutMinutes: 15,
+			Teamspace:   mustTeamspace(t, "project-1", ""),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: 15,
 		},
 	)
 	require.NoErrorf(t, err,
 		"RunMMT returned error")
-	assert.Falsef(t, created.ReserveMachinesTimeoutMinutes() != 15,
-		"ReserveMachinesTimeoutMinutes = %d, want 15", created.ReserveMachinesTimeoutMinutes())
+	assert.Falsef(t, created.KeepMinutes() != 15,
+		"KeepMinutes = %d, want 15", created.KeepMinutes())
 }
 
-func TestMMTRunRejectsNegativeReserveMachinesTimeoutMinutes(t *testing.T) {
+func TestMMTRunRejectsNegativeKeepMinutes(t *testing.T) {
 	_, err := lit.RunMMT(
 		"dist-train-bad",
 		2,
 		"gpu",
 		"train.py",
 		lit.MMTOptions{
-			Teamspace:                     mustTeamspace(t, "project-1", ""),
-			Image:                         "registry.example/train:latest",
-			ReserveMachinesTimeoutMinutes: -1,
+			Teamspace:   mustTeamspace(t, "project-1", ""),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: -1,
 		},
 	)
 	require.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "reserve_machines_timeout_minutes must be >= 0"),
-		"error = %q, want reserve_machines_timeout_minutes must be >= 0", err)
+	assert.True(t, strings.Contains(err.Error(), "keep_minutes must be >= 0"),
+		"error = %q, want keep_minutes must be >= 0", err)
 }
 
 func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {

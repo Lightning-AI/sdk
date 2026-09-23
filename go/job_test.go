@@ -439,7 +439,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())
 }
 
-func TestJobRunMapsReserveMachinesTimeoutMinutes(t *testing.T) {
+func TestJobRunMapsKeepMinutes(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/jobs",
@@ -479,18 +479,18 @@ func TestJobRunMapsReserveMachinesTimeoutMinutes(t *testing.T) {
 		"gpu",
 		"train.py",
 		lit.JobOptions{
-			Teamspace:                     mustTeamspace(t, "project-1", "default", "alice"),
-			Image:                         "registry.example/train:latest",
-			ReserveMachinesTimeoutMinutes: 30,
+			Teamspace:   mustTeamspace(t, "project-1", "default", "alice"),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: 30,
 		},
 	)
 	require.NoErrorf(t, err,
 		"RunJob returned error")
-	assert.Falsef(t, created.ReserveMachinesTimeoutMinutes() != 30,
-		"ReserveMachinesTimeoutMinutes = %d, want 30", created.ReserveMachinesTimeoutMinutes())
+	assert.Falsef(t, created.KeepMinutes() != 30,
+		"KeepMinutes = %d, want 30", created.KeepMinutes())
 }
 
-func TestJobRunOmitsReserveMachinesTimeoutMinutesWhenUnset(t *testing.T) {
+func TestJobRunOmitsKeepMinutesWhenUnset(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -529,20 +529,20 @@ func TestJobRunOmitsReserveMachinesTimeoutMinutesWhenUnset(t *testing.T) {
 		"RunJob returned error")
 }
 
-func TestJobRunRejectsNegativeReserveMachinesTimeoutMinutes(t *testing.T) {
+func TestJobRunRejectsNegativeKeepMinutes(t *testing.T) {
 	_, err := lit.RunJob(
 		"train-bad",
 		"gpu",
 		"train.py",
 		lit.JobOptions{
-			Teamspace:                     mustTeamspace(t, "project-1", "default", "alice"),
-			Image:                         "registry.example/train:latest",
-			ReserveMachinesTimeoutMinutes: -1,
+			Teamspace:   mustTeamspace(t, "project-1", "default", "alice"),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: -1,
 		},
 	)
 	require.Error(t, err)
-	assert.True(t, strings.Contains(err.Error(), "reserve_machines_timeout_minutes must be >= 0"),
-		"error = %q, want reserve_machines_timeout_minutes must be >= 0", err)
+	assert.True(t, strings.Contains(err.Error(), "keep_minutes must be >= 0"),
+		"error = %q, want keep_minutes must be >= 0", err)
 }
 
 func TestJobRunMapsScratchDisksForStudioJobs(t *testing.T) {

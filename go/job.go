@@ -39,12 +39,12 @@ type Job struct {
 	startedAt   time.Time
 	stoppedAt   time.Time
 
-	artifactsSource               string
-	artifactsDestination          string
-	maxRunAttempts                int64
-	currentRunAttempt             int64
-	reserveMachinesTimeoutMinutes int64
-	tags                          []string
+	artifactsSource      string
+	artifactsDestination string
+	maxRunAttempts       int64
+	currentRunAttempt    int64
+	keepMinutes          int64
+	tags                 []string
 }
 
 // JobDict is the JSON-friendly public representation of a job.
@@ -86,31 +86,31 @@ type ScratchDisk struct {
 }
 
 type jobOptions struct {
-	id                            string
-	teamspaceID                   string
-	teamspaceName                 string
-	ownerName                     string
-	studioID                      string
-	mmtID                         string
-	status                        string
-	machine                       string
-	command                       string
-	image                         string
-	publicIP                      string
-	totalCost                     float32
-	env                           map[string]string
-	cloud                         string
-	interruptible                 bool
-	imageCredentials              string
-	cloudAccountAuth              bool
-	entrypoint                    *string
-	pathMappings                  []JobPathMapping
-	artifactsSource               string
-	artifactsDest                 string
-	maxRuntime                    int
-	maxRunAttempts                int64
-	scratchDisks                  []ScratchDisk
-	reserveMachinesTimeoutMinutes int64
+	id               string
+	teamspaceID      string
+	teamspaceName    string
+	ownerName        string
+	studioID         string
+	mmtID            string
+	status           string
+	machine          string
+	command          string
+	image            string
+	publicIP         string
+	totalCost        float32
+	env              map[string]string
+	cloud            string
+	interruptible    bool
+	imageCredentials string
+	cloudAccountAuth bool
+	entrypoint       *string
+	pathMappings     []JobPathMapping
+	artifactsSource  string
+	artifactsDest    string
+	maxRuntime       int
+	maxRunAttempts   int64
+	scratchDisks     []ScratchDisk
+	keepMinutes      int64
 }
 
 type jobWaitOptions struct {
@@ -166,9 +166,9 @@ type JobOptions struct {
 	MaxRunAttempts int64
 	// ScratchDisks mounts temporary scratch storage for studio-backed jobs.
 	ScratchDisks []ScratchDisk
-	// ReserveMachinesTimeoutMinutes is minutes to keep the machine reserved
-	// after the job stops. 0 means the machine is released immediately.
-	ReserveMachinesTimeoutMinutes int64
+	// KeepMinutes is minutes to keep the machine after the job stops.
+	// 0 means the machine is released immediately.
+	KeepMinutes int64
 }
 
 // JobWaitOptions configures polling behavior while waiting for a job.
@@ -337,13 +337,13 @@ func (j *Job) CurrentRunAttempt() int64 {
 	return j.currentRunAttempt
 }
 
-// ReserveMachinesTimeoutMinutes returns minutes the machine is kept reserved
-// after the job stops. 0 means unset (the machine is released immediately).
-func (j *Job) ReserveMachinesTimeoutMinutes() int64 {
+// KeepMinutes returns minutes the machine is kept after the job stops.
+// 0 means unset (the machine is released immediately).
+func (j *Job) KeepMinutes() int64 {
 	if j == nil {
 		return 0
 	}
-	return j.reserveMachinesTimeoutMinutes
+	return j.keepMinutes
 }
 
 // Tags returns the teamspace tags applied to this job, in the order the
@@ -403,7 +403,7 @@ func RunJob(name string, machine Machine, command string, opts ...JobOptions) (*
 	if err := validateJobComputeEnvironment(command, resolved); err != nil {
 		return nil, err
 	}
-	if err := validateReserveMachinesTimeoutMinutes(resolved.reserveMachinesTimeoutMinutes); err != nil {
+	if err := validateKeepMinutes(resolved.keepMinutes); err != nil {
 		return nil, err
 	}
 	api, err := sdkclient.New()
@@ -774,7 +774,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.maxRuntime = opts[0].MaxRuntime
 		resolved.maxRunAttempts = opts[0].MaxRunAttempts
 		resolved.scratchDisks = opts[0].ScratchDisks
-		resolved.reserveMachinesTimeoutMinutes = opts[0].ReserveMachinesTimeoutMinutes
+		resolved.keepMinutes = opts[0].KeepMinutes
 	}
 	return resolved
 }
@@ -872,7 +872,7 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		result.artifactsDestination = model.Spec.ArtifactsDestination
 		result.maxRunAttempts = model.Spec.MaxRunAttempts
 		result.currentRunAttempt = model.Spec.CurrentRunAttempt
-		result.reserveMachinesTimeoutMinutes = model.Spec.ReserveMachinesTimeoutMinutes
+		result.keepMinutes = model.Spec.ReserveMachinesTimeoutMinutes
 	}
 	return result
 }
@@ -907,8 +907,8 @@ func jobSpec(machine, command string, opts jobOptions) *models.V1JobSpec {
 		PathMappings:                  jobPathMappings(opts),
 		MaxRunAttempts:                opts.maxRunAttempts,
 		RequestedRunDurationSeconds:   maxRuntime(opts.maxRuntime),
-		KeepMachineAfterStop:          opts.reserveMachinesTimeoutMinutes > 0,
-		ReserveMachinesTimeoutMinutes: opts.reserveMachinesTimeoutMinutes,
+		KeepMachineAfterStop:          opts.keepMinutes > 0,
+		ReserveMachinesTimeoutMinutes: opts.keepMinutes,
 		Spot:                          opts.interruptible,
 		Volumes:                       scratchVolumes(opts.scratchDisks),
 	}
