@@ -87,26 +87,20 @@ def parse_path_mappings(path_mapping: Sequence[str], path_mappings: str) -> Dict
     return result
 
 
-def _warn_if_caller_key_cannot_call_endpoint() -> None:
-    """Warn when ``--api-key-auth`` is chosen by a caller whose own key cannot use it.
+def _reject_scoped_key_for_api_key_auth() -> None:
+    """Refuse ``--api-key-auth`` when the caller holds a scoped API key.
 
-    ``--api-key-auth`` gates the endpoint on a Lightning *user* key. A scoped API key
-    authenticates as a project principal rather than a user, so it gets a 401 against the
-    endpoint it just created. This is advisory only: the endpoint may legitimately be
-    called by someone else holding a user key.
+    The endpoint only accepts Lightning user keys, so a scoped key would get 401 against it.
     """
     try:
         auth_type = AuthApi().whoami().auth_type
-    except Exception:  # an advisory check must never block a deployment
+    except Exception:  # unknown identity: let the platform decide
         return
 
     if auth_type == V1AuthType.SCOPED_API_KEY:
-        click.secho(
-            "Warning: --api-key-auth gates the endpoint on a Lightning user key, but you are "
-            "authenticated with a scoped API key, so that key will get 401 against this endpoint. "
-            "Use --token-auth if this key is what will call it.",
-            fg="yellow",
-            err=True,
+        raise click.UsageError(
+            "--api-key-auth only accepts Lightning user keys, and you are authenticated with a "
+            "scoped API key. Use --token-auth or --basic-auth instead."
         )
 
 
@@ -120,7 +114,7 @@ def parse_auth(
         raise click.UsageError("--api-key-auth, --basic-auth, and --token-auth are mutually exclusive.")
 
     if api_key_auth:
-        _warn_if_caller_key_cannot_call_endpoint()
+        _reject_scoped_key_for_api_key_auth()
         return ApiKeyAuth()
     if token_auth is not None:
         return TokenAuth(token_auth)
