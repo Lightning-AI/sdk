@@ -66,6 +66,13 @@ typing = [
     "types-requests==2.33.0.20260712",
     "types-tqdm==4.70.0.20260805",
 ]
+dev = [
+    # keep ruff in sync with the ruff-pre-commit rev in ../.pre-commit-config.yaml
+    "ruff==0.1.0",
+    "pre-commit>=4.0",
+    # mypy + stubs, the same group the mypy pre-commit hook runs
+    { include-group = "typing" },
+]
 
 [project.scripts]
 lightning = "lightning_sdk.cli.entrypoint:main_cli"
@@ -178,6 +185,8 @@ exclude = [
   "docs",
   "examples",
   "lightning_sdk/llm/public_assistants.py",
+  # vendored generated client, also excluded in ../.pre-commit-config.yaml
+  "lightning_sdk/lightning_cloud",
 ]
 ignore-init-module-imports = true
 unfixable = ["F401"]
