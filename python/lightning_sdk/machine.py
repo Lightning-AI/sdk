@@ -164,6 +164,10 @@ class Machine:
         """Whether the machine is a CPU."""
         return self.family in ("CPU", "DATA_PREP")
 
+    def _is_predefined(self) -> bool:
+        """Whether this is a catalog machine rather than an ad-hoc custom instance type."""
+        return type(self)._predefined_from_str(self.name, self.slug, self.instance_type) is not None
+
     @classmethod
     def _predefined_from_str(cls, machine: Optional[str], *additional_machine_ids: Any) -> Optional["Machine"]:
         """Return the predefined machine matching any of the identifiers, or ``None`` if unknown.

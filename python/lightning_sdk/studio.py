@@ -12,7 +12,7 @@ from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.utils import AccessibleResource, raise_access_error_if_not_allowed
 from lightning_sdk.base_studio import BaseStudio
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.exceptions import OutOfCapacityError
+from lightning_sdk.exceptions import NotSupportedError, OutOfCapacityError
 from lightning_sdk.lightning_cloud.openapi import V1ClusterType, V1Endpoint
 from lightning_sdk.machine import DEFAULT_MACHINE, CloudProvider, Machine
 from lightning_sdk.organization import Organization
@@ -357,11 +357,12 @@ class Studio(metaclass=TrackCallsMeta):
 
         Raises:
             RuntimeError: If the Studio is already running on a different machine or is not stopped.
-            RuntimeError: If the requested machine has no available capacity.
+            NotSupportedError: If the cloud account does not offer the requested machine.
+            OutOfCapacityError: If the machine is offered but currently out of capacity.
 
         Warns:
-            UserWarning: If the requested machine is not a known machine type for the selected
-                cloud account. It is treated as a custom instance type and passed through as-is.
+            UserWarning: If the requested machine is a custom instance type rather than a known
+                Lightning machine. It is passed through to the cloud account as-is.
         """
         # Check to see if we're inside a studio and if its running
         current_studio_machine = None
@@ -411,25 +412,7 @@ class Studio(metaclass=TrackCallsMeta):
             _logger.info(f"{self._cls_name} {self.name} is already running")
             return
 
-        if not self._studio_api.machine_is_supported(
-            new_machine, self._teamspace.id, self.cloud_account, _get_org_id(self._teamspace)
-        ):
-            warnings.warn(
-                f"Machine {new_machine} is a custom instance type that hasn't been vetted by Lightning. "
-                "It may not be available in the selected cloud account and startup may fail. "
-                "Continue at your own risk."
-            )
-
-        if not self._studio_api.machine_has_capacity(
-            new_machine,
-            self._teamspace.id,
-            self.cloud_account,
-            _get_org_id(self._teamspace),
-        ):
-            raise OutOfCapacityError(
-                "Requested machine is not available in the selected cloud account. "
-                "Try a different machine or cloud account."
-            )
+        self._check_machine_available(new_machine)
 
         if status != Status.Stopped:
             raise RuntimeError(
@@ -461,6 +444,58 @@ class Studio(metaclass=TrackCallsMeta):
             )
 
         self._setup()
+
+    def _check_machine_available(self, machine: Machine, cloud_account: Optional[str] = None) -> None:
+        """Check a machine against the cloud account before asking the platform to provision it.
+
+        The platform silently falls back to the default machine when it is handed a SKU the cloud
+        account does not offer, so a catalog machine that is missing has to be rejected here. An
+        ad-hoc instance type is only warned about, since custom SKUs are unvetted by design.
+
+        Args:
+            machine: The machine the Studio is about to be started or switched to.
+            cloud_account: Cloud account to check against. Defaults to the Studio's own.
+
+        Raises:
+            NotSupportedError: If the cloud account does not offer this catalog machine.
+            OutOfCapacityError: If it offers the machine but is currently out of capacity.
+        """
+        cloud_account = cloud_account or self.cloud_account
+        org_id = _get_org_id(self._teamspace)
+
+        if self._studio_api.machine_is_supported(machine, self._teamspace.id, cloud_account, org_id):
+            if not self._studio_api.machine_has_capacity(machine, self._teamspace.id, cloud_account, org_id):
+                raise OutOfCapacityError(
+                    "Requested machine is not available in the selected cloud account. "
+                    "Try a different machine or cloud account."
+                )
+            return
+
+        if not machine._is_predefined():
+            warnings.warn(
+                f"Machine {machine} is a custom instance type that hasn't been vetted by Lightning. "
+                "It may not be available in the selected cloud account and startup may fail. "
+                "Continue at your own risk."
+            )
+            return
+
+        raise NotSupportedError(
+            f"Machine {machine} is not available on cloud account '{cloud_account}'. "
+            f"{self._machine_alternatives_hint(machine, cloud_account)}"
+        )
+
+    def _machine_alternatives_hint(self, machine: Machine, cloud_account: str) -> str:
+        """Suggest machines the cloud account does offer, preferring the requested family."""
+        available = self._studio_api.supported_machines(self._teamspace.id, cloud_account, _get_org_id(self._teamspace))
+
+        same_family = sorted({str(m) for m in available if m.family == machine.family})
+        if same_family:
+            return f"Available {machine.family} machines: {', '.join(same_family)}."
+
+        other_families = sorted({m.family for m in available if m.family and not m.is_cpu()})
+        if other_families:
+            return f"It has no {machine.family} machines. Available GPU families: {', '.join(other_families)}."
+        return f"It has no {machine.family} machines."
 
     def stop(self) -> None:
         """Stops a running Studio.
@@ -539,6 +574,8 @@ class Studio(metaclass=TrackCallsMeta):
 
         Raises:
             RuntimeError: If the Studio is not currently running.
+            NotSupportedError: If the cloud account does not offer the requested machine.
+            OutOfCapacityError: If the machine is offered but currently out of capacity.
         """
         status = self.status
         if status != Status.Running:
@@ -563,6 +600,10 @@ class Studio(metaclass=TrackCallsMeta):
                 cloud=cloud_provider,
                 default_cloud_account=None,
             )
+
+        if not isinstance(machine, Machine):
+            machine = Machine.from_str(machine)
+        self._check_machine_available(machine, cloud_account=cloud_account or None)
 
         if self.show_progress:
             from lightning_sdk.utils.progress import StudioProgressTracker
