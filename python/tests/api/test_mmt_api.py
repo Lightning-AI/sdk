@@ -203,6 +203,9 @@ def test_get_mmt(_mock_auth):
         ("MultiMachineJob_STATE_STOPPED", Status.Stopped),
         ("MultiMachineJob_STATE_FAILED", Status.Failed),
         ("MultiMachineJob_STATE_COMPLETED", Status.Completed),
+        ("MultiMachineJob_STATE_STOP", Status.Stopping),
+        ("MultiMachineJob_STATE_DELETE", Status.Stopping),
+        ("MultiMachineJob_STATE_DELETED", Status.Stopped),
     ],
 )
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")

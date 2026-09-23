@@ -260,9 +260,17 @@ def test_get_job_v2(mocker_auth):
     ("internal_state", "expected_state"),
     [
         ("pending", Status.Pending),
+        ("creating", Status.Pending),
         ("running", Status.Running),
+        ("restarting", Status.Running),
+        ("stopping", Status.Stopping),
+        ("stop", Status.Stopping),
+        ("delete", Status.Stopping),
         ("stopped", Status.Stopped),
+        ("deleted", Status.Stopped),
+        ("complete", Status.Completed),
         ("completed", Status.Completed),
+        ("fail", Status.Failed),
         ("failed", Status.Failed),
         ("unknown", Status.Pending),
     ],
@@ -304,6 +312,9 @@ def test_machine_translate(
         (["stopped"], 1, False),
         (["completed"], 1, False),
         (["failed"], 1, False),
+        (["fail"], 1, False),
+        (["complete"], 1, False),
+        (["stop", "stopped"], 2, False),
         (["pending", "stopped"], 2, True),
         (["pending", "running", "stopped"], 3, True),
         (["stopping", "stopping", "stopping", "stopped"], 4, False),
@@ -616,6 +627,34 @@ def test_warn_if_max_runtime_noop_on_non_dws_machine():
             cloud_account_id="c",
             org_id="org",
         )
+
+
+def test_warn_if_max_runtime_noop_on_baremetal_machine():
+    job_api = JobApiV2()
+    job_api._get_machines_for_cloud_account = mock.MagicMock(
+        return_value=[
+            mock.MagicMock(
+                slug="lit-h200x-8",
+                slug_multi_cloud="lit-h200x-8",
+                instance_id="lit-h200x-8",
+                secondary_instance_id=None,
+                provider="MACHINE",
+                dws_supported=False,
+                dws_only=False,
+            )
+        ]
+    )
+    with pytest.warns(UserWarning, match="does not stop the job") as recorded:
+        job_api.warn_if_max_runtime_noop(
+            max_runtime=7200,
+            machine="lit-h200x-8",
+            interruptible=False,
+            teamspace_id="ts",
+            cloud_account_id="lightning-baremetal",
+            org_id="org",
+        )
+    assert "timeout 7200" in str(recorded[0].message)
+    assert not any("no effect" in str(warning.message) for warning in recorded)
 
 
 def test_warn_if_max_runtime_noop_silent_for_dws_machine():
