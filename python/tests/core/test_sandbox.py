@@ -645,6 +645,32 @@ def test_resolve_teamspace_id_accepts_owner_teamspace_name():
     m_resolve.assert_called_once_with("teamspace", org="owner", user=None)
 
 
+def test_resolve_teamspace_id_falls_back_to_memberships(mocker):
+    from lightning_sdk.lightning_cloud.openapi import V1ListMembershipsResponse, V1Membership
+
+    mocker.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+    m_resolve = mocker.patch("lightning_sdk.utils.resolve._resolve_teamspace", side_effect=Exception("fail"))
+
+    membership = V1Membership(
+        name="teamspace",
+        display_name="teamspace",
+        owner_id="owner-id",
+        project_id="proj-2",
+    )
+    list_resp = V1ListMembershipsResponse(memberships=[membership])
+    list_mock = mock.MagicMock(return_value=list_resp, __name__="projects_service_list_memberships")
+    mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.projects_service_api.ProjectsServiceApi"
+        ".projects_service_list_memberships",
+        new=list_mock,
+    )
+    assert _resolve_teamspace_id("owner/teamspace") == "proj-2"
+
+    assert m_resolve.call_count == 2
+    m_resolve.assert_any_call("teamspace", org="owner", user=None)
+    m_resolve.assert_any_call("teamspace", org=None, user="owner")
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_sandbox_entry_get_and_list_use_sdk_api():
     sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
