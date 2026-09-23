@@ -5,7 +5,7 @@ import os
 import warnings
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple, Union, cast
 
 from tqdm.auto import tqdm
 
@@ -1117,7 +1117,7 @@ def _model_upload_state_path(teamspace_id: str, model_name: str) -> Path:
 def _dump_model_upload_state(
     teamspace_id: str,
     model_name: str,
-    state_dict: Dict[str, str],
+    state_dict: Dict[str, Any],
 ) -> None:
     """Dump the model upload state so we can safely resume later."""
     curr_path = _model_upload_state_path(teamspace_id, model_name)
