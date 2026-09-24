@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
@@ -10,6 +11,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ListClusterAcceleratorsResponse,
     V1ListDefaultClusterAcceleratorsResponse,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 if TYPE_CHECKING:
     from lightning_sdk.machine import CloudProvider
@@ -27,6 +29,9 @@ _CANONICAL_PROVIDER_CLOUD_ACCOUNT_IDS = {
     "NEBIUS": "lightning-nebius-prod",
     "VOLTAGE_PARK": "lightning-voltagepark-prod",
 }
+
+
+logger = logging.getLogger(__name__)
 
 
 class CloudAccountApi:
@@ -205,6 +210,16 @@ class CloudAccountApi:
                 res = self.list_global_cloud_accounts(teamspace_id=teamspace_id)
             except ValueError:
                 return {}
+            except ApiException as e:
+                if e.status == 403:
+                    logger.warning(
+                        "Cannot list clusters for teamspace %s: %s. "
+                        "Cloud account resolution will fall back to defaults.",
+                        teamspace_id,
+                        e,
+                    )
+                    return {}
+                raise
         else:
             res = self.list_cloud_accounts(teamspace_id=teamspace_id)
 
