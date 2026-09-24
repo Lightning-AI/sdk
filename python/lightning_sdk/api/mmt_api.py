@@ -75,8 +75,8 @@ class MMTApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
-                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
-                (spot) machines. ``None`` means no reservation is requested.
+                (e.g. some top-end GCP GPUs or Lightning baremetal). Not a time limit; see ``Job.run``.
+                ``None`` means no reservation is requested.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             placement_group_id: Optional placement group identifier for colocating the job.
             scratch_disks: Not supported for multi-machine jobs. Kept for parity with ``JobApiV2.submit_job``.
@@ -157,8 +157,8 @@ class MMTApiV2:
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
-                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
-                (spot) machines. ``None`` means no reservation is requested.
+                (e.g. some top-end GCP GPUs or Lightning baremetal). Not a time limit; see ``Job.run``.
+                ``None`` means no reservation is requested.
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
             placement_group_id: Optional placement group identifier for colocating the job.
             max_run_attempts: Max number of run attempts for this multi-machine job. ``None`` or ``0``
@@ -353,8 +353,10 @@ class MMTApiV2:
             return Status.Completed
         if str(state) == V1MultiMachineJobState.FAILED:
             return Status.Failed
-        if str(state) == V1MultiMachineJobState.STOP:
+        if str(state) in (V1MultiMachineJobState.STOP, V1MultiMachineJobState.DELETE):
             return Status.Stopping
+        if str(state) == V1MultiMachineJobState.DELETED:
+            return Status.Stopped
         return Status.Pending
 
     def get_studio_name(self, job: V1MultiMachineJob) -> Optional[str]:

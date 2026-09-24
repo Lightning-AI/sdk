@@ -22,6 +22,7 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateJobBody,
     JobsServiceUpdateJobBody,
+    V1CloudProvider,
     V1ClusterAccelerator,
     V1DownloadJobLogsResponse,
     V1EnvVar,
@@ -119,11 +120,19 @@ class JobApiV2:
 
     # these are stages the job can be in.
     v2_job_state_pending = "pending"
+    v2_job_state_creating = "creating"
     v2_job_state_running = "running"
+    v2_job_state_restarting = "restarting"
     v2_job_state_stopped = "stopped"
     v2_job_state_completed = "completed"
     v2_job_state_failed = "failed"
+    v2_job_state_deleted = "deleted"
     v2_job_state_stopping = "stopping"
+
+    # the backend holds these while the machine shuts down.
+    v2_job_state_complete = "complete"
+    v2_job_state_fail = "fail"
+    v2_job_state_delete = "delete"
 
     # this is the user action to stop the job.
     v2_job_state_stop = "stop"
@@ -172,8 +181,8 @@ class JobApiV2:
             entrypoint: The entrypoint command used to launch the job process.
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
-                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
-                (spot) machines. ``None`` means no reservation is requested.
+                (e.g. some top-end GCP GPUs or Lightning baremetal). Not a time limit; see ``Job.run``.
+                ``None`` means no reservation is requested.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
@@ -259,8 +268,8 @@ class JobApiV2:
             path_mappings: Optional mapping of local paths to remote artifact destinations.
             reuse_snapshot: Whether to reuse the Studio's existing filesystem snapshot.
             max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
-                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
-                (spot) machines. ``None`` means no reservation is requested.
+                (e.g. some top-end GCP GPUs or Lightning baremetal). Not a time limit; see ``Job.run``.
+                ``None`` means no reservation is requested.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
             machine_image_version: Pinned machine-image version string, or ``None`` for the default.
@@ -665,19 +674,24 @@ class JobApiV2:
         """
         from lightning_sdk.status import Status
 
-        if state == self.v2_job_state_pending:
-            return Status.Pending
-        if state == self.v2_job_state_running:
-            return Status.Running
-        if state == self.v2_job_state_stopped:
-            return Status.Stopped
-        if state == self.v2_job_state_completed:
-            return Status.Completed
-        if state == self.v2_job_state_failed:
-            return Status.Failed
-        if state == self.v2_job_state_stopping:
-            return Status.Stopping
-        return Status.Pending
+        states = {
+            self.v2_job_state_pending: Status.Pending,
+            self.v2_job_state_creating: Status.Pending,
+            self.v2_job_state_running: Status.Running,
+            self.v2_job_state_restarting: Status.Running,
+            self.v2_job_state_stopping: Status.Stopping,
+            self.v2_job_state_stop: Status.Stopping,
+            self.v2_job_state_delete: Status.Stopping,
+            self.v2_job_state_stopped: Status.Stopped,
+            self.v2_job_state_deleted: Status.Stopped,
+            # The job has already ended, so report its outcome. This also keeps stop_job()
+            # from relabeling a failed or completed job as stopped.
+            self.v2_job_state_complete: Status.Completed,
+            self.v2_job_state_completed: Status.Completed,
+            self.v2_job_state_fail: Status.Failed,
+            self.v2_job_state_failed: Status.Failed,
+        }
+        return states.get(state, Status.Pending)
 
     def _get_job_machine_from_spec(self, spec: V1JobSpec, teamspace_id: str, org_id: str) -> "Machine":
         """Resolve the ``Machine`` object from a job spec by matching against available accelerators.
@@ -725,10 +739,11 @@ class JobApiV2:
         org_id: str,
         stacklevel: int = 3,
     ) -> None:
-        """Warn when ``max_runtime`` will not take effect.
+        """Warn when ``max_runtime`` will not take effect, or will not stop the job.
 
         ``max_runtime`` maps to a DWS reservation duration. The product UI only sends it for
-        non-spot machines with ``dws_supported`` / ``dws_only``; elsewhere it is a no-op.
+        non-spot machines with ``dws_supported`` / ``dws_only``; elsewhere it is a no-op. On
+        Lightning baremetal (``MACHINE``) it reserves the machine but never stops the job.
         """
         if not max_runtime:
             return
@@ -756,6 +771,16 @@ class JobApiV2:
 
         accelerator = _match_accelerator(machine, accelerators)
         if accelerator is None:
+            return
+        if str(accelerator.provider) == V1CloudProvider.MACHINE:
+            warnings.warn(
+                f"max_runtime does not stop the job on machine '{machine}'. On Lightning baremetal it is the "
+                "minimum time the machine is reserved for the job; afterwards the job keeps running and the "
+                "machine becomes interruptible. For a hard time limit, wrap your command, "
+                f"e.g. 'timeout {max_runtime} <command>'.",
+                UserWarning,
+                stacklevel=stacklevel,
+            )
             return
         if accelerator.dws_supported or accelerator.dws_only:
             return

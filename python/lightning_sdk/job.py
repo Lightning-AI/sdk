@@ -242,6 +242,9 @@ class Job(metaclass=TrackCallsMeta):
             num_machines: The number of machines to run on. Defaults to one.
             command: The command to run inside your job. Required if using a studio. Optional if using an image.
                 If not provided for images, will run the container entrypoint and default command.
+                Studio jobs run the command as a bash script with ``set -e``, so the first command that
+                fails ends the job with its exit code. That includes cleanup commands and ``EXIT`` traps
+                that run after ``exit 0``.
             studio: The studio env to run the job with. Mutually exclusive with image.
                 If both ``studio`` and ``image`` are left unset and this code is running inside a Studio
                 (detected via the ``LIGHTNING_CLOUD_SPACE_ID`` env var), defaults to that Studio, provided
@@ -265,9 +268,12 @@ class Job(metaclass=TrackCallsMeta):
             path_mappings: Maps container paths to data-connection paths in the form
                 ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>:<PATH>"}`` or ``{"<CONTAINER_PATH>": "<CONNECTION_NAME>"}``
                 for the root of a connection. Only applicable when submitting docker jobs.
-            max_runtime: DWS (Dynamic Workload Scheduler) reservation duration in seconds
-                (e.g. some top-end GCP GPUs). Has no effect on non-DWS or interruptible
-                (spot) machines. ``None`` means no reservation is requested.
+            max_runtime: How long, in seconds, to reserve a DWS (Dynamic Workload Scheduler) machine,
+                such as some top-end GCP GPUs or Lightning baremetal. On GCP the job is stopped when the
+                reservation ends. On Lightning baremetal the job keeps running afterwards and the machine
+                becomes interruptible. For a hard time limit, wrap your command, e.g.
+                ``timeout 7200 python train.py``. Has no effect on interruptible (spot) machines.
+                ``None`` means no reservation is requested.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
                 ``N > 1`` allows up to ``N`` attempts. For multi-machine jobs this is set at the

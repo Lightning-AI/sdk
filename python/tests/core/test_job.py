@@ -759,6 +759,8 @@ def test_get_job_by_name_on_init(job_api_get_job_by_name_mocker, internal_studio
         ("completed", Status.Completed),
         ("failed", Status.Failed),
         ("stopped", Status.Stopped),
+        ("fail", Status.Failed),
+        ("complete", Status.Completed),
     ],
 )
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
