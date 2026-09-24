@@ -439,6 +439,112 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 		"unexpected run-attempt fields: %d %d", created.MaxRunAttempts(), created.CurrentRunAttempt())
 }
 
+func TestJobRunMapsKeepMinutes(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.Falsef(t, r.Method != http.MethodPost || r.URL.Path != "/v1/projects/project-1/jobs",
+			"unexpected request: %s %s", r.Method, r.URL.RequestURI())
+
+		var body struct {
+			Spec struct {
+				KeepMachineAfterStop          *bool  `json:"keepMachineAfterStop"`
+				ReserveMachinesTimeoutMinutes *int64 `json:"reserveMachinesTimeoutMinutes"`
+			} `json:"spec"`
+		}
+		require.NoErrorf(t, json.NewDecoder(r.Body).Decode(&body),
+			"decode job body")
+		require.NotNil(t, body.Spec.KeepMachineAfterStop, "keepMachineAfterStop was omitted")
+		assert.True(t, *body.Spec.KeepMachineAfterStop, "keepMachineAfterStop = false, want true")
+		require.NotNil(t, body.Spec.ReserveMachinesTimeoutMinutes, "reserveMachinesTimeoutMinutes was omitted")
+		assert.Falsef(t, *body.Spec.ReserveMachinesTimeoutMinutes != 30,
+			"reserveMachinesTimeoutMinutes = %d, want 30", *body.Spec.ReserveMachinesTimeoutMinutes)
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-reserve",
+			"name":      "train-reserve",
+			"projectId": "project-1",
+			"state":     "pending",
+			"spec": map[string]any{
+				"image":                         "registry.example/train:latest",
+				"keepMachineAfterStop":          true,
+				"reserveMachinesTimeoutMinutes": 30,
+			},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	created, err := lit.RunJob(
+		"train-reserve",
+		"gpu",
+		"train.py",
+		lit.JobOptions{
+			Teamspace:   mustTeamspace(t, "project-1", "default", "alice"),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: 30,
+		},
+	)
+	require.NoErrorf(t, err,
+		"RunJob returned error")
+	assert.Falsef(t, created.KeepMinutes() != 30,
+		"KeepMinutes = %d, want 30", created.KeepMinutes())
+}
+
+func TestJobRunOmitsKeepMinutesWhenUnset(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		var body struct {
+			Spec struct {
+				KeepMachineAfterStop          *bool  `json:"keepMachineAfterStop"`
+				ReserveMachinesTimeoutMinutes *int64 `json:"reserveMachinesTimeoutMinutes"`
+			} `json:"spec"`
+		}
+		require.NoErrorf(t, json.NewDecoder(r.Body).Decode(&body),
+			"decode job body")
+		assert.Nil(t, body.Spec.KeepMachineAfterStop, "keepMachineAfterStop should be omitted")
+		assert.Nil(t, body.Spec.ReserveMachinesTimeoutMinutes, "reserveMachinesTimeoutMinutes should be omitted")
+
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"id":        "job-plain",
+			"name":      "train-plain",
+			"projectId": "project-1",
+			"state":     "pending",
+			"spec":      map[string]any{"image": "registry.example/train:latest"},
+		})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	_, err := lit.RunJob(
+		"train-plain",
+		"gpu",
+		"train.py",
+		lit.JobOptions{
+			Teamspace: mustTeamspace(t, "project-1", "default", "alice"),
+			Image:     "registry.example/train:latest",
+		},
+	)
+	require.NoErrorf(t, err,
+		"RunJob returned error")
+}
+
+func TestJobRunRejectsNegativeKeepMinutes(t *testing.T) {
+	_, err := lit.RunJob(
+		"train-bad",
+		"gpu",
+		"train.py",
+		lit.JobOptions{
+			Teamspace:   mustTeamspace(t, "project-1", "default", "alice"),
+			Image:       "registry.example/train:latest",
+			KeepMinutes: -1,
+		},
+	)
+	require.Error(t, err)
+	assert.True(t, strings.Contains(err.Error(), "keep_minutes must be >= 0"),
+		"error = %q, want keep_minutes must be >= 0", err)
+}
+
 func TestJobRunMapsScratchDisksForStudioJobs(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

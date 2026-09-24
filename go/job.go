@@ -43,6 +43,7 @@ type Job struct {
 	artifactsDestination string
 	maxRunAttempts       int64
 	currentRunAttempt    int64
+	keepMinutes          int64
 	tags                 []string
 }
 
@@ -109,6 +110,7 @@ type jobOptions struct {
 	maxRuntime       int
 	maxRunAttempts   int64
 	scratchDisks     []ScratchDisk
+	keepMinutes      int64
 }
 
 type jobWaitOptions struct {
@@ -164,6 +166,9 @@ type JobOptions struct {
 	MaxRunAttempts int64
 	// ScratchDisks mounts temporary scratch storage for studio-backed jobs.
 	ScratchDisks []ScratchDisk
+	// KeepMinutes is minutes to keep the machine after the job stops.
+	// 0 means the machine is released immediately.
+	KeepMinutes int64
 }
 
 // JobWaitOptions configures polling behavior while waiting for a job.
@@ -332,6 +337,15 @@ func (j *Job) CurrentRunAttempt() int64 {
 	return j.currentRunAttempt
 }
 
+// KeepMinutes returns minutes the machine is kept after the job stops.
+// 0 means unset (the machine is released immediately).
+func (j *Job) KeepMinutes() int64 {
+	if j == nil {
+		return 0
+	}
+	return j.keepMinutes
+}
+
 // Tags returns the teamspace tags applied to this job, in the order the
 // platform returns them.
 func (j *Job) Tags() []string {
@@ -387,6 +401,9 @@ func RunJob(name string, machine Machine, command string, opts ...JobOptions) (*
 		return nil, errors.New("job run requires name")
 	}
 	if err := validateJobComputeEnvironment(command, resolved); err != nil {
+		return nil, err
+	}
+	if err := validateKeepMinutes(resolved.keepMinutes); err != nil {
 		return nil, err
 	}
 	api, err := sdkclient.New()
@@ -757,6 +774,7 @@ func applyJobOptions(opts ...JobOptions) jobOptions {
 		resolved.maxRuntime = opts[0].MaxRuntime
 		resolved.maxRunAttempts = opts[0].MaxRunAttempts
 		resolved.scratchDisks = opts[0].ScratchDisks
+		resolved.keepMinutes = opts[0].KeepMinutes
 	}
 	return resolved
 }
@@ -854,6 +872,7 @@ func jobFromModel(model *models.V1Job, opts jobOptions) *Job {
 		result.artifactsDestination = model.Spec.ArtifactsDestination
 		result.maxRunAttempts = model.Spec.MaxRunAttempts
 		result.currentRunAttempt = model.Spec.CurrentRunAttempt
+		result.keepMinutes = model.Spec.ReserveMachinesTimeoutMinutes
 	}
 	return result
 }
@@ -876,20 +895,22 @@ func isJobTerminalStatus(status string) bool {
 
 func jobSpec(machine, command string, opts jobOptions) *models.V1JobSpec {
 	return &models.V1JobSpec{
-		CloudspaceID:                opts.studioID,
-		ClusterID:                   opts.cloud,
-		Command:                     command,
-		Entrypoint:                  resolveEntrypoint(command, opts.entrypoint, opts.image),
-		Env:                         envVars(opts.env),
-		Image:                       opts.image,
-		ImageClusterCredentials:     opts.cloudAccountAuth,
-		ImageSecretRef:              opts.imageCredentials,
-		InstanceName:                machine,
-		PathMappings:                jobPathMappings(opts),
-		MaxRunAttempts:              opts.maxRunAttempts,
-		RequestedRunDurationSeconds: maxRuntime(opts.maxRuntime),
-		Spot:                        opts.interruptible,
-		Volumes:                     scratchVolumes(opts.scratchDisks),
+		CloudspaceID:                  opts.studioID,
+		ClusterID:                     opts.cloud,
+		Command:                       command,
+		Entrypoint:                    resolveEntrypoint(command, opts.entrypoint, opts.image),
+		Env:                           envVars(opts.env),
+		Image:                         opts.image,
+		ImageClusterCredentials:       opts.cloudAccountAuth,
+		ImageSecretRef:                opts.imageCredentials,
+		InstanceName:                  machine,
+		PathMappings:                  jobPathMappings(opts),
+		MaxRunAttempts:                opts.maxRunAttempts,
+		RequestedRunDurationSeconds:   maxRuntime(opts.maxRuntime),
+		KeepMachineAfterStop:          opts.keepMinutes > 0,
+		ReserveMachinesTimeoutMinutes: opts.keepMinutes,
+		Spot:                          opts.interruptible,
+		Volumes:                       scratchVolumes(opts.scratchDisks),
 	}
 }
 

@@ -214,6 +214,13 @@ func maxRuntime(seconds int) string {
 	return strconv.Itoa(seconds)
 }
 
+func validateKeepMinutes(keepMinutes int64) error {
+	if keepMinutes < 0 {
+		return errors.New("keep_minutes must be >= 0")
+	}
+	return nil
+}
+
 func resolveEntrypoint(command string, entrypoint *string, image string) string {
 	if entrypoint != nil {
 		return *entrypoint
