@@ -120,8 +120,10 @@ deployment.start(
 print(deployment.status)
 ```
 
-**Note:** `ApiKeyAuth` only accepts personal Lightning API keys. If you
-authenticate with a scoped API key, use `TokenAuth` or `BasicAuth` instead.
+**Note:** `ApiKeyAuth` gates the endpoint on a personal Lightning API key. A
+scoped API key is not one, so deploying with a scoped key leaves that key unable
+to call the endpoint it just created. Use `TokenAuth` when the deploying key is
+also the caller.
 
 ## Start sandboxes warm
 
@@ -189,9 +191,9 @@ lightning deployment create nginx-demo \
   --api-key-auth
 ```
 
-**Note:** `--api-key-auth` only accepts personal Lightning API keys, and the CLI
-refuses it when you are authenticated with a scoped API key. Use `--token-auth`
-or `--basic-auth` instead.
+**Note:** `--api-key-auth` gates the endpoint on a personal Lightning API key.
+Deploying from automation with a scoped API key leaves that key unable to call
+the endpoint. Use `--token-auth` when the deploying key is also the caller.
 
 Inspect and stream logs:
 

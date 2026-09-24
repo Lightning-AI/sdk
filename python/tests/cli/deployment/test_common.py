@@ -2,9 +2,6 @@ from contextlib import contextmanager
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import pytest
-import rich_click as click
-
 from lightning_sdk.api.deployment_api import ApiKeyAuth, Env, TokenAuth
 from lightning_sdk.cli.deployment import common
 from lightning_sdk.cli.deployment.common import parse_auth, parse_env
@@ -42,12 +39,18 @@ def _patch_whoami(auth_type=V1AuthType.USER, side_effect=None):
         yield mock
 
 
-def test_parse_auth_rejects_a_scoped_key_with_api_key_auth():
-    with _patch_whoami(auth_type=V1AuthType.SCOPED_API_KEY), pytest.raises(click.UsageError, match="--token-auth"):
-        parse_auth(api_key_auth=True)
+def test_parse_auth_warns_when_a_scoped_key_picks_api_key_auth(capsys):
+    # --api-key-auth gates on a user key, so the caller's own scoped key gets 401.
+    with _patch_whoami(auth_type=V1AuthType.SCOPED_API_KEY):
+        auth = parse_auth(api_key_auth=True)
+
+    assert isinstance(auth, ApiKeyAuth)
+    err = capsys.readouterr().err
+    assert "scoped API key" in err
+    assert "--token-auth" in err
 
 
-def test_parse_auth_accepts_a_user_key(capsys):
+def test_parse_auth_is_quiet_for_a_user_key(capsys):
     with _patch_whoami(auth_type=V1AuthType.USER):
         auth = parse_auth(api_key_auth=True)
 
@@ -56,7 +59,7 @@ def test_parse_auth_accepts_a_user_key(capsys):
 
 
 def test_parse_auth_survives_a_failing_identity_lookup(capsys):
-    # Unknown identity: defer to the platform rather than block.
+    # The warning is advisory; a whoami failure must not block the deployment.
     with _patch_whoami(side_effect=RuntimeError("boom")):
         auth = parse_auth(api_key_auth=True)
 
