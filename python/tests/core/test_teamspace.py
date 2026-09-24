@@ -515,6 +515,93 @@ def test_upload_model_multiple_files(
     )
 
 
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_model_auto_resumes_incomplete_upload(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+    file_path = tmp_path / "checkpoint.pt"
+    file_path.touch()
+
+    ts._teamspace_api.create_model = mock.Mock()
+    ts._teamspace_api.upload_model_file = mock.Mock()
+    ts._teamspace_api._complete_model_upload = mock.Mock()
+
+    # Simulate: first upload fails after one file — state file exists
+    from lightning_sdk.teamspace import _dump_model_upload_state
+
+    _dump_model_upload_state(
+        teamspace_id=ts.id,
+        model_name="modelname",
+        state_dict={
+            "model_id": "existing-model-id",
+            "version": "v2",
+            "completed_files": ["checkpoint.pt"],
+        },
+    )
+    # The version still exists and is not completed yet
+    ts._teamspace_api.get_model_version = mock.Mock(return_value=mock.Mock(upload_complete=False))
+
+    result = ts.upload_model(path=str(file_path), name="modelname")
+
+    # Should NOT have called create_model again
+    ts._teamspace_api.create_model.assert_not_called()
+    # Should NOT upload the already-completed file
+    ts._teamspace_api.upload_model_file.assert_not_called()
+    # Should complete the upload
+    ts._teamspace_api._complete_model_upload.assert_called_once_with(
+        model_id="existing-model-id", version="v2", teamspace_id="ts-abc002"
+    )
+    assert result.name == "modelname"
+    assert result.version == "v2"
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "test-cluster-id"})
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_upload_model_auto_skip_completed(
+    internal_teamspace_api_list_mocker,
+    internal_user_api_mocker,
+    tmp_path,
+):
+    ts = Teamspace("ts-abc", user="user-abc")
+    file1 = tmp_path / "checkpoint.pt"
+    file1.touch()
+    (tmp_path / "extra").mkdir()
+    file2 = tmp_path / "extra" / "config.yaml"
+    file2.touch()
+
+    ts._teamspace_api.create_model = mock.Mock()
+    ts._teamspace_api.upload_model_file = mock.Mock()
+    ts._teamspace_api._complete_model_upload = mock.Mock()
+
+    from lightning_sdk.teamspace import _dump_model_upload_state
+
+    # checkpoint.pt was already uploaded, extra/config.yaml was not
+    _dump_model_upload_state(
+        teamspace_id=ts.id,
+        model_name="modelname",
+        state_dict={
+            "model_id": "existing-model-id",
+            "version": "v2",
+            "completed_files": ["checkpoint.pt"],
+        },
+    )
+    ts._teamspace_api.get_model_version = mock.Mock(return_value=mock.Mock(upload_complete=False))
+
+    result = ts.upload_model(path=str(tmp_path), name="modelname")
+
+    ts._teamspace_api.create_model.assert_not_called()
+    # Only the missing file should be uploaded
+    ts._teamspace_api.upload_model_file.assert_called_once()
+    call_args = ts._teamspace_api.upload_model_file.call_args
+    assert call_args[1]["remote_path"] == "extra/config.yaml"
+    ts._teamspace_api._complete_model_upload.assert_called_once()
+    assert result.version == "v2"
+
+
 @pytest.mark.parametrize("folder", ["download_dir", None])
 @mock.patch("lightning_sdk.api.teamspace_api._download_model_files")
 @mock.patch("lightning_sdk.api.teamspace_api._get_model_version")
