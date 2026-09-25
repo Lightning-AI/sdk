@@ -177,6 +177,9 @@ const (
 
 	// V1RuleResourceSandbox captures enum value "sandbox"
 	V1RuleResourceSandbox V1RuleResource = "sandbox"
+
+	// V1RuleResourceWorkloadTag captures enum value "workloadTag"
+	V1RuleResourceWorkloadTag V1RuleResource = "workloadTag"
 )
 
 // for schema
@@ -184,7 +187,7 @@ var v1RuleResourceEnum []any
 
 func init() {
 	var res []V1RuleResource
-	if err := json.Unmarshal([]byte(`["unspecifiedResource","project","projectBilling","projectRole","projectMembership","projectMembershipRoleBinding","projectClusterBinding","session","experiment","run","datastore","cluster","lightningApp","any","sshKey","secret","org","orgRole","orgMembership","orgMembershipRoleBinding","orgBilling","orgBillingTopUp","dataConnection","cloudSpacePublication","assistant","endpoint","orgClusterBinding","orgClusterEncryptionKeys","cloudSpace","featuredOrgStudioGallery","managedEndpoint","job","deployment","model","slurmJob","multiMachineJob","litLogger","pipeline","cloudSpaceEnvironmentTemplate","orgStorage","kubernetesCluster","storageTransfer","litDataset","upload","machine","kubernetesTemplate","k8s_job","sandbox"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["unspecifiedResource","project","projectBilling","projectRole","projectMembership","projectMembershipRoleBinding","projectClusterBinding","session","experiment","run","datastore","cluster","lightningApp","any","sshKey","secret","org","orgRole","orgMembership","orgMembershipRoleBinding","orgBilling","orgBillingTopUp","dataConnection","cloudSpacePublication","assistant","endpoint","orgClusterBinding","orgClusterEncryptionKeys","cloudSpace","featuredOrgStudioGallery","managedEndpoint","job","deployment","model","slurmJob","multiMachineJob","litLogger","pipeline","cloudSpaceEnvironmentTemplate","orgStorage","kubernetesCluster","storageTransfer","litDataset","upload","machine","kubernetesTemplate","k8s_job","sandbox","workloadTag"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -431,6 +431,11 @@ export interface V1CreateSandboxRequest {
    * @format uint64
    */
   idleTimeout?: string;
+  /**
+   * Bind /var/lib/docker onto the writable disk (quota'd by storage_gb)
+   * instead of the default tmpfs
+   */
+  dockerDataRootOnDisk?: boolean;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -688,6 +693,8 @@ export interface V1Sandbox {
    * cold-boots the processes.
    */
   memorySnapshotCompatible?: boolean;
+  /** Mirrors CreateSandboxRequest.docker_data_root_on_disk */
+  dockerDataRootOnDisk?: boolean;
 }
 
 export interface V1SandboxCommand {
