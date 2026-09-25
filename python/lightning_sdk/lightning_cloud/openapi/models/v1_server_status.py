@@ -58,6 +58,7 @@ class V1ServerStatus(object):
         'requires_maintenance': 'bool',
         'retried_at': 'datetime',
         'retries': 'str',
+        'scheduler_attempted': 'bool',
         'started_at': 'datetime',
         'stop_retried_at': 'datetime',
         'stop_retries': 'str',
@@ -84,6 +85,7 @@ class V1ServerStatus(object):
         'requires_maintenance': 'requiresMaintenance',
         'retried_at': 'retriedAt',
         'retries': 'retries',
+        'scheduler_attempted': 'schedulerAttempted',
         'started_at': 'startedAt',
         'stop_retried_at': 'stopRetriedAt',
         'stop_retries': 'stopRetries',
@@ -96,7 +98,7 @@ class V1ServerStatus(object):
         'workload_taken_at': 'workloadTakenAt'
     }
 
-    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, requires_maintenance: 'bool' =None, retried_at: 'datetime' =None, retries: 'str' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_runtime: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
+    def __init__(self, alert: 'V1ServerAlert' =None, allocate_duration_seconds: 'str' =None, container_image: 'list[str]' =None, created_at: 'datetime' =None, error: 'str' =None, install_duration_seconds: 'str' =None, interruption_notice_received: 'bool' =None, interruption_notice_received_at: 'datetime' =None, last_seen_at: 'datetime' =None, logs_uploaded_at: 'datetime' =None, requires_maintenance: 'bool' =None, retried_at: 'datetime' =None, retries: 'str' =None, scheduler_attempted: 'bool' =None, started_at: 'datetime' =None, stop_retried_at: 'datetime' =None, stop_retries: 'str' =None, stopped_at: 'datetime' =None, updated_at: 'datetime' =None, workload_container_restarts_count: 'str' =None, workload_runtime: 'str' =None, workload_state: 'str' =None, workload_state_details: 'str' =None, workload_taken_at: 'datetime' =None):  # noqa: E501
         """V1ServerStatus - a model defined in Swagger"""  # noqa: E501
         self._alert = None
         self._allocate_duration_seconds = None
@@ -111,6 +113,7 @@ class V1ServerStatus(object):
         self._requires_maintenance = None
         self._retried_at = None
         self._retries = None
+        self._scheduler_attempted = None
         self._started_at = None
         self._stop_retried_at = None
         self._stop_retries = None
@@ -148,6 +151,8 @@ class V1ServerStatus(object):
             self.retried_at = retried_at
         if retries is not None:
             self.retries = retries
+        if scheduler_attempted is not None:
+            self.scheduler_attempted = scheduler_attempted
         if started_at is not None:
             self.started_at = started_at
         if stop_retried_at is not None:
@@ -443,6 +448,29 @@ class V1ServerStatus(object):
         """
 
         self._retries = retries
+
+    @property
+    def scheduler_attempted(self) -> 'bool':
+        """Gets the scheduler_attempted of this V1ServerStatus.  # noqa: E501
+
+        True once the machine-cluster scheduler has run at least once for this server. Sticky; placement is recorded separately (machine_id / provider).  # noqa: E501
+
+        :return: The scheduler_attempted of this V1ServerStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._scheduler_attempted
+
+    @scheduler_attempted.setter
+    def scheduler_attempted(self, scheduler_attempted: 'bool'):
+        """Sets the scheduler_attempted of this V1ServerStatus.
+
+        True once the machine-cluster scheduler has run at least once for this server. Sticky; placement is recorded separately (machine_id / provider).  # noqa: E501
+
+        :param scheduler_attempted: The scheduler_attempted of this V1ServerStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._scheduler_attempted = scheduler_attempted
 
     @property
     def started_at(self) -> 'datetime':

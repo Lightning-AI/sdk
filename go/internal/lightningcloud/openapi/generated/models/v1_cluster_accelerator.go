@@ -118,6 +118,9 @@ type V1ClusterAccelerator struct {
 	// Largest availability of quota in all regions
 	MaxAvailableQuota string `json:"maxAvailableQuota,omitempty"`
 
+	// Additional credits per GPU-hour for a shared machine placement group
+	MultiNodeIbCostPerGpuHour float64 `json:"multiNodeIbCostPerGpuHour,omitempty"`
+
 	// Prevents users from requesting instance as on-demand instance
 	NonOndemand bool `json:"nonOndemand,omitempty"`
 
