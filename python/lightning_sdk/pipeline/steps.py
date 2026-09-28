@@ -212,6 +212,7 @@ class JobStep:
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
+        keep_minutes: Optional[int] = None,
     ) -> None:
         """Configure a job step in a pipeline.
 
@@ -245,6 +246,8 @@ class JobStep:
             num_machines: Number of machines to allocate. Defaults to one.
             tags: Teamspace tag names to apply to the job. Tags that don't exist in the teamspace
                 yet are created, which requires permission to create tags.
+            keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
+                releases the machine immediately.
 
         """
         if num_machines < 1:
@@ -273,6 +276,7 @@ class JobStep:
         self.placement_group_id = placement_group_id
         self.num_machines = num_machines
         self.tags = tags
+        self.keep_minutes = keep_minutes
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -329,6 +333,7 @@ class JobStep:
                 placement_group_id=self.placement_group_id,
                 max_run_attempts=self.max_run_attempts,
                 tags=self.tags,
+                keep_minutes=self.keep_minutes,
             )
             return V1PipelineStep(
                 name=self.name,
@@ -357,6 +362,7 @@ class JobStep:
             scratch_disks=self.scratch_disks,
             placement_group_id=self.placement_group_id,
             tags=self.tags,
+            keep_minutes=self.keep_minutes,
         )
         return V1PipelineStep(
             name=self.name,
@@ -393,6 +399,7 @@ class MMTStep:
         reuse_snapshot: bool = True,
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
+        keep_minutes: Optional[int] = None,
     ) -> None:
         """Configure a multi-machine training step in a pipeline.
 
@@ -424,6 +431,8 @@ class MMTStep:
             placement_group_id: Optional placement group identifier for colocating the job.
             tags: Teamspace tag names to apply to the job. Tags that don't exist in the teamspace
                 yet are created, which requires permission to create tags.
+            keep_minutes: Minutes to keep the machines after the job stops. ``None`` or ``0``
+                releases the machines immediately.
 
         """
         self.machine = machine or Machine.CPU
@@ -448,6 +457,7 @@ class MMTStep:
         self.reuse_snapshot = reuse_snapshot
         self.placement_group_id = placement_group_id
         self.tags = tags
+        self.keep_minutes = keep_minutes
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -501,6 +511,7 @@ class MMTStep:
             placement_group_id=self.placement_group_id,
             max_run_attempts=self.max_run_attempts,
             tags=self.tags,
+            keep_minutes=self.keep_minutes,
         )
 
         return V1PipelineStep(

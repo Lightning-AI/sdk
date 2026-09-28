@@ -782,6 +782,7 @@ class Studio(metaclass=TrackCallsMeta):
         interruptible: bool = False,
         reuse_snapshot: bool = True,
         max_run_attempts: Optional[int] = None,
+        keep_minutes: Optional[int] = None,
     ) -> "Job":
         """Run async workloads using the compute environment from your studio.
 
@@ -795,6 +796,8 @@ class Studio(metaclass=TrackCallsMeta):
                 submitted. Turning this off may result in longer job startup times. Defaults to True.
             max_run_attempts: Max number of run attempts for this job. ``None`` or ``0`` means
                 unset (backend default). ``1`` means a single attempt (no retries).
+            keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
+                releases the machine immediately.
 
         Returns:
             Job: The submitted :class:`Job` instance.
@@ -813,6 +816,7 @@ class Studio(metaclass=TrackCallsMeta):
             interruptible=interruptible,
             reuse_snapshot=reuse_snapshot,
             max_run_attempts=max_run_attempts,
+            keep_minutes=keep_minutes,
         )
 
     def run_mmt(
@@ -824,6 +828,7 @@ class Studio(metaclass=TrackCallsMeta):
         env: Optional[Dict[str, str]] = None,
         interruptible: bool = False,
         max_run_attempts: Optional[int] = None,
+        keep_minutes: Optional[int] = None,
     ) -> "MMT":
         """Run async workloads using the compute environment from your studio.
 
@@ -839,6 +844,8 @@ class Studio(metaclass=TrackCallsMeta):
                 ``1`` the ``RECREATE_ALL_NODES`` fault tolerance strategy is set automatically on the
                 multi-machine job body. Set at the multi-machine job level, not on the per-machine
                 ``JobSpec``.
+            keep_minutes: Minutes to keep the machines after the job stops. ``None`` or ``0``
+                releases the machines immediately.
 
         Returns:
             MMT: The submitted :class:`MMT` instance.
@@ -857,6 +864,7 @@ class Studio(metaclass=TrackCallsMeta):
             env=env,
             interruptible=interruptible,
             max_run_attempts=max_run_attempts,
+            keep_minutes=keep_minutes,
         )
 
     def add_ports(self, ports: Union[int, List[int], Dict[str, int]]) -> List[V1Endpoint]:

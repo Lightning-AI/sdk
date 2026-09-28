@@ -233,6 +233,7 @@ class Job(metaclass=TrackCallsMeta):
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
+        keep_minutes: Optional[int] = None,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -282,6 +283,8 @@ class Job(metaclass=TrackCallsMeta):
                 yet are created, which requires permission to create tags. Names are normalised by
                 the platform (lowercased, whitespace collapsed), so ``job.tags`` may read back
                 slightly differently from what was passed in.
+            keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
+                releases the machine immediately.
 
         Returns:
             Job: The newly submitted Job instance.
@@ -385,6 +388,7 @@ class Job(metaclass=TrackCallsMeta):
             scratch_disks=scratch_disks,
             placement_group_id=placement_group_id,
             tags=tags,
+            keep_minutes=keep_minutes,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -411,6 +415,7 @@ class Job(metaclass=TrackCallsMeta):
         placement_group_id: Optional[str] = None,
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
+        keep_minutes: Optional[int] = None,
     ) -> "Job":
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
@@ -491,6 +496,7 @@ class Job(metaclass=TrackCallsMeta):
             scratch_disks=scratch_disks,
             max_run_attempts=max_run_attempts,
             tags=tags,
+            keep_minutes=keep_minutes,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(
@@ -660,6 +666,13 @@ class Job(metaclass=TrackCallsMeta):
     @property
     def placement_group_id(self) -> Optional[str]:
         return self._guaranteed_job.spec.placement_group_id
+
+    @property
+    def keep_minutes(self) -> Optional[int]:
+        """Minutes the machine is kept after the job stops, or ``None`` if unset."""
+        spec = getattr(self._guaranteed_job, "spec", None)
+        value = getattr(spec, "reserve_machines_timeout_minutes", None)
+        return value or None
 
     @property
     def tags(self) -> Tuple[str, ...]:

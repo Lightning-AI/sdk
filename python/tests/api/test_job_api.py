@@ -184,6 +184,84 @@ def test_job_v2_submit_job_omits_unset_max_run_attempts(mocker_auth):
     assert body.spec.max_run_attempts is None
 
 
+def test_job_v2_submit_job_threads_keep_minutes(mocker_auth):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        keep_minutes=30,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.reserve_machines_timeout_minutes == 30
+    assert body.spec.keep_machine_after_stop is True
+
+
+@pytest.mark.parametrize("timeout", [None, 0])
+def test_job_v2_submit_job_omits_unset_keep_minutes(mocker_auth, timeout):
+    job_api = JobApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        image="image-abc",
+        studio_id="",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        keep_minutes=timeout,
+    )
+
+    body = create_job_mock.call_args.kwargs["body"]
+    assert body.spec.reserve_machines_timeout_minutes is None
+    assert body.spec.keep_machine_after_stop is None
+
+
+def test_job_v2_submit_job_rejects_negative_keep_minutes(mocker_auth):
+    job_api = JobApiV2()
+    job_api._client.jobs_service_create_job = mock.MagicMock()
+
+    with pytest.raises(ValueError, match="keep_minutes must be >= 0"):
+        job_api.submit_job(
+            name="test-job",
+            cloud_account="c-abc",
+            teamspace_id="ts-abc",
+            image="image-abc",
+            studio_id="",
+            machine=Machine.CPU,
+            interruptible=False,
+            env=None,
+            command="echo hello",
+            image_credentials=None,
+            cloud_account_auth=False,
+            entrypoint="sh -c",
+            path_mappings=None,
+            keep_minutes=-1,
+        )
+
+
 def test_job_v2_submit_job_threads_tags(mocker_auth):
     job_api = JobApiV2()
     create_job_mock = mock.MagicMock()
