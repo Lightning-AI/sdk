@@ -28,7 +28,7 @@ dependencies = [ # alphabetically sorted
     "six", # for lightning_cloud
     "tqdm", # for progressbars
     "textual>=2.0", # for interactive TUI
-    "urllib3<=2.5.0", # for downloading files via urls
+    "urllib3>=1.26", # for downloading files via urls
     "uvicorn", # for login
     "websocket-client>=1.6", # for sandbox PTY sessions
 ]
