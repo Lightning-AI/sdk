@@ -56,6 +56,30 @@ def test_run_mmt_with_cloud(monkeypatch):
     assert mock_mmt.run.call_args.kwargs["cloud"] == "aws"
 
 
+@mock_command_logging
+def test_run_mmt_with_keep_minutes(monkeypatch):
+    mock_mmt = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.MMT", mock_mmt)
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.resolve_teamspace", MagicMock(return_value="teamspace"))
+
+    result = CliRunner().invoke(
+        run_mmt,
+        [
+            "--name",
+            "test-mmt",
+            "--image",
+            "ubuntu",
+            "--command",
+            "echo hi",
+            "--keep-minutes",
+            "15",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert mock_mmt.run.call_args.kwargs["keep_minutes"] == 15
+
+
 @pytest.mark.parametrize(
     ("extra_args", "expected_entrypoint"),
     [
