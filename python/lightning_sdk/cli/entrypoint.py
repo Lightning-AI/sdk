@@ -26,6 +26,7 @@ from lightning_sdk.cli.groups import (
     file,
     folder,
     job,
+    llm,
     machine,
     mmt,
     model,
@@ -53,7 +54,7 @@ click.rich_click.COMMAND_GROUPS = {
     "lightning": [
         {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "vm", "container", "sandbox"]},
-        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
+        {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "llm", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
     ]
@@ -137,6 +138,7 @@ main_cli.add_command(deployment)
 main_cli.add_command(vm)
 main_cli.add_command(container)
 main_cli.add_command(model)
+main_cli.add_command(llm)
 main_cli.add_command(pipeline)
 main_cli.add_command(api_key)
 main_cli.add_command(auth)
@@ -164,6 +166,7 @@ main_cli.add_command(build_hidden_alias_group("machines", machine))
 main_cli.add_command(build_hidden_alias_group("deployments", deployment))
 main_cli.add_command(build_hidden_alias_group("containers", container))
 main_cli.add_command(build_hidden_alias_group("models", model))
+main_cli.add_command(build_hidden_alias_group("llms", llm))
 main_cli.add_command(build_hidden_alias_group("files", file))
 main_cli.add_command(build_hidden_alias_group("folders", folder))
 main_cli.add_command(build_hidden_alias_group("datasets", dataset))

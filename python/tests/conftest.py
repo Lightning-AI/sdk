@@ -2701,6 +2701,63 @@ def internal_job_logs_mocker(mocker, internal_get_logs_mocker):
 
 
 @pytest.fixture()
+def published_llm_endpoints(mocker):
+    """Mock the gateway's published-endpoints listing with provider-hosted and open-weights endpoints."""
+    from lightning_sdk.lightning_cloud.openapi.models.v1_list_published_managed_endpoints_response import (
+        V1ListPublishedManagedEndpointsResponse,
+    )
+    from lightning_sdk.lightning_cloud.openapi.models.v1_managed_model import V1ManagedModel
+
+    def model(name, display_name, context_length, prompt, completion, max_completion_tokens="0", status="ONLINE"):
+        return V1ManagedModel(
+            name=name,
+            display_name=display_name,
+            context_length=context_length,
+            prompt_token_price=prompt,
+            completion_token_price=completion,
+            max_completion_tokens=max_completion_tokens,
+            status=status,
+        )
+
+    response = V1ListPublishedManagedEndpointsResponse(
+        managed_endpoints=[
+            V1ManagedEndpoint(
+                id="openai",
+                name="OpenAI",
+                models_metadata=[
+                    model("gpt-5", "GPT 5", "400000", 1.25e-06, 1e-05),
+                    model("gpt-4-turbo", "GPT 4 Turbo", "128000", 1e-05, 3e-05),
+                ],
+            ),
+            V1ManagedEndpoint(
+                id="google",
+                name="Google",
+                models_metadata=[model("gemini-2.5-flash", "Gemini 2.5 Flash", "1048576", 3e-07, 2.5e-06)],
+            ),
+            # Open-weights endpoints carry opaque ids and arbitrary names.
+            V1ManagedEndpoint(
+                id="mge_01m39h1w5et9fh0b6ca9hzpecs",
+                name="glm-5.3",
+                provider_display_name="Lightning AI",
+                models_metadata=[model("glm-5.3", "GLM-5.3", "131072", 2e-06, 4.4e-06, max_completion_tokens="8192")],
+            ),
+            V1ManagedEndpoint(
+                id="mge_01kn86fpvfk5ezk6mg8kj8p3b5",
+                name="lightning-ai",
+                provider_display_name="lightning-ai",
+                models_metadata=[model("gemma-4-31B-it", "Gemma 4 ", "131072", 1.4e-07, 4e-07, status="OFFLINE")],
+            ),
+        ]
+    )
+    mocker.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+    return mocker.patch(
+        "lightning_sdk.lightning_cloud.openapi.api.assistants_service_api.AssistantsServiceApi"
+        ".assistants_service_list_published_managed_endpoints",
+        return_value=response,
+    )
+
+
+@pytest.fixture()
 def internal_job_fallback_mocker(mocker):
     def v2_side_effect(*args, **kwargs):
         raise ApiException(status=404, reason="Not found")
