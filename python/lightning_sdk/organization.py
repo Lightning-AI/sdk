@@ -67,8 +67,7 @@ class Organization(Owner):
         super().__init__()
         self._org_api = OrgApi()
         self._billing_api = BillingApi()
-        if name is None:
-            name = _resolve_org_name(name)
+        name = _resolve_org_name(name)
 
         if name is None:
             raise ValueError(
