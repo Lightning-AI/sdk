@@ -66,6 +66,12 @@ def test_start_conversation_basic(llm_api, mock_client, sample_response):
     assert call_args[1]["_preload_content"] is True
 
 
+def test_list_published_endpoints_tolerates_empty_response(llm_api, mock_client):
+    mock_client.assistants_service_list_published_managed_endpoints.return_value = MagicMock(managed_endpoints=None)
+
+    assert llm_api.list_published_endpoints() == []
+
+
 def test_parse_stream_line_warns_and_returns_none_for_invalid_json(llm_api):
     with pytest.warns(UserWarning, match="Error decoding JSON: not-json"):
         result = llm_api._parse_stream_line("not-json")
