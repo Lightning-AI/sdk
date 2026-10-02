@@ -102,6 +102,8 @@ type ClientService interface {
 
 	OrganizationsServiceSearchOrganizations(params *OrganizationsServiceSearchOrganizationsParams, opts ...ClientOption) (*OrganizationsServiceSearchOrganizationsOK, error)
 
+	OrganizationsServiceSetOrgDefaultTeamspaces(params *OrganizationsServiceSetOrgDefaultTeamspacesParams, opts ...ClientOption) (*OrganizationsServiceSetOrgDefaultTeamspacesOK, error)
+
 	OrganizationsServiceSetOrgMemberModelAPIDailyLimit(params *OrganizationsServiceSetOrgMemberModelAPIDailyLimitParams, opts ...ClientOption) (*OrganizationsServiceSetOrgMemberModelAPIDailyLimitOK, error)
 
 	OrganizationsServiceSetOrgModelAPIDailyLimitDefault(params *OrganizationsServiceSetOrgModelAPIDailyLimitDefaultParams, opts ...ClientOption) (*OrganizationsServiceSetOrgModelAPIDailyLimitDefaultOK, error)
@@ -1039,6 +1041,48 @@ func (a *Client) OrganizationsServiceSearchOrganizations(params *OrganizationsSe
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*OrganizationsServiceSearchOrganizationsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+OrganizationsServiceSetOrgDefaultTeamspaces replaces the teamspaces a new member joins does not change current members
+*/
+func (a *Client) OrganizationsServiceSetOrgDefaultTeamspaces(params *OrganizationsServiceSetOrgDefaultTeamspacesParams, opts ...ClientOption) (*OrganizationsServiceSetOrgDefaultTeamspacesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewOrganizationsServiceSetOrgDefaultTeamspacesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "OrganizationsService_SetOrgDefaultTeamspaces",
+		Method:             "PUT",
+		PathPattern:        "/v1/orgs/{orgId}/default-teamspaces",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &OrganizationsServiceSetOrgDefaultTeamspacesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*OrganizationsServiceSetOrgDefaultTeamspacesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*OrganizationsServiceSetOrgDefaultTeamspacesDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -23,6 +23,9 @@ import (
 // swagger:model DataConnectionServiceUpdateDataConnectionBody
 type DataConnectionServiceUpdateDataConnectionBody struct {
 
+	// Clusters the connection is available in. Omit to leave unchanged.
+	AccessClusterIds *V1AccessClusterIdsUpdate `json:"accessClusterIds,omitempty"`
+
 	// Manages data connection capacity auto-increase
 	AutoIncreaseEnabled bool `json:"autoIncreaseEnabled,omitempty"`
 
@@ -67,6 +70,10 @@ type DataConnectionServiceUpdateDataConnectionBody struct {
 func (m *DataConnectionServiceUpdateDataConnectionBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAccessClusterIds(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateAws(formats); err != nil {
 		res = append(res, err)
 	}
@@ -102,6 +109,29 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) Validate(formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DataConnectionServiceUpdateDataConnectionBody) validateAccessClusterIds(formats strfmt.Registry) error {
+	if swag.IsZero(m.AccessClusterIds) { // not required
+		return nil
+	}
+
+	if m.AccessClusterIds != nil {
+		if err := m.AccessClusterIds.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("accessClusterIds")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("accessClusterIds")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -293,6 +323,10 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) validateSnowflake(format
 func (m *DataConnectionServiceUpdateDataConnectionBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAccessClusterIds(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateAws(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -328,6 +362,31 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) ContextValidate(ctx cont
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DataConnectionServiceUpdateDataConnectionBody) contextValidateAccessClusterIds(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AccessClusterIds != nil {
+
+		if swag.IsZero(m.AccessClusterIds) { // not required
+			return nil
+		}
+
+		if err := m.AccessClusterIds.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("accessClusterIds")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("accessClusterIds")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

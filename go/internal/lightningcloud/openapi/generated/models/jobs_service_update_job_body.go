@@ -24,6 +24,10 @@ type JobsServiceUpdateJobBody struct {
 	// cloudspace Id
 	CloudspaceID string `json:"cloudspaceId,omitempty"`
 
+	// Optional. Why the job failed, reported by the job's own machine with state 'fail'.
+	// Ignored from any other caller or state.
+	Message string `json:"message,omitempty"`
+
 	// Optional, new name for the job. Collisions are resolved server-side.
 	Name string `json:"name,omitempty"`
 

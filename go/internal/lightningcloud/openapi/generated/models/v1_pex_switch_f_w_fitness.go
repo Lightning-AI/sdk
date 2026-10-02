@@ -17,7 +17,7 @@ import (
 )
 
 // V1PexSwitchFWFitness PexSwitchFWFitness is the Dell PEX890xx PCIe-switch firmware compliance for
-// MMT, from a boot-time marker (the live version is not readable in-agent). It is
+// MMT, from a boot-time marker. The live version is in firmware_inventory. It is
 // the one fail-open MMT prerequisite: a switch behind target only degrades GDR
 // bandwidth, not brick-class, so only a confirmed behind (state == "collected"
 // AND compliant == false) is a hard readiness fault; any other state is unverified.

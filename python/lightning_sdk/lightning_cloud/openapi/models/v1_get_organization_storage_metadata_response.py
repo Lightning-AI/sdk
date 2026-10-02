@@ -46,6 +46,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
     """
     swagger_types = {
         'account_limit_bytes': 'str',
+        'account_limit_reason': 'V1StorageLimitReason',
         'estimated_daily_cost': 'float',
         'estimated_daily_efs_cost': 'float',
         'id': 'str',
@@ -64,6 +65,7 @@ class V1GetOrganizationStorageMetadataResponse(object):
 
     attribute_map = {
         'account_limit_bytes': 'accountLimitBytes',
+        'account_limit_reason': 'accountLimitReason',
         'estimated_daily_cost': 'estimatedDailyCost',
         'estimated_daily_efs_cost': 'estimatedDailyEfsCost',
         'id': 'id',
@@ -80,9 +82,10 @@ class V1GetOrganizationStorageMetadataResponse(object):
         'total_upload_storage_bytes': 'totalUploadStorageBytes'
     }
 
-    def __init__(self, account_limit_bytes: 'str' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_free_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_model_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
+    def __init__(self, account_limit_bytes: 'str' =None, account_limit_reason: 'V1StorageLimitReason' =None, estimated_daily_cost: 'float' =None, estimated_daily_efs_cost: 'float' =None, id: 'str' =None, project_metadata: 'list[V1ProjectStorage]' =None, total_billable_bytes: 'str' =None, total_cloudspace_storage_bytes: 'str' =None, total_container_registry_storage_bytes: 'str' =None, total_data_connection_storage_bytes: 'str' =None, total_folder_storage_bytes: 'str' =None, total_free_storage_bytes: 'str' =None, total_job_storage_bytes: 'str' =None, total_model_storage_bytes: 'str' =None, total_storage_bytes: 'str' =None, total_upload_storage_bytes: 'str' =None):  # noqa: E501
         """V1GetOrganizationStorageMetadataResponse - a model defined in Swagger"""  # noqa: E501
         self._account_limit_bytes = None
+        self._account_limit_reason = None
         self._estimated_daily_cost = None
         self._estimated_daily_efs_cost = None
         self._id = None
@@ -100,6 +103,8 @@ class V1GetOrganizationStorageMetadataResponse(object):
         self.discriminator = None
         if account_limit_bytes is not None:
             self.account_limit_bytes = account_limit_bytes
+        if account_limit_reason is not None:
+            self.account_limit_reason = account_limit_reason
         if estimated_daily_cost is not None:
             self.estimated_daily_cost = estimated_daily_cost
         if estimated_daily_efs_cost is not None:
@@ -149,6 +154,27 @@ class V1GetOrganizationStorageMetadataResponse(object):
         """
 
         self._account_limit_bytes = account_limit_bytes
+
+    @property
+    def account_limit_reason(self) -> 'V1StorageLimitReason':
+        """Gets the account_limit_reason of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+
+
+        :return: The account_limit_reason of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :rtype: V1StorageLimitReason
+        """
+        return self._account_limit_reason
+
+    @account_limit_reason.setter
+    def account_limit_reason(self, account_limit_reason: 'V1StorageLimitReason'):
+        """Sets the account_limit_reason of this V1GetOrganizationStorageMetadataResponse.
+
+
+        :param account_limit_reason: The account_limit_reason of this V1GetOrganizationStorageMetadataResponse.  # noqa: E501
+        :type: V1StorageLimitReason
+        """
+
+        self._account_limit_reason = account_limit_reason
 
     @property
     def estimated_daily_cost(self) -> 'float':

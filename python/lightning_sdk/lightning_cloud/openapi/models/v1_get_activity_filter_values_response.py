@@ -45,6 +45,7 @@ class V1GetActivityFilterValuesResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_ids': 'list[str]',
         'project_ids': 'list[str]',
         'resource_ids': 'list[V1NamedFilterValue]',
         'resource_ids_truncated': 'bool',
@@ -53,6 +54,7 @@ class V1GetActivityFilterValuesResponse(object):
     }
 
     attribute_map = {
+        'cluster_ids': 'clusterIds',
         'project_ids': 'projectIds',
         'resource_ids': 'resourceIds',
         'resource_ids_truncated': 'resourceIdsTruncated',
@@ -60,14 +62,17 @@ class V1GetActivityFilterValuesResponse(object):
         'user_ids': 'userIds'
     }
 
-    def __init__(self, project_ids: 'list[str]' =None, resource_ids: 'list[V1NamedFilterValue]' =None, resource_ids_truncated: 'bool' =None, resource_types: 'list[str]' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, cluster_ids: 'list[str]' =None, project_ids: 'list[str]' =None, resource_ids: 'list[V1NamedFilterValue]' =None, resource_ids_truncated: 'bool' =None, resource_types: 'list[str]' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1GetActivityFilterValuesResponse - a model defined in Swagger"""  # noqa: E501
+        self._cluster_ids = None
         self._project_ids = None
         self._resource_ids = None
         self._resource_ids_truncated = None
         self._resource_types = None
         self._user_ids = None
         self.discriminator = None
+        if cluster_ids is not None:
+            self.cluster_ids = cluster_ids
         if project_ids is not None:
             self.project_ids = project_ids
         if resource_ids is not None:
@@ -78,6 +83,27 @@ class V1GetActivityFilterValuesResponse(object):
             self.resource_types = resource_types
         if user_ids is not None:
             self.user_ids = user_ids
+
+    @property
+    def cluster_ids(self) -> 'list[str]':
+        """Gets the cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+
+
+        :return: The cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._cluster_ids
+
+    @cluster_ids.setter
+    def cluster_ids(self, cluster_ids: 'list[str]'):
+        """Sets the cluster_ids of this V1GetActivityFilterValuesResponse.
+
+
+        :param cluster_ids: The cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._cluster_ids = cluster_ids
 
     @property
     def project_ids(self) -> 'list[str]':

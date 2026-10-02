@@ -36,6 +36,9 @@ type V1ClusterSpec struct {
 	// Azure cloud configuration
 	AzureV1 *V1AzureDirectV1 `json:"azureV1,omitempty"`
 
+	// Blocks server creation, allocation, and warm reuse for every user.
+	BlockServerCreation bool `json:"blockServerCreation,omitempty"`
+
 	// If true, apply Lightning cloud pricing for this cluster instead of BYOC
 	// (needed for the case when we keep customers' BYOC clusters on our own infra)
 	CloudPricingEnabled bool `json:"cloudPricingEnabled,omitempty"`

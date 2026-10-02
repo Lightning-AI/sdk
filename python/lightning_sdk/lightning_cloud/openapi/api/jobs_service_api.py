@@ -3318,6 +3318,8 @@ class JobsServiceApi(object):
         :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :param str sandbox_id: sandbox_id returns logs for all of a sandbox's recorded commands.
         :param list[str] sandbox_command_ids: sandbox_command_ids narrows to specific commands (within sandbox_id when set).
+        :param str seek_resource_id: Read seek_resource_id's unfiltered merged stream from seek_line onward (\"view in context\" jumps). Query, severity, since and until are ignored.
+        :param str seek_line:
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3350,12 +3352,14 @@ class JobsServiceApi(object):
         :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :param str sandbox_id: sandbox_id returns logs for all of a sandbox's recorded commands.
         :param list[str] sandbox_command_ids: sandbox_command_ids narrows to specific commands (within sandbox_id when set).
+        :param str seek_resource_id: Read seek_resource_id's unfiltered merged stream from seek_line onward (\"view in context\" jumps). Query, severity, since and until are ignored.
+        :param str seek_line:
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token', 'severity', 'sandbox_id', 'sandbox_command_ids']  # noqa: E501
+        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token', 'severity', 'sandbox_id', 'sandbox_command_ids', 'seek_resource_id', 'seek_line']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3406,6 +3410,10 @@ class JobsServiceApi(object):
         if 'sandbox_command_ids' in params:
             query_params.append(('sandboxCommandIds', params['sandbox_command_ids']))  # noqa: E501
             collection_formats['sandboxCommandIds'] = 'multi'  # noqa: E501
+        if 'seek_resource_id' in params:
+            query_params.append(('seekResourceId', params['seek_resource_id']))  # noqa: E501
+        if 'seek_line' in params:
+            query_params.append(('seekLine', params['seek_line']))  # noqa: E501
 
         header_params = {}
 
