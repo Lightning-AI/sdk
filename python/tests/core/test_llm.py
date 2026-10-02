@@ -224,6 +224,24 @@ def test_get_auth_info(monkeypatch):
     mock_resolve.assert_called_with(teamspace="teamspace-name", org=None, user="my-user")
 
 
+@pytest.mark.filterwarnings("ignore:Passing 'org'/'user' is deprecated:DeprecationWarning")
+@patch("lightning_sdk.user.UserApi")
+@patch("lightning_sdk.teamspace.TeamspaceApi")
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_get_auth_info_strips_teamspace_whitespace(mock_teamspace_api, mock_user_api):
+    LLMCLIENT._llm_api_cache.clear()
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
+    mock_user_api().get_user.return_value = MagicMock(id="user-1")
+    get_teamspace = mock_teamspace_api().get_teamspace
+
+    LLM(name="openai/gpt-4o", teamspace=" my-user / teamspace-name ")
+
+    mock_user_api().get_user.assert_called_with(name="my-user")
+    get_teamspace.assert_called_with(name="teamspace-name", owner_id="user-1")
+
+
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_ephemeral(monkeypatch, mock_public_model):
     LLMCLIENT._auth_info_cached = False
