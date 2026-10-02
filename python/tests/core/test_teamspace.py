@@ -2143,3 +2143,52 @@ def test_teamspace_list_files_converts_tree_entries(
 
     # The server leaves out the size of an empty file rather than sending zero.
     assert (empty.path, empty.is_dir, empty.size) == ("empty.txt", False, 0)
+
+
+@pytest.fixture()
+def _missing_org_teamspace():
+    """Org-owned teamspace lookup fails; no LIGHTNING_USERNAME, no config user, fresh authed-user cache."""
+    from contextlib import ExitStack
+
+    from lightning_sdk.utils.resolve import _get_authed_user
+
+    _get_authed_user.cache_clear()
+    with ExitStack() as stack:
+        stack.enter_context(mock.patch.dict(os.environ, clear=True))
+        stack.enter_context(mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/x.yaml"))
+        stack.enter_context(mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock()))
+        stack.enter_context(mock.patch("lightning_sdk.teamspace.CloudAccountApi"))
+        teamspace_api = stack.enter_context(mock.patch("lightning_sdk.teamspace.TeamspaceApi"))
+        resolve_org = stack.enter_context(mock.patch("lightning_sdk.teamspace._resolve_org"))
+
+        resolve_org.return_value = mock.MagicMock(spec=Organization)
+        resolve_org.return_value.name = "lightningai-engineering"
+        teamspace_api.return_value.get_teamspace.side_effect = ValueError("Teamspace general does not exist")
+        yield
+    _get_authed_user.cache_clear()
+
+
+@pytest.mark.usefixtures("_missing_org_teamspace")
+@mock.patch("lightning_sdk.user.UserApi")
+@mock.patch("lightning_sdk.utils.resolve.UserApi")
+@mock.patch("lightning_sdk.utils.resolve.TeamspaceApi")
+def test_missing_org_teamspace_suggests_logged_in_user(mock_resolve_ts_api, mock_resolve_user_api, mock_user_api):
+    mock_resolve_ts_api.return_value._get_authed_user_id.return_value = "user-1"
+    mock_resolve_user_api.return_value._get_user_by_id.return_value.username = "alice"
+    mock_user_api.return_value.get_user.return_value.username = "alice"
+
+    with pytest.raises(ValueError, match="Teamspace lightningai-engineering/general does not exist") as exc:
+        Teamspace("general")
+
+    assert "user=alice instead of org=lightningai-engineering" in str(exc.value)
+
+
+@pytest.mark.usefixtures("_missing_org_teamspace")
+@mock.patch("lightning_sdk.utils.resolve.TeamspaceApi")
+def test_missing_org_teamspace_keeps_error_when_user_cannot_be_resolved(mock_resolve_ts_api):
+    mock_resolve_ts_api.return_value._get_authed_user_id.side_effect = RuntimeError("not logged in")
+
+    with pytest.raises(ValueError, match="Teamspace lightningai-engineering/general does not exist") as exc:
+        Teamspace("general")
+
+    assert "user=" not in str(exc.value)
