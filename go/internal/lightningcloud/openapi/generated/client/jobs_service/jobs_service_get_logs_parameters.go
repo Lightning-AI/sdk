@@ -101,6 +101,18 @@ type JobsServiceGetLogsParams struct {
 	*/
 	SandboxID *string
 
+	// SeekLine.
+	//
+	// Format: uint64
+	SeekLine *string
+
+	/* SeekResourceID.
+
+	     Read seek_resource_id's unfiltered merged stream from seek_line onward
+	("view in context" jumps). Query, severity, since and until are ignored.
+	*/
+	SeekResourceID *string
+
 	/* Severity.
 
 	     Minimum severity to include: returns only lines equal to or more severe than this
@@ -265,6 +277,28 @@ func (o *JobsServiceGetLogsParams) WithSandboxID(sandboxID *string) *JobsService
 // SetSandboxID adds the sandboxId to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) SetSandboxID(sandboxID *string) {
 	o.SandboxID = sandboxID
+}
+
+// WithSeekLine adds the seekLine to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSeekLine(seekLine *string) *JobsServiceGetLogsParams {
+	o.SetSeekLine(seekLine)
+	return o
+}
+
+// SetSeekLine adds the seekLine to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSeekLine(seekLine *string) {
+	o.SeekLine = seekLine
+}
+
+// WithSeekResourceID adds the seekResourceID to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSeekResourceID(seekResourceID *string) *JobsServiceGetLogsParams {
+	o.SetSeekResourceID(seekResourceID)
+	return o
+}
+
+// SetSeekResourceID adds the seekResourceId to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSeekResourceID(seekResourceID *string) {
+	o.SeekResourceID = seekResourceID
 }
 
 // WithSeverity adds the severity to the jobs service get logs params
@@ -432,6 +466,40 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qSandboxID != "" {
 
 			if err := r.SetQueryParam("sandboxId", qSandboxID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SeekLine != nil {
+
+		// query param seekLine
+		var qrSeekLine string
+
+		if o.SeekLine != nil {
+			qrSeekLine = *o.SeekLine
+		}
+		qSeekLine := qrSeekLine
+		if qSeekLine != "" {
+
+			if err := r.SetQueryParam("seekLine", qSeekLine); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SeekResourceID != nil {
+
+		// query param seekResourceId
+		var qrSeekResourceID string
+
+		if o.SeekResourceID != nil {
+			qrSeekResourceID = *o.SeekResourceID
+		}
+		qSeekResourceID := qrSeekResourceID
+		if qSeekResourceID != "" {
+
+			if err := r.SetQueryParam("seekResourceId", qSeekResourceID); err != nil {
 				return err
 			}
 		}

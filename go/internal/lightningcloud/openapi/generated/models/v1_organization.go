@@ -92,6 +92,10 @@ type V1Organization struct {
 	// A project to associate org-wide things with it, e.g. to charge for org-wide things
 	DefaultProjectID string `json:"defaultProjectId,omitempty"`
 
+	// Teamspaces a new member joins, in list order. Empty means the member joins none.
+	// An unset column is also empty here.
+	DefaultTeamspaceIds []string `json:"defaultTeamspaceIds"`
+
 	// description
 	Description string `json:"description,omitempty"`
 
@@ -160,6 +164,9 @@ type V1Organization struct {
 
 	// location
 	Location string `json:"location,omitempty"`
+
+	// Operator-managed NAIRR grant recipient; read-only in the customer API.
+	Nairr bool `json:"nairr,omitempty"`
 
 	// Org name
 	Name string `json:"name,omitempty"`

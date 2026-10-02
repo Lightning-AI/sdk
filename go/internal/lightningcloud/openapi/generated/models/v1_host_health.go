@@ -34,6 +34,18 @@ type V1HostHealth struct {
 	// creates (GHES fatal PCIe panic or vfio-pci HDA hang on the previous boot).
 	GpuCreateHostCrash *V1GPUCreateHostCrash `json:"gpuCreateHostCrash,omitempty"`
 
+	// ib guids
+	IbGuids []*V1HostIBGUIDRail `json:"ibGuids"`
+
+	// ib pkeys
+	IbPkeys *V1HostIBPKeysHealth `json:"ibPkeys,omitempty"`
+
+	// inband netplan
+	InbandNetplan *V1InbandNetplanHealth `json:"inbandNetplan,omitempty"`
+
+	// litaccess ib pkeys
+	LitaccessIbPkeys *V1HostIBPKeysHealth `json:"litaccessIbPkeys,omitempty"`
+
 	// node fitness
 	NodeFitness *V1NodeFitness `json:"nodeFitness,omitempty"`
 
@@ -70,6 +82,22 @@ func (m *V1HostHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGpuCreateHostCrash(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIbGuids(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIbPkeys(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInbandNetplan(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLitaccessIbPkeys(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -166,6 +194,105 @@ func (m *V1HostHealth) validateGpuCreateHostCrash(formats strfmt.Registry) error
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("gpuCreateHostCrash")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) validateIbGuids(formats strfmt.Registry) error {
+	if swag.IsZero(m.IbGuids) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.IbGuids); i++ {
+		if swag.IsZero(m.IbGuids[i]) { // not required
+			continue
+		}
+
+		if m.IbGuids[i] != nil {
+			if err := m.IbGuids[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibGuids" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibGuids" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) validateIbPkeys(formats strfmt.Registry) error {
+	if swag.IsZero(m.IbPkeys) { // not required
+		return nil
+	}
+
+	if m.IbPkeys != nil {
+		if err := m.IbPkeys.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("ibPkeys")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("ibPkeys")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) validateInbandNetplan(formats strfmt.Registry) error {
+	if swag.IsZero(m.InbandNetplan) { // not required
+		return nil
+	}
+
+	if m.InbandNetplan != nil {
+		if err := m.InbandNetplan.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("inbandNetplan")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("inbandNetplan")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) validateLitaccessIbPkeys(formats strfmt.Registry) error {
+	if swag.IsZero(m.LitaccessIbPkeys) { // not required
+		return nil
+	}
+
+	if m.LitaccessIbPkeys != nil {
+		if err := m.LitaccessIbPkeys.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("litaccessIbPkeys")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("litaccessIbPkeys")
 			}
 
 			return err
@@ -306,6 +433,22 @@ func (m *V1HostHealth) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateIbGuids(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIbPkeys(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateInbandNetplan(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLitaccessIbPkeys(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateNodeFitness(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -402,6 +545,110 @@ func (m *V1HostHealth) contextValidateGpuCreateHostCrash(ctx context.Context, fo
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("gpuCreateHostCrash")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateIbGuids(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.IbGuids); i++ {
+
+		if m.IbGuids[i] != nil {
+
+			if swag.IsZero(m.IbGuids[i]) { // not required
+				return nil
+			}
+
+			if err := m.IbGuids[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("ibGuids" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("ibGuids" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateIbPkeys(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.IbPkeys != nil {
+
+		if swag.IsZero(m.IbPkeys) { // not required
+			return nil
+		}
+
+		if err := m.IbPkeys.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("ibPkeys")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("ibPkeys")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateInbandNetplan(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InbandNetplan != nil {
+
+		if swag.IsZero(m.InbandNetplan) { // not required
+			return nil
+		}
+
+		if err := m.InbandNetplan.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("inbandNetplan")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("inbandNetplan")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1HostHealth) contextValidateLitaccessIbPkeys(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LitaccessIbPkeys != nil {
+
+		if swag.IsZero(m.LitaccessIbPkeys) { // not required
+			return nil
+		}
+
+		if err := m.LitaccessIbPkeys.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("litaccessIbPkeys")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("litaccessIbPkeys")
 			}
 
 			return err

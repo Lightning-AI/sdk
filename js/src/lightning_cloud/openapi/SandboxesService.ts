@@ -18,6 +18,7 @@ import {
   RpcStatus,
   SandboxesServiceCreateSandboxDirectoryBody,
   SandboxesServiceCreateSandboxSnapshotBody,
+  SandboxesServiceExposeSandboxPortsBody,
   SandboxesServiceExtendSandboxTimeoutBody,
   SandboxesServiceFinalizeSandboxSnapshotBody,
   SandboxesServiceGetSandboxSnapshotBlobDownloadUrlsBody,
@@ -558,6 +559,54 @@ applied; retry on the next activity report.
       method: "POST",
       body: body,
       type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceExposeSandboxPorts
+ * @summary ExposeSandboxPorts makes HTTP servers inside a running or paused sandbox
+reachable at their `port_urls`. Ports that are already exposed are left
+as they are. A paused sandbox gets the ports when it resumes.
+ * @request POST:/v1/core/sandboxes/{id}/ports
+ */
+  sandboxesServiceExposeSandboxPorts = (
+    id: string,
+    body: SandboxesServiceExposeSandboxPortsBody,
+    params: RequestParams = {},
+  ) =>
+    this.request<V1Sandbox, RpcStatus>({
+      path: `/v1/core/sandboxes/${id}/ports`,
+      method: "POST",
+      body: body,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+ * No description
+ *
+ * @tags SandboxesService
+ * @name SandboxesServiceUnexposeSandboxPort
+ * @summary UnexposeSandboxPort stops routing new requests to a port. Connections
+already open, such as WebSockets, stay up until they close. Unexposing a
+port that is not exposed is a no-op.
+ * @request DELETE:/v1/core/sandboxes/{id}/ports/{port}
+ */
+  sandboxesServiceUnexposeSandboxPort = (
+    id: string,
+    port: string,
+    query?: {
+      organizationId?: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<V1Sandbox, RpcStatus>({
+      path: `/v1/core/sandboxes/${id}/ports/${port}`,
+      method: "DELETE",
+      query: query,
       format: "json",
       ...params,
     });

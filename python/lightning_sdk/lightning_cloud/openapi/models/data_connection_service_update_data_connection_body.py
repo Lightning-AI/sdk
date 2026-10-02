@@ -45,6 +45,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'access_cluster_ids': 'V1AccessClusterIdsUpdate',
         'auto_increase_enabled': 'bool',
         'aws': 'V1AwsDataConnection',
         'capacity_gb': 'str',
@@ -61,6 +62,7 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
     }
 
     attribute_map = {
+        'access_cluster_ids': 'accessClusterIds',
         'auto_increase_enabled': 'autoIncreaseEnabled',
         'aws': 'aws',
         'capacity_gb': 'capacityGb',
@@ -76,8 +78,9 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         'writable': 'writable'
     }
 
-    def __init__(self, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, capacity_gb: 'str' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
+    def __init__(self, access_cluster_ids: 'V1AccessClusterIdsUpdate' =None, auto_increase_enabled: 'bool' =None, aws: 'V1AwsDataConnection' =None, capacity_gb: 'str' =None, efs: 'V1EfsConfig' =None, gcp: 'V1GcpDataConnection' =None, gcs_folder: 'V1GCSFolderDataConnection' =None, name: 'str' =None, optimization_mode: 'V1DataConnectionOptimizationMode' =None, r2: 'V1R2DataConnection' =None, run_cmds: 'list[str]' =None, s3_folder: 'V1S3FolderDataConnection' =None, snowflake: 'V1SnowflakeDataConnection' =None, writable: 'bool' =None):  # noqa: E501
         """DataConnectionServiceUpdateDataConnectionBody - a model defined in Swagger"""  # noqa: E501
+        self._access_cluster_ids = None
         self._auto_increase_enabled = None
         self._aws = None
         self._capacity_gb = None
@@ -92,6 +95,8 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
         self._snowflake = None
         self._writable = None
         self.discriminator = None
+        if access_cluster_ids is not None:
+            self.access_cluster_ids = access_cluster_ids
         if auto_increase_enabled is not None:
             self.auto_increase_enabled = auto_increase_enabled
         if aws is not None:
@@ -118,6 +123,27 @@ class DataConnectionServiceUpdateDataConnectionBody(object):
             self.snowflake = snowflake
         if writable is not None:
             self.writable = writable
+
+    @property
+    def access_cluster_ids(self) -> 'V1AccessClusterIdsUpdate':
+        """Gets the access_cluster_ids of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+
+
+        :return: The access_cluster_ids of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :rtype: V1AccessClusterIdsUpdate
+        """
+        return self._access_cluster_ids
+
+    @access_cluster_ids.setter
+    def access_cluster_ids(self, access_cluster_ids: 'V1AccessClusterIdsUpdate'):
+        """Sets the access_cluster_ids of this DataConnectionServiceUpdateDataConnectionBody.
+
+
+        :param access_cluster_ids: The access_cluster_ids of this DataConnectionServiceUpdateDataConnectionBody.  # noqa: E501
+        :type: V1AccessClusterIdsUpdate
+        """
+
+        self._access_cluster_ids = access_cluster_ids
 
     @property
     def auto_increase_enabled(self) -> 'bool':
