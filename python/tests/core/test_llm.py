@@ -6,6 +6,7 @@ import pytest
 
 from lightning_sdk.llm import LLM
 from lightning_sdk.llm import LLM as LLMCLIENT
+from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
 
 
 @pytest.fixture(autouse=True)
@@ -134,6 +135,50 @@ def test_get_model_id_uses_cache():
 
     assert llm._model_id == "assistant-id-123"
     assert llm.context_length == 8192
+
+
+def _studio_llm_with_server_lookup(monkeypatch, public_assistants):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._llm_api_cache = {}
+    LLMCLIENT._public_assistants = public_assistants
+    mock_api = MagicMock()
+    mock_api.get_assistant.return_value = "ast_from_server"
+    monkeypatch.setattr("lightning_sdk.llm.llm.LLMApi", lambda: mock_api)
+    return mock_api
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_studio_model_missing_from_public_map_uses_server_lookup(monkeypatch):
+    mock_api = _studio_llm_with_server_lookup(
+        monkeypatch, {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
+    )
+
+    llm = LLM(name="google/gemini-3.5-flash")
+
+    assert llm._model_id == "ast_from_server"
+    mock_api.get_assistant.assert_called_once_with(
+        model_provider="Google", model_name="gemini-3.5-flash", user_name="", org_name=""
+    )
+
+
+@pytest.mark.parametrize(
+    "model",
+    [
+        "anthropic/claude-3-5-sonnet-20240620",
+        "lightning-ai/gpt-oss-20b",
+        "lightning-ai/gpt-oss-120b",
+        "lightning-ai/DeepSeek-V3.1",
+    ],
+)
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_studio_unpublished_model_is_not_served_from_public_map(monkeypatch, model):
+    mock_api = _studio_llm_with_server_lookup(monkeypatch, PUBLIC_MODELS)
+
+    llm = LLM(name=model)
+
+    assert llm._model_id == "ast_from_server"
+    mock_api.get_assistant.assert_called_once()
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())

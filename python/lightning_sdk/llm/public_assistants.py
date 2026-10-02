@@ -1,54 +1,38 @@
+# Fast-path cache of published models, used only on https://lightning.ai; unlisted models use a server lookup.
+# Drop entries once a model is unpublished, otherwise they resolve to an assistant users cannot reach.
 PUBLIC_MODELS = {
-    "openai/gpt-4o": {
-        "id": "ast_01jdjds71fs8gt47jexzed4czs",
-        "context_length": 128000
-    },
-    "openai/gpt-4": {
-        "id": "ast_01jd38ze6tjbrcd4942nhz41zn",
-        "context_length": 8192
-    },
-    "openai/o3-mini": {
-        "id": "ast_01jz3t13fhnjhh11t1k8b5gyp1",
-        "context_length": 128000
-    },
-    "anthropic/claude-3-5-sonnet-20240620": {
-        "id": "ast_01jd3923a6p98rqwh3dpj686pq",
-        "context_length": 200000
-    },
-    "google/gemini-2.5-pro": {
-        "id": "ast_01jz3tdb1fhey798k95pv61v57",
-        "context_length": 1048576
-    },
-    "google/gemini-2.5-flash": {
-        "id": "ast_01jz3thxskg4fcdk4xhkjkym5a",
-        "context_length": 1048576
-    },
-    "google/gemini-2.5-flash-lite-preview-06-17": {
-        "id": "ast_01jz3thxskg4fcdk4xhkjkym5b",
-        "context_length": 1048576
-    },
-    "lightning-ai/DeepSeek-V3.1": {
-        "id": "ast_01k378z15k0msktaxjpfrfwqqh",
-        "context_length": 163840
-    },
-    "lightning-ai/gpt-oss-20b": {
-        "id": "ast_01k1y2ywfh9zzexjzrva6y96ms",
-        "context_length": 128000,
-    },
-    "lightning-ai/gpt-oss-120b": {
-        "id": "ast_01k1z7ajxbz7wq62xj5bc0mrcs",
-        "context_length": 128000,
-    },
-    "openai/gpt-5": {
-        "id": "ast_01jdjds71fs8gt47jexzed4cza",
-        "context_length": 400000
-    },
-    "openai/gpt-5-mini": {
-        "id": "ast_01jdjds71fs8gt47jexzed4czb",
-        "context_length": 400000
-    },
-    "openai/gpt-5-nano": {
-        "id": "ast_01jdjds71fs8gt47jexzed4czc",
-        "context_length": 400000
-    },
+    "openai/gpt-3.5-turbo": {"id": "ast_01jd390b99t6013y87f31kpsp2", "context_length": 16385},
+    "openai/gpt-4": {"id": "ast_01jd38ze6tjbrcd4942nhz41zn", "context_length": 8192},
+    "openai/gpt-4-turbo": {"id": "ast_01jd3913yw0t7cdphwba7w2bkv", "context_length": 128000},
+    "openai/gpt-4.1": {"id": "ast_01jz413pbny1pcz4tnqv5hg88m", "context_length": 1047576},
+    "openai/gpt-4o": {"id": "ast_01jdjds71fs8gt47jexzed4czs", "context_length": 128000},
+    "openai/gpt-5": {"id": "ast_01jdjds71fs8gt47jexzed4cza", "context_length": 400000},
+    "openai/gpt-5-mini": {"id": "ast_01jdjds71fs8gt47jexzed4czb", "context_length": 400000},
+    "openai/gpt-5-nano": {"id": "ast_01jdjds71fs8gt47jexzed4czc", "context_length": 400000},
+    "openai/gpt-5.2-2025-12-11": {"id": "ast_01kc9hmfymdt49rms4wpq9cpnx", "context_length": 400000},
+    "openai/gpt-5.4-2026-03-05": {"id": "ast_01kmh22yc3rttptttqastnxh65", "context_length": 1050000},
+    "openai/gpt-5.4-mini-2026-03-17": {"id": "ast_01krgr1nrf95097cy9nx0g6kpr", "context_length": 400000},
+    "openai/gpt-5.4-nano-2026-03-17": {"id": "ast_01krgqzj91rxjha7b9yb8f4dwm", "context_length": 400000},
+    "openai/gpt-5.5-2026-04-23": {"id": "ast_01krgqyd0trcjk3e4scvvmrkrr", "context_length": 1050000},
+    "openai/gpt-5.6-luna": {"id": "ast_01kxgm8ek07vvvh9sjtda4xmra", "context_length": 1050000},
+    "openai/gpt-5.6-sol": {"id": "ast_01kxgkxy2p6sv5gc2bmm1pwdrg", "context_length": 1050000},
+    "openai/gpt-5.6-terra": {"id": "ast_01kxgm9bvcvnhzceed2hqg83kd", "context_length": 1050000},
+    "openai/gpt-6-astra": {"id": "ast_01m23h5r6zz690pj7ndy2b2xk6", "context_length": 1050000},
+    "openai/gpt-6-sol": {"id": "ast_01m3e3vk0k7q44kb46wvk54wke", "context_length": 1050000},
+    "openai/gpt-6.1-sol": {"id": "ast_01m3sfxm9scs7nqz4yrgx4v4vh", "context_length": 1050000},
+    "openai/o3": {"id": "ast_01jz3sych0t0f35qcyavghtj8t", "context_length": 200000},
+    "openai/o3-mini": {"id": "ast_01jz3t13fhnjhh11t1k8b5gyp1", "context_length": 200000},
+    "google/gemini-2.5-flash": {"id": "ast_01jz3thxskg4fcdk4xhkjkym5a", "context_length": 1048576},
+    "google/gemini-2.5-flash-lite-preview-06-17": {"id": "ast_01jz3thxskg4fcdk4xhkjkym5b", "context_length": 1048576},
+    "google/gemini-2.5-pro": {"id": "ast_01jz3tdb1fhey798k95pv61v57", "context_length": 1048576},
+    "google/gemini-3-flash-preview": {"id": "ast_01keffzky2rs1yqcmq65xjcx0c", "context_length": 1048576},
+    "google/gemini-3.1-flash-lite-preview": {"id": "ast_01kpp3rker3dgb5e8v0qy4c373", "context_length": 1048576},
+    "google/gemini-3.1-pro-preview": {"id": "ast_01khvqj76ca5ejaf80nbdnyqq7", "context_length": 1048576},
+    "google/gemini-3.5-flash": {"id": "ast_01ks1fex52ay8hw70spnyp2wx1", "context_length": 1048576},
+    "lightning-ai/deepseek-v4.1-flash": {"id": "ast_01m35rjsrhnp93cp1ncvr1n0j1", "context_length": 1048576},
+    "lightning-ai/gemma-4-31B-it": {"id": "ast_01kn86fpvssxpeh89v7kvvk5ad", "context_length": 131072},
+    "lightning-ai/glm-5.3": {"id": "ast_01m39h1w6skt6q0zj0ywdde783", "context_length": 131072},
+    "lightning-ai/glm-5.3-flash": {"id": "ast_01m3vqn441595f3r4der72dg30", "context_length": 253952},
+    "lightning-ai/mimo-v2.6-pro": {"id": "ast_01m3c1xca0zm55t6qwz4vfr6t0", "context_length": 262144},
+    "lightning-ai/Qwen3.8-27B": {"id": "ast_01m0g54ncvvszwsdqgtvwdjnb4", "context_length": 262144},
 }
