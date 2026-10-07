@@ -42,3 +42,31 @@ Organization
 .. autoclass:: BillingNamedFilterValue
    :members:
    :show-inheritance:
+
+.. autoclass:: BillingActivitySubfilters
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingWorkloadTagSubfilter
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingAssistantMessageSubfilter
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivitySubfilterValues
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingWorkloadSubfilterValues
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingAssistantMessageSubfilterValues
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivityResourceNames
+   :members:
+   :show-inheritance:
