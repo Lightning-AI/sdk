@@ -248,6 +248,21 @@ def test_teamspace_slug_falls_back_to_user_when_owner_is_not_an_org(
     assert ts.owner is mock_user
 
 
+@pytest.mark.parametrize("name", ["my-org/my-ts ", " my-org / my-ts "])
+@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
+@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_slug_strips_whitespace(mock_resolve_org, mock_resolve_user, mock_teamspace_api, name):
+    mock_resolve_org.return_value.id = "org-1"
+    get_teamspace = mock_teamspace_api().get_teamspace
+
+    Teamspace(name)
+
+    mock_resolve_org.assert_any_call("my-org")
+    get_teamspace.assert_called_with(name="my-ts", owner_id="org-1")
+
+
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_slug_conflicts_with_explicit_org_raises():
     with pytest.raises(ValueError, match="specified both as part of 'name'"):
