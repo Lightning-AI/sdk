@@ -3,8 +3,6 @@ import json
 from datetime import datetime, timezone
 from unittest import mock
 
-import pytest
-
 from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
     BillingActivity,
@@ -236,11 +234,20 @@ def test_build_activity_query_params_skips_empty_subfilters():
     assert _build_activity_query_params(org_id="org-1", subfilters=subfilters) == {"orgId": "org-1"}
 
 
-def test_build_activity_query_params_rejects_tag_subfilters():
-    subfilters = BillingActivitySubfilters(deployment=BillingWorkloadTagSubfilter(tag_ids=["tag-1"]))
+def test_build_activity_query_params_forwards_tag_subfilters():
+    subfilters = BillingActivitySubfilters(
+        job=BillingWorkloadTagSubfilter(tag_ids=["tag-1", "tag-2"], match_all_tags=True),
+        multi_machine_job=BillingWorkloadTagSubfilter(tag_ids=["tag-3"]),
+        deployment=BillingWorkloadTagSubfilter(tag_ids=["tag-4"]),
+    )
 
-    with pytest.raises(ValueError, match="deployment"):
-        _build_activity_query_params(org_id="org-1", subfilters=subfilters)
+    assert _build_activity_query_params(org_id="org-1", subfilters=subfilters) == {
+        "orgId": "org-1",
+        "subfilters.job.tagIds": ["tag-1", "tag-2"],
+        "subfilters.job.matchAllTags": "true",
+        "subfilters.multiMachineJob.tagIds": ["tag-3"],
+        "subfilters.deployment.tagIds": ["tag-4"],
+    }
 
 
 # ---- BillingApi.get_activity ------------------------------------------------
