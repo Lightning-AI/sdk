@@ -18,8 +18,8 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from functools import partial
-from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequence, Set, Tuple, Union
-from urllib.parse import urlparse
+from typing import Any, Callable, Deque, Dict, Iterator, List, Mapping, Optional, Sequence, Set, Tuple, Union
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud.login import Auth
@@ -58,6 +58,14 @@ _MAX_DEDUP_KEYS = 5000
 
 SEVERITIES = ("error", "warning", "info", "debug")
 
+# Labels the follow socket puts on entries. A cursor (``<server>:<ts_nanos>:<count>``) marks where
+# a server's stream is, so a reconnect can resume right after it; the server only sends cursors to
+# a client that asks for them with :data:`LOG_CURSORS_HEADER`. A lifecycle phase marks a synthetic
+# line about the job's own lifecycle (queued, image pulled, executing, terminal, ...).
+LOG_CURSOR_LABEL = "lightning.ai/log-cursor"
+LIFECYCLE_PHASE_LABEL = "lightning.ai/lifecycle-phase"
+LOG_CURSORS_HEADER = "X-Lightning-Log-Cursors: 1"
+
 
 @dataclass(frozen=True)
 class LogEntry:
@@ -69,6 +77,8 @@ class LogEntry:
     severity: str = ""
     # The job the line came from: the replica for a deployment, the rank for a multi-machine job.
     resource_id: str = ""
+    # Server-side annotations, e.g. :data:`LIFECYCLE_PHASE_LABEL`. Not part of the entry's identity.
+    labels: Mapping[str, str] = field(default_factory=dict, compare=False, hash=False)
 
     def format(self, *, timestamps: bool = False, prefix: Optional[str] = None) -> str:
         """Render the entry as a printable line.
@@ -152,7 +162,14 @@ def _entry_from_model(entry: Any) -> LogEntry:
         line=_to_int(getattr(entry, "line", 0)),
         severity=str(getattr(entry, "severity", "") or ""),
         resource_id=str(getattr(entry, "resource_id", "") or ""),
+        labels=_labels(getattr(entry, "labels", None)),
     )
+
+
+def _labels(value: Any) -> Dict[str, str]:
+    if not isinstance(value, dict):
+        return {}
+    return {str(k): str(v) for k, v in value.items() if v is not None}
 
 
 def parse_log_entries(payload_text: str) -> List[LogEntry]:
@@ -181,6 +198,7 @@ def parse_log_entries(payload_text: str) -> List[LogEntry]:
                 line=_to_int(raw.get("line")),
                 severity=str(raw.get("severity") or ""),
                 resource_id=str(raw.get("resource_id") or raw.get("resourceId") or ""),
+                labels=_labels(raw.get("labels") or raw.get("Labels")),
             )
         )
     return entries
@@ -220,6 +238,60 @@ class _RecentKeys:
 
     def __contains__(self, entry: LogEntry) -> bool:
         return entry.dedup_key in self._keys
+
+
+def _timestamp_nanos(value: datetime) -> int:
+    """``value`` in nanoseconds since the epoch, rounded up to the end of its microsecond.
+
+    Entries carry microsecond timestamps, so rounding up keeps a boundary at or after the
+    server's own nanosecond time for that entry.
+    """
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    micros = (value - datetime(1970, 1, 1, tzinfo=timezone.utc)) // timedelta(microseconds=1)
+    return micros * 1000 + 999
+
+
+class _ResumePoint:
+    """Where a followed stream got to, so a reconnect resumes right after it.
+
+    The server labels each streamed line with a per-server cursor and accepts the latest one back
+    as a ``serverBoundary`` query parameter; synthetic lifecycle lines are resumed per job with
+    ``lifecycleBoundary``. Without these, a reconnect replays a tail and relies on de-duplication.
+    """
+
+    def __init__(self) -> None:
+        self.servers: Dict[str, str] = {}
+        self.lifecycle: Dict[str, int] = {}
+
+    def note(self, entry: LogEntry) -> None:
+        cursor = entry.labels.get(LOG_CURSOR_LABEL)
+        if cursor:
+            server, sep, position = cursor.partition(":")
+            if server and sep and position.count(":") == 1:
+                self.servers[server] = position
+        if entry.labels.get(LIFECYCLE_PHASE_LABEL) and entry.resource_id and entry.timestamp is not None:
+            nanos = _timestamp_nanos(entry.timestamp)
+            self.lifecycle[entry.resource_id] = max(nanos, self.lifecycle.get(entry.resource_id, 0))
+
+    def apply(self, url: str) -> str:
+        """``url`` with this point's boundaries, replacing any earlier ones for the same server or job."""
+        if not self.servers and not self.lifecycle:
+            return url
+        parts = urlparse(url)
+        overrides: Dict[str, Mapping[str, object]] = {
+            "serverBoundary": self.servers,
+            "lifecycleBoundary": self.lifecycle,
+        }
+        query = [
+            (key, value)
+            for key, value in parse_qsl(parts.query, keep_blank_values=True)
+            if key not in overrides or value.partition(":")[0] not in overrides[key]
+        ]
+        query += [("serverBoundary", f"{server}:{position}") for server, position in self.servers.items()]
+        # the lifecycle tracker compares timestamps only, but the parser wants three parts
+        query += [("lifecycleBoundary", f"{job}:{nanos}:0") for job, nanos in self.lifecycle.items()]
+        return urlunparse(parts._replace(query=urlencode(query)))
 
 
 class LogsApi:
@@ -329,6 +401,7 @@ class LogsApi:
         idle_timeout: Optional[float] = None,
         fallback_to_live: bool = False,
         stop: Optional[Callable[[], bool]] = None,
+        cursors: bool = False,
     ) -> Iterator[LogEntry]:
         """Yield the resource's history, then optionally tail its live stream.
 
@@ -356,6 +429,8 @@ class LogsApi:
                 ``follow`` is not set. Used to still show something for a running resource whose
                 logs are not in the new storage format yet.
             stop: Called while the tail is quiet; return ``True`` to end the stream.
+            cursors: Ask the live stream for resume cursors and reconnect from them (see
+                :meth:`follow`).
 
         Yields:
             LogEntry: History entries in time order, then live entries as they arrive.
@@ -408,6 +483,7 @@ class LogsApi:
             idle_timeout=idle_timeout,
             stop=stop,
             reconnect=follow,
+            cursors=cursors,
         )
 
     def _iter_history(
@@ -473,6 +549,7 @@ class LogsApi:
         stop: Optional[Callable[[], bool]] = None,
         reconnect: bool = True,
         on_socket: Optional[Callable[[Any], None]] = None,
+        cursors: bool = False,
     ) -> Iterator[LogEntry]:
         """Yield log lines from a ``follow_url`` websocket as they arrive.
 
@@ -490,6 +567,9 @@ class LogsApi:
             on_socket: Called with the live websocket right after it connects, and with ``None``
                 once it closes. Lets a caller on another thread interrupt a blocked ``recv()``
                 immediately (e.g. ``sock.shutdown()`` on quit) instead of waiting out the poll.
+            cursors: Ask the server to label lines with resume cursors, and reconnect after a drop
+                from the last cursor and lifecycle line seen, so nothing in the gap is lost or
+                replayed. A server without cursor support ignores the request.
 
         Yields:
             LogEntry: Live entries in arrival order.
@@ -508,6 +588,11 @@ class LogsApi:
 
         auth_header = Auth().authenticate()
         url = _websocket_url(follow_url)
+        headers = [f"Authorization: {auth_header}"]
+        resume: Optional[_ResumePoint] = None
+        if cursors:
+            headers.append(LOG_CURSORS_HEADER)
+            resume = _ResumePoint()
         # Poll `recv()` rather than blocking on it, so `stop` and `idle_timeout` get a chance to
         # run. The poll has to stay below the server's heartbeat interval: a heartbeat resets the
         # socket's read timeout, so a longer one would never fire. Silence is therefore measured
@@ -523,7 +608,7 @@ class LogsApi:
             try:
                 # The handshake gets a longer budget than the deliberately short read poll.
                 ws = websocket.create_connection(
-                    url, header=[f"Authorization: {auth_header}"], timeout=_CONNECT_TIMEOUT
+                    resume.apply(url) if resume is not None else url, header=headers, timeout=_CONNECT_TIMEOUT
                 )
                 ws.settimeout(recv_timeout)
                 if on_socket is not None:
@@ -549,6 +634,8 @@ class LogsApi:
                     if entries:
                         last_line_at = time.monotonic()
                     for entry in entries:
+                        if resume is not None:
+                            resume.note(entry)
                         if recent is not None:
                             if entry in recent:
                                 continue

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, List, Optional,
 
 from lightning_sdk.api.cloud_account_api import CloudAccountApi
 from lightning_sdk.api.job_api import JobApiV2
-from lightning_sdk.api.logs_api import LogsApi
+from lightning_sdk.api.logs_api import LogEntry, LogsApi
 from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.api.utils import (
     AccessibleResource,
@@ -1090,6 +1090,29 @@ class Job(metaclass=TrackCallsMeta):
         )
         for entry in entries:
             yield entry.format(timestamps=timestamps)
+
+    def _follow_entries(
+        self,
+        *,
+        stop: Optional[Callable[[], bool]] = None,
+        query: Optional[str] = None,
+    ) -> Iterator[LogEntry]:
+        """Yield the job's log entries with their labels: the saved history, then the live stream.
+
+        Unlike :attr:`logs`, this works in any state: a pending job's stream starts once it runs,
+        and carries the server's lifecycle lines meanwhile. A finished job yields its history
+        only. A dropped stream resumes from the server's cursors. Used by ``lightning job watch``.
+        """
+        job = self._guaranteed_job
+        selector: Dict[str, Any] = {"mmt_id": job.id} if self.is_multi_machine else {"job_ids": [job.id]}
+        return self._logs_api.stream(
+            self.teamspace.id,
+            query=query,
+            follow=True,
+            stop=stop,
+            cursors=True,
+            **selector,
+        )
 
     def _stream_logs(
         self,
