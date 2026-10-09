@@ -16,18 +16,18 @@ from lightning_sdk.utils.jsonc import JSONCError
 @click.option(
     "--model",
     type=click.Choice(MODEL_KEYS),
-    help="Make this the default model. Without it, GLM-5.3 becomes the default only if you have none.",
+    help="Make this the default model. Without it, DeepSeek V4.1 Flash becomes the default only if you have none.",
 )
 @click.option("--rotate-key", is_flag=True, default=False, help="Create a new API key and revoke the old one.")
 @click.option("--dry-run", is_flag=True, default=False, help="Show the changes without writing or creating anything.")
 @click.option(
-    "--yes",
-    "-y",
+    "--force",
+    "-f",
     is_flag=True,
     default=False,
     help="Replace a 'lightning' provider or key that `lightning code` didn't set up.",
 )
-def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool, dry_run: bool, yes: bool) -> None:
+def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool, dry_run: bool, force: bool) -> None:
     """Set up a coding tool to use code.lightning.ai.
 
     Adds Lightning as a model provider without touching the rest of the tool's config,
@@ -43,10 +43,10 @@ def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool,
     except (JSONCError, ValueError) as exc:
         raise click.ClickException(f"Couldn't read OpenCode's config: {exc}") from None
 
-    if state.foreign and not yes:
+    if state.foreign and not force:
         raise click.ClickException(
             f"OpenCode already has a '{opencode.PROVIDER_ID}' provider or key that `lightning code` didn't set up.\n"
-            "Re-run with --yes to replace it. The config file is backed up first."
+            "Re-run with --force to replace it. The config file is backed up first."
         )
 
     previous = state.credential if state.managed else None

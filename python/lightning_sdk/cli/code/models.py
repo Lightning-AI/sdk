@@ -24,5 +24,6 @@ CODING_MODELS = (
     CodingModel("glm-5.3-flash", "lightning-ai/glm-5.3-flash", "GLM-5.3 Flash", 253_952, images=True),
     CodingModel("deepseek-v4.1-flash", "lightning-ai/deepseek-v4.1-flash", "DeepSeek V4.1 Flash", 253_952),
 )
-DEFAULT_MODEL = CODING_MODELS[0].key
+# the model `lightning code setup` makes the default when the user has none
+DEFAULT_MODEL = "deepseek-v4.1-flash"
 MODEL_KEYS = tuple(model.key for model in CODING_MODELS)

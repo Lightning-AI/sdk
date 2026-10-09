@@ -55,5 +55,5 @@
       }
     }
   },
-  "model": "lightning/glm-5.3"
+  "model": "lightning/deepseek-v4.1-flash"
 }

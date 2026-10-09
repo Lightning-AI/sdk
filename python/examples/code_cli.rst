@@ -22,7 +22,7 @@ Set up OpenCode
    OpenCode now uses code.lightning.ai, billed to My Org [my-org].
      Provider: lightning in ~/.config/opencode/opencode.json
      API key:  opencode on my-laptop 2026-10-09 in ~/.local/share/opencode/auth.json
-     Default:  lightning/glm-5.3
+     Default:  lightning/deepseek-v4.1-flash
 
    $ opencode
 
@@ -37,7 +37,7 @@ The setup leaves the rest of OpenCode's config alone:
 - The API key goes to OpenCode's credential store, ``auth.json``, next to the keys
   ``opencode auth login`` saves, never into the config file. Its metadata records
   the organization and key, as in `code/opencode-auth.json <code/opencode-auth.json>`_.
-- ``lightning/glm-5.3`` becomes the default model only if you have no default yet.
+- ``lightning/deepseek-v4.1-flash`` becomes the default model only if you have no default yet.
   Pass ``--model`` to set one anyway.
 
 Preview the changes first, or pick a different default model:
@@ -45,7 +45,7 @@ Preview the changes first, or pick a different default model:
 .. code-block:: console
 
    $ lightning code setup opencode --org my-org --dry-run
-   $ lightning code setup opencode --org my-org --model glm-5.3-flash
+   $ lightning code setup opencode --org my-org --model glm-5.3
 
 Run it again to switch organizations, which creates a key there and revokes the
 old one, or to pick up new models. ``--rotate-key`` replaces the key in place.
@@ -60,7 +60,7 @@ Check and undo the setup
      Org:     my-org
      API key: opencode on my-laptop 2026-10-09 (01jexamplekey0000000000000)
      Config:  ~/.config/opencode/opencode.json
-     Default: lightning/glm-5.3
+     Default: lightning/deepseek-v4.1-flash
 
    $ lightning code remove opencode
 
@@ -80,7 +80,7 @@ or Anthropic API. The key is printed once, so store it straight away.
 
    $ export ANTHROPIC_BASE_URL=https://code.lightning.ai
    $ export ANTHROPIC_AUTH_TOKEN=$(lightning code token --org my-org --name claude-code)
-   $ claude --model glm-5.3
+   $ claude --model deepseek-v4.1-flash
 
    $ lightning code token --org my-org --json
 

@@ -16,7 +16,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
-from lightning_sdk.cli.code.models import CODE_BASE_URL, CODING_MODELS, OUTPUT_TOKENS, REQUEST_TIMEOUT_MS
+from lightning_sdk.cli.code.models import (
+    CODE_BASE_URL,
+    CODING_MODELS,
+    DEFAULT_MODEL,
+    OUTPUT_TOKENS,
+    REQUEST_TIMEOUT_MS,
+)
 from lightning_sdk.utils import jsonc
 
 NAME = "OpenCode"
@@ -201,7 +207,7 @@ def plan_setup(state: State, *, model: Optional[str]) -> Plan:
     if model is not None:
         set_model = model_ref(model)
     elif state.model is None:
-        set_model = model_ref(CODING_MODELS[0].key)
+        set_model = model_ref(DEFAULT_MODEL)
     if set_model is not None:
         text = jsonc.set_value(text, ["model"], set_model)
     return Plan(state, text, set_model)

@@ -9,6 +9,7 @@ import pytest
 from click.testing import CliRunner, Result
 
 from lightning_sdk.cli.code import account, opencode
+from lightning_sdk.cli.code.models import DEFAULT_MODEL
 from lightning_sdk.cli.code.remove import remove
 from lightning_sdk.cli.code.setup import setup
 from lightning_sdk.cli.code.status import status
@@ -84,7 +85,7 @@ def test_setup_creates_config_and_key(api) -> None:
 
     config = jsonc.loads(_config_path().read_text())
     assert config["$schema"] == opencode.SCHEMA_URL
-    assert config["model"] == "lightning/glm-5.3"
+    assert config["model"] == "lightning/deepseek-v4.1-flash"
     provider = config["provider"]["lightning"]
     assert provider["options"]["baseURL"] == "https://code.lightning.ai/v1"
     assert "apiKey" not in provider["options"]
@@ -195,16 +196,16 @@ def test_setup_coding_disabled_org_is_refused(api) -> None:
     api.create_key.assert_not_called()
 
 
-def test_setup_will_not_replace_a_hand_made_provider_without_yes(api) -> None:
+def test_setup_will_not_replace_a_hand_made_provider_without_force(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text('{"provider": {"lightning": {"options": {"apiKey": "sk-lit-old"}}}}')
 
     result = CliRunner().invoke(setup, ["opencode", "--org", "my-org"])
     assert result.exit_code == 1
-    assert "--yes" in result.output
+    assert "--force" in result.output
     api.create_key.assert_not_called()
 
-    assert _invoke(setup, "opencode", "--org", "my-org", "--yes").exit_code == 0
+    assert _invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
     assert "apiKey" not in jsonc.loads(_config_path().read_text())["provider"]["lightning"]["options"]
 
 
@@ -248,7 +249,7 @@ def test_status_and_remove(api) -> None:
     assert info["managed"] is True
     assert info["org"] == "my-org"
     assert info["key_id"] == "key-1"
-    assert info["model"] == "lightning/glm-5.3"
+    assert info["model"] == "lightning/deepseek-v4.1-flash"
 
     result = _invoke(remove, "opencode")
     assert result.exit_code == 0
@@ -264,7 +265,7 @@ def test_status_and_remove(api) -> None:
 def test_remove_takes_out_a_lightning_default_the_user_set(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text('{"provider": {"lightning": {}}, "model": "lightning/glm-5.3", "theme": "x"}')
-    assert _invoke(setup, "opencode", "--org", "my-org", "--yes").exit_code == 0
+    assert _invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
 
     assert _invoke(remove, "opencode").exit_code == 0
     assert jsonc.loads(_config_path().read_text()) == {"theme": "x"}
@@ -386,3 +387,8 @@ def test_example_config_matches_what_setup_writes() -> None:
     example = Path(__file__).parents[3] / "examples" / "code" / "opencode.json"
     plan = opencode.plan_setup(opencode.read_state(), model=None)
     assert plan.config_text == example.read_text()
+
+
+def test_default_model_is_one_setup_configures() -> None:
+    assert DEFAULT_MODEL == "deepseek-v4.1-flash"
+    assert DEFAULT_MODEL in opencode.provider_config()["models"]
