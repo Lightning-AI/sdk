@@ -7,10 +7,15 @@ from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
     BillingActivity,
     BillingActivityFilterValues,
+    BillingActivityResourceNames,
+    BillingActivitySubfilters,
     BillingApi,
+    BillingAssistantMessageSubfilter,
     BillingDailyUsage,
     BillingNamedFilterValue,
     BillingResourceUsage,
+    BillingWorkloadSubfilterValues,
+    BillingWorkloadTagSubfilter,
     _build_activity_query_params,
 )
 
@@ -136,30 +141,51 @@ def test_billing_activity_filter_values_from_api():
     filter_values = BillingActivityFilterValues._from_api(
         {
             "project_ids": ["proj-1", "proj-2"],
-            "resource_ids": [{"id": "res-1", "name": "my-resource"}],
-            "resource_ids_truncated": True,
-            "resource_types": ["Studio", "Job"],
             "user_ids": ["user-1"],
+            "resource_types": ["lightning_code", "job"],
+            "cluster_ids": ["cluster-1"],
+            "subfilters": {
+                "job": {"resource_type": "Job", "tags": [{"id": "tag-1", "name": "nightly"}]},
+                "deployment": {"resource_type": "Deployment"},
+                "assistant_message": {"api_key_ids": [{"id": "key-1", "name": "ci key"}]},
+            },
         }
     )
 
     assert filter_values.project_ids == ["proj-1", "proj-2"]
-    assert len(filter_values.resource_ids) == 1
-    assert isinstance(filter_values.resource_ids[0], BillingNamedFilterValue)
-    assert filter_values.resource_ids[0].id == "res-1"
-    assert filter_values.resource_ids_truncated is True
-    assert filter_values.resource_types == ["Studio", "Job"]
     assert filter_values.user_ids == ["user-1"]
+    assert filter_values.resource_types == ["lightning_code", "job"]
+    assert filter_values.cluster_ids == ["cluster-1"]
+    subfilters = filter_values.subfilters
+    assert subfilters.job == BillingWorkloadSubfilterValues(
+        resource_type="Job", tags=[BillingNamedFilterValue(id="tag-1", name="nightly")]
+    )
+    assert subfilters.deployment == BillingWorkloadSubfilterValues(resource_type="Deployment")
+    assert subfilters.multi_machine_job == BillingWorkloadSubfilterValues()
+    assert subfilters.assistant_message.api_key_ids == [BillingNamedFilterValue(id="key-1", name="ci key")]
 
 
 def test_billing_activity_filter_values_from_api_missing_lists_default_to_empty():
     filter_values = BillingActivityFilterValues._from_api({})
 
-    assert filter_values.project_ids == []
-    assert filter_values.resource_ids == []
-    assert filter_values.resource_ids_truncated is False
-    assert filter_values.resource_types == []
-    assert filter_values.user_ids == []
+    assert filter_values == BillingActivityFilterValues()
+    assert filter_values.subfilters.job.tags == []
+    assert filter_values.subfilters.assistant_message.api_key_ids == []
+
+
+def test_billing_activity_resource_names_from_api():
+    page = BillingActivityResourceNames._from_api(
+        {"resource_ids": [{"id": "res-1", "name": "my-studio"}], "next_page_token": "tok"}
+    )
+
+    assert page.resource_ids == [BillingNamedFilterValue(id="res-1", name="my-studio")]
+    assert page.next_page_token == "tok"
+
+
+def test_billing_activity_resource_names_from_api_last_page():
+    page = BillingActivityResourceNames._from_api({"resource_ids": [], "next_page_token": ""})
+
+    assert page == BillingActivityResourceNames()
 
 
 # ---- _build_activity_query_params ------------------------------------------
@@ -174,34 +200,53 @@ def test_build_activity_query_params_minimal():
 def test_build_activity_query_params_full():
     start = datetime(2026, 1, 1, tzinfo=timezone.utc)
     end = datetime(2026, 2, 1, tzinfo=timezone.utc)
-    search_after = datetime(2026, 1, 15, tzinfo=timezone.utc)
 
     params = _build_activity_query_params(
         org_id="org-1",
         project_ids=["proj-1"],
-        resource_types=["Studio"],
+        resource_types=["assistant_message"],
         resource_ids=["res-1"],
         user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=BillingActivitySubfilters(assistant_message=BillingAssistantMessageSubfilter(api_key_ids=["key-1"])),
         start=start,
         end=end,
-        limit=10,
-        search_after=search_after,
-        search_after_resource_id="res-1",
-        search_after_resource_type="Studio",
     )
 
     assert params == {
         "orgId": "org-1",
         "projectIds": ["proj-1"],
-        "resourceTypes": ["Studio"],
+        "resourceTypes": ["assistant_message"],
         "resourceIds": ["res-1"],
         "userIds": ["user-1"],
+        "clusterIds": ["cluster-1"],
+        "subfilters.assistantMessage.apiKeyIds": ["key-1"],
         "from": start.isoformat(),
         "to": end.isoformat(),
-        "limit": 10,
-        "searchAfter": search_after.isoformat(),
-        "searchAfterResourceId": "res-1",
-        "searchAfterResourceType": "Studio",
+    }
+
+
+def test_build_activity_query_params_skips_empty_subfilters():
+    subfilters = BillingActivitySubfilters(
+        job=BillingWorkloadTagSubfilter(), assistant_message=BillingAssistantMessageSubfilter()
+    )
+
+    assert _build_activity_query_params(org_id="org-1", subfilters=subfilters) == {"orgId": "org-1"}
+
+
+def test_build_activity_query_params_forwards_tag_subfilters():
+    subfilters = BillingActivitySubfilters(
+        job=BillingWorkloadTagSubfilter(tag_ids=["tag-1", "tag-2"], match_all_tags=True),
+        multi_machine_job=BillingWorkloadTagSubfilter(tag_ids=["tag-3"]),
+        deployment=BillingWorkloadTagSubfilter(tag_ids=["tag-4"]),
+    )
+
+    assert _build_activity_query_params(org_id="org-1", subfilters=subfilters) == {
+        "orgId": "org-1",
+        "subfilters.job.tagIds": ["tag-1", "tag-2"],
+        "subfilters.job.matchAllTags": "true",
+        "subfilters.multiMachineJob.tagIds": ["tag-3"],
+        "subfilters.deployment.tagIds": ["tag-4"],
     }
 
 
@@ -234,6 +279,13 @@ def test_get_activity_forwards_all_kwargs(mock_client):
         resource_types=["Studio"],
         resource_ids=["res-1"],
         user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=BillingActivitySubfilters(
+            job=BillingWorkloadTagSubfilter(tag_ids=["tag-1", "tag-2"], match_all_tags=True),
+            multi_machine_job=BillingWorkloadTagSubfilter(tag_ids=["tag-3"]),
+            deployment=BillingWorkloadTagSubfilter(),
+            assistant_message=BillingAssistantMessageSubfilter(api_key_ids=["key-1"]),
+        ),
         start=start,
         end=end,
         limit=10,
@@ -249,6 +301,11 @@ def test_get_activity_forwards_all_kwargs(mock_client):
         "resource_types": ["Studio"],
         "resource_ids": ["res-1"],
         "user_ids": ["user-1"],
+        "cluster_ids": ["cluster-1"],
+        "subfilters_job_tag_ids": ["tag-1", "tag-2"],
+        "subfilters_job_match_all_tags": True,
+        "subfilters_multi_machine_job_tag_ids": ["tag-3"],
+        "subfilters_assistant_message_api_key_ids": ["key-1"],
         "_from": start,
         "to": end,
         "limit": 10,
@@ -282,6 +339,40 @@ def test_get_activity_filter_values_with_project_id(mock_client):
 
     call_kwargs = mock_client().billing_service_get_activity_filter_values.call_args[1]
     assert call_kwargs == {"org_id": "org-1", "project_id": "proj-1"}
+
+
+# ---- BillingApi.get_activity_filter_resource_names ---------------------------
+
+
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+def test_get_activity_filter_resource_names_minimal(mock_client):
+    mock_client().billing_service_get_activity_filter_resource_names.return_value.to_dict.return_value = {}
+
+    billing_api = BillingApi()
+    result = billing_api.get_activity_filter_resource_names(org_id="org-1")
+
+    assert isinstance(result, BillingActivityResourceNames)
+    call_kwargs = mock_client().billing_service_get_activity_filter_resource_names.call_args[1]
+    assert call_kwargs == {"org_id": "org-1"}
+
+
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+def test_get_activity_filter_resource_names_forwards_all_kwargs(mock_client):
+    mock_client().billing_service_get_activity_filter_resource_names.return_value.to_dict.return_value = {}
+
+    billing_api = BillingApi()
+    billing_api.get_activity_filter_resource_names(
+        org_id="org-1", project_id="proj-1", search_query="train", page_size=50, page_token="tok"
+    )
+
+    call_kwargs = mock_client().billing_service_get_activity_filter_resource_names.call_args[1]
+    assert call_kwargs == {
+        "org_id": "org-1",
+        "project_id": "proj-1",
+        "search_query": "train",
+        "page_size": 50,
+        "page_token": "tok",
+    }
 
 
 # ---- CSV downloads ----------------------------------------------------------
@@ -360,7 +451,7 @@ def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_pat
         format=ActivityFileFormat.CSV,
         writer=writer,
         project_ids=["proj-1"],
-        limit=5,
+        cluster_ids=["cluster-1"],
     )
 
     assert result is None
@@ -368,7 +459,7 @@ def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_pat
     mock_authenticate.assert_called_once_with()
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/summary")
-    assert call_args[1]["params"] == {"orgId": "org-1", "projectIds": ["proj-1"], "limit": 5}
+    assert call_args[1]["params"] == {"orgId": "org-1", "projectIds": ["proj-1"], "clusterIds": ["cluster-1"]}
 
 
 @mock.patch("requests.get", autospec=True)
