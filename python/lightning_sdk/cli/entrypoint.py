@@ -16,6 +16,7 @@ from lightning_sdk.cli.groups import (
     api_key,
     auth,
     base_studio,
+    code,
     config,
     connection,
     container,
@@ -56,6 +57,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
         {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
+        {"name": "CODING", "commands": ["code"]},
     ]
 }
 click.rich_click.STYLE_COMMANDS_TABLE_COLUMN_WIDTH_RATIO = (1, 3)
@@ -140,6 +142,7 @@ main_cli.add_command(model)
 main_cli.add_command(pipeline)
 main_cli.add_command(api_key)
 main_cli.add_command(auth)
+main_cli.add_command(code)
 main_cli.add_command(file)
 main_cli.add_command(folder)
 main_cli.add_command(ssh)

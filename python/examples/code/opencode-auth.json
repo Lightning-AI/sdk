@@ -1,0 +1,13 @@
+{
+  "lightning": {
+    "type": "api",
+    "key": "sk-lit-replace-me",
+    "metadata": {
+      "managed_by": "lightning-sdk",
+      "org_id": "01jexample0rg0000000000000",
+      "org_name": "my-org",
+      "key_id": "01jexamplekey0000000000000",
+      "key_name": "opencode on my-laptop 2026-10-09"
+    }
+  }
+}
