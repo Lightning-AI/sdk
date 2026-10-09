@@ -146,7 +146,8 @@ class JobApiV2:
     v2_job_state_deleted = "deleted"
     v2_job_state_stopping = "stopping"
 
-    # the backend holds these while the machine shuts down.
+    # the backend holds these while the machine shuts down and the job's logs and artifacts
+    # are still being collected.
     v2_job_state_complete = "complete"
     v2_job_state_fail = "fail"
     v2_job_state_delete = "delete"
@@ -707,13 +708,14 @@ class JobApiV2:
             self.v2_job_state_stopping: Status.Stopping,
             self.v2_job_state_stop: Status.Stopping,
             self.v2_job_state_delete: Status.Stopping,
+            # The workload has exited, but its logs and artifacts aren't final until the backend
+            # settles the job as completed or failed. Stopping also keeps stop_job() from
+            # requesting a stop, which would relabel the job as stopped.
+            self.v2_job_state_complete: Status.Stopping,
+            self.v2_job_state_fail: Status.Stopping,
             self.v2_job_state_stopped: Status.Stopped,
             self.v2_job_state_deleted: Status.Stopped,
-            # The job has already ended, so report its outcome. This also keeps stop_job()
-            # from relabeling a failed or completed job as stopped.
-            self.v2_job_state_complete: Status.Completed,
             self.v2_job_state_completed: Status.Completed,
-            self.v2_job_state_fail: Status.Failed,
             self.v2_job_state_failed: Status.Failed,
         }
         return states.get(state, Status.Pending)
