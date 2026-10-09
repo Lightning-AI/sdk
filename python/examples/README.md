@@ -71,6 +71,7 @@ export LIGHTNING_SANDBOX_API_KEY="..."
 | [`sandboxes_cli.rst`](sandboxes_cli.rst)   | Create sandboxes, run commands, inspect logs, stop, resume, and delete from the CLI |
 | [`logs_cli.rst`](logs_cli.rst)             | Tail, follow, search, and page logs for jobs, MMTs, deployments, and sandboxes      |
 | [`api_cli.rst`](api_cli.rst)               | Call authenticated Lightning API endpoints directly from shell scripts              |
+| [`code_cli.rst`](code_cli.rst)             | Set up OpenCode for code.lightning.ai and create keys for other coding tools        |
 
 # Running examples
 

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "lightning": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Lightning AI",
+      "options": {
+        "baseURL": "https://code.lightning.ai/v1",
+        "timeout": 600000
+      },
+      "models": {
+        "glm-5.3": {
+          "id": "lightning-ai/glm-5.3",
+          "name": "GLM-5.3",
+          "reasoning": true,
+          "tool_call": true,
+          "interleaved": "reasoning_content",
+          "limit": {
+            "context": 1048576,
+            "output": 32768
+          }
+        },
+        "glm-5.3-flash": {
+          "id": "lightning-ai/glm-5.3-flash",
+          "name": "GLM-5.3 Flash",
+          "reasoning": true,
+          "tool_call": true,
+          "interleaved": "reasoning_content",
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 253952,
+            "output": 32768
+          }
+        },
+        "deepseek-v4.1-flash": {
+          "id": "lightning-ai/deepseek-v4.1-flash",
+          "name": "DeepSeek V4.1 Flash",
+          "reasoning": true,
+          "tool_call": true,
+          "interleaved": "reasoning_content",
+          "limit": {
+            "context": 253952,
+            "output": 32768
+          }
+        }
+      }
+    }
+  },
+  "model": "lightning/glm-5.3"
+}

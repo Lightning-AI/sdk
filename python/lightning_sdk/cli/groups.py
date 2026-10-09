@@ -7,6 +7,7 @@ from lightning_sdk.cli.api import register_commands as register_api_commands
 from lightning_sdk.cli.api_key import register_commands as register_api_key_commands
 from lightning_sdk.cli.auth import register_commands as register_auth_commands
 from lightning_sdk.cli.base_studio import register_commands as register_base_studio_commands
+from lightning_sdk.cli.code import register_commands as register_code_commands
 from lightning_sdk.cli.config import register_commands as register_config_commands
 from lightning_sdk.cli.connection import register_commands as register_connection_commands
 from lightning_sdk.cli.container import register_commands as register_container_commands
@@ -161,6 +162,11 @@ def api_key() -> None:
     """
 
 
+@click.group(name="code", cls=LightningGroup)
+def code() -> None:
+    """Coding agents on code.lightning.ai."""
+
+
 @click.group(name="auth", cls=LightningGroup)
 def auth() -> None:
     """Identity and access: who you are, and what you're allowed to do."""
@@ -279,6 +285,7 @@ register_model_commands(model)
 register_pipeline_commands(pipeline)
 register_api_key_commands(api_key)
 register_auth_commands(auth)
+register_code_commands(code)
 register_file_commands(file)
 register_folder_commands(folder)
 register_ssh_commands(ssh)
