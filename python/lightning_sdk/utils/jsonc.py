@@ -27,6 +27,7 @@ class _Node:
     end: int
     kind: str  # "object", "array" or "scalar"
     members: list[_Member] = field(default_factory=list)
+    items: list["_Node"] = field(default_factory=list)
 
     def member(self, key: str) -> Optional[_Member]:
         return next((m for m in self.members if m.key == key), None)
@@ -36,6 +37,8 @@ class _Parser:
     def __init__(self, text: str, pos: int = 0) -> None:
         self.text = text
         self.pos = pos
+        # set once a comment has been skipped
+        self.comments = False
 
     def fail(self, message: str) -> JSONCError:
         line = self.text.count("\n", 0, self.pos) + 1
@@ -48,9 +51,11 @@ class _Parser:
             if text[self.pos] in " \t\r\n﻿":
                 self.pos += 1
             elif text.startswith("//", self.pos):
+                self.comments = True
                 newline = text.find("\n", self.pos)
                 self.pos = len(text) if newline < 0 else newline + 1
             elif text.startswith("/*", self.pos):
+                self.comments = True
                 close = text.find("*/", self.pos + 2)
                 if close < 0:
                     raise self.fail("unterminated comment")
@@ -125,7 +130,7 @@ class _Parser:
                 self.pos += 1
                 node.end = self.pos
                 return node
-            self.value()
+            node.items.append(self.value())
             char = self.peek()
             if char == ",":
                 self.pos += 1
@@ -165,6 +170,14 @@ def _strip(text: str) -> str:
             out[comma] = " "
         comma = len(out) if token == "," else None
         out.append(token)
+
+
+def has_comments(text: str) -> bool:
+    """Whether ``text`` has comments, which parsing it would lose."""
+    parser = _Parser(text)
+    parser.value()
+    parser.skip()
+    return parser.comments
 
 
 def loads(text: str) -> Any:
@@ -319,3 +332,41 @@ def remove_value(text: str, path: Sequence[str]) -> str:
     comma = previous.pos
     text = text[:start] + text[end:]
     return text[:comma] + text[comma + 1 :]
+
+
+def _array_at(text: str, path: Sequence[str]) -> Optional[_Node]:
+    node, depth = _object_at(_root(text), path[:-1])
+    member = node.member(path[-1]) if depth == len(path) - 1 else None
+    return member.value if member is not None and member.value.kind == "array" else None
+
+
+def append_item(text: str, path: Sequence[str], value: Any) -> str:
+    """Append ``value`` to the array at ``path``, leaving the items already there as they are."""
+    array = _array_at(text, path)
+    if array is None:
+        raise JSONCError(f"'{'.'.join(path)}' is not an array")
+    rendered = json.dumps(value, ensure_ascii=False)
+    if array.items:
+        last = array.items[-1]
+        separator = ", "
+        if "\n" in text[array.start : last.start]:
+            separator = ",\n" + _line_indent(text, last.start)
+        return text[: last.end] + separator + rendered + text[last.end :]
+    return text[: array.start + 1] + rendered + text[array.end - 1 :]
+
+
+def remove_item(text: str, path: Sequence[str], value: Any) -> str:
+    """Remove the first item equal to ``value`` from the array at ``path``, if it's there."""
+    array = _array_at(text, path)
+    if array is None:
+        return text
+    index = next((i for i, item in enumerate(array.items) if loads(text[item.start : item.end]) == value), None)
+    if index is None:
+        return text
+    item = array.items[index]
+    if index > 0:
+        # from the end of the item before, so the comma between them goes too
+        return text[: array.items[index - 1].end] + text[item.end :]
+    if len(array.items) > 1:
+        return text[: item.start] + text[array.items[1].start :]
+    return text[: array.start + 1] + text[array.end - 1 :]

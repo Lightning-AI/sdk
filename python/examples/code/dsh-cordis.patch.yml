@@ -1,0 +1,33 @@
+- id: llm-pi-ai
+  config:
+    providers:
+      lightning:
+        displayName: Lightning AI
+        apiKeyEnv: LIGHTNING_CODE_API_KEY
+        api: openai-completions
+        baseURL: https://code.lightning.ai/v1
+        models:
+        - id: lightning-ai/glm-5.3
+          name: GLM-5.3
+          contextWindow: 1048576
+          maxTokens: 131072
+          input:
+          - text
+        - id: lightning-ai/glm-5.3-flash
+          name: GLM-5.3 Flash
+          contextWindow: 253952
+          maxTokens: 131072
+          input:
+          - text
+          - image
+        - id: lightning-ai/deepseek-v4.1-flash
+          name: DeepSeek V4.1 Flash
+          contextWindow: 253952
+          maxTokens: 131072
+          input:
+          - text
+          - image
+- id: agent-default-model
+  config:
+    provider: lightning
+    model: lightning-ai/deepseek-v4.1-flash

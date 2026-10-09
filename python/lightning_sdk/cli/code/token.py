@@ -19,7 +19,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 def token(org: Optional[str], name: Optional[str], as_json: bool = False) -> None:
     """Create an API key for code.lightning.ai and print it.
 
-    For tools `lightning code setup` doesn't configure: Claude Code, Cursor, Cline,
+    For tools `lightning code setup` doesn't configure: Claude Code, Cline, Zed,
     or your own scripts. The key bills the organization you choose, which needs a
     Pro, Teams or Enterprise plan. It's shown only once.
 
