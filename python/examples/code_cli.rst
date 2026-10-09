@@ -39,6 +39,9 @@ The setup leaves the rest of OpenCode's config alone:
   the organization and key, as in `code/opencode-auth.json <code/opencode-auth.json>`_.
 - ``lightning/deepseek-v4.1-flash`` becomes the default model only if you have no default yet.
   Pass ``--model`` to set one anyway.
+- The models, with their names, context windows, output limits and image support,
+  come from ``https://code.lightning.ai/v1/models``, so new models appear without
+  a CLI update. If it can't be reached, a built-in list is used.
 
 Preview the changes first, or pick a different default model:
 

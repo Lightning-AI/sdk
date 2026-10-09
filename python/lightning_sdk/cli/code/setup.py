@@ -5,7 +5,7 @@ from typing import Optional
 import rich_click as click
 
 from lightning_sdk.cli.code import account, opencode
-from lightning_sdk.cli.code.models import MODEL_KEYS
+from lightning_sdk.cli.code.models import DEFAULT_MODEL, coding_models
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.utils.jsonc import JSONCError
 
@@ -15,8 +15,10 @@ from lightning_sdk.utils.jsonc import JSONCError
 @click.option("--org", help="Organization that pays, by name. Asked for when you belong to several.")
 @click.option(
     "--model",
-    type=click.Choice(MODEL_KEYS),
-    help="Make this the default model. Without it, DeepSeek V4.1 Flash becomes the default only if you have none.",
+    help=(
+        f"Make this the default model, e.g. glm-5.3. Without it, {DEFAULT_MODEL} "
+        "becomes the default only if you have none."
+    ),
 )
 @click.option("--rotate-key", is_flag=True, default=False, help="Create a new API key and revoke the old one.")
 @click.option("--dry-run", is_flag=True, default=False, help="Show the changes without writing or creating anything.")
@@ -49,6 +51,13 @@ def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool,
             "Re-run with --force to replace it. The config file is backed up first."
         )
 
+    models, fetch_error = coding_models()
+    if fetch_error:
+        click.echo(f"Couldn't get the model list from code.lightning.ai ({fetch_error}); using the built-in one.")
+    keys = [m.key for m in models]
+    if model is not None and model not in keys:
+        raise click.UsageError(f"Unknown model '{model}'. Choose one of: {', '.join(keys)}")
+
     previous = state.credential if state.managed else None
     chosen = account.choose_org(org, previous_org_id=previous.org_id if previous else None)
     account.require_coding_plan(chosen)
@@ -57,7 +66,7 @@ def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool,
     reuse = None
     if previous is not None and not rotate_key and previous.org_id == chosen.id and previous.key_id:
         reuse = previous if account.key_exists(chosen.id, previous.key_id) else None
-    plan = opencode.plan_setup(state, model=model)
+    plan = opencode.plan_setup(state, models=models, model=model)
 
     if dry_run:
         diff = plan.config_diff()

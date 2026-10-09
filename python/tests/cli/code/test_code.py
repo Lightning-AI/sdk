@@ -9,7 +9,8 @@ import pytest
 from click.testing import CliRunner, Result
 
 from lightning_sdk.cli.code import account, opencode
-from lightning_sdk.cli.code.models import DEFAULT_MODEL
+from lightning_sdk.cli.code import models as coding_models
+from lightning_sdk.cli.code.models import DEFAULT_MODEL, FALLBACK_MODELS
 from lightning_sdk.cli.code.remove import remove
 from lightning_sdk.cli.code.setup import setup
 from lightning_sdk.cli.code.status import status
@@ -35,6 +36,18 @@ def opencode_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
         monkeypatch.delenv(name, raising=False)
     monkeypatch.chdir(tmp_path)
     return tmp_path
+
+
+MODELS_RESPONSE = json.loads((Path(__file__).parent / "models_response.json").read_text())
+
+
+@pytest.fixture(autouse=True)
+def models_api():
+    """Serve /v1/models from a copy of what code.lightning.ai returned, instead of the network."""
+    response = MagicMock()
+    response.json.return_value = MODELS_RESPONSE
+    with patch.object(coding_models.requests, "get", return_value=response) as get:
+        yield get
 
 
 def _org(plan="Enterprise", name="my-org", org_id="org-1", **kwargs) -> account.CodingOrg:
@@ -385,10 +398,106 @@ def test_unreadable_plan_is_allowed_with_a_note() -> None:
 
 def test_example_config_matches_what_setup_writes() -> None:
     example = Path(__file__).parents[3] / "examples" / "code" / "opencode.json"
-    plan = opencode.plan_setup(opencode.read_state(), model=None)
+    plan = opencode.plan_setup(opencode.read_state(), models=FALLBACK_MODELS, model=None)
     assert plan.config_text == example.read_text()
 
 
 def test_default_model_is_one_setup_configures() -> None:
     assert DEFAULT_MODEL == "deepseek-v4.1-flash"
-    assert DEFAULT_MODEL in opencode.provider_config()["models"]
+    assert DEFAULT_MODEL in opencode.provider_config(FALLBACK_MODELS)["models"]
+    assert DEFAULT_MODEL in opencode.provider_config(coding_models.fetch_models())["models"]
+
+
+def test_fetch_models_reads_the_openrouter_fields(models_api) -> None:
+    models = {model.key: model for model in coding_models.fetch_models()}
+
+    models_api.assert_called_once_with("https://code.lightning.ai/v1/models", timeout=10)
+    assert models["deepseek-v4.1-flash"] == coding_models.CodingModel(
+        key="deepseek-v4.1-flash",
+        id="lightning-ai/deepseek-v4.1-flash",
+        name="DeepSeek V4.1 Flash",
+        context_window=253_952,
+        output_tokens=131_072,
+        images=True,
+    )
+    assert models["glm-5.3"].images is False
+    assert models["glm-5.3"].context_window == 1_048_576
+
+
+def test_fallback_matches_what_the_api_served() -> None:
+    assert coding_models.fetch_models() == FALLBACK_MODELS
+
+
+def test_fetch_models_skips_entries_it_cannot_configure(models_api) -> None:
+    models_api.return_value.json.return_value = {
+        "data": [
+            {"id": "lightning-ai/no-limits"},
+            {"object": "model"},
+            {"id": "lightning-ai/new", "context_length": 1000, "top_provider": {"max_completion_tokens": 100}},
+        ]
+    }
+    [model] = coding_models.fetch_models()
+    assert (model.key, model.name, model.images, model.tools, model.reasoning) == (
+        "new",
+        "lightning-ai/new",
+        False,
+        True,
+        True,
+    )
+
+    models_api.return_value.json.return_value = {"data": []}
+    with pytest.raises(ValueError, match="no models"):
+        coding_models.fetch_models()
+
+
+def test_setup_writes_the_models_the_api_lists(api, models_api) -> None:
+    models_api.return_value.json.return_value = {
+        "data": [
+            {
+                "id": "lightning-ai/next-model",
+                "name": "Next Model",
+                "context_length": 500_000,
+                "architecture": {"input_modalities": ["text"]},
+                "top_provider": {"max_completion_tokens": 65_536},
+                "supported_parameters": ["max_tokens"],
+            }
+        ]
+    }
+    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+
+    config = jsonc.loads(_config_path().read_text())
+    assert config["provider"]["lightning"]["models"] == {
+        "next-model": {
+            "id": "lightning-ai/next-model",
+            "name": "Next Model",
+            "reasoning": False,
+            "tool_call": False,
+            "limit": {"context": 500_000, "output": 65_536},
+        }
+    }
+    # the preferred default isn't served, so the first listed model is
+    assert config["model"] == "lightning/next-model"
+
+
+def test_setup_falls_back_to_the_built_in_models(api, models_api) -> None:
+    models_api.side_effect = OSError("network down")
+    result = _invoke(setup, "opencode", "--org", "my-org")
+
+    assert result.exit_code == 0
+    assert "using the built-in one" in result.output
+    models = jsonc.loads(_config_path().read_text())["provider"]["lightning"]["models"]
+    assert set(models) == {model.key for model in FALLBACK_MODELS}
+
+
+def test_setup_rejects_an_unknown_model(api) -> None:
+    result = CliRunner().invoke(setup, ["opencode", "--org", "my-org", "--model", "gpt-9"])
+    assert result.exit_code == 2
+    assert "Unknown model 'gpt-9'" in result.output
+    api.create_key.assert_not_called()
+
+
+def test_setup_replaces_a_default_on_a_retired_model(api) -> None:
+    _config_path().parent.mkdir(parents=True)
+    _config_path().write_text('{"model": "lightning/glm-4"}')
+    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert jsonc.loads(_config_path().read_text())["model"] == "lightning/deepseek-v4.1-flash"

@@ -14,15 +14,9 @@ import shutil
 import stat
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
-from lightning_sdk.cli.code.models import (
-    CODE_BASE_URL,
-    CODING_MODELS,
-    DEFAULT_MODEL,
-    OUTPUT_TOKENS,
-    REQUEST_TIMEOUT_MS,
-)
+from lightning_sdk.cli.code.models import CODE_BASE_URL, REQUEST_TIMEOUT_MS, CodingModel, default_model
 from lightning_sdk.utils import jsonc
 
 NAME = "OpenCode"
@@ -64,27 +58,28 @@ def config_path() -> Path:
     return config_dir() / "opencode.json"
 
 
-def provider_config() -> dict[str, Any]:
-    """The `provider.lightning` block. It has no apiKey: OpenCode reads that from auth.json."""
-    models = {}
-    for model in CODING_MODELS:
-        entry: dict[str, Any] = {
-            "id": model.id,
-            "name": model.name,
-            "reasoning": True,
-            "tool_call": True,
-            "interleaved": "reasoning_content",
-        }
+def provider_config(models: Sequence[CodingModel]) -> dict[str, Any]:
+    """The `provider.lightning` block. It has no apiKey: OpenCode reads that from auth.json.
+
+    OpenCode sends at most 32,000 as max_tokens whatever ``limit.output`` says, and keeps
+    prompts within ``limit.context`` minus that, so the full output limit is safe to state.
+    """
+    entries = {}
+    for model in models:
+        entry: dict[str, Any] = {"id": model.id, "name": model.name, "reasoning": model.reasoning}
+        if model.reasoning:
+            entry["interleaved"] = "reasoning_content"
+        entry["tool_call"] = model.tools
         if model.images:
             entry["attachment"] = True
             entry["modalities"] = {"input": ["text", "image"], "output": ["text"]}
-        entry["limit"] = {"context": model.context_window, "output": OUTPUT_TOKENS}
-        models[model.key] = entry
+        entry["limit"] = {"context": model.context_window, "output": model.output_tokens}
+        entries[model.key] = entry
     return {
         "npm": "@ai-sdk/openai-compatible",
         "name": "Lightning AI",
         "options": {"baseURL": CODE_BASE_URL, "timeout": REQUEST_TIMEOUT_MS},
-        "models": models,
+        "models": entries,
     }
 
 
@@ -192,22 +187,25 @@ class Plan:
         return "".join(difflib.unified_diff(before, after, fromfile=name, tofile=name))
 
 
-def plan_setup(state: State, *, model: Optional[str]) -> Plan:
+def plan_setup(state: State, *, models: Sequence[CodingModel], model: Optional[str]) -> Plan:
     """Work out the new config: our provider block, and `model` only when asked or unset.
 
     ``model`` is a model key passed with --model; without it the default model is set only
-    when the user has no default of their own.
+    when the user has no default of their own, or has one on a Lightning model that's gone.
     """
     text = state.config_text
     if not text.strip():
         text = jsonc.set_value("", ["$schema"], SCHEMA_URL)
-    text = jsonc.set_value(text, ["provider", PROVIDER_ID], provider_config())
+    text = jsonc.set_value(text, ["provider", PROVIDER_ID], provider_config(models))
 
+    served = {model_ref(m.key) for m in models}
+    retired = isinstance(state.model, str) and state.model.startswith(f"{PROVIDER_ID}/") and state.model not in served
     set_model = None
     if model is not None:
         set_model = model_ref(model)
-    elif state.model is None:
-        set_model = model_ref(DEFAULT_MODEL)
+    elif state.model is None or retired:
+        # also replace a default on a Lightning model that is no longer served
+        set_model = model_ref(default_model(tuple(models)))
     if set_model is not None:
         text = jsonc.set_value(text, ["model"], set_model)
     return Plan(state, text, set_model)

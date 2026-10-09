@@ -1,0 +1,103 @@
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "lightning-ai/glm-5.3",
+      "object": "model",
+      "created": 0,
+      "owned_by": "lightning-ai",
+      "name": "GLM-5.3",
+      "context_length": 1048576,
+      "max_model_len": 1048576,
+      "architecture": {
+        "modality": "text->text",
+        "input_modalities": [
+          "text"
+        ],
+        "output_modalities": [
+          "text"
+        ]
+      },
+      "top_provider": {
+        "context_length": 1048576,
+        "max_completion_tokens": 131072,
+        "is_moderated": false
+      },
+      "supported_parameters": [
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ]
+    },
+    {
+      "id": "lightning-ai/glm-5.3-flash",
+      "object": "model",
+      "created": 0,
+      "owned_by": "lightning-ai",
+      "name": "GLM-5.3 Flash",
+      "context_length": 253952,
+      "max_model_len": 253952,
+      "architecture": {
+        "modality": "text+image->text",
+        "input_modalities": [
+          "text",
+          "image"
+        ],
+        "output_modalities": [
+          "text"
+        ]
+      },
+      "top_provider": {
+        "context_length": 253952,
+        "max_completion_tokens": 131072,
+        "is_moderated": false
+      },
+      "supported_parameters": [
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ]
+    },
+    {
+      "id": "lightning-ai/deepseek-v4.1-flash",
+      "object": "model",
+      "created": 0,
+      "owned_by": "lightning-ai",
+      "name": "DeepSeek V4.1 Flash",
+      "context_length": 253952,
+      "max_model_len": 253952,
+      "architecture": {
+        "modality": "text+image->text",
+        "input_modalities": [
+          "text",
+          "image"
+        ],
+        "output_modalities": [
+          "text"
+        ]
+      },
+      "top_provider": {
+        "context_length": 253952,
+        "max_completion_tokens": 131072,
+        "is_moderated": false
+      },
+      "supported_parameters": [
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ]
+    }
+  ]
+}
