@@ -4,14 +4,19 @@ from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.code import account, opencode
+from lightning_sdk.cli.code import account
+from lightning_sdk.cli.code import tool as tools
 from lightning_sdk.cli.code.models import DEFAULT_MODEL, coding_models
+from lightning_sdk.cli.code.registry import TOOL_NAMES, TOOLS
+from lightning_sdk.cli.code.tool import KeyRecord, ToolConfigError
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.utils.jsonc import JSONCError
+
+# stands in for the key in a --dry-run, which doesn't create one
+_DRY_RUN_KEY = "sk-lit-dry-run"
 
 
 @click.command("setup", cls=LightningCommand)
-@click.argument("tool", type=click.Choice(["opencode"], case_sensitive=False))
+@click.argument("tool", type=click.Choice(TOOL_NAMES, case_sensitive=False))
 @click.option("--org", help="Organization that pays, by name. Asked for when you belong to several.")
 @click.option(
     "--model",
@@ -27,28 +32,33 @@ from lightning_sdk.utils.jsonc import JSONCError
     "-f",
     is_flag=True,
     default=False,
-    help="Replace a 'lightning' provider or key that `lightning code` didn't set up.",
+    help="Replace a Lightning setup that `lightning code` didn't make.",
 )
 def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool, dry_run: bool, force: bool) -> None:
     """Set up a coding tool to use code.lightning.ai.
 
-    Adds Lightning as a model provider without touching the rest of the tool's config,
-    and creates an API key that bills the organization you choose. The organization
-    needs a Pro, Teams or Enterprise plan. Run it again to switch organizations or
-    pick up new models.
+    TOOL is one of opencode, pi, codex, dsh (DeepSeek Harness) or cursor. Lightning is
+    added as a model provider without touching the rest of the tool's config, with an
+    API key that bills the organization you choose. The organization needs a Pro, Teams
+    or Enterprise plan. Cursor can't be configured from outside, so for it the key is
+    printed with the steps to add it in Cursor Settings.
+
+    Run it again to switch organizations or pick up new models.
 
     Examples:
         lightning code setup opencode --org my-org
+        lightning code setup codex --org my-org --model glm-5.3
     """
+    target = TOOLS[tool.lower()]
     try:
-        state = opencode.read_state()
-    except (JSONCError, ValueError) as exc:
-        raise click.ClickException(f"Couldn't read OpenCode's config: {exc}") from None
+        state = target.read()
+    except ToolConfigError as exc:
+        raise click.ClickException(f"Couldn't read {target.name}'s config: {exc}") from None
 
     if state.foreign and not force:
         raise click.ClickException(
-            f"OpenCode already has a '{opencode.PROVIDER_ID}' provider or key that `lightning code` didn't set up.\n"
-            "Re-run with --force to replace it. The config file is backed up first."
+            f"{target.name} already has a Lightning setup that `lightning code` didn't make ({state.location}).\n"
+            "Re-run with --force to replace it. Files you had are backed up first."
         )
 
     models, fetch_error = coding_models()
@@ -58,64 +68,72 @@ def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool,
     if model is not None and model not in keys:
         raise click.UsageError(f"Unknown model '{model}'. Choose one of: {', '.join(keys)}")
 
-    previous = state.credential if state.managed else None
+    previous = state.record
     chosen = account.choose_org(org, previous_org_id=previous.org_id if previous else None)
     account.require_coding_plan(chosen)
 
-    # the key set up before, when it bills the chosen org and still exists
-    reuse = None
-    if previous is not None and not rotate_key and previous.org_id == chosen.id and previous.key_id:
-        reuse = previous if account.key_exists(chosen.id, previous.key_id) else None
-    plan = opencode.plan_setup(state, models=models, model=model)
+    # the key set up before, when the tool still has it, it bills the chosen org and it still exists
+    reuse = (
+        previous is not None
+        and state.key is not None
+        and not rotate_key
+        and previous.org_id == chosen.id
+        and account.key_exists(chosen.id, previous.key_id)
+    )
 
     if dry_run:
-        diff = plan.config_diff()
-        click.echo(diff if diff else f"No changes to {state.config_path}")
-        if reuse:
-            click.echo(f"Would keep the API key '{reuse.metadata.get('key_name', reuse.key_id)}'.")
+        record = previous if reuse and previous else KeyRecord(chosen.id, chosen.name, "", "")
+        plan = target.plan_setup(state, models=models, model=model, key=_DRY_RUN_KEY, record=record)
+        click.echo(plan.describe() or f"No changes to {target.name}'s config.")
+        if reuse and previous:
+            click.echo(f"Would keep the API key '{previous.key_name}'.")
         else:
-            click.echo(f"Would create an API key billed to {chosen.label} and save it to {opencode.auth_path()}.")
-            if previous is not None and previous.key_id:
-                click.echo("Would revoke the API key set up before.")
+            click.echo(f"Would create an API key billed to {chosen.label}.")
+            if previous is not None:
+                click.echo(f"Would revoke the API key '{previous.key_name}' set up before.")
         return
 
-    if reuse:
-        key, metadata = reuse.key, dict(reuse.metadata)
+    if reuse and previous and state.key:
+        key, record = state.key, previous
     else:
         name = account.default_key_name(tool)
         created = account.create_key(
-            chosen, name, "For OpenCode on code.lightning.ai, created by `lightning code setup`"
+            chosen, name, f"For {target.name} on code.lightning.ai, created by `lightning code setup`"
         )
-        key = created.raw_key
-        metadata = {"org_id": chosen.id, "org_name": chosen.name, "key_id": created.id, "key_name": name}
-    metadata.pop("managed_by", None)
+        key, record = created.raw_key, KeyRecord(chosen.id, chosen.name, created.id, name)
 
+    plan = target.plan_setup(state, models=models, model=model, key=key, record=record)
     try:
-        backup = opencode.apply_setup(plan, key=key, metadata=metadata)
+        backups = tools.apply(plan)
     except Exception:
-        if not reuse:
-            account.revoke_key(chosen.id, metadata["key_id"])
+        if record is not previous:
+            account.revoke_key(chosen.id, record.key_id)
         raise
 
-    click.echo(f"OpenCode now uses code.lightning.ai, billed to {chosen.label}.")
-    click.echo(f"  Provider: {opencode.PROVIDER_ID} in {state.config_path}")
-    click.echo(f"  API key:  {metadata['key_name']} in {opencode.auth_path()}")
+    click.echo(f"{target.name} now uses code.lightning.ai, billed to {chosen.label}.")
+    lines = [*target.summary(state, plan), ("API key", record.key_name)]
     if plan.set_model:
-        click.echo(f"  Default:  {plan.set_model}")
-    if backup:
-        click.echo(f"  Backup:   {backup}")
+        lines.append(("Default", plan.set_model))
+    lines += [("Backup", str(path)) for path in backups]
+    width = max(len(label) for label, _ in lines) + 1
+    for label, value in lines:
+        click.echo(f"  {label + ':':<{width}} {value}")
 
-    if previous is not None and not reuse and previous.key_id and previous.org_id:
+    if previous is not None and record is not previous:
         if account.revoke_key(previous.org_id, previous.key_id):
-            click.echo(f"Revoked the previous API key '{previous.metadata.get('key_name', previous.key_id)}'.")
+            click.echo(f"Revoked the previous API key '{previous.key_name}'.")
         else:
             click.echo(
                 f"Couldn't revoke the previous API key {previous.key_id}. "
-                f"Delete it with: lightning api-key delete {previous.key_id} --org {previous.metadata.get('org_name')}"
+                f"Delete it with: lightning api-key delete {previous.key_id} --org {previous.org_name}"
             )
 
-    for note in opencode.warnings(state):
+    for note in target.warnings(state):
         click.echo(f"Note: {note}")
-    if not opencode.installed():
-        click.echo(f"\nOpenCode isn't on your PATH. Install it with:\n  {opencode.INSTALL_COMMAND}")
-    click.echo("\nStart coding with `opencode`, and switch models with /models.")
+    instructions = target.instructions(key, models, plan)
+    if instructions:
+        click.echo(f"\n{instructions}")
+    if not target.installed():
+        click.echo(f"\n{target.name} isn't on your PATH. Install it with:\n  {target.install}")
+    if target.start:
+        click.echo(f"\n{target.start}")

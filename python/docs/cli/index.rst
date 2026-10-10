@@ -98,7 +98,7 @@ Common Workflows
 * Configure accounts, organizations, teamspaces, cloud accounts, and SSH with
   :doc:`config`, :doc:`api-key`, and :doc:`ssh`.
 * Manage lower-level sandbox sessions with :doc:`sandbox`.
-* Point coding agents such as OpenCode at code.lightning.ai with :doc:`code`.
+* Point coding agents (OpenCode, pi, Codex, DeepSeek Harness, Cursor) at code.lightning.ai with :doc:`code`.
 
 Command details
 ---------------
