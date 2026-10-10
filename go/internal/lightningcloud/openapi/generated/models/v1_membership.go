@@ -57,7 +57,7 @@ type V1Membership struct {
 	// free storage bytes
 	FreeStorageBytes string `json:"freeStorageBytes,omitempty"`
 
-	// The creator is not allowed to leave or delete the project and can only be removed by leaving / being removed from the organization/ being removed from the organization
+	// The creator can leave, and an authorized caller can delete the teamspace.
 	IsDefault bool `json:"isDefault,omitempty"`
 
 	// job count

@@ -39,6 +39,9 @@ type ClusterServiceProvisionMachineBody struct {
 	// ca cert
 	CaCert string `json:"caCert,omitempty"`
 
+	// Fences an existing-machine setup callback to its committed enrollment attempt.
+	EnrollmentEpoch string `json:"enrollmentEpoch,omitempty"`
+
 	// Env vars collected from the nodes
 	Env []*V1EnvVar `json:"env"`
 

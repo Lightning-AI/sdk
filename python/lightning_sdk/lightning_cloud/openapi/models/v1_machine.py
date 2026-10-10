@@ -51,6 +51,7 @@ class V1Machine(object):
         'capacity_reservation_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'customer_networks': 'list[V1MachineCustomerNetwork]',
         'disable_monitoring': 'bool',
         'env': 'list[V1EnvVar]',
         'health': 'V1MachineHealth',
@@ -99,6 +100,7 @@ class V1Machine(object):
         'capacity_reservation_id': 'capacityReservationId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'customer_networks': 'customerNetworks',
         'disable_monitoring': 'disableMonitoring',
         'env': 'env',
         'health': 'health',
@@ -140,7 +142,7 @@ class V1Machine(object):
         'warning_message': 'warningMessage'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, idrac_address: 'str' =None, inband_subnet: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, only_spot: 'bool' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_availability_zone: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_node_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, auth_token: 'str' =None, capacity_reservation_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, customer_networks: 'list[V1MachineCustomerNetwork]' =None, disable_monitoring: 'bool' =None, env: 'list[V1EnvVar]' =None, health: 'V1MachineHealth' =None, id: 'str' =None, idrac_address: 'str' =None, inband_subnet: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, mode: 'str' =None, name: 'str' =None, only_spot: 'bool' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, private_address: 'str' =None, project_id: 'str' =None, provider: 'str' =None, provider_availability_zone: 'str' =None, provider_fabric_group: 'str' =None, provider_instance_id: 'str' =None, provider_node_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, ready_at: 'datetime' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, requires_maintenance_started_at: 'datetime' =None, requires_maintenance_user_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, resources: 'V1Resources' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, ssh_username: 'str' =None, status: 'str' =None, switch_ip: 'str' =None, unschedulable: 'bool' =None, updated_at: 'datetime' =None, warning_message: 'str' =None):  # noqa: E501
         """V1Machine - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
@@ -148,6 +150,7 @@ class V1Machine(object):
         self._capacity_reservation_id = None
         self._cluster_id = None
         self._created_at = None
+        self._customer_networks = None
         self._disable_monitoring = None
         self._env = None
         self._health = None
@@ -200,6 +203,8 @@ class V1Machine(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if customer_networks is not None:
+            self.customer_networks = customer_networks
         if disable_monitoring is not None:
             self.disable_monitoring = disable_monitoring
         if env is not None:
@@ -404,6 +409,29 @@ class V1Machine(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def customer_networks(self) -> 'list[V1MachineCustomerNetwork]':
+        """Gets the customer_networks of this V1Machine.  # noqa: E501
+
+        The customer networks a vpn-gateway machine serves. Set only for Lightning staff, since it names other orgs' networks.  # noqa: E501
+
+        :return: The customer_networks of this V1Machine.  # noqa: E501
+        :rtype: list[V1MachineCustomerNetwork]
+        """
+        return self._customer_networks
+
+    @customer_networks.setter
+    def customer_networks(self, customer_networks: 'list[V1MachineCustomerNetwork]'):
+        """Sets the customer_networks of this V1Machine.
+
+        The customer networks a vpn-gateway machine serves. Set only for Lightning staff, since it names other orgs' networks.  # noqa: E501
+
+        :param customer_networks: The customer_networks of this V1Machine.  # noqa: E501
+        :type: list[V1MachineCustomerNetwork]
+        """
+
+        self._customer_networks = customer_networks
 
     @property
     def disable_monitoring(self) -> 'bool':

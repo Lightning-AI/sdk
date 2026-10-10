@@ -47,6 +47,7 @@ class V1CreateSandboxRequest(object):
     swagger_types = {
         'cloudspace_id': 'str',
         'cluster_id': 'str',
+        'docker_data_root_on_disk': 'bool',
         'idle_timeout': 'str',
         'image': 'str',
         'image_secret_ref': 'str',
@@ -71,6 +72,7 @@ class V1CreateSandboxRequest(object):
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
+        'docker_data_root_on_disk': 'dockerDataRootOnDisk',
         'idle_timeout': 'idleTimeout',
         'image': 'image',
         'image_secret_ref': 'imageSecretRef',
@@ -92,10 +94,11 @@ class V1CreateSandboxRequest(object):
         'warm': 'warm'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None, warm: 'V1SandboxWarmSpec' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, docker_data_root_on_disk: 'bool' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, require_memory_restore: 'bool' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, storage_gb: 'str' =None, timeout: 'str' =None, warm: 'V1SandboxWarmSpec' =None):  # noqa: E501
         """V1CreateSandboxRequest - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
+        self._docker_data_root_on_disk = None
         self._idle_timeout = None
         self._image = None
         self._image_secret_ref = None
@@ -120,6 +123,8 @@ class V1CreateSandboxRequest(object):
             self.cloudspace_id = cloudspace_id
         if cluster_id is not None:
             self.cluster_id = cluster_id
+        if docker_data_root_on_disk is not None:
+            self.docker_data_root_on_disk = docker_data_root_on_disk
         if idle_timeout is not None:
             self.idle_timeout = idle_timeout
         if image is not None:
@@ -200,6 +205,27 @@ class V1CreateSandboxRequest(object):
         """
 
         self._cluster_id = cluster_id
+
+    @property
+    def docker_data_root_on_disk(self) -> 'bool':
+        """Gets the docker_data_root_on_disk of this V1CreateSandboxRequest.  # noqa: E501
+
+
+        :return: The docker_data_root_on_disk of this V1CreateSandboxRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._docker_data_root_on_disk
+
+    @docker_data_root_on_disk.setter
+    def docker_data_root_on_disk(self, docker_data_root_on_disk: 'bool'):
+        """Sets the docker_data_root_on_disk of this V1CreateSandboxRequest.
+
+
+        :param docker_data_root_on_disk: The docker_data_root_on_disk of this V1CreateSandboxRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._docker_data_root_on_disk = docker_data_root_on_disk
 
     @property
     def idle_timeout(self) -> 'str':

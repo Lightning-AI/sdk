@@ -46,53 +46,23 @@ class V1Quotas(object):
     """
     swagger_types = {
         'free_storage_bytes': 'str',
-        'max_frontends_per_lightning_app': 'str',
-        'max_lightning_app_releases': 'str',
-        'max_lightning_apps': 'str',
-        'max_lightning_works': 'str',
-        'max_running_default_lightning_works_per_app': 'str',
-        'max_running_lightning_apps': 'str',
-        'max_running_lightning_works': 'str'
+        'max_lightning_app_releases': 'str'
     }
 
     attribute_map = {
         'free_storage_bytes': 'freeStorageBytes',
-        'max_frontends_per_lightning_app': 'maxFrontendsPerLightningApp',
-        'max_lightning_app_releases': 'maxLightningAppReleases',
-        'max_lightning_apps': 'maxLightningApps',
-        'max_lightning_works': 'maxLightningWorks',
-        'max_running_default_lightning_works_per_app': 'maxRunningDefaultLightningWorksPerApp',
-        'max_running_lightning_apps': 'maxRunningLightningApps',
-        'max_running_lightning_works': 'maxRunningLightningWorks'
+        'max_lightning_app_releases': 'maxLightningAppReleases'
     }
 
-    def __init__(self, free_storage_bytes: 'str' =None, max_frontends_per_lightning_app: 'str' =None, max_lightning_app_releases: 'str' =None, max_lightning_apps: 'str' =None, max_lightning_works: 'str' =None, max_running_default_lightning_works_per_app: 'str' =None, max_running_lightning_apps: 'str' =None, max_running_lightning_works: 'str' =None):  # noqa: E501
+    def __init__(self, free_storage_bytes: 'str' =None, max_lightning_app_releases: 'str' =None):  # noqa: E501
         """V1Quotas - a model defined in Swagger"""  # noqa: E501
         self._free_storage_bytes = None
-        self._max_frontends_per_lightning_app = None
         self._max_lightning_app_releases = None
-        self._max_lightning_apps = None
-        self._max_lightning_works = None
-        self._max_running_default_lightning_works_per_app = None
-        self._max_running_lightning_apps = None
-        self._max_running_lightning_works = None
         self.discriminator = None
         if free_storage_bytes is not None:
             self.free_storage_bytes = free_storage_bytes
-        if max_frontends_per_lightning_app is not None:
-            self.max_frontends_per_lightning_app = max_frontends_per_lightning_app
         if max_lightning_app_releases is not None:
             self.max_lightning_app_releases = max_lightning_app_releases
-        if max_lightning_apps is not None:
-            self.max_lightning_apps = max_lightning_apps
-        if max_lightning_works is not None:
-            self.max_lightning_works = max_lightning_works
-        if max_running_default_lightning_works_per_app is not None:
-            self.max_running_default_lightning_works_per_app = max_running_default_lightning_works_per_app
-        if max_running_lightning_apps is not None:
-            self.max_running_lightning_apps = max_running_lightning_apps
-        if max_running_lightning_works is not None:
-            self.max_running_lightning_works = max_running_lightning_works
 
     @property
     def free_storage_bytes(self) -> 'str':
@@ -116,27 +86,6 @@ class V1Quotas(object):
         self._free_storage_bytes = free_storage_bytes
 
     @property
-    def max_frontends_per_lightning_app(self) -> 'str':
-        """Gets the max_frontends_per_lightning_app of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_frontends_per_lightning_app of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_frontends_per_lightning_app
-
-    @max_frontends_per_lightning_app.setter
-    def max_frontends_per_lightning_app(self, max_frontends_per_lightning_app: 'str'):
-        """Sets the max_frontends_per_lightning_app of this V1Quotas.
-
-
-        :param max_frontends_per_lightning_app: The max_frontends_per_lightning_app of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_frontends_per_lightning_app = max_frontends_per_lightning_app
-
-    @property
     def max_lightning_app_releases(self) -> 'str':
         """Gets the max_lightning_app_releases of this V1Quotas.  # noqa: E501
 
@@ -156,111 +105,6 @@ class V1Quotas(object):
         """
 
         self._max_lightning_app_releases = max_lightning_app_releases
-
-    @property
-    def max_lightning_apps(self) -> 'str':
-        """Gets the max_lightning_apps of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_lightning_apps of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_lightning_apps
-
-    @max_lightning_apps.setter
-    def max_lightning_apps(self, max_lightning_apps: 'str'):
-        """Sets the max_lightning_apps of this V1Quotas.
-
-
-        :param max_lightning_apps: The max_lightning_apps of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_lightning_apps = max_lightning_apps
-
-    @property
-    def max_lightning_works(self) -> 'str':
-        """Gets the max_lightning_works of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_lightning_works of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_lightning_works
-
-    @max_lightning_works.setter
-    def max_lightning_works(self, max_lightning_works: 'str'):
-        """Sets the max_lightning_works of this V1Quotas.
-
-
-        :param max_lightning_works: The max_lightning_works of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_lightning_works = max_lightning_works
-
-    @property
-    def max_running_default_lightning_works_per_app(self) -> 'str':
-        """Gets the max_running_default_lightning_works_per_app of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_running_default_lightning_works_per_app of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_running_default_lightning_works_per_app
-
-    @max_running_default_lightning_works_per_app.setter
-    def max_running_default_lightning_works_per_app(self, max_running_default_lightning_works_per_app: 'str'):
-        """Sets the max_running_default_lightning_works_per_app of this V1Quotas.
-
-
-        :param max_running_default_lightning_works_per_app: The max_running_default_lightning_works_per_app of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_running_default_lightning_works_per_app = max_running_default_lightning_works_per_app
-
-    @property
-    def max_running_lightning_apps(self) -> 'str':
-        """Gets the max_running_lightning_apps of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_running_lightning_apps of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_running_lightning_apps
-
-    @max_running_lightning_apps.setter
-    def max_running_lightning_apps(self, max_running_lightning_apps: 'str'):
-        """Sets the max_running_lightning_apps of this V1Quotas.
-
-
-        :param max_running_lightning_apps: The max_running_lightning_apps of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_running_lightning_apps = max_running_lightning_apps
-
-    @property
-    def max_running_lightning_works(self) -> 'str':
-        """Gets the max_running_lightning_works of this V1Quotas.  # noqa: E501
-
-
-        :return: The max_running_lightning_works of this V1Quotas.  # noqa: E501
-        :rtype: str
-        """
-        return self._max_running_lightning_works
-
-    @max_running_lightning_works.setter
-    def max_running_lightning_works(self, max_running_lightning_works: 'str'):
-        """Sets the max_running_lightning_works of this V1Quotas.
-
-
-        :param max_running_lightning_works: The max_running_lightning_works of this V1Quotas.  # noqa: E501
-        :type: str
-        """
-
-        self._max_running_lightning_works = max_running_lightning_works
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

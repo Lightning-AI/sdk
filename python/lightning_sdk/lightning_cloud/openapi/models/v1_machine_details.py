@@ -61,7 +61,8 @@ class V1MachineDetails(object):
         'memory_total_mb': 'int',
         'memory_used_mb': 'int',
         'os_info': 'str',
-        'vm_instances': 'list[V1VMInstance]'
+        'vm_instances': 'list[V1VMInstance]',
+        'vpn_services': 'V1MachineVPNServicesStatus'
     }
 
     attribute_map = {
@@ -81,10 +82,11 @@ class V1MachineDetails(object):
         'memory_total_mb': 'memoryTotalMb',
         'memory_used_mb': 'memoryUsedMb',
         'os_info': 'osInfo',
-        'vm_instances': 'vmInstances'
+        'vm_instances': 'vmInstances',
+        'vpn_services': 'vpnServices'
     }
 
-    def __init__(self, allocated_servers: 'list[V1Server]' =None, app_uptime_ms: 'str' =None, app_version: 'str' =None, boot_params: 'str' =None, disk_total_gb: 'int' =None, disk_used_gb: 'int' =None, gpu_diagnostics: 'V1GPUDiagnosticReport' =None, gpus_allocated: 'int' =None, gpus_total: 'int' =None, host_uptime_ms: 'str' =None, instance_count: 'int' =None, kernel_version: 'str' =None, machine_images: 'list[V1MachineImageStatus]' =None, memory_total_mb: 'int' =None, memory_used_mb: 'int' =None, os_info: 'str' =None, vm_instances: 'list[V1VMInstance]' =None):  # noqa: E501
+    def __init__(self, allocated_servers: 'list[V1Server]' =None, app_uptime_ms: 'str' =None, app_version: 'str' =None, boot_params: 'str' =None, disk_total_gb: 'int' =None, disk_used_gb: 'int' =None, gpu_diagnostics: 'V1GPUDiagnosticReport' =None, gpus_allocated: 'int' =None, gpus_total: 'int' =None, host_uptime_ms: 'str' =None, instance_count: 'int' =None, kernel_version: 'str' =None, machine_images: 'list[V1MachineImageStatus]' =None, memory_total_mb: 'int' =None, memory_used_mb: 'int' =None, os_info: 'str' =None, vm_instances: 'list[V1VMInstance]' =None, vpn_services: 'V1MachineVPNServicesStatus' =None):  # noqa: E501
         """V1MachineDetails - a model defined in Swagger"""  # noqa: E501
         self._allocated_servers = None
         self._app_uptime_ms = None
@@ -103,6 +105,7 @@ class V1MachineDetails(object):
         self._memory_used_mb = None
         self._os_info = None
         self._vm_instances = None
+        self._vpn_services = None
         self.discriminator = None
         if allocated_servers is not None:
             self.allocated_servers = allocated_servers
@@ -138,6 +141,8 @@ class V1MachineDetails(object):
             self.os_info = os_info
         if vm_instances is not None:
             self.vm_instances = vm_instances
+        if vpn_services is not None:
+            self.vpn_services = vpn_services
 
     @property
     def allocated_servers(self) -> 'list[V1Server]':
@@ -495,6 +500,27 @@ class V1MachineDetails(object):
         """
 
         self._vm_instances = vm_instances
+
+    @property
+    def vpn_services(self) -> 'V1MachineVPNServicesStatus':
+        """Gets the vpn_services of this V1MachineDetails.  # noqa: E501
+
+
+        :return: The vpn_services of this V1MachineDetails.  # noqa: E501
+        :rtype: V1MachineVPNServicesStatus
+        """
+        return self._vpn_services
+
+    @vpn_services.setter
+    def vpn_services(self, vpn_services: 'V1MachineVPNServicesStatus'):
+        """Sets the vpn_services of this V1MachineDetails.
+
+
+        :param vpn_services: The vpn_services of this V1MachineDetails.  # noqa: E501
+        :type: V1MachineVPNServicesStatus
+        """
+
+        self._vpn_services = vpn_services
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

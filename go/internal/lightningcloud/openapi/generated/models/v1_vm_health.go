@@ -89,6 +89,9 @@ type V1VMHealth struct {
 	// fabric manager restarts during active NCCL/CUDA jobs.
 	RunningCompute []*V1ComputeApp `json:"runningCompute"`
 
+	// sentinelone
+	Sentinelone *V1SentinelOneHealth `json:"sentinelone,omitempty"`
+
 	// ssh error
 	SSHError string `json:"sshError,omitempty"`
 
@@ -142,6 +145,10 @@ func (m *V1VMHealth) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRunningCompute(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSentinelone(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -340,6 +347,29 @@ func (m *V1VMHealth) validateRunningCompute(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1VMHealth) validateSentinelone(formats strfmt.Registry) error {
+	if swag.IsZero(m.Sentinelone) { // not required
+		return nil
+	}
+
+	if m.Sentinelone != nil {
+		if err := m.Sentinelone.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("sentinelone")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("sentinelone")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1VMHealth) validateXids(formats strfmt.Registry) error {
 	if swag.IsZero(m.Xids) { // not required
 		return nil
@@ -395,6 +425,10 @@ func (m *V1VMHealth) ContextValidate(ctx context.Context, formats strfmt.Registr
 	}
 
 	if err := m.contextValidateRunningCompute(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSentinelone(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -573,6 +607,31 @@ func (m *V1VMHealth) contextValidateRunningCompute(ctx context.Context, formats 
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1VMHealth) contextValidateSentinelone(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Sentinelone != nil {
+
+		if swag.IsZero(m.Sentinelone) { // not required
+			return nil
+		}
+
+		if err := m.Sentinelone.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("sentinelone")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("sentinelone")
+			}
+
+			return err
+		}
 	}
 
 	return nil

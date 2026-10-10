@@ -47,6 +47,7 @@ class V1CreateAPIKeyRequest(object):
     swagger_types = {
         'budget_config': 'V1APIKeyBudget',
         'description': 'str',
+        'expires_at': 'datetime',
         'name': 'str',
         'org_id': 'str',
         'project_id': 'str',
@@ -58,6 +59,7 @@ class V1CreateAPIKeyRequest(object):
     attribute_map = {
         'budget_config': 'budgetConfig',
         'description': 'description',
+        'expires_at': 'expiresAt',
         'name': 'name',
         'org_id': 'orgId',
         'project_id': 'projectId',
@@ -66,10 +68,11 @@ class V1CreateAPIKeyRequest(object):
         'role': 'role'
     }
 
-    def __init__(self, budget_config: 'V1APIKeyBudget' =None, description: 'str' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, budget_config: 'V1APIKeyBudget' =None, description: 'str' =None, expires_at: 'datetime' =None, name: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, resource_id: 'str' =None, resource_type: 'str' =None, role: 'str' =None):  # noqa: E501
         """V1CreateAPIKeyRequest - a model defined in Swagger"""  # noqa: E501
         self._budget_config = None
         self._description = None
+        self._expires_at = None
         self._name = None
         self._org_id = None
         self._project_id = None
@@ -81,6 +84,8 @@ class V1CreateAPIKeyRequest(object):
             self.budget_config = budget_config
         if description is not None:
             self.description = description
+        if expires_at is not None:
+            self.expires_at = expires_at
         if name is not None:
             self.name = name
         if org_id is not None:
@@ -135,6 +140,27 @@ class V1CreateAPIKeyRequest(object):
         """
 
         self._description = description
+
+    @property
+    def expires_at(self) -> 'datetime':
+        """Gets the expires_at of this V1CreateAPIKeyRequest.  # noqa: E501
+
+
+        :return: The expires_at of this V1CreateAPIKeyRequest.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expires_at
+
+    @expires_at.setter
+    def expires_at(self, expires_at: 'datetime'):
+        """Sets the expires_at of this V1CreateAPIKeyRequest.
+
+
+        :param expires_at: The expires_at of this V1CreateAPIKeyRequest.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expires_at = expires_at
 
     @property
     def name(self) -> 'str':

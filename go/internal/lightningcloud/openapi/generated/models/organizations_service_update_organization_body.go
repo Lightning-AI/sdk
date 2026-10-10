@@ -101,12 +101,6 @@ type OrganizationsServiceUpdateOrganizationBody struct {
 	// disallow nebius saas
 	DisallowNebiusSaas bool `json:"disallowNebiusSaas,omitempty"`
 
-	// disallow voltage park saas
-	DisallowVoltageParkSaas bool `json:"disallowVoltageParkSaas,omitempty"`
-
-	// disallow vultr saas
-	DisallowVultrSaas bool `json:"disallowVultrSaas,omitempty"`
-
 	// display name
 	DisplayName string `json:"displayName,omitempty"`
 

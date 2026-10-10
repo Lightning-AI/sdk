@@ -48,6 +48,10 @@ class V1HostHealth(object):
         'aer_counters': 'list[V1AERCounter]',
         'fabric_manager': 'V1FabricManagerHealth',
         'gpu_create_host_crash': 'V1GPUCreateHostCrash',
+        'ib_guids': 'list[V1HostIBGUIDRail]',
+        'ib_pkeys': 'V1HostIBPKeysHealth',
+        'inband_netplan': 'V1InbandNetplanHealth',
+        'litaccess_ib_pkeys': 'V1HostIBPKeysHealth',
         'node_fitness': 'V1NodeFitness',
         'nvlink_fm_topology': 'V1NVLinkFMTopology',
         'nvswitch_fatal': 'V1NVSwitchFatal',
@@ -60,6 +64,10 @@ class V1HostHealth(object):
         'aer_counters': 'aerCounters',
         'fabric_manager': 'fabricManager',
         'gpu_create_host_crash': 'gpuCreateHostCrash',
+        'ib_guids': 'ibGuids',
+        'ib_pkeys': 'ibPkeys',
+        'inband_netplan': 'inbandNetplan',
+        'litaccess_ib_pkeys': 'litaccessIbPkeys',
         'node_fitness': 'nodeFitness',
         'nvlink_fm_topology': 'nvlinkFmTopology',
         'nvswitch_fatal': 'nvswitchFatal',
@@ -68,11 +76,15 @@ class V1HostHealth(object):
         'system': 'system'
     }
 
-    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, gpu_create_host_crash: 'V1GPUCreateHostCrash' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, nvswitch_fatal: 'V1NVSwitchFatal' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
+    def __init__(self, aer_counters: 'list[V1AERCounter]' =None, fabric_manager: 'V1FabricManagerHealth' =None, gpu_create_host_crash: 'V1GPUCreateHostCrash' =None, ib_guids: 'list[V1HostIBGUIDRail]' =None, ib_pkeys: 'V1HostIBPKeysHealth' =None, inband_netplan: 'V1InbandNetplanHealth' =None, litaccess_ib_pkeys: 'V1HostIBPKeysHealth' =None, node_fitness: 'V1NodeFitness' =None, nvlink_fm_topology: 'V1NVLinkFMTopology' =None, nvswitch_fatal: 'V1NVSwitchFatal' =None, recent_dmesg_errors: 'list[str]' =None, storage: 'V1HostStorage' =None, system: 'V1MachineSystemInfo' =None):  # noqa: E501
         """V1HostHealth - a model defined in Swagger"""  # noqa: E501
         self._aer_counters = None
         self._fabric_manager = None
         self._gpu_create_host_crash = None
+        self._ib_guids = None
+        self._ib_pkeys = None
+        self._inband_netplan = None
+        self._litaccess_ib_pkeys = None
         self._node_fitness = None
         self._nvlink_fm_topology = None
         self._nvswitch_fatal = None
@@ -86,6 +98,14 @@ class V1HostHealth(object):
             self.fabric_manager = fabric_manager
         if gpu_create_host_crash is not None:
             self.gpu_create_host_crash = gpu_create_host_crash
+        if ib_guids is not None:
+            self.ib_guids = ib_guids
+        if ib_pkeys is not None:
+            self.ib_pkeys = ib_pkeys
+        if inband_netplan is not None:
+            self.inband_netplan = inband_netplan
+        if litaccess_ib_pkeys is not None:
+            self.litaccess_ib_pkeys = litaccess_ib_pkeys
         if node_fitness is not None:
             self.node_fitness = node_fitness
         if nvlink_fm_topology is not None:
@@ -161,6 +181,90 @@ class V1HostHealth(object):
         """
 
         self._gpu_create_host_crash = gpu_create_host_crash
+
+    @property
+    def ib_guids(self) -> 'list[V1HostIBGUIDRail]':
+        """Gets the ib_guids of this V1HostHealth.  # noqa: E501
+
+
+        :return: The ib_guids of this V1HostHealth.  # noqa: E501
+        :rtype: list[V1HostIBGUIDRail]
+        """
+        return self._ib_guids
+
+    @ib_guids.setter
+    def ib_guids(self, ib_guids: 'list[V1HostIBGUIDRail]'):
+        """Sets the ib_guids of this V1HostHealth.
+
+
+        :param ib_guids: The ib_guids of this V1HostHealth.  # noqa: E501
+        :type: list[V1HostIBGUIDRail]
+        """
+
+        self._ib_guids = ib_guids
+
+    @property
+    def ib_pkeys(self) -> 'V1HostIBPKeysHealth':
+        """Gets the ib_pkeys of this V1HostHealth.  # noqa: E501
+
+
+        :return: The ib_pkeys of this V1HostHealth.  # noqa: E501
+        :rtype: V1HostIBPKeysHealth
+        """
+        return self._ib_pkeys
+
+    @ib_pkeys.setter
+    def ib_pkeys(self, ib_pkeys: 'V1HostIBPKeysHealth'):
+        """Sets the ib_pkeys of this V1HostHealth.
+
+
+        :param ib_pkeys: The ib_pkeys of this V1HostHealth.  # noqa: E501
+        :type: V1HostIBPKeysHealth
+        """
+
+        self._ib_pkeys = ib_pkeys
+
+    @property
+    def inband_netplan(self) -> 'V1InbandNetplanHealth':
+        """Gets the inband_netplan of this V1HostHealth.  # noqa: E501
+
+
+        :return: The inband_netplan of this V1HostHealth.  # noqa: E501
+        :rtype: V1InbandNetplanHealth
+        """
+        return self._inband_netplan
+
+    @inband_netplan.setter
+    def inband_netplan(self, inband_netplan: 'V1InbandNetplanHealth'):
+        """Sets the inband_netplan of this V1HostHealth.
+
+
+        :param inband_netplan: The inband_netplan of this V1HostHealth.  # noqa: E501
+        :type: V1InbandNetplanHealth
+        """
+
+        self._inband_netplan = inband_netplan
+
+    @property
+    def litaccess_ib_pkeys(self) -> 'V1HostIBPKeysHealth':
+        """Gets the litaccess_ib_pkeys of this V1HostHealth.  # noqa: E501
+
+
+        :return: The litaccess_ib_pkeys of this V1HostHealth.  # noqa: E501
+        :rtype: V1HostIBPKeysHealth
+        """
+        return self._litaccess_ib_pkeys
+
+    @litaccess_ib_pkeys.setter
+    def litaccess_ib_pkeys(self, litaccess_ib_pkeys: 'V1HostIBPKeysHealth'):
+        """Sets the litaccess_ib_pkeys of this V1HostHealth.
+
+
+        :param litaccess_ib_pkeys: The litaccess_ib_pkeys of this V1HostHealth.  # noqa: E501
+        :type: V1HostIBPKeysHealth
+        """
+
+        self._litaccess_ib_pkeys = litaccess_ib_pkeys
 
     @property
     def node_fitness(self) -> 'V1NodeFitness':

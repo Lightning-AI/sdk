@@ -1982,6 +1982,7 @@ class JobsServiceApi(object):
         :param int status_code: Optional to filter
         :param bool group_by_resource: Whether the telemetry should grouped by resource
         :param str resolution: Which time resolution to use
+        :param list[str] resource_ids: Optional to filter by the resources (replica job ids) that served the requests
         :return: V1GetDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2010,12 +2011,13 @@ class JobsServiceApi(object):
         :param int status_code: Optional to filter
         :param bool group_by_resource: Whether the telemetry should grouped by resource
         :param str resolution: Which time resolution to use
+        :param list[str] resource_ids: Optional to filter by the resources (replica job ids) that served the requests
         :return: V1GetDeploymentRoutingTelemetryResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'start', 'end', 'path', 'status_code', 'group_by_resource', 'resolution']  # noqa: E501
+        all_params = ['project_id', 'id', 'start', 'end', 'path', 'status_code', 'group_by_resource', 'resolution', 'resource_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2060,6 +2062,9 @@ class JobsServiceApi(object):
             query_params.append(('groupByResource', params['group_by_resource']))  # noqa: E501
         if 'resolution' in params:
             query_params.append(('resolution', params['resolution']))  # noqa: E501
+        if 'resource_ids' in params:
+            query_params.append(('resourceIds', params['resource_ids']))  # noqa: E501
+            collection_formats['resourceIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -2106,6 +2111,7 @@ class JobsServiceApi(object):
         :param list[str] paths: Optional to filter
         :param list[str] status_codes: Optional to filter
         :param str resolution: Which time resolution to use
+        :param list[str] resource_ids: Optional to filter by the resources (replica job ids) that served the requests
         :return: V1GetDeploymentRoutingTelemetryAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -2133,12 +2139,13 @@ class JobsServiceApi(object):
         :param list[str] paths: Optional to filter
         :param list[str] status_codes: Optional to filter
         :param str resolution: Which time resolution to use
+        :param list[str] resource_ids: Optional to filter by the resources (replica job ids) that served the requests
         :return: V1GetDeploymentRoutingTelemetryAggregatedResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'id', 'start', 'end', 'paths', 'status_codes', 'resolution']  # noqa: E501
+        all_params = ['project_id', 'id', 'start', 'end', 'paths', 'status_codes', 'resolution', 'resource_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -2183,6 +2190,9 @@ class JobsServiceApi(object):
             collection_formats['statusCodes'] = 'multi'  # noqa: E501
         if 'resolution' in params:
             query_params.append(('resolution', params['resolution']))  # noqa: E501
+        if 'resource_ids' in params:
+            query_params.append(('resourceIds', params['resource_ids']))  # noqa: E501
+            collection_formats['resourceIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -3318,6 +3328,9 @@ class JobsServiceApi(object):
         :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :param str sandbox_id: sandbox_id returns logs for all of a sandbox's recorded commands.
         :param list[str] sandbox_command_ids: sandbox_command_ids narrows to specific commands (within sandbox_id when set).
+        :param str seek_resource_id: Read seek_resource_id's unfiltered merged stream from seek_line onward (\"view in context\" jumps). Query, severity, since and until are ignored.
+        :param str seek_line:
+        :param bool newest_first: Return the last page_size matching lines instead of the first, with a next_page_token for the lines before them. Each page is still oldest first. Ignored with seek_resource_id.
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3350,12 +3363,15 @@ class JobsServiceApi(object):
         :param str severity: Minimum severity to include: returns only lines equal to or more severe than this (error > warning > info > debug). Empty returns all. Lines with no inferred severity rank as debug, so any threshold above debug excludes them.
         :param str sandbox_id: sandbox_id returns logs for all of a sandbox's recorded commands.
         :param list[str] sandbox_command_ids: sandbox_command_ids narrows to specific commands (within sandbox_id when set).
+        :param str seek_resource_id: Read seek_resource_id's unfiltered merged stream from seek_line onward (\"view in context\" jumps). Query, severity, since and until are ignored.
+        :param str seek_line:
+        :param bool newest_first: Return the last page_size matching lines instead of the first, with a next_page_token for the lines before them. Each page is still oldest first. Ignored with seek_resource_id.
         :return: V1GetLogsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token', 'severity', 'sandbox_id', 'sandbox_command_ids']  # noqa: E501
+        all_params = ['project_id', 'deployment_id', 'mmt_id', 'since', 'until', 'query', 'job_ids', 'page_size', 'page_token', 'severity', 'sandbox_id', 'sandbox_command_ids', 'seek_resource_id', 'seek_line', 'newest_first']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3406,6 +3422,12 @@ class JobsServiceApi(object):
         if 'sandbox_command_ids' in params:
             query_params.append(('sandboxCommandIds', params['sandbox_command_ids']))  # noqa: E501
             collection_formats['sandboxCommandIds'] = 'multi'  # noqa: E501
+        if 'seek_resource_id' in params:
+            query_params.append(('seekResourceId', params['seek_resource_id']))  # noqa: E501
+        if 'seek_line' in params:
+            query_params.append(('seekLine', params['seek_line']))  # noqa: E501
+        if 'newest_first' in params:
+            query_params.append(('newestFirst', params['newest_first']))  # noqa: E501
 
         header_params = {}
 
@@ -3761,6 +3783,9 @@ class JobsServiceApi(object):
         :param str sort_order: ascending or descending
         :param list[str] tag_ids: Match any of these tags
         :param bool match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] user_ids: Creators to filter by; with project_id/org_id any members are allowed, otherwise only the caller
+        :param list[str] instance_types: Match jobs whose spec instance_type is one of these
+        :param list[str] sources: Match jobs whose source is a Studio (cloud_space_id) or a Docker image (spec image)
         :return: V1ListAllJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -3794,12 +3819,15 @@ class JobsServiceApi(object):
         :param str sort_order: ascending or descending
         :param list[str] tag_ids: Match any of these tags
         :param bool match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] user_ids: Creators to filter by; with project_id/org_id any members are allowed, otherwise only the caller
+        :param list[str] instance_types: Match jobs whose spec instance_type is one of these
+        :param list[str] sources: Match jobs whose source is a Studio (cloud_space_id) or a Docker image (spec image)
         :return: V1ListAllJobsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'page_token', 'limit', 'search_query', 'states', 'job_types', 'org_id', 'user_id', 'cloudspace_id', 'sort_by', 'sort_order', 'tag_ids', 'match_all_tags']  # noqa: E501
+        all_params = ['project_id', 'page_token', 'limit', 'search_query', 'states', 'job_types', 'org_id', 'user_id', 'cloudspace_id', 'sort_by', 'sort_order', 'tag_ids', 'match_all_tags', 'user_ids', 'instance_types', 'sources']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -3849,6 +3877,15 @@ class JobsServiceApi(object):
             collection_formats['tagIds'] = 'multi'  # noqa: E501
         if 'match_all_tags' in params:
             query_params.append(('matchAllTags', params['match_all_tags']))  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
+        if 'instance_types' in params:
+            query_params.append(('instanceTypes', params['instance_types']))  # noqa: E501
+            collection_formats['instanceTypes'] = 'multi'  # noqa: E501
+        if 'sources' in params:
+            query_params.append(('sources', params['sources']))  # noqa: E501
+            collection_formats['sources'] = 'multi'  # noqa: E501
 
         header_params = {}
 

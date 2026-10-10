@@ -76,6 +76,7 @@ class V1ClusterAccelerator(object):
         'local_disk_supported': 'bool',
         'local_disks_count': 'str',
         'max_available_quota': 'str',
+        'multi_node_ib_cost_per_gpu_hour': 'float',
         'non_ondemand': 'bool',
         'non_spot': 'bool',
         'original_cost': 'float',
@@ -140,6 +141,7 @@ class V1ClusterAccelerator(object):
         'local_disk_supported': 'localDiskSupported',
         'local_disks_count': 'localDisksCount',
         'max_available_quota': 'maxAvailableQuota',
+        'multi_node_ib_cost_per_gpu_hour': 'multiNodeIbCostPerGpuHour',
         'non_ondemand': 'nonOndemand',
         'non_spot': 'nonSpot',
         'original_cost': 'originalCost',
@@ -172,7 +174,7 @@ class V1ClusterAccelerator(object):
         'spot_quota_page_url': 'spotQuotaPageUrl'
     }
 
-    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, availability_strategy: 'str' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_cost: 'float' =None, dws_only: 'bool' =None, dws_supported: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, full: 'bool' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, lightning_interruptible: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, non_ondemand: 'bool' =None, non_spot: 'bool' =None, original_cost: 'float' =None, original_spot_price: 'float' =None, out_of_capacity: 'bool' =None, partition_only: 'bool' =None, partitionable_parents: 'list[str]' =None, persistent_disk_supported: 'bool' =None, promo: 'V1PromoOverlay' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, secondary_instance_id: 'str' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
+    def __init__(self, accelerator_type: 'str' =None, allowed_resources: 'list[str]' =None, availability_strategy: 'str' =None, available_in_seconds: 'str' =None, available_in_seconds_spot: 'str' =None, available_zones: 'list[str]' =None, byoc_only: 'bool' =None, capacity_block_only: 'bool' =None, capacity_block_price: 'float' =None, capacity_blocks_available: 'list[V1ClusterCapacityReservation]' =None, cluster_id: 'str' =None, cost: 'float' =None, detailed_quotas_info: 'list[V1AcceleratorQuotaInfo]' =None, device_card: 'str' =None, device_info: 'str' =None, display_name: 'str' =None, dws_cost: 'float' =None, dws_only: 'bool' =None, dws_supported: 'bool' =None, enabled: 'bool' =None, family: 'str' =None, full: 'bool' =None, instance_id: 'str' =None, is_custom: 'bool' =None, is_tier_restricted: 'bool' =None, lightning_interruptible: 'bool' =None, local_disk_included: 'bool' =None, local_disk_size: 'str' =None, local_disk_supported: 'bool' =None, local_disks_count: 'str' =None, max_available_quota: 'str' =None, multi_node_ib_cost_per_gpu_hour: 'float' =None, non_ondemand: 'bool' =None, non_spot: 'bool' =None, original_cost: 'float' =None, original_spot_price: 'float' =None, out_of_capacity: 'bool' =None, partition_only: 'bool' =None, partitionable_parents: 'list[str]' =None, persistent_disk_supported: 'bool' =None, promo: 'V1PromoOverlay' =None, provider: 'V1CloudProvider' =None, quota_checked_at: 'datetime' =None, quota_code: 'str' =None, quota_name: 'str' =None, quota_page_url: 'str' =None, quota_service_code: 'str' =None, quota_utilization: 'str' =None, quota_value: 'str' =None, reservable: 'bool' =None, reservation_available_zones: 'list[str]' =None, reservation_quota_code: 'str' =None, reservation_quota_name: 'str' =None, reservation_quota_page_url: 'str' =None, resources: 'V1Resources' =None, secondary_instance_id: 'str' =None, slug: 'str' =None, slug_multi_cloud: 'str' =None, spot_price: 'float' =None, spot_quota_code: 'str' =None, spot_quota_name: 'str' =None, spot_quota_page_url: 'str' =None):  # noqa: E501
         """V1ClusterAccelerator - a model defined in Swagger"""  # noqa: E501
         self._accelerator_type = None
         self._allowed_resources = None
@@ -205,6 +207,7 @@ class V1ClusterAccelerator(object):
         self._local_disk_supported = None
         self._local_disks_count = None
         self._max_available_quota = None
+        self._multi_node_ib_cost_per_gpu_hour = None
         self._non_ondemand = None
         self._non_spot = None
         self._original_cost = None
@@ -298,6 +301,8 @@ class V1ClusterAccelerator(object):
             self.local_disks_count = local_disks_count
         if max_available_quota is not None:
             self.max_available_quota = max_available_quota
+        if multi_node_ib_cost_per_gpu_hour is not None:
+            self.multi_node_ib_cost_per_gpu_hour = multi_node_ib_cost_per_gpu_hour
         if non_ondemand is not None:
             self.non_ondemand = non_ondemand
         if non_spot is not None:
@@ -1009,6 +1014,27 @@ class V1ClusterAccelerator(object):
         """
 
         self._max_available_quota = max_available_quota
+
+    @property
+    def multi_node_ib_cost_per_gpu_hour(self) -> 'float':
+        """Gets the multi_node_ib_cost_per_gpu_hour of this V1ClusterAccelerator.  # noqa: E501
+
+
+        :return: The multi_node_ib_cost_per_gpu_hour of this V1ClusterAccelerator.  # noqa: E501
+        :rtype: float
+        """
+        return self._multi_node_ib_cost_per_gpu_hour
+
+    @multi_node_ib_cost_per_gpu_hour.setter
+    def multi_node_ib_cost_per_gpu_hour(self, multi_node_ib_cost_per_gpu_hour: 'float'):
+        """Sets the multi_node_ib_cost_per_gpu_hour of this V1ClusterAccelerator.
+
+
+        :param multi_node_ib_cost_per_gpu_hour: The multi_node_ib_cost_per_gpu_hour of this V1ClusterAccelerator.  # noqa: E501
+        :type: float
+        """
+
+        self._multi_node_ib_cost_per_gpu_hour = multi_node_ib_cost_per_gpu_hour
 
     @property
     def non_ondemand(self) -> 'bool':

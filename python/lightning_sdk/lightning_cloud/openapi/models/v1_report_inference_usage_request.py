@@ -47,6 +47,7 @@ class V1ReportInferenceUsageRequest(object):
     swagger_types = {
         'cache_creation_tokens': 'str',
         'cache_read_tokens': 'str',
+        'coding_plan': 'bool',
         'completion_tokens': 'str',
         'model': 'str',
         'prompt_tokens': 'str'
@@ -55,15 +56,17 @@ class V1ReportInferenceUsageRequest(object):
     attribute_map = {
         'cache_creation_tokens': 'cacheCreationTokens',
         'cache_read_tokens': 'cacheReadTokens',
+        'coding_plan': 'codingPlan',
         'completion_tokens': 'completionTokens',
         'model': 'model',
         'prompt_tokens': 'promptTokens'
     }
 
-    def __init__(self, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, coding_plan: 'bool' =None, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
         """V1ReportInferenceUsageRequest - a model defined in Swagger"""  # noqa: E501
         self._cache_creation_tokens = None
         self._cache_read_tokens = None
+        self._coding_plan = None
         self._completion_tokens = None
         self._model = None
         self._prompt_tokens = None
@@ -72,6 +75,8 @@ class V1ReportInferenceUsageRequest(object):
             self.cache_creation_tokens = cache_creation_tokens
         if cache_read_tokens is not None:
             self.cache_read_tokens = cache_read_tokens
+        if coding_plan is not None:
+            self.coding_plan = coding_plan
         if completion_tokens is not None:
             self.completion_tokens = completion_tokens
         if model is not None:
@@ -120,6 +125,29 @@ class V1ReportInferenceUsageRequest(object):
         """
 
         self._cache_read_tokens = cache_read_tokens
+
+    @property
+    def coding_plan(self) -> 'bool':
+        """Gets the coding_plan of this V1ReportInferenceUsageRequest.  # noqa: E501
+
+        Counts the usage against the caller's coding plan windows (code.lightning.ai traffic).  # noqa: E501
+
+        :return: The coding_plan of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :rtype: bool
+        """
+        return self._coding_plan
+
+    @coding_plan.setter
+    def coding_plan(self, coding_plan: 'bool'):
+        """Sets the coding_plan of this V1ReportInferenceUsageRequest.
+
+        Counts the usage against the caller's coding plan windows (code.lightning.ai traffic).  # noqa: E501
+
+        :param coding_plan: The coding_plan of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :type: bool
+        """
+
+        self._coding_plan = coding_plan
 
     @property
     def completion_tokens(self) -> 'str':

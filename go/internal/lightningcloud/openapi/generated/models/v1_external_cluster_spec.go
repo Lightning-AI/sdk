@@ -129,12 +129,6 @@ type V1ExternalClusterSpec struct {
 
 	// user Id
 	UserID string `json:"userId,omitempty"`
-
-	// VoltagePark Cloud configuration
-	VoltageParkV1 *V1VoltageParkDirectV1 `json:"voltageParkV1,omitempty"`
-
-	// Vultr Cloud configuration
-	VultrV1 *V1VultrDirectV1 `json:"vultrV1,omitempty"`
 }
 
 // Validate validates this v1 external cluster spec
@@ -226,14 +220,6 @@ func (m *V1ExternalClusterSpec) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateThunderCatV1(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVoltageParkV1(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVultrV1(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -756,52 +742,6 @@ func (m *V1ExternalClusterSpec) validateThunderCatV1(formats strfmt.Registry) er
 	return nil
 }
 
-func (m *V1ExternalClusterSpec) validateVoltageParkV1(formats strfmt.Registry) error {
-	if swag.IsZero(m.VoltageParkV1) { // not required
-		return nil
-	}
-
-	if m.VoltageParkV1 != nil {
-		if err := m.VoltageParkV1.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("voltageParkV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("voltageParkV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ExternalClusterSpec) validateVultrV1(formats strfmt.Registry) error {
-	if swag.IsZero(m.VultrV1) { // not required
-		return nil
-	}
-
-	if m.VultrV1 != nil {
-		if err := m.VultrV1.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("vultrV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("vultrV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this v1 external cluster spec based on the context it is used
 func (m *V1ExternalClusterSpec) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -891,14 +831,6 @@ func (m *V1ExternalClusterSpec) ContextValidate(ctx context.Context, formats str
 	}
 
 	if err := m.contextValidateThunderCatV1(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateVoltageParkV1(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateVultrV1(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -1453,56 +1385,6 @@ func (m *V1ExternalClusterSpec) contextValidateThunderCatV1(ctx context.Context,
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("thunderCatV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ExternalClusterSpec) contextValidateVoltageParkV1(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.VoltageParkV1 != nil {
-
-		if swag.IsZero(m.VoltageParkV1) { // not required
-			return nil
-		}
-
-		if err := m.VoltageParkV1.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("voltageParkV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("voltageParkV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ExternalClusterSpec) contextValidateVultrV1(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.VultrV1 != nil {
-
-		if swag.IsZero(m.VultrV1) { // not required
-			return nil
-		}
-
-		if err := m.VultrV1.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("vultrV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("vultrV1")
 			}
 
 			return err

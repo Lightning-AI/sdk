@@ -54,7 +54,8 @@ type V1VMIBPKeyInfo struct {
 	// physical state
 	PhysicalState string `json:"physicalState,omitempty"`
 
-	// Expected single non-default pool P_Key, e.g. 0x881a.
+	// Canonical low-15-bit identity of the expected single non-default pool
+	// P_Key (membership bit removed), e.g. 0x081a.
 	Pkey string `json:"pkey,omitempty"`
 
 	// Encoding contract for all_pkeys. Currently empty (legacy set) or indexed-v1.

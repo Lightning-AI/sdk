@@ -43,9 +43,6 @@ const (
 	// V1CloudProviderGCP captures enum value "GCP"
 	V1CloudProviderGCP V1CloudProvider = "GCP"
 
-	// V1CloudProviderVULTR captures enum value "VULTR"
-	V1CloudProviderVULTR V1CloudProvider = "VULTR"
-
 	// V1CloudProviderLAMBDALABS captures enum value "LAMBDA_LABS"
 	V1CloudProviderLAMBDALABS V1CloudProvider = "LAMBDA_LABS"
 
@@ -54,9 +51,6 @@ const (
 
 	// V1CloudProviderDGX captures enum value "DGX"
 	V1CloudProviderDGX V1CloudProvider = "DGX"
-
-	// V1CloudProviderVOLTAGEPARK captures enum value "VOLTAGE_PARK"
-	V1CloudProviderVOLTAGEPARK V1CloudProvider = "VOLTAGE_PARK"
 
 	// V1CloudProviderNEBIUS captures enum value "NEBIUS"
 	V1CloudProviderNEBIUS V1CloudProvider = "NEBIUS"
@@ -103,7 +97,7 @@ var v1CloudProviderEnum []any
 
 func init() {
 	var res []V1CloudProvider
-	if err := json.Unmarshal([]byte(`["CLOUD_PROVIDER_UNSPECIFIED","AWS","GCP","VULTR","LAMBDA_LABS","SLURM","DGX","VOLTAGE_PARK","NEBIUS","CLOUDFLARE","LIGHTNING","LIGHTNING_AGGREGATE","KUBERNETES","MACHINE","LIGHTNING_ELASTIC_CLUSTER_AGGREGATE","CUDO","MITHRIL","THUNDER_CAT","TENSORDOCK","AZURE","RAFAY"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["CLOUD_PROVIDER_UNSPECIFIED","AWS","GCP","LAMBDA_LABS","SLURM","DGX","NEBIUS","CLOUDFLARE","LIGHTNING","LIGHTNING_AGGREGATE","KUBERNETES","MACHINE","LIGHTNING_ELASTIC_CLUSTER_AGGREGATE","CUDO","MITHRIL","THUNDER_CAT","TENSORDOCK","AZURE","RAFAY"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
