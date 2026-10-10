@@ -21,6 +21,7 @@ from lightning_sdk.cli.folder import register_commands as register_folder_comman
 from lightning_sdk.cli.job import register_commands as register_job_commands
 from lightning_sdk.cli.legacy_redirects import DeprecatedGroup
 from lightning_sdk.cli.license import register_commands as register_license_commands
+from lightning_sdk.cli.llm import register_commands as register_llm_commands
 from lightning_sdk.cli.machine import register_commands as register_machine_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
 from lightning_sdk.cli.model import register_commands as register_model_commands
@@ -145,6 +146,11 @@ def container() -> None:
 @click.group(name="model", cls=LightningGroup)
 def model() -> None:
     """Register and version models."""
+
+
+@click.group(name="llm", cls=LightningGroup)
+def llm() -> None:
+    """Browse hosted LLMs on the model gateway."""
 
 
 @click.group(name="pipeline", cls=LightningGroup)
@@ -282,6 +288,7 @@ register_vm_commands(vm)
 register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)
+register_llm_commands(llm)
 register_pipeline_commands(pipeline)
 register_api_key_commands(api_key)
 register_auth_commands(auth)
