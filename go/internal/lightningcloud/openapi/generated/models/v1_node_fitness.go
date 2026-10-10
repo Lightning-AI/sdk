@@ -60,6 +60,9 @@ type V1NodeFitness struct {
 	// dmi
 	Dmi *V1DMIInfo `json:"dmi,omitempty"`
 
+	// firmware inventory
+	FirmwareInventory *V1FirmwareInventory `json:"firmwareInventory,omitempty"`
+
 	// gpu isolation
 	GpuIsolation []*V1DeviceIsolationFitness `json:"gpuIsolation"`
 
@@ -108,6 +111,10 @@ func (m *V1NodeFitness) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDmi(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFirmwareInventory(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -186,6 +193,29 @@ func (m *V1NodeFitness) validateDmi(formats strfmt.Registry) error {
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("dmi")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) validateFirmwareInventory(formats strfmt.Registry) error {
+	if swag.IsZero(m.FirmwareInventory) { // not required
+		return nil
+	}
+
+	if m.FirmwareInventory != nil {
+		if err := m.FirmwareInventory.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("firmwareInventory")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("firmwareInventory")
 			}
 
 			return err
@@ -433,6 +463,10 @@ func (m *V1NodeFitness) ContextValidate(ctx context.Context, formats strfmt.Regi
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateFirmwareInventory(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateGpuIsolation(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -512,6 +546,31 @@ func (m *V1NodeFitness) contextValidateDmi(ctx context.Context, formats strfmt.R
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("dmi")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1NodeFitness) contextValidateFirmwareInventory(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.FirmwareInventory != nil {
+
+		if swag.IsZero(m.FirmwareInventory) { // not required
+			return nil
+		}
+
+		if err := m.FirmwareInventory.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("firmwareInventory")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("firmwareInventory")
 			}
 
 			return err

@@ -46,9 +46,6 @@ class V1UpdateUserRequest(object):
     """
     swagger_types = {
         'agree_to_terms_and_conditions': 'bool',
-        'allow_credits_auto_replenish': 'bool',
-        'auto_replenish_amount': 'float',
-        'auto_replenish_threshold': 'float',
         'complete_sign_up': 'bool',
         'completed_project_onboarding': 'bool',
         'country': 'str',
@@ -77,9 +74,6 @@ class V1UpdateUserRequest(object):
 
     attribute_map = {
         'agree_to_terms_and_conditions': 'agreeToTermsAndConditions',
-        'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
-        'auto_replenish_amount': 'autoReplenishAmount',
-        'auto_replenish_threshold': 'autoReplenishThreshold',
         'complete_sign_up': 'completeSignUp',
         'completed_project_onboarding': 'completedProjectOnboarding',
         'country': 'country',
@@ -106,12 +100,9 @@ class V1UpdateUserRequest(object):
         'website': 'website'
     }
 
-    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
+    def __init__(self, agree_to_terms_and_conditions: 'bool' =None, complete_sign_up: 'bool' =None, completed_project_onboarding: 'bool' =None, country: 'str' =None, disable_shell_persistence: 'bool' =None, email: 'str' =None, experimentation_id: 'str' =None, first_name: 'str' =None, general_audience_mode: 'bool' =None, last_name: 'str' =None, linux_username: 'str' =None, non_developer_mode: 'bool' =None, opted_in_marketing_emails: 'bool' =None, organization: 'str' =None, preferred_color_scheme: 'str' =None, preferred_ide: 'str' =None, preferred_shell: 'str' =None, preferred_vscode_marketplace: 'str' =None, role: 'str' =None, saw_create_first_project_dialog: 'bool' =None, saw_forums_login_merge_dialog: 'bool' =None, saw_free_credits_notification: 'bool' =None, user_metadata: 'str' =None, username: 'str' =None, website: 'str' =None):  # noqa: E501
         """V1UpdateUserRequest - a model defined in Swagger"""  # noqa: E501
         self._agree_to_terms_and_conditions = None
-        self._allow_credits_auto_replenish = None
-        self._auto_replenish_amount = None
-        self._auto_replenish_threshold = None
         self._complete_sign_up = None
         self._completed_project_onboarding = None
         self._country = None
@@ -139,12 +130,6 @@ class V1UpdateUserRequest(object):
         self.discriminator = None
         if agree_to_terms_and_conditions is not None:
             self.agree_to_terms_and_conditions = agree_to_terms_and_conditions
-        if allow_credits_auto_replenish is not None:
-            self.allow_credits_auto_replenish = allow_credits_auto_replenish
-        if auto_replenish_amount is not None:
-            self.auto_replenish_amount = auto_replenish_amount
-        if auto_replenish_threshold is not None:
-            self.auto_replenish_threshold = auto_replenish_threshold
         if complete_sign_up is not None:
             self.complete_sign_up = complete_sign_up
         if completed_project_onboarding is not None:
@@ -214,71 +199,6 @@ class V1UpdateUserRequest(object):
         """
 
         self._agree_to_terms_and_conditions = agree_to_terms_and_conditions
-
-    @property
-    def allow_credits_auto_replenish(self) -> 'bool':
-        """Gets the allow_credits_auto_replenish of this V1UpdateUserRequest.  # noqa: E501
-
-        If true, credits will be auto-replenished from the credit card on file.  # noqa: E501
-
-        :return: The allow_credits_auto_replenish of this V1UpdateUserRequest.  # noqa: E501
-        :rtype: bool
-        """
-        return self._allow_credits_auto_replenish
-
-    @allow_credits_auto_replenish.setter
-    def allow_credits_auto_replenish(self, allow_credits_auto_replenish: 'bool'):
-        """Sets the allow_credits_auto_replenish of this V1UpdateUserRequest.
-
-        If true, credits will be auto-replenished from the credit card on file.  # noqa: E501
-
-        :param allow_credits_auto_replenish: The allow_credits_auto_replenish of this V1UpdateUserRequest.  # noqa: E501
-        :type: bool
-        """
-
-        self._allow_credits_auto_replenish = allow_credits_auto_replenish
-
-    @property
-    def auto_replenish_amount(self) -> 'float':
-        """Gets the auto_replenish_amount of this V1UpdateUserRequest.  # noqa: E501
-
-
-        :return: The auto_replenish_amount of this V1UpdateUserRequest.  # noqa: E501
-        :rtype: float
-        """
-        return self._auto_replenish_amount
-
-    @auto_replenish_amount.setter
-    def auto_replenish_amount(self, auto_replenish_amount: 'float'):
-        """Sets the auto_replenish_amount of this V1UpdateUserRequest.
-
-
-        :param auto_replenish_amount: The auto_replenish_amount of this V1UpdateUserRequest.  # noqa: E501
-        :type: float
-        """
-
-        self._auto_replenish_amount = auto_replenish_amount
-
-    @property
-    def auto_replenish_threshold(self) -> 'float':
-        """Gets the auto_replenish_threshold of this V1UpdateUserRequest.  # noqa: E501
-
-
-        :return: The auto_replenish_threshold of this V1UpdateUserRequest.  # noqa: E501
-        :rtype: float
-        """
-        return self._auto_replenish_threshold
-
-    @auto_replenish_threshold.setter
-    def auto_replenish_threshold(self, auto_replenish_threshold: 'float'):
-        """Sets the auto_replenish_threshold of this V1UpdateUserRequest.
-
-
-        :param auto_replenish_threshold: The auto_replenish_threshold of this V1UpdateUserRequest.  # noqa: E501
-        :type: float
-        """
-
-        self._auto_replenish_threshold = auto_replenish_threshold
 
     @property
     def complete_sign_up(self) -> 'bool':

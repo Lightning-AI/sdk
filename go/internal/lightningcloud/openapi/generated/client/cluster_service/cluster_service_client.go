@@ -122,11 +122,17 @@ type ClientService interface {
 
 	ClusterServiceGetClusterCredentials(params *ClusterServiceGetClusterCredentialsParams, opts ...ClientOption) (*ClusterServiceGetClusterCredentialsOK, error)
 
+	ClusterServiceGetClusterDetails(params *ClusterServiceGetClusterDetailsParams, opts ...ClientOption) (*ClusterServiceGetClusterDetailsOK, error)
+
 	ClusterServiceGetClusterHealth(params *ClusterServiceGetClusterHealthParams, opts ...ClientOption) (*ClusterServiceGetClusterHealthOK, error)
+
+	ClusterServiceGetClusterReservationUsage(params *ClusterServiceGetClusterReservationUsageParams, opts ...ClientOption) (*ClusterServiceGetClusterReservationUsageOK, error)
 
 	ClusterServiceGetMachine(params *ClusterServiceGetMachineParams, opts ...ClientOption) (*ClusterServiceGetMachineOK, error)
 
 	ClusterServiceGetMachineDetails(params *ClusterServiceGetMachineDetailsParams, opts ...ClientOption) (*ClusterServiceGetMachineDetailsOK, error)
+
+	ClusterServiceGetMachineSetupURL(params *ClusterServiceGetMachineSetupURLParams, opts ...ClientOption) (*ClusterServiceGetMachineSetupURLOK, error)
 
 	ClusterServiceGetMachineSystemMetrics(params *ClusterServiceGetMachineSystemMetricsParams, opts ...ClientOption) (*ClusterServiceGetMachineSystemMetricsOK, error)
 
@@ -144,6 +150,8 @@ type ClientService interface {
 
 	ClusterServiceListClusterProxies(params *ClusterServiceListClusterProxiesParams, opts ...ClientOption) (*ClusterServiceListClusterProxiesOK, error)
 
+	ClusterServiceListClusterReservationsForUsage(params *ClusterServiceListClusterReservationsForUsageParams, opts ...ClientOption) (*ClusterServiceListClusterReservationsForUsageOK, error)
+
 	ClusterServiceListClusterUsageRestrictions(params *ClusterServiceListClusterUsageRestrictionsParams, opts ...ClientOption) (*ClusterServiceListClusterUsageRestrictionsOK, error)
 
 	ClusterServiceListClusters(params *ClusterServiceListClustersParams, opts ...ClientOption) (*ClusterServiceListClustersOK, error)
@@ -159,6 +167,8 @@ type ClientService interface {
 	ClusterServiceListProjectClusterAccelerators(params *ClusterServiceListProjectClusterAcceleratorsParams, opts ...ClientOption) (*ClusterServiceListProjectClusterAcceleratorsOK, error)
 
 	ClusterServiceListProjectClusters(params *ClusterServiceListProjectClustersParams, opts ...ClientOption) (*ClusterServiceListProjectClustersOK, error)
+
+	ClusterServiceListProviderFleet(params *ClusterServiceListProviderFleetParams, opts ...ClientOption) (*ClusterServiceListProviderFleetOK, error)
 
 	ClusterServiceMintSandboxLogsToken(params *ClusterServiceMintSandboxLogsTokenParams, opts ...ClientOption) (*ClusterServiceMintSandboxLogsTokenOK, error)
 
@@ -182,6 +192,8 @@ type ClientService interface {
 
 	ClusterServiceServerCheckIn(params *ClusterServiceServerCheckInParams, opts ...ClientOption) (*ClusterServiceServerCheckInOK, error)
 
+	ClusterServiceSetMachineVPNServices(params *ClusterServiceSetMachineVPNServicesParams, opts ...ClientOption) (*ClusterServiceSetMachineVPNServicesOK, error)
+
 	ClusterServiceSleepServer(params *ClusterServiceSleepServerParams, opts ...ClientOption) (*ClusterServiceSleepServerOK, error)
 
 	ClusterServiceUpdateCluster(params *ClusterServiceUpdateClusterParams, opts ...ClientOption) (*ClusterServiceUpdateClusterOK, error)
@@ -201,6 +213,8 @@ type ClientService interface {
 	ClusterServiceUpdateProjectCluster(params *ClusterServiceUpdateProjectClusterParams, opts ...ClientOption) (*ClusterServiceUpdateProjectClusterOK, error)
 
 	ClusterServiceUpdateProjectClusterAccelerators(params *ClusterServiceUpdateProjectClusterAcceleratorsParams, opts ...ClientOption) (*ClusterServiceUpdateProjectClusterAcceleratorsOK, error)
+
+	ClusterServiceUpdateProviderFleetOwner(params *ClusterServiceUpdateProviderFleetOwnerParams, opts ...ClientOption) (*ClusterServiceUpdateProviderFleetOwnerOK, error)
 
 	ClusterServiceUpdateSandboxCommandExitCode(params *ClusterServiceUpdateSandboxCommandExitCodeParams, opts ...ClientOption) (*ClusterServiceUpdateSandboxCommandExitCodeOK, error)
 
@@ -1554,6 +1568,48 @@ func (a *Client) ClusterServiceGetClusterCredentials(params *ClusterServiceGetCl
 }
 
 /*
+ClusterServiceGetClusterDetails gets cluster details is internal only placement machine vs g c p burst pending unscheduled creates and shadow reservation utilization
+*/
+func (a *Client) ClusterServiceGetClusterDetails(params *ClusterServiceGetClusterDetailsParams, opts ...ClientOption) (*ClusterServiceGetClusterDetailsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceGetClusterDetailsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_GetClusterDetails",
+		Method:             "GET",
+		PathPattern:        "/v1/core/clusters/{clusterId}/details",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceGetClusterDetailsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceGetClusterDetailsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceGetClusterDetailsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceGetClusterHealth cluster service get cluster health API
 */
 func (a *Client) ClusterServiceGetClusterHealth(params *ClusterServiceGetClusterHealthParams, opts ...ClientOption) (*ClusterServiceGetClusterHealthOK, error) {
@@ -1591,6 +1647,48 @@ func (a *Client) ClusterServiceGetClusterHealth(params *ClusterServiceGetCluster
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceGetClusterHealthDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceGetClusterReservationUsage cluster service get cluster reservation usage API
+*/
+func (a *Client) ClusterServiceGetClusterReservationUsage(params *ClusterServiceGetClusterReservationUsageParams, opts ...ClientOption) (*ClusterServiceGetClusterReservationUsageOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceGetClusterReservationUsageParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_GetClusterReservationUsage",
+		Method:             "GET",
+		PathPattern:        "/v1/orgs/{orgId}/clusters/{clusterId}/capacity-reservations/{reservationId}/usage",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceGetClusterReservationUsageReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceGetClusterReservationUsageOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceGetClusterReservationUsageDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -1675,6 +1773,48 @@ func (a *Client) ClusterServiceGetMachineDetails(params *ClusterServiceGetMachin
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceGetMachineDetailsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceGetMachineSetupURL mints the short lived user token the machine setup script is fetched with
+*/
+func (a *Client) ClusterServiceGetMachineSetupURL(params *ClusterServiceGetMachineSetupURLParams, opts ...ClientOption) (*ClusterServiceGetMachineSetupURLOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceGetMachineSetupURLParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_GetMachineSetupURL",
+		Method:             "GET",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machine-setup-url",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceGetMachineSetupURLReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceGetMachineSetupURLOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceGetMachineSetupURLDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2016,6 +2156,48 @@ func (a *Client) ClusterServiceListClusterProxies(params *ClusterServiceListClus
 }
 
 /*
+ClusterServiceListClusterReservationsForUsage cluster service list cluster reservations for usage API
+*/
+func (a *Client) ClusterServiceListClusterReservationsForUsage(params *ClusterServiceListClusterReservationsForUsageParams, opts ...ClientOption) (*ClusterServiceListClusterReservationsForUsageOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceListClusterReservationsForUsageParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_ListClusterReservationsForUsage",
+		Method:             "GET",
+		PathPattern:        "/v1/orgs/{orgId}/clusters/{clusterId}/reservation-usage",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceListClusterReservationsForUsageReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceListClusterReservationsForUsageOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceListClusterReservationsForUsageDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceListClusterUsageRestrictions cluster service list cluster usage restrictions API
 */
 func (a *Client) ClusterServiceListClusterUsageRestrictions(params *ClusterServiceListClusterUsageRestrictionsParams, opts ...ClientOption) (*ClusterServiceListClusterUsageRestrictionsOK, error) {
@@ -2347,6 +2529,48 @@ func (a *Client) ClusterServiceListProjectClusters(params *ClusterServiceListPro
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceListProjectClustersDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceListProviderFleet cluster service list provider fleet API
+*/
+func (a *Client) ClusterServiceListProviderFleet(params *ClusterServiceListProviderFleetParams, opts ...ClientOption) (*ClusterServiceListProviderFleetOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceListProviderFleetParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_ListProviderFleet",
+		Method:             "GET",
+		PathPattern:        "/v1/core/clusters/{clusterId}/provider-fleet",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceListProviderFleetReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceListProviderFleetOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceListProviderFleetDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2814,6 +3038,48 @@ func (a *Client) ClusterServiceServerCheckIn(params *ClusterServiceServerCheckIn
 }
 
 /*
+ClusterServiceSetMachineVPNServices sets machine v p n services starts or stops strong swan and f r r on a v p n gateway
+*/
+func (a *Client) ClusterServiceSetMachineVPNServices(params *ClusterServiceSetMachineVPNServicesParams, opts ...ClientOption) (*ClusterServiceSetMachineVPNServicesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceSetMachineVPNServicesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_SetMachineVPNServices",
+		Method:             "POST",
+		PathPattern:        "/v1/core/clusters/{clusterId}/machines/{id}/vpn",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceSetMachineVPNServicesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceSetMachineVPNServicesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceSetMachineVPNServicesDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ClusterServiceSleepServer cluster service sleep server API
 */
 func (a *Client) ClusterServiceSleepServer(params *ClusterServiceSleepServerParams, opts ...ClientOption) (*ClusterServiceSleepServerOK, error) {
@@ -3229,6 +3495,48 @@ func (a *Client) ClusterServiceUpdateProjectClusterAccelerators(params *ClusterS
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ClusterServiceUpdateProjectClusterAcceleratorsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ClusterServiceUpdateProviderFleetOwner cluster service update provider fleet owner API
+*/
+func (a *Client) ClusterServiceUpdateProviderFleetOwner(params *ClusterServiceUpdateProviderFleetOwnerParams, opts ...ClientOption) (*ClusterServiceUpdateProviderFleetOwnerOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewClusterServiceUpdateProviderFleetOwnerParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "ClusterService_UpdateProviderFleetOwner",
+		Method:             "PUT",
+		PathPattern:        "/v1/core/clusters/{clusterId}/provider-fleet/{nodeId}/owner",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ClusterServiceUpdateProviderFleetOwnerReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ClusterServiceUpdateProviderFleetOwnerOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ClusterServiceUpdateProviderFleetOwnerDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -49,12 +49,6 @@ type V1ProjectSettings struct {
 	// allow nebius saas
 	AllowNebiusSaas bool `json:"allowNebiusSaas,omitempty"`
 
-	// allow voltage park saas
-	AllowVoltageParkSaas bool `json:"allowVoltageParkSaas,omitempty"`
-
-	// allow vultr saas
-	AllowVultrSaas bool `json:"allowVultrSaas,omitempty"`
-
 	// auto replenish amount
 	AutoReplenishAmount float32 `json:"autoReplenishAmount,omitempty"`
 

@@ -47,6 +47,7 @@ class V1CloudSpaceInstanceStartupStatus(object):
     swagger_types = {
         'initial_restore_at': 'datetime',
         'initial_restore_finished': 'bool',
+        'jupyterlab_available': 'bool',
         'stage_progress': 'list[V1CloudSpaceInstanceStageProgress]',
         'started_at': 'datetime',
         'top_up_restore_at': 'datetime',
@@ -56,16 +57,18 @@ class V1CloudSpaceInstanceStartupStatus(object):
     attribute_map = {
         'initial_restore_at': 'initialRestoreAt',
         'initial_restore_finished': 'initialRestoreFinished',
+        'jupyterlab_available': 'jupyterlabAvailable',
         'stage_progress': 'stageProgress',
         'started_at': 'startedAt',
         'top_up_restore_at': 'topUpRestoreAt',
         'top_up_restore_finished': 'topUpRestoreFinished'
     }
 
-    def __init__(self, initial_restore_at: 'datetime' =None, initial_restore_finished: 'bool' =None, stage_progress: 'list[V1CloudSpaceInstanceStageProgress]' =None, started_at: 'datetime' =None, top_up_restore_at: 'datetime' =None, top_up_restore_finished: 'bool' =None):  # noqa: E501
+    def __init__(self, initial_restore_at: 'datetime' =None, initial_restore_finished: 'bool' =None, jupyterlab_available: 'bool' =None, stage_progress: 'list[V1CloudSpaceInstanceStageProgress]' =None, started_at: 'datetime' =None, top_up_restore_at: 'datetime' =None, top_up_restore_finished: 'bool' =None):  # noqa: E501
         """V1CloudSpaceInstanceStartupStatus - a model defined in Swagger"""  # noqa: E501
         self._initial_restore_at = None
         self._initial_restore_finished = None
+        self._jupyterlab_available = None
         self._stage_progress = None
         self._started_at = None
         self._top_up_restore_at = None
@@ -75,6 +78,8 @@ class V1CloudSpaceInstanceStartupStatus(object):
             self.initial_restore_at = initial_restore_at
         if initial_restore_finished is not None:
             self.initial_restore_finished = initial_restore_finished
+        if jupyterlab_available is not None:
+            self.jupyterlab_available = jupyterlab_available
         if stage_progress is not None:
             self.stage_progress = stage_progress
         if started_at is not None:
@@ -125,6 +130,29 @@ class V1CloudSpaceInstanceStartupStatus(object):
         """
 
         self._initial_restore_finished = initial_restore_finished
+
+    @property
+    def jupyterlab_available(self) -> 'bool':
+        """Gets the jupyterlab_available of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+
+        True once the Studio's tired-proxy reports it was given JupyterLab's socket. Only those Studios start JupyterLab.  # noqa: E501
+
+        :return: The jupyterlab_available of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._jupyterlab_available
+
+    @jupyterlab_available.setter
+    def jupyterlab_available(self, jupyterlab_available: 'bool'):
+        """Sets the jupyterlab_available of this V1CloudSpaceInstanceStartupStatus.
+
+        True once the Studio's tired-proxy reports it was given JupyterLab's socket. Only those Studios start JupyterLab.  # noqa: E501
+
+        :param jupyterlab_available: The jupyterlab_available of this V1CloudSpaceInstanceStartupStatus.  # noqa: E501
+        :type: bool
+        """
+
+        self._jupyterlab_available = jupyterlab_available
 
     @property
     def stage_progress(self) -> 'list[V1CloudSpaceInstanceStageProgress]':

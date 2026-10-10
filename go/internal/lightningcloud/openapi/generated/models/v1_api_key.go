@@ -37,6 +37,10 @@ type V1APIKey struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// nil when the key never expires
+	// Format: date-time
+	ExpiresAt strfmt.DateTime `json:"expiresAt,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
 
@@ -55,6 +59,9 @@ type V1APIKey struct {
 
 	// role
 	Role string `json:"role,omitempty"`
+
+	// status
+	Status *V1APIKeyStatus `json:"status,omitempty"`
 }
 
 // Validate validates this v1 API key
@@ -69,7 +76,15 @@ func (m *V1APIKey) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateExpiresAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateLastUsed(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -114,6 +129,18 @@ func (m *V1APIKey) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1APIKey) validateExpiresAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.ExpiresAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("expiresAt", "body", "date-time", m.ExpiresAt.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *V1APIKey) validateLastUsed(formats strfmt.Registry) error {
 	if swag.IsZero(m.LastUsed) { // not required
 		return nil
@@ -126,11 +153,38 @@ func (m *V1APIKey) validateLastUsed(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1APIKey) validateStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if m.Status != nil {
+		if err := m.Status.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("status")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("status")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this v1 API key based on the context it is used
 func (m *V1APIKey) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateBudgetConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -156,6 +210,31 @@ func (m *V1APIKey) contextValidateBudgetConfig(ctx context.Context, formats strf
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("budgetConfig")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1APIKey) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Status != nil {
+
+		if swag.IsZero(m.Status) { // not required
+			return nil
+		}
+
+		if err := m.Status.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("status")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("status")
 			}
 
 			return err

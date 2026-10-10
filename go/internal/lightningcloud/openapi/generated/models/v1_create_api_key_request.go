@@ -16,6 +16,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // V1CreateAPIKeyRequest v1 create API key request
@@ -28,6 +29,10 @@ type V1CreateAPIKeyRequest struct {
 
 	// description
 	Description string `json:"description,omitempty"`
+
+	// Optional expiry
+	// Format: date-time
+	ExpiresAt strfmt.DateTime `json:"expiresAt,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -56,6 +61,10 @@ func (m *V1CreateAPIKeyRequest) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateExpiresAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -80,6 +89,18 @@ func (m *V1CreateAPIKeyRequest) validateBudgetConfig(formats strfmt.Registry) er
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1CreateAPIKeyRequest) validateExpiresAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.ExpiresAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("expiresAt", "body", "date-time", m.ExpiresAt.String(), formats); err != nil {
+		return err
 	}
 
 	return nil

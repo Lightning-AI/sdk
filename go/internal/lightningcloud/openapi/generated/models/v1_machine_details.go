@@ -74,6 +74,10 @@ type V1MachineDetails struct {
 
 	// RAW VM instances info (hypervisor, internal baremetal-agent info, etc)
 	VMInstances []*V1VMInstance `json:"vmInstances"`
+
+	// Set only for a vpn-gateway machine. Its agent serves none of the instance
+	// or status fields above, so they stay empty.
+	VpnServices *V1MachineVPNServicesStatus `json:"vpnServices,omitempty"`
 }
 
 // Validate validates this v1 machine details
@@ -93,6 +97,10 @@ func (m *V1MachineDetails) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateVMInstances(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVpnServices(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -215,6 +223,29 @@ func (m *V1MachineDetails) validateVMInstances(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1MachineDetails) validateVpnServices(formats strfmt.Registry) error {
+	if swag.IsZero(m.VpnServices) { // not required
+		return nil
+	}
+
+	if m.VpnServices != nil {
+		if err := m.VpnServices.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("vpnServices")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("vpnServices")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this v1 machine details based on the context it is used
 func (m *V1MachineDetails) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -232,6 +263,10 @@ func (m *V1MachineDetails) ContextValidate(ctx context.Context, formats strfmt.R
 	}
 
 	if err := m.contextValidateVMInstances(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVpnServices(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -348,6 +383,31 @@ func (m *V1MachineDetails) contextValidateVMInstances(ctx context.Context, forma
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1MachineDetails) contextValidateVpnServices(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.VpnServices != nil {
+
+		if swag.IsZero(m.VpnServices) { // not required
+			return nil
+		}
+
+		if err := m.VpnServices.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("vpnServices")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("vpnServices")
+			}
+
+			return err
+		}
 	}
 
 	return nil

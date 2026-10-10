@@ -44,6 +44,10 @@ type V1Machine struct {
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
+	// The customer networks a vpn-gateway machine serves. Set only for Lightning
+	// staff, since it names other orgs' networks.
+	CustomerNetworks []*V1MachineCustomerNetwork `json:"customerNetworks"`
+
 	// If true, the machine will not be monitored by the monitor machines worker
 	DisableMonitoring bool `json:"disableMonitoring,omitempty"`
 
@@ -179,6 +183,10 @@ func (m *V1Machine) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCustomerNetworks(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEnv(formats); err != nil {
 		res = append(res, err)
 	}
@@ -220,6 +228,36 @@ func (m *V1Machine) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *V1Machine) validateCustomerNetworks(formats strfmt.Registry) error {
+	if swag.IsZero(m.CustomerNetworks) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CustomerNetworks); i++ {
+		if swag.IsZero(m.CustomerNetworks[i]) { // not required
+			continue
+		}
+
+		if m.CustomerNetworks[i] != nil {
+			if err := m.CustomerNetworks[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customerNetworks" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customerNetworks" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -364,6 +402,10 @@ func (m *V1Machine) validateUpdatedAt(formats strfmt.Registry) error {
 func (m *V1Machine) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateCustomerNetworks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateEnv(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -383,6 +425,35 @@ func (m *V1Machine) ContextValidate(ctx context.Context, formats strfmt.Registry
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *V1Machine) contextValidateCustomerNetworks(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CustomerNetworks); i++ {
+
+		if m.CustomerNetworks[i] != nil {
+
+			if swag.IsZero(m.CustomerNetworks[i]) { // not required
+				return nil
+			}
+
+			if err := m.CustomerNetworks[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("customerNetworks" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("customerNetworks" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

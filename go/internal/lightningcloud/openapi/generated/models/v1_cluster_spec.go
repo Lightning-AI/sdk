@@ -36,6 +36,9 @@ type V1ClusterSpec struct {
 	// Azure cloud configuration
 	AzureV1 *V1AzureDirectV1 `json:"azureV1,omitempty"`
 
+	// Blocks server creation, allocation, and warm reuse for every user.
+	BlockServerCreation bool `json:"blockServerCreation,omitempty"`
+
 	// If true, apply Lightning cloud pricing for this cluster instead of BYOC
 	// (needed for the case when we keep customers' BYOC clusters on our own infra)
 	CloudPricingEnabled bool `json:"cloudPricingEnabled,omitempty"`
@@ -160,12 +163,6 @@ type V1ClusterSpec struct {
 
 	// Whether cloudy vibe coding is enabled for the cluster
 	VibeCodingEnabled bool `json:"vibeCodingEnabled,omitempty"`
-
-	// VoltagePark Cloud configuration
-	VoltageParkV1 *V1VoltageParkDirectV1 `json:"voltageParkV1,omitempty"`
-
-	// Vultr Cloud configuration
-	VultrV1 *V1VultrDirectV1 `json:"vultrV1,omitempty"`
 }
 
 // Validate validates this v1 cluster spec
@@ -261,14 +258,6 @@ func (m *V1ClusterSpec) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateThunderCatV1(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVoltageParkV1(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVultrV1(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -814,52 +803,6 @@ func (m *V1ClusterSpec) validateThunderCatV1(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *V1ClusterSpec) validateVoltageParkV1(formats strfmt.Registry) error {
-	if swag.IsZero(m.VoltageParkV1) { // not required
-		return nil
-	}
-
-	if m.VoltageParkV1 != nil {
-		if err := m.VoltageParkV1.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("voltageParkV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("voltageParkV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ClusterSpec) validateVultrV1(formats strfmt.Registry) error {
-	if swag.IsZero(m.VultrV1) { // not required
-		return nil
-	}
-
-	if m.VultrV1 != nil {
-		if err := m.VultrV1.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("vultrV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("vultrV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
 // ContextValidate validate this v1 cluster spec based on the context it is used
 func (m *V1ClusterSpec) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -953,14 +896,6 @@ func (m *V1ClusterSpec) ContextValidate(ctx context.Context, formats strfmt.Regi
 	}
 
 	if err := m.contextValidateThunderCatV1(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateVoltageParkV1(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateVultrV1(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -1540,56 +1475,6 @@ func (m *V1ClusterSpec) contextValidateThunderCatV1(ctx context.Context, formats
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("thunderCatV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ClusterSpec) contextValidateVoltageParkV1(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.VoltageParkV1 != nil {
-
-		if swag.IsZero(m.VoltageParkV1) { // not required
-			return nil
-		}
-
-		if err := m.VoltageParkV1.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("voltageParkV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("voltageParkV1")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *V1ClusterSpec) contextValidateVultrV1(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.VultrV1 != nil {
-
-		if swag.IsZero(m.VultrV1) { // not required
-			return nil
-		}
-
-		if err := m.VultrV1.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("vultrV1")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("vultrV1")
 			}
 
 			return err

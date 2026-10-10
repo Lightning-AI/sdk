@@ -18,12 +18,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DataConnectionServiceUpdateDataConnectionBody Update
+// DataConnectionServiceUpdateDataConnectionBody Update. Omitted fields leave the stored value unchanged: the scalar settings
+// below carry field presence, and an omitted run_cmds keeps the stored commands.
 //
 // swagger:model DataConnectionServiceUpdateDataConnectionBody
 type DataConnectionServiceUpdateDataConnectionBody struct {
 
-	// Manages data connection capacity auto-increase
+	// Clusters the connection is available in. Omit to leave unchanged.
+	AccessClusterIds *V1AccessClusterIdsUpdate `json:"accessClusterIds,omitempty"`
+
+	// Manages data connection capacity auto-increase. Omit to leave unchanged.
 	AutoIncreaseEnabled bool `json:"autoIncreaseEnabled,omitempty"`
 
 	// aws
@@ -44,13 +48,13 @@ type DataConnectionServiceUpdateDataConnectionBody struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// Optimization mode for the data connection
+	// Optimization mode for the data connection. Omit to leave unchanged.
 	OptimizationMode *V1DataConnectionOptimizationMode `json:"optimizationMode,omitempty"`
 
 	// r2
 	R2 *V1R2DataConnection `json:"r2,omitempty"`
 
-	// Used for rclone
+	// Used for rclone. Omit to leave unchanged.
 	RunCmds []string `json:"runCmds"`
 
 	// s3 folder
@@ -59,13 +63,17 @@ type DataConnectionServiceUpdateDataConnectionBody struct {
 	// snowflake
 	Snowflake *V1SnowflakeDataConnection `json:"snowflake,omitempty"`
 
-	// If true, allow writing to the data connection folder
+	// If true, allow writing to the data connection folder. Omit to leave unchanged.
 	Writable bool `json:"writable,omitempty"`
 }
 
 // Validate validates this data connection service update data connection body
 func (m *DataConnectionServiceUpdateDataConnectionBody) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAccessClusterIds(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateAws(formats); err != nil {
 		res = append(res, err)
@@ -102,6 +110,29 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) Validate(formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DataConnectionServiceUpdateDataConnectionBody) validateAccessClusterIds(formats strfmt.Registry) error {
+	if swag.IsZero(m.AccessClusterIds) { // not required
+		return nil
+	}
+
+	if m.AccessClusterIds != nil {
+		if err := m.AccessClusterIds.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("accessClusterIds")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("accessClusterIds")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -293,6 +324,10 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) validateSnowflake(format
 func (m *DataConnectionServiceUpdateDataConnectionBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateAccessClusterIds(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateAws(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -328,6 +363,31 @@ func (m *DataConnectionServiceUpdateDataConnectionBody) ContextValidate(ctx cont
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DataConnectionServiceUpdateDataConnectionBody) contextValidateAccessClusterIds(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.AccessClusterIds != nil {
+
+		if swag.IsZero(m.AccessClusterIds) { // not required
+			return nil
+		}
+
+		if err := m.AccessClusterIds.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("accessClusterIds")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("accessClusterIds")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -49,6 +49,7 @@ class V1ClusterSpec(object):
         'available_accelerators': 'list[str]',
         'aws_v1': 'V1AWSDirectV1',
         'azure_v1': 'V1AzureDirectV1',
+        'block_server_creation': 'bool',
         'cloud_pricing_enabled': 'bool',
         'cloudflare_v1': 'V1CloudflareV1',
         'cluster_type': 'V1ClusterType',
@@ -89,9 +90,7 @@ class V1ClusterSpec(object):
         'thunder_cat_v1': 'V1ThunderCatDirectV1',
         'unavailability_spikes_detection_enabled': 'bool',
         'user_id': 'str',
-        'vibe_coding_enabled': 'bool',
-        'voltage_park_v1': 'V1VoltageParkDirectV1',
-        'vultr_v1': 'V1VultrDirectV1'
+        'vibe_coding_enabled': 'bool'
     }
 
     attribute_map = {
@@ -99,6 +98,7 @@ class V1ClusterSpec(object):
         'available_accelerators': 'availableAccelerators',
         'aws_v1': 'awsV1',
         'azure_v1': 'azureV1',
+        'block_server_creation': 'blockServerCreation',
         'cloud_pricing_enabled': 'cloudPricingEnabled',
         'cloudflare_v1': 'cloudflareV1',
         'cluster_type': 'clusterType',
@@ -139,17 +139,16 @@ class V1ClusterSpec(object):
         'thunder_cat_v1': 'thunderCatV1',
         'unavailability_spikes_detection_enabled': 'unavailabilitySpikesDetectionEnabled',
         'user_id': 'userId',
-        'vibe_coding_enabled': 'vibeCodingEnabled',
-        'voltage_park_v1': 'voltageParkV1',
-        'vultr_v1': 'vultrV1'
+        'vibe_coding_enabled': 'vibeCodingEnabled'
     }
 
-    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, enforce_lightning_compute_on_demand_access: 'bool' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, rafay_v1: 'V1RafayDirectV1' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, storage_retention_period_days: 'int' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None, voltage_park_v1: 'V1VoltageParkDirectV1' =None, vultr_v1: 'V1VultrDirectV1' =None):  # noqa: E501
+    def __init__(self, auth_token: 'str' =None, available_accelerators: 'list[str]' =None, aws_v1: 'V1AWSDirectV1' =None, azure_v1: 'V1AzureDirectV1' =None, block_server_creation: 'bool' =None, cloud_pricing_enabled: 'bool' =None, cloudflare_v1: 'V1CloudflareV1' =None, cluster_type: 'V1ClusterType' =None, compute_cluster_ids: 'list[str]' =None, compute_cluster_request: 'V1ComputeClusterRequest' =None, cudo_v1: 'V1CudoDirectV1' =None, deletion_options: 'V1ClusterDeletionOptions' =None, desired_state: 'V1ClusterState' =None, domain: 'str' =None, driver: 'V1CloudProvider' =None, enforce_lightning_compute_on_demand_access: 'bool' =None, freeze_accelerators: 'bool' =None, google_cloud_v1: 'V1GoogleCloudDirectV1' =None, host_dns_enabled: 'bool' =None, insurer_disabled: 'bool' =None, kubernetes_v1: 'V1KubernetesDirectV1' =None, lambda_labs_v1: 'V1LambdaLabsDirectV1' =None, lightning_elastic_cluster_v1: 'V1LightningElasticClusterV1' =None, lock_overprovisioning: 'bool' =None, locked_zones: 'list[str]' =None, machine_v1: 'V1MachineDirectV1' =None, mithril_v1: 'V1MithrilDirectV1' =None, monitor_deletion_disabled: 'bool' =None, nebius_v1: 'V1NebiusDirectV1' =None, overprovisioning: 'list[V1InstanceOverprovisioningSpec]' =None, parent_cluster_id: 'str' =None, parent_cluster_type: 'str' =None, pause_automation: 'bool' =None, rafay_v1: 'V1RafayDirectV1' =None, reservation_details: 'V1ReservationDetails' =None, reserved_capacity_provider: 'bool' =None, reserved_instances_only: 'bool' =None, security_options: 'V1ClusterSecurityOptions' =None, slurm_v1: 'V1SlurmV1' =None, storage_retention_period_days: 'int' =None, tagging_options: 'V1ClusterTaggingOptions' =None, tensordock_v1: 'V1TensorDockDirectV1' =None, thunder_cat_v1: 'V1ThunderCatDirectV1' =None, unavailability_spikes_detection_enabled: 'bool' =None, user_id: 'str' =None, vibe_coding_enabled: 'bool' =None):  # noqa: E501
         """V1ClusterSpec - a model defined in Swagger"""  # noqa: E501
         self._auth_token = None
         self._available_accelerators = None
         self._aws_v1 = None
         self._azure_v1 = None
+        self._block_server_creation = None
         self._cloud_pricing_enabled = None
         self._cloudflare_v1 = None
         self._cluster_type = None
@@ -191,8 +190,6 @@ class V1ClusterSpec(object):
         self._unavailability_spikes_detection_enabled = None
         self._user_id = None
         self._vibe_coding_enabled = None
-        self._voltage_park_v1 = None
-        self._vultr_v1 = None
         self.discriminator = None
         if auth_token is not None:
             self.auth_token = auth_token
@@ -202,6 +199,8 @@ class V1ClusterSpec(object):
             self.aws_v1 = aws_v1
         if azure_v1 is not None:
             self.azure_v1 = azure_v1
+        if block_server_creation is not None:
+            self.block_server_creation = block_server_creation
         if cloud_pricing_enabled is not None:
             self.cloud_pricing_enabled = cloud_pricing_enabled
         if cloudflare_v1 is not None:
@@ -284,10 +283,6 @@ class V1ClusterSpec(object):
             self.user_id = user_id
         if vibe_coding_enabled is not None:
             self.vibe_coding_enabled = vibe_coding_enabled
-        if voltage_park_v1 is not None:
-            self.voltage_park_v1 = voltage_park_v1
-        if vultr_v1 is not None:
-            self.vultr_v1 = vultr_v1
 
     @property
     def auth_token(self) -> 'str':
@@ -372,6 +367,29 @@ class V1ClusterSpec(object):
         """
 
         self._azure_v1 = azure_v1
+
+    @property
+    def block_server_creation(self) -> 'bool':
+        """Gets the block_server_creation of this V1ClusterSpec.  # noqa: E501
+
+        Blocks server creation, allocation, and warm reuse for every user.  # noqa: E501
+
+        :return: The block_server_creation of this V1ClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._block_server_creation
+
+    @block_server_creation.setter
+    def block_server_creation(self, block_server_creation: 'bool'):
+        """Sets the block_server_creation of this V1ClusterSpec.
+
+        Blocks server creation, allocation, and warm reuse for every user.  # noqa: E501
+
+        :param block_server_creation: The block_server_creation of this V1ClusterSpec.  # noqa: E501
+        :type: bool
+        """
+
+        self._block_server_creation = block_server_creation
 
     @property
     def cloud_pricing_enabled(self) -> 'bool':
@@ -1237,48 +1255,6 @@ class V1ClusterSpec(object):
         """
 
         self._vibe_coding_enabled = vibe_coding_enabled
-
-    @property
-    def voltage_park_v1(self) -> 'V1VoltageParkDirectV1':
-        """Gets the voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
-
-
-        :return: The voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
-        :rtype: V1VoltageParkDirectV1
-        """
-        return self._voltage_park_v1
-
-    @voltage_park_v1.setter
-    def voltage_park_v1(self, voltage_park_v1: 'V1VoltageParkDirectV1'):
-        """Sets the voltage_park_v1 of this V1ClusterSpec.
-
-
-        :param voltage_park_v1: The voltage_park_v1 of this V1ClusterSpec.  # noqa: E501
-        :type: V1VoltageParkDirectV1
-        """
-
-        self._voltage_park_v1 = voltage_park_v1
-
-    @property
-    def vultr_v1(self) -> 'V1VultrDirectV1':
-        """Gets the vultr_v1 of this V1ClusterSpec.  # noqa: E501
-
-
-        :return: The vultr_v1 of this V1ClusterSpec.  # noqa: E501
-        :rtype: V1VultrDirectV1
-        """
-        return self._vultr_v1
-
-    @vultr_v1.setter
-    def vultr_v1(self, vultr_v1: 'V1VultrDirectV1'):
-        """Sets the vultr_v1 of this V1ClusterSpec.
-
-
-        :param vultr_v1: The vultr_v1 of this V1ClusterSpec.  # noqa: E501
-        :type: V1VultrDirectV1
-        """
-
-        self._vultr_v1 = vultr_v1
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -48,7 +48,9 @@ class V1GenericJob(object):
         'cloud_space_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'current_run_attempt': 'int',
         'id': 'str',
+        'max_run_attempts': 'int',
         'message': 'str',
         'name': 'str',
         'project_id': 'str',
@@ -65,7 +67,9 @@ class V1GenericJob(object):
         'cloud_space_id': 'cloudSpaceId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'current_run_attempt': 'currentRunAttempt',
         'id': 'id',
+        'max_run_attempts': 'maxRunAttempts',
         'message': 'message',
         'name': 'name',
         'project_id': 'projectId',
@@ -78,12 +82,14 @@ class V1GenericJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, id: 'str' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1GenericJob - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_id = None
         self._cluster_id = None
         self._created_at = None
+        self._current_run_attempt = None
         self._id = None
+        self._max_run_attempts = None
         self._message = None
         self._name = None
         self._project_id = None
@@ -101,8 +107,12 @@ class V1GenericJob(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if current_run_attempt is not None:
+            self.current_run_attempt = current_run_attempt
         if id is not None:
             self.id = id
+        if max_run_attempts is not None:
+            self.max_run_attempts = max_run_attempts
         if message is not None:
             self.message = message
         if name is not None:
@@ -188,6 +198,27 @@ class V1GenericJob(object):
         self._created_at = created_at
 
     @property
+    def current_run_attempt(self) -> 'int':
+        """Gets the current_run_attempt of this V1GenericJob.  # noqa: E501
+
+
+        :return: The current_run_attempt of this V1GenericJob.  # noqa: E501
+        :rtype: int
+        """
+        return self._current_run_attempt
+
+    @current_run_attempt.setter
+    def current_run_attempt(self, current_run_attempt: 'int'):
+        """Sets the current_run_attempt of this V1GenericJob.
+
+
+        :param current_run_attempt: The current_run_attempt of this V1GenericJob.  # noqa: E501
+        :type: int
+        """
+
+        self._current_run_attempt = current_run_attempt
+
+    @property
     def id(self) -> 'str':
         """Gets the id of this V1GenericJob.  # noqa: E501
 
@@ -207,6 +238,27 @@ class V1GenericJob(object):
         """
 
         self._id = id
+
+    @property
+    def max_run_attempts(self) -> 'int':
+        """Gets the max_run_attempts of this V1GenericJob.  # noqa: E501
+
+
+        :return: The max_run_attempts of this V1GenericJob.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_run_attempts
+
+    @max_run_attempts.setter
+    def max_run_attempts(self, max_run_attempts: 'int'):
+        """Sets the max_run_attempts of this V1GenericJob.
+
+
+        :param max_run_attempts: The max_run_attempts of this V1GenericJob.  # noqa: E501
+        :type: int
+        """
+
+        self._max_run_attempts = max_run_attempts
 
     @property
     def message(self) -> 'str':
