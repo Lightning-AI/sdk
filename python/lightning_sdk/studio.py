@@ -358,6 +358,7 @@ class Studio(metaclass=TrackCallsMeta):
         Raises:
             RuntimeError: If the Studio is already running on a different machine or is not stopped.
             RuntimeError: If the requested machine has no available capacity.
+            RuntimeError: If the started instance fails or stops before becoming ready.
 
         Warns:
             UserWarning: If the requested machine is not a known machine type for the selected

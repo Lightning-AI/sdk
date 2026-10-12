@@ -39,6 +39,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Resources,
     V1SearchUser,
     V1SearchUsersResponse,
+    V1StartCloudSpaceInstanceResponse,
     V1UserRequestedComputeConfig,
 )
 from lightning_sdk.machine import Machine
@@ -281,16 +282,19 @@ def test_switch_machine_no_requested(switch_mock, update_mock, status_mock):
 )
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_start_studio(mock_start_instance, mock_get_status):
+    mock_start_instance.return_value = V1StartCloudSpaceInstanceResponse()
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         requested=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
-            )
+            ),
         ),
         in_use=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
-            )
+            ),
         ),
     )
 
