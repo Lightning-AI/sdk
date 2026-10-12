@@ -10,7 +10,6 @@ from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceCreateCloudSpaceBody,
     Externalv1CloudSpaceInstanceStatus,
-    Externalv1LightningappInstance,
     V1AWSDirectV1,
     V1CloudProvider,
     V1CloudSpace,
@@ -20,7 +19,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CloudSpaceState,
     V1ClusterAccelerator,
     V1ClusterType,
-    V1CreateCloudSpaceAppInstanceResponse,
     V1DeleteCloudSpaceResponse,
     V1Endpoint,
     V1ExecuteCloudSpaceCommandResponse,
@@ -915,70 +913,6 @@ def test_duplicate_org_with_new_name(
     body = call_args[0][1]
     assert body.new_name == "renamed-studio"
     assert kwargs == {"name": "renamed-studio", "teamspace": "teamspace-abc", "org": "org-abc"}
-
-
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_create_job_with_service_id(monkeypatch):
-    monkeypatch.setenv("LIGHTNING_SERVICE_EXECUTION_ID", "service_id")
-    mock_client = mock.MagicMock()
-
-    monkeypatch.setattr("lightning_sdk.api.utils.LightningClient", mock.MagicMock(return_value=mock_client))
-    studio_api = StudioApi()
-
-    studio_api.create_job("my-entry-point", "fancy-job-name", Machine.L4, "st-abc", "ts-abc", "cluster-abc", False)
-    assert (
-        mock_client.cloud_space_service_create_cloud_space_app_instance._mock_mock_calls[0].kwargs["body"].service_id
-        == "service_id"
-    )
-
-
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
-    autospec=True,
-)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_create_inference_run(mock_create_app):
-    def side_effect(self, body, project_id, cloudspace_id, id):
-        if id == "inference_plugin":
-            assert body.plugin_arguments == {
-                "compute": "lit-l4-1",
-                "entrypoint": "my-entry-point",
-                "name": "fancy-inference-name",
-                "min_replicas": "1",
-                "max_replicas": "5",
-                "max_batch_size": "10",
-                "timeout_batching": "0.3",
-                "scale_in_interval": "11",
-                "scale_out_interval": "12",
-                "endpoint": "/fancy-predict",
-                "spot": "false",
-            }
-
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
-        )
-
-    mock_create_app.side_effect = side_effect
-
-    studio_api = StudioApi()
-
-    resp = studio_api.create_inference_job(
-        "my-entry-point",
-        "fancy-inference-name",
-        Machine.L4,
-        min_replicas="1",
-        max_replicas="5",
-        max_batch_size="10",
-        timeout_batching="0.3",
-        scale_in_interval="11",
-        scale_out_interval="12",
-        endpoint="/fancy-predict",
-        studio_id="st-abc",
-        teamspace_id="ts-abc",
-        cloud_account="cluster-abc",
-        interruptible=False,
-    )
-    assert resp.name == "fancy-inference-name"
 
 
 @mock.patch("requests.get", autospec=True)

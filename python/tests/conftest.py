@@ -1,4 +1,3 @@
-import json
 import os
 import time
 from typing import Callable
@@ -25,7 +24,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterSpec,
     V1ClusterState,
     V1ClusterStatus,
-    V1CreateCloudSpaceAppInstanceResponse,
     V1DeleteCloudSpaceResponse,
     V1DownloadJobLogsResponse,
     V1DownloadLightningappInstanceLogsResponse,
@@ -38,7 +36,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetUserResponse,
     V1Job,
     V1JobSpec,
-    V1LightningappInstanceSpec,
     V1LightningappInstanceState,
     V1LightningappInstanceStatus,
     V1LightningRun,
@@ -1499,56 +1496,6 @@ def internal_studio_duplicate_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_studio_api_create_app_mocker(mocker):
-    def side_effect(self, body, project_id, cloudspace_id, id):
-        if id == "job":
-            assert body.plugin_arguments == {
-                "entrypoint": "my-entry-point",
-                "name": "fancy-job-name",
-                "compute": "lit-l4-1",
-                "spot": "false",
-            }
-        elif id == "distributed_plugin":
-            assert body.plugin_arguments == {
-                "entrypoint": "my-entry-point",
-                "name": "fancy-mmt-name",
-                "distributedArguments": json.dumps(
-                    {"cloud_compute": "lit-l4-1", "num_instances": 4, "strategy": "parallel"}
-                ),
-                "spot": "false",
-            }
-
-        elif id == "inference_plugin":
-            assert body.plugin_arguments == {
-                "compute": "lit-l4-1",
-                "entrypoint": "my-entry-point",
-                "name": "fancy-inference-name",
-                "min_replicas": "1",
-                "max_replicas": "5",
-                "max_batch_size": "10",
-                "timeout_batching": "0.3",
-                "scale_in_interval": "11",
-                "scale_out_interval": "12",
-                "endpoint": "/fancy-predict",
-                "spot": "false",
-            }
-
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
-        )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
-        autospec=True,
-        side_effect=side_effect,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
 def internal_job_get_cloudspace_mocker(mocker):
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space",
@@ -1559,36 +1506,6 @@ def internal_job_get_cloudspace_mocker(mocker):
             cluster_id="c-abc",
         ),
         autospec=True,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
-def internal_job_run_mocker(mocker):
-    def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.machine import Machine
-
-        assert body.plugin_arguments["entrypoint"] == "python my-file.py"
-        assert body.plugin_arguments["name"] != ""
-        assert body.plugin_arguments["compute"] in [
-            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ]
-
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(
-                name=body.plugin_arguments["name"],
-                project_id="ts-abc",
-                spec=V1LightningappInstanceSpec(cloud_space_id="st-abc"),
-            )
-        )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
-        autospec=True,
-        side_effect=side_effect,
     )
 
     yield [mocker]
@@ -1619,39 +1536,6 @@ def internal_mmt_run_mocker(mocker):
 
     mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_create_multi_machine_job",
-        autospec=True,
-        side_effect=side_effect,
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
-def internal_inference_run_mocker(mocker):
-    def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.machine import Machine
-
-        assert body.plugin_arguments["entrypoint"] == "python my-file.py"
-        assert body.plugin_arguments["name"] == "my-fancy-inference-name"
-        assert body.plugin_arguments["min_replicas"] == "1"
-        assert body.plugin_arguments["max_replicas"] == "5"
-        assert body.plugin_arguments["max_batch_size"] == "10"
-        assert body.plugin_arguments["timeout_batching"] == "0.3"
-        assert body.plugin_arguments["scale_in_interval"] == "11"
-        assert body.plugin_arguments["scale_out_interval"] == "12"
-        assert body.plugin_arguments["endpoint"] == "/fancy-predict"
-        assert body.plugin_arguments["compute"] in [
-            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ] + [machine.slug for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
-        )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
         autospec=True,
         side_effect=side_effect,
     )
@@ -1698,34 +1582,6 @@ def internal_studio_api_add_port_mocker(mocker):  # todo
             name="endpoint-name",
             urls=["http://localhost:8000"],
         ),
-    )
-
-    yield [mocker]
-
-    mocker.resetall()
-
-
-@pytest.fixture()
-def internal_data_prep_run_mocker(mocker):
-    def side_effect(self, body, project_id, cloudspace_id, id):
-        from lightning_sdk.machine import Machine
-
-        distributed_args = json.loads(body.plugin_arguments["dataPrepArguments"])
-        assert body.plugin_arguments["entrypoint"] == "python my-file.py"
-        assert body.plugin_arguments["name"] == "my-fancy-data-prep-name"
-        assert distributed_args["num_instances"] == 42
-        assert distributed_args["cloud_compute"] in [
-            machine.instance_type for machine in Machine.__dict__.values() if isinstance(machine, Machine)
-        ] + [machine.slug for machine in Machine.__dict__.values() if isinstance(machine, Machine)]
-
-        return V1CreateCloudSpaceAppInstanceResponse(
-            lightningappinstance=Externalv1LightningappInstance(name=body.plugin_arguments["name"])
-        )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_create_cloud_space_app_instance",
-        autospec=True,
-        side_effect=side_effect,
     )
 
     yield [mocker]
