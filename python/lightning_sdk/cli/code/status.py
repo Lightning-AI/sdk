@@ -1,55 +1,63 @@
 """lightning code status: which coding tools use code.lightning.ai."""
 
+from typing import Any
+
 import rich_click as click
 
-from lightning_sdk.cli.code import opencode
+from lightning_sdk.cli.code.registry import TOOLS
+from lightning_sdk.cli.code.tool import ToolConfigError
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
-from lightning_sdk.utils.jsonc import JSONCError
 
 
 @click.command("status", cls=LightningCommand)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def status(as_json: bool = False) -> None:
     """Show which coding tools are set up for code.lightning.ai, and which org they bill."""
-    try:
-        state = opencode.read_state()
-    except (JSONCError, ValueError) as exc:
-        raise click.ClickException(f"Couldn't read OpenCode's config: {exc}") from None
+    infos: list[dict[str, Any]] = []
+    for tool in TOOLS.values():
+        info: dict[str, Any] = {"tool": tool.id, "installed": tool.installed()}
+        try:
+            state = tool.read()
+        except ToolConfigError as exc:
+            infos.append({**info, "configured": False, "managed": False, "error": str(exc)})
+            continue
+        record = state.record
+        infos.append(
+            {
+                **info,
+                "configured": state.configured,
+                "managed": record is not None,
+                "config": state.location,
+                "org": record.org_name if record else None,
+                "key_name": record.key_name if record else None,
+                "key_id": record.key_id if record else None,
+                "model": state.default_model,
+                "notes": tool.warnings(state) if state.configured else [],
+            }
+        )
 
-    credential = state.credential
-    metadata = credential.metadata if credential else {}
-    info = {
-        "tool": "opencode",
-        "installed": opencode.installed(),
-        "configured": state.provider is not None and credential is not None,
-        "managed": state.managed,
-        "config": str(state.config_path),
-        "org": metadata.get("org_name"),
-        "key_name": metadata.get("key_name"),
-        "key_id": metadata.get("key_id"),
-        "model": state.model,
-    }
     if as_json:
-        echo_json([info])
+        echo_json(infos)
         return
 
-    click.echo(opencode.NAME)
-    if not info["configured"]:
-        missing = "provider" if state.provider is None else "API key"
-        if state.provider is None and credential is None:
-            click.echo("  Not set up. Run: lightning code setup opencode")
+    for info in infos:
+        tool = TOOLS[info["tool"]]
+        if "error" in info:
+            click.echo(f"{tool.name}: couldn't read its config: {info['error']}")
+        elif not info["configured"]:
+            click.echo(f"{tool.name}: not set up")
+            continue
+        elif not info["managed"]:
+            click.echo(f"{tool.name}: set up by hand in {info['config']}, not by `lightning code`")
+            continue
         else:
-            click.echo(f"  Incomplete, the {missing} is missing. Run: lightning code setup opencode")
-        return
-    if not state.managed:
-        click.echo(f"  Set up by hand in {state.config_path}, not by `lightning code`.")
-        return
-    click.echo(f"  Org:     {info['org']}")
-    click.echo(f"  API key: {info['key_name']} ({info['key_id']})")
-    click.echo(f"  Config:  {info['config']}")
-    click.echo(f"  Default: {info['model'] or 'none'}")
-    if not info["installed"]:
-        click.echo(f"  OpenCode isn't on your PATH. Install it with: {opencode.INSTALL_COMMAND}")
-    for note in opencode.warnings(state):
-        click.echo(f"  Note: {note}")
+            click.echo(f"{tool.name}: billed to {info['org']}")
+            click.echo(f"  API key: {info['key_name']} ({info['key_id']})")
+            click.echo(f"  Config:  {info['config']}")
+            if info["model"]:
+                click.echo(f"  Default: {info['model']}")
+            if not info["installed"] and tool.install:
+                click.echo(f"  Not on your PATH. Install it with: {tool.install}")
+            for note in info["notes"]:
+                click.echo(f"  Note: {note}")

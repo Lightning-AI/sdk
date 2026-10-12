@@ -1,0 +1,14 @@
+# Written by `lightning code setup codex`. Use it with: codex --profile lightning
+# Run the setup again to update it; `lightning code remove codex` deletes it.
+# Models: lightning-ai/glm-5.3, lightning-ai/glm-5.3-flash, lightning-ai/deepseek-v4.1-flash
+model_provider = "lightning"
+model = "lightning-ai/deepseek-v4.1-flash"
+model_context_window = 253952
+model_reasoning_summary = "none"
+
+[model_providers.lightning]
+name = "Lightning AI"
+base_url = "https://code.lightning.ai/v1"
+wire_api = "responses"
+experimental_bearer_token = "sk-lit-replace-me"
+stream_idle_timeout_ms = 600000

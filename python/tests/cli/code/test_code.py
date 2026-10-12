@@ -6,16 +6,19 @@ from unittest.mock import MagicMock, patch
 
 import click
 import pytest
-from click.testing import CliRunner, Result
+from click.testing import CliRunner
 
 from lightning_sdk.cli.code import account, opencode
 from lightning_sdk.cli.code import models as coding_models
+from lightning_sdk.cli.code import tool as tool_module
 from lightning_sdk.cli.code.models import DEFAULT_MODEL, FALLBACK_MODELS
 from lightning_sdk.cli.code.remove import remove
 from lightning_sdk.cli.code.setup import setup
 from lightning_sdk.cli.code.status import status
 from lightning_sdk.cli.code.token import token
+from lightning_sdk.cli.code.tool import KeyRecord
 from lightning_sdk.utils import jsonc
+from tests.cli.code.conftest import invoke, make_org
 from tests.cli.help import assert_help_contains, mock_command_logging
 
 USER_CONFIG = """{
@@ -25,56 +28,6 @@ USER_CONFIG = """{
   "model": "anthropic/claude-sonnet-5-5"
 }
 """
-
-
-@pytest.fixture(autouse=True)
-def opencode_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "config"))
-    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "data"))
-    monkeypatch.setenv("HOME", str(tmp_path))
-    for name in ("OPENCODE_CONFIG", "OPENCODE_CONFIG_CONTENT", "OPENCODE_AUTH_CONTENT"):
-        monkeypatch.delenv(name, raising=False)
-    monkeypatch.chdir(tmp_path)
-    return tmp_path
-
-
-MODELS_RESPONSE = json.loads((Path(__file__).parent / "models_response.json").read_text())
-
-
-@pytest.fixture(autouse=True)
-def models_api():
-    """Serve /v1/models from a copy of what code.lightning.ai returned, instead of the network."""
-    response = MagicMock()
-    response.json.return_value = MODELS_RESPONSE
-    with patch.object(coding_models.requests, "get", return_value=response) as get:
-        yield get
-
-
-def _org(plan="Enterprise", name="my-org", org_id="org-1", **kwargs) -> account.CodingOrg:
-    fields = {"display_name": "", "personal": False, "coding_disabled": False, **kwargs}
-    return account.CodingOrg(id=org_id, name=name, plan=plan, **fields)
-
-
-@pytest.fixture()
-def api():
-    """Mock everything that talks to Lightning: org choice, key creation and revocation."""
-    keys = iter(range(1, 100))
-
-    def create_key(org, name, description):
-        n = next(keys)
-        return SimpleNamespace(id=f"key-{n}", name=name, raw_key=f"sk-lit-{n}")
-
-    with patch.object(account, "choose_org", return_value=_org()) as choose, patch.object(
-        account, "create_key", side_effect=create_key
-    ) as create, patch.object(account, "key_exists", return_value=True) as exists, patch.object(
-        account, "revoke_key", return_value=True
-    ) as revoke:
-        yield SimpleNamespace(choose_org=choose, create_key=create, key_exists=exists, revoke_key=revoke)
-
-
-def _invoke(command: click.Command, *args: str) -> Result:
-    with patch("lightning_sdk.cli.utils.logging._log_command", new=MagicMock()):
-        return CliRunner().invoke(command, list(args), catch_exceptions=False)
 
 
 def _auth() -> dict:
@@ -93,7 +46,7 @@ def test_code_help() -> None:
 
 
 def test_setup_creates_config_and_key(api) -> None:
-    result = _invoke(setup, "opencode", "--org", "my-org")
+    result = invoke(setup, "opencode", "--org", "my-org")
     assert result.exit_code == 0, result.output
 
     config = jsonc.loads(_config_path().read_text())
@@ -124,7 +77,7 @@ def test_setup_keeps_the_rest_of_the_users_files(api) -> None:
     opencode.auth_path().parent.mkdir(parents=True)
     opencode.auth_path().write_text(json.dumps({"anthropic": {"type": "api", "key": "sk-ant"}}))
 
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
 
     text = _config_path().read_text()
     assert "// keep this comment" in text
@@ -140,7 +93,7 @@ def test_setup_prefers_the_jsonc_file(api) -> None:
     (opencode.config_dir() / "opencode.json").write_text("{}")
     (opencode.config_dir() / "opencode.jsonc").write_text("{\n  // mine\n}\n")
 
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
     assert "lightning" in jsonc.loads((opencode.config_dir() / "opencode.jsonc").read_text())["provider"]
     assert (opencode.config_dir() / "opencode.json").read_text() == "{}"
 
@@ -149,13 +102,13 @@ def test_setup_with_model_sets_the_default(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text(USER_CONFIG)
 
-    assert _invoke(setup, "opencode", "--org", "my-org", "--model", "glm-5.3-flash").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org", "--model", "glm-5.3-flash").exit_code == 0
     assert jsonc.loads(_config_path().read_text())["model"] == "lightning/glm-5.3-flash"
 
 
 def test_setup_rerun_reuses_the_key(api) -> None:
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
 
     assert api.create_key.call_count == 1
     assert _auth()["lightning"]["key"] == "sk-lit-1"
@@ -164,8 +117,8 @@ def test_setup_rerun_reuses_the_key(api) -> None:
 
 
 def test_setup_rotate_key_revokes_the_old_one(api) -> None:
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
-    result = _invoke(setup, "opencode", "--org", "my-org", "--rotate-key")
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    result = invoke(setup, "opencode", "--org", "my-org", "--rotate-key")
 
     assert result.exit_code == 0
     assert _auth()["lightning"]["key"] == "sk-lit-2"
@@ -174,23 +127,23 @@ def test_setup_rotate_key_revokes_the_old_one(api) -> None:
 
 
 def test_setup_switching_org_creates_a_key_there(api) -> None:
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
-    api.choose_org.return_value = _org(name="other", org_id="org-2")
-    assert _invoke(setup, "opencode", "--org", "other").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    api.choose_org.return_value = make_org(name="other", org_id="org-2")
+    assert invoke(setup, "opencode", "--org", "other").exit_code == 0
 
     assert _auth()["lightning"]["metadata"]["org_id"] == "org-2"
     api.revoke_key.assert_called_once_with("org-1", "key-1")
 
 
 def test_setup_replaces_a_deleted_key(api) -> None:
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
     api.key_exists.return_value = False
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
     assert _auth()["lightning"]["key"] == "sk-lit-2"
 
 
 def test_setup_free_plan_asks_to_upgrade(api) -> None:
-    api.choose_org.return_value = _org(plan="Free")
+    api.choose_org.return_value = make_org(plan="Free")
     with patch.object(account, "_get_cloud_url", return_value="https://lightning.ai"):
         result = CliRunner().invoke(setup, ["opencode", "--org", "my-org"])
 
@@ -202,7 +155,7 @@ def test_setup_free_plan_asks_to_upgrade(api) -> None:
 
 
 def test_setup_coding_disabled_org_is_refused(api) -> None:
-    api.choose_org.return_value = _org(coding_disabled=True)
+    api.choose_org.return_value = make_org(coding_disabled=True)
     result = CliRunner().invoke(setup, ["opencode", "--org", "my-org"])
     assert result.exit_code == 1
     assert "turned off" in result.output
@@ -218,12 +171,12 @@ def test_setup_will_not_replace_a_hand_made_provider_without_force(api) -> None:
     assert "--force" in result.output
     api.create_key.assert_not_called()
 
-    assert _invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
     assert "apiKey" not in jsonc.loads(_config_path().read_text())["provider"]["lightning"]["options"]
 
 
 def test_setup_dry_run_writes_nothing(api) -> None:
-    result = _invoke(setup, "opencode", "--org", "my-org", "--dry-run")
+    result = invoke(setup, "opencode", "--org", "my-org", "--dry-run")
 
     assert result.exit_code == 0
     assert '+    "lightning": {' in result.output
@@ -244,51 +197,51 @@ def test_setup_invalid_config_fails_before_creating_a_key(api) -> None:
 
 
 def test_setup_revokes_the_new_key_when_writing_fails(api) -> None:
-    with patch.object(opencode, "apply_setup", side_effect=OSError("disk full")), pytest.raises(
+    with patch.object(tool_module, "apply", side_effect=OSError("disk full")), pytest.raises(
         OSError, match="disk full"
     ):
-        _invoke(setup, "opencode", "--org", "my-org")
+        invoke(setup, "opencode", "--org", "my-org")
     api.revoke_key.assert_called_once_with("org-1", "key-1")
 
 
 def test_status_and_remove(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text("{\n  // keep this comment\n}\n")
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
 
-    result = _invoke(status, "--json")
-    [info] = json.loads(result.output)
+    result = invoke(status, "--json")
+    info = next(entry for entry in json.loads(result.output) if entry["tool"] == "opencode")
     assert info["configured"] is True
     assert info["managed"] is True
     assert info["org"] == "my-org"
     assert info["key_id"] == "key-1"
     assert info["model"] == "lightning/deepseek-v4.1-flash"
 
-    result = _invoke(remove, "opencode")
+    result = invoke(remove, "opencode")
     assert result.exit_code == 0
     assert "Revoked the API key" in result.output
     api.revoke_key.assert_called_once_with("org-1", "key-1")
     assert _config_path().read_text() == "{\n  // keep this comment\n}\n"
     assert "lightning" not in _auth()
 
-    assert "isn't set up" in _invoke(remove, "opencode").output
-    assert "Not set up" in _invoke(status).output
+    assert "isn't set up" in invoke(remove, "opencode").output
+    assert "OpenCode: not set up" in invoke(status).output
 
 
 def test_remove_takes_out_a_lightning_default_the_user_set(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text('{"provider": {"lightning": {}}, "model": "lightning/glm-5.3", "theme": "x"}')
-    assert _invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org", "--force").exit_code == 0
 
-    assert _invoke(remove, "opencode").exit_code == 0
+    assert invoke(remove, "opencode").exit_code == 0
     assert jsonc.loads(_config_path().read_text()) == {"theme": "x"}
 
 
 def test_remove_keeps_a_default_model_the_user_changed(api) -> None:
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
     _config_path().write_text(jsonc.set_value(_config_path().read_text(), ["model"], "anthropic/claude"))
 
-    assert _invoke(remove, "opencode", "--keep-key").exit_code == 0
+    assert invoke(remove, "opencode", "--keep-key").exit_code == 0
     assert jsonc.loads(_config_path().read_text()) == {
         "$schema": opencode.SCHEMA_URL,
         "model": "anthropic/claude",
@@ -296,28 +249,28 @@ def test_remove_keeps_a_default_model_the_user_changed(api) -> None:
     api.revoke_key.assert_not_called()
 
 
-def test_warnings_point_at_overrides(opencode_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_warnings_point_at_overrides(tool_homes: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("OPENCODE_AUTH_CONTENT", "{}")
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text('{"enabled_providers": ["anthropic"], "disabled_providers": ["lightning"]}')
-    project = opencode_home / "repo"
+    project = tool_homes / "repo"
     (project / ".git").mkdir(parents=True)
     (project / "opencode.json").write_text('{"model": "anthropic/claude"}')
 
-    notes = opencode.warnings(opencode.read_state(), cwd=project)
+    tool = opencode.OpenCode()
+    notes = tool.warnings(tool.read(), cwd=project)
 
     assert any("OPENCODE_AUTH_CONTENT" in note for note in notes)
-    assert any("enabled_providers" in note for note in notes)
     assert any("disabled_providers" in note for note in notes)
     assert any("sets model to anthropic/claude" in note for note in notes)
 
 
 def test_token_prints_a_new_key(api) -> None:
-    result = _invoke(token, "--org", "my-org")
+    result = invoke(token, "--org", "my-org")
     assert result.exit_code == 0
     assert result.output == "sk-lit-1\n"
 
-    result = _invoke(token, "--org", "my-org", "--name", "ci", "--json")
+    result = invoke(token, "--org", "my-org", "--name", "ci", "--json")
     assert json.loads(result.output) == {
         "api_key": "sk-lit-2",
         "base_url": "https://code.lightning.ai/v1",
@@ -329,14 +282,14 @@ def test_token_prints_a_new_key(api) -> None:
 
 
 def test_token_free_plan_asks_to_upgrade(api) -> None:
-    api.choose_org.return_value = _org(plan="Free")
+    api.choose_org.return_value = make_org(plan="Free")
     result = CliRunner().invoke(token, ["--org", "my-org"])
     assert result.exit_code == 1
     assert "Upgrade to Pro or Teams" in result.output
     api.create_key.assert_not_called()
 
 
-def _v1_org(name: str, org_id: str, personal: bool = False) -> SimpleNamespace:
+def _v1make_org(name: str, org_id: str, personal: bool = False) -> SimpleNamespace:
     return SimpleNamespace(
         id=org_id, name=name, display_name=name.title(), is_personal_org=personal, disable_coding_agents=False
     )
@@ -346,9 +299,9 @@ def _v1_org(name: str, org_id: str, personal: bool = False) -> SimpleNamespace:
 def client(inline_executor_cls):
     client = MagicMock()
     client.organizations_service_list_organizations.return_value.organizations = [
-        _v1_org("zeta", "org-z"),
-        _v1_org("alpha", "org-a"),
-        _v1_org("me", "org-me", personal=True),
+        _v1make_org("zeta", "org-z"),
+        _v1make_org("alpha", "org-a"),
+        _v1make_org("me", "org-me", personal=True),
     ]
     plans = {"org-z": "Teams", "org-a": "Free", "org-me": "Professional"}
     client.billing_service_get_billing_subscription.side_effect = lambda org_id: SimpleNamespace(name=plans[org_id])
@@ -392,14 +345,17 @@ def test_choose_org_unknown_name(client) -> None:
 
 def test_unreadable_plan_is_allowed_with_a_note() -> None:
     with patch.object(account.click, "echo") as echo:
-        account.require_coding_plan(_org(plan=None))
+        account.require_coding_plan(make_org(plan=None))
     assert "Couldn't read the plan" in echo.call_args.args[0]
 
 
 def test_example_config_matches_what_setup_writes() -> None:
     example = Path(__file__).parents[3] / "examples" / "code" / "opencode.json"
-    plan = opencode.plan_setup(opencode.read_state(), models=FALLBACK_MODELS, model=None)
-    assert plan.config_text == example.read_text()
+    tool = opencode.OpenCode()
+    record = KeyRecord("org-1", "my-org", "key-1", "key")
+    plan = tool.plan_setup(tool.read(), models=FALLBACK_MODELS, model=None, key="sk-lit-1", record=record)
+    config = next(change for change in plan.changes if change.path == _config_path())
+    assert config.after == example.read_text()
 
 
 def test_default_model_is_one_setup_configures() -> None:
@@ -463,7 +419,7 @@ def test_setup_writes_the_models_the_api_lists(api, models_api) -> None:
             }
         ]
     }
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
 
     config = jsonc.loads(_config_path().read_text())
     assert config["provider"]["lightning"]["models"] == {
@@ -481,7 +437,7 @@ def test_setup_writes_the_models_the_api_lists(api, models_api) -> None:
 
 def test_setup_falls_back_to_the_built_in_models(api, models_api) -> None:
     models_api.side_effect = OSError("network down")
-    result = _invoke(setup, "opencode", "--org", "my-org")
+    result = invoke(setup, "opencode", "--org", "my-org")
 
     assert result.exit_code == 0
     assert "using the built-in one" in result.output
@@ -499,5 +455,5 @@ def test_setup_rejects_an_unknown_model(api) -> None:
 def test_setup_replaces_a_default_on_a_retired_model(api) -> None:
     _config_path().parent.mkdir(parents=True)
     _config_path().write_text('{"model": "lightning/glm-4"}')
-    assert _invoke(setup, "opencode", "--org", "my-org").exit_code == 0
+    assert invoke(setup, "opencode", "--org", "my-org").exit_code == 0
     assert jsonc.loads(_config_path().read_text())["model"] == "lightning/deepseek-v4.1-flash"

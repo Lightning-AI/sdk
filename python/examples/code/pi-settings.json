@@ -1,0 +1,4 @@
+{
+  "defaultProvider": "lightning",
+  "defaultModel": "lightning-ai/deepseek-v4.1-flash"
+}

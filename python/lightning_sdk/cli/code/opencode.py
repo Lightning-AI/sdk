@@ -3,29 +3,33 @@
 The provider block goes into the user's global config, spliced in so comments and other
 settings stay as they are. The API key goes into OpenCode's own credential store,
 auth.json, where `opencode auth login` keeps keys; OpenCode hands it to the provider of the
-same id. Its metadata records which org and key `lightning code` set up, for re-runs,
-`lightning code status` and `lightning code remove`.
+same id. Its metadata records which org and key `lightning code` set up.
 """
 
-import difflib
 import json
 import os
-import shutil
-import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
-from lightning_sdk.cli.code.models import CODE_BASE_URL, REQUEST_TIMEOUT_MS, CodingModel, default_model
+from lightning_sdk.cli.code import files
+from lightning_sdk.cli.code.models import CODE_BASE_URL, REQUEST_TIMEOUT_MS, CodingModel
+from lightning_sdk.cli.code.tool import (
+    FileChange,
+    KeyRecord,
+    Plan,
+    Tool,
+    ToolConfigError,
+    ToolState,
+    default_to_set,
+    emptied,
+)
 from lightning_sdk.utils import jsonc
 
-NAME = "OpenCode"
 PROVIDER_ID = "lightning"
 SCHEMA_URL = "https://opencode.ai/config.json"
-INSTALL_COMMAND = "curl -fsSL https://opencode.ai/install | bash"
 # marks the auth.json entries `lightning code` wrote, as opposed to ones a user added
 MANAGED_BY = "lightning-sdk"
-BACKUP_SUFFIX = ".lightning-backup"
 
 # Read in this order, later files winning; see OpenCode's config/config.ts.
 _GLOBAL_CONFIG_FILES = ("config.json", "opencode.json", "opencode.jsonc")
@@ -83,171 +87,20 @@ def provider_config(models: Sequence[CodingModel]) -> dict[str, Any]:
     }
 
 
-def model_ref(model_key: str) -> str:
-    return f"{PROVIDER_ID}/{model_key}"
+def model_ref(model: CodingModel) -> str:
+    return f"{PROVIDER_ID}/{model.key}"
 
 
-def _read(path: Path) -> str:
-    try:
-        return path.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        return ""
-
-
-def _write(path: Path, text: str, *, mode: Optional[int] = None) -> None:
-    """Replace ``path`` atomically, keeping its permissions unless ``mode`` is given."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if mode is None:
-        mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o644
-    tmp = path.with_name(f".{path.name}.lightning-tmp")
-    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, mode)
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        f.write(text)
-    os.chmod(tmp, mode)
-    os.replace(tmp, path)
+def _ours(ref: str) -> bool:
+    return ref.startswith(f"{PROVIDER_ID}/")
 
 
 @dataclass
-class Credential:
-    """The `lightning` entry in auth.json."""
-
-    key: str
-    metadata: dict[str, str]
-
-    @property
-    def managed(self) -> bool:
-        return self.metadata.get("managed_by") == MANAGED_BY
-
-    @property
-    def org_id(self) -> Optional[str]:
-        return self.metadata.get("org_id")
-
-    @property
-    def key_id(self) -> Optional[str]:
-        return self.metadata.get("key_id")
-
-
-@dataclass
-class State:
-    """What OpenCode's files say about the Lightning setup right now."""
-
+class _Files:
     config_path: Path
     config_text: str
+    auth_text: str
     auth: dict[str, Any]
-    credential: Optional[Credential]
-
-    @property
-    def provider(self) -> Optional[Any]:
-        return jsonc.get_value(self.config_text, ["provider", PROVIDER_ID])
-
-    @property
-    def model(self) -> Optional[str]:
-        return jsonc.get_value(self.config_text, ["model"])
-
-    @property
-    def managed(self) -> bool:
-        return self.credential is not None and self.credential.managed
-
-    @property
-    def foreign(self) -> bool:
-        """Whether a `lightning` provider or key exists that `lightning code` didn't write."""
-        return not self.managed and (self.provider is not None or self.credential is not None)
-
-
-def read_state() -> State:
-    """Read the global config and auth.json. Raises ``jsonc.JSONCError`` if either can't be parsed."""
-    path = config_path()
-    text = _read(path)
-    if text.strip():
-        jsonc.loads(text)
-
-    auth_text = _read(auth_path())
-    auth = json.loads(auth_text) if auth_text.strip() else {}
-    if not isinstance(auth, dict):
-        raise jsonc.JSONCError(f"{auth_path()} is not a JSON object")
-    entry = auth.get(PROVIDER_ID)
-    credential = None
-    if isinstance(entry, dict) and entry.get("type") == "api" and isinstance(entry.get("key"), str):
-        credential = Credential(entry["key"], dict(entry.get("metadata") or {}))
-    return State(path, text, auth, credential)
-
-
-@dataclass
-class Plan:
-    """The changes `setup` makes, worked out before anything is written."""
-
-    state: State
-    config_text: str
-    set_model: Optional[str]
-
-    def config_diff(self) -> str:
-        before = self.state.config_text.splitlines(keepends=True)
-        after = self.config_text.splitlines(keepends=True)
-        name = str(self.state.config_path)
-        return "".join(difflib.unified_diff(before, after, fromfile=name, tofile=name))
-
-
-def plan_setup(state: State, *, models: Sequence[CodingModel], model: Optional[str]) -> Plan:
-    """Work out the new config: our provider block, and `model` only when asked or unset.
-
-    ``model`` is a model key passed with --model; without it the default model is set only
-    when the user has no default of their own, or has one on a Lightning model that's gone.
-    """
-    text = state.config_text
-    if not text.strip():
-        text = jsonc.set_value("", ["$schema"], SCHEMA_URL)
-    text = jsonc.set_value(text, ["provider", PROVIDER_ID], provider_config(models))
-
-    served = {model_ref(m.key) for m in models}
-    retired = isinstance(state.model, str) and state.model.startswith(f"{PROVIDER_ID}/") and state.model not in served
-    set_model = None
-    if model is not None:
-        set_model = model_ref(model)
-    elif state.model is None or retired:
-        # also replace a default on a Lightning model that is no longer served
-        set_model = model_ref(default_model(tuple(models)))
-    if set_model is not None:
-        text = jsonc.set_value(text, ["model"], set_model)
-    return Plan(state, text, set_model)
-
-
-def apply_setup(plan: Plan, *, key: str, metadata: dict[str, str]) -> Optional[Path]:
-    """Write auth.json and the config. Returns the backup of the config, if there was one to back up."""
-    state = plan.state
-    auth = dict(state.auth)
-    auth[PROVIDER_ID] = {"type": "api", "key": key, "metadata": {"managed_by": MANAGED_BY, **metadata}}
-    _write(auth_path(), json.dumps(auth, indent=2) + "\n", mode=0o600)
-
-    backup = None
-    if plan.config_text != state.config_text:
-        if state.config_text:
-            backup = state.config_path.with_name(state.config_path.name + BACKUP_SUFFIX)
-            shutil.copy2(state.config_path, backup)
-        _write(state.config_path, plan.config_text)
-    return backup
-
-
-def remove(state: State) -> list[str]:
-    """Remove the provider, a default model on it, and the key. Returns what was removed."""
-    removed = []
-    text = state.config_text
-    if state.provider is not None:
-        text = jsonc.remove_value(text, ["provider", PROVIDER_ID])
-        if jsonc.get_value(text, ["provider"]) == {}:
-            text = jsonc.remove_value(text, ["provider"])
-        removed.append(f"the {PROVIDER_ID} provider from {state.config_path}")
-    # a default on the lightning provider can't work once the provider is gone, whoever set it
-    if isinstance(state.model, str) and state.model.startswith(f"{PROVIDER_ID}/"):
-        text = jsonc.remove_value(text, ["model"])
-        removed.append(f"the default model {state.model}")
-    if text != state.config_text:
-        _write(state.config_path, text)
-
-    if state.credential is not None:
-        auth = {k: v for k, v in state.auth.items() if k != PROVIDER_ID}
-        _write(auth_path(), json.dumps(auth, indent=2) + "\n", mode=0o600)
-        removed.append(f"the API key from {auth_path()}")
-    return removed
 
 
 def _project_configs(start: Path) -> list[Path]:
@@ -264,31 +117,138 @@ def _project_configs(start: Path) -> list[Path]:
     return found
 
 
-def warnings(state: State, *, cwd: Optional[Path] = None) -> list[str]:
-    """Settings elsewhere that would stop OpenCode from using what `setup` wrote."""
-    notes = [f"{name} is set, which {effect}." for name, effect in _ENV_OVERRIDES.items() if os.environ.get(name)]
+class OpenCode(Tool):
+    id = "opencode"
+    name = "OpenCode"
+    binary = "opencode"
+    install = "curl -fsSL https://opencode.ai/install | bash"
+    start = "Start coding with `opencode`, and switch models with /models."
 
-    config = jsonc.loads(state.config_text) if state.config_text.strip() else {}
-    enabled = config.get("enabled_providers")
-    if isinstance(enabled, list) and PROVIDER_ID not in enabled:
-        notes.append(f"enabled_providers in {state.config_path} doesn't include '{PROVIDER_ID}'.")
-    disabled = config.get("disabled_providers")
-    if isinstance(disabled, list) and PROVIDER_ID in disabled:
-        notes.append(f"disabled_providers in {state.config_path} includes '{PROVIDER_ID}'.")
-
-    for path in _project_configs(cwd or Path.cwd()):
+    def read(self) -> ToolState:
+        path = config_path()
+        text = files.read_text(path)
         try:
-            project = jsonc.loads(_read(path))
-        except jsonc.JSONCError:
-            continue
-        if not isinstance(project, dict):
-            continue
-        if isinstance(project.get("provider"), dict) and PROVIDER_ID in project["provider"]:
-            notes.append(f"{path} defines its own '{PROVIDER_ID}' provider, which wins in that project.")
-        if "model" in project:
-            notes.append(f"{path} sets model to {project['model']}, which wins in that project.")
-    return notes
+            config = jsonc.loads(text) if text.strip() else {}
+            auth_text = files.read_text(auth_path())
+            auth = json.loads(auth_text) if auth_text.strip() else {}
+        except (jsonc.JSONCError, ValueError) as exc:
+            raise ToolConfigError(str(exc)) from None
+        if not isinstance(config, dict) or not isinstance(auth, dict):
+            raise ToolConfigError(f"{path} or {auth_path()} is not a JSON object")
 
+        entry = auth.get(PROVIDER_ID)
+        credential = entry if isinstance(entry, dict) and entry.get("type") == "api" else None
+        key = credential.get("key") if credential else None
+        metadata = (credential or {}).get("metadata") or {}
+        record = KeyRecord.from_dict(metadata) if metadata.get("managed_by") == MANAGED_BY else None
+        provider = (config.get("provider") or {}).get(PROVIDER_ID) if isinstance(config.get("provider"), dict) else None
+        model = config.get("model")
+        return ToolState(
+            record=record,
+            key=key if isinstance(key, str) else None,
+            configured=provider is not None or credential is not None,
+            default_model=model if isinstance(model, str) else None,
+            location=str(path),
+            data=_Files(path, text, auth_text, auth),
+        )
 
-def installed() -> bool:
-    return shutil.which("opencode") is not None
+    def plan_setup(
+        self,
+        state: ToolState,
+        *,
+        models: Sequence[CodingModel],
+        model: Optional[str],
+        key: str,
+        record: KeyRecord,
+    ) -> Plan:
+        current: _Files = state.data
+        text = current.config_text
+        if not text.strip():
+            text = jsonc.set_value("", ["$schema"], SCHEMA_URL)
+        text = jsonc.set_value(text, ["provider", PROVIDER_ID], provider_config(models))
+        set_model = default_to_set(state.default_model, requested=model, models=models, ref=model_ref, ours=_ours)
+        if set_model is not None:
+            text = jsonc.set_value(text, ["model"], set_model)
+        enabled = jsonc.get_value(text, ["enabled_providers"])
+        if isinstance(enabled, list) and PROVIDER_ID not in enabled:
+            # an allowlist of providers would hide ours
+            text = jsonc.append_item(text, ["enabled_providers"], PROVIDER_ID)
+
+        auth = dict(current.auth)
+        auth[PROVIDER_ID] = {"type": "api", "key": key, "metadata": {"managed_by": MANAGED_BY, **record.as_dict()}}
+        return Plan(
+            changes=[
+                FileChange(
+                    auth_path(),
+                    current.auth_text,
+                    files.dump_json(auth),
+                    mode=0o600,
+                    secret=True,
+                    summary=f"save the API key as '{PROVIDER_ID}'",
+                    backup=False,
+                ),
+                FileChange(current.config_path, current.config_text, text),
+            ],
+            set_model=set_model,
+        )
+
+    def plan_remove(self, state: ToolState) -> Plan:
+        current: _Files = state.data
+        plan = Plan()
+        text = current.config_text
+        if jsonc.get_value(text, ["provider", PROVIDER_ID]) is not None:
+            text = jsonc.remove_value(text, ["provider", PROVIDER_ID])
+            if jsonc.get_value(text, ["provider"]) == {}:
+                text = jsonc.remove_value(text, ["provider"])
+            plan.removed.append(f"the {PROVIDER_ID} provider from {current.config_path}")
+        # a default on the lightning provider can't work once the provider is gone, whoever set it
+        if state.default_model and _ours(state.default_model):
+            text = jsonc.remove_value(text, ["model"])
+            plan.removed.append(f"the default model {state.default_model}")
+        enabled = jsonc.get_value(text, ["enabled_providers"])
+        if isinstance(enabled, list) and PROVIDER_ID in enabled:
+            text = jsonc.remove_item(text, ["enabled_providers"], PROVIDER_ID)
+            plan.removed.append(f"'{PROVIDER_ID}' from enabled_providers")
+        plan.changes.append(
+            FileChange(current.config_path, current.config_text, emptied(text, ignore=["$schema"]), backup=False)
+        )
+
+        if PROVIDER_ID in current.auth:
+            auth = {k: v for k, v in current.auth.items() if k != PROVIDER_ID}
+            plan.changes.append(
+                FileChange(
+                    auth_path(),
+                    current.auth_text,
+                    files.dump_json(auth),
+                    mode=0o600,
+                    secret=True,
+                    summary=f"remove the '{PROVIDER_ID}' API key",
+                    backup=False,
+                )
+            )
+            plan.removed.append(f"the API key from {auth_path()}")
+        return plan
+
+    def summary(self, state: ToolState, plan: Plan) -> list[tuple[str, str]]:
+        return [("Provider", f"{PROVIDER_ID} in {state.location}"), ("Key file", str(auth_path()))]
+
+    def warnings(self, state: ToolState, *, cwd: Optional[Path] = None) -> list[str]:
+        notes = [f"{name} is set, which {effect}." for name, effect in _ENV_OVERRIDES.items() if os.environ.get(name)]
+        current: _Files = state.data
+        config = jsonc.loads(current.config_text) if current.config_text.strip() else {}
+        disabled = config.get("disabled_providers")
+        if isinstance(disabled, list) and PROVIDER_ID in disabled:
+            notes.append(f"disabled_providers in {current.config_path} includes '{PROVIDER_ID}'.")
+
+        for path in _project_configs(cwd or Path.cwd()):
+            try:
+                project = jsonc.loads(files.read_text(path))
+            except jsonc.JSONCError:
+                continue
+            if not isinstance(project, dict):
+                continue
+            if isinstance(project.get("provider"), dict) and PROVIDER_ID in project["provider"]:
+                notes.append(f"{path} defines its own '{PROVIDER_ID}' provider, which wins in that project.")
+            if "model" in project:
+                notes.append(f"{path} sets model to {project['model']}, which wins in that project.")
+        return notes
