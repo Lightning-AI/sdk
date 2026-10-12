@@ -712,6 +712,7 @@ def test_duplicate_user(
     )
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
             ),
@@ -775,6 +776,7 @@ def test_duplicate_org(
     )
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
             ),
@@ -836,6 +838,7 @@ def test_duplicate_user_with_new_name(
     )
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
             ),
@@ -905,6 +908,7 @@ def test_duplicate_org_with_new_name(
     )
     mock_get_status.return_value = V1GetCloudSpaceInstanceStatusResponse(
         in_use=Externalv1CloudSpaceInstanceStatus(
+            cloud_space_instance_id="instance-new",
             startup_status=V1CloudSpaceInstanceStartupStatus(
                 initial_restore_finished=True, top_up_restore_finished=True
             ),
