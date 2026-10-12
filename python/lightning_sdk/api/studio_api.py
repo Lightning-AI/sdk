@@ -1,4 +1,3 @@
-import json
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -14,7 +13,6 @@ from lightning_sdk.api.utils import (
     _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
-    _create_app,
     _DummyBody,
     _DummyResponse,
     _machine_to_compute_name,
@@ -40,7 +38,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     CloudSpaceServiceUpdateCloudSpaceInstanceConfigBody,
     CloudSpaceServiceUpdateCloudSpaceSleepConfigBody,
     EndpointServiceCreateEndpointBody,
-    Externalv1LightningappInstance,
     V1Assistant,
     V1CloudSpace,
     V1CloudSpaceInstanceConfig,
@@ -1273,182 +1270,6 @@ class StudioApi:
 
         raise RuntimeError(f"Failed to remove folder '{path}' from the Studio. Status code: {r.status_code}")
 
-    def create_job(
-        self,
-        entrypoint: str,
-        name: str,
-        machine: Machine,
-        studio_id: str,
-        teamspace_id: str,
-        cloud_account: str,
-        interruptible: bool,
-    ) -> Externalv1LightningappInstance:
-        """Creates a job with given commands.
-
-        Args:
-            entrypoint: Shell command or script path to run as the job entrypoint.
-            name: Display name for the job.
-            machine: Machine type to run the job on.
-            studio_id: Studio (cloud space) ID associated with the job.
-            teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID for the job's compute resources.
-            interruptible: Whether to use a spot (interruptible) instance.
-
-        Returns:
-            The created ``Externalv1LightningappInstance`` representing the job.
-        """
-        return self._create_app(
-            studio_id=studio_id,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            plugin_type="job",
-            entrypoint=entrypoint,
-            name=name,
-            compute=_machine_to_compute_name(machine),
-            interruptible=interruptible,
-        )
-
-    def create_multi_machine_job(
-        self,
-        entrypoint: str,
-        name: str,
-        num_instances: int,
-        machine: Machine,
-        strategy: str,
-        studio_id: str,
-        teamspace_id: str,
-        cloud_account: str,
-        interruptible: bool,
-    ) -> Externalv1LightningappInstance:
-        """Creates a multi-machine job with given commands.
-
-        Args:
-            entrypoint: Shell command or script path to run as the job entrypoint.
-            name: Display name for the job.
-            num_instances: Number of machines to run in parallel.
-            machine: Machine type for each instance.
-            strategy: Distributed training strategy identifier.
-            studio_id: Studio (cloud space) ID associated with the job.
-            teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID for the job's compute resources.
-            interruptible: Whether to use spot (interruptible) instances.
-
-        Returns:
-            The created ``Externalv1LightningappInstance`` representing the multi-machine job.
-        """
-        distributed_args = {
-            "cloud_compute": _machine_to_compute_name(machine),
-            "num_instances": num_instances,
-            "strategy": strategy,
-        }
-        return self._create_app(
-            studio_id=studio_id,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            plugin_type="distributed_plugin",
-            entrypoint=entrypoint,
-            name=name,
-            distributedArguments=json.dumps(distributed_args),
-            interruptible=interruptible,
-        )
-
-    def create_data_prep_machine_job(
-        self,
-        entrypoint: str,
-        name: str,
-        num_instances: int,
-        machine: Machine,
-        studio_id: str,
-        teamspace_id: str,
-        cloud_account: str,
-        interruptible: bool,
-    ) -> Externalv1LightningappInstance:
-        """Creates a multi-machine job with given commands.
-
-        Args:
-            entrypoint: Shell command or script path to run as the job entrypoint.
-            name: Display name for the job.
-            num_instances: Number of machines to run in parallel.
-            machine: Machine type for each instance.
-            studio_id: Studio (cloud space) ID associated with the job.
-            teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID for the job's compute resources.
-            interruptible: Whether to use spot (interruptible) instances.
-
-        Returns:
-            The created ``Externalv1LightningappInstance`` representing the data preparation job.
-        """
-        data_prep_args = {
-            "cloud_compute": _machine_to_compute_name(machine),
-            "num_instances": num_instances,
-        }
-        return self._create_app(
-            studio_id=studio_id,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            plugin_type="litdata",
-            entrypoint=entrypoint,
-            name=name,
-            dataPrepArguments=json.dumps(data_prep_args),
-            interruptible=interruptible,
-        )
-
-    def create_inference_job(
-        self,
-        entrypoint: str,
-        name: str,
-        machine: Machine,
-        min_replicas: str,
-        max_replicas: str,
-        max_batch_size: str,
-        timeout_batching: str,
-        scale_in_interval: str,
-        scale_out_interval: str,
-        endpoint: str,
-        studio_id: str,
-        teamspace_id: str,
-        cloud_account: str,
-        interruptible: bool,
-    ) -> Externalv1LightningappInstance:
-        """Creates an inference job for given endpoint.
-
-        Args:
-            entrypoint: Shell command or script path to run as the inference server.
-            name: Display name for the inference job.
-            machine: Machine type to run the inference server on.
-            min_replicas: Minimum number of replicas to keep running.
-            max_replicas: Maximum number of replicas to scale up to.
-            max_batch_size: Maximum request batch size per replica.
-            timeout_batching: Maximum wait time in seconds to form a batch.
-            scale_in_interval: Seconds of low traffic before scaling in.
-            scale_out_interval: Seconds of high traffic before scaling out.
-            endpoint: URL path prefix for the inference endpoint.
-            studio_id: Studio (cloud space) ID associated with the job.
-            teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID for the job's compute resources.
-            interruptible: Whether to use spot (interruptible) instances.
-
-        Returns:
-            The created ``Externalv1LightningappInstance`` representing the inference job.
-        """
-        return self._create_app(
-            studio_id=studio_id,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            plugin_type="inference_plugin",
-            compute=_machine_to_compute_name(machine),
-            entrypoint=entrypoint,
-            name=name,
-            min_replicas=min_replicas,
-            max_replicas=max_replicas,
-            max_batch_size=max_batch_size,
-            timeout_batching=timeout_batching,
-            scale_in_interval=scale_in_interval,
-            scale_out_interval=scale_out_interval,
-            endpoint=endpoint,
-            interruptible=interruptible,
-        )
-
     def add_port(
         self, teamspace_id: str, studio_id: str, name: Optional[str], port: int, auto_start: bool = False
     ) -> V1Endpoint:
@@ -1582,30 +1403,6 @@ class StudioApi:
         return self._client.assistants_service_create_assistant(
             body=body,
             project_id=teamspace_id,
-        )
-
-    def _create_app(
-        self, studio_id: str, teamspace_id: str, cloud_account: str, plugin_type: str, **other_arguments: Any
-    ) -> Externalv1LightningappInstance:
-        """Creates an arbitrary app.
-
-        Args:
-            studio_id: Studio (cloud space) ID to associate the app with.
-            teamspace_id: ID of the owning teamspace.
-            cloud_account: Cloud account ID for the app's compute resources.
-            plugin_type: Plugin type identifier that determines the app kind.
-            **other_arguments: Additional keyword arguments forwarded to the underlying app creator.
-
-        Returns:
-            The created ``Externalv1LightningappInstance``.
-        """
-        return _create_app(
-            self._client,
-            studio_id=studio_id,
-            teamspace_id=teamspace_id,
-            cloud_account=cloud_account,
-            plugin_type=plugin_type,
-            **other_arguments,
         )
 
     def _update_cloudspace(self, studio: V1CloudSpace, teamspace_id: str, key: str, value: Any) -> None:

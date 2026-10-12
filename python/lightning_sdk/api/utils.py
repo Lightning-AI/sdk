@@ -32,12 +32,8 @@ import requests
 from requests.exceptions import HTTPError
 from tqdm.auto import tqdm
 
-from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__, _LIGHTNING_DEBUG
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
-    CloudSpaceServiceApi,
-    CloudSpaceServiceCreateCloudSpaceAppInstanceBody,
-    Externalv1LightningappInstance,
     ModelsStoreCompleteMultiPartUploadBody,
     ModelsStoreCreateMultiPartUploadBody,
     ModelsStoreGetModelFileUploadUrlsBody,
@@ -1115,51 +1111,6 @@ def _download_model_files(
         _collect_download_results(futures, f"{name}/{version}")
 
         return response.filepaths
-
-
-def _create_app(
-    client: CloudSpaceServiceApi,
-    studio_id: str,
-    teamspace_id: str,
-    cloud_account: str,
-    plugin_type: str,
-    **other_arguments: Any,
-) -> Externalv1LightningappInstance:
-    """Creates an arbitrary app.
-
-    Args:
-        client: The CloudSpace service API client.
-        studio_id: The studio (cloudspace) ID to create the app in.
-        teamspace_id: The teamspace (project) ID that owns the studio.
-        cloud_account: The cloud account (cluster) ID for the app.
-        plugin_type: The plugin type identifier for the app to create.
-        **other_arguments: Additional plugin arguments forwarded to the request body.
-
-    Returns:
-        Externalv1LightningappInstance: The created app instance.
-    """
-    from lightning_sdk.utils.resolve import _LIGHTNING_SERVICE_EXECUTION_ID_KEY
-
-    # Check if 'interruptible' is in the arguments and convert it to a string
-    if isinstance(other_arguments, dict) and "interruptible" in other_arguments:
-        other_arguments["spot"] = str(other_arguments["interruptible"]).lower()
-        del other_arguments["interruptible"]
-
-    body = CloudSpaceServiceCreateCloudSpaceAppInstanceBody(
-        cluster_id=cloud_account,
-        plugin_arguments=other_arguments,
-        service_id=os.getenv(_LIGHTNING_SERVICE_EXECUTION_ID_KEY),
-        unique_id=__GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__[studio_id],
-    )
-
-    resp = client.cloud_space_service_create_cloud_space_app_instance(
-        body=body, project_id=teamspace_id, cloudspace_id=studio_id, id=plugin_type
-    ).lightningappinstance
-
-    if _LIGHTNING_DEBUG:
-        print(f"Create App: {resp.id=} {teamspace_id=} {studio_id=} {cloud_account=}")
-
-    return resp
 
 
 def remove_datetime_prefix(text: str) -> str:
