@@ -50,6 +50,7 @@ class ClusterServiceCreateMachineBody(object):
         'bootstrap': 'V1MachineBootstrap',
         'bridge_network_cidr': 'str',
         'ca_cert': 'str',
+        'enrollment_epoch': 'str',
         'env': 'list[V1EnvVar]',
         'id': 'str',
         'instance_type': 'str',
@@ -77,6 +78,7 @@ class ClusterServiceCreateMachineBody(object):
         'bootstrap': 'bootstrap',
         'bridge_network_cidr': 'bridgeNetworkCidr',
         'ca_cert': 'caCert',
+        'enrollment_epoch': 'enrollmentEpoch',
         'env': 'env',
         'id': 'id',
         'instance_type': 'instanceType',
@@ -98,13 +100,14 @@ class ClusterServiceCreateMachineBody(object):
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, bridge_network_cidr: 'str' =None, ca_cert: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, added_by: 'str' =None, address: 'str' =None, bootstrap: 'V1MachineBootstrap' =None, bridge_network_cidr: 'str' =None, ca_cert: 'str' =None, enrollment_epoch: 'str' =None, env: 'list[V1EnvVar]' =None, id: 'str' =None, instance_type: 'str' =None, management_api_url: 'str' =None, name: 'str' =None, org_id: 'str' =None, parent_cluster_id: 'str' =None, private_address: 'str' =None, provider: 'str' =None, provider_instance_id: 'str' =None, provider_region: 'str' =None, provisioning_method: 'str' =None, purpose: 'str' =None, resources: 'V1Resources' =None, ssh_port: 'int' =None, ssh_username: 'str' =None, tls_cert: 'str' =None, tls_key: 'str' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceCreateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._added_by = None
         self._address = None
         self._bootstrap = None
         self._bridge_network_cidr = None
         self._ca_cert = None
+        self._enrollment_epoch = None
         self._env = None
         self._id = None
         self._instance_type = None
@@ -135,6 +138,8 @@ class ClusterServiceCreateMachineBody(object):
             self.bridge_network_cidr = bridge_network_cidr
         if ca_cert is not None:
             self.ca_cert = ca_cert
+        if enrollment_epoch is not None:
+            self.enrollment_epoch = enrollment_epoch
         if env is not None:
             self.env = env
         if id is not None:
@@ -278,6 +283,29 @@ class ClusterServiceCreateMachineBody(object):
         """
 
         self._ca_cert = ca_cert
+
+    @property
+    def enrollment_epoch(self) -> 'str':
+        """Gets the enrollment_epoch of this ClusterServiceCreateMachineBody.  # noqa: E501
+
+        Fences an existing-machine setup callback to its committed enrollment attempt.  # noqa: E501
+
+        :return: The enrollment_epoch of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._enrollment_epoch
+
+    @enrollment_epoch.setter
+    def enrollment_epoch(self, enrollment_epoch: 'str'):
+        """Sets the enrollment_epoch of this ClusterServiceCreateMachineBody.
+
+        Fences an existing-machine setup callback to its committed enrollment attempt.  # noqa: E501
+
+        :param enrollment_epoch: The enrollment_epoch of this ClusterServiceCreateMachineBody.  # noqa: E501
+        :type: str
+        """
+
+        self._enrollment_epoch = enrollment_epoch
 
     @property
     def env(self) -> 'list[V1EnvVar]':

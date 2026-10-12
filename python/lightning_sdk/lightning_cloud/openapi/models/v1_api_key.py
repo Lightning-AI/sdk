@@ -49,12 +49,14 @@ class V1APIKey(object):
         'created_at': 'datetime',
         'creator_id': 'str',
         'description': 'str',
+        'expires_at': 'datetime',
         'id': 'str',
         'last_used': 'datetime',
         'name': 'str',
         'project_id': 'str',
         'raw_key': 'str',
-        'role': 'str'
+        'role': 'str',
+        'status': 'V1APIKeyStatus'
     }
 
     attribute_map = {
@@ -62,26 +64,30 @@ class V1APIKey(object):
         'created_at': 'createdAt',
         'creator_id': 'creatorId',
         'description': 'description',
+        'expires_at': 'expiresAt',
         'id': 'id',
         'last_used': 'lastUsed',
         'name': 'name',
         'project_id': 'projectId',
         'raw_key': 'rawKey',
-        'role': 'role'
+        'role': 'role',
+        'status': 'status'
     }
 
-    def __init__(self, budget_config: 'V1APIKeyBudget' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, project_id: 'str' =None, raw_key: 'str' =None, role: 'str' =None):  # noqa: E501
+    def __init__(self, budget_config: 'V1APIKeyBudget' =None, created_at: 'datetime' =None, creator_id: 'str' =None, description: 'str' =None, expires_at: 'datetime' =None, id: 'str' =None, last_used: 'datetime' =None, name: 'str' =None, project_id: 'str' =None, raw_key: 'str' =None, role: 'str' =None, status: 'V1APIKeyStatus' =None):  # noqa: E501
         """V1APIKey - a model defined in Swagger"""  # noqa: E501
         self._budget_config = None
         self._created_at = None
         self._creator_id = None
         self._description = None
+        self._expires_at = None
         self._id = None
         self._last_used = None
         self._name = None
         self._project_id = None
         self._raw_key = None
         self._role = None
+        self._status = None
         self.discriminator = None
         if budget_config is not None:
             self.budget_config = budget_config
@@ -91,6 +97,8 @@ class V1APIKey(object):
             self.creator_id = creator_id
         if description is not None:
             self.description = description
+        if expires_at is not None:
+            self.expires_at = expires_at
         if id is not None:
             self.id = id
         if last_used is not None:
@@ -103,6 +111,8 @@ class V1APIKey(object):
             self.raw_key = raw_key
         if role is not None:
             self.role = role
+        if status is not None:
+            self.status = status
 
     @property
     def budget_config(self) -> 'V1APIKeyBudget':
@@ -187,6 +197,27 @@ class V1APIKey(object):
         """
 
         self._description = description
+
+    @property
+    def expires_at(self) -> 'datetime':
+        """Gets the expires_at of this V1APIKey.  # noqa: E501
+
+
+        :return: The expires_at of this V1APIKey.  # noqa: E501
+        :rtype: datetime
+        """
+        return self._expires_at
+
+    @expires_at.setter
+    def expires_at(self, expires_at: 'datetime'):
+        """Sets the expires_at of this V1APIKey.
+
+
+        :param expires_at: The expires_at of this V1APIKey.  # noqa: E501
+        :type: datetime
+        """
+
+        self._expires_at = expires_at
 
     @property
     def id(self) -> 'str':
@@ -315,6 +346,27 @@ class V1APIKey(object):
         """
 
         self._role = role
+
+    @property
+    def status(self) -> 'V1APIKeyStatus':
+        """Gets the status of this V1APIKey.  # noqa: E501
+
+
+        :return: The status of this V1APIKey.  # noqa: E501
+        :rtype: V1APIKeyStatus
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status: 'V1APIKeyStatus'):
+        """Sets the status of this V1APIKey.
+
+
+        :param status: The status of this V1APIKey.  # noqa: E501
+        :type: V1APIKeyStatus
+        """
+
+        self._status = status
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

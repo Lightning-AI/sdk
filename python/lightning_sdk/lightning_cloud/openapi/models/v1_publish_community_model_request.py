@@ -48,8 +48,12 @@ class V1PublishCommunityModelRequest(object):
         'aliases': 'list[str]',
         'api_base_url': 'str',
         'api_key': 'str',
+        'cache_creation_token_price': 'float',
+        'cache_creation_token_price1h': 'float',
+        'cache_read_token_price': 'float',
         'completion_token_price': 'float',
         'context_length': 'str',
+        'description': 'str',
         'display_name': 'str',
         'max_completion_tokens': 'str',
         'model_id': 'str',
@@ -62,8 +66,12 @@ class V1PublishCommunityModelRequest(object):
         'aliases': 'aliases',
         'api_base_url': 'apiBaseUrl',
         'api_key': 'apiKey',
+        'cache_creation_token_price': 'cacheCreationTokenPrice',
+        'cache_creation_token_price1h': 'cacheCreationTokenPrice1h',
+        'cache_read_token_price': 'cacheReadTokenPrice',
         'completion_token_price': 'completionTokenPrice',
         'context_length': 'contextLength',
+        'description': 'description',
         'display_name': 'displayName',
         'max_completion_tokens': 'maxCompletionTokens',
         'model_id': 'modelId',
@@ -72,13 +80,17 @@ class V1PublishCommunityModelRequest(object):
         'provider': 'provider'
     }
 
-    def __init__(self, aliases: 'list[str]' =None, api_base_url: 'str' =None, api_key: 'str' =None, completion_token_price: 'float' =None, context_length: 'str' =None, display_name: 'str' =None, max_completion_tokens: 'str' =None, model_id: 'str' =None, nvidia_usage_enabled: 'bool' =None, prompt_token_price: 'float' =None, provider: 'V1ModelAPIProvider' =None):  # noqa: E501
+    def __init__(self, aliases: 'list[str]' =None, api_base_url: 'str' =None, api_key: 'str' =None, cache_creation_token_price: 'float' =None, cache_creation_token_price1h: 'float' =None, cache_read_token_price: 'float' =None, completion_token_price: 'float' =None, context_length: 'str' =None, description: 'str' =None, display_name: 'str' =None, max_completion_tokens: 'str' =None, model_id: 'str' =None, nvidia_usage_enabled: 'bool' =None, prompt_token_price: 'float' =None, provider: 'V1ModelAPIProvider' =None):  # noqa: E501
         """V1PublishCommunityModelRequest - a model defined in Swagger"""  # noqa: E501
         self._aliases = None
         self._api_base_url = None
         self._api_key = None
+        self._cache_creation_token_price = None
+        self._cache_creation_token_price1h = None
+        self._cache_read_token_price = None
         self._completion_token_price = None
         self._context_length = None
+        self._description = None
         self._display_name = None
         self._max_completion_tokens = None
         self._model_id = None
@@ -92,10 +104,18 @@ class V1PublishCommunityModelRequest(object):
             self.api_base_url = api_base_url
         if api_key is not None:
             self.api_key = api_key
+        if cache_creation_token_price is not None:
+            self.cache_creation_token_price = cache_creation_token_price
+        if cache_creation_token_price1h is not None:
+            self.cache_creation_token_price1h = cache_creation_token_price1h
+        if cache_read_token_price is not None:
+            self.cache_read_token_price = cache_read_token_price
         if completion_token_price is not None:
             self.completion_token_price = completion_token_price
         if context_length is not None:
             self.context_length = context_length
+        if description is not None:
+            self.description = description
         if display_name is not None:
             self.display_name = display_name
         if max_completion_tokens is not None:
@@ -173,6 +193,69 @@ class V1PublishCommunityModelRequest(object):
         self._api_key = api_key
 
     @property
+    def cache_creation_token_price(self) -> 'float':
+        """Gets the cache_creation_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+
+
+        :return: The cache_creation_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._cache_creation_token_price
+
+    @cache_creation_token_price.setter
+    def cache_creation_token_price(self, cache_creation_token_price: 'float'):
+        """Sets the cache_creation_token_price of this V1PublishCommunityModelRequest.
+
+
+        :param cache_creation_token_price: The cache_creation_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._cache_creation_token_price = cache_creation_token_price
+
+    @property
+    def cache_creation_token_price1h(self) -> 'float':
+        """Gets the cache_creation_token_price1h of this V1PublishCommunityModelRequest.  # noqa: E501
+
+
+        :return: The cache_creation_token_price1h of this V1PublishCommunityModelRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._cache_creation_token_price1h
+
+    @cache_creation_token_price1h.setter
+    def cache_creation_token_price1h(self, cache_creation_token_price1h: 'float'):
+        """Sets the cache_creation_token_price1h of this V1PublishCommunityModelRequest.
+
+
+        :param cache_creation_token_price1h: The cache_creation_token_price1h of this V1PublishCommunityModelRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._cache_creation_token_price1h = cache_creation_token_price1h
+
+    @property
+    def cache_read_token_price(self) -> 'float':
+        """Gets the cache_read_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+
+
+        :return: The cache_read_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._cache_read_token_price
+
+    @cache_read_token_price.setter
+    def cache_read_token_price(self, cache_read_token_price: 'float'):
+        """Sets the cache_read_token_price of this V1PublishCommunityModelRequest.
+
+
+        :param cache_read_token_price: The cache_read_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._cache_read_token_price = cache_read_token_price
+
+    @property
     def completion_token_price(self) -> 'float':
         """Gets the completion_token_price of this V1PublishCommunityModelRequest.  # noqa: E501
 
@@ -213,6 +296,27 @@ class V1PublishCommunityModelRequest(object):
         """
 
         self._context_length = context_length
+
+    @property
+    def description(self) -> 'str':
+        """Gets the description of this V1PublishCommunityModelRequest.  # noqa: E501
+
+
+        :return: The description of this V1PublishCommunityModelRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._description
+
+    @description.setter
+    def description(self, description: 'str'):
+        """Sets the description of this V1PublishCommunityModelRequest.
+
+
+        :param description: The description of this V1PublishCommunityModelRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._description = description
 
     @property
     def display_name(self) -> 'str':

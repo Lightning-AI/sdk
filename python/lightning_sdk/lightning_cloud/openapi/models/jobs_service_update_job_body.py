@@ -46,6 +46,7 @@ class JobsServiceUpdateJobBody(object):
     """
     swagger_types = {
         'cloudspace_id': 'str',
+        'message': 'str',
         'name': 'str',
         'replace_requested': 'bool',
         'state': 'str'
@@ -53,20 +54,24 @@ class JobsServiceUpdateJobBody(object):
 
     attribute_map = {
         'cloudspace_id': 'cloudspaceId',
+        'message': 'message',
         'name': 'name',
         'replace_requested': 'replaceRequested',
         'state': 'state'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, name: 'str' =None, replace_requested: 'bool' =None, state: 'str' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, message: 'str' =None, name: 'str' =None, replace_requested: 'bool' =None, state: 'str' =None):  # noqa: E501
         """JobsServiceUpdateJobBody - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
+        self._message = None
         self._name = None
         self._replace_requested = None
         self._state = None
         self.discriminator = None
         if cloudspace_id is not None:
             self.cloudspace_id = cloudspace_id
+        if message is not None:
+            self.message = message
         if name is not None:
             self.name = name
         if replace_requested is not None:
@@ -94,6 +99,29 @@ class JobsServiceUpdateJobBody(object):
         """
 
         self._cloudspace_id = cloudspace_id
+
+    @property
+    def message(self) -> 'str':
+        """Gets the message of this JobsServiceUpdateJobBody.  # noqa: E501
+
+        Optional. Why the job failed, reported by the job's own machine with state 'fail'. Ignored from any other caller or state.  # noqa: E501
+
+        :return: The message of this JobsServiceUpdateJobBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: 'str'):
+        """Sets the message of this JobsServiceUpdateJobBody.
+
+        Optional. Why the job failed, reported by the job's own machine with state 'fail'. Ignored from any other caller or state.  # noqa: E501
+
+        :param message: The message of this JobsServiceUpdateJobBody.  # noqa: E501
+        :type: str
+        """
+
+        self._message = message
 
     @property
     def name(self) -> 'str':

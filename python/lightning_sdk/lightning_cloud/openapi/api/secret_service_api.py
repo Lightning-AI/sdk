@@ -743,6 +743,7 @@ class SecretServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param str type:
         :return: V1ListSecretsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -763,12 +764,13 @@ class SecretServiceApi(object):
         >>> result = thread.get()
 
         :param async_req bool
+        :param str type:
         :return: V1ListSecretsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = []  # noqa: E501
+        all_params = ['type']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -789,6 +791,8 @@ class SecretServiceApi(object):
         path_params = {}
 
         query_params = []
+        if 'type' in params:
+            query_params.append(('type', params['type']))  # noqa: E501
 
         header_params = {}
 

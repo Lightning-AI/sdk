@@ -48,6 +48,7 @@ class V1Sandbox(object):
         'cloudspace_id': 'str',
         'cluster_id': 'str',
         'created_at': 'datetime',
+        'docker_data_root_on_disk': 'bool',
         'id': 'str',
         'idle_timeout': 'str',
         'image': 'str',
@@ -81,6 +82,7 @@ class V1Sandbox(object):
         'cloudspace_id': 'cloudspaceId',
         'cluster_id': 'clusterId',
         'created_at': 'createdAt',
+        'docker_data_root_on_disk': 'dockerDataRootOnDisk',
         'id': 'id',
         'idle_timeout': 'idleTimeout',
         'image': 'image',
@@ -110,11 +112,12 @@ class V1Sandbox(object):
         'warm_secrets': 'warmSecrets'
     }
 
-    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, id: 'str' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, restore: 'V1SandboxRestore' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, warm: 'V1SandboxWarmStatus' =None, warm_secrets: 'dict(str, str)' =None):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, docker_data_root_on_disk: 'bool' =None, id: 'str' =None, idle_timeout: 'str' =None, image: 'str' =None, image_secret_ref: 'str' =None, instance_type: 'str' =None, machine_id: 'str' =None, memory_snapshot_compatible: 'bool' =None, name: 'str' =None, network_policy: 'V1NetworkPolicy' =None, organization_id: 'str' =None, persistent: 'bool' =None, phase_durations: 'list[V1SandboxPhaseDuration]' =None, port_urls: 'dict(str, str)' =None, ports: 'list[str]' =None, project_id: 'str' =None, purpose: 'V1SandboxPurpose' =None, restore: 'V1SandboxRestore' =None, runtime: 'str' =None, snapshot_id: 'str' =None, spot: 'bool' =None, status: 'str' =None, storage_gb: 'str' =None, timeout: 'str' =None, updated_at: 'datetime' =None, user_id: 'str' =None, warm: 'V1SandboxWarmStatus' =None, warm_secrets: 'dict(str, str)' =None):  # noqa: E501
         """V1Sandbox - a model defined in Swagger"""  # noqa: E501
         self._cloudspace_id = None
         self._cluster_id = None
         self._created_at = None
+        self._docker_data_root_on_disk = None
         self._id = None
         self._idle_timeout = None
         self._image = None
@@ -149,6 +152,8 @@ class V1Sandbox(object):
             self.cluster_id = cluster_id
         if created_at is not None:
             self.created_at = created_at
+        if docker_data_root_on_disk is not None:
+            self.docker_data_root_on_disk = docker_data_root_on_disk
         if id is not None:
             self.id = id
         if idle_timeout is not None:
@@ -266,6 +271,27 @@ class V1Sandbox(object):
         """
 
         self._created_at = created_at
+
+    @property
+    def docker_data_root_on_disk(self) -> 'bool':
+        """Gets the docker_data_root_on_disk of this V1Sandbox.  # noqa: E501
+
+
+        :return: The docker_data_root_on_disk of this V1Sandbox.  # noqa: E501
+        :rtype: bool
+        """
+        return self._docker_data_root_on_disk
+
+    @docker_data_root_on_disk.setter
+    def docker_data_root_on_disk(self, docker_data_root_on_disk: 'bool'):
+        """Sets the docker_data_root_on_disk of this V1Sandbox.
+
+
+        :param docker_data_root_on_disk: The docker_data_root_on_disk of this V1Sandbox.  # noqa: E501
+        :type: bool
+        """
+
+        self._docker_data_root_on_disk = docker_data_root_on_disk
 
     @property
     def id(self) -> 'str':
@@ -537,7 +563,7 @@ class V1Sandbox(object):
     def port_urls(self) -> 'dict(str, str)':
         """Gets the port_urls of this V1Sandbox.  # noqa: E501
 
-        Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the port number as a string (e.g. \"8080\" -> \"https://8080-<id>-s.cloudspaces.litng.ai\"). Each URL routes through the cluster proxy to that port inside the sandbox. Only the ports the caller requested at create time are included; the internal sandbox API port is never exposed. Populated on create / get / list / update responses; empty when the sandbox has no user ports.  # noqa: E501
+        Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the port number as a string (e.g. \"8080\" -> \"https://8080-<id>-s.cloudspaces.litng.ai\"). Each URL routes through the cluster proxy to that port inside the sandbox. Only the ports requested at create time or through ExposeSandboxPorts are included; the internal sandbox API port is never exposed. Populated on create / get / list / update responses; empty when the sandbox has no user ports.  # noqa: E501
 
         :return: The port_urls of this V1Sandbox.  # noqa: E501
         :rtype: dict(str, str)
@@ -548,7 +574,7 @@ class V1Sandbox(object):
     def port_urls(self, port_urls: 'dict(str, str)'):
         """Sets the port_urls of this V1Sandbox.
 
-        Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the port number as a string (e.g. \"8080\" -> \"https://8080-<id>-s.cloudspaces.litng.ai\"). Each URL routes through the cluster proxy to that port inside the sandbox. Only the ports the caller requested at create time are included; the internal sandbox API port is never exposed. Populated on create / get / list / update responses; empty when the sandbox has no user ports.  # noqa: E501
+        Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the port number as a string (e.g. \"8080\" -> \"https://8080-<id>-s.cloudspaces.litng.ai\"). Each URL routes through the cluster proxy to that port inside the sandbox. Only the ports requested at create time or through ExposeSandboxPorts are included; the internal sandbox API port is never exposed. Populated on create / get / list / update responses; empty when the sandbox has no user ports.  # noqa: E501
 
         :param port_urls: The port_urls of this V1Sandbox.  # noqa: E501
         :type: dict(str, str)

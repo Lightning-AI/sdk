@@ -65,6 +65,7 @@ class V1VMHealth(object):
         'nvidia_smi_error': 'str',
         'nvlinks': 'list[V1NVLinkStatus]',
         'running_compute': 'list[V1ComputeApp]',
+        'sentinelone': 'V1SentinelOneHealth',
         'ssh_error': 'str',
         'ssh_reachable': 'bool',
         'status_details': 'str',
@@ -95,6 +96,7 @@ class V1VMHealth(object):
         'nvidia_smi_error': 'nvidiaSmiError',
         'nvlinks': 'nvlinks',
         'running_compute': 'runningCompute',
+        'sentinelone': 'sentinelone',
         'ssh_error': 'sshError',
         'ssh_reachable': 'sshReachable',
         'status_details': 'statusDetails',
@@ -104,7 +106,7 @@ class V1VMHealth(object):
         'xids': 'xids'
     }
 
-    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, guest_channel_error: 'str' =None, guest_channel_reachable: 'bool' =None, guest_transport: 'str' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, user_ssh_error: 'str' =None, user_ssh_reachable: 'bool' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
+    def __init__(self, alive: 'bool' =None, ch_log_failures: 'list[str]' =None, ch_log_last_failure: 'str' =None, ch_log_path: 'str' =None, ch_log_scan_error: 'str' =None, ch_log_size_bytes: 'str' =None, checked_at: 'datetime' =None, filesystems: 'list[V1VMFilesystemUsage]' =None, gpu_status: 'list[V1GPUStatus]' =None, gpus: 'list[str]' =None, guest_channel_error: 'str' =None, guest_channel_reachable: 'bool' =None, guest_transport: 'str' =None, ib_pkeys_info: 'list[V1VMIBPKeyInfo]' =None, ip: 'str' =None, memory: 'V1VMMemoryUsage' =None, name: 'str' =None, nvidia_smi_error: 'str' =None, nvlinks: 'list[V1NVLinkStatus]' =None, running_compute: 'list[V1ComputeApp]' =None, sentinelone: 'V1SentinelOneHealth' =None, ssh_error: 'str' =None, ssh_reachable: 'bool' =None, status_details: 'str' =None, user_ssh_error: 'str' =None, user_ssh_reachable: 'bool' =None, vm_id: 'str' =None, xids: 'list[V1XidEvent]' =None):  # noqa: E501
         """V1VMHealth - a model defined in Swagger"""  # noqa: E501
         self._alive = None
         self._ch_log_failures = None
@@ -126,6 +128,7 @@ class V1VMHealth(object):
         self._nvidia_smi_error = None
         self._nvlinks = None
         self._running_compute = None
+        self._sentinelone = None
         self._ssh_error = None
         self._ssh_reachable = None
         self._status_details = None
@@ -174,6 +177,8 @@ class V1VMHealth(object):
             self.nvlinks = nvlinks
         if running_compute is not None:
             self.running_compute = running_compute
+        if sentinelone is not None:
+            self.sentinelone = sentinelone
         if ssh_error is not None:
             self.ssh_error = ssh_error
         if ssh_reachable is not None:
@@ -620,6 +625,27 @@ class V1VMHealth(object):
         """
 
         self._running_compute = running_compute
+
+    @property
+    def sentinelone(self) -> 'V1SentinelOneHealth':
+        """Gets the sentinelone of this V1VMHealth.  # noqa: E501
+
+
+        :return: The sentinelone of this V1VMHealth.  # noqa: E501
+        :rtype: V1SentinelOneHealth
+        """
+        return self._sentinelone
+
+    @sentinelone.setter
+    def sentinelone(self, sentinelone: 'V1SentinelOneHealth'):
+        """Sets the sentinelone of this V1VMHealth.
+
+
+        :param sentinelone: The sentinelone of this V1VMHealth.  # noqa: E501
+        :type: V1SentinelOneHealth
+        """
+
+        self._sentinelone = sentinelone
 
     @property
     def ssh_error(self) -> 'str':

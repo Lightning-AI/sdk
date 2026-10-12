@@ -75,6 +75,13 @@ type JobsServiceGetLogsParams struct {
 	// MmtID.
 	MmtID *string
 
+	/* NewestFirst.
+
+	     Return the last page_size matching lines instead of the first, with a next_page_token for the
+	lines before them. Each page is still oldest first. Ignored with seek_resource_id.
+	*/
+	NewestFirst *bool
+
 	// PageSize.
 	//
 	// Format: uint64
@@ -100,6 +107,24 @@ type JobsServiceGetLogsParams struct {
 	   sandbox_id returns logs for all of a sandbox's recorded commands.
 	*/
 	SandboxID *string
+
+	/* ScheduleRunIds.
+
+	   schedule_run_ids returns the output of these cloudspace schedule runs.
+	*/
+	ScheduleRunIds []string
+
+	// SeekLine.
+	//
+	// Format: uint64
+	SeekLine *string
+
+	/* SeekResourceID.
+
+	     Read seek_resource_id's unfiltered merged stream from seek_line onward
+	("view in context" jumps). Query, severity, since and until are ignored.
+	*/
+	SeekResourceID *string
 
 	/* Severity.
 
@@ -201,6 +226,17 @@ func (o *JobsServiceGetLogsParams) SetMmtID(mmtID *string) {
 	o.MmtID = mmtID
 }
 
+// WithNewestFirst adds the newestFirst to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithNewestFirst(newestFirst *bool) *JobsServiceGetLogsParams {
+	o.SetNewestFirst(newestFirst)
+	return o
+}
+
+// SetNewestFirst adds the newestFirst to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetNewestFirst(newestFirst *bool) {
+	o.NewestFirst = newestFirst
+}
+
 // WithPageSize adds the pageSize to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) WithPageSize(pageSize *string) *JobsServiceGetLogsParams {
 	o.SetPageSize(pageSize)
@@ -265,6 +301,39 @@ func (o *JobsServiceGetLogsParams) WithSandboxID(sandboxID *string) *JobsService
 // SetSandboxID adds the sandboxId to the jobs service get logs params
 func (o *JobsServiceGetLogsParams) SetSandboxID(sandboxID *string) {
 	o.SandboxID = sandboxID
+}
+
+// WithScheduleRunIds adds the scheduleRunIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithScheduleRunIds(scheduleRunIds []string) *JobsServiceGetLogsParams {
+	o.SetScheduleRunIds(scheduleRunIds)
+	return o
+}
+
+// SetScheduleRunIds adds the scheduleRunIds to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetScheduleRunIds(scheduleRunIds []string) {
+	o.ScheduleRunIds = scheduleRunIds
+}
+
+// WithSeekLine adds the seekLine to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSeekLine(seekLine *string) *JobsServiceGetLogsParams {
+	o.SetSeekLine(seekLine)
+	return o
+}
+
+// SetSeekLine adds the seekLine to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSeekLine(seekLine *string) {
+	o.SeekLine = seekLine
+}
+
+// WithSeekResourceID adds the seekResourceID to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) WithSeekResourceID(seekResourceID *string) *JobsServiceGetLogsParams {
+	o.SetSeekResourceID(seekResourceID)
+	return o
+}
+
+// SetSeekResourceID adds the seekResourceId to the jobs service get logs params
+func (o *JobsServiceGetLogsParams) SetSeekResourceID(seekResourceID *string) {
+	o.SeekResourceID = seekResourceID
 }
 
 // WithSeverity adds the severity to the jobs service get logs params
@@ -353,6 +422,23 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		}
 	}
 
+	if o.NewestFirst != nil {
+
+		// query param newestFirst
+		var qrNewestFirst bool
+
+		if o.NewestFirst != nil {
+			qrNewestFirst = *o.NewestFirst
+		}
+		qNewestFirst := swag.FormatBool(qrNewestFirst)
+		if qNewestFirst != "" {
+
+			if err := r.SetQueryParam("newestFirst", qNewestFirst); err != nil {
+				return err
+			}
+		}
+	}
+
 	if o.PageSize != nil {
 
 		// query param pageSize
@@ -432,6 +518,51 @@ func (o *JobsServiceGetLogsParams) WriteToRequest(r runtime.ClientRequest, reg s
 		if qSandboxID != "" {
 
 			if err := r.SetQueryParam("sandboxId", qSandboxID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ScheduleRunIds != nil {
+
+		// binding items for scheduleRunIds
+		joinedScheduleRunIds := o.bindParamScheduleRunIds(reg)
+
+		// query array param scheduleRunIds
+		if err := r.SetQueryParam("scheduleRunIds", joinedScheduleRunIds...); err != nil {
+			return err
+		}
+	}
+
+	if o.SeekLine != nil {
+
+		// query param seekLine
+		var qrSeekLine string
+
+		if o.SeekLine != nil {
+			qrSeekLine = *o.SeekLine
+		}
+		qSeekLine := qrSeekLine
+		if qSeekLine != "" {
+
+			if err := r.SetQueryParam("seekLine", qSeekLine); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SeekResourceID != nil {
+
+		// query param seekResourceId
+		var qrSeekResourceID string
+
+		if o.SeekResourceID != nil {
+			qrSeekResourceID = *o.SeekResourceID
+		}
+		qSeekResourceID := qrSeekResourceID
+		if qSeekResourceID != "" {
+
+			if err := r.SetQueryParam("seekResourceId", qSeekResourceID); err != nil {
 				return err
 			}
 		}
@@ -526,4 +657,21 @@ func (o *JobsServiceGetLogsParams) bindParamSandboxCommandIds(formats strfmt.Reg
 	sandboxCommandIdsIS := swag.JoinByFormat(sandboxCommandIdsIC, "multi")
 
 	return sandboxCommandIdsIS
+}
+
+// bindParamJobsServiceGetLogs binds the parameter scheduleRunIds
+func (o *JobsServiceGetLogsParams) bindParamScheduleRunIds(formats strfmt.Registry) []string {
+	scheduleRunIdsIR := o.ScheduleRunIds
+
+	var scheduleRunIdsIC []string
+	for _, scheduleRunIdsIIR := range scheduleRunIdsIR { // explode []string
+
+		scheduleRunIdsIIV := scheduleRunIdsIIR // string as string
+		scheduleRunIdsIC = append(scheduleRunIdsIC, scheduleRunIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	scheduleRunIdsIS := swag.JoinByFormat(scheduleRunIdsIC, "multi")
+
+	return scheduleRunIdsIS
 }

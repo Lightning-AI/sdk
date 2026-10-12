@@ -68,7 +68,7 @@ CloudSpaceServiceRequestCloudSpaceAccessParams contains all the parameters to se
 type CloudSpaceServiceRequestCloudSpaceAccessParams struct {
 
 	// Body.
-	Body models.CloudSpaceServiceRequestCloudSpaceAccessBody
+	Body *models.CloudSpaceServiceRequestCloudSpaceAccessBody
 
 	// CloudspaceName.
 	CloudspaceName string
@@ -133,13 +133,13 @@ func (o *CloudSpaceServiceRequestCloudSpaceAccessParams) SetHTTPClient(client *h
 }
 
 // WithBody adds the body to the cloud space service request cloud space access params
-func (o *CloudSpaceServiceRequestCloudSpaceAccessParams) WithBody(body models.CloudSpaceServiceRequestCloudSpaceAccessBody) *CloudSpaceServiceRequestCloudSpaceAccessParams {
+func (o *CloudSpaceServiceRequestCloudSpaceAccessParams) WithBody(body *models.CloudSpaceServiceRequestCloudSpaceAccessBody) *CloudSpaceServiceRequestCloudSpaceAccessParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the cloud space service request cloud space access params
-func (o *CloudSpaceServiceRequestCloudSpaceAccessParams) SetBody(body models.CloudSpaceServiceRequestCloudSpaceAccessBody) {
+func (o *CloudSpaceServiceRequestCloudSpaceAccessParams) SetBody(body *models.CloudSpaceServiceRequestCloudSpaceAccessBody) {
 	o.Body = body
 }
 

@@ -633,6 +633,111 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def billing_service_get_activity_filter_resource_names(self, **kwargs) -> 'V1GetActivityFilterResourceNamesResponse':  # noqa: E501
+        """Paginated, searchable replacement for GetActivityFilterValues.resource_ids. Returns only resource ids for Studio/Job/Deployment/MultiMachineJob, ordered and paginated by resource id.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_activity_filter_resource_names(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id: if this is non empty the request is project scoped
+        :param str search_query: optional, matched against the resolved resource name
+        :param int page_size:
+        :param str page_token:
+        :return: V1GetActivityFilterResourceNamesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_activity_filter_resource_names_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_activity_filter_resource_names_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_activity_filter_resource_names_with_http_info(self, **kwargs) -> 'V1GetActivityFilterResourceNamesResponse':  # noqa: E501
+        """Paginated, searchable replacement for GetActivityFilterValues.resource_ids. Returns only resource ids for Studio/Job/Deployment/MultiMachineJob, ordered and paginated by resource id.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_activity_filter_resource_names_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param str project_id: if this is non empty the request is project scoped
+        :param str search_query: optional, matched against the resolved resource name
+        :param int page_size:
+        :param str page_token:
+        :return: V1GetActivityFilterResourceNamesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'project_id', 'search_query', 'page_size', 'page_token']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_activity_filter_resource_names" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_id' in params:
+            query_params.append(('projectId', params['project_id']))  # noqa: E501
+        if 'search_query' in params:
+            query_params.append(('searchQuery', params['search_query']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/usage-report/filter-values/resource-names', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetActivityFilterResourceNamesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def billing_service_get_activity_filter_values(self, **kwargs) -> 'V1GetActivityFilterValuesResponse':  # noqa: E501
         """Returns the set of values (projects, users, resource types, resource ids) an org admin or teamspace viewer can filter the activity page by, for the given scope and time range.  # noqa: E501
 
@@ -921,6 +1026,91 @@ class BillingServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1BillingSubscription',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def billing_service_get_coding_usage(self, **kwargs) -> 'V1GetCodingUsageResponse':  # noqa: E501
+        """The caller's coding plan allowance and how much of each window they have used.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_coding_usage(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :return: V1GetCodingUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_coding_usage_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_coding_usage_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_coding_usage_with_http_info(self, **kwargs) -> 'V1GetCodingUsageResponse':  # noqa: E501
+        """The caller's coding plan allowance and how much of each window they have used.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_coding_usage_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :return: V1GetCodingUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = []  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_coding_usage" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/coding-usage', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetCodingUsageResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -1627,6 +1817,322 @@ class BillingServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def billing_service_get_usage_group_daily_totals(self, **kwargs) -> 'V1GetUsageGroupDailyTotalsResponse':  # noqa: E501
+        """Usage cost per UTC day and group (resource type, user or teamspace) over the requested range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_usage_group_daily_totals(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param list[str] project_ids:
+        :param list[str] resource_types:
+        :param list[str] resource_ids:
+        :param list[str] user_ids:
+        :param list[str] cluster_ids:
+        :param datetime _from:
+        :param datetime to:
+        :param str group_by: Required
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
+        :return: V1GetUsageGroupDailyTotalsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_usage_group_daily_totals_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_usage_group_daily_totals_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_usage_group_daily_totals_with_http_info(self, **kwargs) -> 'V1GetUsageGroupDailyTotalsResponse':  # noqa: E501
+        """Usage cost per UTC day and group (resource type, user or teamspace) over the requested range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_usage_group_daily_totals_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param list[str] project_ids:
+        :param list[str] resource_types:
+        :param list[str] resource_ids:
+        :param list[str] user_ids:
+        :param list[str] cluster_ids:
+        :param datetime _from:
+        :param datetime to:
+        :param str group_by: Required
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
+        :return: V1GetUsageGroupDailyTotalsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'project_ids', 'resource_types', 'resource_ids', 'user_ids', 'cluster_ids', '_from', 'to', 'group_by', 'subfilters_job_tag_ids', 'subfilters_job_match_all_tags', 'subfilters_multi_machine_job_tag_ids', 'subfilters_multi_machine_job_match_all_tags', 'subfilters_deployment_tag_ids', 'subfilters_deployment_match_all_tags', 'subfilters_assistant_message_api_key_ids']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_usage_group_daily_totals" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_ids' in params:
+            query_params.append(('projectIds', params['project_ids']))  # noqa: E501
+            collection_formats['projectIds'] = 'multi'  # noqa: E501
+        if 'resource_types' in params:
+            query_params.append(('resourceTypes', params['resource_types']))  # noqa: E501
+            collection_formats['resourceTypes'] = 'multi'  # noqa: E501
+        if 'resource_ids' in params:
+            query_params.append(('resourceIds', params['resource_ids']))  # noqa: E501
+            collection_formats['resourceIds'] = 'multi'  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
+        if 'cluster_ids' in params:
+            query_params.append(('clusterIds', params['cluster_ids']))  # noqa: E501
+            collection_formats['clusterIds'] = 'multi'  # noqa: E501
+        if '_from' in params:
+            query_params.append(('from', params['_from']))  # noqa: E501
+        if 'to' in params:
+            query_params.append(('to', params['to']))  # noqa: E501
+        if 'group_by' in params:
+            query_params.append(('groupBy', params['group_by']))  # noqa: E501
+        if 'subfilters_job_tag_ids' in params:
+            query_params.append(('subfilters.job.tagIds', params['subfilters_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.job.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_job_match_all_tags' in params:
+            query_params.append(('subfilters.job.matchAllTags', params['subfilters_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_multi_machine_job_tag_ids' in params:
+            query_params.append(('subfilters.multiMachineJob.tagIds', params['subfilters_multi_machine_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.multiMachineJob.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_multi_machine_job_match_all_tags' in params:
+            query_params.append(('subfilters.multiMachineJob.matchAllTags', params['subfilters_multi_machine_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_deployment_tag_ids' in params:
+            query_params.append(('subfilters.deployment.tagIds', params['subfilters_deployment_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.deployment.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_deployment_match_all_tags' in params:
+            query_params.append(('subfilters.deployment.matchAllTags', params['subfilters_deployment_match_all_tags']))  # noqa: E501
+        if 'subfilters_assistant_message_api_key_ids' in params:
+            query_params.append(('subfilters.assistantMessage.apiKeyIds', params['subfilters_assistant_message_api_key_ids']))  # noqa: E501
+            collection_formats['subfilters.assistantMessage.apiKeyIds'] = 'multi'  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/usage-report-rollup/group-daily-totals', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetUsageGroupDailyTotalsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def billing_service_get_usage_group_totals(self, **kwargs) -> 'V1GetUsageGroupTotalsResponse':  # noqa: E501
+        """Usage cost per group (resource type, user or teamspace) summed over the whole requested range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_usage_group_totals(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param list[str] project_ids:
+        :param list[str] resource_types:
+        :param list[str] resource_ids:
+        :param list[str] user_ids:
+        :param list[str] cluster_ids:
+        :param datetime _from:
+        :param datetime to:
+        :param str group_by: Required
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
+        :return: V1GetUsageGroupTotalsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_get_usage_group_totals_with_http_info(**kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_get_usage_group_totals_with_http_info(**kwargs)  # noqa: E501
+            return data
+
+    def billing_service_get_usage_group_totals_with_http_info(self, **kwargs) -> 'V1GetUsageGroupTotalsResponse':  # noqa: E501
+        """Usage cost per group (resource type, user or teamspace) summed over the whole requested range.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_get_usage_group_totals_with_http_info(async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id:
+        :param list[str] project_ids:
+        :param list[str] resource_types:
+        :param list[str] resource_ids:
+        :param list[str] user_ids:
+        :param list[str] cluster_ids:
+        :param datetime _from:
+        :param datetime to:
+        :param str group_by: Required
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
+        :return: V1GetUsageGroupTotalsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'project_ids', 'resource_types', 'resource_ids', 'user_ids', 'cluster_ids', '_from', 'to', 'group_by', 'subfilters_job_tag_ids', 'subfilters_job_match_all_tags', 'subfilters_multi_machine_job_tag_ids', 'subfilters_multi_machine_job_match_all_tags', 'subfilters_deployment_tag_ids', 'subfilters_deployment_match_all_tags', 'subfilters_assistant_message_api_key_ids']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_get_usage_group_totals" % key
+                )
+            params[key] = val
+        del params['kwargs']
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'project_ids' in params:
+            query_params.append(('projectIds', params['project_ids']))  # noqa: E501
+            collection_formats['projectIds'] = 'multi'  # noqa: E501
+        if 'resource_types' in params:
+            query_params.append(('resourceTypes', params['resource_types']))  # noqa: E501
+            collection_formats['resourceTypes'] = 'multi'  # noqa: E501
+        if 'resource_ids' in params:
+            query_params.append(('resourceIds', params['resource_ids']))  # noqa: E501
+            collection_formats['resourceIds'] = 'multi'  # noqa: E501
+        if 'user_ids' in params:
+            query_params.append(('userIds', params['user_ids']))  # noqa: E501
+            collection_formats['userIds'] = 'multi'  # noqa: E501
+        if 'cluster_ids' in params:
+            query_params.append(('clusterIds', params['cluster_ids']))  # noqa: E501
+            collection_formats['clusterIds'] = 'multi'  # noqa: E501
+        if '_from' in params:
+            query_params.append(('from', params['_from']))  # noqa: E501
+        if 'to' in params:
+            query_params.append(('to', params['to']))  # noqa: E501
+        if 'group_by' in params:
+            query_params.append(('groupBy', params['group_by']))  # noqa: E501
+        if 'subfilters_job_tag_ids' in params:
+            query_params.append(('subfilters.job.tagIds', params['subfilters_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.job.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_job_match_all_tags' in params:
+            query_params.append(('subfilters.job.matchAllTags', params['subfilters_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_multi_machine_job_tag_ids' in params:
+            query_params.append(('subfilters.multiMachineJob.tagIds', params['subfilters_multi_machine_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.multiMachineJob.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_multi_machine_job_match_all_tags' in params:
+            query_params.append(('subfilters.multiMachineJob.matchAllTags', params['subfilters_multi_machine_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_deployment_tag_ids' in params:
+            query_params.append(('subfilters.deployment.tagIds', params['subfilters_deployment_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.deployment.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_deployment_match_all_tags' in params:
+            query_params.append(('subfilters.deployment.matchAllTags', params['subfilters_deployment_match_all_tags']))  # noqa: E501
+        if 'subfilters_assistant_message_api_key_ids' in params:
+            query_params.append(('subfilters.assistantMessage.apiKeyIds', params['subfilters_assistant_message_api_key_ids']))  # noqa: E501
+            collection_formats['subfilters.assistantMessage.apiKeyIds'] = 'multi'  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/usage-report-rollup/group-totals', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetUsageGroupTotalsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def billing_service_get_usage_report_v1(self, **kwargs) -> 'V1UsageReportV1':  # noqa: E501
         """Usage report endpoint to get credits spending information. Provides credits consumption data by particular project according to filters given.  # noqa: E501
 
@@ -1792,6 +2298,14 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param list[str] cluster_ids: Optional, will filter by cluster account/provider name if given
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
         :return: V1UsageReportV2
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1823,12 +2337,20 @@ class BillingServiceApi(object):
         :param datetime search_after: Optional, only include usage entries strictly after this time. This time will be the time of the last returned usage report item. The API will return the next search_after to use.
         :param str search_after_resource_id: Optional, paired with search_after: the resource_id of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
         :param str search_after_resource_type: Optional, paired with search_after: the resource_type of the last returned usage report item, needed to break ties when multiple resources share the same search_after date.
+        :param list[str] cluster_ids: Optional, will filter by cluster account/provider name if given
+        :param list[str] subfilters_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_multi_machine_job_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_multi_machine_job_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_deployment_tag_ids: Match workloads with any of these tags. Empty means no subfilter for this resource type
+        :param bool subfilters_deployment_match_all_tags: Require every tag in tag_ids rather than any
+        :param list[str] subfilters_assistant_message_api_key_ids: Match messages billed through any of these API keys. Empty means no subfilter for assistant messages
         :return: V1UsageReportV2
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['org_id', 'project_ids', 'resource_types', 'resource_ids', 'user_ids', '_from', 'to', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type']  # noqa: E501
+        all_params = ['org_id', 'project_ids', 'resource_types', 'resource_ids', 'user_ids', '_from', 'to', 'limit', 'search_after', 'search_after_resource_id', 'search_after_resource_type', 'cluster_ids', 'subfilters_job_tag_ids', 'subfilters_job_match_all_tags', 'subfilters_multi_machine_job_tag_ids', 'subfilters_multi_machine_job_match_all_tags', 'subfilters_deployment_tag_ids', 'subfilters_deployment_match_all_tags', 'subfilters_assistant_message_api_key_ids']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1875,6 +2397,27 @@ class BillingServiceApi(object):
             query_params.append(('searchAfterResourceId', params['search_after_resource_id']))  # noqa: E501
         if 'search_after_resource_type' in params:
             query_params.append(('searchAfterResourceType', params['search_after_resource_type']))  # noqa: E501
+        if 'cluster_ids' in params:
+            query_params.append(('clusterIds', params['cluster_ids']))  # noqa: E501
+            collection_formats['clusterIds'] = 'multi'  # noqa: E501
+        if 'subfilters_job_tag_ids' in params:
+            query_params.append(('subfilters.job.tagIds', params['subfilters_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.job.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_job_match_all_tags' in params:
+            query_params.append(('subfilters.job.matchAllTags', params['subfilters_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_multi_machine_job_tag_ids' in params:
+            query_params.append(('subfilters.multiMachineJob.tagIds', params['subfilters_multi_machine_job_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.multiMachineJob.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_multi_machine_job_match_all_tags' in params:
+            query_params.append(('subfilters.multiMachineJob.matchAllTags', params['subfilters_multi_machine_job_match_all_tags']))  # noqa: E501
+        if 'subfilters_deployment_tag_ids' in params:
+            query_params.append(('subfilters.deployment.tagIds', params['subfilters_deployment_tag_ids']))  # noqa: E501
+            collection_formats['subfilters.deployment.tagIds'] = 'multi'  # noqa: E501
+        if 'subfilters_deployment_match_all_tags' in params:
+            query_params.append(('subfilters.deployment.matchAllTags', params['subfilters_deployment_match_all_tags']))  # noqa: E501
+        if 'subfilters_assistant_message_api_key_ids' in params:
+            query_params.append(('subfilters.assistantMessage.apiKeyIds', params['subfilters_assistant_message_api_key_ids']))  # noqa: E501
+            collection_formats['subfilters.assistantMessage.apiKeyIds'] = 'multi'  # noqa: E501
 
         header_params = {}
 
@@ -2674,6 +3217,103 @@ class BillingServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1BillingSubscription',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def billing_service_update_coding_usage_settings(self, body: 'V1UpdateCodingUsageSettingsRequest', **kwargs) -> 'V1UpdateCodingUsageSettingsResponse':  # noqa: E501
+        """billing_service_update_coding_usage_settings  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_update_coding_usage_settings(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1UpdateCodingUsageSettingsRequest body: (required)
+        :return: V1UpdateCodingUsageSettingsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.billing_service_update_coding_usage_settings_with_http_info(body, **kwargs)  # noqa: E501
+        else:
+            (data) = self.billing_service_update_coding_usage_settings_with_http_info(body, **kwargs)  # noqa: E501
+            return data
+
+    def billing_service_update_coding_usage_settings_with_http_info(self, body: 'V1UpdateCodingUsageSettingsRequest', **kwargs) -> 'V1UpdateCodingUsageSettingsResponse':  # noqa: E501
+        """billing_service_update_coding_usage_settings  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.billing_service_update_coding_usage_settings_with_http_info(body, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param V1UpdateCodingUsageSettingsRequest body: (required)
+        :return: V1UpdateCodingUsageSettingsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method billing_service_update_coding_usage_settings" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `billing_service_update_coding_usage_settings`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/billing/coding-usage/settings', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1UpdateCodingUsageSettingsResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

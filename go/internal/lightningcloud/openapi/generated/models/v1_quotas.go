@@ -24,26 +24,8 @@ type V1Quotas struct {
 	// free storage bytes
 	FreeStorageBytes string `json:"freeStorageBytes,omitempty"`
 
-	// max frontends per lightning app
-	MaxFrontendsPerLightningApp string `json:"maxFrontendsPerLightningApp,omitempty"`
-
 	// max lightning app releases
 	MaxLightningAppReleases string `json:"maxLightningAppReleases,omitempty"`
-
-	// max lightning apps
-	MaxLightningApps string `json:"maxLightningApps,omitempty"`
-
-	// max lightning works
-	MaxLightningWorks string `json:"maxLightningWorks,omitempty"`
-
-	// max running default lightning works per app
-	MaxRunningDefaultLightningWorksPerApp string `json:"maxRunningDefaultLightningWorksPerApp,omitempty"`
-
-	// max running lightning apps
-	MaxRunningLightningApps string `json:"maxRunningLightningApps,omitempty"`
-
-	// max running lightning works
-	MaxRunningLightningWorks string `json:"maxRunningLightningWorks,omitempty"`
 }
 
 // Validate validates this v1 quotas

@@ -82,6 +82,9 @@ type V1ServerSpec struct {
 	// dws
 	Dws bool `json:"dws,omitempty"`
 
+	// Admission rejections apply only to this server and expire after the configured debounce period.
+	ExcludeMachineIds []*V1MachineExclusion `json:"excludeMachineIds"`
+
 	// User requested ports for the server (sandbox, plain VM cloud instance)
 	ForwardPorts []int64 `json:"forwardPorts"`
 
@@ -146,6 +149,9 @@ type V1ServerSpec struct {
 
 	// Set if it's part of a multi machine job
 	MultiMachineJobID string `json:"multiMachineJobId,omitempty"`
+
+	// Allocation-time rate retained for billing after placement-group peers are deleted.
+	MultiNodeIbCostPerHour float64 `json:"multiNodeIbCostPerHour,omitempty"`
 
 	// Network interfaces of the server
 	NetworkInterfaces []*V1NetworkInterface `json:"networkInterfaces"`
@@ -215,6 +221,9 @@ type V1ServerSpec struct {
 	// resource type
 	ResourceType string `json:"resourceType,omitempty"`
 
+	// sentinelone
+	Sentinelone *V1SentinelOneState `json:"sentinelone,omitempty"`
+
 	// server type
 	ServerType *V1ServerType `json:"serverType,omitempty"`
 
@@ -274,6 +283,10 @@ func (m *V1ServerSpec) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateExcludeMachineIds(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateGuestAccelerators(formats); err != nil {
 		res = append(res, err)
 	}
@@ -299,6 +312,10 @@ func (m *V1ServerSpec) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePortOverrides(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSentinelone(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -342,6 +359,36 @@ func (m *V1ServerSpec) validateAcceleratorType(formats strfmt.Registry) error {
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) validateExcludeMachineIds(formats strfmt.Registry) error {
+	if swag.IsZero(m.ExcludeMachineIds) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.ExcludeMachineIds); i++ {
+		if swag.IsZero(m.ExcludeMachineIds[i]) { // not required
+			continue
+		}
+
+		if m.ExcludeMachineIds[i] != nil {
+			if err := m.ExcludeMachineIds[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("excludeMachineIds" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("excludeMachineIds" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -543,6 +590,29 @@ func (m *V1ServerSpec) validatePortOverrides(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *V1ServerSpec) validateSentinelone(formats strfmt.Registry) error {
+	if swag.IsZero(m.Sentinelone) { // not required
+		return nil
+	}
+
+	if m.Sentinelone != nil {
+		if err := m.Sentinelone.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("sentinelone")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("sentinelone")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1ServerSpec) validateServerType(formats strfmt.Registry) error {
 	if swag.IsZero(m.ServerType) { // not required
 		return nil
@@ -639,6 +709,10 @@ func (m *V1ServerSpec) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateExcludeMachineIds(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateGuestAccelerators(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -664,6 +738,10 @@ func (m *V1ServerSpec) ContextValidate(ctx context.Context, formats strfmt.Regis
 	}
 
 	if err := m.contextValidatePortOverrides(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSentinelone(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -705,6 +783,35 @@ func (m *V1ServerSpec) contextValidateAcceleratorType(ctx context.Context, forma
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) contextValidateExcludeMachineIds(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ExcludeMachineIds); i++ {
+
+		if m.ExcludeMachineIds[i] != nil {
+
+			if swag.IsZero(m.ExcludeMachineIds[i]) { // not required
+				return nil
+			}
+
+			if err := m.ExcludeMachineIds[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("excludeMachineIds" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("excludeMachineIds" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -896,6 +1003,31 @@ func (m *V1ServerSpec) contextValidatePortOverrides(ctx context.Context, formats
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("portOverrides")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *V1ServerSpec) contextValidateSentinelone(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Sentinelone != nil {
+
+		if swag.IsZero(m.Sentinelone) { // not required
+			return nil
+		}
+
+		if err := m.Sentinelone.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("sentinelone")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("sentinelone")
 			}
 
 			return err

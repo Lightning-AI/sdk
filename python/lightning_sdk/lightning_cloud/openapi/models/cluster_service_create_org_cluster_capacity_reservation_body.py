@@ -49,6 +49,7 @@ class ClusterServiceCreateOrgClusterCapacityReservationBody(object):
         'cloud_provider_capacity_reservation_id': 'str',
         'end_time': 'datetime',
         'full_cloud_provider_reservation_string': 'str',
+        'infiniband_tier': 'V1InfinibandTier',
         'instance_type': 'str',
         'match_pattern': 'str',
         'num_instances': 'int',
@@ -64,6 +65,7 @@ class ClusterServiceCreateOrgClusterCapacityReservationBody(object):
         'cloud_provider_capacity_reservation_id': 'cloudProviderCapacityReservationId',
         'end_time': 'endTime',
         'full_cloud_provider_reservation_string': 'fullCloudProviderReservationString',
+        'infiniband_tier': 'infinibandTier',
         'instance_type': 'instanceType',
         'match_pattern': 'matchPattern',
         'num_instances': 'numInstances',
@@ -74,12 +76,13 @@ class ClusterServiceCreateOrgClusterCapacityReservationBody(object):
         'zone': 'zone'
     }
 
-    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'int' =None, populate_from_cloud_provider: 'bool' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
+    def __init__(self, capacity_reservation_type: 'str' =None, cloud_provider_capacity_reservation_id: 'str' =None, end_time: 'datetime' =None, full_cloud_provider_reservation_string: 'str' =None, infiniband_tier: 'V1InfinibandTier' =None, instance_type: 'str' =None, match_pattern: 'str' =None, num_instances: 'int' =None, populate_from_cloud_provider: 'bool' =None, project_id: 'str' =None, region: 'str' =None, start_time: 'datetime' =None, zone: 'str' =None):  # noqa: E501
         """ClusterServiceCreateOrgClusterCapacityReservationBody - a model defined in Swagger"""  # noqa: E501
         self._capacity_reservation_type = None
         self._cloud_provider_capacity_reservation_id = None
         self._end_time = None
         self._full_cloud_provider_reservation_string = None
+        self._infiniband_tier = None
         self._instance_type = None
         self._match_pattern = None
         self._num_instances = None
@@ -97,6 +100,8 @@ class ClusterServiceCreateOrgClusterCapacityReservationBody(object):
             self.end_time = end_time
         if full_cloud_provider_reservation_string is not None:
             self.full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
+        if infiniband_tier is not None:
+            self.infiniband_tier = infiniband_tier
         if instance_type is not None:
             self.instance_type = instance_type
         if match_pattern is not None:
@@ -197,6 +202,27 @@ class ClusterServiceCreateOrgClusterCapacityReservationBody(object):
         """
 
         self._full_cloud_provider_reservation_string = full_cloud_provider_reservation_string
+
+    @property
+    def infiniband_tier(self) -> 'V1InfinibandTier':
+        """Gets the infiniband_tier of this ClusterServiceCreateOrgClusterCapacityReservationBody.  # noqa: E501
+
+
+        :return: The infiniband_tier of this ClusterServiceCreateOrgClusterCapacityReservationBody.  # noqa: E501
+        :rtype: V1InfinibandTier
+        """
+        return self._infiniband_tier
+
+    @infiniband_tier.setter
+    def infiniband_tier(self, infiniband_tier: 'V1InfinibandTier'):
+        """Sets the infiniband_tier of this ClusterServiceCreateOrgClusterCapacityReservationBody.
+
+
+        :param infiniband_tier: The infiniband_tier of this ClusterServiceCreateOrgClusterCapacityReservationBody.  # noqa: E501
+        :type: V1InfinibandTier
+        """
+
+        self._infiniband_tier = infiniband_tier
 
     @property
     def instance_type(self) -> 'str':

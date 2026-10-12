@@ -67,6 +67,9 @@ type ClusterServiceUpdateMachineBody struct {
 	// schedulable affinity
 	SchedulableAffinity *V1SchedulableAffinity `json:"schedulableAffinity,omitempty"`
 
+	// Omitted preserves the current value; 0 clears the override; otherwise must be finite and >= 1.
+	StorageOvercommitFactor float32 `json:"storageOvercommitFactor,omitempty"`
+
 	// unschedulable
 	Unschedulable bool `json:"unschedulable,omitempty"`
 }

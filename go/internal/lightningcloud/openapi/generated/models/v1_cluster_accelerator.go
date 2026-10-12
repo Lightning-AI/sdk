@@ -118,6 +118,9 @@ type V1ClusterAccelerator struct {
 	// Largest availability of quota in all regions
 	MaxAvailableQuota string `json:"maxAvailableQuota,omitempty"`
 
+	// Additional credits per GPU-hour for a shared machine placement group
+	MultiNodeIbCostPerGpuHour float64 `json:"multiNodeIbCostPerGpuHour,omitempty"`
+
 	// Prevents users from requesting instance as on-demand instance
 	NonOndemand bool `json:"nonOndemand,omitempty"`
 
@@ -150,7 +153,7 @@ type V1ClusterAccelerator struct {
 	// Campaign label / end time; nil when no promo applies
 	Promo *V1PromoOverlay `json:"promo,omitempty"`
 
-	// Cloud provider name as string, e.g. 'aws', 'gcp', 'vultr' - this avoids us matching on the FE
+	// Cloud provider name as string, e.g. 'aws', 'gcp' - this avoids us matching on the FE
 	Provider *V1CloudProvider `json:"provider,omitempty"`
 
 	// Quota last checking time

@@ -68,10 +68,6 @@ type ClientService interface {
 
 	CloudSpaceServiceCreateCloudSpace(params *CloudSpaceServiceCreateCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceOK, error)
 
-	CloudSpaceServiceCreateCloudSpaceApp(params *CloudSpaceServiceCreateCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceAppOK, error)
-
-	CloudSpaceServiceCreateCloudSpaceAppInstance(params *CloudSpaceServiceCreateCloudSpaceAppInstanceParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceAppInstanceOK, error)
-
 	CloudSpaceServiceCreateCloudSpaceInstanceMetric(params *CloudSpaceServiceCreateCloudSpaceInstanceMetricParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceInstanceMetricOK, error)
 
 	CloudSpaceServiceCreateCloudSpaceSession(params *CloudSpaceServiceCreateCloudSpaceSessionParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceSessionOK, error)
@@ -82,11 +78,7 @@ type ClientService interface {
 
 	CloudSpaceServiceCreateLightningRun(params *CloudSpaceServiceCreateLightningRunParams, opts ...ClientOption) (*CloudSpaceServiceCreateLightningRunOK, error)
 
-	CloudSpaceServiceCreateLightningRunInstance(params *CloudSpaceServiceCreateLightningRunInstanceParams, opts ...ClientOption) (*CloudSpaceServiceCreateLightningRunInstanceOK, error)
-
 	CloudSpaceServiceDeleteCloudSpace(params *CloudSpaceServiceDeleteCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceDeleteCloudSpaceOK, error)
-
-	CloudSpaceServiceDeleteCloudSpaceApp(params *CloudSpaceServiceDeleteCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceDeleteCloudSpaceAppOK, error)
 
 	CloudSpaceServiceDeleteCloudSpaceSession(params *CloudSpaceServiceDeleteCloudSpaceSessionParams, opts ...ClientOption) (*CloudSpaceServiceDeleteCloudSpaceSessionOK, error)
 
@@ -106,11 +98,7 @@ type ClientService interface {
 
 	CloudSpaceServiceForkCloudSpace(params *CloudSpaceServiceForkCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceForkCloudSpaceOK, error)
 
-	CloudSpaceServiceForkCloudSpaceAppInstance(params *CloudSpaceServiceForkCloudSpaceAppInstanceParams, opts ...ClientOption) (*CloudSpaceServiceForkCloudSpaceAppInstanceOK, error)
-
 	CloudSpaceServiceGetCloudSpace(params *CloudSpaceServiceGetCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceGetCloudSpaceOK, error)
-
-	CloudSpaceServiceGetCloudSpaceApp(params *CloudSpaceServiceGetCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceGetCloudSpaceAppOK, error)
 
 	CloudSpaceServiceGetCloudSpaceByCollabSession(params *CloudSpaceServiceGetCloudSpaceByCollabSessionParams, opts ...ClientOption) (*CloudSpaceServiceGetCloudSpaceByCollabSessionOK, error)
 
@@ -153,8 +141,6 @@ type ClientService interface {
 	CloudSpaceServiceKeepAliveCloudSpaceInstance(params *CloudSpaceServiceKeepAliveCloudSpaceInstanceParams, opts ...ClientOption) (*CloudSpaceServiceKeepAliveCloudSpaceInstanceOK, error)
 
 	CloudSpaceServiceListAvailablePlugins(params *CloudSpaceServiceListAvailablePluginsParams, opts ...ClientOption) (*CloudSpaceServiceListAvailablePluginsOK, error)
-
-	CloudSpaceServiceListCloudSpaceApps(params *CloudSpaceServiceListCloudSpaceAppsParams, opts ...ClientOption) (*CloudSpaceServiceListCloudSpaceAppsOK, error)
 
 	CloudSpaceServiceListCloudSpaceColdStartMetrics(params *CloudSpaceServiceListCloudSpaceColdStartMetricsParams, opts ...ClientOption) (*CloudSpaceServiceListCloudSpaceColdStartMetricsOK, error)
 
@@ -213,8 +199,6 @@ type ClientService interface {
 	CloudSpaceServiceUnpublishCloudSpace(params *CloudSpaceServiceUnpublishCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceUnpublishCloudSpaceOK, error)
 
 	CloudSpaceServiceUpdateCloudSpace(params *CloudSpaceServiceUpdateCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceUpdateCloudSpaceOK, error)
-
-	CloudSpaceServiceUpdateCloudSpaceApp(params *CloudSpaceServiceUpdateCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceUpdateCloudSpaceAppOK, error)
 
 	CloudSpaceServiceUpdateCloudSpaceCollab(params *CloudSpaceServiceUpdateCloudSpaceCollabParams, opts ...ClientOption) (*CloudSpaceServiceUpdateCloudSpaceCollabOK, error)
 
@@ -453,90 +437,6 @@ func (a *Client) CloudSpaceServiceCreateCloudSpace(params *CloudSpaceServiceCrea
 }
 
 /*
-CloudSpaceServiceCreateCloudSpaceApp cloud space service create cloud space app API
-*/
-func (a *Client) CloudSpaceServiceCreateCloudSpaceApp(params *CloudSpaceServiceCreateCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceAppOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceCreateCloudSpaceAppParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_CreateCloudSpaceApp",
-		Method:             "POST",
-		PathPattern:        "/v1/cloudspaces/apps",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceCreateCloudSpaceAppReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceCreateCloudSpaceAppOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceCreateCloudSpaceAppDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-CloudSpaceServiceCreateCloudSpaceAppInstance cloud space service create cloud space app instance API
-*/
-func (a *Client) CloudSpaceServiceCreateCloudSpaceAppInstance(params *CloudSpaceServiceCreateCloudSpaceAppInstanceParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceAppInstanceOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceCreateCloudSpaceAppInstanceParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_CreateCloudSpaceAppInstance",
-		Method:             "POST",
-		PathPattern:        "/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/apps/{id}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceCreateCloudSpaceAppInstanceReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceCreateCloudSpaceAppInstanceOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceCreateCloudSpaceAppInstanceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 CloudSpaceServiceCreateCloudSpaceInstanceMetric endpoints for collecting studio startup metrics
 */
 func (a *Client) CloudSpaceServiceCreateCloudSpaceInstanceMetric(params *CloudSpaceServiceCreateCloudSpaceInstanceMetricParams, opts ...ClientOption) (*CloudSpaceServiceCreateCloudSpaceInstanceMetricOK, error) {
@@ -747,48 +647,6 @@ func (a *Client) CloudSpaceServiceCreateLightningRun(params *CloudSpaceServiceCr
 }
 
 /*
-CloudSpaceServiceCreateLightningRunInstance cloud space service create lightning run instance API
-*/
-func (a *Client) CloudSpaceServiceCreateLightningRunInstance(params *CloudSpaceServiceCreateLightningRunInstanceParams, opts ...ClientOption) (*CloudSpaceServiceCreateLightningRunInstanceOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceCreateLightningRunInstanceParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_CreateLightningRunInstance",
-		Method:             "POST",
-		PathPattern:        "/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/runs/{id}/get",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceCreateLightningRunInstanceReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceCreateLightningRunInstanceOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceCreateLightningRunInstanceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 CloudSpaceServiceDeleteCloudSpace cloud space service delete cloud space API
 */
 func (a *Client) CloudSpaceServiceDeleteCloudSpace(params *CloudSpaceServiceDeleteCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceDeleteCloudSpaceOK, error) {
@@ -826,48 +684,6 @@ func (a *Client) CloudSpaceServiceDeleteCloudSpace(params *CloudSpaceServiceDele
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CloudSpaceServiceDeleteCloudSpaceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-CloudSpaceServiceDeleteCloudSpaceApp cloud space service delete cloud space app API
-*/
-func (a *Client) CloudSpaceServiceDeleteCloudSpaceApp(params *CloudSpaceServiceDeleteCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceDeleteCloudSpaceAppOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceDeleteCloudSpaceAppParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_DeleteCloudSpaceApp",
-		Method:             "DELETE",
-		PathPattern:        "/v1/cloudspaces/apps/{id}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceDeleteCloudSpaceAppReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceDeleteCloudSpaceAppOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceDeleteCloudSpaceAppDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -1251,48 +1067,6 @@ func (a *Client) CloudSpaceServiceForkCloudSpace(params *CloudSpaceServiceForkCl
 }
 
 /*
-CloudSpaceServiceForkCloudSpaceAppInstance cloud space service fork cloud space app instance API
-*/
-func (a *Client) CloudSpaceServiceForkCloudSpaceAppInstance(params *CloudSpaceServiceForkCloudSpaceAppInstanceParams, opts ...ClientOption) (*CloudSpaceServiceForkCloudSpaceAppInstanceOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceForkCloudSpaceAppInstanceParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_ForkCloudSpaceAppInstance",
-		Method:             "PUT",
-		PathPattern:        "/v1/projects/{projectId}/cloudspaces/{cloudspaceId}/apps/{id}/fork",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceForkCloudSpaceAppInstanceReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceForkCloudSpaceAppInstanceOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceForkCloudSpaceAppInstanceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 CloudSpaceServiceGetCloudSpace cloud space service get cloud space API
 */
 func (a *Client) CloudSpaceServiceGetCloudSpace(params *CloudSpaceServiceGetCloudSpaceParams, opts ...ClientOption) (*CloudSpaceServiceGetCloudSpaceOK, error) {
@@ -1330,48 +1104,6 @@ func (a *Client) CloudSpaceServiceGetCloudSpace(params *CloudSpaceServiceGetClou
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CloudSpaceServiceGetCloudSpaceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-CloudSpaceServiceGetCloudSpaceApp cloud space service get cloud space app API
-*/
-func (a *Client) CloudSpaceServiceGetCloudSpaceApp(params *CloudSpaceServiceGetCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceGetCloudSpaceAppOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceGetCloudSpaceAppParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_GetCloudSpaceApp",
-		Method:             "GET",
-		PathPattern:        "/v1/cloudspaces/apps/{id}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceGetCloudSpaceAppReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceGetCloudSpaceAppOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceGetCloudSpaceAppDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -2254,48 +1986,6 @@ func (a *Client) CloudSpaceServiceListAvailablePlugins(params *CloudSpaceService
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CloudSpaceServiceListAvailablePluginsDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-CloudSpaceServiceListCloudSpaceApps cloud space service list cloud space apps API
-*/
-func (a *Client) CloudSpaceServiceListCloudSpaceApps(params *CloudSpaceServiceListCloudSpaceAppsParams, opts ...ClientOption) (*CloudSpaceServiceListCloudSpaceAppsOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceListCloudSpaceAppsParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_ListCloudSpaceApps",
-		Method:             "GET",
-		PathPattern:        "/v1/cloudspaces/apps",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceListCloudSpaceAppsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceListCloudSpaceAppsOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceListCloudSpaceAppsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
@@ -3514,48 +3204,6 @@ func (a *Client) CloudSpaceServiceUpdateCloudSpace(params *CloudSpaceServiceUpda
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CloudSpaceServiceUpdateCloudSpaceDefault)
-
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-CloudSpaceServiceUpdateCloudSpaceApp cloud space service update cloud space app API
-*/
-func (a *Client) CloudSpaceServiceUpdateCloudSpaceApp(params *CloudSpaceServiceUpdateCloudSpaceAppParams, opts ...ClientOption) (*CloudSpaceServiceUpdateCloudSpaceAppOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewCloudSpaceServiceUpdateCloudSpaceAppParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "CloudSpaceService_UpdateCloudSpaceApp",
-		Method:             "PUT",
-		PathPattern:        "/v1/cloudspaces/apps/{id}",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &CloudSpaceServiceUpdateCloudSpaceAppReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*CloudSpaceServiceUpdateCloudSpaceAppOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-	//
-	// a default response is provided: fill this and return an error
-	unexpectedSuccess := result.(*CloudSpaceServiceUpdateCloudSpaceAppDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

@@ -548,6 +548,111 @@ class SandboxesServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def sandboxes_service_expose_sandbox_ports(self, body: 'SandboxesServiceExposeSandboxPortsBody', id: 'str', **kwargs) -> 'V1Sandbox':  # noqa: E501
+        """ExposeSandboxPorts makes HTTP servers inside a running or paused sandbox reachable at their `port_urls`. Ports that are already exposed are left as they are. A paused sandbox gets the ports when it resumes.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_expose_sandbox_ports(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param SandboxesServiceExposeSandboxPortsBody body: (required)
+        :param str id: (required)
+        :return: V1Sandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_expose_sandbox_ports_with_http_info(body, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_expose_sandbox_ports_with_http_info(body, id, **kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_expose_sandbox_ports_with_http_info(self, body: 'SandboxesServiceExposeSandboxPortsBody', id: 'str', **kwargs) -> 'V1Sandbox':  # noqa: E501
+        """ExposeSandboxPorts makes HTTP servers inside a running or paused sandbox reachable at their `port_urls`. Ports that are already exposed are left as they are. A paused sandbox gets the ports when it resumes.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_expose_sandbox_ports_with_http_info(body, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param SandboxesServiceExposeSandboxPortsBody body: (required)
+        :param str id: (required)
+        :return: V1Sandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_expose_sandbox_ports" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `sandboxes_service_expose_sandbox_ports`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `sandboxes_service_expose_sandbox_ports`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/{id}/ports', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Sandbox',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def sandboxes_service_extend_sandbox_timeout(self, body: 'SandboxesServiceExtendSandboxTimeoutBody', id: 'str', **kwargs) -> 'V1ExtendSandboxTimeoutResponse':  # noqa: E501
         """ExtendSandboxTimeout adds `timeout` more milliseconds to the sandbox's termination deadline. FailedPrecondition when the sandbox was created with an idle_timeout: its deadline belongs to KeepSandboxAlive and `timeout` is the cap that deadline is clamped to, so extending it here would push the sandbox past the cap it was created with. Also FailedPrecondition when a stop is already in progress.  # noqa: E501
 
@@ -2322,6 +2427,111 @@ class SandboxesServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1StopSandboxResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def sandboxes_service_unexpose_sandbox_port(self, id: 'str', port: 'str', **kwargs) -> 'V1Sandbox':  # noqa: E501
+        """UnexposeSandboxPort stops routing new requests to a port. Connections already open, such as WebSockets, stay up until they close. Unexposing a port that is not exposed is a no-op.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_unexpose_sandbox_port(id, port, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str port: (required)
+        :param str organization_id:
+        :return: V1Sandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.sandboxes_service_unexpose_sandbox_port_with_http_info(id, port, **kwargs)  # noqa: E501
+        else:
+            (data) = self.sandboxes_service_unexpose_sandbox_port_with_http_info(id, port, **kwargs)  # noqa: E501
+            return data
+
+    def sandboxes_service_unexpose_sandbox_port_with_http_info(self, id: 'str', port: 'str', **kwargs) -> 'V1Sandbox':  # noqa: E501
+        """UnexposeSandboxPort stops routing new requests to a port. Connections already open, such as WebSockets, stay up until they close. Unexposing a port that is not exposed is a no-op.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.sandboxes_service_unexpose_sandbox_port_with_http_info(id, port, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str id: (required)
+        :param str port: (required)
+        :param str organization_id:
+        :return: V1Sandbox
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['id', 'port', 'organization_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method sandboxes_service_unexpose_sandbox_port" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `sandboxes_service_unexpose_sandbox_port`")  # noqa: E501
+        # verify the required parameter 'port' is set
+        if ('port' not in params or
+                params['port'] is None):
+            raise ValueError("Missing the required parameter `port` when calling `sandboxes_service_unexpose_sandbox_port`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+        if 'port' in params:
+            path_params['port'] = params['port']  # noqa: E501
+
+        query_params = []
+        if 'organization_id' in params:
+            query_params.append(('organizationId', params['organization_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/sandboxes/{id}/ports/{port}', 'DELETE',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1Sandbox',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

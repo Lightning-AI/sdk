@@ -48,6 +48,8 @@ class V1ListJobsSortBy(object):
     INSTANCE_TYPE = "LIST_JOBS_SORT_BY_INSTANCE_TYPE"
     USER_ID = "LIST_JOBS_SORT_BY_USER_ID"
     CLUSTER_ID = "LIST_JOBS_SORT_BY_CLUSTER_ID"
+    STATE = "LIST_JOBS_SORT_BY_STATE"
+    DURATION = "LIST_JOBS_SORT_BY_DURATION"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

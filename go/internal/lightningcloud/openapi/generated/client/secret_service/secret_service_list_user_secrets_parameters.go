@@ -64,6 +64,12 @@ SecretServiceListUserSecretsParams contains all the parameters to send to the AP
 	Typically these are written to a http.Request.
 */
 type SecretServiceListUserSecretsParams struct {
+
+	// Type.
+	//
+	// Default: "SECRET_TYPE_UNSPECIFIED"
+	Type *string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -81,7 +87,18 @@ func (o *SecretServiceListUserSecretsParams) WithDefaults() *SecretServiceListUs
 //
 // All values with no default are reset to their zero value.
 func (o *SecretServiceListUserSecretsParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		typeVarDefault = string("SECRET_TYPE_UNSPECIFIED")
+	)
+
+	val := SecretServiceListUserSecretsParams{
+		Type: &typeVarDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the secret service list user secrets params
@@ -117,6 +134,17 @@ func (o *SecretServiceListUserSecretsParams) SetHTTPClient(client *http.Client) 
 	o.HTTPClient = client
 }
 
+// WithType adds the typeVar to the secret service list user secrets params
+func (o *SecretServiceListUserSecretsParams) WithType(typeVar *string) *SecretServiceListUserSecretsParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the secret service list user secrets params
+func (o *SecretServiceListUserSecretsParams) SetType(typeVar *string) {
+	o.Type = typeVar
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *SecretServiceListUserSecretsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -124,6 +152,23 @@ func (o *SecretServiceListUserSecretsParams) WriteToRequest(r runtime.ClientRequ
 		return err
 	}
 	var res []error
+
+	if o.Type != nil {
+
+		// query param type
+		var qrType string
+
+		if o.Type != nil {
+			qrType = *o.Type
+		}
+		qType := qrType
+		if qType != "" {
+
+			if err := r.SetQueryParam("type", qType); err != nil {
+				return err
+			}
+		}
+	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

@@ -314,7 +314,7 @@ class V1VMIBPKeyInfo(object):
     def pkey(self) -> 'str':
         """Gets the pkey of this V1VMIBPKeyInfo.  # noqa: E501
 
-        Expected single non-default pool P_Key, e.g. 0x881a.  # noqa: E501
+        Canonical low-15-bit identity of the expected single non-default pool P_Key (membership bit removed), e.g. 0x081a.  # noqa: E501
 
         :return: The pkey of this V1VMIBPKeyInfo.  # noqa: E501
         :rtype: str
@@ -325,7 +325,7 @@ class V1VMIBPKeyInfo(object):
     def pkey(self, pkey: 'str'):
         """Sets the pkey of this V1VMIBPKeyInfo.
 
-        Expected single non-default pool P_Key, e.g. 0x881a.  # noqa: E501
+        Canonical low-15-bit identity of the expected single non-default pool P_Key (membership bit removed), e.g. 0x081a.  # noqa: E501
 
         :param pkey: The pkey of this V1VMIBPKeyInfo.  # noqa: E501
         :type: str

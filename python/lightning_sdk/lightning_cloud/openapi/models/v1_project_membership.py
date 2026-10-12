@@ -502,6 +502,7 @@ class V1ProjectMembership(object):
     def is_default(self) -> 'bool':
         """Gets the is_default of this V1ProjectMembership.  # noqa: E501
 
+        The creator can leave, and an authorized caller can delete the teamspace.  # noqa: E501
 
         :return: The is_default of this V1ProjectMembership.  # noqa: E501
         :rtype: bool
@@ -512,6 +513,7 @@ class V1ProjectMembership(object):
     def is_default(self, is_default: 'bool'):
         """Sets the is_default of this V1ProjectMembership.
 
+        The creator can leave, and an authorized caller can delete the teamspace.  # noqa: E501
 
         :param is_default: The is_default of this V1ProjectMembership.  # noqa: E501
         :type: bool

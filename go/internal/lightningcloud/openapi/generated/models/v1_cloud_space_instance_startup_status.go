@@ -32,6 +32,9 @@ type V1CloudSpaceInstanceStartupStatus struct {
 	// initial restore finished
 	InitialRestoreFinished bool `json:"initialRestoreFinished,omitempty"`
 
+	// True once the Studio's tired-proxy reports it was given JupyterLab's socket. Only those Studios start JupyterLab.
+	JupyterlabAvailable bool `json:"jupyterlabAvailable,omitempty"`
+
 	// stage progress
 	StageProgress []*V1CloudSpaceInstanceStageProgress `json:"stageProgress"`
 
