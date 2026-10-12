@@ -27,7 +27,6 @@ _CANONICAL_PROVIDER_CLOUD_ACCOUNT_IDS = {
     "LAMBDA_LABS": "lightning-lambda-prod",
     "LIGHTNING": "lightning-baremetal",
     "NEBIUS": "lightning-nebius-prod",
-    "VOLTAGE_PARK": "lightning-voltagepark-prod",
 }
 
 
@@ -300,8 +299,6 @@ class CloudAccountApi:
                 return CloudProvider.GCP
             if cloud_account.spec.lambda_labs_v1:
                 return CloudProvider.LAMBDA_LABS
-            if cloud_account.spec.voltage_park_v1:
-                return CloudProvider.VOLTAGE_PARK
             if cloud_account.spec.nebius_v1:
                 return CloudProvider.NEBIUS
             if cloud_account.spec.machine_v1:
@@ -403,7 +400,6 @@ class CloudAccountApi:
             CloudProvider.LAMBDA_LABS,
             CloudProvider.NEBIUS,
             CloudProvider.LIGHTNING_AGGREGATE,
-            CloudProvider.VOLTAGE_PARK,
         ):
             return getattr(V1CloudProvider, str(cloud_provider))
 

@@ -14,7 +14,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1LambdaLabsDirectV1,
     V1MachineDirectV1,
     V1NebiusDirectV1,
-    V1VoltageParkDirectV1,
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_list_cluster_accelerators_response import (
     V1ListClusterAcceleratorsResponse,
@@ -249,7 +248,6 @@ def test_provider_mapping_empty_when_teamspace_has_no_accounts(api):
         (CloudProvider.DGX, V1CloudProvider.DGX),
         (CloudProvider.LAMBDA_LABS, V1CloudProvider.LAMBDA_LABS),
         (CloudProvider.NEBIUS, V1CloudProvider.NEBIUS),
-        (CloudProvider.VOLTAGE_PARK, V1CloudProvider.VOLTAGE_PARK),
         (CloudProvider.LIGHTNING_AGGREGATE, V1CloudProvider.LIGHTNING_AGGREGATE),
         (CloudProvider.LIGHTNING, V1CloudProvider.MACHINE),
         ("lightning", V1CloudProvider.MACHINE),
@@ -318,12 +316,6 @@ def test_lightning_provider_prefers_baremetal_over_sched_test_clusters(api):
         ),
         (CloudProvider.LIGHTNING, "lightning-baremetal", "other-machine", {"machine_v1": V1MachineDirectV1()}),
         (CloudProvider.NEBIUS, "lightning-nebius-prod", "other-nebius", {"nebius_v1": V1NebiusDirectV1()}),
-        (
-            CloudProvider.VOLTAGE_PARK,
-            "lightning-voltagepark-prod",
-            "other-voltagepark",
-            {"voltage_park_v1": V1VoltageParkDirectV1()},
-        ),
     ],
 )
 def test_global_provider_mapping_prefers_canonical_accounts(api, provider, canonical_id, other_id, spec_kwargs):
@@ -365,13 +357,6 @@ def test_global_provider_mapping_prefers_canonical_accounts(api, provider, canon
         ),
         (CloudProvider.LIGHTNING, "lightning", "staging-machine", "dev-machine", {"machine_v1": V1MachineDirectV1()}),
         (CloudProvider.NEBIUS, "nebius", "staging-nebius", "dev-nebius", {"nebius_v1": V1NebiusDirectV1()}),
-        (
-            CloudProvider.VOLTAGE_PARK,
-            "voltage_park",
-            "staging-voltagepark",
-            "dev-voltagepark",
-            {"voltage_park_v1": V1VoltageParkDirectV1()},
-        ),
     ],
 )
 def test_global_provider_mapping_falls_back_when_canonical_missing(
