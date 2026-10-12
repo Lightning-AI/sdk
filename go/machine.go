@@ -354,11 +354,9 @@ func isCloudProvider(cloud string) bool {
 	switch normalizeCloudProvider(cloud) {
 	case string(models.V1CloudProviderAWS),
 		string(models.V1CloudProviderGCP),
-		string(models.V1CloudProviderVULTR),
 		string(models.V1CloudProviderLAMBDALABS),
 		string(models.V1CloudProviderSLURM),
 		string(models.V1CloudProviderDGX),
-		string(models.V1CloudProviderVOLTAGEPARK),
 		string(models.V1CloudProviderNEBIUS),
 		string(models.V1CloudProviderCLOUDFLARE),
 		string(models.V1CloudProviderLIGHTNING),
