@@ -45,14 +45,42 @@ class CloudSpaceServiceRequestCloudSpaceAccessBody(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cloudspace_id': 'str'
     }
 
     attribute_map = {
+        'cloudspace_id': 'cloudspaceId'
     }
 
-    def __init__(self):  # noqa: E501
+    def __init__(self, cloudspace_id: 'str' =None):  # noqa: E501
         """CloudSpaceServiceRequestCloudSpaceAccessBody - a model defined in Swagger"""  # noqa: E501
+        self._cloudspace_id = None
         self.discriminator = None
+        if cloudspace_id is not None:
+            self.cloudspace_id = cloudspace_id
+
+    @property
+    def cloudspace_id(self) -> 'str':
+        """Gets the cloudspace_id of this CloudSpaceServiceRequestCloudSpaceAccessBody.  # noqa: E501
+
+        When set, access is requested to the Studio with this id within the project and cloudspace_name is ignored, so a link from before a rename reaches the right Studio.  # noqa: E501
+
+        :return: The cloudspace_id of this CloudSpaceServiceRequestCloudSpaceAccessBody.  # noqa: E501
+        :rtype: str
+        """
+        return self._cloudspace_id
+
+    @cloudspace_id.setter
+    def cloudspace_id(self, cloudspace_id: 'str'):
+        """Sets the cloudspace_id of this CloudSpaceServiceRequestCloudSpaceAccessBody.
+
+        When set, access is requested to the Studio with this id within the project and cloudspace_name is ignored, so a link from before a rename reaches the right Studio.  # noqa: E501
+
+        :param cloudspace_id: The cloudspace_id of this CloudSpaceServiceRequestCloudSpaceAccessBody.  # noqa: E501
+        :type: str
+        """
+
+        self._cloudspace_id = cloudspace_id
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

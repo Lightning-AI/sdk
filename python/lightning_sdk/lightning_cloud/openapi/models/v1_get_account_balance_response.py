@@ -45,19 +45,24 @@ class V1GetAccountBalanceResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'balance': 'float'
+        'balance': 'float',
+        'coding_plan': 'V1CodingPlanVerdict'
     }
 
     attribute_map = {
-        'balance': 'balance'
+        'balance': 'balance',
+        'coding_plan': 'codingPlan'
     }
 
-    def __init__(self, balance: 'float' =None):  # noqa: E501
+    def __init__(self, balance: 'float' =None, coding_plan: 'V1CodingPlanVerdict' =None):  # noqa: E501
         """V1GetAccountBalanceResponse - a model defined in Swagger"""  # noqa: E501
         self._balance = None
+        self._coding_plan = None
         self.discriminator = None
         if balance is not None:
             self.balance = balance
+        if coding_plan is not None:
+            self.coding_plan = coding_plan
 
     @property
     def balance(self) -> 'float':
@@ -79,6 +84,27 @@ class V1GetAccountBalanceResponse(object):
         """
 
         self._balance = balance
+
+    @property
+    def coding_plan(self) -> 'V1CodingPlanVerdict':
+        """Gets the coding_plan of this V1GetAccountBalanceResponse.  # noqa: E501
+
+
+        :return: The coding_plan of this V1GetAccountBalanceResponse.  # noqa: E501
+        :rtype: V1CodingPlanVerdict
+        """
+        return self._coding_plan
+
+    @coding_plan.setter
+    def coding_plan(self, coding_plan: 'V1CodingPlanVerdict'):
+        """Sets the coding_plan of this V1GetAccountBalanceResponse.
+
+
+        :param coding_plan: The coding_plan of this V1GetAccountBalanceResponse.  # noqa: E501
+        :type: V1CodingPlanVerdict
+        """
+
+        self._coding_plan = coding_plan
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

@@ -45,39 +45,60 @@ class V1GetActivityFilterValuesResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'cluster_ids': 'list[str]',
         'project_ids': 'list[str]',
-        'resource_ids': 'list[V1NamedFilterValue]',
-        'resource_ids_truncated': 'bool',
         'resource_types': 'list[str]',
+        'subfilters': 'V1ActivitySubfilterValues',
         'user_ids': 'list[str]'
     }
 
     attribute_map = {
+        'cluster_ids': 'clusterIds',
         'project_ids': 'projectIds',
-        'resource_ids': 'resourceIds',
-        'resource_ids_truncated': 'resourceIdsTruncated',
         'resource_types': 'resourceTypes',
+        'subfilters': 'subfilters',
         'user_ids': 'userIds'
     }
 
-    def __init__(self, project_ids: 'list[str]' =None, resource_ids: 'list[V1NamedFilterValue]' =None, resource_ids_truncated: 'bool' =None, resource_types: 'list[str]' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, cluster_ids: 'list[str]' =None, project_ids: 'list[str]' =None, resource_types: 'list[str]' =None, subfilters: 'V1ActivitySubfilterValues' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1GetActivityFilterValuesResponse - a model defined in Swagger"""  # noqa: E501
+        self._cluster_ids = None
         self._project_ids = None
-        self._resource_ids = None
-        self._resource_ids_truncated = None
         self._resource_types = None
+        self._subfilters = None
         self._user_ids = None
         self.discriminator = None
+        if cluster_ids is not None:
+            self.cluster_ids = cluster_ids
         if project_ids is not None:
             self.project_ids = project_ids
-        if resource_ids is not None:
-            self.resource_ids = resource_ids
-        if resource_ids_truncated is not None:
-            self.resource_ids_truncated = resource_ids_truncated
         if resource_types is not None:
             self.resource_types = resource_types
+        if subfilters is not None:
+            self.subfilters = subfilters
         if user_ids is not None:
             self.user_ids = user_ids
+
+    @property
+    def cluster_ids(self) -> 'list[str]':
+        """Gets the cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+
+
+        :return: The cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._cluster_ids
+
+    @cluster_ids.setter
+    def cluster_ids(self, cluster_ids: 'list[str]'):
+        """Sets the cluster_ids of this V1GetActivityFilterValuesResponse.
+
+
+        :param cluster_ids: The cluster_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._cluster_ids = cluster_ids
 
     @property
     def project_ids(self) -> 'list[str]':
@@ -101,48 +122,6 @@ class V1GetActivityFilterValuesResponse(object):
         self._project_ids = project_ids
 
     @property
-    def resource_ids(self) -> 'list[V1NamedFilterValue]':
-        """Gets the resource_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
-
-
-        :return: The resource_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
-        :rtype: list[V1NamedFilterValue]
-        """
-        return self._resource_ids
-
-    @resource_ids.setter
-    def resource_ids(self, resource_ids: 'list[V1NamedFilterValue]'):
-        """Sets the resource_ids of this V1GetActivityFilterValuesResponse.
-
-
-        :param resource_ids: The resource_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
-        :type: list[V1NamedFilterValue]
-        """
-
-        self._resource_ids = resource_ids
-
-    @property
-    def resource_ids_truncated(self) -> 'bool':
-        """Gets the resource_ids_truncated of this V1GetActivityFilterValuesResponse.  # noqa: E501
-
-
-        :return: The resource_ids_truncated of this V1GetActivityFilterValuesResponse.  # noqa: E501
-        :rtype: bool
-        """
-        return self._resource_ids_truncated
-
-    @resource_ids_truncated.setter
-    def resource_ids_truncated(self, resource_ids_truncated: 'bool'):
-        """Sets the resource_ids_truncated of this V1GetActivityFilterValuesResponse.
-
-
-        :param resource_ids_truncated: The resource_ids_truncated of this V1GetActivityFilterValuesResponse.  # noqa: E501
-        :type: bool
-        """
-
-        self._resource_ids_truncated = resource_ids_truncated
-
-    @property
     def resource_types(self) -> 'list[str]':
         """Gets the resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
 
@@ -162,6 +141,27 @@ class V1GetActivityFilterValuesResponse(object):
         """
 
         self._resource_types = resource_types
+
+    @property
+    def subfilters(self) -> 'V1ActivitySubfilterValues':
+        """Gets the subfilters of this V1GetActivityFilterValuesResponse.  # noqa: E501
+
+
+        :return: The subfilters of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :rtype: V1ActivitySubfilterValues
+        """
+        return self._subfilters
+
+    @subfilters.setter
+    def subfilters(self, subfilters: 'V1ActivitySubfilterValues'):
+        """Sets the subfilters of this V1GetActivityFilterValuesResponse.
+
+
+        :param subfilters: The subfilters of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :type: V1ActivitySubfilterValues
+        """
+
+        self._subfilters = subfilters
 
     @property
     def user_ids(self) -> 'list[str]':

@@ -66,6 +66,13 @@ CloudSpaceServiceGetCloudSpaceByNameParams contains all the parameters to send t
 */
 type CloudSpaceServiceGetCloudSpaceByNameParams struct {
 
+	/* CloudspaceID.
+
+	     When set, the Studio is looked up by id within the resolved project and cloudspace_name is ignored, so a
+	link keeps working after the Studio is renamed.
+	*/
+	CloudspaceID *string
+
 	// CloudspaceName.
 	CloudspaceName string
 
@@ -134,6 +141,17 @@ func (o *CloudSpaceServiceGetCloudSpaceByNameParams) SetHTTPClient(client *http.
 	o.HTTPClient = client
 }
 
+// WithCloudspaceID adds the cloudspaceID to the cloud space service get cloud space by name params
+func (o *CloudSpaceServiceGetCloudSpaceByNameParams) WithCloudspaceID(cloudspaceID *string) *CloudSpaceServiceGetCloudSpaceByNameParams {
+	o.SetCloudspaceID(cloudspaceID)
+	return o
+}
+
+// SetCloudspaceID adds the cloudspaceId to the cloud space service get cloud space by name params
+func (o *CloudSpaceServiceGetCloudSpaceByNameParams) SetCloudspaceID(cloudspaceID *string) {
+	o.CloudspaceID = cloudspaceID
+}
+
 // WithCloudspaceName adds the cloudspaceName to the cloud space service get cloud space by name params
 func (o *CloudSpaceServiceGetCloudSpaceByNameParams) WithCloudspaceName(cloudspaceName string) *CloudSpaceServiceGetCloudSpaceByNameParams {
 	o.SetCloudspaceName(cloudspaceName)
@@ -196,6 +214,23 @@ func (o *CloudSpaceServiceGetCloudSpaceByNameParams) WriteToRequest(r runtime.Cl
 		return err
 	}
 	var res []error
+
+	if o.CloudspaceID != nil {
+
+		// query param cloudspaceId
+		var qrCloudspaceID string
+
+		if o.CloudspaceID != nil {
+			qrCloudspaceID = *o.CloudspaceID
+		}
+		qCloudspaceID := qrCloudspaceID
+		if qCloudspaceID != "" {
+
+			if err := r.SetQueryParam("cloudspaceId", qCloudspaceID); err != nil {
+				return err
+			}
+		}
+	}
 
 	// path param cloudspaceName
 	if err := r.SetPathParam("cloudspaceName", o.CloudspaceName); err != nil {

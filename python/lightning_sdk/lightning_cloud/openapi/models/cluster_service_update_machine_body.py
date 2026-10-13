@@ -57,6 +57,7 @@ class ClusterServiceUpdateMachineBody(object):
         'requires_maintenance_reason': 'str',
         'reset_hugepages': 'bool',
         'schedulable_affinity': 'V1SchedulableAffinity',
+        'storage_overcommit_factor': 'float',
         'unschedulable': 'bool'
     }
 
@@ -73,10 +74,11 @@ class ClusterServiceUpdateMachineBody(object):
         'requires_maintenance_reason': 'requiresMaintenanceReason',
         'reset_hugepages': 'resetHugepages',
         'schedulable_affinity': 'schedulableAffinity',
+        'storage_overcommit_factor': 'storageOvercommitFactor',
         'unschedulable': 'unschedulable'
     }
 
-    def __init__(self, desired_cluster_id: 'str' =None, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, unschedulable: 'bool' =None):  # noqa: E501
+    def __init__(self, desired_cluster_id: 'str' =None, machine_mode: 'str' =None, name: 'str' =None, ordering_index: 'int' =None, org_id: 'str' =None, owned_by_lightning: 'bool' =None, purpose: 'str' =None, reboot: 'bool' =None, requires_maintenance: 'bool' =None, requires_maintenance_reason: 'str' =None, reset_hugepages: 'bool' =None, schedulable_affinity: 'V1SchedulableAffinity' =None, storage_overcommit_factor: 'float' =None, unschedulable: 'bool' =None):  # noqa: E501
         """ClusterServiceUpdateMachineBody - a model defined in Swagger"""  # noqa: E501
         self._desired_cluster_id = None
         self._machine_mode = None
@@ -90,6 +92,7 @@ class ClusterServiceUpdateMachineBody(object):
         self._requires_maintenance_reason = None
         self._reset_hugepages = None
         self._schedulable_affinity = None
+        self._storage_overcommit_factor = None
         self._unschedulable = None
         self.discriminator = None
         if desired_cluster_id is not None:
@@ -116,6 +119,8 @@ class ClusterServiceUpdateMachineBody(object):
             self.reset_hugepages = reset_hugepages
         if schedulable_affinity is not None:
             self.schedulable_affinity = schedulable_affinity
+        if storage_overcommit_factor is not None:
+            self.storage_overcommit_factor = storage_overcommit_factor
         if unschedulable is not None:
             self.unschedulable = unschedulable
 
@@ -376,6 +381,29 @@ class ClusterServiceUpdateMachineBody(object):
         """
 
         self._schedulable_affinity = schedulable_affinity
+
+    @property
+    def storage_overcommit_factor(self) -> 'float':
+        """Gets the storage_overcommit_factor of this ClusterServiceUpdateMachineBody.  # noqa: E501
+
+        Omitted preserves the current value; 0 clears the override; otherwise must be finite and >= 1.  # noqa: E501
+
+        :return: The storage_overcommit_factor of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :rtype: float
+        """
+        return self._storage_overcommit_factor
+
+    @storage_overcommit_factor.setter
+    def storage_overcommit_factor(self, storage_overcommit_factor: 'float'):
+        """Sets the storage_overcommit_factor of this ClusterServiceUpdateMachineBody.
+
+        Omitted preserves the current value; 0 clears the override; otherwise must be finite and >= 1.  # noqa: E501
+
+        :param storage_overcommit_factor: The storage_overcommit_factor of this ClusterServiceUpdateMachineBody.  # noqa: E501
+        :type: float
+        """
+
+        self._storage_overcommit_factor = storage_overcommit_factor
 
     @property
     def unschedulable(self) -> 'bool':

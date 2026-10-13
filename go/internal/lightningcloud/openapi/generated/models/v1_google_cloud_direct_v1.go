@@ -87,6 +87,9 @@ type V1GoogleCloudDirectV1 struct {
 	// Custom subnets specifications if needed
 	Subnets []*V1SubnetSpec `json:"subnets"`
 
+	// If true, batch and regular provisioning get the same disk setup - needed to avoid impacting existing behavior and for smooth rollout
+	UniformDiskSetup bool `json:"uniformDiskSetup,omitempty"`
+
 	// VPC networks to use for the cluster
 	Vpcs []*V1GCPDirectVPC `json:"vpcs"`
 }

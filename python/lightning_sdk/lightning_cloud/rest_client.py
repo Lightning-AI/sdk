@@ -29,7 +29,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     GpuTelemetryServiceApi,
     JobsServiceApi,
     LightningappInstanceServiceApi,
-    LightningappV2ServiceApi,
     LightningworkServiceApi,
     LitLoggerServiceApi,
     LitRegistryServiceApi,
@@ -89,7 +88,6 @@ def create_swagger_client(check_context: bool = True, with_auth: bool = True):
 
 class GridRestClient(
     LightningappInstanceServiceApi,
-    LightningappV2ServiceApi,
     AuthServiceApi,
     CloudSpaceServiceApi,
     ClusterServiceApi,

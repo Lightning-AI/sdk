@@ -11,6 +11,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -35,6 +36,9 @@ type ClusterServiceCreateOrgClusterCapacityReservationBody struct {
 
 	// This overwrites cloud_provider_capacity_reservation_id
 	FullCloudProviderReservationString string `json:"fullCloudProviderReservationString,omitempty"`
+
+	// fabric locality tier (see ClusterCapacityReservation.infiniband_tier)
+	InfinibandTier *V1InfinibandTier `json:"infinibandTier,omitempty"`
 
 	// instance type
 	InstanceType string `json:"instanceType,omitempty"`
@@ -70,6 +74,10 @@ func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) Validate(formats
 		res = append(res, err)
 	}
 
+	if err := m.validateInfinibandTier(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStartTime(formats); err != nil {
 		res = append(res, err)
 	}
@@ -92,6 +100,29 @@ func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) validateEndTime(
 	return nil
 }
 
+func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) validateInfinibandTier(formats strfmt.Registry) error {
+	if swag.IsZero(m.InfinibandTier) { // not required
+		return nil
+	}
+
+	if m.InfinibandTier != nil {
+		if err := m.InfinibandTier.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("infinibandTier")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("infinibandTier")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) validateStartTime(formats strfmt.Registry) error {
 	if swag.IsZero(m.StartTime) { // not required
 		return nil
@@ -104,8 +135,42 @@ func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) validateStartTim
 	return nil
 }
 
-// ContextValidate validates this cluster service create org cluster capacity reservation body based on context it is used
+// ContextValidate validate this cluster service create org cluster capacity reservation body based on the context it is used
 func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInfinibandTier(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ClusterServiceCreateOrgClusterCapacityReservationBody) contextValidateInfinibandTier(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InfinibandTier != nil {
+
+		if swag.IsZero(m.InfinibandTier) { // not required
+			return nil
+		}
+
+		if err := m.InfinibandTier.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("infinibandTier")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("infinibandTier")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 

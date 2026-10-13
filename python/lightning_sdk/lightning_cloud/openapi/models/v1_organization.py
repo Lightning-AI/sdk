@@ -47,6 +47,7 @@ class V1Organization(object):
     swagger_types = {
         'alerts_config': 'V1OrgAlertsConfig',
         'allow_billing_activity_page_v2': 'bool',
+        'allow_billing_breakdown_page_v2': 'bool',
         'allow_budgeting': 'bool',
         'allow_cloud_space_publish': 'bool',
         'allow_credits_auto_replenish': 'bool',
@@ -67,6 +68,7 @@ class V1Organization(object):
         'default_machine_image_version': 'str',
         'default_machine_type': 'str',
         'default_project_id': 'str',
+        'default_teamspace_ids': 'list[str]',
         'description': 'str',
         'disable_coding_agents': 'bool',
         'disable_public_templates': 'bool',
@@ -76,8 +78,6 @@ class V1Organization(object):
         'disallow_lambda_saas': 'bool',
         'disallow_lightning_saas': 'bool',
         'disallow_nebius_saas': 'bool',
-        'disallow_voltage_park_saas': 'bool',
-        'disallow_vultr_saas': 'bool',
         'display_name': 'str',
         'domain': 'str',
         'email': 'str',
@@ -89,6 +89,8 @@ class V1Organization(object):
         'is_personal_org': 'bool',
         'last_storage_overuse_notification_sent_at': 'datetime',
         'location': 'str',
+        'mmt_ib_membership_enabled': 'bool',
+        'nairr': 'bool',
         'name': 'str',
         'preferred_cluster': 'str',
         'preferred_deployment_provider': 'str',
@@ -111,6 +113,7 @@ class V1Organization(object):
     attribute_map = {
         'alerts_config': 'alertsConfig',
         'allow_billing_activity_page_v2': 'allowBillingActivityPageV2',
+        'allow_billing_breakdown_page_v2': 'allowBillingBreakdownPageV2',
         'allow_budgeting': 'allowBudgeting',
         'allow_cloud_space_publish': 'allowCloudSpacePublish',
         'allow_credits_auto_replenish': 'allowCreditsAutoReplenish',
@@ -131,6 +134,7 @@ class V1Organization(object):
         'default_machine_image_version': 'defaultMachineImageVersion',
         'default_machine_type': 'defaultMachineType',
         'default_project_id': 'defaultProjectId',
+        'default_teamspace_ids': 'defaultTeamspaceIds',
         'description': 'description',
         'disable_coding_agents': 'disableCodingAgents',
         'disable_public_templates': 'disablePublicTemplates',
@@ -140,8 +144,6 @@ class V1Organization(object):
         'disallow_lambda_saas': 'disallowLambdaSaas',
         'disallow_lightning_saas': 'disallowLightningSaas',
         'disallow_nebius_saas': 'disallowNebiusSaas',
-        'disallow_voltage_park_saas': 'disallowVoltageParkSaas',
-        'disallow_vultr_saas': 'disallowVultrSaas',
         'display_name': 'displayName',
         'domain': 'domain',
         'email': 'email',
@@ -153,6 +155,8 @@ class V1Organization(object):
         'is_personal_org': 'isPersonalOrg',
         'last_storage_overuse_notification_sent_at': 'lastStorageOveruseNotificationSentAt',
         'location': 'location',
+        'mmt_ib_membership_enabled': 'mmtIbMembershipEnabled',
+        'nairr': 'nairr',
         'name': 'name',
         'preferred_cluster': 'preferredCluster',
         'preferred_deployment_provider': 'preferredDeploymentProvider',
@@ -172,10 +176,11 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_billing_activity_page_v2: 'bool' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, disallow_voltage_park_saas: 'bool' =None, disallow_vultr_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_max_mmt_capacity: 'bool' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_billing_activity_page_v2: 'bool' =None, allow_billing_breakdown_page_v2: 'bool' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, default_teamspace_ids: 'list[str]' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, nairr: 'bool' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_max_mmt_capacity: 'bool' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None, mmt_ib_membership_enabled: 'bool' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_billing_activity_page_v2 = None
+        self._allow_billing_breakdown_page_v2 = None
         self._allow_budgeting = None
         self._allow_cloud_space_publish = None
         self._allow_credits_auto_replenish = None
@@ -196,6 +201,7 @@ class V1Organization(object):
         self._default_machine_image_version = None
         self._default_machine_type = None
         self._default_project_id = None
+        self._default_teamspace_ids = None
         self._description = None
         self._disable_coding_agents = None
         self._disable_public_templates = None
@@ -205,8 +211,6 @@ class V1Organization(object):
         self._disallow_lambda_saas = None
         self._disallow_lightning_saas = None
         self._disallow_nebius_saas = None
-        self._disallow_voltage_park_saas = None
-        self._disallow_vultr_saas = None
         self._display_name = None
         self._domain = None
         self._email = None
@@ -218,6 +222,8 @@ class V1Organization(object):
         self._is_personal_org = None
         self._last_storage_overuse_notification_sent_at = None
         self._location = None
+        self._mmt_ib_membership_enabled = None
+        self._nairr = None
         self._name = None
         self._preferred_cluster = None
         self._preferred_deployment_provider = None
@@ -240,6 +246,8 @@ class V1Organization(object):
             self.alerts_config = alerts_config
         if allow_billing_activity_page_v2 is not None:
             self.allow_billing_activity_page_v2 = allow_billing_activity_page_v2
+        if allow_billing_breakdown_page_v2 is not None:
+            self.allow_billing_breakdown_page_v2 = allow_billing_breakdown_page_v2
         if allow_budgeting is not None:
             self.allow_budgeting = allow_budgeting
         if allow_cloud_space_publish is not None:
@@ -280,6 +288,8 @@ class V1Organization(object):
             self.default_machine_type = default_machine_type
         if default_project_id is not None:
             self.default_project_id = default_project_id
+        if default_teamspace_ids is not None:
+            self.default_teamspace_ids = default_teamspace_ids
         if description is not None:
             self.description = description
         if disable_coding_agents is not None:
@@ -298,10 +308,6 @@ class V1Organization(object):
             self.disallow_lightning_saas = disallow_lightning_saas
         if disallow_nebius_saas is not None:
             self.disallow_nebius_saas = disallow_nebius_saas
-        if disallow_voltage_park_saas is not None:
-            self.disallow_voltage_park_saas = disallow_voltage_park_saas
-        if disallow_vultr_saas is not None:
-            self.disallow_vultr_saas = disallow_vultr_saas
         if display_name is not None:
             self.display_name = display_name
         if domain is not None:
@@ -324,6 +330,10 @@ class V1Organization(object):
             self.last_storage_overuse_notification_sent_at = last_storage_overuse_notification_sent_at
         if location is not None:
             self.location = location
+        if mmt_ib_membership_enabled is not None:
+            self.mmt_ib_membership_enabled = mmt_ib_membership_enabled
+        if nairr is not None:
+            self.nairr = nairr
         if name is not None:
             self.name = name
         if preferred_cluster is not None:
@@ -400,6 +410,27 @@ class V1Organization(object):
         """
 
         self._allow_billing_activity_page_v2 = allow_billing_activity_page_v2
+
+    @property
+    def allow_billing_breakdown_page_v2(self) -> 'bool':
+        """Gets the allow_billing_breakdown_page_v2 of this V1Organization.  # noqa: E501
+
+
+        :return: The allow_billing_breakdown_page_v2 of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._allow_billing_breakdown_page_v2
+
+    @allow_billing_breakdown_page_v2.setter
+    def allow_billing_breakdown_page_v2(self, allow_billing_breakdown_page_v2: 'bool'):
+        """Sets the allow_billing_breakdown_page_v2 of this V1Organization.
+
+
+        :param allow_billing_breakdown_page_v2: The allow_billing_breakdown_page_v2 of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._allow_billing_breakdown_page_v2 = allow_billing_breakdown_page_v2
 
     @property
     def allow_budgeting(self) -> 'bool':
@@ -824,6 +855,29 @@ class V1Organization(object):
         self._default_project_id = default_project_id
 
     @property
+    def default_teamspace_ids(self) -> 'list[str]':
+        """Gets the default_teamspace_ids of this V1Organization.  # noqa: E501
+
+        Teamspaces a new member joins, in list order. Empty means the member joins none. An unset column is also empty here.  # noqa: E501
+
+        :return: The default_teamspace_ids of this V1Organization.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._default_teamspace_ids
+
+    @default_teamspace_ids.setter
+    def default_teamspace_ids(self, default_teamspace_ids: 'list[str]'):
+        """Sets the default_teamspace_ids of this V1Organization.
+
+        Teamspaces a new member joins, in list order. Empty means the member joins none. An unset column is also empty here.  # noqa: E501
+
+        :param default_teamspace_ids: The default_teamspace_ids of this V1Organization.  # noqa: E501
+        :type: list[str]
+        """
+
+        self._default_teamspace_ids = default_teamspace_ids
+
+    @property
     def description(self) -> 'str':
         """Gets the description of this V1Organization.  # noqa: E501
 
@@ -1011,48 +1065,6 @@ class V1Organization(object):
         """
 
         self._disallow_nebius_saas = disallow_nebius_saas
-
-    @property
-    def disallow_voltage_park_saas(self) -> 'bool':
-        """Gets the disallow_voltage_park_saas of this V1Organization.  # noqa: E501
-
-
-        :return: The disallow_voltage_park_saas of this V1Organization.  # noqa: E501
-        :rtype: bool
-        """
-        return self._disallow_voltage_park_saas
-
-    @disallow_voltage_park_saas.setter
-    def disallow_voltage_park_saas(self, disallow_voltage_park_saas: 'bool'):
-        """Sets the disallow_voltage_park_saas of this V1Organization.
-
-
-        :param disallow_voltage_park_saas: The disallow_voltage_park_saas of this V1Organization.  # noqa: E501
-        :type: bool
-        """
-
-        self._disallow_voltage_park_saas = disallow_voltage_park_saas
-
-    @property
-    def disallow_vultr_saas(self) -> 'bool':
-        """Gets the disallow_vultr_saas of this V1Organization.  # noqa: E501
-
-
-        :return: The disallow_vultr_saas of this V1Organization.  # noqa: E501
-        :rtype: bool
-        """
-        return self._disallow_vultr_saas
-
-    @disallow_vultr_saas.setter
-    def disallow_vultr_saas(self, disallow_vultr_saas: 'bool'):
-        """Sets the disallow_vultr_saas of this V1Organization.
-
-
-        :param disallow_vultr_saas: The disallow_vultr_saas of this V1Organization.  # noqa: E501
-        :type: bool
-        """
-
-        self._disallow_vultr_saas = disallow_vultr_saas
 
     @property
     def display_name(self) -> 'str':
@@ -1284,6 +1296,52 @@ class V1Organization(object):
         """
 
         self._location = location
+
+    @property
+    def mmt_ib_membership_enabled(self) -> 'bool':
+        """Gets the mmt_ib_membership_enabled of this V1Organization.  # noqa: E501
+
+        Operator-managed MMT IB enrollment; read-only in the customer API.  # noqa: E501
+
+        :return: The mmt_ib_membership_enabled of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._mmt_ib_membership_enabled
+
+    @mmt_ib_membership_enabled.setter
+    def mmt_ib_membership_enabled(self, mmt_ib_membership_enabled: 'bool'):
+        """Sets the mmt_ib_membership_enabled of this V1Organization.
+
+        Operator-managed MMT IB enrollment; read-only in the customer API.  # noqa: E501
+
+        :param mmt_ib_membership_enabled: The mmt_ib_membership_enabled of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._mmt_ib_membership_enabled = mmt_ib_membership_enabled
+
+    @property
+    def nairr(self) -> 'bool':
+        """Gets the nairr of this V1Organization.  # noqa: E501
+
+        Operator-managed NAIRR grant recipient; read-only in the customer API.  # noqa: E501
+
+        :return: The nairr of this V1Organization.  # noqa: E501
+        :rtype: bool
+        """
+        return self._nairr
+
+    @nairr.setter
+    def nairr(self, nairr: 'bool'):
+        """Sets the nairr of this V1Organization.
+
+        Operator-managed NAIRR grant recipient; read-only in the customer API.  # noqa: E501
+
+        :param nairr: The nairr of this V1Organization.  # noqa: E501
+        :type: bool
+        """
+
+        self._nairr = nairr
 
     @property
     def name(self) -> 'str':

@@ -69,6 +69,12 @@ type JobsServiceListAllJobsParams struct {
 	// CloudspaceID.
 	CloudspaceID *string
 
+	/* InstanceTypes.
+
+	   Match jobs whose spec instance_type is one of these
+	*/
+	InstanceTypes []string
+
 	/* JobTypes.
 
 	     - JOB_TYPE_APP_INSTANCE: Lightning app instances
@@ -120,6 +126,12 @@ type JobsServiceListAllJobsParams struct {
 	*/
 	SortOrder *string
 
+	/* Sources.
+
+	   Match jobs whose source is a Studio (cloud_space_id) or a Docker image (spec image)
+	*/
+	Sources []string
+
 	// States.
 	States []string
 
@@ -131,6 +143,12 @@ type JobsServiceListAllJobsParams struct {
 
 	// UserID.
 	UserID *string
+
+	/* UserIds.
+
+	   Creators to filter by; with project_id/org_id any members are allowed, otherwise only the caller
+	*/
+	UserIds []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -208,6 +226,17 @@ func (o *JobsServiceListAllJobsParams) WithCloudspaceID(cloudspaceID *string) *J
 // SetCloudspaceID adds the cloudspaceId to the jobs service list all jobs params
 func (o *JobsServiceListAllJobsParams) SetCloudspaceID(cloudspaceID *string) {
 	o.CloudspaceID = cloudspaceID
+}
+
+// WithInstanceTypes adds the instanceTypes to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithInstanceTypes(instanceTypes []string) *JobsServiceListAllJobsParams {
+	o.SetInstanceTypes(instanceTypes)
+	return o
+}
+
+// SetInstanceTypes adds the instanceTypes to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetInstanceTypes(instanceTypes []string) {
+	o.InstanceTypes = instanceTypes
 }
 
 // WithJobTypes adds the jobTypes to the jobs service list all jobs params
@@ -309,6 +338,17 @@ func (o *JobsServiceListAllJobsParams) SetSortOrder(sortOrder *string) {
 	o.SortOrder = sortOrder
 }
 
+// WithSources adds the sources to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithSources(sources []string) *JobsServiceListAllJobsParams {
+	o.SetSources(sources)
+	return o
+}
+
+// SetSources adds the sources to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetSources(sources []string) {
+	o.Sources = sources
+}
+
 // WithStates adds the states to the jobs service list all jobs params
 func (o *JobsServiceListAllJobsParams) WithStates(states []string) *JobsServiceListAllJobsParams {
 	o.SetStates(states)
@@ -342,6 +382,17 @@ func (o *JobsServiceListAllJobsParams) SetUserID(userID *string) {
 	o.UserID = userID
 }
 
+// WithUserIds adds the userIds to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) WithUserIds(userIds []string) *JobsServiceListAllJobsParams {
+	o.SetUserIds(userIds)
+	return o
+}
+
+// SetUserIds adds the userIds to the jobs service list all jobs params
+func (o *JobsServiceListAllJobsParams) SetUserIds(userIds []string) {
+	o.UserIds = userIds
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -364,6 +415,17 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 			if err := r.SetQueryParam("cloudspaceId", qCloudspaceID); err != nil {
 				return err
 			}
+		}
+	}
+
+	if o.InstanceTypes != nil {
+
+		// binding items for instanceTypes
+		joinedInstanceTypes := o.bindParamInstanceTypes(reg)
+
+		// query array param instanceTypes
+		if err := r.SetQueryParam("instanceTypes", joinedInstanceTypes...); err != nil {
+			return err
 		}
 	}
 
@@ -514,6 +576,17 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 		}
 	}
 
+	if o.Sources != nil {
+
+		// binding items for sources
+		joinedSources := o.bindParamSources(reg)
+
+		// query array param sources
+		if err := r.SetQueryParam("sources", joinedSources...); err != nil {
+			return err
+		}
+	}
+
 	if o.States != nil {
 
 		// binding items for states
@@ -553,10 +626,38 @@ func (o *JobsServiceListAllJobsParams) WriteToRequest(r runtime.ClientRequest, r
 		}
 	}
 
+	if o.UserIds != nil {
+
+		// binding items for userIds
+		joinedUserIds := o.bindParamUserIds(reg)
+
+		// query array param userIds
+		if err := r.SetQueryParam("userIds", joinedUserIds...); err != nil {
+			return err
+		}
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamJobsServiceListAllJobs binds the parameter instanceTypes
+func (o *JobsServiceListAllJobsParams) bindParamInstanceTypes(formats strfmt.Registry) []string {
+	instanceTypesIR := o.InstanceTypes
+
+	var instanceTypesIC []string
+	for _, instanceTypesIIR := range instanceTypesIR { // explode []string
+
+		instanceTypesIIV := instanceTypesIIR // string as string
+		instanceTypesIC = append(instanceTypesIC, instanceTypesIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	instanceTypesIS := swag.JoinByFormat(instanceTypesIC, "multi")
+
+	return instanceTypesIS
 }
 
 // bindParamJobsServiceListAllJobs binds the parameter jobTypes
@@ -574,6 +675,23 @@ func (o *JobsServiceListAllJobsParams) bindParamJobTypes(formats strfmt.Registry
 	jobTypesIS := swag.JoinByFormat(jobTypesIC, "multi")
 
 	return jobTypesIS
+}
+
+// bindParamJobsServiceListAllJobs binds the parameter sources
+func (o *JobsServiceListAllJobsParams) bindParamSources(formats strfmt.Registry) []string {
+	sourcesIR := o.Sources
+
+	var sourcesIC []string
+	for _, sourcesIIR := range sourcesIR { // explode []string
+
+		sourcesIIV := sourcesIIR // string as string
+		sourcesIC = append(sourcesIC, sourcesIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	sourcesIS := swag.JoinByFormat(sourcesIC, "multi")
+
+	return sourcesIS
 }
 
 // bindParamJobsServiceListAllJobs binds the parameter states
@@ -608,4 +726,21 @@ func (o *JobsServiceListAllJobsParams) bindParamTagIds(formats strfmt.Registry) 
 	tagIdsIS := swag.JoinByFormat(tagIdsIC, "multi")
 
 	return tagIdsIS
+}
+
+// bindParamJobsServiceListAllJobs binds the parameter userIds
+func (o *JobsServiceListAllJobsParams) bindParamUserIds(formats strfmt.Registry) []string {
+	userIdsIR := o.UserIds
+
+	var userIdsIC []string
+	for _, userIdsIIR := range userIdsIR { // explode []string
+
+		userIdsIIV := userIdsIIR // string as string
+		userIdsIC = append(userIdsIC, userIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	userIdsIS := swag.JoinByFormat(userIdsIC, "multi")
+
+	return userIdsIS
 }

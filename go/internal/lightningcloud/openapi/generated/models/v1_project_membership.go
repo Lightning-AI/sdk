@@ -68,7 +68,7 @@ type V1ProjectMembership struct {
 	// inactive
 	Inactive bool `json:"inactive,omitempty"`
 
-	// The creator is not allowed to leave or delete the project and can only be removed by leaving / being removed from the organization
+	// The creator can leave, and an authorized caller can delete the teamspace.
 	IsDefault bool `json:"isDefault,omitempty"`
 
 	// job count

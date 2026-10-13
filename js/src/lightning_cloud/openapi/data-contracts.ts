@@ -83,6 +83,12 @@ export interface SandboxesServiceCreateSandboxSnapshotBody {
   includeMemory?: boolean;
 }
 
+export interface SandboxesServiceExposeSandboxPortsBody {
+  organizationId?: string;
+  /** Ports inside the sandbox, 1-65535. The sandbox API port (5060) is rejected. */
+  ports?: string[];
+}
+
 export interface SandboxesServiceExtendSandboxTimeoutBody {
   organizationId?: string;
   /**
@@ -431,6 +437,11 @@ export interface V1CreateSandboxRequest {
    * @format uint64
    */
   idleTimeout?: string;
+  /**
+   * Bind /var/lib/docker onto the writable disk (quota'd by storage_gb)
+   * instead of the default tmpfs
+   */
+  dockerDataRootOnDisk?: boolean;
 }
 
 export type V1DeleteSandboxResponse = object;
@@ -648,9 +659,10 @@ export interface V1Sandbox {
    * Public HTTPS URLs for the sandbox's user-exposed `ports`, keyed by the
    * port number as a string (e.g. "8080" -> "https://8080-<id>-s.cloudspaces.litng.ai").
    * Each URL routes through the cluster proxy to that port inside the sandbox.
-   * Only the ports the caller requested at create time are included; the
-   * internal sandbox API port is never exposed. Populated on create / get /
-   * list / update responses; empty when the sandbox has no user ports.
+   * Only the ports requested at create time or through ExposeSandboxPorts are
+   * included; the internal sandbox API port is never exposed. Populated on
+   * create / get / list / update responses; empty when the sandbox has no
+   * user ports.
    */
   portUrls?: Record<string, string>;
   /**
@@ -688,6 +700,8 @@ export interface V1Sandbox {
    * cold-boots the processes.
    */
   memorySnapshotCompatible?: boolean;
+  /** Mirrors CreateSandboxRequest.docker_data_root_on_disk */
+  dockerDataRootOnDisk?: boolean;
 }
 
 export interface V1SandboxCommand {

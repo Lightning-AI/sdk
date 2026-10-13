@@ -52,6 +52,9 @@ class V1AssistantSessionDailyAggregated(object):
         'org_id': 'str',
         'parent_id': 'str',
         'project_id': 'str',
+        'total_cache_creation_tokens': 'str',
+        'total_cache_creation_tokens1h': 'str',
+        'total_cache_read_tokens': 'str',
         'total_completion_tokens': 'int',
         'total_cost': 'float',
         'total_prompt_tokens': 'int',
@@ -66,13 +69,16 @@ class V1AssistantSessionDailyAggregated(object):
         'org_id': 'orgId',
         'parent_id': 'parentId',
         'project_id': 'projectId',
+        'total_cache_creation_tokens': 'totalCacheCreationTokens',
+        'total_cache_creation_tokens1h': 'totalCacheCreationTokens1h',
+        'total_cache_read_tokens': 'totalCacheReadTokens',
         'total_completion_tokens': 'totalCompletionTokens',
         'total_cost': 'totalCost',
         'total_prompt_tokens': 'totalPromptTokens',
         'user_id': 'userId'
     }
 
-    def __init__(self, day: 'datetime' =None, model_id: 'str' =None, name: 'str' =None, num_messages: 'int' =None, org_id: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, total_completion_tokens: 'int' =None, total_cost: 'float' =None, total_prompt_tokens: 'int' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, day: 'datetime' =None, model_id: 'str' =None, name: 'str' =None, num_messages: 'int' =None, org_id: 'str' =None, parent_id: 'str' =None, project_id: 'str' =None, total_cache_creation_tokens: 'str' =None, total_cache_creation_tokens1h: 'str' =None, total_cache_read_tokens: 'str' =None, total_completion_tokens: 'int' =None, total_cost: 'float' =None, total_prompt_tokens: 'int' =None, user_id: 'str' =None):  # noqa: E501
         """V1AssistantSessionDailyAggregated - a model defined in Swagger"""  # noqa: E501
         self._day = None
         self._model_id = None
@@ -81,6 +87,9 @@ class V1AssistantSessionDailyAggregated(object):
         self._org_id = None
         self._parent_id = None
         self._project_id = None
+        self._total_cache_creation_tokens = None
+        self._total_cache_creation_tokens1h = None
+        self._total_cache_read_tokens = None
         self._total_completion_tokens = None
         self._total_cost = None
         self._total_prompt_tokens = None
@@ -100,6 +109,12 @@ class V1AssistantSessionDailyAggregated(object):
             self.parent_id = parent_id
         if project_id is not None:
             self.project_id = project_id
+        if total_cache_creation_tokens is not None:
+            self.total_cache_creation_tokens = total_cache_creation_tokens
+        if total_cache_creation_tokens1h is not None:
+            self.total_cache_creation_tokens1h = total_cache_creation_tokens1h
+        if total_cache_read_tokens is not None:
+            self.total_cache_read_tokens = total_cache_read_tokens
         if total_completion_tokens is not None:
             self.total_completion_tokens = total_completion_tokens
         if total_cost is not None:
@@ -255,6 +270,75 @@ class V1AssistantSessionDailyAggregated(object):
         """
 
         self._project_id = project_id
+
+    @property
+    def total_cache_creation_tokens(self) -> 'str':
+        """Gets the total_cache_creation_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+
+        Input tokens written to the prompt cache with the 5-minute TTL. Not included in total_prompt_tokens.  # noqa: E501
+
+        :return: The total_cache_creation_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_cache_creation_tokens
+
+    @total_cache_creation_tokens.setter
+    def total_cache_creation_tokens(self, total_cache_creation_tokens: 'str'):
+        """Sets the total_cache_creation_tokens of this V1AssistantSessionDailyAggregated.
+
+        Input tokens written to the prompt cache with the 5-minute TTL. Not included in total_prompt_tokens.  # noqa: E501
+
+        :param total_cache_creation_tokens: The total_cache_creation_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :type: str
+        """
+
+        self._total_cache_creation_tokens = total_cache_creation_tokens
+
+    @property
+    def total_cache_creation_tokens1h(self) -> 'str':
+        """Gets the total_cache_creation_tokens1h of this V1AssistantSessionDailyAggregated.  # noqa: E501
+
+        Input tokens written to the prompt cache with the 1-hour TTL. Not included in total_prompt_tokens.  # noqa: E501
+
+        :return: The total_cache_creation_tokens1h of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_cache_creation_tokens1h
+
+    @total_cache_creation_tokens1h.setter
+    def total_cache_creation_tokens1h(self, total_cache_creation_tokens1h: 'str'):
+        """Sets the total_cache_creation_tokens1h of this V1AssistantSessionDailyAggregated.
+
+        Input tokens written to the prompt cache with the 1-hour TTL. Not included in total_prompt_tokens.  # noqa: E501
+
+        :param total_cache_creation_tokens1h: The total_cache_creation_tokens1h of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :type: str
+        """
+
+        self._total_cache_creation_tokens1h = total_cache_creation_tokens1h
+
+    @property
+    def total_cache_read_tokens(self) -> 'str':
+        """Gets the total_cache_read_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+
+        Input tokens served from the provider's prompt cache. Not included in total_prompt_tokens.  # noqa: E501
+
+        :return: The total_cache_read_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_cache_read_tokens
+
+    @total_cache_read_tokens.setter
+    def total_cache_read_tokens(self, total_cache_read_tokens: 'str'):
+        """Sets the total_cache_read_tokens of this V1AssistantSessionDailyAggregated.
+
+        Input tokens served from the provider's prompt cache. Not included in total_prompt_tokens.  # noqa: E501
+
+        :param total_cache_read_tokens: The total_cache_read_tokens of this V1AssistantSessionDailyAggregated.  # noqa: E501
+        :type: str
+        """
+
+        self._total_cache_read_tokens = total_cache_read_tokens
 
     @property
     def total_completion_tokens(self) -> 'int':

@@ -95,6 +95,12 @@ type JobsServiceGetDeploymentRoutingTelemetryAggregatedParams struct {
 	*/
 	Resolution *string
 
+	/* ResourceIds.
+
+	   Optional to filter by the resources (replica job ids) that served the requests
+	*/
+	ResourceIds []string
+
 	/* Start.
 
 	   Optional to filter
@@ -217,6 +223,17 @@ func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) SetResolution
 	o.Resolution = resolution
 }
 
+// WithResourceIds adds the resourceIds to the jobs service get deployment routing telemetry aggregated params
+func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) WithResourceIds(resourceIds []string) *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams {
+	o.SetResourceIds(resourceIds)
+	return o
+}
+
+// SetResourceIds adds the resourceIds to the jobs service get deployment routing telemetry aggregated params
+func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) SetResourceIds(resourceIds []string) {
+	o.ResourceIds = resourceIds
+}
+
 // WithStart adds the start to the jobs service get deployment routing telemetry aggregated params
 func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) WithStart(start *strfmt.DateTime) *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams {
 	o.SetStart(start)
@@ -302,6 +319,17 @@ func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) WriteToReques
 		}
 	}
 
+	if o.ResourceIds != nil {
+
+		// binding items for resourceIds
+		joinedResourceIds := o.bindParamResourceIds(reg)
+
+		// query array param resourceIds
+		if err := r.SetQueryParam("resourceIds", joinedResourceIds...); err != nil {
+			return err
+		}
+	}
+
 	if o.Start != nil {
 
 		// query param start
@@ -351,6 +379,23 @@ func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) bindParamPath
 	pathsIS := swag.JoinByFormat(pathsIC, "multi")
 
 	return pathsIS
+}
+
+// bindParamJobsServiceGetDeploymentRoutingTelemetryAggregated binds the parameter resourceIds
+func (o *JobsServiceGetDeploymentRoutingTelemetryAggregatedParams) bindParamResourceIds(formats strfmt.Registry) []string {
+	resourceIdsIR := o.ResourceIds
+
+	var resourceIdsIC []string
+	for _, resourceIdsIIR := range resourceIdsIR { // explode []string
+
+		resourceIdsIIV := resourceIdsIIR // string as string
+		resourceIdsIC = append(resourceIdsIC, resourceIdsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	resourceIdsIS := swag.JoinByFormat(resourceIdsIC, "multi")
+
+	return resourceIdsIS
 }
 
 // bindParamJobsServiceGetDeploymentRoutingTelemetryAggregated binds the parameter statusCodes

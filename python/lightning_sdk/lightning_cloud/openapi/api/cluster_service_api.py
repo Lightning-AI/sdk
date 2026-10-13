@@ -3457,6 +3457,103 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cluster_service_get_cluster_details(self, cluster_id: 'str', **kwargs) -> 'V1GetClusterDetailsResponse':  # noqa: E501
+        """GetClusterDetails is internal-only: placement (machine vs GCP burst), pending/unscheduled creates, and shadow-reservation utilization.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_cluster_details(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id:
+        :return: V1GetClusterDetailsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_get_cluster_details_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_get_cluster_details_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_get_cluster_details_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1GetClusterDetailsResponse':  # noqa: E501
+        """GetClusterDetails is internal-only: placement (machine vs GCP burst), pending/unscheduled creates, and shadow-reservation utilization.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_cluster_details_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id:
+        :return: V1GetClusterDetailsResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_get_cluster_details" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_get_cluster_details`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/details', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetClusterDetailsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cluster_service_get_cluster_health(self, id: 'str', **kwargs) -> 'V1GetClusterHealthResponse':  # noqa: E501
         """cluster_service_get_cluster_health  # noqa: E501
 
@@ -3543,6 +3640,123 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetClusterHealthResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_get_cluster_reservation_usage(self, org_id: 'str', cluster_id: 'str', reservation_id: 'str', **kwargs) -> 'V1GetClusterReservationUsageResponse':  # noqa: E501
+        """cluster_service_get_cluster_reservation_usage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_cluster_reservation_usage(org_id, cluster_id, reservation_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str cluster_id: (required)
+        :param str reservation_id: (required)
+        :param datetime start_time:
+        :param datetime end_time:
+        :return: V1GetClusterReservationUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_get_cluster_reservation_usage_with_http_info(org_id, cluster_id, reservation_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_get_cluster_reservation_usage_with_http_info(org_id, cluster_id, reservation_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_get_cluster_reservation_usage_with_http_info(self, org_id: 'str', cluster_id: 'str', reservation_id: 'str', **kwargs) -> 'V1GetClusterReservationUsageResponse':  # noqa: E501
+        """cluster_service_get_cluster_reservation_usage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_cluster_reservation_usage_with_http_info(org_id, cluster_id, reservation_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str cluster_id: (required)
+        :param str reservation_id: (required)
+        :param datetime start_time:
+        :param datetime end_time:
+        :return: V1GetClusterReservationUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'cluster_id', 'reservation_id', 'start_time', 'end_time']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_get_cluster_reservation_usage" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `cluster_service_get_cluster_reservation_usage`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_get_cluster_reservation_usage`")  # noqa: E501
+        # verify the required parameter 'reservation_id' is set
+        if ('reservation_id' not in params or
+                params['reservation_id'] is None):
+            raise ValueError("Missing the required parameter `reservation_id` when calling `cluster_service_get_cluster_reservation_usage`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'reservation_id' in params:
+            path_params['reservationId'] = params['reservation_id']  # noqa: E501
+
+        query_params = []
+        if 'start_time' in params:
+            query_params.append(('startTime', params['start_time']))  # noqa: E501
+        if 'end_time' in params:
+            query_params.append(('endTime', params['end_time']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/orgs/{orgId}/clusters/{clusterId}/capacity-reservations/{reservationId}/usage', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetClusterReservationUsageResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -3757,6 +3971,103 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1GetMachineDetailsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_get_machine_setup_url(self, cluster_id: 'str', **kwargs) -> 'V1GetMachineSetupURLResponse':  # noqa: E501
+        """Mints the short-lived user token the machine setup script is fetched with.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_machine_setup_url(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id: Optional. When set, the cluster must belong to this organization.
+        :return: V1GetMachineSetupURLResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_get_machine_setup_url_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_get_machine_setup_url_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_get_machine_setup_url_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1GetMachineSetupURLResponse':  # noqa: E501
+        """Mints the short-lived user token the machine setup script is fetched with.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_get_machine_setup_url_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id: Optional. When set, the cluster must belong to this organization.
+        :return: V1GetMachineSetupURLResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'org_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_get_machine_setup_url" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_get_machine_setup_url`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/machine-setup-url', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1GetMachineSetupURLResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -4636,6 +4947,107 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cluster_service_list_cluster_reservations_for_usage(self, org_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterReservationsForUsageResponse':  # noqa: E501
+        """cluster_service_list_cluster_reservations_for_usage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_cluster_reservations_for_usage(org_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str cluster_id: (required)
+        :return: V1ListClusterReservationsForUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_list_cluster_reservations_for_usage_with_http_info(org_id, cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_list_cluster_reservations_for_usage_with_http_info(org_id, cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_list_cluster_reservations_for_usage_with_http_info(self, org_id: 'str', cluster_id: 'str', **kwargs) -> 'V1ListClusterReservationsForUsageResponse':  # noqa: E501
+        """cluster_service_list_cluster_reservations_for_usage  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_cluster_reservations_for_usage_with_http_info(org_id, cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str org_id: (required)
+        :param str cluster_id: (required)
+        :return: V1ListClusterReservationsForUsageResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['org_id', 'cluster_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_list_cluster_reservations_for_usage" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'org_id' is set
+        if ('org_id' not in params or
+                params['org_id'] is None):
+            raise ValueError("Missing the required parameter `org_id` when calling `cluster_service_list_cluster_reservations_for_usage`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_list_cluster_reservations_for_usage`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'org_id' in params:
+            path_params['orgId'] = params['org_id']  # noqa: E501
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/orgs/{orgId}/clusters/{clusterId}/reservation-usage', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListClusterReservationsForUsageResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cluster_service_list_cluster_usage_restrictions(self, cluster_id: 'str', **kwargs) -> 'V1ListClusterUsageRestrictionsResponse':  # noqa: E501
         """cluster_service_list_cluster_usage_restrictions  # noqa: E501
 
@@ -5449,6 +5861,107 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1ListProjectClustersResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_list_provider_fleet(self, cluster_id: 'str', **kwargs) -> 'V1ListProviderFleetResponse':  # noqa: E501
+        """cluster_service_list_provider_fleet  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_provider_fleet(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id:
+        :param int history_days:
+        :return: V1ListProviderFleetResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_list_provider_fleet_with_http_info(cluster_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_list_provider_fleet_with_http_info(cluster_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_list_provider_fleet_with_http_info(self, cluster_id: 'str', **kwargs) -> 'V1ListProviderFleetResponse':  # noqa: E501
+        """cluster_service_list_provider_fleet  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_list_provider_fleet_with_http_info(cluster_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param str cluster_id: (required)
+        :param str org_id:
+        :param int history_days:
+        :return: V1ListProviderFleetResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['cluster_id', 'org_id', 'history_days']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_list_provider_fleet" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_list_provider_fleet`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+
+        query_params = []
+        if 'org_id' in params:
+            query_params.append(('orgId', params['org_id']))  # noqa: E501
+        if 'history_days' in params:
+            query_params.append(('historyDays', params['history_days']))  # noqa: E501
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/provider-fleet', 'GET',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ListProviderFleetResponse',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),
@@ -6659,6 +7172,119 @@ class ClusterServiceApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
+    def cluster_service_set_machine_vpn_services(self, body: 'ClusterServiceSetMachineVPNServicesBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1SetMachineVPNServicesResponse':  # noqa: E501
+        """SetMachineVPNServices starts or stops strongSwan and FRR on a VPN gateway.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_set_machine_vpn_services(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceSetMachineVPNServicesBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1SetMachineVPNServicesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_set_machine_vpn_services_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_set_machine_vpn_services_with_http_info(body, cluster_id, id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_set_machine_vpn_services_with_http_info(self, body: 'ClusterServiceSetMachineVPNServicesBody', cluster_id: 'str', id: 'str', **kwargs) -> 'V1SetMachineVPNServicesResponse':  # noqa: E501
+        """SetMachineVPNServices starts or stops strongSwan and FRR on a VPN gateway.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_set_machine_vpn_services_with_http_info(body, cluster_id, id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceSetMachineVPNServicesBody body: (required)
+        :param str cluster_id: (required)
+        :param str id: (required)
+        :return: V1SetMachineVPNServicesResponse
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id', 'id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_set_machine_vpn_services" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cluster_service_set_machine_vpn_services`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_set_machine_vpn_services`")  # noqa: E501
+        # verify the required parameter 'id' is set
+        if ('id' not in params or
+                params['id'] is None):
+            raise ValueError("Missing the required parameter `id` when calling `cluster_service_set_machine_vpn_services`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'id' in params:
+            path_params['id'] = params['id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/machines/{id}/vpn', 'POST',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1SetMachineVPNServicesResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
     def cluster_service_sleep_server(self, body: 'ClusterServiceSleepServerBody', server_id: 'str', **kwargs) -> 'V1SleepServerResponse':  # noqa: E501
         """cluster_service_sleep_server  # noqa: E501
 
@@ -7722,6 +8348,119 @@ class ClusterServiceApi(object):
             post_params=form_params,
             files=local_var_files,
             response_type='V1UpdateProjectClusterAcceleratorsResponse',  # noqa: E501
+            auth_settings=auth_settings,
+            async_req=params.get('async_req'),
+            _return_http_data_only=params.get('_return_http_data_only'),
+            _preload_content=params.get('_preload_content', True),
+            _request_timeout=params.get('_request_timeout'),
+            collection_formats=collection_formats)
+
+    def cluster_service_update_provider_fleet_owner(self, body: 'ClusterServiceUpdateProviderFleetOwnerBody', cluster_id: 'str', node_id: 'str', **kwargs) -> 'V1ProviderFleetOwner':  # noqa: E501
+        """cluster_service_update_provider_fleet_owner  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_update_provider_fleet_owner(body, cluster_id, node_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceUpdateProviderFleetOwnerBody body: (required)
+        :param str cluster_id: (required)
+        :param str node_id: (required)
+        :return: V1ProviderFleetOwner
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('async_req'):
+            return self.cluster_service_update_provider_fleet_owner_with_http_info(body, cluster_id, node_id, **kwargs)  # noqa: E501
+        else:
+            (data) = self.cluster_service_update_provider_fleet_owner_with_http_info(body, cluster_id, node_id, **kwargs)  # noqa: E501
+            return data
+
+    def cluster_service_update_provider_fleet_owner_with_http_info(self, body: 'ClusterServiceUpdateProviderFleetOwnerBody', cluster_id: 'str', node_id: 'str', **kwargs) -> 'V1ProviderFleetOwner':  # noqa: E501
+        """cluster_service_update_provider_fleet_owner  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+        >>> thread = api.cluster_service_update_provider_fleet_owner_with_http_info(body, cluster_id, node_id, async_req=True)
+        >>> result = thread.get()
+
+        :param async_req bool
+        :param ClusterServiceUpdateProviderFleetOwnerBody body: (required)
+        :param str cluster_id: (required)
+        :param str node_id: (required)
+        :return: V1ProviderFleetOwner
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['body', 'cluster_id', 'node_id']  # noqa: E501
+        all_params.append('async_req')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in six.iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method cluster_service_update_provider_fleet_owner" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'body' is set
+        if ('body' not in params or
+                params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `cluster_service_update_provider_fleet_owner`")  # noqa: E501
+        # verify the required parameter 'cluster_id' is set
+        if ('cluster_id' not in params or
+                params['cluster_id'] is None):
+            raise ValueError("Missing the required parameter `cluster_id` when calling `cluster_service_update_provider_fleet_owner`")  # noqa: E501
+        # verify the required parameter 'node_id' is set
+        if ('node_id' not in params or
+                params['node_id'] is None):
+            raise ValueError("Missing the required parameter `node_id` when calling `cluster_service_update_provider_fleet_owner`")  # noqa: E501
+
+        collection_formats = {}
+
+        path_params = {}
+        if 'cluster_id' in params:
+            path_params['clusterId'] = params['cluster_id']  # noqa: E501
+        if 'node_id' in params:
+            path_params['nodeId'] = params['node_id']  # noqa: E501
+
+        query_params = []
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept(
+            ['application/json'])  # noqa: E501
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type(  # noqa: E501
+            ['application/json'])  # noqa: E501
+
+        # Authentication setting
+        auth_settings = []  # noqa: E501
+
+        return self.api_client.call_api(
+            '/v1/core/clusters/{clusterId}/provider-fleet/{nodeId}/owner', 'PUT',
+            path_params,
+            query_params,
+            header_params,
+            body=body_params,
+            post_params=form_params,
+            files=local_var_files,
+            response_type='V1ProviderFleetOwner',  # noqa: E501
             auth_settings=auth_settings,
             async_req=params.get('async_req'),
             _return_http_data_only=params.get('_return_http_data_only'),

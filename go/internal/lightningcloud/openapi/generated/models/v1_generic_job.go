@@ -35,8 +35,14 @@ type V1GenericJob struct {
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
+	// 1-based attempt currently shown; 0 = unset
+	CurrentRunAttempt int32 `json:"currentRunAttempt,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
+
+	// Total attempts allowed; 0 = unset (no retries)
+	MaxRunAttempts int32 `json:"maxRunAttempts,omitempty"`
 
 	// message
 	Message string `json:"message,omitempty"`

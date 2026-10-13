@@ -62,6 +62,7 @@ class V1ManagedModel(object):
         'name': 'str',
         'prompt_token_price': 'float',
         'prompt_token_price_above_threshold': 'float',
+        'publish_status': 'str',
         'status': 'V1AssistantModelStatus',
         'temperature': 'float',
         'throughput': 'float',
@@ -89,6 +90,7 @@ class V1ManagedModel(object):
         'name': 'name',
         'prompt_token_price': 'promptTokenPrice',
         'prompt_token_price_above_threshold': 'promptTokenPriceAboveThreshold',
+        'publish_status': 'publishStatus',
         'status': 'status',
         'temperature': 'temperature',
         'throughput': 'throughput',
@@ -98,7 +100,7 @@ class V1ManagedModel(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, cache_creation_token_price: 'float' =None, cache_creation_token_price1h: 'float' =None, cache_read_token_price: 'float' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, abilities: 'V1ManagedModelAbilities' =None, cache_creation_token_price: 'float' =None, cache_creation_token_price1h: 'float' =None, cache_read_token_price: 'float' =None, completion_token_price: 'float' =None, completion_token_price_above_threshold: 'float' =None, context_length: 'str' =None, created_at: 'datetime' =None, deployment_details: 'V1DeploymentDetails' =None, description: 'str' =None, display_name: 'str' =None, endpoint_id: 'str' =None, id: 'str' =None, max_completion_tokens: 'str' =None, name: 'str' =None, prompt_token_price: 'float' =None, prompt_token_price_above_threshold: 'float' =None, publish_status: 'str' =None, status: 'V1AssistantModelStatus' =None, temperature: 'float' =None, throughput: 'float' =None, time_to_first_token: 'float' =None, token_threshold: 'str' =None, top_k: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1ManagedModel - a model defined in Swagger"""  # noqa: E501
         self._abilities = None
         self._cache_creation_token_price = None
@@ -117,6 +119,7 @@ class V1ManagedModel(object):
         self._name = None
         self._prompt_token_price = None
         self._prompt_token_price_above_threshold = None
+        self._publish_status = None
         self._status = None
         self._temperature = None
         self._throughput = None
@@ -159,6 +162,8 @@ class V1ManagedModel(object):
             self.prompt_token_price = prompt_token_price
         if prompt_token_price_above_threshold is not None:
             self.prompt_token_price_above_threshold = prompt_token_price_above_threshold
+        if publish_status is not None:
+            self.publish_status = publish_status
         if status is not None:
             self.status = status
         if temperature is not None:
@@ -530,6 +535,27 @@ class V1ManagedModel(object):
         """
 
         self._prompt_token_price_above_threshold = prompt_token_price_above_threshold
+
+    @property
+    def publish_status(self) -> 'str':
+        """Gets the publish_status of this V1ManagedModel.  # noqa: E501
+
+
+        :return: The publish_status of this V1ManagedModel.  # noqa: E501
+        :rtype: str
+        """
+        return self._publish_status
+
+    @publish_status.setter
+    def publish_status(self, publish_status: 'str'):
+        """Sets the publish_status of this V1ManagedModel.
+
+
+        :param publish_status: The publish_status of this V1ManagedModel.  # noqa: E501
+        :type: str
+        """
+
+        self._publish_status = publish_status
 
     @property
     def status(self) -> 'V1AssistantModelStatus':

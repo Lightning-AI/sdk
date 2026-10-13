@@ -68,6 +68,10 @@ type V1ServerStatus struct {
 	// How many retries to create the server
 	Retries string `json:"retries,omitempty"`
 
+	// True once the machine-cluster scheduler has run at least once for this
+	// server. Sticky; placement is recorded separately (machine_id / provider).
+	SchedulerAttempted bool `json:"schedulerAttempted,omitempty"`
+
 	// started at
 	// Format: date-time
 	StartedAt strfmt.DateTime `json:"startedAt,omitempty"`
