@@ -420,14 +420,16 @@ def internal_studio_api_mocker_start_studio(mocker):
         "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_get_cloud_space_instance_status",
         return_value=V1GetCloudSpaceInstanceStatusResponse(
             requested=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new",
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
-                )
+                ),
             ),
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new",
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
-                )
+                ),
             ),
         ),
         autospec=True,

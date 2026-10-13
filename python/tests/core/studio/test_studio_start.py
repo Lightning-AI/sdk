@@ -117,6 +117,9 @@ def test_studio_start(
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new"
+                if status["st-abc"] == "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
+                else "instance-old",
                 phase=status["st-abc"],
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -308,6 +311,9 @@ def test_studio_start_on_demand_machine(
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new"
+                if status["st-abc"] == "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
+                else "instance-old",
                 phase=status["st-abc"],
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -498,6 +504,9 @@ def test_studio_start_interruptible_override(
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new"
+                if status["st-abc"] == "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
+                else "instance-old",
                 phase=status["st-abc"],
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -687,6 +696,9 @@ def test_studio_start_different_machine(
     def side_effect_status(*args, **kwargs):
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new"
+                if status["st-abc"] == "CLOUD_SPACE_INSTANCE_STATE_RUNNING"
+                else "instance-old",
                 phase=status["st-abc"],
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -898,6 +910,7 @@ def test_studio_start_uses_current_studio_machine_when_inside_running_studio(
         id = kwargs.get("id") or (args[2] if len(args) > 2 else None)
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new",
                 phase=status.get(id),
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -1095,6 +1108,7 @@ def test_studio_start_ignores_stopped_current_studio_machine(
         id = kwargs.get("id") or (args[2] if len(args) > 2 else None)
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new",
                 phase=status.get(id),
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
@@ -1270,6 +1284,7 @@ def test_studio_start_explicit_machine_overrides_current_studio_machine(
         id = kwargs.get("id") or (args[2] if len(args) > 2 else None)
         return V1GetCloudSpaceInstanceStatusResponse(
             in_use=Externalv1CloudSpaceInstanceStatus(
+                cloud_space_instance_id="instance-new",
                 phase=status.get(id),
                 startup_status=V1CloudSpaceInstanceStartupStatus(
                     initial_restore_finished=True, top_up_restore_finished=True
