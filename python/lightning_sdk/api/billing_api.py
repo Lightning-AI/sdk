@@ -271,7 +271,7 @@ class BillingActivityFilterValues:
     """The set of values a billing activity query can be filtered by, for a given scope.
 
     Resource IDs aren't included, since an org can have too many to return at once; page through
-    them with :meth:`BillingApi.get_activity_filter_resource_names` instead.
+    them with :meth:`Organization.get_activity_filter_resource_names` instead.
 
     Attributes:
         project_ids: Teamspace (project) IDs with billing activity in the queried scope.
