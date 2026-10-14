@@ -105,7 +105,7 @@ class PipelineApi:
         original_pipeline_id = ancestor_ids[-1] if ancestor_ids else pipeline.id
 
         # Older SDK versions grouped schedules under intermediate runs instead of the root.
-        schedule_ids = set()
+        schedule_ids: set[str] = set()
         for ancestor_id in ancestor_ids:
             current_schedules = (
                 self._client.schedules_service_list_schedules(
