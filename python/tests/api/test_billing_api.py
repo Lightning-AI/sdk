@@ -143,6 +143,7 @@ def test_billing_activity_filter_values_from_api():
             "project_ids": ["proj-1", "proj-2"],
             "user_ids": ["user-1"],
             "resource_types": ["lightning_code", "job"],
+            "named_resource_types": [{"id": "lightning_code", "name": "Studio"}, {"id": "job", "name": "Job"}],
             "cluster_ids": ["cluster-1"],
             "subfilters": {
                 "job": {"resource_type": "Job", "tags": [{"id": "tag-1", "name": "nightly"}]},
@@ -154,7 +155,10 @@ def test_billing_activity_filter_values_from_api():
 
     assert filter_values.project_ids == ["proj-1", "proj-2"]
     assert filter_values.user_ids == ["user-1"]
-    assert filter_values.resource_types == ["lightning_code", "job"]
+    assert filter_values.resource_types == [
+        BillingNamedFilterValue(id="lightning_code", name="Studio"),
+        BillingNamedFilterValue(id="job", name="Job"),
+    ]
     assert filter_values.cluster_ids == ["cluster-1"]
     subfilters = filter_values.subfilters
     assert subfilters.job == BillingWorkloadSubfilterValues(
@@ -163,6 +167,12 @@ def test_billing_activity_filter_values_from_api():
     assert subfilters.deployment == BillingWorkloadSubfilterValues(resource_type="Deployment")
     assert subfilters.multi_machine_job == BillingWorkloadSubfilterValues()
     assert subfilters.assistant_message.api_key_ids == [BillingNamedFilterValue(id="key-1", name="ci key")]
+
+
+def test_billing_activity_filter_values_from_api_falls_back_to_legacy_resource_types():
+    filter_values = BillingActivityFilterValues._from_api({"resource_types": ["lightning_code"]})
+
+    assert filter_values.resource_types == [BillingNamedFilterValue(id="lightning_code", name="lightning_code")]
 
 
 def test_billing_activity_filter_values_from_api_missing_lists_default_to_empty():
