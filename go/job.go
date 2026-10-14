@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	sdkapi "github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client"
 	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/jobs_service"
 	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/models"
 	"github.com/lightning-ai/sdk/go/internal/sdkclient"
@@ -581,7 +582,7 @@ func (j *Job) Wait(opts ...JobWaitOptions) error {
 	}
 }
 
-// Logs downloads and returns the job logs.
+// Logs returns the job's logs, read from the unified logs API.
 func (j *Job) Logs() (string, error) {
 	if j == nil || j.teamspaceID == "" || j.id == "" {
 		return "", errors.New("job logs requires teamspace ID and job ID")
@@ -590,6 +591,47 @@ func (j *Job) Logs() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	var lines []string
+	var pageToken string
+	for {
+		params := jobs_service.NewJobsServiceGetLogsParamsWithContext(context.Background()).
+			WithProjectID(j.teamspaceID).
+			WithJobIds([]string{j.id})
+		if pageToken != "" {
+			params = params.WithPageToken(&pageToken)
+		}
+		resp, err := api.JobsService.JobsServiceGetLogs(params)
+		if err != nil {
+			return "", err
+		}
+		if resp.Payload == nil {
+			return "", fmt.Errorf("get job logs returned empty payload")
+		}
+		for i, entry := range resp.Payload.Entries {
+			if entry == nil {
+				continue
+			}
+			// the platform prepends a "+ lightning" banner line; skip it on the first page
+			if pageToken == "" && i == 0 && entry.Message == "+ lightning" {
+				continue
+			}
+			lines = append(lines, entry.Message)
+		}
+		pageToken = resp.Payload.NextPageToken
+		if pageToken == "" {
+			break
+		}
+	}
+	if len(lines) == 0 && !strings.EqualFold(j.status, "running") {
+		// nothing in the logs API: the job finished before logs moved to the current
+		// storage format, so fall back to its saved log file
+		return j.savedLogs(api)
+	}
+	return strings.Join(lines, "\n"), nil
+}
+
+// savedLogs downloads the job's saved log file, for jobs whose lines are not in the logs API.
+func (j *Job) savedLogs(api *sdkapi.LightningSdkAPI) (string, error) {
 	resp, err := api.JobsService.JobsServiceDownloadJobLogs(
 		jobs_service.NewJobsServiceDownloadJobLogsParamsWithContext(context.Background()).
 			WithProjectID(j.teamspaceID).
