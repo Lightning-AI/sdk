@@ -255,6 +255,17 @@ class BillingActivitySubfilterValues:
         )
 
 
+def _resource_type_filter_values(data: Dict[str, Any]) -> List[BillingNamedFilterValue]:
+    """Resource types paired with their display names.
+
+    Falls back to the legacy raw ``resource_types`` IDs, named after themselves, for servers that
+    don't send ``named_resource_types`` yet.
+    """
+    if named_resource_types := data.get("named_resource_types"):
+        return _named_filter_values(named_resource_types)
+    return [BillingNamedFilterValue(id=rt, name=rt) for rt in data.get("resource_types") or []]
+
+
 @dataclass
 class BillingActivityFilterValues:
     """The set of values a billing activity query can be filtered by, for a given scope.
@@ -265,15 +276,16 @@ class BillingActivityFilterValues:
     Attributes:
         project_ids: Teamspace (project) IDs with billing activity in the queried scope.
         user_ids: User IDs with billing activity in the queried scope.
-        resource_types: Resource types with billing activity in the queried scope, e.g.
-            "lightning_code" (Studios), "job" or "assistant_message".
+        resource_types: Resource types with billing activity in the queried scope, paired with
+            their display names, e.g. ID "lightning_code" with name "Studio". Pass their IDs as
+            ``resource_types`` when filtering.
         cluster_ids: Cloud account IDs with billing activity in the queried scope.
         subfilters: Values for the filters that only apply to one resource type.
     """
 
     project_ids: List[str] = field(default_factory=list)
     user_ids: List[str] = field(default_factory=list)
-    resource_types: List[str] = field(default_factory=list)
+    resource_types: List[BillingNamedFilterValue] = field(default_factory=list)
     cluster_ids: List[str] = field(default_factory=list)
     subfilters: BillingActivitySubfilterValues = field(default_factory=BillingActivitySubfilterValues)
 
@@ -282,7 +294,7 @@ class BillingActivityFilterValues:
         return cls(
             project_ids=list(data.get("project_ids") or []),
             user_ids=list(data.get("user_ids") or []),
-            resource_types=list(data.get("resource_types") or []),
+            resource_types=_resource_type_filter_values(data),
             cluster_ids=list(data.get("cluster_ids") or []),
             subfilters=BillingActivitySubfilterValues._from_api(data.get("subfilters")),
         )
