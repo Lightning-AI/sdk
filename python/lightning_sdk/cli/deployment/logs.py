@@ -12,10 +12,10 @@ import rich_click as click
 from lightning_sdk.api.deployment_api import DeploymentApi
 from lightning_sdk.api.job_api import JobApiV2
 from lightning_sdk.api.logs_api import SEVERITIES
+from lightning_sdk.api.mmt_api import MMTApiV2
 from lightning_sdk.cli.deployment.common import resolve_deployment, resolve_teamspace
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.logs import (
-    LIVE_FALLBACK_IDLE_TIMEOUT,
     LogSelection,
     deployment_replica_labels,
     make_logs_group,
@@ -85,7 +85,7 @@ def _command_without_tui(
     type=click.Choice(SEVERITIES),
     help="Only include lines at or above this severity.",
 )
-@click.option("--rank", type=int, help="Machine of a single replica to read (legacy log path).")
+@click.option("--rank", type=int, help="Machine (0-based) to read within a multi-machine replica.")
 @click.option("--follow", "-f", is_flag=True, default=False, help="Stream new log lines as they are produced.")
 @click.option("--tail", type=int, help=f"Only show the last N lines. Defaults to {_DEFAULT_TAIL}.")
 @click.option("--timestamps", is_flag=True, default=False, help="Prepend each line with its ISO-8601 timestamp.")
@@ -160,7 +160,7 @@ def _deployment_logs_cmd(
 
     if rank is not None:
         if as_json:
-            raise click.ClickException("--json is not supported with --rank (the legacy single-replica path).")
+            raise click.ClickException("--json is not supported with --rank (a single machine's stream).")
         _ranked_logs(
             api,
             resolved_teamspace.id,
@@ -219,11 +219,11 @@ def _ranked_logs(
     tail: Optional[int],
     timestamps: bool,
 ) -> None:
-    """Read one machine of one replica over the legacy per-job log path.
+    """Read one machine of one replica through the logs API.
 
-    --rank selects a machine inside a replica, which the merged logs API has no equivalent for:
-    it returns every machine's lines tagged with the replica instead. Until it does, a ranked
-    read uses the older per-job endpoints, and those serve a single replica at a time.
+    ``--rank`` selects a machine inside a replica. The logs API has no rank parameter and
+    serves each machine as its own job, so the machine's job id is resolved client-side and
+    read like any other job.
     """
     if len(job_ids) > 1:
         raise click.ClickException("--rank reads one replica at a time; pass a single --job-id.")
@@ -239,39 +239,33 @@ def _ranked_logs(
             raise click.ClickException("This deployment has several replicas; pass --job-id to pick one for --rank.")
         job_id = jobs[0].id
 
-    entries = list(
-        api.iter_job_log_entries(
-            teamspace_id,
-            job_id,
-            deployment_id=deployment_id,
-            since=resolve_time(since, "--since"),
-            until=resolve_time(until, "--until"),
-            rank=rank,
-        )
+    read_logs(
+        LogSelection(teamspace_id=teamspace_id, job_ids=[_resolve_ranked_job_id(teamspace_id, job_id, rank)]),
+        since=resolve_time(since, "--since"),
+        until=resolve_time(until, "--until"),
+        tail=tail,
+        follow=follow,
+        timestamps=timestamps,
     )
-    if tail is not None:
-        entries = entries[-tail:]
-    for entry in entries:
-        click.echo(entry.format(timestamps=timestamps))
 
-    if not follow and entries:
-        return
 
-    try:
-        for line in JobApiV2().stream_logs(
-            job_id=job_id,
-            teamspace_id=teamspace_id,
-            follow=follow,
-            tail=tail,
-            rank=rank,
-            idle_timeout=None if follow else LIVE_FALLBACK_IDLE_TIMEOUT,
-            timestamps=timestamps,
-        ):
-            click.echo(line)
-    except KeyboardInterrupt:
-        pass
-    except RuntimeError as ex:
-        raise click.ClickException(str(ex)) from ex
+def _resolve_ranked_job_id(teamspace_id: str, job_id: str, rank: int) -> str:
+    """The job id of machine ``rank`` (0-based) within ``job_id``'s multi-machine job.
+
+    ``job_id`` itself is returned when it already is that machine. A plain single-machine
+    replica has no other machines to select, so anything but its own rank is an error.
+    """
+    job = JobApiV2().get_job(job_id, teamspace_id)
+    if (getattr(job.spec, "rank", 0) or 0) == rank:
+        return job.id
+
+    parent_id = getattr(job, "multi_machine_job_id", None)
+    if not parent_id:
+        raise click.ClickException(f"--rank {rank}: this replica is a single machine. Read it without --rank.")
+    for subjob in sorted(MMTApiV2().list_mmt_subjobs(parent_id, teamspace_id), key=lambda s: s.spec.rank):
+        if subjob.spec.rank == rank:
+            return subjob.id
+    raise click.ClickException(f"--rank {rank} is out of range; the multi-machine job has fewer machines.")
 
 
 @click.command("download", cls=LightningCommand)

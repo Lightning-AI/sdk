@@ -58,22 +58,20 @@ def _logs_job_cmd(
     Prints a snapshot of the logs available so far. Pass --follow to stream new
     lines from a running job until it finishes or you press Ctrl-C. --query and
     --severity are applied by the server, to both the snapshot and the stream.
-    Multi-machine logs are merged unless --rank selects one machine, which opens
-    that machine's per-job websocket (same path as a single-machine job with
-    --rank).
+    Multi-machine logs are merged unless --rank selects one machine; the machine
+    is resolved client-side and read through the logs API.
     """
     resolved_teamspace = resolve_teamspace(teamspace)
     resource = resolve_job(name, resolved_teamspace)
     selected_rank = resource.is_multi_machine is True and rank is not None
-    if selected_rank:
-        assert rank is not None
-        job = resolve_job_machine(resource, rank)
-    else:
-        job = resource
 
     if tui:
         from lightning_sdk.cli.logs_tui import run_tui
 
+        job = resource
+        if selected_rank:
+            assert rank is not None
+            job = resolve_job_machine(resource, rank)
         assert job.resource_id is not None, "job must have a resource_id"
         run_tui(
             LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id]),
@@ -90,21 +88,29 @@ def _logs_job_cmd(
     if as_json:
         if rank is not None and not selected_rank:
             raise click.ClickException("--rank is not supported with --json.")
-        if job.is_multi_machine is True:
+        if selected_rank:
+            assert rank is not None
+            machine = resolve_job_machine(resource, rank)
+            if machine.resource_id is None:
+                raise click.ClickException("The selected machine does not have a resource ID.")
+            selection = LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[machine.resource_id])
+        elif resource.is_multi_machine is True:
             labels: dict = {}
             with suppress(Exception):
                 labels = {
-                    machine.resource_id: machine.name for machine in job.machines if machine.resource_id is not None
+                    machine.resource_id: machine.name
+                    for machine in resource.machines
+                    if machine.resource_id is not None
                 }
             selection = LogSelection(
                 teamspace_id=resolved_teamspace.id,
-                mmt_id=job.resource_id,
+                mmt_id=resource.resource_id,
                 labels=labels,
             )
         else:
-            if job.resource_id is None:
+            if resource.resource_id is None:
                 raise click.ClickException("The selected job does not have a resource ID.")
-            selection = LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[job.resource_id])
+            selection = LogSelection(teamspace_id=resolved_teamspace.id, job_ids=[resource.resource_id])
         read_logs(
             selection,
             query=query,
@@ -118,29 +124,18 @@ def _logs_job_cmd(
         return
 
     try:
-        if job.is_multi_machine is True:
-            logs = job.logs(
-                follow=follow,
-                tail=tail,
-                timestamps=timestamps,
-                since=resolve_time(since, "--since"),
-                until=resolve_time(until, "--until"),
-                query=query,
-                severity=severity,
-            )
-        else:
-            # Any non-None rank routes Job through the legacy per-job websocket (server-side
-            # tail). For a selected MMT machine the process rank on that node is 0.
-            logs = job.logs(
-                follow=follow,
-                tail=tail,
-                rank=0 if selected_rank else rank,
-                timestamps=timestamps,
-                since=resolve_time(since, "--since"),
-                until=resolve_time(until, "--until"),
-                query=query,
-                severity=severity,
-            )
+        # `rank` (when set) selects one machine of a multi-machine job; the SDK resolves it
+        # client-side to that machine's own job and reads it through the logs API.
+        logs = resource.logs(
+            follow=follow,
+            tail=tail,
+            rank=rank,
+            timestamps=timestamps,
+            since=resolve_time(since, "--since"),
+            until=resolve_time(until, "--until"),
+            query=query,
+            severity=severity,
+        )
         if follow:
             for line in logs:
                 click.echo(line)
@@ -148,7 +143,7 @@ def _logs_job_cmd(
             click.echo(logs)
     except KeyboardInterrupt:
         pass
-    except RuntimeError as ex:
+    except (RuntimeError, ValueError) as ex:
         raise click.ClickException(str(ex)) from ex
 
 
