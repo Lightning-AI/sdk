@@ -37,7 +37,7 @@ class _FakeResponse:
         return default
 
 
-@pytest.fixture
+@pytest.fixture()
 def billing_api():
     """A BillingApi backed by the real generated client, with only the HTTP layer stubbed.
 
