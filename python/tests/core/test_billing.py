@@ -6,6 +6,7 @@ import pytest
 
 from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
+    BillingActivityGroupBy,
     BillingActivitySubfilters,
     BillingWorkloadTagSubfilter,
 )
@@ -24,6 +25,9 @@ def _make_org(org_id="org-1"):
     org.get_activity_filter_resource_names = Organization.get_activity_filter_resource_names.__get__(org)
     org.get_session_activity = Organization.get_session_activity.__get__(org)
     org.get_resource_activity = Organization.get_resource_activity.__get__(org)
+    org.get_activity_group_totals = Organization.get_activity_group_totals.__get__(org)
+    org.get_activity_group_daily_totals = Organization.get_activity_group_daily_totals.__get__(org)
+    org.get_activity_breakdown = Organization.get_activity_breakdown.__get__(org)
     return org
 
 
@@ -278,6 +282,116 @@ def test_get_resource_activity_defaults_to_json():
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
+        start=None,
+        end=None,
+    )
+
+
+# ---- get_activity_group_totals / get_activity_group_daily_totals --------
+
+
+def test_get_activity_group_totals_defaults():
+    org = _make_org("org-1")
+
+    org.get_activity_group_totals(BillingActivityGroupBy.RESOURCE_TYPE)
+
+    org._billing_api.get_activity_group_totals.assert_called_once_with(
+        org_id="org-1",
+        group_by=BillingActivityGroupBy.RESOURCE_TYPE,
+        project_ids=None,
+        resource_types=None,
+        resource_ids=None,
+        user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
+        start=None,
+        end=None,
+    )
+
+
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_get_activity_group_daily_totals_forwards_args(mock_resolve_teamspace):
+    org = _make_org("org-1")
+    teamspace = _make_teamspace("ts-1", org)
+    mock_resolve_teamspace.return_value = teamspace
+    subfilters = BillingActivitySubfilters(job=BillingWorkloadTagSubfilter(tag_ids=["tag-1"]))
+    start = datetime(2026, 1, 1)
+    end = datetime(2026, 2, 1)
+    filters = BillingActivityFilters(
+        resource_types=["job"],
+        resource_ids=["res-1"],
+        user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=subfilters,
+        start=start,
+        end=end,
+        limit=10,
+    )
+
+    org.get_activity_group_daily_totals(BillingActivityGroupBy.USER, teamspaces=[teamspace], filters=filters)
+
+    org._billing_api.get_activity_group_daily_totals.assert_called_once_with(
+        org_id="org-1",
+        group_by=BillingActivityGroupBy.USER,
+        project_ids=["ts-1"],
+        resource_types=["job"],
+        resource_ids=["res-1"],
+        user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=subfilters,
+        start=start,
+        end=end,
+    )
+
+
+# ---- get_activity_breakdown ---------------------------------------------
+
+
+def test_get_activity_breakdown_defaults_to_json():
+    org = _make_org("org-1")
+    writer = io.StringIO()
+
+    org.get_activity_breakdown(writer=writer)
+
+    org._billing_api.get_activity_breakdown.assert_called_once_with(
+        org_id="org-1",
+        format=ActivityFileFormat.JSON,
+        writer=writer,
+        project_ids=None,
+        resource_types=None,
+        resource_ids=None,
+        user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
+        start=None,
+        end=None,
+    )
+
+
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_get_activity_breakdown_forwards_args(mock_resolve_teamspace):
+    org = _make_org("org-1")
+    teamspace = _make_teamspace("ts-1", org)
+    mock_resolve_teamspace.return_value = teamspace
+    writer = io.StringIO()
+
+    org.get_activity_breakdown(
+        writer=writer,
+        format=ActivityFileFormat.CSV,
+        teamspace=teamspace,
+        filters=BillingActivityFilters(user_ids=["user-1"]),
+    )
+
+    org._billing_api.get_activity_breakdown.assert_called_once_with(
+        org_id="org-1",
+        format=ActivityFileFormat.CSV,
+        writer=writer,
+        project_ids=["ts-1"],
+        resource_types=None,
+        resource_ids=None,
+        user_ids=["user-1"],
         cluster_ids=None,
         subfilters=None,
         start=None,

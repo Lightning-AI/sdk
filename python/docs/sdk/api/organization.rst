@@ -31,6 +31,26 @@ Organization
    :members:
    :show-inheritance:
 
+.. autoclass:: BillingActivityGroupBy
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivityGroupTotals
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivityGroupTotal
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivityGroupDailyTotals
+   :members:
+   :show-inheritance:
+
+.. autoclass:: BillingActivityGroupDailyTotal
+   :members:
+   :show-inheritance:
+
 .. autoclass:: BillingResourceUsage
    :members:
    :show-inheritance:

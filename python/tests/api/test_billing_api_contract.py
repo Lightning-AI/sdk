@@ -13,6 +13,8 @@ from unittest import mock
 import pytest
 
 from lightning_sdk.api.billing_api import (
+    BillingActivityGroupBy,
+    BillingActivityGroupTotal,
     BillingActivitySubfilters,
     BillingApi,
     BillingAssistantMessageSubfilter,
@@ -242,3 +244,61 @@ def test_get_activity_filter_resource_names_last_page(billing_api):
 
     assert page.resource_ids == []
     assert page.next_page_token is None
+
+
+def test_get_activity_group_totals(billing_api):
+    api, respond_with = billing_api
+    request = respond_with(
+        {
+            "groups": [{"groupValue": "job", "cost": 10.0, "savedCost": 1.0}, {"cost": 2.0}],
+            "totalCost": 12.0,
+            "totalSavedCost": 1.0,
+        }
+    )
+
+    totals = api.get_activity_group_totals(
+        org_id="org-1",
+        group_by=BillingActivityGroupBy.TEAMSPACE,
+        project_ids=["proj-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=BillingActivitySubfilters(job=BillingWorkloadTagSubfilter(tag_ids=["tag-1"], match_all_tags=True)),
+        start=datetime(2026, 1, 1, tzinfo=timezone.utc),
+    )
+
+    method, url, query = _sent_request(request)
+    assert method == "GET"
+    assert url == "https://lightning.test/v1/billing/usage-report-rollup/group-totals"
+    assert _values(query, "orgId") == ["org-1"]
+    assert _values(query, "groupBy") == ["USAGE_GROUP_BY_TEAMSPACE"]
+    assert _values(query, "projectIds") == ["proj-1"]
+    assert _values(query, "clusterIds") == ["cluster-1"]
+    assert _values(query, "subfilters.job.tagIds") == ["tag-1"]
+    assert _values(query, "subfilters.job.matchAllTags") == [True]
+    assert len(_values(query, "from")) == 1
+
+    assert totals.groups == [
+        BillingActivityGroupTotal(group_value="job", cost=10.0, saved_cost=1.0),
+        BillingActivityGroupTotal(group_value="", cost=2.0),
+    ]
+    assert totals.total_cost == 12.0
+    assert totals.total_saved_cost == 1.0
+
+
+def test_get_activity_group_daily_totals(billing_api):
+    api, respond_with = billing_api
+    request = respond_with(
+        {"dailyTotals": [{"day": "2026-01-02T00:00:00Z", "groupValue": "user-1", "cost": 3.0, "savedCost": 0.5}]}
+    )
+
+    daily = api.get_activity_group_daily_totals(org_id="org-1", group_by=BillingActivityGroupBy.USER)
+
+    method, url, query = _sent_request(request)
+    assert method == "GET"
+    assert url == "https://lightning.test/v1/billing/usage-report-rollup/group-daily-totals"
+    assert query == [("orgId", "org-1"), ("groupBy", "USAGE_GROUP_BY_USER")]
+
+    assert len(daily.daily_totals) == 1
+    entry = daily.daily_totals[0]
+    # The generated client only parses datetimes when python-dateutil is installed.
+    assert str(entry.day).replace(" ", "T").startswith("2026-01-02T00:00:00")
+    assert (entry.group_value, entry.cost, entry.saved_cost) == ("user-1", 3.0, 0.5)

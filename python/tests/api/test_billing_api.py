@@ -3,10 +3,17 @@ import json
 from datetime import datetime, timezone
 from unittest import mock
 
+import pytest
+
 from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
     BillingActivity,
     BillingActivityFilterValues,
+    BillingActivityGroupBy,
+    BillingActivityGroupDailyTotal,
+    BillingActivityGroupDailyTotals,
+    BillingActivityGroupTotal,
+    BillingActivityGroupTotals,
     BillingActivityResourceNames,
     BillingActivitySubfilters,
     BillingApi,
@@ -325,6 +332,121 @@ def test_get_activity_forwards_all_kwargs(mock_client):
     }
 
 
+# ---- grouped dataclasses: _from_api ------------------------------------------
+
+
+def test_billing_activity_group_totals_from_api():
+    totals = BillingActivityGroupTotals._from_api(
+        {
+            "groups": [
+                {"group_value": "job", "cost": 10.0, "saved_cost": 1.0},
+                {"group_value": "", "cost": 2.0, "saved_cost": 0.0},
+            ],
+            "total_cost": 12.0,
+            "total_saved_cost": 1.0,
+        }
+    )
+
+    assert totals == BillingActivityGroupTotals(
+        groups=[
+            BillingActivityGroupTotal(group_value="job", cost=10.0, saved_cost=1.0),
+            BillingActivityGroupTotal(group_value="", cost=2.0, saved_cost=0.0),
+        ],
+        total_cost=12.0,
+        total_saved_cost=1.0,
+    )
+
+
+def test_billing_activity_group_totals_from_api_defaults():
+    totals = BillingActivityGroupTotals._from_api({"groups": [{"cost": 1.0}]})
+
+    assert totals.groups == [BillingActivityGroupTotal(group_value="", cost=1.0)]
+    assert totals.total_cost is None
+    assert BillingActivityGroupTotals._from_api({}).groups == []
+
+
+def test_billing_activity_group_daily_totals_from_api():
+    day = datetime(2026, 1, 2, tzinfo=timezone.utc)
+    daily = BillingActivityGroupDailyTotals._from_api(
+        {"daily_totals": [{"day": day, "group_value": "user-1", "cost": 3.0, "saved_cost": 0.5}]}
+    )
+
+    assert daily.daily_totals == [
+        BillingActivityGroupDailyTotal(day=day, group_value="user-1", cost=3.0, saved_cost=0.5)
+    ]
+    assert BillingActivityGroupDailyTotals._from_api({}).daily_totals == []
+
+
+def test_billing_activity_group_by_str():
+    assert str(BillingActivityGroupBy.TEAMSPACE) == "USAGE_GROUP_BY_TEAMSPACE"
+
+
+# ---- BillingApi.get_activity_group_totals / get_activity_group_daily_totals ---
+
+
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+def test_get_activity_group_totals_minimal(mock_client):
+    mock_client().billing_service_get_usage_group_totals.return_value.to_dict.return_value = {}
+
+    billing_api = BillingApi()
+    result = billing_api.get_activity_group_totals(org_id="org-1", group_by=BillingActivityGroupBy.RESOURCE_TYPE)
+
+    assert isinstance(result, BillingActivityGroupTotals)
+    call_kwargs = mock_client().billing_service_get_usage_group_totals.call_args[1]
+    assert call_kwargs == {"org_id": "org-1", "group_by": "USAGE_GROUP_BY_RESOURCE_TYPE"}
+
+
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+def test_get_activity_group_daily_totals_forwards_all_kwargs(mock_client):
+    mock_client().billing_service_get_usage_group_daily_totals.return_value.to_dict.return_value = {}
+    start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    end = datetime(2026, 2, 1, tzinfo=timezone.utc)
+
+    billing_api = BillingApi()
+    result = billing_api.get_activity_group_daily_totals(
+        org_id="org-1",
+        group_by="USAGE_GROUP_BY_USER",
+        project_ids=["proj-1"],
+        resource_types=["job"],
+        resource_ids=["res-1"],
+        user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=BillingActivitySubfilters(
+            job=BillingWorkloadTagSubfilter(tag_ids=["tag-1"], match_all_tags=True),
+            assistant_message=BillingAssistantMessageSubfilter(api_key_ids=["key-1"]),
+        ),
+        start=start,
+        end=end,
+    )
+
+    assert isinstance(result, BillingActivityGroupDailyTotals)
+    call_kwargs = mock_client().billing_service_get_usage_group_daily_totals.call_args[1]
+    assert call_kwargs == {
+        "org_id": "org-1",
+        "group_by": "USAGE_GROUP_BY_USER",
+        "project_ids": ["proj-1"],
+        "resource_types": ["job"],
+        "resource_ids": ["res-1"],
+        "user_ids": ["user-1"],
+        "cluster_ids": ["cluster-1"],
+        "subfilters_job_tag_ids": ["tag-1"],
+        "subfilters_job_match_all_tags": True,
+        "subfilters_assistant_message_api_key_ids": ["key-1"],
+        "_from": start,
+        "to": end,
+    }
+
+
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+def test_get_activity_group_totals_rejects_unknown_group_by(mock_client):
+    billing_api = BillingApi()
+
+    with pytest.raises(ValueError, match="USAGE_GROUP_BY_UNSPECIFIED"):
+        billing_api.get_activity_group_totals(org_id="org-1", group_by="USAGE_GROUP_BY_UNSPECIFIED")
+
+    mock_client().billing_service_get_usage_group_totals.assert_not_called()
+
+
 # ---- BillingApi.get_activity_filter_values -----------------------------------
 
 
@@ -494,3 +616,71 @@ def test_get_resource_activity_json_default_format(mock_authenticate, mock_reque
     assert json.loads(writer.getvalue()) == [{"id": "res-1", "name": "studio"}]
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/summary")
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_activity_breakdown_csv(mock_authenticate, mock_requests_get):
+    mock_response = mock.Mock()
+    mock_response.status_code = 200
+    mock_response.headers = {"content-length": "4"}
+    mock_response.text = "data"
+    mock_requests_get.return_value = mock_response
+
+    billing_api = BillingApi()
+    writer = io.StringIO()
+
+    result = billing_api.get_activity_breakdown(
+        org_id="org-1",
+        format=ActivityFileFormat.CSV,
+        writer=writer,
+        project_ids=["proj-1"],
+        subfilters=BillingActivitySubfilters(deployment=BillingWorkloadTagSubfilter(tag_ids=["tag-1"])),
+    )
+
+    assert result is None
+    assert writer.getvalue() == "data"
+    mock_authenticate.assert_called_once_with()
+    call_args = mock_requests_get.call_args
+    assert call_args[0][0].endswith("/v1/billing/usage-report/download/breakdown")
+    assert call_args[1]["params"] == {
+        "orgId": "org-1",
+        "projectIds": ["proj-1"],
+        "subfilters.deployment.tagIds": ["tag-1"],
+    }
+
+
+@mock.patch("requests.get", autospec=True)
+@mock.patch(
+    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
+    return_value={"Authorization": "Bearer test-token"},
+)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_get_activity_breakdown_json_default_format(mock_authenticate, mock_requests_get):
+    mock_response = mock.Mock()
+    mock_response.status_code = 200
+    mock_response.text = (
+        "Date,Resource type,User,Teamspace,Cost,Saved cost\n2026-01-02,Studio,alice,Unassigned,1.50,0.00\n"
+    )
+    mock_requests_get.return_value = mock_response
+
+    billing_api = BillingApi()
+    writer = io.StringIO()
+
+    billing_api.get_activity_breakdown(org_id="org-1", writer=writer)
+
+    assert json.loads(writer.getvalue()) == [
+        {
+            "Date": "2026-01-02",
+            "Resource type": "Studio",
+            "User": "alice",
+            "Teamspace": "Unassigned",
+            "Cost": "1.50",
+            "Saved cost": "0.00",
+        }
+    ]
+    assert mock_requests_get.call_args[0][0].endswith("/v1/billing/usage-report/download/breakdown")

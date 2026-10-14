@@ -16,6 +16,14 @@ Three ways to get billing activity, at different grains:
       queried range, with resolved names, a more concise view than the session-level report.
       Returns CSV or JSON depending on the ``format`` argument.
 
+And three ways to get cost split by a single dimension (resource type, user or teamspace), the
+data behind the Reports page's grouped charts:
+    - :meth:`BillingApi.get_activity_group_totals`: cost per group, summed over the queried range.
+    - :meth:`BillingApi.get_activity_group_daily_totals`: cost per UTC day and group.
+    - :meth:`BillingApi.get_activity_breakdown`: cost per UTC day, resource type, user and
+      teamspace at once, with resolved names, for regrouping elsewhere. Returns CSV or JSON
+      depending on the ``format`` argument.
+
 The values each filter accepts come from :meth:`BillingApi.get_activity_filter_values`, and
 resource IDs from :meth:`BillingApi.get_activity_filter_resource_names`.
 """
@@ -412,6 +420,151 @@ def _subfilter_query_params(subfilters: Optional[BillingActivitySubfilters]) -> 
     return query_params
 
 
+class BillingActivityGroupBy(str, Enum):
+    """Dimension the grouped billing activity endpoints split cost by."""
+
+    RESOURCE_TYPE = "USAGE_GROUP_BY_RESOURCE_TYPE"
+    USER = "USAGE_GROUP_BY_USER"
+    TEAMSPACE = "USAGE_GROUP_BY_TEAMSPACE"
+
+    def __str__(self) -> str:
+        """Converts the BillingActivityGroupBy to a str.
+
+        Returns:
+            str: The string value of the enum member (e.g. ``"USAGE_GROUP_BY_USER"``).
+        """
+        return self.value
+
+
+@dataclass
+class BillingActivityGroupTotal:
+    """Cost for a single group, summed over the whole queried time range.
+
+    Attributes:
+        group_value: The group this entry covers, depending on the
+            :class:`BillingActivityGroupBy` it was queried with: a raw resource type (e.g.
+            "lightning_code" for Studios), a user ID or a teamspace (project) ID. Usage not
+            assigned to a teamspace is grouped under an empty teamspace ID, and usage not assigned
+            to a user under the nil-UUID user ID.
+        cost: Total credits spent by this group.
+        saved_cost: Total credits saved by this group.
+    """
+
+    group_value: str = ""
+    cost: Optional[float] = None
+    saved_cost: Optional[float] = None
+
+    @classmethod
+    def _from_api(cls, data: Dict[str, Any]) -> "BillingActivityGroupTotal":
+        return cls(
+            group_value=data.get("group_value") or "",
+            cost=data.get("cost"),
+            saved_cost=data.get("saved_cost"),
+        )
+
+
+@dataclass
+class BillingActivityGroupTotals:
+    """Billing activity cost split by group, as returned by the group totals endpoint.
+
+    Attributes:
+        groups: Cost per group, ordered by cost, highest first.
+        total_cost: Total credits spent, summed across all groups.
+        total_saved_cost: Total credits saved, summed across all groups.
+    """
+
+    groups: List[BillingActivityGroupTotal] = field(default_factory=list)
+    total_cost: Optional[float] = None
+    total_saved_cost: Optional[float] = None
+
+    @classmethod
+    def _from_api(cls, data: Dict[str, Any]) -> "BillingActivityGroupTotals":
+        return cls(
+            groups=[BillingActivityGroupTotal._from_api(item) for item in data.get("groups") or []],
+            total_cost=data.get("total_cost"),
+            total_saved_cost=data.get("total_saved_cost"),
+        )
+
+
+@dataclass
+class BillingActivityGroupDailyTotal:
+    """Cost for a single group on a single UTC day.
+
+    Attributes:
+        day: The UTC day this entry covers.
+        group_value: The group this entry covers, as in
+            :attr:`BillingActivityGroupTotal.group_value`.
+        cost: Credits spent by this group on this day.
+        saved_cost: Credits saved by this group on this day.
+    """
+
+    day: Optional[datetime] = None
+    group_value: str = ""
+    cost: Optional[float] = None
+    saved_cost: Optional[float] = None
+
+    @classmethod
+    def _from_api(cls, data: Dict[str, Any]) -> "BillingActivityGroupDailyTotal":
+        return cls(
+            day=data.get("day"),
+            group_value=data.get("group_value") or "",
+            cost=data.get("cost"),
+            saved_cost=data.get("saved_cost"),
+        )
+
+
+@dataclass
+class BillingActivityGroupDailyTotals:
+    """Billing activity cost split by UTC day and group, as returned by the group daily totals endpoint.
+
+    Attributes:
+        daily_totals: One entry per day and group with usage, newest day first. Days without
+            usage are left out.
+    """
+
+    daily_totals: List[BillingActivityGroupDailyTotal] = field(default_factory=list)
+
+    @classmethod
+    def _from_api(cls, data: Dict[str, Any]) -> "BillingActivityGroupDailyTotals":
+        return cls(
+            daily_totals=[BillingActivityGroupDailyTotal._from_api(item) for item in data.get("daily_totals") or []],
+        )
+
+
+def _activity_filter_client_kwargs(
+    org_id: str,
+    project_ids: Optional[List[str]] = None,
+    resource_types: Optional[List[str]] = None,
+    resource_ids: Optional[List[str]] = None,
+    user_ids: Optional[List[str]] = None,
+    cluster_ids: Optional[List[str]] = None,
+    subfilters: Optional[BillingActivitySubfilters] = None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+) -> Dict[str, Any]:
+    """Build the filter kwargs the generated client takes for the usage report endpoints.
+
+    Shared by the V2 usage report and the grouped endpoints, which all take the same filters.
+    """
+    kwargs: Dict[str, Any] = {"org_id": org_id}
+    if project_ids is not None:
+        kwargs["project_ids"] = project_ids
+    if resource_types is not None:
+        kwargs["resource_types"] = resource_types
+    if resource_ids is not None:
+        kwargs["resource_ids"] = resource_ids
+    if user_ids is not None:
+        kwargs["user_ids"] = user_ids
+    if cluster_ids is not None:
+        kwargs["cluster_ids"] = cluster_ids
+    kwargs.update(_subfilter_client_kwargs(subfilters))
+    if start is not None:
+        kwargs["_from"] = start
+    if end is not None:
+        kwargs["to"] = end
+    return kwargs
+
+
 class ActivityFileFormat(str, Enum):
     """File format to return a billing activity report in."""
 
@@ -466,11 +619,12 @@ class BillingApi:
     """Internal API client for billing/usage-report requests.
 
     Combines calls through the generated OpenAPI client (:meth:`get_activity`,
+    :meth:`get_activity_group_totals`, :meth:`get_activity_group_daily_totals`,
     :meth:`get_activity_filter_values`, :meth:`get_activity_filter_resource_names`) with raw
     authenticated HTTP requests for the CSV download endpoints (:meth:`get_session_activity`,
-    :meth:`get_resource_activity`), which aren't exposed by the generated client. Both return CSV
-    or JSON depending on the ``format`` argument; the JSON variant is built on top of the CSV
-    download, converting it in memory.
+    :meth:`get_resource_activity`, :meth:`get_activity_breakdown`), which aren't exposed by the
+    generated client. All three return CSV or JSON depending on the ``format`` argument; the JSON
+    variant is built on top of the CSV download, converting it in memory.
     """
 
     def __init__(self) -> None:
@@ -531,8 +685,8 @@ class BillingApi:
     ) -> None:
         """Get a CSV-download-backed billing activity report, as CSV or JSON.
 
-        Shared by :meth:`get_session_activity` and :meth:`get_resource_activity`, which only
-        differ in which download endpoint they hit.
+        Shared by :meth:`get_session_activity`, :meth:`get_resource_activity` and
+        :meth:`get_activity_breakdown`, which only differ in which download endpoint they hit.
 
         If ``format`` is :attr:`ActivityFileFormat.CSV`, the raw CSV text is written to
         ``writer``. If ``format`` is :attr:`ActivityFileFormat.JSON`, the CSV is parsed and the
@@ -694,6 +848,75 @@ class BillingApi:
             end=end,
         )
 
+    def get_activity_breakdown(
+        self,
+        org_id: str,
+        writer: IO[str],
+        format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
+        project_ids: Optional[List[str]] = None,
+        resource_types: Optional[List[str]] = None,
+        resource_ids: Optional[List[str]] = None,
+        user_ids: Optional[List[str]] = None,
+        cluster_ids: Optional[List[str]] = None,
+        subfilters: Optional[BillingActivitySubfilters] = None,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> None:
+        """Get the billing activity cost breakdown report, as CSV or JSON.
+
+        One row per UTC day, resource type, user and teamspace with usage, with the columns
+        ``Date``, ``Resource type``, ``User``, ``Teamspace``, ``Cost`` and ``Saved cost``. This is
+        the data behind :meth:`get_activity_group_totals` and
+        :meth:`get_activity_group_daily_totals` at its finest grain, with resolved names, for
+        regrouping elsewhere. Usage not assigned to a user or teamspace is listed under
+        ``Unassigned``.
+
+        Hits ``GET /v1/billing/usage-report/download/breakdown`` with the same filters as the V2
+        usage report (see :meth:`get_activity`), and returns the whole report at once rather than
+        paginating. Not exposed by the generated OpenAPI client, so this issues a raw authenticated
+        HTTP request directly against ``self._client``'s configured host (see
+        ``StudioApi.download_file`` for the established pattern of doing so).
+
+        If ``format`` is :attr:`ActivityFileFormat.CSV`, the raw CSV text is written straight to
+        ``writer``. If ``format`` is :attr:`ActivityFileFormat.JSON` (the default), the CSV is
+        parsed and the equivalent JSON is written to ``writer`` instead. ``writer`` can be any
+        writable text stream: an open file, an ``io.StringIO`` buffer, ``sys.stdout``, etc. To
+        get the JSON as a string rather than writing it to a file, pass an ``io.StringIO()`` and
+        read it back with ``.getvalue()``.
+
+        Args:
+            org_id: ID of the organization to query.
+            writer: Writable text stream to write the report to.
+            format: File format to return the report in, CSV or JSON. Defaults to JSON.
+            project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
+                all teamspaces in the organization is returned.
+            resource_types: Restrict to these resource types. If omitted, all resource types
+                are returned.
+            resource_ids: Restrict to these specific resource IDs. If omitted, all matching
+                resources are returned.
+            user_ids: Restrict to activity generated by these users.
+            cluster_ids: Restrict to activity on these cloud accounts.
+            subfilters: Restrict individual resource types further, by tag or API key.
+            start: Only include activity on or after this time. Defaults to project/resource
+                creation time.
+            end: Only include activity on or before this time. Defaults to resource deletion
+                time or now.
+        """
+        self._get_activity_report(
+            "/v1/billing/usage-report/download/breakdown",
+            org_id=org_id,
+            format=format,
+            writer=writer,
+            project_ids=project_ids,
+            resource_types=resource_types,
+            resource_ids=resource_ids,
+            user_ids=user_ids,
+            cluster_ids=cluster_ids,
+            subfilters=subfilters,
+            start=start,
+            end=end,
+        )
+
     def get_activity(
         self,
         org_id: str,
@@ -744,22 +967,17 @@ class BillingApi:
         Returns:
             BillingActivity: The usage report response.
         """
-        kwargs: Dict[str, Any] = {"org_id": org_id}
-        if project_ids is not None:
-            kwargs["project_ids"] = project_ids
-        if resource_types is not None:
-            kwargs["resource_types"] = resource_types
-        if resource_ids is not None:
-            kwargs["resource_ids"] = resource_ids
-        if user_ids is not None:
-            kwargs["user_ids"] = user_ids
-        if cluster_ids is not None:
-            kwargs["cluster_ids"] = cluster_ids
-        kwargs.update(_subfilter_client_kwargs(subfilters))
-        if start is not None:
-            kwargs["_from"] = start
-        if end is not None:
-            kwargs["to"] = end
+        kwargs = _activity_filter_client_kwargs(
+            org_id=org_id,
+            project_ids=project_ids,
+            resource_types=resource_types,
+            resource_ids=resource_ids,
+            user_ids=user_ids,
+            cluster_ids=cluster_ids,
+            subfilters=subfilters,
+            start=start,
+            end=end,
+        )
         if limit is not None:
             kwargs["limit"] = limit
         if search_after is not None:
@@ -771,6 +989,122 @@ class BillingApi:
 
         response = self._client.billing_service_get_usage_report_v2(**kwargs)
         return BillingActivity._from_api(response.to_dict())
+
+    def get_activity_group_totals(
+        self,
+        org_id: str,
+        group_by: BillingActivityGroupBy,
+        project_ids: Optional[List[str]] = None,
+        resource_types: Optional[List[str]] = None,
+        resource_ids: Optional[List[str]] = None,
+        user_ids: Optional[List[str]] = None,
+        cluster_ids: Optional[List[str]] = None,
+        subfilters: Optional[BillingActivitySubfilters] = None,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> BillingActivityGroupTotals:
+        """Get billing activity cost split by resource type, user or teamspace.
+
+        Each group's cost is summed over the whole queried range. Use
+        :meth:`get_activity_group_daily_totals` for the same split per UTC day instead.
+
+        Backed by ``billing_service_get_usage_group_totals``. Takes the same filters as the V2
+        usage report (see :meth:`get_activity`), without its pagination.
+
+        Args:
+            org_id: ID of the organization to query.
+            group_by: Dimension to split cost by: resource type, user or teamspace.
+            project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
+                all teamspaces in the organization is returned.
+            resource_types: Restrict to these resource types. If omitted, all resource types
+                are returned.
+            resource_ids: Restrict to these specific resource IDs. If omitted, all matching
+                resources are returned.
+            user_ids: Restrict to activity generated by these users.
+            cluster_ids: Restrict to activity on these cloud accounts.
+            subfilters: Restrict individual resource types further, by tag or API key.
+            start: Only include activity on or after this time. Defaults to project/resource
+                creation time.
+            end: Only include activity on or before this time. Defaults to resource deletion
+                time or now.
+
+        Returns:
+            BillingActivityGroupTotals: Cost per group, highest first, and the totals across
+            groups.
+        """
+        kwargs = _activity_filter_client_kwargs(
+            org_id=org_id,
+            project_ids=project_ids,
+            resource_types=resource_types,
+            resource_ids=resource_ids,
+            user_ids=user_ids,
+            cluster_ids=cluster_ids,
+            subfilters=subfilters,
+            start=start,
+            end=end,
+        )
+        kwargs["group_by"] = BillingActivityGroupBy(group_by).value
+
+        response = self._client.billing_service_get_usage_group_totals(**kwargs)
+        return BillingActivityGroupTotals._from_api(response.to_dict())
+
+    def get_activity_group_daily_totals(
+        self,
+        org_id: str,
+        group_by: BillingActivityGroupBy,
+        project_ids: Optional[List[str]] = None,
+        resource_types: Optional[List[str]] = None,
+        resource_ids: Optional[List[str]] = None,
+        user_ids: Optional[List[str]] = None,
+        cluster_ids: Optional[List[str]] = None,
+        subfilters: Optional[BillingActivitySubfilters] = None,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> BillingActivityGroupDailyTotals:
+        """Get billing activity cost split by UTC day and resource type, user or teamspace.
+
+        Use :meth:`get_activity_group_totals` for each group's cost summed over the whole
+        queried range instead.
+
+        Backed by ``billing_service_get_usage_group_daily_totals``. Takes the same filters as the
+        V2 usage report (see :meth:`get_activity`), without its pagination.
+
+        Args:
+            org_id: ID of the organization to query.
+            group_by: Dimension to split cost by: resource type, user or teamspace.
+            project_ids: Restrict to these teamspace (project) IDs. If omitted, activity over
+                all teamspaces in the organization is returned.
+            resource_types: Restrict to these resource types. If omitted, all resource types
+                are returned.
+            resource_ids: Restrict to these specific resource IDs. If omitted, all matching
+                resources are returned.
+            user_ids: Restrict to activity generated by these users.
+            cluster_ids: Restrict to activity on these cloud accounts.
+            subfilters: Restrict individual resource types further, by tag or API key.
+            start: Only include activity on or after this time. Defaults to project/resource
+                creation time.
+            end: Only include activity on or before this time. Defaults to resource deletion
+                time or now.
+
+        Returns:
+            BillingActivityGroupDailyTotals: Cost per day and group, newest day first. Days
+            without usage are left out.
+        """
+        kwargs = _activity_filter_client_kwargs(
+            org_id=org_id,
+            project_ids=project_ids,
+            resource_types=resource_types,
+            resource_ids=resource_ids,
+            user_ids=user_ids,
+            cluster_ids=cluster_ids,
+            subfilters=subfilters,
+            start=start,
+            end=end,
+        )
+        kwargs["group_by"] = BillingActivityGroupBy(group_by).value
+
+        response = self._client.billing_service_get_usage_group_daily_totals(**kwargs)
+        return BillingActivityGroupDailyTotals._from_api(response.to_dict())
 
     def get_activity_filter_values(
         self,

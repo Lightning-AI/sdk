@@ -7,6 +7,9 @@ from lightning_sdk.api.billing_api import (
     ActivityFileFormat,
     BillingActivity,
     BillingActivityFilterValues,
+    BillingActivityGroupBy,
+    BillingActivityGroupDailyTotals,
+    BillingActivityGroupTotals,
     BillingActivityResourceNames,
     BillingActivitySubfilters,
     BillingApi,
@@ -36,8 +39,8 @@ class BillingActivityFilters:
         start: Only include activity on or after this time.
         end: Only include activity on or before this time.
         limit: Maximum number of entries to return. Only applies to
-            :meth:`Organization.get_activity`; the session and resource activity reports always
-            return every entry.
+            :meth:`Organization.get_activity`; the grouped totals and the session, resource and
+            breakdown activity reports always return every entry.
     """
 
     resource_types: Optional[List[str]] = None
@@ -247,6 +250,87 @@ class Organization(Owner):
             search_after_resource_type=cursor.search_after_resource_type,
         )
 
+    def get_activity_group_totals(
+        self,
+        group_by: BillingActivityGroupBy,
+        teamspace: Optional[Union[str, "Teamspace"]] = None,
+        teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
+        filters: Optional[BillingActivityFilters] = None,
+    ) -> BillingActivityGroupTotals:
+        """Get billing activity cost for this organization split by resource type, user or teamspace.
+
+        Each group's cost is summed over the whole queried range. Use
+        :meth:`get_activity_group_daily_totals` for the same split per UTC day, or
+        :meth:`get_activity_breakdown` for every dimension at once with resolved names.
+
+        Args:
+            group_by: Dimension to split cost by: resource type, user or teamspace.
+            teamspace: A single teamspace to scope the query to.
+            teamspaces: Multiple teamspaces to scope the query to. Provide at most one of
+                ``teamspace``/``teamspaces``. If neither is given, the query covers the whole
+                organization.
+            filters: Optional filters to narrow down the query. ``limit`` is ignored.
+
+        Returns:
+            BillingActivityGroupTotals: Cost per group, highest first, and the totals across
+            groups.
+        """
+        filters = filters or BillingActivityFilters()
+        resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
+
+        return self._billing_api.get_activity_group_totals(
+            org_id=self.id,
+            group_by=group_by,
+            project_ids=[t.id for t in resolved_teamspaces] or None,
+            resource_types=filters.resource_types,
+            resource_ids=filters.resource_ids,
+            user_ids=filters.user_ids,
+            cluster_ids=filters.cluster_ids,
+            subfilters=filters.subfilters,
+            start=filters.start,
+            end=filters.end,
+        )
+
+    def get_activity_group_daily_totals(
+        self,
+        group_by: BillingActivityGroupBy,
+        teamspace: Optional[Union[str, "Teamspace"]] = None,
+        teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
+        filters: Optional[BillingActivityFilters] = None,
+    ) -> BillingActivityGroupDailyTotals:
+        """Get billing activity cost for this organization split by UTC day and resource type, user or teamspace.
+
+        Use :meth:`get_activity_group_totals` for each group's cost summed over the whole queried
+        range instead.
+
+        Args:
+            group_by: Dimension to split cost by: resource type, user or teamspace.
+            teamspace: A single teamspace to scope the query to.
+            teamspaces: Multiple teamspaces to scope the query to. Provide at most one of
+                ``teamspace``/``teamspaces``. If neither is given, the query covers the whole
+                organization.
+            filters: Optional filters to narrow down the query. ``limit`` is ignored.
+
+        Returns:
+            BillingActivityGroupDailyTotals: Cost per day and group, newest day first. Days
+            without usage are left out.
+        """
+        filters = filters or BillingActivityFilters()
+        resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
+
+        return self._billing_api.get_activity_group_daily_totals(
+            org_id=self.id,
+            group_by=group_by,
+            project_ids=[t.id for t in resolved_teamspaces] or None,
+            resource_types=filters.resource_types,
+            resource_ids=filters.resource_ids,
+            user_ids=filters.user_ids,
+            cluster_ids=filters.cluster_ids,
+            subfilters=filters.subfilters,
+            start=filters.start,
+            end=filters.end,
+        )
+
     def get_activity_filter_values(
         self,
         teamspace: Optional[Union[str, "Teamspace"]] = None,
@@ -369,6 +453,51 @@ class Organization(Owner):
         resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
 
         self._billing_api.get_resource_activity(
+            org_id=self.id,
+            format=format,
+            writer=writer,
+            project_ids=[t.id for t in resolved_teamspaces] or None,
+            resource_types=filters.resource_types,
+            resource_ids=filters.resource_ids,
+            user_ids=filters.user_ids,
+            cluster_ids=filters.cluster_ids,
+            subfilters=filters.subfilters,
+            start=filters.start,
+            end=filters.end,
+        )
+
+    def get_activity_breakdown(
+        self,
+        writer: IO[str],
+        format: ActivityFileFormat = ActivityFileFormat.JSON,  # noqa: A002
+        teamspace: Optional[Union[str, "Teamspace"]] = None,
+        teamspaces: Optional[List[Union[str, "Teamspace"]]] = None,
+        filters: Optional[BillingActivityFilters] = None,
+    ) -> None:
+        """Get the billing activity cost breakdown report for this organization, as CSV or JSON.
+
+        One row per UTC day, resource type, user and teamspace with usage, with the columns
+        ``Date``, ``Resource type``, ``User``, ``Teamspace``, ``Cost`` and ``Saved cost``. This is
+        the data behind :meth:`get_activity_group_totals` and
+        :meth:`get_activity_group_daily_totals` at its finest grain, with resolved names, for
+        regrouping elsewhere. Usage not assigned to a user or teamspace is listed under
+        ``Unassigned``.
+
+        Args:
+            writer: Writable text stream to write the report to, e.g. an open file, an
+                ``io.StringIO`` buffer, or ``sys.stdout``. To get the JSON as a string rather
+                than writing it to a file, pass an ``io.StringIO()`` and read it back with
+                ``.getvalue()``.
+            format: File format to return the report in, either CSV or JSON. Defaults to JSON.
+            teamspace: A single teamspace to scope the report to.
+            teamspaces: Multiple teamspaces to scope the report to. Provide at most one of
+                ``teamspace``/``teamspaces``.
+            filters: Optional filters to narrow down the report.
+        """
+        filters = filters or BillingActivityFilters()
+        resolved_teamspaces = self._resolve_billing_teamspaces(teamspace, teamspaces)
+
+        self._billing_api.get_activity_breakdown(
             org_id=self.id,
             format=format,
             writer=writer,
