@@ -82,6 +82,15 @@ class PipelineApi:
         Returns:
             V1Pipeline: The created pipeline record.
         """
+        ancestor_ids = []
+        ancestor_id = parent_pipeline_id
+        while ancestor_id:
+            if ancestor_id in ancestor_ids:
+                raise RuntimeError("Pipeline ancestry contains a cycle")
+            ancestor_ids.append(ancestor_id)
+            ancestor = self._client.pipelines_service_get_pipeline(project_id=teamspace.id, id=ancestor_id)
+            ancestor_id = ancestor.parent_pipeline_id
+
         body = PipelinesServiceCreatePipelineBody(
             name=name,
             steps=steps,
@@ -93,13 +102,20 @@ class PipelineApi:
 
         pipeline = self._client.pipelines_service_create_pipeline(body, teamspace.id)
 
-        # Delete the previous schedules
-        if parent_pipeline_id is not None:
-            current_schedules = self._client.schedules_service_list_schedules(
-                teamspace.id, parent_resource_id=parent_pipeline_id
-            ).schedules
-            for schedule in current_schedules:
-                self._client.schedules_service_delete_schedule(teamspace.id, schedule.id)
+        original_pipeline_id = ancestor_ids[-1] if ancestor_ids else pipeline.id
+
+        # Older SDK versions grouped schedules under intermediate runs instead of the root.
+        schedule_ids = set()
+        for ancestor_id in ancestor_ids:
+            current_schedules = (
+                self._client.schedules_service_list_schedules(
+                    teamspace.id, resource_id=ancestor_id, parent_resource_id=ancestor_id
+                ).schedules
+                or []
+            )
+            schedule_ids.update(schedule.id for schedule in current_schedules)
+        for schedule_id in sorted(schedule_ids):
+            self._client.schedules_service_delete_schedule(teamspace.id, schedule_id)
 
         if len(schedules):
             for schedule in schedules:
@@ -107,7 +123,7 @@ class PipelineApi:
                     cron_expression=schedule.cron_expression,
                     display_name=schedule.name,
                     resource_id=pipeline.id,
-                    parent_resource_id=parent_pipeline_id or pipeline.id,
+                    parent_resource_id=original_pipeline_id,
                     resource_type=V1ScheduleResourceType.PIPELINE,
                     timezone=schedule.timezone,
                     parallel_runs=schedule.parallel_runs or False,

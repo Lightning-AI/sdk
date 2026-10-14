@@ -99,7 +99,8 @@ class Pipeline:
 
         Args:
             steps: Ordered list of pipeline steps to execute.  Must not be empty.
-            schedules: Optional cron schedules that trigger the pipeline automatically.
+            schedules: Cron schedules that replace the existing schedules for this pipeline.
+                Omitting schedules or passing an empty list removes the existing schedules.
 
         Raises:
             ValueError: If ``steps`` is empty or a schedule timezone is unsupported.
