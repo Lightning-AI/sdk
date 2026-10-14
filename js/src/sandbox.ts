@@ -28,13 +28,11 @@ import type {
   SandboxesServiceUpdateSandboxBody,
   SandboxesServiceWriteSandboxFileBody,
   V1CreateSandboxRequest,
-  V1GetSandboxCommandLogsResponse,
   V1GetSandboxCommandResponse,
   V1GetSandboxFileResponse,
   V1ListSandboxCommandsResponse,
   V1ListSandboxesResponse,
   V1ListSandboxSnapshotsResponse,
-  V1LogMessage,
   V1RunSandboxCommandResponse,
   V1Sandbox,
   V1SandboxCommand,
@@ -116,6 +114,23 @@ async function request<T>(
     return (await resp.json()) as T;
   }
   return {} as T;
+}
+
+/**
+ * Minimal shape of one entry served by the unified logs API
+ * (`GET /v1/projects/{projectId}/page-logs`).
+ */
+interface PageLogsEntry {
+  message?: string;
+  timestamp?: string;
+  severity?: string;
+}
+
+/** Response of the unified logs API: one page of entries plus its continuation token. */
+interface PageLogsResponse {
+  entries?: PageLogsEntry[];
+  nextPageToken?: string;
+  followUrl?: string;
 }
 
 function toSandboxData(v: V1Sandbox): SandboxData {
@@ -715,17 +730,27 @@ export class Sandbox {
   }
 
   async getCommandLogs(cmdId: string): Promise<{ logs: CommandLog[] }> {
-    const qs = buildQuery({
-      organizationId: this.organizationId || undefined,
-    });
-    const data = await request<V1GetSandboxCommandLogsResponse>(
-      "GET",
-      `/v1/core/sandboxes/${encodeURIComponent(this.sandboxId)}/commands/${encodeURIComponent(cmdId)}/logs${qs}`,
-    );
-    const logs = (data.logs ?? []).map((l: V1LogMessage) => ({
-      timestamp: l.timestamp ?? "",
-      message: l.message ?? "",
-    }));
+    if (!this.projectId) {
+      throw new Error(
+        `Sandbox ${this.sandboxId} has no teamspace id, which the logs API requires to read command logs.`,
+      );
+    }
+    const logs: CommandLog[] = [];
+    let pageToken: string | undefined;
+    do {
+      const qs = new URLSearchParams();
+      qs.set("sandboxId", this.sandboxId);
+      qs.append("sandboxCommandIds", cmdId);
+      if (pageToken) qs.set("pageToken", pageToken);
+      const data = await request<PageLogsResponse>(
+        "GET",
+        `/v1/projects/${encodeURIComponent(this.projectId)}/page-logs?${qs.toString()}`,
+      );
+      for (const entry of data.entries ?? []) {
+        logs.push({ timestamp: entry.timestamp ?? "", message: entry.message ?? "" });
+      }
+      pageToken = data.nextPageToken || undefined;
+    } while (pageToken);
     return { logs };
   }
 
