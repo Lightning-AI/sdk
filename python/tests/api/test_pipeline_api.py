@@ -26,6 +26,7 @@ def _build_pipeline_api(mock_client_cls):
     mock_client_cls.return_value = mock_client
     api = PipelineApi()
     api._client = mock_client
+    mock_client.pipelines_service_get_pipeline.return_value = V1Pipeline(id="pip_old")
     return api, mock_client
 
 
@@ -126,7 +127,7 @@ class TestCreatePipeline:
 
         # Check that the pipeline was created with correct body
         mock_lightning_client.pipelines_service_create_pipeline.assert_called_once()
-        call_args, call_kwargs = mock_lightning_client.pipelines_service_create_pipeline.call_args
+        call_args, _call_kwargs = mock_lightning_client.pipelines_service_create_pipeline.call_args
         body = call_args[0]
         assert isinstance(body, PipelinesServiceCreatePipelineBody)
         assert body.name == PIPELINE_NAME
@@ -352,7 +353,7 @@ class TestCreatePipeline:
 
         # Check old schedules were listed by parent pipeline and deleted
         mock_lightning_client.schedules_service_list_schedules.assert_called_once_with(
-            PROJECT_ID, parent_resource_id=parent_id
+            PROJECT_ID, resource_id=parent_id, parent_resource_id=parent_id
         )
 
         expected_delete_calls = [
@@ -362,6 +363,77 @@ class TestCreatePipeline:
         mock_lightning_client.schedules_service_delete_schedule.assert_has_calls(expected_delete_calls, any_order=True)
 
         mock_lightning_client.schedules_service_create_schedule.assert_not_called()
+
+
+@pytest.mark.parametrize("legacy_parent", [False, True])
+@patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
+@patch("lightning_sdk.api.utils.LightningClient")
+def test_repeated_runs_replace_schedules(mock_client_cls, _mock_cloud_account_api, legacy_parent):
+    from lightning_sdk.lightning_cloud.openapi.models import V1ListSchedulesResponse, V1Schedule
+
+    api, client = _build_pipeline_api(mock_client_cls)
+    teamspace = MagicMock(id=PROJECT_ID)
+    root_id = "pip_root"
+    existing = [
+        V1Schedule(id="unrelated", resource_id="pip_other", parent_resource_id="pip_other"),
+        V1Schedule(id="old", resource_id="pip_previous", parent_resource_id="pip_older" if legacy_parent else root_id),
+    ]
+
+    def list_schedules(project_id, resource_id, parent_resource_id):
+        assert project_id == PROJECT_ID
+        assert parent_resource_id == resource_id
+        return V1ListSchedulesResponse(
+            schedules=[
+                schedule
+                for schedule in existing
+                if schedule.resource_id == resource_id or schedule.parent_resource_id == parent_resource_id
+            ]
+        )
+
+    def delete_schedule(project_id, schedule_id):
+        assert project_id == PROJECT_ID
+        existing[:] = [schedule for schedule in existing if schedule.id != schedule_id]
+
+    def create_schedule(body, project_id):
+        assert project_id == PROJECT_ID
+        assert body.parent_resource_id == root_id
+        existing.append(
+            V1Schedule(
+                id="schedule-" + body.resource_id,
+                resource_id=body.resource_id,
+                parent_resource_id=body.parent_resource_id,
+            )
+        )
+
+    client.schedules_service_list_schedules.side_effect = list_schedules
+    client.schedules_service_delete_schedule.side_effect = delete_schedule
+    client.schedules_service_create_schedule.side_effect = create_schedule
+    ancestors = {"pip_previous": "pip_older", "pip_older": root_id, root_id: None}
+    client.pipelines_service_get_pipeline.side_effect = lambda **kwargs: V1Pipeline(
+        id=kwargs["id"], parent_pipeline_id=ancestors[kwargs["id"]]
+    )
+    parent_id = "pip_previous"
+    for run_id, schedules in [
+        ("pip_second", [Schedule("40 5 * * 1")]),
+        ("pip_third", [Schedule("0 6 * * 1")]),
+        ("pip_fourth", []),
+    ]:
+        client.pipelines_service_create_pipeline.return_value = V1Pipeline(id=run_id, parent_pipeline_id=parent_id)
+        api.create_pipeline(PIPELINE_NAME, teamspace, [], False, schedules, parent_id)
+        assert [schedule.id for schedule in existing] == ["unrelated"] + (["schedule-" + run_id] if schedules else [])
+        ancestors[run_id] = parent_id
+        parent_id = run_id
+
+
+@patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
+@patch("lightning_sdk.api.utils.LightningClient")
+def test_create_failure_keeps_existing_schedules(mock_client_cls, _mock_cloud_account_api):
+    api, client = _build_pipeline_api(mock_client_cls)
+    client.pipelines_service_create_pipeline.side_effect = ApiException(reason="create failed")
+    with pytest.raises(ApiException, match="create failed"):
+        api.create_pipeline(PIPELINE_NAME, MagicMock(id=PROJECT_ID), [], False, [], "pip_previous")
+    client.schedules_service_delete_schedule.assert_not_called()
+    client.schedules_service_create_schedule.assert_not_called()
 
 
 @patch("lightning_sdk.api.pipeline_api.CloudAccountApi")
