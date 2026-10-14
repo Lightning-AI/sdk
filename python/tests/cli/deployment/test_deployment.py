@@ -504,28 +504,65 @@ def test_deployment_logs_reports_no_jobs(monkeypatch) -> None:
 
 
 @mock_command_logging
-def test_deployment_logs_rank_uses_legacy_path(monkeypatch) -> None:
+def test_deployment_logs_rank_resolves_machine(monkeypatch) -> None:
+    """--rank resolves the machine's job id client-side and reads it from the logs API."""
     api = _deployment_api_with_replicas("replica-0")
-    api.iter_job_log_entries.return_value = iter([LogEntry(message="from rank 2")])
-    _patch_logs_command(monkeypatch, api, [])
+    stream = _patch_logs_command(monkeypatch, api, [LogEntry(message="from rank 2")])
+    # the replica is machine 1 of a multi-machine job; rank 2 resolves to that sibling machine
+    job_api = MagicMock()
+    job_api.get_job.return_value = V1Job(id="job-0", multi_machine_job_id="mmt-1", spec=V1JobSpec(rank=1))
+    mmt_api = MagicMock()
+    mmt_api.list_mmt_subjobs.return_value = [V1Job(id="job-2", spec=V1JobSpec(rank=2))]
+    monkeypatch.setattr("lightning_sdk.cli.deployment.logs.JobApiV2", MagicMock(return_value=job_api))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.logs.MMTApiV2", MagicMock(return_value=mmt_api))
 
     result = CliRunner().invoke(deployment_logs, ["my-deployment", "--rank", "2"])
 
     assert result.exit_code == 0, result.output
     assert result.output == "from rank 2\n"
-    assert api.iter_job_log_entries.call_args.kwargs["rank"] == 2
+    assert stream.call_args.kwargs["job_ids"] == ["job-2"]
+
+
+@mock_command_logging
+def test_deployment_logs_rank_zero_reads_replica_itself(monkeypatch) -> None:
+    api = _deployment_api_with_replicas("replica-0")
+    stream = _patch_logs_command(monkeypatch, api, [LogEntry(message="own logs")])
+    job_api = MagicMock()
+    job_api.get_job.return_value = V1Job(id="job-0", spec=V1JobSpec(rank=0))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.logs.JobApiV2", MagicMock(return_value=job_api))
+
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--rank", "0"])
+
+    assert result.exit_code == 0, result.output
+    assert result.output == "own logs\n"
+    assert stream.call_args.kwargs["job_ids"] == ["job-0"]
+
+
+@mock_command_logging
+def test_deployment_logs_rank_rejected_for_single_machine_replica(monkeypatch) -> None:
+    api = _deployment_api_with_replicas("replica-0")
+    stream = _patch_logs_command(monkeypatch, api, [])
+    job_api = MagicMock()
+    job_api.get_job.return_value = V1Job(id="job-0", spec=V1JobSpec(rank=0))
+    monkeypatch.setattr("lightning_sdk.cli.deployment.logs.JobApiV2", MagicMock(return_value=job_api))
+
+    result = CliRunner().invoke(deployment_logs, ["my-deployment", "--rank", "3"])
+
+    assert result.exit_code != 0
+    assert "single machine" in result.output
+    stream.assert_not_called()
 
 
 @mock_command_logging
 def test_deployment_logs_rank_needs_a_single_replica(monkeypatch) -> None:
     api = _deployment_api_with_replicas("replica-0", "replica-1")
-    _patch_logs_command(monkeypatch, api, [])
+    stream = _patch_logs_command(monkeypatch, api, [])
 
     result = CliRunner().invoke(deployment_logs, ["my-deployment", "--rank", "0"])
 
     assert result.exit_code != 0
     assert "--job-id" in result.output
-    api.iter_job_log_entries.assert_not_called()
+    stream.assert_not_called()
 
 
 def _patch_tui_command(monkeypatch, api):

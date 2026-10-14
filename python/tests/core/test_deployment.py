@@ -10,6 +10,7 @@ from lightning_sdk import organization as organization_module
 from lightning_sdk.api import deployment_api as deployment_api_module
 from lightning_sdk.api import utils as api_utils_module
 from lightning_sdk.api.deployment_api import apply_change, to_env, to_health_check
+from lightning_sdk.api.logs_api import LogEntry
 from lightning_sdk.deployment import AutoScaleConfig, Env, HttpHealthCheck, Secret
 from lightning_sdk.lightning_cloud.openapi import (
     V1AutoscalingSpec,
@@ -1402,18 +1403,18 @@ def test_deployment_download_logs_single_replica_auto_picked(tmp_path, monkeypat
     deployment = _bare_deployment("my-dep")
     deployment._deployment_api.list_deployment_jobs.return_value = [MagicMock(id="rep-1")]
 
-    job_api = MagicMock()
-    job_api.download_logs.return_value = "hello\n"
-    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "JobApiV2", return_value=job_api):
+    logs_api = MagicMock()
+    logs_api.stream.return_value = [LogEntry(message="hello", line=1)]
+    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "LogsApi", return_value=logs_api):
         written = deployment.download_logs()
 
     assert written == str(tmp_path / "deployment-my-dep.log")
     assert (tmp_path / "deployment-my-dep.log").read_text() == "hello\n"
-    job_api.download_logs.assert_called_once_with(
-        job_id="rep-1",
-        teamspace_id="ts-abc",
-        deployment_id="dep-1",
-        timestamps=False,
+    logs_api.stream.assert_called_once_with(
+        "ts-abc",
+        job_ids=["rep-1"],
+        idle_timeout=deployment_module._REPLICA_LOGS_IDLE_TIMEOUT,
+        fallback_to_live=True,
     )
 
 
@@ -1423,7 +1424,7 @@ def test_deployment_download_logs_requires_job_id_with_multiple_replicas(tmp_pat
     deployment._deployment_api.list_deployment_jobs.return_value = [MagicMock(id="rep-1"), MagicMock(id="rep-2")]
 
     with _patch_deployment_identity("my-dep"), patch.object(
-        deployment_module, "JobApiV2", return_value=MagicMock()
+        deployment_module, "LogsApi", return_value=MagicMock()
     ), pytest.raises(ValueError, match="pass job_id"):
         deployment.download_logs()
 
@@ -1432,16 +1433,12 @@ def test_deployment_download_logs_explicit_job_id_skips_listing(tmp_path, monkey
     monkeypatch.chdir(tmp_path)
     deployment = _bare_deployment("my-dep")
 
-    job_api = MagicMock()
-    job_api.download_logs.return_value = "x\n"
-    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "JobApiV2", return_value=job_api):
+    logs_api = MagicMock()
+    logs_api.stream.return_value = [LogEntry(message="x", line=1)]
+    with _patch_deployment_identity("my-dep"), patch.object(deployment_module, "LogsApi", return_value=logs_api):
         written = deployment.download_logs(job_id="rep-9")
 
     assert written == str(tmp_path / "deployment-my-dep.log")
     deployment._deployment_api.list_deployment_jobs.assert_not_called()
-    job_api.download_logs.assert_called_once_with(
-        job_id="rep-9",
-        teamspace_id="ts-abc",
-        deployment_id="dep-1",
-        timestamps=False,
-    )
+    assert logs_api.stream.call_args.args == ("ts-abc",)
+    assert logs_api.stream.call_args.kwargs["job_ids"] == ["rep-9"]

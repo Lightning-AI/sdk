@@ -25,8 +25,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ClusterState,
     V1ClusterStatus,
     V1DeleteCloudSpaceResponse,
-    V1DownloadJobLogsResponse,
-    V1DownloadLightningappInstanceLogsResponse,
     V1Endpoint,
     V1ExecuteCloudSpaceCommandResponse,
     V1ExternalCluster,
@@ -35,6 +33,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1GetLogsResponse,
     V1GetUserResponse,
     V1Job,
+    V1JobLogEntry,
     V1JobSpec,
     V1LightningappInstanceState,
     V1LightningappInstanceStatus,
@@ -2514,7 +2513,7 @@ def mmt_api_get_job_by_name_mocker(mocker):
 
 @pytest.fixture()
 def internal_get_logs_mocker(mocker):
-    """Serve the logs API with no saved lines, so log reads take the legacy fallback."""
+    """Serve the logs API with no saved lines, so log reads return nothing."""
     return mocker.patch(
         "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_logs",
         autospec=True,
@@ -2523,34 +2522,17 @@ def internal_get_logs_mocker(mocker):
 
 
 @pytest.fixture()
-def internal_job_logs_mocker(mocker, internal_get_logs_mocker):
-    log_msg = "[2025-01-08T14:15:03.797142418Z] ⚡  ~ echo Hello\n[2025-01-08T14:15:03.803077717Z] Hello\n"
-    dummy_url = "http://dummy-url.com/logs"
-
-    class DummyOpener:
-        def read(self) -> bytes:
-            return log_msg.encode("utf-8")
-
-    def side_effect(url):
-        assert url == dummy_url
-        return DummyOpener()
-
+def internal_job_logs_mocker(mocker):
+    """Serve the logs API with two saved lines for a finished job."""
     mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_download_job_logs",
+        "lightning_sdk.lightning_cloud.openapi.api.jobs_service_api.JobsServiceApi.jobs_service_get_logs",
         autospec=True,
-        return_value=V1DownloadJobLogsResponse(url=dummy_url),
-    )
-
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.lightningapp_instance_service_api.LightningappInstanceServiceApi.lightningapp_instance_service_download_lightningapp_instance_logs",
-        autospec=True,
-        return_value=V1DownloadLightningappInstanceLogsResponse(url=dummy_url),
-    )
-
-    mocker.patch(
-        "lightning_sdk.api.job_api.urlopen",
-        autospec=True,
-        side_effect=side_effect,
+        return_value=V1GetLogsResponse(
+            entries=[
+                V1JobLogEntry(message="⚡  ~ echo Hello", line=1),
+                V1JobLogEntry(message="Hello", line=2),
+            ]
+        ),
     )
 
     yield [mocker]
