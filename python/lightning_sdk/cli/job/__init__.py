@@ -14,6 +14,7 @@ def register_commands(group: click.Group) -> None:
     from lightning_sdk.cli.job.stop import stop_job
     from lightning_sdk.cli.job.tag import tag_job
     from lightning_sdk.cli.job.untag import untag_job
+    from lightning_sdk.cli.job.watch import watch_job
     from lightning_sdk.cli.utils.delete import register_delete_command
     from lightning_sdk.job import Job
 
@@ -26,6 +27,7 @@ def register_commands(group: click.Group) -> None:
     group.add_command(stop_job, name="stop")
     group.add_command(tag_job, name="tag")
     group.add_command(untag_job, name="untag")
+    group.add_command(watch_job, name="watch")
     register_delete_command(
         group,
         Job,

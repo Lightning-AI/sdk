@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from unittest import mock
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 
@@ -398,3 +399,55 @@ def test_follow_requires_websocket_client(monkeypatch) -> None:
 
     with pytest.raises(RuntimeError, match="websocket-client"):
         list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs"))
+
+
+def test_parse_log_entries_reads_labels() -> None:
+    entries = parse_log_entries(
+        '[{"message":"PROGRESS 4/10","labels":{"lightning.ai/progress":"{\\"step\\":4}"}},{"message":"plain"}]'
+    )
+
+    assert entries[0].labels == {"lightning.ai/progress": '{"step":4}'}
+    assert entries[1].labels == {}
+    # labels are annotations, not part of an entry's identity
+    assert entries[0] == LogEntry(message="PROGRESS 4/10")
+
+
+def test_follow_with_cursors_resumes_after_the_last_cursor(fake_websocket) -> None:
+    cursor = '{"lightning.ai/log-cursor":"srv-1:1784000000000000001:2"}'
+    lifecycle = '{"lightning.ai/lifecycle-phase":"execute"}'
+    sockets = [
+        _FakeSocket(
+            [
+                f'[{{"message":"before","labels":{cursor}}}]',
+                '[{"message":"Executing","resource_id":"job-1",'
+                f'"timestamp":{{"seconds":1784000000,"nanos":0}},"labels":{lifecycle}}}]',
+                _FakeClosedError(),
+            ]
+        ),
+        _FakeSocket(['[{"message":"after"}]']),
+    ]
+    fake_websocket.create_connection.side_effect = sockets
+    stop = mock.MagicMock(
+        side_effect=lambda: fake_websocket.create_connection.call_count >= 2 and not sockets[1]._frames
+    )
+    url = "wss://host/logs?jobID=job-1&serverBoundary=srv-1:5:1&lifecycleBoundary=job-1:7:0"
+
+    with mock.patch("lightning_sdk.api.logs_api.time.sleep"):
+        entries = list(LogsApi(client=mock.MagicMock()).follow(url, stop=stop, cursors=True))
+
+    assert [e.message for e in entries] == ["before", "Executing", "after"]
+    first, second = (call.args[0] for call in fake_websocket.create_connection.call_args_list)
+    assert first == url
+    assert "X-Lightning-Log-Cursors: 1" in fake_websocket.create_connection.call_args.kwargs["header"]
+    query = parse_qs(urlparse(second).query)
+    assert query["jobID"] == ["job-1"]
+    assert query["serverBoundary"] == ["srv-1:1784000000000000001:2"]
+    assert query["lifecycleBoundary"] == ["job-1:1784000000000000999:0"]
+
+
+def test_follow_without_cursors_sends_no_cursor_header(fake_websocket) -> None:
+    fake_websocket.create_connection.return_value = _FakeSocket(['[{"message":"live"}]'])
+
+    list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", stop=lambda: True))
+
+    assert fake_websocket.create_connection.call_args.kwargs["header"] == [mock.ANY]
