@@ -84,6 +84,7 @@ Reference Pages
    api/deployment
    api/agent
    api/k8s-cluster
+   api/vm-network-group
    api/owner
    api/organization
    api/user
