@@ -224,10 +224,10 @@ class LLM:
                             f"Teamspace {teamspace_owner}/{teamspace_name} not found."
                             "Please verify owner name (username or organization) and the teamspace name are correct."
                         ) from err
-                    if t is None:
-                        raise ValueError(f"Teamspace {teamspace_owner}/{teamspace_name} not found.") from None
-                    os.environ["LIGHTNING_TEAMSPACE"] = t.name
-                    os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
+                if t is None:
+                    raise ValueError(f"Teamspace {teamspace_owner}/{teamspace_name} not found.") from None
+                os.environ["LIGHTNING_TEAMSPACE"] = t.name
+                os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
 
             elif teamspace_name and teamspace_owner is None:
                 # if only org name is given, use the default teamspace
