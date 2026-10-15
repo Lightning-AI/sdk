@@ -655,3 +655,53 @@ async def test_async_stream_chat(monkeypatch):
         result += token
     assert result == "Hello, world!"
     llm._llm_api.async_start_conversation.assert_awaited_once()
+
+
+def test_list_models_names_are_callable_provider_model_ids(published_llm_endpoints):
+    names = [model.name for model in LLM.list_models()]
+
+    assert names == [
+        "openai/gpt-5",
+        "openai/gpt-4-turbo",
+        "google/gemini-2.5-flash",
+        "lightning-ai/glm-5.3",
+        "lightning-ai/gemma-4-31B-it",
+    ]
+
+
+def test_list_models_names_resolve_through_llm(published_llm_endpoints, monkeypatch):
+    """Every listed name must route to the provider `LLM` resolves it under, never an opaque endpoint id."""
+    # Fresh auth state and no static id map, so every name goes through live resolution.
+    monkeypatch.setattr(LLM, "_auth_info_cached", False)
+    monkeypatch.setattr(LLM, "_cached_auth_info", {})
+    monkeypatch.setattr(LLM, "_llm_api_cache", {})
+    monkeypatch.setattr(LLM, "_public_assistants", {})
+    resolved_providers = []
+
+    def get_assistant(model_provider, model_name, user_name, org_name):
+        resolved_providers.append(model_provider)
+        return "ast_123"
+
+    with patch("lightning_sdk.api.llm_api.LLMApi.get_assistant", side_effect=get_assistant):
+        for model in LLM.list_models():
+            LLM(model.name)
+
+    assert resolved_providers == ["OpenAI", "OpenAI", "Google", "lightning-ai", "lightning-ai"]
+
+
+def test_list_models_converts_prices_and_token_counts(published_llm_endpoints):
+    models = {model.name: model for model in LLM.list_models()}
+
+    gpt5 = models["openai/gpt-5"]
+    assert gpt5.prompt_usd_per_1m_tokens == 1.25
+    assert gpt5.completion_usd_per_1m_tokens == 10.0
+    assert gpt5.context_length == 400_000
+    assert gpt5.max_completion_tokens is None  # "0" means no cap
+
+    gemma = models["lightning-ai/gemma-4-31B-it"]
+    assert gemma.completion_usd_per_1m_tokens == 0.4  # 4e-07 * 1e6 is 0.39999999999999997 before rounding
+    assert gemma.display_name == "Gemma 4"
+    assert gemma.status == "OFFLINE"
+    assert gemma.provider == "lightning-ai"
+
+    assert models["lightning-ai/glm-5.3"].max_completion_tokens == 8192

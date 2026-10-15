@@ -61,6 +61,50 @@ Capabilities: Images={self.capabilities.get("images", False)}, Files={self.capab
         """.strip()
 
 
+# Gateway resolves models on open-weights endpoints (opaque ``mge_`` ids) under this provider.
+_OPEN_WEIGHTS_PROVIDER = "lightning-ai"
+_TOKENS_PER_PRICE_UNIT = 1_000_000
+
+
+@dataclass(frozen=True)
+class HostedModel:
+    """A model served by the Lightning LLM gateway.
+
+    Attributes:
+        name: Callable ``provider/model`` identifier, as passed to :class:`LLM`.
+        provider: Provider prefix of ``name`` (e.g. ``openai``, ``google``, ``lightning-ai``).
+        display_name: Human-readable model name.
+        status: Serving status reported by the gateway (e.g. ``ONLINE``).
+        context_length: Context window in tokens, or ``None`` if unknown.
+        max_completion_tokens: Output token cap, or ``None`` if the gateway sets none.
+        prompt_usd_per_1m_tokens: Price of 1M prompt (input) tokens in USD.
+        completion_usd_per_1m_tokens: Price of 1M completion (output) tokens in USD.
+    """
+
+    name: str
+    provider: str
+    display_name: str
+    status: str
+    context_length: Optional[int]
+    max_completion_tokens: Optional[int]
+    prompt_usd_per_1m_tokens: float
+    completion_usd_per_1m_tokens: float
+
+
+def _positive_int(value: Optional[str]) -> Optional[int]:
+    """Parse the gateway's stringified token counts, treating ``"0"`` and blanks as unset."""
+    try:
+        parsed = int(value or 0)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed > 0 else None
+
+
+def _usd_per_1m_tokens(per_token: Optional[float]) -> float:
+    # Rounded so float noise (1.3999999...) does not leak into output.
+    return round((per_token or 0.0) * _TOKENS_PER_PRICE_UNIT, 6)
+
+
 class LLM:
     _auth_info_cached: ClassVar[bool] = False
     _cached_auth_info: ClassVar[Dict[str, Optional[str]]] = {}
@@ -194,6 +238,38 @@ class LLM:
             return int(temp_metadata.context_length)
         except Exception as e:
             raise ValueError(f"Cannot access context length of model '{model}': {e}") from e
+
+    @staticmethod
+    def list_models() -> List[HostedModel]:
+        """List the models hosted on the Lightning LLM gateway.
+
+        Each entry's ``name`` is the ``provider/model`` identifier to pass to :class:`LLM`.
+
+        Returns:
+            List[HostedModel]: Hosted models with context length, pricing (USD per 1M tokens) and status.
+
+        Example:
+            >>> from lightning_sdk.llm import LLM
+            >>> [m.name for m in LLM.list_models()]  # doctest: +SKIP
+            ['openai/gpt-5', 'google/gemini-2.5-pro', 'lightning-ai/glm-5.3', ...]
+        """
+        models = []
+        for endpoint in LLMApi().list_published_endpoints():
+            provider = endpoint.id if endpoint.id in PUBLIC_MODEL_PROVIDERS else _OPEN_WEIGHTS_PROVIDER
+            for model in endpoint.models_metadata or []:
+                models.append(
+                    HostedModel(
+                        name=f"{provider}/{model.name}",
+                        provider=provider,
+                        display_name=(model.display_name or model.name or "").strip(),
+                        status=str(model.status or ""),
+                        context_length=_positive_int(model.context_length),
+                        max_completion_tokens=_positive_int(model.max_completion_tokens),
+                        prompt_usd_per_1m_tokens=_usd_per_1m_tokens(model.prompt_token_price),
+                        completion_usd_per_1m_tokens=_usd_per_1m_tokens(model.completion_token_price),
+                    )
+                )
+        return models
 
     def _get_auth_info(self, teamspace_owner: Optional[str] = None, teamspace_name: Optional[str] = None) -> None:
         """Resolve and cache teamspace / user auth information for billing.

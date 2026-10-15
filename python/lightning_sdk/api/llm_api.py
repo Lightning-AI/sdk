@@ -17,6 +17,7 @@ from lightning_sdk.lightning_cloud.login import Auth, AuthServer
 from lightning_sdk.lightning_cloud.openapi.models import (
     StreamResultOfV1ConversationResponseChunk,
     V1ConversationResponseChunk,
+    V1ManagedEndpoint,
     V1ManagedModel,
     V1ResponseChoice,
     V1ResponseChoiceDelta,
@@ -106,6 +107,15 @@ class LLMApi:
                 teamspace_id, self._assistant.managed_endpoint_id, model_name
             )
         return self._model
+
+    def list_published_endpoints(self) -> List[V1ManagedEndpoint]:
+        """Return the managed endpoints published as hosted models, each with its models' metadata.
+
+        Returns:
+            List[V1ManagedEndpoint]: The published endpoints.
+        """
+        result = self._client.assistants_service_list_published_managed_endpoints()
+        return list(result.managed_endpoints or [])
 
     def _parse_stream_line(self, decoded_line: str) -> Optional[V1ConversationResponseChunk]:
         """Parse a single ndjson line from a streaming response into a ``V1ConversationResponseChunk``.
