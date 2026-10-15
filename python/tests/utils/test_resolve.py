@@ -172,6 +172,26 @@ def test_resolve_teamspace_name_env_var(provided):
 
 
 @pytest.mark.parametrize(
+    ("provided", "expected"),
+    [
+        ("general ", "general"),
+        ("  general\t", "general"),
+        ("my-org/general ", "my-org/general"),
+        (" my-org / general ", "my-org/general"),
+    ],
+)
+@pytest.mark.parametrize("resolver", [_resolve_teamspace_name, _resolve_org_name, _resolve_user_name])
+@mock.patch.dict(os.environ, clear=True)
+def test_resolve_names_strip_whitespace(resolver, provided, expected):
+    assert resolver(provided) == expected
+
+
+@mock.patch.dict(os.environ, {"LIGHTNING_TEAMSPACE": "general \n"}, clear=True)
+def test_resolve_teamspace_name_strips_env_var():
+    assert _resolve_teamspace_name(None) == "general"
+
+
+@pytest.mark.parametrize(
     ("teamspace_name", "org_name", "user_name", "expected_result"),
     [
         ("ts-abc", None, "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
