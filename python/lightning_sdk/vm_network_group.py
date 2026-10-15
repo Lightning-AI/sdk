@@ -8,11 +8,11 @@ from lightning_sdk.organization import Organization
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.utils.logging import TrackCallsMeta
-from lightning_sdk.vm import VM, _default_machine_cluster, _require_org_id, _resolve
+from lightning_sdk.vm import VM, _require_org_id, _resolve
 
 
 class VMNetworkGroup(metaclass=TrackCallsMeta):
-    """A private network for native VMs in one teamspace and machine cluster.
+    """A private network for native VMs in one teamspace.
 
     Creation and additions require the per-user ``VMNetworkGroups`` feature flag.
     Removal and deletion remain available when the flag is disabled.
@@ -50,13 +50,12 @@ class VMNetworkGroup(metaclass=TrackCallsMeta):
         teamspace: Optional[Union[str, Teamspace]] = None,
         org: Optional[Union[str, Organization]] = None,
         user: Optional[Union[str, User]] = None,
-        cloud_account: Optional[str] = None,
     ) -> "VMNetworkGroup":
-        """Create an empty group; ``cloud_account`` is a machine-cluster ID."""
+        """Create an empty group owned by one teamspace; members must use the global machine cluster."""
         resolved = _resolve(teamspace, org, user)
         org_id = _require_org_id(resolved)
         api = VMNetworkGroupApi()
-        group = api.create(name, org_id, resolved.id, cloud_account or _default_machine_cluster(org_id))
+        group = api.create(name, org_id, resolved.id)
         return cls._from_group(group, resolved, org_id, api)
 
     @staticmethod

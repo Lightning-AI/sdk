@@ -45,55 +45,29 @@ class V1CreateVMNetworkGroupRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'str',
         'name': 'str',
         'organization_id': 'str',
         'project_id': 'str'
     }
 
     attribute_map = {
-        'cluster_id': 'clusterId',
         'name': 'name',
         'organization_id': 'organizationId',
         'project_id': 'projectId'
     }
 
-    def __init__(self, cluster_id: 'str' =None, name: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
+    def __init__(self, name: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None):  # noqa: E501
         """V1CreateVMNetworkGroupRequest - a model defined in Swagger"""  # noqa: E501
-        self._cluster_id = None
         self._name = None
         self._organization_id = None
         self._project_id = None
         self.discriminator = None
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
         if name is not None:
             self.name = name
         if organization_id is not None:
             self.organization_id = organization_id
         if project_id is not None:
             self.project_id = project_id
-
-    @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this V1CreateVMNetworkGroupRequest.  # noqa: E501
-
-
-        :return: The cluster_id of this V1CreateVMNetworkGroupRequest.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this V1CreateVMNetworkGroupRequest.
-
-
-        :param cluster_id: The cluster_id of this V1CreateVMNetworkGroupRequest.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
 
     @property
     def name(self) -> 'str':

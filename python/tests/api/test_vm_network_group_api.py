@@ -108,7 +108,6 @@ def test_generated_client_round_trips_the_network_group_wire_contract(monkeypatc
                 "id": "group",
                 "organizationId": "org",
                 "projectId": "project",
-                "clusterId": "cluster",
                 "revision": "9007199254740993",
                 "status": "ready",
                 "members": [{"instanceId": "vm", "privateAddress": "10.15.1.2"}],
@@ -136,7 +135,7 @@ def test_generated_client_round_trips_the_network_group_wire_contract(monkeypatc
     )
     try:
         api = VMNetworkGroupApi()
-        assert api.create("nodes", "org", "project", "cluster").id == "group"
+        assert api.create("nodes", "org", "project").id == "group"
         assert api.get("group", "org").members[0].private_address == "10.15.1.2"
         assert len(api.list("org", "project")) == 1
         revision = 9007199254740993
@@ -147,7 +146,7 @@ def test_generated_client_round_trips_the_network_group_wire_contract(monkeypatc
         thread.join()
         server.server_close()
         client.rest_client.pool_manager.clear()
-    assert calls[0][2] == {"name": "nodes", "organizationId": "org", "projectId": "project", "clusterId": "cluster"}
+    assert calls[0][2] == {"name": "nodes", "organizationId": "org", "projectId": "project"}
     assert calls[1][1] == "/v1/core/vm-network-groups/group?organizationId=org"
     assert "organizationId=org" in calls[2][1]
     assert "projectId=project" in calls[2][1]

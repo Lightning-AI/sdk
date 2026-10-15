@@ -16,7 +16,6 @@ def _group(revision="3", **kwargs):
         "name": "nodes",
         "organization_id": "org",
         "project_id": "project",
-        "cluster_id": "cluster",
         "revision": revision,
         "status": "ready",
         "members": [],
@@ -36,11 +35,11 @@ def _fixture(monkeypatch):
     return VMNetworkGroup("group"), api, teamspace
 
 
-def test_create_and_list_keep_explicit_teamspace_and_cluster(monkeypatch):
+def test_create_and_list_keep_explicit_teamspace_without_cluster_selection(monkeypatch):
     _, api, _ = _fixture(monkeypatch)
     api.create.return_value = _group()
-    group = VMNetworkGroup.create("nodes", teamspace="org/research", cloud_account="cluster")
-    api.create.assert_called_once_with("nodes", "org", "project", "cluster")
+    group = VMNetworkGroup.create("nodes", teamspace="org/research")
+    api.create.assert_called_once_with("nodes", "org", "project")
     assert group.name == "nodes"
     api.list.return_value = [_group()]
     assert [group.id for group in VMNetworkGroup.list()] == ["group"]

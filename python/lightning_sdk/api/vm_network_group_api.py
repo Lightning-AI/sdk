@@ -23,10 +23,8 @@ class VMNetworkGroupApi:
         # A lost create response must not create another group on retry.
         self._client = LightningClient(retry=False)
 
-    def create(self, name: str, org_id: str, project_id: str, cluster_id: str) -> V1VMNetworkGroup:
-        body = V1CreateVMNetworkGroupRequest(
-            name=name, organization_id=org_id, project_id=project_id, cluster_id=cluster_id
-        )
+    def create(self, name: str, org_id: str, project_id: str) -> V1VMNetworkGroup:
+        body = V1CreateVMNetworkGroupRequest(name=name, organization_id=org_id, project_id=project_id)
         return self._client.cloud_instances_service_create_vm_network_group(body=body)
 
     def get(self, group_id: str, org_id: str, timeout: Optional[float] = None) -> Optional[V1VMNetworkGroup]:

@@ -45,7 +45,6 @@ class V1VMNetworkGroup(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'cluster_id': 'str',
         'error': 'str',
         'id': 'str',
         'members': 'list[V1VMNetworkGroupMember]',
@@ -57,7 +56,6 @@ class V1VMNetworkGroup(object):
     }
 
     attribute_map = {
-        'cluster_id': 'clusterId',
         'error': 'error',
         'id': 'id',
         'members': 'members',
@@ -68,9 +66,8 @@ class V1VMNetworkGroup(object):
         'status': 'status'
     }
 
-    def __init__(self, cluster_id: 'str' =None, error: 'str' =None, id: 'str' =None, members: 'list[V1VMNetworkGroupMember]' =None, name: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, revision: 'str' =None, status: 'str' =None):  # noqa: E501
+    def __init__(self, error: 'str' =None, id: 'str' =None, members: 'list[V1VMNetworkGroupMember]' =None, name: 'str' =None, organization_id: 'str' =None, project_id: 'str' =None, revision: 'str' =None, status: 'str' =None):  # noqa: E501
         """V1VMNetworkGroup - a model defined in Swagger"""  # noqa: E501
-        self._cluster_id = None
         self._error = None
         self._id = None
         self._members = None
@@ -80,8 +77,6 @@ class V1VMNetworkGroup(object):
         self._revision = None
         self._status = None
         self.discriminator = None
-        if cluster_id is not None:
-            self.cluster_id = cluster_id
         if error is not None:
             self.error = error
         if id is not None:
@@ -98,27 +93,6 @@ class V1VMNetworkGroup(object):
             self.revision = revision
         if status is not None:
             self.status = status
-
-    @property
-    def cluster_id(self) -> 'str':
-        """Gets the cluster_id of this V1VMNetworkGroup.  # noqa: E501
-
-
-        :return: The cluster_id of this V1VMNetworkGroup.  # noqa: E501
-        :rtype: str
-        """
-        return self._cluster_id
-
-    @cluster_id.setter
-    def cluster_id(self, cluster_id: 'str'):
-        """Sets the cluster_id of this V1VMNetworkGroup.
-
-
-        :param cluster_id: The cluster_id of this V1VMNetworkGroup.  # noqa: E501
-        :type: str
-        """
-
-        self._cluster_id = cluster_id
 
     @property
     def error(self) -> 'str':
