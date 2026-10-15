@@ -1,10 +1,8 @@
 """Job list command."""
 
-import re
 from contextlib import suppress
 from datetime import datetime
-from fnmatch import fnmatchcase
-from typing import Dict, List, Optional, Sequence, Tuple, cast
+from typing import Dict, List, Optional, Sequence, cast
 
 import rich_click as click
 from rich.console import Console
@@ -13,6 +11,7 @@ from rich.table import Table
 from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.cli.job.run import _resolve_tags
 from lightning_sdk.cli.utils.json_output import echo_json
+from lightning_sdk.cli.utils.list_filters import Filters, matches_filters, resolve_filters
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.job import Job
@@ -33,10 +32,6 @@ LIST_KEYS = (
     "started",
     "stopped",
 )
-
-# Only a comma that introduces the next pair separates filters; one inside a pattern
-# (`name=job-[0,1]`) or a value (an image tag) belongs to that pattern.
-_FILTER_SEPARATOR = re.compile(r",(?=\s*(?:" + "|".join(re.escape(key) for key in LIST_KEYS) + r")\s*=)")
 
 # Keys whose row field is named differently from the key itself.
 _ROW_KEYS = {"cloud-account": "_cloud_account", "started": "started_at", "stopped": "stopped_at"}
@@ -193,39 +188,18 @@ def list_jobs(
     Console().print(table)
 
 
-def _resolve_filters(filters: Sequence[str]) -> Tuple[Tuple[str, str], ...]:
-    """Flatten comma-separated and repeated --filter values into KEY=PATTERN pairs.
-
-    Keys that `--sort-by` does not accept are rejected here, which keeps the two options in parity.
-    """
-    resolved = []
-    for value in filters:
-        for entry in _FILTER_SEPARATOR.split(value):
-            raw = entry.strip()
-            if not raw:
-                continue
-
-            key, separator, pattern = raw.partition("=")
-            key, pattern = key.strip().lower(), pattern.strip()
-            if not separator or not key:
-                raise click.BadParameter(f"expected KEY=PATTERN, got {raw!r}", param_hint="'--filter'")
-            if key not in LIST_KEYS:
-                raise click.BadParameter(
-                    f"unknown key {key!r}. Filter by one of: {', '.join(LIST_KEYS)}", param_hint="'--filter'"
-                )
-            resolved.append((key, pattern))
-
-    return tuple(resolved)
+def _resolve_filters(filters: Sequence[str]) -> Filters:
+    return resolve_filters(filters, LIST_KEYS)
 
 
-def _matches_filters(row: Dict[str, object], filters: Sequence[Tuple[str, str]]) -> bool:
+def _matches_filters(row: Dict[str, object], filters: Filters) -> bool:
     """Whether a row matches every filter, comparing patterns against the values as displayed."""
-    for key, pattern in filters:
+
+    def display(key: str) -> str:
         value = row.get(_ROW_KEYS.get(key, key))
-        text = _format_timestamp(value) if isinstance(value, datetime) else str(value or "")
-        if not fnmatchcase(text.lower(), pattern.lower()):
-            return False
-    return True
+        return _format_timestamp(value) if isinstance(value, datetime) else str(value or "")
+
+    return matches_filters(display, filters)
 
 
 def _creator(job: Job, usernames: Dict[str, Dict[str, str]]) -> str:
