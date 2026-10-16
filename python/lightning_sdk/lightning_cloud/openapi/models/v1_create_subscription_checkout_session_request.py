@@ -45,6 +45,7 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'attribution': 'str',
         'billing_period': 'V1BillingPeriod',
         'org_id': 'str',
         'product_id': 'str',
@@ -56,6 +57,7 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
     }
 
     attribute_map = {
+        'attribution': 'attribution',
         'billing_period': 'billingPeriod',
         'org_id': 'orgId',
         'product_id': 'productId',
@@ -66,8 +68,9 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         'upgrade_feature': 'upgradeFeature'
     }
 
-    def __init__(self, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, product_id: 'str' =None, redirect_url_failed: 'str' =None, redirect_url_succeeded: 'str' =None, seats: 'int' =None, tier: 'V1BillingTier' =None, upgrade_feature: 'str' =None):  # noqa: E501
+    def __init__(self, attribution: 'str' =None, billing_period: 'V1BillingPeriod' =None, org_id: 'str' =None, product_id: 'str' =None, redirect_url_failed: 'str' =None, redirect_url_succeeded: 'str' =None, seats: 'int' =None, tier: 'V1BillingTier' =None, upgrade_feature: 'str' =None):  # noqa: E501
         """V1CreateSubscriptionCheckoutSessionRequest - a model defined in Swagger"""  # noqa: E501
+        self._attribution = None
         self._billing_period = None
         self._org_id = None
         self._product_id = None
@@ -77,6 +80,8 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
         self._tier = None
         self._upgrade_feature = None
         self.discriminator = None
+        if attribution is not None:
+            self.attribution = attribution
         if billing_period is not None:
             self.billing_period = billing_period
         if org_id is not None:
@@ -93,6 +98,29 @@ class V1CreateSubscriptionCheckoutSessionRequest(object):
             self.tier = tier
         if upgrade_feature is not None:
             self.upgrade_feature = upgrade_feature
+
+    @property
+    def attribution(self) -> 'str':
+        """Gets the attribution of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+
+        The buyer's first and last marketing touch, as the JSON the browser records: the same shape as the signup referrer_params.  # noqa: E501
+
+        :return: The attribution of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._attribution
+
+    @attribution.setter
+    def attribution(self, attribution: 'str'):
+        """Sets the attribution of this V1CreateSubscriptionCheckoutSessionRequest.
+
+        The buyer's first and last marketing touch, as the JSON the browser records: the same shape as the signup referrer_params.  # noqa: E501
+
+        :param attribution: The attribution of this V1CreateSubscriptionCheckoutSessionRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._attribution = attribution
 
     @property
     def billing_period(self) -> 'V1BillingPeriod':
