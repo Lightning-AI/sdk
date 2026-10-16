@@ -41,6 +41,9 @@ type V1GenericJob struct {
 	// id
 	ID string `json:"id,omitempty"`
 
+	// For job groups: number of member jobs
+	JobCount int64 `json:"jobCount,omitempty"`
+
 	// Total attempts allowed; 0 = unset (no retries)
 	MaxRunAttempts int32 `json:"maxRunAttempts,omitempty"`
 

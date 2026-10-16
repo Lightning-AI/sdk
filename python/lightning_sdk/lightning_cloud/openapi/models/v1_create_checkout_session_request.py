@@ -46,6 +46,7 @@ class V1CreateCheckoutSessionRequest(object):
     """
     swagger_types = {
         'amount': 'float',
+        'attribution': 'str',
         'capture_method': 'str',
         'gclid': 'str',
         'org_id': 'str',
@@ -58,6 +59,7 @@ class V1CreateCheckoutSessionRequest(object):
 
     attribute_map = {
         'amount': 'amount',
+        'attribution': 'attribution',
         'capture_method': 'captureMethod',
         'gclid': 'gclid',
         'org_id': 'orgId',
@@ -68,9 +70,10 @@ class V1CreateCheckoutSessionRequest(object):
         'wallet_type': 'walletType'
     }
 
-    def __init__(self, amount: 'float' =None, capture_method: 'str' =None, gclid: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, redirect_url_cancelled: 'str' =None, redirect_url_succeeded: 'str' =None, transaction_type: 'str' =None, wallet_type: 'CreateCheckoutSessionRequestWalletType' =None):  # noqa: E501
+    def __init__(self, amount: 'float' =None, attribution: 'str' =None, capture_method: 'str' =None, gclid: 'str' =None, org_id: 'str' =None, project_id: 'str' =None, redirect_url_cancelled: 'str' =None, redirect_url_succeeded: 'str' =None, transaction_type: 'str' =None, wallet_type: 'CreateCheckoutSessionRequestWalletType' =None):  # noqa: E501
         """V1CreateCheckoutSessionRequest - a model defined in Swagger"""  # noqa: E501
         self._amount = None
+        self._attribution = None
         self._capture_method = None
         self._gclid = None
         self._org_id = None
@@ -82,6 +85,8 @@ class V1CreateCheckoutSessionRequest(object):
         self.discriminator = None
         if amount is not None:
             self.amount = amount
+        if attribution is not None:
+            self.attribution = attribution
         if capture_method is not None:
             self.capture_method = capture_method
         if gclid is not None:
@@ -119,6 +124,29 @@ class V1CreateCheckoutSessionRequest(object):
         """
 
         self._amount = amount
+
+    @property
+    def attribution(self) -> 'str':
+        """Gets the attribution of this V1CreateCheckoutSessionRequest.  # noqa: E501
+
+        The buyer's first and last marketing touch, as the JSON the browser records: the same shape as the signup referrer_params.  # noqa: E501
+
+        :return: The attribution of this V1CreateCheckoutSessionRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._attribution
+
+    @attribution.setter
+    def attribution(self, attribution: 'str'):
+        """Sets the attribution of this V1CreateCheckoutSessionRequest.
+
+        The buyer's first and last marketing touch, as the JSON the browser records: the same shape as the signup referrer_params.  # noqa: E501
+
+        :param attribution: The attribution of this V1CreateCheckoutSessionRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._attribution = attribution
 
     @property
     def capture_method(self) -> 'str':

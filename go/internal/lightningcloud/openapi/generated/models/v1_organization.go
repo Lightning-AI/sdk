@@ -202,6 +202,9 @@ type V1Organization struct {
 	// storage_overuse_notification_count is the number of times the organization admins have been notified about storage overuse
 	StorageOveruseNotificationCount int32 `json:"storageOveruseNotificationCount,omitempty"`
 
+	// studio ports access
+	StudioPortsAccess *V1StudioPortsAccess `json:"studioPortsAccess,omitempty"`
+
 	// switch to default machine on idle
 	SwitchToDefaultMachineOnIdle bool `json:"switchToDefaultMachineOnIdle,omitempty"`
 
@@ -251,6 +254,10 @@ func (m *V1Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStorageOveruseDeletionAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStudioPortsAccess(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -377,6 +384,29 @@ func (m *V1Organization) validateStorageOveruseDeletionAt(formats strfmt.Registr
 	return nil
 }
 
+func (m *V1Organization) validateStudioPortsAccess(formats strfmt.Registry) error {
+	if swag.IsZero(m.StudioPortsAccess) { // not required
+		return nil
+	}
+
+	if m.StudioPortsAccess != nil {
+		if err := m.StudioPortsAccess.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("studioPortsAccess")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("studioPortsAccess")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *V1Organization) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -398,6 +428,10 @@ func (m *V1Organization) ContextValidate(ctx context.Context, formats strfmt.Reg
 	}
 
 	if err := m.contextValidateAutoJoinDomainValidations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStudioPortsAccess(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -442,6 +476,31 @@ func (m *V1Organization) contextValidateAutoJoinDomainValidations(ctx context.Co
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *V1Organization) contextValidateStudioPortsAccess(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.StudioPortsAccess != nil {
+
+		if swag.IsZero(m.StudioPortsAccess) { // not required
+			return nil
+		}
+
+		if err := m.StudioPortsAccess.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("studioPortsAccess")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("studioPortsAccess")
+			}
+
+			return err
+		}
 	}
 
 	return nil
