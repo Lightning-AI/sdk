@@ -128,7 +128,7 @@ def test_logout_session_revokes_server_session_and_clears_credentials(monkeypatc
 
 def test_login_with_browser_redirects_without_credentials_in_url(monkeypatch, tmp_path) -> None:
     """The `/login-complete` callback redirects to `/cli-login-successful` without forwarding tokens in the URL."""
-    from fastapi.testclient import TestClient
+    import asyncio
 
     from lightning_sdk.lightning_cloud.login import AuthServer
 
@@ -145,11 +145,9 @@ def test_login_with_browser_redirects_without_credentials_in_url(monkeypatch, tm
             captured["app"] = config.app
 
         def run(self) -> None:
-            client = TestClient(captured["app"])
-            resp = client.get(
-                "/login-complete",
-                params={"token": "sess_user-1.secret", "userID": "user-1", "state": "fixed-state"},
-                follow_redirects=False,
+            route = next(r for r in captured["app"].routes if getattr(r, "path", None) == "/login-complete")
+            resp = asyncio.run(
+                route.endpoint(token="sess_user-1.secret", key="", state="fixed-state", user_id="user-1")
             )
             captured["location"] = resp.headers["location"]
 
