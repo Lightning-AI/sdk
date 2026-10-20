@@ -1,10 +1,11 @@
+import json
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy._auth import _AuthLitServe, _AuthMode
-from lightning_sdk.cli.utils.auth import browser_authentication, require_auth_header
+from lightning_sdk.cli.utils.auth import browser_authentication, logout_session, require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -82,3 +83,125 @@ def test_litserve_auth_instructs_login_when_callback_auth_would_be_required() ->
     """Deployment callback auth must tell the user to run the explicit login command."""
     with pytest.raises(click.UsageError, match="lightning login"):
         _AuthLitServe(_AuthMode.DEPLOY)._run_server()
+
+
+def test_auth_save_stores_session_token_as_auth_token(monkeypatch, tmp_path) -> None:
+    """Browser login callback passes the session token as `token`; it must be saved as `auth_token`."""
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    auth = Auth()
+    auth.save(token="sess_user-1.secret", user_id="user-1", api_key="")
+
+    assert auth.auth_token == "sess_user-1.secret"
+    assert auth.api_key == ""
+    assert auth.auth_header == "Bearer sess_user-1.secret"
+    assert json.loads(secrets_file.read_text()) == {
+        "user_id": "user-1",
+        "api_key": "",
+        "auth_token": "sess_user-1.secret",
+    }
+    assert (secrets_file.stat().st_mode & 0o777) == 0o600
+
+
+def test_logout_session_revokes_server_session_and_clears_credentials(monkeypatch, tmp_path) -> None:
+    """`lightning logout` revokes the saved session token on the server and removes local credentials."""
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    auth = Auth()
+    auth.save(token="sess_user-1.secret", user_id="user-1")
+
+    with patch("lightning_sdk.cli.utils.auth.requests.post") as post_mock:
+        logout_session(Auth())
+
+    post_mock.assert_called_once()
+    assert post_mock.call_args.kwargs["headers"] == {"Authorization": "Bearer sess_user-1.secret"}
+    assert not secrets_file.exists()
+
+
+def test_login_with_browser_redirects_without_credentials_in_url(monkeypatch, tmp_path) -> None:
+    """The `/login-complete` callback redirects to `/cli-login-successful` without forwarding tokens in the URL."""
+    import asyncio
+
+    from lightning_sdk.lightning_cloud.login import AuthServer
+
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    captured: dict = {}
+
+    class FakeServer:
+        def __init__(self, config) -> None:
+            captured["app"] = config.app
+
+        def run(self) -> None:
+            route = next(r for r in captured["app"].routes if getattr(r, "path", None) == "/login-complete")
+            resp = asyncio.run(
+                route.endpoint(token="sess_user-1.secret", key="", state="fixed-state", user_id="user-1")
+            )
+            captured["location"] = resp.headers["location"]
+
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth._generate_state", lambda: "fixed-state")
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.requests.head", MagicMock())
+    monkeypatch.setattr("webbrowser.open", lambda url: captured.setdefault("auth_url", url) or True)
+    monkeypatch.setattr("uvicorn.Server", FakeServer)
+
+    auth = Auth()
+    AuthServer().login_with_browser(auth)
+
+    assert "state=fixed-state" in captured["auth_url"] or "state%3Dfixed-state" in captured["auth_url"]
+    assert captured["location"].endswith("/cli-login-successful")
+    assert "token=" not in captured["location"]
+    assert auth.auth_token == "sess_user-1.secret"
+
+
+def test_login_with_browser_rejects_callback_without_matching_state(monkeypatch, tmp_path) -> None:
+    """Omitting or forging `state` must not store the callback token or key."""
+    import asyncio
+
+    from lightning_sdk.lightning_cloud.login import AuthServer
+
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    captured: dict = {}
+
+    class FakeServer:
+        def __init__(self, config) -> None:
+            captured["app"] = config.app
+
+        def run(self) -> None:
+            captured["route"] = next(r for r in captured["app"].routes if getattr(r, "path", None) == "/login-complete")
+
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth._generate_state", lambda: "fixed-state")
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.requests.head", MagicMock())
+    monkeypatch.setattr("webbrowser.open", lambda url: True)
+    monkeypatch.setattr("uvicorn.Server", FakeServer)
+
+    auth = Auth()
+    AuthServer().login_with_browser(auth)
+
+    for state in ("", "forged-state"):
+        resp = asyncio.run(
+            captured["route"].endpoint(
+                token="sess_attacker.secret", key="attacker-key", state=state, user_id="attacker"
+            )
+        )
+        assert resp.headers["location"].endswith("/cli-login-failed")
+
+    assert not secrets_file.exists()
+    assert not auth.auth_token
+    assert not auth.api_key

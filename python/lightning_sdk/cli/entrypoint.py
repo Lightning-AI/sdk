@@ -45,7 +45,7 @@ from lightning_sdk.cli.legacy_redirects import (
 )
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import browser_authentication
+from lightning_sdk.cli.utils.auth import browser_authentication, logout_session
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -125,7 +125,7 @@ def login() -> None:
 def logout() -> None:
     """Sign out of the current session."""
     auth = Auth()
-    auth.clear()
+    logout_session(auth)
 
 
 # Add new command groups

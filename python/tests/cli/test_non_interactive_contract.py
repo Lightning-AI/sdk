@@ -10,7 +10,10 @@ FORBIDDEN = (
     "LIGHTNING_NON_INTERACTIVE",
     "webbrowser.open",
 )
-ALLOWED = {("utils/delete.py", "click.confirm")}
+ALLOWED = {
+    ("utils/auth.py", "webbrowser.open"),
+    ("utils/delete.py", "click.confirm"),
+}
 
 
 def test_cli_has_no_implicit_interaction() -> None:
