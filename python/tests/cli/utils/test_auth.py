@@ -124,3 +124,44 @@ def test_logout_session_revokes_server_session_and_clears_credentials(monkeypatc
     post_mock.assert_called_once()
     assert post_mock.call_args.kwargs["headers"] == {"Authorization": "Bearer sess_user-1.secret"}
     assert not secrets_file.exists()
+
+
+def test_login_with_browser_redirects_without_credentials_in_url(monkeypatch, tmp_path) -> None:
+    """The `/login-complete` callback redirects to `/cli-login-successful` without forwarding tokens in the URL."""
+    from fastapi.testclient import TestClient
+
+    from lightning_sdk.lightning_cloud.login import AuthServer
+
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    captured: dict = {}
+
+    class FakeServer:
+        def __init__(self, config) -> None:
+            captured["app"] = config.app
+
+        def run(self) -> None:
+            client = TestClient(captured["app"])
+            resp = client.get(
+                "/login-complete",
+                params={"token": "sess_user-1.secret", "userID": "user-1", "state": "fixed-state"},
+                follow_redirects=False,
+            )
+            captured["location"] = resp.headers["location"]
+
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth._generate_state", lambda: "fixed-state")
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.requests.head", MagicMock())
+    monkeypatch.setattr("webbrowser.open", lambda url: captured.setdefault("auth_url", url) or True)
+    monkeypatch.setattr("uvicorn.Server", FakeServer)
+
+    auth = Auth()
+    AuthServer().login_with_browser(auth)
+
+    assert "state=fixed-state" in captured["auth_url"] or "state%3Dfixed-state" in captured["auth_url"]
+    assert captured["location"].endswith("/cli-login-successful")
+    assert "token=" not in captured["location"]
+    assert auth.auth_token == "sess_user-1.secret"

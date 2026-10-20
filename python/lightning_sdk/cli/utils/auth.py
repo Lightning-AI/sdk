@@ -1,20 +1,27 @@
 """Non-interactive authentication helpers for CLI commands."""
 
-from contextlib import contextmanager
-from contextvars import ContextVar
+import base64
+import hmac
 import json
 import os
+from contextlib import contextmanager, suppress
+from contextvars import ContextVar
 from pathlib import Path
 from typing import Generator, Optional
+from urllib.parse import urlencode
 
 import requests
 import rich_click as click
 
 from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.login import Auth, AuthServer, logger
 
 _BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
 _ORIGINAL_AUTH_SAVE = Auth.save
+
+
+def _generate_state() -> str:
+    return base64.urlsafe_b64encode(os.urandom(16)).rstrip(b"=").decode("ascii")
 
 
 def _save_with_session_token(
@@ -36,13 +43,89 @@ def _save_with_session_token(
         api_key=api_key,
         auth_token=auth_token,
     )
-    try:
+    with suppress(OSError):
         os.chmod(self.secrets_file, 0o600)
-    except OSError:
-        pass
+
+
+def _login_with_browser(self: AuthServer, auth: Auth) -> None:
+    """Complete browser authentication without forwarding credentials back to `/me/apps`."""
+    import webbrowser
+
+    import uvicorn
+    from fastapi import FastAPI, Query
+    from starlette.background import BackgroundTask
+    from starlette.responses import RedirectResponse
+
+    from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
+
+    expected_state = _generate_state()
+    app = FastAPI()
+    port = find_free_network_port()
+    base_url = self.get_auth_url(port)
+    redirect_uri = f"http://localhost:{port}/login-complete"
+    if urlencode({"redirectTo": redirect_uri}) in base_url:
+        stateful_redirect = f"{redirect_uri}?{urlencode({'state': expected_state})}"
+        url = base_url.replace(urlencode({"redirectTo": redirect_uri}), urlencode({"redirectTo": stateful_redirect}), 1)
+    else:
+        url = base_url
+
+    try:
+        requests.head(url, timeout=10)
+    except requests.ConnectionError as e:
+        raise requests.ConnectionError(
+            f"No internet connection available. Please connect to a stable internet connection \n{e}"
+        ) from e
+    except requests.RequestException as e:
+        raise requests.RequestException(
+            f"An error occurred with the request. Please report this issue to Lightning Team \n{e}"
+        ) from e
+
+    logger.info(f"login started for lightning.ai, opening {url}")
+    if not webbrowser.open(url):
+        deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID")
+        if deployment_id:
+            raise RuntimeError(
+                "Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the "
+                "'Environment' section of the deployment settings."
+            )
+        raise RuntimeError(
+            "Failed to authenticate to Lightning. When running without access to a browser, "
+            "'LIGHTNING_API_KEY' should be exported."
+        )
+
+    @app.get("/login-complete")
+    async def save_token(
+        token: str = "",
+        key: str = "",
+        state: str = "",
+        user_id: str = Query("", alias="userID"),
+    ) -> RedirectResponse:
+        state_valid = not state or hmac.compare_digest(state, expected_state)
+        if token and state_valid:
+            auth.save(token=token, user_id=user_id, api_key=key)
+            logger.info("Authentication Successful")
+            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-successful"
+        else:
+            logger.warning(
+                "Authentication Failed. This is most likely because you're using an older version of the CLI. "
+                "Please try to update the CLI and run `lightning login` again."
+            )
+            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
+
+        return RedirectResponse(
+            url=target,
+            background=BackgroundTask(stop_server),
+        )
+
+    def stop_server() -> None:
+        server.should_exit = True
+
+    server = uvicorn.Server(config=uvicorn.Config(app, port=port, log_level="error"))
+    server.run()
 
 
 Auth.save = _save_with_session_token
+AuthServer.login_with_browser = _login_with_browser
 
 
 def logout_session(auth: Auth) -> None:
@@ -60,14 +143,12 @@ def logout_session(auth: Auth) -> None:
             except Exception:
                 token = None
     if isinstance(token, str) and token:
-        try:
+        with suppress(requests.RequestException):
             requests.post(
                 f"{env.LIGHTNING_CLOUD_URL}/v1/auth/logout",
                 headers={"Authorization": f"Bearer {token}"},
                 timeout=10,
             )
-        except requests.RequestException:
-            pass
     auth.clear()
 
 
