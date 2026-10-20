@@ -196,7 +196,9 @@ def test_login_with_browser_rejects_callback_without_matching_state(monkeypatch,
 
     for state in ("", "forged-state"):
         resp = asyncio.run(
-            captured["route"].endpoint(token="sess_attacker.secret", key="attacker-key", state=state, user_id="attacker")
+            captured["route"].endpoint(
+                token="sess_attacker.secret", key="attacker-key", state=state, user_id="attacker"
+            )
         )
         assert resp.headers["location"].endswith("/cli-login-failed")
 
