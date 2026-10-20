@@ -2,13 +2,73 @@
 
 from contextlib import contextmanager
 from contextvars import ContextVar
+import json
+import os
+from pathlib import Path
 from typing import Generator, Optional
 
+import requests
 import rich_click as click
 
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth
 
 _BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
+_ORIGINAL_AUTH_SAVE = Auth.save
+
+
+def _save_with_session_token(
+    self: Auth,
+    token: str = "",
+    user_id: str = "",
+    api_key: str = "",
+    auth_token: str = "",
+) -> None:
+    """Persist session tokens (`token`) as `auth_token` so the SDK/CLI sends `Bearer sess_...`."""
+    if not auth_token and token and (not api_key or token.startswith("sess_")):
+        auth_token = token
+        if token.startswith("sess_"):
+            api_key = ""
+    _ORIGINAL_AUTH_SAVE(
+        self,
+        token=token,
+        user_id=user_id,
+        api_key=api_key,
+        auth_token=auth_token,
+    )
+    try:
+        os.chmod(self.secrets_file, 0o600)
+    except OSError:
+        pass
+
+
+Auth.save = _save_with_session_token
+
+
+def logout_session(auth: Auth) -> None:
+    """Revoke the active CLI session token on the server and clear local credentials."""
+    token = getattr(auth, "auth_token", None)
+    if not isinstance(token, str) or not token:
+        secrets_file = getattr(auth, "secrets_file", None)
+        if isinstance(secrets_file, Path) and secrets_file.exists():
+            try:
+                with secrets_file.open() as creds:
+                    data = json.load(creds)
+                loaded = data.get("auth_token")
+                if isinstance(loaded, str) and loaded:
+                    token = loaded
+            except Exception:
+                token = None
+    if isinstance(token, str) and token:
+        try:
+            requests.post(
+                f"{env.LIGHTNING_CLOUD_URL}/v1/auth/logout",
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=10,
+            )
+        except requests.RequestException:
+            pass
+    auth.clear()
 
 
 @contextmanager

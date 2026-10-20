@@ -1,10 +1,11 @@
+import json
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy._auth import _AuthLitServe, _AuthMode
-from lightning_sdk.cli.utils.auth import browser_authentication, require_auth_header
+from lightning_sdk.cli.utils.auth import browser_authentication, logout_session, require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -82,3 +83,44 @@ def test_litserve_auth_instructs_login_when_callback_auth_would_be_required() ->
     """Deployment callback auth must tell the user to run the explicit login command."""
     with pytest.raises(click.UsageError, match="lightning login"):
         _AuthLitServe(_AuthMode.DEPLOY)._run_server()
+
+
+def test_auth_save_stores_session_token_as_auth_token(monkeypatch, tmp_path) -> None:
+    """Browser login callback passes the session token as `token`; it must be saved as `auth_token`."""
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    auth = Auth()
+    auth.save(token="sess_user-1.secret", user_id="user-1", api_key="")
+
+    assert auth.auth_token == "sess_user-1.secret"
+    assert auth.api_key == ""
+    assert auth.auth_header == "Bearer sess_user-1.secret"
+    assert json.loads(secrets_file.read_text()) == {
+        "user_id": "user-1",
+        "api_key": "",
+        "auth_token": "sess_user-1.secret",
+    }
+    assert (secrets_file.stat().st_mode & 0o777) == 0o600
+
+
+def test_logout_session_revokes_server_session_and_clears_credentials(monkeypatch, tmp_path) -> None:
+    """`lightning logout` revokes the saved session token on the server and removes local credentials."""
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+
+    auth = Auth()
+    auth.save(token="sess_user-1.secret", user_id="user-1")
+
+    with patch("lightning_sdk.cli.utils.auth.requests.post") as post_mock:
+        logout_session(Auth())
+
+    post_mock.assert_called_once()
+    assert post_mock.call_args.kwargs["headers"] == {"Authorization": "Bearer sess_user-1.secret"}
+    assert not secrets_file.exists()
