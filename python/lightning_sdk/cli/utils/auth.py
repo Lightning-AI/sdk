@@ -100,7 +100,7 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
         state: str = "",
         user_id: str = Query("", alias="userID"),
     ) -> RedirectResponse:
-        state_valid = not state or hmac.compare_digest(state, expected_state)
+        state_valid = bool(state) and hmac.compare_digest(state, expected_state)
         if token and state_valid:
             auth.save(token=token, user_id=user_id, api_key=key)
             logger.info("Authentication Successful")
