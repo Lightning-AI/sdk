@@ -6,7 +6,7 @@ from typing import Generator, List, Optional, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.utils import _RemoteApiError, _tree_path_info
-from lightning_sdk.cli.utils.filesystem import resolve_lit_url
+from lightning_sdk.cli.utils.filesystem import resolve_lit_url, resolve_lit_url_ref
 from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.logging import TrackCallsMeta
 
@@ -35,8 +35,8 @@ class Filesystem(metaclass=TrackCallsMeta):
         Returns:
             List[str]: Basenames of the entries directly inside the given directory.
         """
-        selected_teamspace, remote_path = resolve_lit_url(uri)
-        output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=False)
+        teamspace_ref, remote_path = resolve_lit_url_ref(uri)
+        output = self._filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=False)
         return [os.path.basename(item["path"]) for item in output]
 
     def walk(self, url: str) -> Generator[Tuple[str, List[str], List[str]], None, None]:
@@ -51,8 +51,8 @@ class Filesystem(metaclass=TrackCallsMeta):
             current directory path, a list of its immediate subdirectory names, and a list of
             its immediate file names — mirroring the behaviour of :func:`os.walk`.
         """
-        selected_teamspace, remote_path = resolve_lit_url(url)
-        output = self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=True)
+        teamspace_ref, remote_path = resolve_lit_url_ref(url)
+        output = self._filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=True)
 
         dirs: dict[str, list[str]] = {}
         files: dict[str, list[str]] = {}
@@ -148,18 +148,18 @@ class Filesystem(metaclass=TrackCallsMeta):
         if not source_is_lit and not dest_is_lit:
             raise ValueError("At least one path must be a lit://")
 
-        selected_teamspace, remote_path = resolve_lit_url(source if source_is_lit else destination)
         local_path = destination if source_is_lit else source
         if source_is_lit:
             # download
+            teamspace_ref, remote_path = resolve_lit_url_ref(source)
             parent = os.path.dirname(remote_path.strip("/"))
             try:
-                entries = self._filesystem_api.list_files(selected_teamspace.id, parent, recursive=False)
+                entries = self._filesystem_api.list_files(teamspace_ref.id, parent, recursive=False)
             except _RemoteApiError as e:
                 # A missing parent means the path can't exist either.
                 if e.status_code != 404:
                     raise
-                raise ValueError(f"File {remote_path} does not exist in teamspace {selected_teamspace.name}") from e
+                raise ValueError(f"File {remote_path} does not exist in teamspace {teamspace_ref.name}") from e
             found = False
             is_directory = False
 
@@ -170,7 +170,7 @@ class Filesystem(metaclass=TrackCallsMeta):
                     break
 
             if not found:
-                raise ValueError(f"File {remote_path} does not exist in teamspace {selected_teamspace.name}")
+                raise ValueError(f"File {remote_path} does not exist in teamspace {teamspace_ref.name}")
 
             if is_directory:
                 if not recursive:
@@ -180,11 +180,11 @@ class Filesystem(metaclass=TrackCallsMeta):
                 local_folder_name = os.path.basename(remote_path.rstrip("/"))
                 if local_path in ("./", "."):
                     if local_folder_name == "":
-                        local_folder_name = f"{selected_teamspace.name}_downloads"
+                        local_folder_name = f"{teamspace_ref.name}_downloads"
                     target_path = os.path.join(local_path, local_folder_name)
                 else:
                     target_path = local_path
-                self._filesystem_api.download_folder(remote_path, target_path, selected_teamspace.id, progress_bar)
+                self._filesystem_api.download_folder(remote_path, target_path, teamspace_ref.id, progress_bar)
             else:
                 if os.path.isdir(local_path) or local_path.endswith(("/", "\\")):
                     # if local_path ends with / or \ or is a directory, treat it as a directory
@@ -192,9 +192,10 @@ class Filesystem(metaclass=TrackCallsMeta):
                     target_path = os.path.join(local_path, file_name)
                 else:
                     target_path = local_path
-                self._filesystem_api.download_file(remote_path, target_path, selected_teamspace.id, progress_bar)
+                self._filesystem_api.download_file(remote_path, target_path, teamspace_ref.id, progress_bar)
         else:
             # upload
+            selected_teamspace, remote_path = resolve_lit_url(destination)
             if not os.path.exists(local_path):
                 raise FileNotFoundError(f"The provided path does not exist: {local_path}")
 

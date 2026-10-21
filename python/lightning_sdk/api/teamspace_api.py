@@ -178,6 +178,33 @@ class TeamspaceApi:
                 teamspaces.append(self._get_teamspace_by_id(teamspace.project_id))
         return teamspaces
 
+    def find_teamspace_id(self, name: str, owner_id: str) -> Optional[str]:
+        """Return the ID of the authed user's teamspace with this name and owner.
+
+        Unlike ``get_teamspace``, reads only the user's memberships, without
+        fetching the teamspace itself.
+
+        Args:
+            name: Name or display name of the teamspace.
+            owner_id: User or organization ID that owns the teamspace.
+
+        Returns:
+            Optional[str]: The teamspace's ID, or ``None`` if the user is a member of
+            no teamspace with that name and owner.
+
+        Raises:
+            RuntimeError: If the name matches more than one teamspace.
+        """
+        res = self._client.projects_service_list_memberships(filter_by_user_id=True)
+        ids = [
+            membership.project_id
+            for membership in res.memberships
+            if membership.owner_id == owner_id and name in (membership.name, membership.display_name)
+        ]
+        if len(ids) > 1:
+            raise RuntimeError(f"{name} is no unique name for a Teamspace")
+        return ids[0] if ids else None
+
     def list_studios(self, teamspace_id: str, cloud_account: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace.
 
