@@ -83,14 +83,39 @@ def test_teamspace_not_in_memberships_is_an_error(client, tree):
     tree.assert_not_called()
 
 
+@pytest.fixture()
+def config_file(tmp_path):
+    path = tmp_path / "config.yaml"
+    with mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", str(path)):
+        yield path
+
+
 @mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_relative_url_falls_back_to_full_resolution(resolve_teamspace, client, tree):
-    resolve_teamspace.return_value = SimpleNamespace(id="ts-current", name="current")
+def test_relative_url_uses_teamspace_from_env(resolve_teamspace, client, tree, config_file, monkeypatch):
+    monkeypatch.setenv("LIGHTNING_TEAMSPACE", "my-teamspace")
+    monkeypatch.setenv("LIGHTNING_ORG", "my-org")
 
     Filesystem().listdir("lit:///data")
 
+    client.organizations_service_get_organization.assert_called_once_with(id="", name="my-org")
+    client.projects_service_get_project.assert_not_called()
+    resolve_teamspace.assert_not_called()
+    assert f"/v1/projects/{TEAMSPACE_ID}/artifacts/trees/data" in tree.call_args[0][0]
+
+
+def test_relative_url_uses_teamspace_from_config(client, tree, config_file):
+    config_file.write_text("teamspace:\n  name: my-teamspace\n  owner: my-org\n  owner_type: organization\n")
+
+    Filesystem().listdir("lit:///data")
+
+    client.organizations_service_get_organization.assert_called_once_with(id="", name="my-org")
+    assert f"/v1/projects/{TEAMSPACE_ID}/" in tree.call_args[0][0]
+
+
+def test_relative_url_without_a_current_teamspace_is_an_error(client, tree, config_file):
+    with pytest.raises(ValueError, match="Could not resolve a teamspace"):
+        Filesystem().listdir("lit:///data")
     client.organizations_service_get_organization.assert_not_called()
-    resolve_teamspace.assert_called_once_with(None, None)
 
 
 def test_org_lookup_error_other_than_not_found_is_raised(client, tree):
