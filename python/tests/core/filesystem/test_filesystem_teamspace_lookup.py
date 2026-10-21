@@ -68,15 +68,19 @@ def test_teamspace_matches_display_name(resolve_teamspace, client, tree):
     assert f"/v1/projects/{TEAMSPACE_ID}/" in tree.call_args[0][0]
 
 
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_user_owner_falls_back_to_full_resolution(resolve_teamspace, client, tree):
+def test_unknown_org_is_an_error(client, tree):
     client.organizations_service_get_organization.side_effect = ApiException(status=404, reason="Not Found")
-    resolve_teamspace.return_value = SimpleNamespace(id="ts-user", name="my-teamspace")
 
-    Filesystem().listdir("lit://my-user/my-teamspace/data")
+    with pytest.raises(ValueError, match="Org nope does not exist"):
+        Filesystem().listdir("lit://nope/my-teamspace/data")
+    tree.assert_not_called()
 
-    resolve_teamspace.assert_called_once_with("my-teamspace", "my-user")
-    assert "/v1/projects/ts-user/" in tree.call_args[0][0]
+
+def test_teamspace_not_in_memberships_is_an_error(client, tree):
+    with pytest.raises(ValueError, match="Teamspace missing does not exist"):
+        Filesystem().listdir("lit://my-org/missing/data")
+    client.projects_service_get_project.assert_not_called()
+    tree.assert_not_called()
 
 
 @mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")

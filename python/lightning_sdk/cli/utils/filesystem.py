@@ -32,22 +32,32 @@ def resolve_lit_url(url: str) -> Tuple[Teamspace, str]:
     return resolve_teamspace(parsed["teamspace"], parsed["owner"]), parsed["destination"] or ""
 
 
-def resolve_lit_url_ref(url: str) -> Tuple[TeamspaceRef, str]:
-    """Like :func:`resolve_lit_url`, for operations that need only the teamspace's ID.
+def resolve_teamspace_ref(teamspace: Optional[str], owner: Optional[str]) -> TeamspaceRef:
+    """Like :func:`resolve_teamspace`, for operations that need only the teamspace's ID.
 
-    A teamspace owned by an organization resolves from two requests, the
-    organization and the user's memberships, instead of building a full
-    :class:`Teamspace`. The relative form, and a teamspace owned by a user,
-    resolve through :func:`resolve_lit_url`.
+    Teamspaces are owned by organizations, so a named teamspace resolves from two
+    requests, the organization and the user's memberships, instead of building a
+    full :class:`Teamspace`. Without a name or owner, the current teamspace
+    resolves through :func:`resolve_teamspace`.
+
+    Raises:
+        ValueError: If the organization does not exist, or the user is not a member
+            of a teamspace with that name in it.
     """
-    parsed = parse_lit_url(url)
-    owner, name = parsed["owner"], parsed["teamspace"]
-    destination = parsed["destination"] or ""
-    if owner and name:
-        org_id = OrgApi().find_org_id(owner)
-        teamspace_id = TeamspaceApi().find_teamspace_id(name=name, owner_id=org_id) if org_id else None
-        if teamspace_id:
-            return TeamspaceRef(id=teamspace_id, name=name), destination
+    if not (teamspace and owner):
+        resolved = resolve_teamspace(teamspace, owner)
+        return TeamspaceRef(id=resolved.id, name=resolved.name)
 
-    teamspace = resolve_teamspace(name, owner)
-    return TeamspaceRef(id=teamspace.id, name=teamspace.name), destination
+    org_id = OrgApi().find_org_id(owner)
+    if not org_id:
+        raise ValueError(f"Org {owner} does not exist")
+    teamspace_id = TeamspaceApi().find_teamspace_id(name=teamspace, owner_id=org_id)
+    if not teamspace_id:
+        raise ValueError(f"Teamspace {teamspace} does not exist")
+    return TeamspaceRef(id=teamspace_id, name=teamspace)
+
+
+def resolve_lit_url_ref(url: str) -> Tuple[TeamspaceRef, str]:
+    """Like :func:`resolve_lit_url`, resolving the teamspace with :func:`resolve_teamspace_ref`."""
+    parsed = parse_lit_url(url)
+    return resolve_teamspace_ref(parsed["teamspace"], parsed["owner"]), parsed["destination"] or ""
