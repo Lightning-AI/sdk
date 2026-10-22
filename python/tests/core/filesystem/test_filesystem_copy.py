@@ -32,7 +32,7 @@ def fake_path_result():
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref")
 @mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_download_file(
     mock_parse_lit_url, mock_resolve, mock_authenticate, mock_client_cls, mock_get, fake_teamspace, tmp_path
@@ -74,7 +74,7 @@ def test_copy_download_file(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref")
 @mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_download_folder(
     mock_parse_lit_url,
@@ -121,7 +121,7 @@ def test_copy_download_folder(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers", return_value=FAKE_AUTH_HEADERS)
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref")
 @mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_raises_if_directory_without_recursive(
     mock_parse_lit_url, mock_resolve, _mock_authenticate, mock_client_cls, mock_get, fake_teamspace
@@ -420,5 +420,9 @@ def test_copy_download_maps_missing_parent_to_does_not_exist(fake_teamspace):
     fs, patches = _upload_fs(fake_teamspace, "r2_connections/nope/file.txt")
     fs._filesystem_api.list_files.side_effect = _RemoteApiError("Failed to list files: 404", status_code=404)
 
-    with patches[0], patches[1], pytest.raises(ValueError, match="does not exist in teamspace"):
+    with (
+        patches[0],
+        mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace),
+        pytest.raises(ValueError, match="does not exist in teamspace"),
+    ):
         fs.copy("lit://my-org/my-teamspace/r2_connections/nope/file.txt", "/tmp/out")

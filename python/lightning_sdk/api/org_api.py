@@ -6,6 +6,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1CreateProjectRequest,
     V1Organization,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 # The billing summary API only supports querying up to 2 years of history.
 _MAX_DURATION = timedelta(days=730)
@@ -49,6 +50,26 @@ class OrgApi:
         if not res:
             raise ValueError(f"Org {name} does not exist")
         return res
+
+    def find_org_id(self, name: str) -> Optional[str]:
+        """Return the ID of the organisation with this name, or ``None`` if there is none.
+
+        Args:
+            name: The organisation name to look up.
+
+        Returns:
+            Optional[str]: The organisation's ID, or ``None`` if no organisation has that name.
+
+        Raises:
+            ApiException: If the API returns an error other than not found.
+        """
+        try:
+            res = self._client.organizations_service_get_organization(id="", name=name)
+        except ApiException as ex:
+            if ex.status == 404:
+                return None
+            raise
+        return res.id if res else None
 
     def _get_org_by_id(self, org_id: str) -> V1Organization:
         """Gets the organization from the given ID.
