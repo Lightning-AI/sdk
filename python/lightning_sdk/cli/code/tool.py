@@ -16,11 +16,12 @@ from typing import Any, Callable, Optional, Sequence
 from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CodingModel, default_model
 
-_KEY_PATTERN = re.compile(r"sk-lit-[A-Za-z0-9_-]+")
+# service-account keys (lit_sa_) are what setup writes now; sk-lit- keys are the legacy org keys
+_KEY_PATTERN = re.compile(r"(?:lit_sa_|sk-lit-)[A-Za-z0-9_-]+")
 
 
 def _redact(text: str) -> str:
-    return _KEY_PATTERN.sub("sk-lit-…", text)
+    return _KEY_PATTERN.sub("<API key>", text)
 
 
 class ToolConfigError(Exception):
@@ -28,30 +29,11 @@ class ToolConfigError(Exception):
 
 
 @dataclass
-class KeyRecord:
-    """The org and API key `lightning code` set a tool up with."""
-
-    org_id: str
-    org_name: str
-    key_id: str
-    key_name: str
-
-    def as_dict(self) -> dict[str, str]:
-        return {"org_id": self.org_id, "org_name": self.org_name, "key_id": self.key_id, "key_name": self.key_name}
-
-    @classmethod
-    def from_dict(cls, data: Optional[dict[str, Any]]) -> Optional["KeyRecord"]:
-        if not data or not all(isinstance(data.get(k), str) for k in ("org_id", "key_id")):
-            return None
-        return cls(data["org_id"], data.get("org_name") or "", data["key_id"], data.get("key_name") or data["key_id"])
-
-
-@dataclass
 class ToolState:
     """What a tool's files say about its Lightning setup right now."""
 
-    # what `lightning code` set up, if it did
-    record: Optional[KeyRecord]
+    # whether `lightning code` set up the Lightning setup
+    managed: bool
     # the API key the tool holds now, when it can be read back
     key: Optional[str]
     # Lightning is set up in the tool, by anyone
@@ -65,7 +47,7 @@ class ToolState:
     @property
     def foreign(self) -> bool:
         """Whether a Lightning setup exists that `lightning code` didn't write."""
-        return self.configured and self.record is None
+        return self.configured and not self.managed
 
 
 @dataclass
@@ -119,9 +101,9 @@ class Plan:
         return "".join(change.describe() for change in self.changes if not change.quiet)
 
 
-def record_change(tool: str, record: Optional[KeyRecord]) -> FileChange:
-    """The change to the shared record file that notes, or forgets, ``tool``'s org and key."""
-    before, after = files.records_text(tool, record.as_dict() if record else None)
+def record_change(tool: str, managed: bool) -> FileChange:
+    """The change to the shared record file that notes, or forgets, that ``tool`` is set up by `lightning code`."""
+    before, after = files.records_text(tool, managed)
     return FileChange(files.records_path(), before, after, mode=0o600, backup=False, quiet=True)
 
 
@@ -166,7 +148,6 @@ class Tool(ABC):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
         """The changes that point the tool at code.lightning.ai with ``key``.
 

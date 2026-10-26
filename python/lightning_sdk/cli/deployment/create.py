@@ -56,7 +56,6 @@ from lightning_sdk.deployment import Deployment
 @click.option("--quantity", type=int, help="Number of machines per replica.")
 @click.option("--include-credentials/--no-include-credentials", default=None, help="Inject SDK credentials.")
 @click.option("--custom-domain", help="Custom domain to attach to the deployment.")
-@click.option("--api-key-auth", is_flag=True, default=False, help="Require Lightning API key auth on the endpoint.")
 @click.option("--basic-auth", help="Require basic auth on the endpoint, in USERNAME:PASSWORD format.")
 @click.option("--token-auth", help="Require bearer token auth on the endpoint.")
 @click.option(
@@ -124,7 +123,6 @@ def create_deployment(
     quantity: Optional[int] = None,
     include_credentials: Optional[bool] = None,
     custom_domain: Optional[str] = None,
-    api_key_auth: bool = False,
     basic_auth: Optional[str] = None,
     token_auth: Optional[str] = None,
     path_mapping: Sequence[str] = (),
@@ -206,7 +204,7 @@ def create_deployment(
             env=parse_env(env, secret),
             spot=interruptible,
             replicas=replicas,
-            auth=parse_auth(api_key_auth=api_key_auth, basic_auth=basic_auth, token_auth=token_auth),
+            auth=parse_auth(basic_auth=basic_auth, token_auth=token_auth),
             cloud=cloud,
             custom_domain=custom_domain,
             quantity=quantity,

@@ -1,14 +1,15 @@
 import json
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import click
 import pytest
 from click.testing import CliRunner, Result
 
-from lightning_sdk.cli.code import account
 from lightning_sdk.cli.code import models as coding_models
+
+# the key `lightning code setup` reads from LIGHTNING_API_KEY, and writes into each tool's config
+KEY = "lit_sa_test-key"
 
 
 @pytest.fixture(autouse=True)
@@ -22,6 +23,7 @@ def tool_homes(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("HOME", str(tmp_path))
     for name in ("OPENCODE_CONFIG", "OPENCODE_CONFIG_CONTENT", "OPENCODE_AUTH_CONTENT", "LIGHTNING_CODE_API_KEY"):
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
     monkeypatch.chdir(tmp_path)
     return tmp_path
 
@@ -38,26 +40,11 @@ def models_api():
         yield get
 
 
-def make_org(plan="Enterprise", name="my-org", org_id="org-1", **kwargs) -> account.CodingOrg:
-    fields = {"display_name": "", "personal": False, "coding_disabled": False, **kwargs}
-    return account.CodingOrg(id=org_id, name=name, plan=plan, **fields)
-
-
 @pytest.fixture()
-def api():
-    """Mock everything that talks to Lightning: org choice, key creation and revocation."""
-    keys = iter(range(1, 100))
-
-    def create_key(org, name, description):
-        n = next(keys)
-        return SimpleNamespace(id=f"key-{n}", name=name, raw_key=f"sk-lit-{n}")
-
-    with patch.object(account, "choose_org", return_value=make_org()) as choose, patch.object(
-        account, "create_key", side_effect=create_key
-    ) as create, patch.object(account, "key_exists", return_value=True) as exists, patch.object(
-        account, "revoke_key", return_value=True
-    ) as revoke:
-        yield SimpleNamespace(choose_org=choose, create_key=create, key_exists=exists, revoke_key=revoke)
+def api(monkeypatch: pytest.MonkeyPatch):
+    """Put the key setup reads in LIGHTNING_API_KEY."""
+    monkeypatch.setenv("LIGHTNING_API_KEY", KEY)
+    return KEY
 
 
 def invoke(command: click.Command, *args: str) -> Result:

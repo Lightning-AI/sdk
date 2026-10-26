@@ -21,9 +21,6 @@ Deployment
 .. autoclass:: TokenAuth
    :members:
 
-.. autoclass:: ApiKeyAuth
-   :members:
-
 .. autoclass:: ReleaseStrategy
    :members:
 

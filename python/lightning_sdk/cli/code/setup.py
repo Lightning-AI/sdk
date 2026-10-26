@@ -1,23 +1,24 @@
 """lightning code setup: point a coding tool at code.lightning.ai."""
 
+import os
 from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.cli.code import account
 from lightning_sdk.cli.code import tool as tools
 from lightning_sdk.cli.code.models import DEFAULT_MODEL, coding_models
 from lightning_sdk.cli.code.registry import TOOL_NAMES, TOOLS
-from lightning_sdk.cli.code.tool import KeyRecord, ToolConfigError
+from lightning_sdk.cli.code.tool import ToolConfigError
 from lightning_sdk.cli.utils.logging import LightningCommand
 
-# stands in for the key in a --dry-run, which doesn't create one
-_DRY_RUN_KEY = "sk-lit-dry-run"
+# the variable the key is read from, which the tool's config then holds
+KEY_ENV = "LIGHTNING_API_KEY"
+# stands in for the key in a --dry-run, which doesn't need one
+_DRY_RUN_KEY = "lit_sa_dry-run"
 
 
 @click.command("setup", cls=LightningCommand)
 @click.argument("tool", type=click.Choice(TOOL_NAMES, case_sensitive=False))
-@click.option("--org", help="Organization that pays, by name. Asked for when you belong to several.")
 @click.option(
     "--model",
     help=(
@@ -25,8 +26,7 @@ _DRY_RUN_KEY = "sk-lit-dry-run"
         "becomes the default only if you have none."
     ),
 )
-@click.option("--rotate-key", is_flag=True, default=False, help="Create a new API key and revoke the old one.")
-@click.option("--dry-run", is_flag=True, default=False, help="Show the changes without writing or creating anything.")
+@click.option("--dry-run", is_flag=True, default=False, help="Show the changes without writing anything.")
 @click.option(
     "--force",
     "-f",
@@ -34,20 +34,20 @@ _DRY_RUN_KEY = "sk-lit-dry-run"
     default=False,
     help="Replace a Lightning setup that `lightning code` didn't make.",
 )
-def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool, dry_run: bool, force: bool) -> None:
+def setup(tool: str, model: Optional[str], dry_run: bool, force: bool) -> None:
     """Set up a coding tool to use code.lightning.ai.
 
     TOOL is one of opencode, pi, codex, dsh (DeepSeek Harness) or cursor. Lightning is
-    added as a model provider without touching the rest of the tool's config, with an
-    API key that bills the organization you choose. The organization needs a Pro, Teams
-    or Enterprise plan. Cursor can't be configured from outside, so for it the key is
-    printed with the steps to add it in Cursor Settings.
+    added as a model provider without touching the rest of the tool's config. The API
+    key is read from LIGHTNING_API_KEY and saved in the tool's config; no key is created.
+    Cursor can't be configured from outside, so for it the key is printed with the steps
+    to add it in Cursor Settings.
 
-    Run it again to switch organizations or pick up new models.
+    Run it again to pick up new models.
 
     Examples:
-        lightning code setup opencode --org my-org
-        lightning code setup codex --org my-org --model glm-5.3
+        LIGHTNING_API_KEY=lit_sa_... lightning code setup opencode
+        LIGHTNING_API_KEY=lit_sa_... lightning code setup codex --model glm-5.3
     """
     target = TOOLS[tool.lower()]
     try:
@@ -68,65 +68,26 @@ def setup(tool: str, org: Optional[str], model: Optional[str], rotate_key: bool,
     if model is not None and model not in keys:
         raise click.UsageError(f"Unknown model '{model}'. Choose one of: {', '.join(keys)}")
 
-    previous = state.record
-    chosen = account.choose_org(org, previous_org_id=previous.org_id if previous else None)
-    account.require_coding_plan(chosen)
-
-    # the key set up before, when the tool still has it, it bills the chosen org and it still exists
-    reuse = (
-        previous is not None
-        and state.key is not None
-        and not rotate_key
-        and previous.org_id == chosen.id
-        and account.key_exists(chosen.id, previous.key_id)
-    )
-
     if dry_run:
-        record = previous if reuse and previous else KeyRecord(chosen.id, chosen.name, "", "")
-        plan = target.plan_setup(state, models=models, model=model, key=_DRY_RUN_KEY, record=record)
+        plan = target.plan_setup(state, models=models, model=model, key=_DRY_RUN_KEY)
         click.echo(plan.describe() or f"No changes to {target.name}'s config.")
-        if reuse and previous:
-            click.echo(f"Would keep the API key '{previous.key_name}'.")
-        else:
-            click.echo(f"Would create an API key billed to {chosen.label}.")
-            if previous is not None:
-                click.echo(f"Would revoke the API key '{previous.key_name}' set up before.")
         return
 
-    if reuse and previous and state.key:
-        key, record = state.key, previous
-    else:
-        name = account.default_key_name(tool)
-        created = account.create_key(
-            chosen, name, f"For {target.name} on code.lightning.ai, created by `lightning code setup`"
-        )
-        key, record = created.raw_key, KeyRecord(chosen.id, chosen.name, created.id, name)
+    key = os.environ.get(KEY_ENV)
+    if not key:
+        raise click.ClickException(f"Set {KEY_ENV} to the API key {target.name} should use, then run setup again.")
 
-    plan = target.plan_setup(state, models=models, model=model, key=key, record=record)
-    try:
-        backups = tools.apply(plan)
-    except Exception:
-        if record is not previous:
-            account.revoke_key(chosen.id, record.key_id)
-        raise
+    plan = target.plan_setup(state, models=models, model=model, key=key)
+    backups = tools.apply(plan)
 
-    click.echo(f"{target.name} now uses code.lightning.ai, billed to {chosen.label}.")
-    lines = [*target.summary(state, plan), ("API key", record.key_name)]
+    click.echo(f"{target.name} now uses code.lightning.ai.")
+    lines = [*target.summary(state, plan)]
     if plan.set_model:
         lines.append(("Default", plan.set_model))
     lines += [("Backup", str(path)) for path in backups]
-    width = max(len(label) for label, _ in lines) + 1
+    width = max((len(label) for label, _ in lines), default=0) + 1
     for label, value in lines:
         click.echo(f"  {label + ':':<{width}} {value}")
-
-    if previous is not None and record is not previous:
-        if account.revoke_key(previous.org_id, previous.key_id):
-            click.echo(f"Revoked the previous API key '{previous.key_name}'.")
-        else:
-            click.echo(
-                f"Couldn't revoke the previous API key {previous.key_id}. "
-                f"Delete it with: lightning api-key delete {previous.key_id} --org {previous.org_name}"
-            )
 
     for note in target.warnings(state):
         click.echo(f"Note: {note}")

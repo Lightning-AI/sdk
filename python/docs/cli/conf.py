@@ -47,7 +47,6 @@ _CLI_ARGUMENT_HELP = {
     ("lightning container delete", "name"): "Container name to delete.",
     ("lightning model upload", "name"): "Model name to upload.",
     ("lightning model download", "name"): "Model name to download.",
-    ("lightning api-key delete", "key_id"): "API key ID to delete.",
     ("lightning file upload", "path"): "Local file path to upload.",
     ("lightning file download", "path"): "Remote file path to download.",
     ("lightning folder upload", "path"): "Local folder path to upload.",

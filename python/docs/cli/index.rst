@@ -96,7 +96,7 @@ Common Workflows
 * Build and operate inference services with :doc:`deployment` and :doc:`model`.
 * Move data and artifacts with :doc:`file`, :doc:`folder`, :doc:`container`, and :doc:`cp`.
 * Configure accounts, organizations, teamspaces, cloud accounts, and SSH with
-  :doc:`config`, :doc:`api-key`, and :doc:`ssh`.
+  :doc:`config`, and :doc:`ssh`.
 * Manage lower-level sandbox sessions with :doc:`sandbox`.
 * Point coding agents (OpenCode, pi, Codex, DeepSeek Harness, Cursor) at code.lightning.ai with :doc:`code`.
 
@@ -116,7 +116,6 @@ reference.
    deployment
    container
    model
-   api-key
    file
    folder
    ssh
