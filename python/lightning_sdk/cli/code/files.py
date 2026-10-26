@@ -49,27 +49,26 @@ def delete(path: Path) -> None:
 
 
 def records_path() -> Path:
-    """Where `lightning code` notes the org and key it set up for tools that have no place for it."""
+    """Where `lightning code` marks the tools it set up, for tools that have no place for the mark."""
     return Path.home() / ".lightning" / "code-tools.json"
 
 
-def load_record(tool: str) -> Optional[dict[str, str]]:
+def is_managed(tool: str) -> bool:
     try:
-        entry = read_json(records_path()).get(tool)
+        return tool in read_json(records_path())
     except ValueError:
-        return None
-    return dict(entry) if isinstance(entry, dict) else None
+        return False
 
 
-def records_text(tool: str, record: Optional[dict[str, str]]) -> tuple[str, str]:
-    """The record file before and after setting ``tool``'s entry, or removing it when ``record`` is None."""
+def records_text(tool: str, managed: bool) -> tuple[str, str]:
+    """The record file before and after marking ``tool`` as set up by `lightning code`, or unmarking it."""
     before = read_text(records_path())
     try:
         data = read_json(records_path())
     except ValueError:
         data = {}
-    if record is None:
-        data.pop(tool, None)
+    if managed:
+        data[tool] = {"managed": True}
     else:
-        data[tool] = record
+        data.pop(tool, None)
     return before, dump_json(data)

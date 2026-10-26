@@ -13,7 +13,7 @@ from lightning_sdk.cli.utils.logging import LightningCommand
 @click.command("status", cls=LightningCommand)
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def status(as_json: bool = False) -> None:
-    """Show which coding tools are set up for code.lightning.ai, and which org they bill."""
+    """Show which coding tools are set up for code.lightning.ai."""
     infos: list[dict[str, Any]] = []
     for tool in TOOLS.values():
         info: dict[str, Any] = {"tool": tool.id, "installed": tool.installed()}
@@ -22,16 +22,12 @@ def status(as_json: bool = False) -> None:
         except ToolConfigError as exc:
             infos.append({**info, "configured": False, "managed": False, "error": str(exc)})
             continue
-        record = state.record
         infos.append(
             {
                 **info,
                 "configured": state.configured,
-                "managed": record is not None,
+                "managed": state.managed,
                 "config": state.location,
-                "org": record.org_name if record else None,
-                "key_name": record.key_name if record else None,
-                "key_id": record.key_id if record else None,
                 "model": state.default_model,
                 "notes": tool.warnings(state) if state.configured else [],
             }
@@ -52,8 +48,7 @@ def status(as_json: bool = False) -> None:
             click.echo(f"{tool.name}: set up by hand in {info['config']}, not by `lightning code`")
             continue
         else:
-            click.echo(f"{tool.name}: billed to {info['org']}")
-            click.echo(f"  API key: {info['key_name']} ({info['key_id']})")
+            click.echo(f"{tool.name}: set up by `lightning code`")
             click.echo(f"  Config:  {info['config']}")
             if info["model"]:
                 click.echo(f"  Default: {info['model']}")

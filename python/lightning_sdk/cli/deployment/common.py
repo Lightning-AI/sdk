@@ -6,9 +6,7 @@ from typing import Any, Dict, Iterable, List, Literal, Optional, Sequence, Union
 
 import rich_click as click
 
-from lightning_sdk.api.auth_api import AuthApi
 from lightning_sdk.api.deployment_api import (
-    ApiKeyAuth,
     AutoScaleConfig,
     BasicAuth,
     DeploymentApi,
@@ -19,7 +17,7 @@ from lightning_sdk.api.deployment_api import (
 )
 from lightning_sdk.cli.job.run import _resolve_envs, _resolve_path_mapping
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
-from lightning_sdk.lightning_cloud.openapi import V1AuthType, V1Deployment
+from lightning_sdk.lightning_cloud.openapi import V1Deployment
 from lightning_sdk.machine import Machine
 from lightning_sdk.models import _list_teamspaces
 from lightning_sdk.teamspace import Teamspace
@@ -87,38 +85,13 @@ def parse_path_mappings(path_mapping: Sequence[str], path_mappings: str) -> Dict
     return result
 
 
-def _warn_if_caller_key_cannot_call_endpoint() -> None:
-    """Warn when a scoped key picks ``--api-key-auth``: the endpoint will reject that key.
-
-    Advisory only, since the endpoint may be called by someone holding a user key.
-    """
-    try:
-        auth_type = AuthApi().whoami().auth_type
-    except Exception:  # an advisory check must never block a deployment
-        return
-
-    if auth_type == V1AuthType.SCOPED_API_KEY:
-        click.secho(
-            "Warning: --api-key-auth gates the endpoint on a Lightning user key, but you are "
-            "authenticated with a scoped API key, so that key will get 401 against this endpoint. "
-            "Use --token-auth if this key is what will call it.",
-            fg="yellow",
-            err=True,
-        )
-
-
 def parse_auth(
-    api_key_auth: bool = False,
     basic_auth: Optional[str] = None,
     token_auth: Optional[str] = None,
-) -> Optional[Union[ApiKeyAuth, BasicAuth, TokenAuth]]:
-    selected = [bool(api_key_auth), basic_auth is not None, token_auth is not None]
-    if sum(selected) > 1:
-        raise click.UsageError("--api-key-auth, --basic-auth, and --token-auth are mutually exclusive.")
+) -> Optional[Union[BasicAuth, TokenAuth]]:
+    if basic_auth is not None and token_auth is not None:
+        raise click.UsageError("--basic-auth and --token-auth are mutually exclusive.")
 
-    if api_key_auth:
-        _warn_if_caller_key_cannot_call_endpoint()
-        return ApiKeyAuth()
     if token_auth is not None:
         return TokenAuth(token_auth)
     if basic_auth is not None:

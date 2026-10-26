@@ -1,4 +1,4 @@
-"""Cursor: create a key and print the steps to add it in Cursor Settings.
+"""Cursor: print the steps to add your key in Cursor Settings.
 
 Cursor keeps these settings in an internal database it holds open and rewrites, with the
 key encrypted through the OS keychain, so nothing outside it can set them safely. Its
@@ -9,7 +9,7 @@ from typing import Optional, Sequence
 
 from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CODE_BASE_URL, CodingModel, default_model
-from lightning_sdk.cli.code.tool import KeyRecord, Plan, Tool, ToolState, record_change
+from lightning_sdk.cli.code.tool import Plan, Tool, ToolState, record_change
 
 
 class Cursor(Tool):
@@ -18,12 +18,12 @@ class Cursor(Tool):
     start = ""
 
     def read(self) -> ToolState:
-        # Cursor's copy of the key can't be read back, so every setup creates a new one
-        record = KeyRecord.from_dict(files.load_record(self.id))
+        # Cursor's copy of the key can't be read back, so only the mark that setup left is known
+        managed = files.is_managed(self.id)
         return ToolState(
-            record=record,
+            managed=managed,
             key=None,
-            configured=record is not None,
+            configured=managed,
             default_model=None,
             location="Cursor Settings > Models",
         )
@@ -35,14 +35,13 @@ class Cursor(Tool):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
-        return Plan(changes=[record_change(self.id, record)])
+        return Plan(changes=[record_change(self.id, True)])
 
     def plan_remove(self, state: ToolState) -> Plan:
-        plan = Plan(changes=[record_change(self.id, None)])
-        if state.record is not None:
-            plan.removed.append("the record of Cursor's key")
+        plan = Plan(changes=[record_change(self.id, False)])
+        if state.managed:
+            plan.removed.append("the Lightning setup marker for Cursor")
         return plan
 
     def instructions(self, key: str, models: Sequence[CodingModel], plan: Plan) -> Optional[str]:

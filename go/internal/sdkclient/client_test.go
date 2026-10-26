@@ -149,18 +149,30 @@ func TestResolveAuthPrefersEnvBearer(t *testing.T) {
 	}
 }
 
-func TestResolveAuthUsesEnvBasic(t *testing.T) {
+func TestResolveAuthUsesEnvAPIKeyAsBearer(t *testing.T) {
 	resetAuthEnv(t)
 	t.Setenv("LIGHTNING_USER_ID", "env-user")
-	t.Setenv("LIGHTNING_API_KEY", "env-key")
+	t.Setenv("LIGHTNING_API_KEY", "lit_sa_env-key")
 	writeCredentialsFile(t, `{"auth_token":"file-token"}`)
 
 	auth, err := resolveAuth()
 	if err != nil {
 		t.Fatalf("resolveAuth returned error: %v", err)
 	}
-	if auth.kind != authBasic || auth.userID != "env-user" || auth.apiKey != "env-key" {
-		t.Fatalf("auth = %+v, want env basic", auth)
+	if auth.kind != authBearer || auth.token != "lit_sa_env-key" {
+		t.Fatalf("auth = %+v, want env api key as bearer", auth)
+	}
+}
+
+func TestResolveAuthRefusesLegacyEnvAPIKey(t *testing.T) {
+	for _, key := range []string{"sk-lit-0123456789abcdef", "3f2b8c1e-9d4a-4b7f-8e21-0a6c5d9f7b10"} {
+		resetAuthEnv(t)
+		t.Setenv("LIGHTNING_API_KEY", key)
+
+		_, err := resolveAuth()
+		if err == nil || !strings.Contains(err.Error(), "no longer supported") {
+			t.Fatalf("resolveAuth(%q) error = %v, want migration message", key, err)
+		}
 	}
 }
 
@@ -177,16 +189,13 @@ func TestResolveAuthLoadsCredentialsFileBearer(t *testing.T) {
 	}
 }
 
-func TestResolveAuthLoadsCredentialsFileBasic(t *testing.T) {
+func TestResolveAuthRefusesLegacyCredentialsFileAPIKey(t *testing.T) {
 	resetAuthEnv(t)
-	writeCredentialsFile(t, `{"user_id":"file-user","api_key":"file-key"}`)
+	writeCredentialsFile(t, `{"user_id":"file-user","api_key":"sk-lit-0123456789abcdef"}`)
 
-	auth, err := resolveAuth()
-	if err != nil {
-		t.Fatalf("resolveAuth returned error: %v", err)
-	}
-	if auth.kind != authBasic || auth.userID != "file-user" || auth.apiKey != "file-key" {
-		t.Fatalf("auth = %+v, want file basic", auth)
+	_, err := resolveAuth()
+	if err == nil || !strings.Contains(err.Error(), "no longer supported") {
+		t.Fatalf("resolveAuth error = %v, want migration message", err)
 	}
 }
 
@@ -196,20 +205,6 @@ func TestResolveAuthErrorsOnMalformedCredentialsFile(t *testing.T) {
 
 	if _, err := resolveAuth(); err == nil {
 		t.Fatal("resolveAuth returned nil error for malformed credentials file")
-	}
-}
-
-func TestSetRequestAuthUsesResolvedBasicCredentials(t *testing.T) {
-	req := request(t, http.MethodGet, nil)
-
-	setRequestAuth(req, authCredentials{kind: authBasic, userID: "user-1", apiKey: "key-1"})
-
-	user, password, ok := req.BasicAuth()
-	if !ok {
-		t.Fatal("request is missing basic auth")
-	}
-	if user != "user-1" || password != "key-1" {
-		t.Fatalf("basic auth = %q %q, want user-1 key-1", user, password)
 	}
 }
 

@@ -15,7 +15,6 @@ from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CODE_BASE_URL, CodingModel
 from lightning_sdk.cli.code.tool import (
     FileChange,
-    KeyRecord,
     Plan,
     Tool,
     ToolConfigError,
@@ -101,10 +100,9 @@ class Pi(Tool):
         default = None
         if settings.get("defaultProvider") and settings.get("defaultModel"):
             default = f"{settings['defaultProvider']}/{settings['defaultModel']}"
-        record = KeyRecord.from_dict(files.load_record(self.id))
         return ToolState(
-            # a record only counts while the tool still has a key to go with it
-            record=record if credential is not None else None,
+            # the mark only counts while the tool still has a key to go with it
+            managed=files.is_managed(self.id) and credential is not None,
             key=key if isinstance(key, str) else None,
             configured=provider is not None or credential is not None,
             default_model=default,
@@ -119,7 +117,6 @@ class Pi(Tool):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
         current: _Files = state.data
         directory = agent_dir()
@@ -147,7 +144,7 @@ class Pi(Tool):
                     summary=f"save the API key as '{PROVIDER_ID}'",
                 ),
                 FileChange(directory / "settings.json", current.settings_text, settings_text),
-                record_change(self.id, record),
+                record_change(self.id, True),
             ],
             set_model=set_model,
         )
@@ -186,7 +183,7 @@ class Pi(Tool):
                 )
             )
             plan.removed.append(f"the API key from {directory / 'auth.json'}")
-        plan.changes.append(record_change(self.id, None))
+        plan.changes.append(record_change(self.id, False))
         return plan
 
     def summary(self, state: ToolState, plan: Plan) -> list[tuple[str, str]]:

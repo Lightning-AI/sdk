@@ -42,7 +42,6 @@ from lightning_sdk.deployment import Deployment
 @click.option("--quantity", type=int, help="New number of machines per replica.")
 @click.option("--include-credentials/--no-include-credentials", default=None, help="Inject SDK credentials.")
 @click.option("--custom-domain", help="New custom domain.")
-@click.option("--api-key-auth", is_flag=True, default=False, help="Require Lightning API key auth on the endpoint.")
 @click.option("--basic-auth", help="Require basic auth on the endpoint, in USERNAME:PASSWORD format.")
 @click.option("--token-auth", help="Require bearer token auth on the endpoint.")
 @click.option(
@@ -75,7 +74,6 @@ def update_deployment(
     quantity: Optional[int] = None,
     include_credentials: Optional[bool] = None,
     custom_domain: Optional[str] = None,
-    api_key_auth: bool = False,
     basic_auth: Optional[str] = None,
     token_auth: Optional[str] = None,
     path_mapping: Sequence[str] = (),
@@ -105,7 +103,7 @@ def update_deployment(
         quantity,
         include_credentials,
         custom_domain,
-        api_key_auth or basic_auth or token_auth,
+        basic_auth or token_auth,
         path_mappings_dict,
         max_runtime,
     ]
@@ -146,7 +144,7 @@ def update_deployment(
         ports=parse_ports(ports),
         release_strategy=build_release_strategy(max_surge, max_unavailable) if release_changes else None,
         replicas=replicas,
-        auth=parse_auth(api_key_auth=api_key_auth, basic_auth=basic_auth, token_auth=token_auth),
+        auth=parse_auth(basic_auth=basic_auth, token_auth=token_auth),
         custom_domain=custom_domain,
         quantity=quantity,
         include_credentials=include_credentials,

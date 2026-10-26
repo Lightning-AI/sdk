@@ -157,7 +157,6 @@ def test_help():
     assert "deploym…  Deploy autoscaling inference APIs." in text
 
     # ACCESS
-    assert "api-key   Keys for model endpoint access." in text
     assert "ssh       Configure SSH access to Studios." in text
     assert "license   View and manage product licenses." in text
 

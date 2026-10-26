@@ -8,7 +8,6 @@ import requests
 
 from lightning_sdk.api import CloudAccountApi
 from lightning_sdk.api.deployment_api import (
-    ApiKeyAuth,
     Auth,
     AutoScaleConfig,
     AutoScalingMetric,
@@ -60,7 +59,6 @@ from lightning_sdk.utils.resolve import (
 )
 
 __all__ = [
-    "ApiKeyAuth",
     "AutoScaleConfig",
     "AutoScalingMetric",
     "BasicAuth",
@@ -179,7 +177,7 @@ class Deployment(metaclass=TrackCallsMeta):
         spot: Optional[bool] = None,
         replicas: Optional[int] = None,
         health_check: Optional[Union[HttpHealthCheck, ExecHealthCheck]] = None,
-        auth: Optional[Union[BasicAuth, TokenAuth, ApiKeyAuth]] = None,
+        auth: Optional[Union[BasicAuth, TokenAuth]] = None,
         custom_domain: Optional[str] = None,
         cloudspace_id: Optional[str] = None,
         quantity: Optional[int] = None,
@@ -908,9 +906,6 @@ class Deployment(metaclass=TrackCallsMeta):
     def _get_auth_headers(self) -> Dict:
         if self._deployment:
             self._deployment = self._deployment_api.get_deployment_by_name(self._name, self._teamspace.id)
-
-        if self._deployment.endpoint.auth.user_api_key:
-            return {"Authorization": f"Bearer {self._auth.api_key}"}
 
         # TODO: Add support for all auth
         return {}

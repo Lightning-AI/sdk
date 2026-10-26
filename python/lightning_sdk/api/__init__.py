@@ -1,5 +1,4 @@
 from lightning_sdk.api.agents_api import AgentApi
-from lightning_sdk.api.api_key_api import ApiKeyApi
 from lightning_sdk.api.billing_api import (
     BillingActivity,
     BillingActivityFilterValues,
@@ -17,7 +16,6 @@ from lightning_sdk.api.user_api import UserApi
 
 __all__ = [
     "AgentApi",
-    "ApiKeyApi",
     "BillingActivity",
     "BillingActivityFilterValues",
     "BillingApi",

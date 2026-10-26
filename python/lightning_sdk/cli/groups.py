@@ -4,7 +4,6 @@ import rich_click as click
 
 from lightning_sdk.cli.api import APIGroup
 from lightning_sdk.cli.api import register_commands as register_api_commands
-from lightning_sdk.cli.api_key import register_commands as register_api_key_commands
 from lightning_sdk.cli.auth import register_commands as register_auth_commands
 from lightning_sdk.cli.base_studio import register_commands as register_base_studio_commands
 from lightning_sdk.cli.code import register_commands as register_code_commands
@@ -152,16 +151,6 @@ def pipeline() -> None:
     """Build and manage pipelines."""
 
 
-@click.group(name="api-key", cls=LightningGroup)
-def api_key() -> None:
-    """Keys for model endpoint access.
-
-    Org context is inferred automatically. If you use multiple orgs, set
-    LIGHTNING_ORG or `lightning config set organization.name` to match the org
-    selected in the web UI.
-    """
-
-
 @click.group(name="code", cls=LightningGroup)
 def code() -> None:
     """Coding agents on code.lightning.ai."""
@@ -283,7 +272,6 @@ register_sandbox_commands(sandbox)
 register_container_commands(container)
 register_model_commands(model)
 register_pipeline_commands(pipeline)
-register_api_key_commands(api_key)
 register_auth_commands(auth)
 register_code_commands(code)
 register_file_commands(file)

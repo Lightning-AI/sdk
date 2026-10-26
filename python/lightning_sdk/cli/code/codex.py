@@ -16,7 +16,6 @@ from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CODE_BASE_URL, REQUEST_TIMEOUT_MS, CodingModel
 from lightning_sdk.cli.code.tool import (
     FileChange,
-    KeyRecord,
     Plan,
     Tool,
     ToolConfigError,
@@ -87,10 +86,9 @@ class Codex(Tool):
         provider = (profile.get("model_providers") or {}).get(PROVIDER_ID) or {}
         key = provider.get("experimental_bearer_token")
         ours = text.startswith(MARKER)
-        record = KeyRecord.from_dict(files.load_record(self.id)) if ours else None
         model = profile.get("model")
         return ToolState(
-            record=record,
+            managed=ours,
             key=key if isinstance(key, str) and ours else None,
             configured=bool(text.strip()),
             default_model=model if isinstance(model, str) else None,
@@ -105,7 +103,6 @@ class Codex(Tool):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
         # the profile only ever holds Lightning models, so a default not served any more is replaced
         set_model = default_to_set(
@@ -116,13 +113,13 @@ class Codex(Tool):
         return Plan(
             changes=[
                 FileChange(profile_path(), state.data, text, mode=0o600, secret=True),
-                record_change(self.id, record),
+                record_change(self.id, True),
             ],
             set_model=set_model,
         )
 
     def plan_remove(self, state: ToolState) -> Plan:
-        plan = Plan(changes=[record_change(self.id, None)])
+        plan = Plan(changes=[record_change(self.id, False)])
         if state.configured:
             plan.changes.insert(0, FileChange(profile_path(), state.data, None, secret=True, backup=False))
             plan.removed.append(f"the {PROFILE} profile {profile_path()}")

@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -318,28 +319,37 @@ type authKind int
 const (
 	authNone authKind = iota
 	authBearer
-	authBasic
 )
 
 type authCredentials struct {
-	kind   authKind
-	token  string
-	userID string
-	apiKey string
+	kind  authKind
+	token string
 }
 
 type credentialsFile struct {
-	UserID    string `json:"user_id"`
 	APIKey    string `json:"api_key"`
 	AuthToken string `json:"auth_token"`
+}
+
+// legacyAPIKeyMessage is returned for a legacy user (UUID) or org (sk-lit-) key. The SDK never sends Basic auth.
+const legacyAPIKeyMessage = "LIGHTNING_API_KEY holds a legacy API key, which is no longer supported. Create a service-account key (lit_sa_) and set LIGHTNING_API_KEY to it. If you are on an older lightning-sdk, run: pip install -U lightning-sdk"
+
+var legacyUUIDPattern = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
+
+// apiKeyCredentials sends an API key as a Bearer token, refusing the legacy formats.
+func apiKeyCredentials(apiKey string) (authCredentials, error) {
+	if strings.HasPrefix(apiKey, "sk-lit-") || legacyUUIDPattern.MatchString(apiKey) {
+		return authCredentials{}, errors.New(legacyAPIKeyMessage)
+	}
+	return authCredentials{kind: authBearer, token: apiKey}, nil
 }
 
 func resolveAuth() (authCredentials, error) {
 	if authToken := os.Getenv("LIGHTNING_AUTH_TOKEN"); authToken != "" {
 		return authCredentials{kind: authBearer, token: authToken}, nil
 	}
-	if userID, apiKey := os.Getenv("LIGHTNING_USER_ID"), os.Getenv("LIGHTNING_API_KEY"); userID != "" && apiKey != "" {
-		return authCredentials{kind: authBasic, userID: userID, apiKey: apiKey}, nil
+	if apiKey := os.Getenv("LIGHTNING_API_KEY"); apiKey != "" {
+		return apiKeyCredentials(apiKey)
 	}
 	credentials, ok, err := loadCredentialsFile()
 	if err != nil || !ok {
@@ -348,8 +358,8 @@ func resolveAuth() (authCredentials, error) {
 	if credentials.AuthToken != "" {
 		return authCredentials{kind: authBearer, token: credentials.AuthToken}, nil
 	}
-	if credentials.UserID != "" && credentials.APIKey != "" {
-		return authCredentials{kind: authBasic, userID: credentials.UserID, apiKey: credentials.APIKey}, nil
+	if credentials.APIKey != "" {
+		return apiKeyCredentials(credentials.APIKey)
 	}
 	return authCredentials{}, nil
 }
@@ -386,20 +396,14 @@ func credentialsPath() (string, bool) {
 }
 
 func setGeneratedAuth(transport *httptransport.Runtime, auth authCredentials) {
-	switch auth.kind {
-	case authBearer:
+	if auth.kind == authBearer {
 		transport.DefaultAuthentication = httptransport.BearerToken(auth.token)
-	case authBasic:
-		transport.DefaultAuthentication = httptransport.BasicAuth(auth.userID, auth.apiKey)
 	}
 }
 
 func setRequestAuth(req *http.Request, auth authCredentials) {
-	switch auth.kind {
-	case authBearer:
+	if auth.kind == authBearer {
 		req.Header.Set("Authorization", "Bearer "+auth.token)
-	case authBasic:
-		req.SetBasicAuth(auth.userID, auth.apiKey)
 	}
 }
 

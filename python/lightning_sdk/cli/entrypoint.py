@@ -13,7 +13,6 @@ from lightning_sdk.cli.completion import completion
 # Import legacy groups directly from groups.py
 from lightning_sdk.cli.groups import (
     api,
-    api_key,
     auth,
     base_studio,
     code,
@@ -55,7 +54,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "vm", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
-        {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "api-key", "ssh", "license"]},
+        {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "ssh", "license"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
         {"name": "CODING", "commands": ["code"]},
     ]
@@ -140,7 +139,6 @@ main_cli.add_command(vm)
 main_cli.add_command(container)
 main_cli.add_command(model)
 main_cli.add_command(pipeline)
-main_cli.add_command(api_key)
 main_cli.add_command(auth)
 main_cli.add_command(code)
 main_cli.add_command(file)

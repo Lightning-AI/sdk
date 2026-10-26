@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
 from lightning_sdk.api.deployment_api import (
-    ApiKeyAuth,
     BasicAuth,
     DeploymentApi,
     TokenAuth,
@@ -23,8 +22,6 @@ def test_auth_to_proto_and_restore():
     def fn(x):
         return restore_auth(to_endpoint_auth(x))
 
-    assert isinstance(fn(ApiKeyAuth()), ApiKeyAuth)
-
     new = fn(BasicAuth(username="x", password="x"))
     assert isinstance(new, BasicAuth)
     assert new.username == "x"
@@ -36,8 +33,6 @@ def test_auth_to_proto_and_restore():
 
 
 def test_restore_auth():
-    assert isinstance(restore_auth(V1EndpointAuth(enabled=True, user_api_key=True)), ApiKeyAuth)
-
     new = restore_auth(V1EndpointAuth(enabled=True, username="x", password="x"))
     assert isinstance(new, BasicAuth)
     assert new.username == "x"

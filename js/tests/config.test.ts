@@ -54,6 +54,21 @@ describe("config", () => {
       assert.equal(getApiKey(), "k-env");
     });
 
+    it("refuses a legacy UUID in LIGHTNING_API_KEY with the migration message", () => {
+      process.env.LIGHTNING_API_KEY = "3f2b8c1e-9d4a-4b7f-8e21-0a6c5d9f7b10";
+      assert.throws(() => getApiKey(), /no longer supported/);
+    });
+
+    it("refuses an sk-lit- key in LIGHTNING_API_KEY with the migration message", () => {
+      process.env.LIGHTNING_API_KEY = "sk-lit-0123456789abcdef";
+      assert.throws(() => getApiKey(), /no longer supported/);
+    });
+
+    it("does not read LIGHTNING_API_KEY when an explicit key is given", () => {
+      process.env.LIGHTNING_API_KEY = "sk-lit-0123456789abcdef";
+      assert.equal(getApiKey("override"), "override");
+    });
+
     it("prefers LIGHTNING_SANDBOX_API_KEY over LIGHTNING_API_KEY", () => {
       process.env.LIGHTNING_API_KEY = "k-legacy";
       process.env.LIGHTNING_SANDBOX_API_KEY = "k-sandbox";

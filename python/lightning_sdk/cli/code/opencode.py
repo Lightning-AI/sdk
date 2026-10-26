@@ -3,7 +3,7 @@
 The provider block goes into the user's global config, spliced in so comments and other
 settings stay as they are. The API key goes into OpenCode's own credential store,
 auth.json, where `opencode auth login` keeps keys; OpenCode hands it to the provider of the
-same id. Its metadata records which org and key `lightning code` set up.
+same id. Its metadata marks the entry as set up by `lightning code`.
 """
 
 import json
@@ -16,7 +16,6 @@ from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CODE_BASE_URL, REQUEST_TIMEOUT_MS, CodingModel
 from lightning_sdk.cli.code.tool import (
     FileChange,
-    KeyRecord,
     Plan,
     Tool,
     ToolConfigError,
@@ -140,11 +139,10 @@ class OpenCode(Tool):
         credential = entry if isinstance(entry, dict) and entry.get("type") == "api" else None
         key = credential.get("key") if credential else None
         metadata = (credential or {}).get("metadata") or {}
-        record = KeyRecord.from_dict(metadata) if metadata.get("managed_by") == MANAGED_BY else None
         provider = (config.get("provider") or {}).get(PROVIDER_ID) if isinstance(config.get("provider"), dict) else None
         model = config.get("model")
         return ToolState(
-            record=record,
+            managed=metadata.get("managed_by") == MANAGED_BY,
             key=key if isinstance(key, str) else None,
             configured=provider is not None or credential is not None,
             default_model=model if isinstance(model, str) else None,
@@ -159,7 +157,6 @@ class OpenCode(Tool):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
         current: _Files = state.data
         text = current.config_text
@@ -175,7 +172,7 @@ class OpenCode(Tool):
             text = jsonc.append_item(text, ["enabled_providers"], PROVIDER_ID)
 
         auth = dict(current.auth)
-        auth[PROVIDER_ID] = {"type": "api", "key": key, "metadata": {"managed_by": MANAGED_BY, **record.as_dict()}}
+        auth[PROVIDER_ID] = {"type": "api", "key": key, "metadata": {"managed_by": MANAGED_BY}}
         return Plan(
             changes=[
                 FileChange(

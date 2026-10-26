@@ -106,7 +106,7 @@ print(job.status)
 
 ```python
 from lightning_sdk import Deployment, Machine
-from lightning_sdk.api.deployment_api import ApiKeyAuth
+from lightning_sdk.api.deployment_api import TokenAuth
 
 deployment = Deployment("nginx-demo", teamspace="owner/teamspace")
 deployment.start(
@@ -114,16 +114,11 @@ deployment.start(
     machine=Machine.CPU,
     ports=80,
     replicas=1,
-    auth=ApiKeyAuth(),
+    auth=TokenAuth(token="my-endpoint-token"),
 )
 
 print(deployment.status)
 ```
-
-**Note:** `ApiKeyAuth` gates the endpoint on a personal Lightning API key. A
-scoped API key is not one, so deploying with a scoped key leaves that key unable
-to call the endpoint it just created. Use `TokenAuth` when the deploying key is
-also the caller.
 
 ## Start sandboxes warm
 
@@ -188,12 +183,8 @@ lightning deployment create nginx-demo \
   --machine CPU \
   --port 80 \
   --replicas 1 \
-  --api-key-auth
+  --token-auth my-endpoint-token
 ```
-
-**Note:** `--api-key-auth` gates the endpoint on a personal Lightning API key.
-Deploying from automation with a scoped API key leaves that key unable to call
-the endpoint. Use `--token-auth` when the deploying key is also the caller.
 
 Inspect and stream logs:
 

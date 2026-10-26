@@ -4,11 +4,11 @@ Coding agents CLI examples
 `code.lightning.ai <https://code.lightning.ai>`_ serves GLM-5.3, GLM-5.3 Flash and
 DeepSeek V4.1 Flash to coding agents through an OpenAI-compatible API at
 ``https://code.lightning.ai/v1``. The ``lightning code`` commands set up a coding
-tool to use it and create the API key it needs. They work the same on macOS and
-Linux.
+tool to use it with the API key in ``LIGHTNING_API_KEY``. They work the same on
+macOS and Linux.
 
-Requests bill the organization you pick, which needs a Pro, Teams or Enterprise
-plan. A Free organization gets a link to upgrade instead of a key.
+Requests bill the organization the key belongs to. ``lightning code`` doesn't
+create keys, so make one in advance and export it.
 
 Set up a tool
 -------------
@@ -16,19 +16,17 @@ Set up a tool
 .. code-block:: console
 
    $ pip install lightning-sdk -U
-   $ lightning login
+   $ export LIGHTNING_API_KEY=lit_sa_...
 
-   $ lightning code setup opencode --org my-org
-   OpenCode now uses code.lightning.ai, billed to My Org [my-org].
+   $ lightning code setup opencode
+   OpenCode now uses code.lightning.ai.
      Provider: lightning in ~/.config/opencode/opencode.json
      Key file: ~/.local/share/opencode/auth.json
-     API key:  opencode on my-laptop 2026-10-09
      Default:  lightning/deepseek-v4.1-flash
 
 The tool is one of ``opencode``, ``pi``, ``codex``, ``dsh`` (DeepSeek Harness) or
-``cursor``. Without ``--org``, the command lists your organizations with their
-plans and asks which one pays. In scripts and other non-interactive shells,
-``--org`` is required.
+``cursor``. The key is read from ``LIGHTNING_API_KEY`` and saved in the tool's own
+config; if the variable isn't set, setup stops and says so.
 
 For every tool, the setup:
 
@@ -47,11 +45,10 @@ Preview the changes first, or pick a different default model:
 
 .. code-block:: console
 
-   $ lightning code setup pi --org my-org --dry-run
-   $ lightning code setup pi --org my-org --model glm-5.3
+   $ lightning code setup pi --dry-run
+   $ lightning code setup pi --model glm-5.3
 
-Run it again to switch organizations, which creates a key there and revokes the
-old one, or to pick up new models. ``--rotate-key`` replaces the key in place.
+Run it again after changing ``LIGHTNING_API_KEY``, or to pick up new models.
 ``--force`` replaces a Lightning setup you made by hand.
 
 OpenCode
@@ -60,7 +57,7 @@ OpenCode
 .. code-block:: console
 
    $ curl -fsSL https://opencode.ai/install | bash
-   $ lightning code setup opencode --org my-org
+   $ lightning code setup opencode
    $ opencode
 
 The provider goes into ``~/.config/opencode/opencode.json`` (or ``opencode.jsonc``)
@@ -75,7 +72,7 @@ pi
 .. code-block:: console
 
    $ curl -fsSL https://pi.dev/install.sh | sh
-   $ lightning code setup pi --org my-org
+   $ lightning code setup pi
    $ pi
 
 The provider goes into ``~/.pi/agent/models.json``, the key into pi's
@@ -89,7 +86,7 @@ Codex
 .. code-block:: console
 
    $ npm install -g @openai/codex
-   $ lightning code setup codex --org my-org
+   $ lightning code setup codex
    $ codex --profile lightning
    $ codex --profile lightning -m lightning-ai/glm-5.3
 
@@ -107,7 +104,7 @@ DeepSeek Harness
 .. code-block:: console
 
    $ npm install -g @deepseek-ai/dsh     # needs Node.js 22.19 or newer
-   $ lightning code setup dsh --org my-org
+   $ lightning code setup dsh
    $ dsh web
 
 The provider and default model go into the ``web`` and ``headless`` profiles,
@@ -120,18 +117,16 @@ Cursor
 ------
 
 Cursor keeps these settings where nothing outside it can safely change them, so
-the setup creates a key and prints the steps to add it in Cursor Settings:
+the setup prints the key from ``LIGHTNING_API_KEY`` and the steps to add it in
+Cursor Settings:
 
 .. code-block:: console
 
-   $ lightning code setup cursor --org my-org
-   Cursor now uses code.lightning.ai, billed to My Org [my-org].
-     API key: cursor on my-laptop 2026-10-09
-
+   $ lightning code setup cursor
    Finish in Cursor (needs a paid Cursor plan):
      1. Open Cursor Settings (Cmd+Shift+J on macOS, Ctrl+Shift+J elsewhere) and go to Models.
      2. Under API Keys, paste this into OpenAI API Key and press Enter:
-          sk-lit-...
+          lit_sa_...
      3. Turn on "Use OpenAI API Key".
      4. Turn on "Override OpenAI Base URL" and enter:
           https://code.lightning.ai/v1
@@ -151,35 +146,16 @@ Check and undo the setup
 .. code-block:: console
 
    $ lightning code status
-   OpenCode: billed to my-org
-     API key: opencode on my-laptop 2026-10-09 (01jexamplekey0000000000000)
+   OpenCode: set up by `lightning code`
      Config:  ~/.config/opencode/opencode.json
      Default: lightning/deepseek-v4.1-flash
    pi: not set up
-   Codex: billed to my-org
+   Codex: set up by `lightning code`
      ...
 
    $ lightning code remove opencode
 
-``remove`` takes out the provider, a Lightning default model, and the key, which
-it also revokes. Files the setup created are deleted again. Pass ``--keep-key`` to
-leave the key active.
-
-Use other tools
----------------
-
-``lightning code token`` creates a key for anything else that speaks the OpenAI
-or Anthropic API. The key is printed once, so store it straight away.
-
-.. code-block:: console
-
-   $ export OPENAI_BASE_URL=https://code.lightning.ai/v1
-   $ export OPENAI_API_KEY=$(lightning code token --org my-org)
-
-   $ export ANTHROPIC_BASE_URL=https://code.lightning.ai
-   $ export ANTHROPIC_AUTH_TOKEN=$(lightning code token --org my-org --name claude-code)
-   $ claude --model deepseek-v4.1-flash
-
-   $ lightning code token --org my-org --json
-
-Keys created this way are listed and deleted with ``lightning api-key``.
+``remove`` takes out the provider, a Lightning default model, and the key saved in
+the tool's config. Files the setup created are deleted again. No key is revoked,
+because ``lightning code`` doesn't create keys; revoke a key you no longer need in
+the web UI.

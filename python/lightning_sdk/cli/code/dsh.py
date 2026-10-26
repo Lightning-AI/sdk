@@ -20,7 +20,6 @@ from lightning_sdk.cli.code import files
 from lightning_sdk.cli.code.models import CODE_BASE_URL, CodingModel
 from lightning_sdk.cli.code.tool import (
     FileChange,
-    KeyRecord,
     Plan,
     Tool,
     ToolConfigError,
@@ -257,9 +256,8 @@ class DeepSeekHarness(Tool):
         default = None
         if default_entry.get("provider") and default_entry.get("model"):
             default = f"{default_entry['provider']}/{default_entry['model']}"
-        record = KeyRecord.from_dict(files.load_record(self.id))
         return ToolState(
-            record=record if key is not None else None,
+            managed=files.is_managed(self.id) and key is not None,
             key=key if isinstance(key, str) else None,
             configured=provider is not None or key is not None,
             default_model=default,
@@ -274,7 +272,6 @@ class DeepSeekHarness(Tool):
         models: Sequence[CodingModel],
         model: Optional[str],
         key: str,
-        record: KeyRecord,
     ) -> Plan:
         current: _Files = state.data
         set_model = default_to_set(state.default_model, requested=model, models=models, ref=model_ref, ours=_ours)
@@ -305,7 +302,7 @@ class DeepSeekHarness(Tool):
                 summary=f"save the API key as {KEY_ENV}",
             )
         )
-        plan.changes.append(record_change(self.id, record))
+        plan.changes.append(record_change(self.id, True))
         return plan
 
     def plan_remove(self, state: ToolState) -> Plan:
@@ -347,7 +344,7 @@ class DeepSeekHarness(Tool):
                 )
             )
             plan.removed.append(f"the API key from {credentials_path()}")
-        plan.changes.append(record_change(self.id, None))
+        plan.changes.append(record_change(self.id, False))
         return plan
 
     def summary(self, state: ToolState, plan: Plan) -> list[tuple[str, str]]:
