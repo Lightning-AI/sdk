@@ -130,7 +130,7 @@ linkcheck_anchors = False
 linkcheck_timeout = 60
 linkcheck_retries = 3
 linkcheck_ignore = [
-    r"https://lightning\.ai/.*",
+    r"https://(platform\.)?lightning\.ai(/.*)?",
 ]
 
 

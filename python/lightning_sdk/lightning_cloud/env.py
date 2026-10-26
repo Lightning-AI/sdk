@@ -31,7 +31,7 @@ def _float_env(name: str, default: Optional[float]) -> Optional[float]:
         return default
 
 
-LIGHTNING_CLOUD_URL = os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+LIGHTNING_CLOUD_URL = os.getenv("LIGHTNING_CLOUD_URL", "https://platform.lightning.ai")
 
 # Default per-request timeouts, in seconds. See rest_client.create_swagger_client.
 LIGHTNING_CLOUD_CONNECT_TIMEOUT = _float_env("LIGHTNING_CLOUD_CONNECT_TIMEOUT", 10.0)

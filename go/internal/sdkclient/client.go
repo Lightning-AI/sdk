@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	defaultBaseURL = "https://lightning.ai"
+	defaultBaseURL = "https://platform.lightning.ai"
 	defaultRetries = 7
 )
 

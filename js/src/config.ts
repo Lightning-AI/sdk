@@ -1,7 +1,7 @@
 import type { SandboxConfig } from "./types.js";
 
 /** Default Lightning Cloud origin when no base URL is configured. */
-export const DEFAULT_LIGHTNING_BASE_URL = "https://lightning.ai";
+export const DEFAULT_LIGHTNING_BASE_URL = "https://platform.lightning.ai";
 
 let globalConfig: SandboxConfig = {};
 

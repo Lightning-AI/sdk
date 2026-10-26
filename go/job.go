@@ -718,7 +718,7 @@ func jobLink(ownerName, teamspaceName, jobName string) string {
 	if ownerName == "" || teamspaceName == "" || jobName == "" {
 		return ""
 	}
-	return fmt.Sprintf("https://lightning.ai/%s/%s/jobs/%s", ownerName, teamspaceName, jobName)
+	return fmt.Sprintf("https://platform.lightning.ai/%s/%s/jobs/%s", ownerName, teamspaceName, jobName)
 }
 
 func applyJobOptions(opts ...JobOptions) jobOptions {

@@ -1,6 +1,6 @@
-import os
 from typing import Any, ClassVar, Dict, List
 
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.lightning_cloud.openapi.models import V1Pipeline, V1PipelineStepType, V1Schedule
 from lightning_sdk.pipeline.utils import _get_spec
 
@@ -84,7 +84,7 @@ class PipelinePrinter:
 
     def _print_footer(self) -> None:
         """Prints the final link and closing message."""
-        cloud_url = os.getenv("LIGHTNING_CLOUD_URL", "https://lightning.ai").replace(":443", "")
+        cloud_url = _get_cloud_url().replace(":443", "")
 
         # Using properties of assumed objects for a cleaner look
         owner: str = self._teamspace.owner.name

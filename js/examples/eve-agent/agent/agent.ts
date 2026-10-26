@@ -7,7 +7,7 @@ if (!apiKey) {
 }
 
 const lightning = createAnthropic({
-  baseURL: "https://lightning.ai/v1",
+  baseURL: "https://platform.lightning.ai/v1",
   authToken: apiKey,
 });
 

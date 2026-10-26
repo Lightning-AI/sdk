@@ -14,7 +14,7 @@ def mock_env(monkeypatch):
     monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "teamspace-123")
     monkeypatch.setenv("LIGHTNING_USERNAME", "user-name")
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-123")
-    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://platform.lightning.ai")
     monkeypatch.setenv("LIGHTNING_API_KEY", "my-api-key")
     return monkeypatch
 
@@ -114,7 +114,7 @@ def test_get_auth_info_missing_teamspace_raises(monkeypatch):
         ValueError,
         match=re.escape(
             "Teamspace information is missing. "
-            "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
+            "If this is your first time using LitAI, please log in at https://platform.lightning.ai/sign-up "
             "and re-run your script, or set environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
         ),
     ):

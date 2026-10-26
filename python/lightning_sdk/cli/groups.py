@@ -103,7 +103,7 @@ def sandbox() -> None:
     """Ephemeral sandboxes for agents.
 
     Set LIGHTNING_SANDBOX_API_KEY for non-interactive authentication. The sandbox
-    API uses https://lightning.ai by default; set LIGHTNING_CLOUD_URL to override
+    API uses https://platform.lightning.ai by default; set LIGHTNING_CLOUD_URL to override
     the host.
 
     Examples:

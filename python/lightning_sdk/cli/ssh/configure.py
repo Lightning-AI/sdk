@@ -6,6 +6,7 @@ from typing import Optional
 import rich_click as click
 from rich.console import Console
 
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.resource_completion import complete_studio
 from lightning_sdk.cli.ssh.common import generate_ssh_config
 from lightning_sdk.cli.utils.auth import require_auth_header
@@ -60,13 +61,13 @@ def configure_ssh(name: Optional[str] = None, teamspace: Optional[str] = None, o
     if not key_path.exists() or not (key_path.with_suffix(".pub")).exists() or overwrite:
         key_id = str(uuid.uuid4())
         download_file(
-            f"https://lightning.ai/setup/ssh-gen?t={auth.api_key}&id={key_id}&machineName={platform.node()}",
+            f"{_get_cloud_url()}/setup/ssh-gen?t={auth.api_key}&id={key_id}&machineName={platform.node()}",
             key_path,
             overwrite=overwrite,
             chmod=0o600,
         )
         download_file(
-            f"https://lightning.ai/setup/ssh-public?t={auth.api_key}&id={key_id}",
+            f"{_get_cloud_url()}/setup/ssh-public?t={auth.api_key}&id={key_id}",
             key_path.with_suffix(".pub"),
             overwrite=overwrite,
         )

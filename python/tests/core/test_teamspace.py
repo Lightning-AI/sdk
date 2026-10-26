@@ -1493,7 +1493,9 @@ class _FakeRangeResponse:
         return iter([self._payload])
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"}
+)
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version(
@@ -1544,13 +1546,13 @@ def test_download_dataset_version(
 
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets",
         headers=mock.ANY,
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-1/versions/3/files",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-1/versions/3/files",
         query_params={"clusterId": "aws-us-east"},
         headers=mock.ANY,
         _preload_content=True,
@@ -1562,7 +1564,7 @@ def test_download_dataset_version(
     assert (target_path / "data.csv").read_bytes() == b"data"
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_download_dataset_version_no_token_no_cluster(
@@ -1605,13 +1607,13 @@ def test_download_dataset_version_no_token_no_cluster(
 
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets",
         headers=mock.ANY,
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-2/versions/1/files",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-2/versions/1/files",
         query_params={},
         headers=mock.ANY,
         _preload_content=True,
@@ -1619,7 +1621,7 @@ def test_download_dataset_version_no_token_no_cluster(
     assert (target_path / "data.csv").read_bytes() == b"data"
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_resolve_dataset_id_and_version(
@@ -1651,7 +1653,7 @@ def test_resolve_dataset_id_and_version(
     assert (ds_id, ver) == ("id-123", "v2")
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 def test_download_dataset_files_parallel(tmp_path):
     """Files download concurrently via Range GETs, each written to its own path."""
     from lightning_sdk.api.dataset import _download_dataset_files
@@ -1681,7 +1683,7 @@ def test_download_dataset_files_parallel(tmp_path):
     assert not (tmp_path / "missing-url.bin").exists()
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 def test_download_dataset_files_chunked(tmp_path):
     """A file larger than part_size is fetched as multiple byte-range parts and
     reassembled correctly at their offsets."""
@@ -1709,7 +1711,9 @@ def test_download_dataset_files_chunked(tmp_path):
     assert (tmp_path / "big.bin").read_bytes() == content
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"}
+)
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
@@ -1767,20 +1771,20 @@ def test_upload_dataset_new(
 
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets",
         headers=mock.ANY,
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "POST",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets",
         headers=mock.ANY,
         body={"name": "my-new-dataset", "cluster_id": "aws-us-east"},
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "POST",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-new-1/versions",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-new-1/versions",
         headers=mock.ANY,
         body={"cluster_id": "aws-us-east"},
         _preload_content=True,
@@ -1825,7 +1829,7 @@ class _SyncExecutor:
         return fut
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     """Files upload in parallel: one uploader per file, with the concurrency
@@ -1869,7 +1873,7 @@ def test_upload_dataset_files_parallel(mock_lightning_client, tmp_path):
     assert all(c["max_workers"] == 5 for c in calls)
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai"})
+@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai"})
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
     """The concurrency budget splits sensibly at the edges: a single large file
@@ -1917,7 +1921,9 @@ def test_upload_dataset_files_budget_split(mock_lightning_client, tmp_path):
     assert all(c["max_workers"] == 1 for c in calls)
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"}
+)
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
@@ -1976,19 +1982,19 @@ def test_upload_dataset_existing(
 
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets",
         headers=mock.ANY,
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "GET",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
         headers=mock.ANY,
         _preload_content=True,
     )
     mock_api_client.request.assert_any_call(
         "POST",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
         headers=mock.ANY,
         body={"cluster_id": None, "version": "v4"},
         _preload_content=True,
@@ -2009,7 +2015,9 @@ def test_upload_dataset_existing(
     )
 
 
-@mock.patch.dict(os.environ, {"LIGHTNING_CLOUD_URL": "https://lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"})
+@mock.patch.dict(
+    os.environ, {"LIGHTNING_CLOUD_URL": "https://platform.lightning.ai", "LIGHTNING_AUTH_TOKEN": "test-token"}
+)
 @mock.patch("lightning_sdk.api.dataset._complete_dataset_upload")
 @mock.patch("lightning_sdk.api.dataset._upload_dataset_files")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
@@ -2063,7 +2071,7 @@ def test_upload_dataset_with_explicit_version(
 
     mock_api_client.request.assert_any_call(
         "POST",
-        "https://lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
+        "https://platform.lightning.ai/v1/projects/proj-1/lit-datasets/ds-existing-1/versions",
         headers=mock.ANY,
         body={"cluster_id": None, "version": "experiment-v1"},
         _preload_content=True,

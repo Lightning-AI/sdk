@@ -29,7 +29,7 @@ func TestMMTExposesWebLinks(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetMMT returned error")
 
-	if got, want := m.Link(), "https://lightning.ai/alice/default/jobs/dist-train?app_id=mmt"; got != want {
+	if got, want := m.Link(), "https://platform.lightning.ai/alice/default/jobs/dist-train?app_id=mmt"; got != want {
 		assert.Fail(t, fmt.Sprintf("mmt link = %q, want %q", got, want))
 	}
 }

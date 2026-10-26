@@ -81,7 +81,7 @@ func TestJobExposesWebLinks(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got, want := j.Link(), "https://lightning.ai/alice/default/jobs/train"; got != want {
+	if got, want := j.Link(), "https://platform.lightning.ai/alice/default/jobs/train"; got != want {
 		assert.Fail(t, fmt.Sprintf("job link = %q, want %q", got, want))
 	}
 
@@ -89,7 +89,7 @@ func TestJobExposesWebLinks(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got, want := imageJob.Link(), "https://lightning.ai/alice/default/jobs/image-train?app_id=jobs"; got != want {
+	if got, want := imageJob.Link(), "https://platform.lightning.ai/alice/default/jobs/image-train?app_id=jobs"; got != want {
 		assert.Fail(t, fmt.Sprintf("image job link = %q, want %q", got, want))
 	}
 
@@ -97,7 +97,7 @@ func TestJobExposesWebLinks(t *testing.T) {
 	require.NoErrorf(t, err,
 		"GetJob returned error")
 
-	if got, want := mmtMachine.Link(), "https://lightning.ai/alice/default/jobs/dist-train-0"; got != want {
+	if got, want := mmtMachine.Link(), "https://platform.lightning.ai/alice/default/jobs/dist-train-0"; got != want {
 		assert.Fail(t, fmt.Sprintf("mmt machine link = %q, want %q", got, want))
 	}
 }

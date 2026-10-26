@@ -6,6 +6,7 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
@@ -33,13 +34,13 @@ def download_ssh_keys(
     if not os.path.isfile(ssh_private_key_path) or force_download:
         key_id = str(uuid.uuid4())
         download_file(
-            f"https://lightning.ai/setup/ssh-gen?t={api_key}&id={key_id}&machineName={platform.node()}",
+            f"{_get_cloud_url()}/setup/ssh-gen?t={api_key}&id={key_id}&machineName={platform.node()}",
             Path(ssh_private_key_path),
             overwrite=True,
             chmod=0o600,
         )
         download_file(
-            f"https://lightning.ai/setup/ssh-public?t={api_key}&id={key_id}",
+            f"{_get_cloud_url()}/setup/ssh-public?t={api_key}&id={key_id}",
             Path(ssh_private_key_path + ".pub"),
             overwrite=True,
         )
