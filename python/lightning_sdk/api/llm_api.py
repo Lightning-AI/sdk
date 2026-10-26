@@ -52,7 +52,8 @@ class _AuthLitAI(Auth):
             )
             if not proceed:
                 raise RuntimeError(
-                    "Login cancelled. Please login at https://platform.lightning.ai/sign-up. Or run `lightning login` to login."
+                    "Login cancelled. Please login at https://platform.lightning.ai/sign-up. "
+                    "Or run `lightning login` to login."
                 )
         print("Opening browser for authentication...")
         print("Please come back to the terminal after logging in.")

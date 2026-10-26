@@ -21,8 +21,7 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_conversation_response_chunk
 from lightning_sdk.llm.public_assistants import PUBLIC_MODELS
 from lightning_sdk.utils.resolve import _resolve_org, _resolve_teamspace
 
-# The platform moved from lightning.ai to platform.lightning.ai; either means prod.
-_PROD_CLOUD_URLS = ("https://lightning.ai", "https://platform.lightning.ai")
+_PROD_CLOUD_URL = "https://platform.lightning.ai"
 
 PUBLIC_MODEL_PROVIDERS: Dict[str, str] = {
     "openai": "OpenAI",
@@ -271,7 +270,8 @@ class LLM:
                         # throw an appropriate error that guides users to login through the platform
                         raise ValueError(
                             "Teamspace information is missing. "
-                            "If this is your first time using LitAI, please log in at https://platform.lightning.ai/sign-up "
+                            "If this is your first time using LitAI, "
+                            "please log in at https://platform.lightning.ai/sign-up "
                             "and re-run your script, or set environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
                         ) from err
 
@@ -328,7 +328,7 @@ class LLM:
         if self._model_provider in PUBLIC_MODEL_PROVIDERS:
             # if prod
             if (
-                self._cloud_url in _PROD_CLOUD_URLS
+                self._cloud_url == _PROD_CLOUD_URL
                 and LLM._public_assistants
                 and f"{self._model_provider}/{self._model_name}" in LLM._public_assistants
             ):

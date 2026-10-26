@@ -14,7 +14,7 @@ def mock_env(monkeypatch):
     monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "teamspace-123")
     monkeypatch.setenv("LIGHTNING_USERNAME", "user-name")
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-123")
-    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://lightning.ai")
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", "https://platform.lightning.ai")
     monkeypatch.setenv("LIGHTNING_API_KEY", "my-api-key")
     return monkeypatch
 
