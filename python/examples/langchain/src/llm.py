@@ -15,7 +15,7 @@ from typing import Optional
 from langchain_openai import ChatOpenAI
 
 # Default Lightning cloud URL; overridden by LIGHTNING_CLOUD_URL when set.
-DEFAULT_CLOUD_URL = "https://lightning.ai"
+DEFAULT_CLOUD_URL = "https://platform.lightning.ai"
 
 
 def _api_base() -> str:

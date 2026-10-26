@@ -7,6 +7,7 @@ from typing import Optional, Union
 import click
 from rich.console import Console
 
+from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.legacy.generate import _generate_ssh_config
 from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
@@ -123,9 +124,9 @@ def _download_ssh_keys(
 
     # todo: consider hitting the API to get the key pair directly instead of using wget
     _download_file(
-        f"https://lightning.ai/setup/ssh-gen?t={api_key}&id={key_id}&machineName={platform.node()}",
+        f"{_get_cloud_url()}/setup/ssh-gen?t={api_key}&id={key_id}&machineName={platform.node()}",
         path_key,
         overwrite=overwrite,
         chmod=0o600,
     )
-    _download_file(f"https://lightning.ai/setup/ssh-public?t={api_key}&id={key_id}", path_pub, overwrite=overwrite)
+    _download_file(f"{_get_cloud_url()}/setup/ssh-public?t={api_key}&id={key_id}", path_pub, overwrite=overwrite)

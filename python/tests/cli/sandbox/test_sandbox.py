@@ -157,7 +157,7 @@ def test_sandbox_help() -> None:
         "lightning sandbox --help",
         "Usage: lightning sandbox",
         "Ephemeral sandboxes for agents.",
-        "https://lightning.ai by default; set LIGHTNING_CLOUD_URL to",
+        "https://platform.lightning.ai by default; set LIGHTNING_CLOUD_URL to",
         "$ sandbox create --name devbox --teamspace owner/teamspace --persistent",
         "$ sandbox run sbx-42 -- python -c \"print('hello')\"",
         "Auto snapshot: snap-abc123",

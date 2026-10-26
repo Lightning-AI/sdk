@@ -34,7 +34,7 @@ def test_drive_url_encodes_nested_studio_path(monkeypatch):
         "/coding-model-training/dataset/repos.txt"
     )
     assert url == (
-        "https://lightning.ai/lightning-ai/coding-model-training/drive"
+        "https://platform.lightning.ai/lightning-ai/coding-model-training/drive"
         "?path=studios%2Fliana-dataset-dev-cluster%2Fcoding-model-training%2Fdataset%2Frepos.txt"
     )
 

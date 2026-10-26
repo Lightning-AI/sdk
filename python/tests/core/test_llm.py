@@ -114,7 +114,7 @@ def test_get_auth_info_missing_teamspace_raises(monkeypatch):
         ValueError,
         match=re.escape(
             "Teamspace information is missing. "
-            "If this is your first time using LitAI, please log in at https://lightning.ai/sign-up "
+            "If this is your first time using LitAI, please log in at https://platform.lightning.ai/sign-up "
             "and re-run your script, or set environment variable LIGHTNING_TEAMSPACE=<your-teamspace>."
         ),
     ):

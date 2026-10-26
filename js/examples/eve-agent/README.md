@@ -4,7 +4,7 @@ A compact, production-shaped [Eve](https://eve.dev/) agent with both halves of
 the runtime on Lightning AI:
 
 - Claude Opus 4.8 is called through the Anthropic-compatible
-  `https://lightning.ai/v1/messages` API.
+  `https://platform.lightning.ai/v1/messages` API.
 - Eve's shell and file tools run in a persistent Lightning CPU sandbox through
   a custom `SandboxBackend` adapter.
 
@@ -41,7 +41,7 @@ Eve accepts baseURL and authToken options to connect to the Lightning models API
 
 ```js
 const lightning = createAnthropic({
-  baseURL: "https://lightning.ai/v1",
+  baseURL: "https://platform.lightning.ai/v1",
   authToken: apiKey,
 });
 
@@ -79,4 +79,4 @@ export default defineSandbox({
 
 The endpoint currently expects Anthropic's native `claude-opus-4-8` model ID in
 the request body. The provider namespace belongs in gateway-style IDs, but
-`anthropic/claude-opus-4-8` is rejected by `lightning.ai/v1/messages`.
+`anthropic/claude-opus-4-8` is rejected by `platform.lightning.ai/v1/messages`.

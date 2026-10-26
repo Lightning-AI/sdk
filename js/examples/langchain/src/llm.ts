@@ -12,7 +12,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 
 // Default Lightning cloud URL; overridden by LIGHTNING_CLOUD_URL when set.
-const DEFAULT_CLOUD_URL = "https://lightning.ai";
+const DEFAULT_CLOUD_URL = "https://platform.lightning.ai";
 
 function apiBase(): string {
   const cloudUrl = process.env.LIGHTNING_CLOUD_URL || DEFAULT_CLOUD_URL;

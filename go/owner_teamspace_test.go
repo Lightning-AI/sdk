@@ -182,7 +182,7 @@ func TestTeamspaceListsStudiosJobsAndMMTs(t *testing.T) {
 	assert.Falsef(t, len(jobs) != 1 || jobs[0].ID() != "job-1" || jobs[0].StudioID() != "studio-1" || jobs[0].Machine() != "cpu" || jobs[0].TotalCost() != 3.5,
 		"unexpected jobs: %+v", jobs)
 
-	if got, want := jobs[0].Link(), "https://lightning.ai/alice/default/jobs/train?app_id=jobs"; got != want {
+	if got, want := jobs[0].Link(), "https://platform.lightning.ai/alice/default/jobs/train?app_id=jobs"; got != want {
 		assert.Fail(t, fmt.Sprintf("job link = %q, want %q", got, want))
 	}
 
@@ -192,7 +192,7 @@ func TestTeamspaceListsStudiosJobsAndMMTs(t *testing.T) {
 	assert.Falsef(t, len(mmts) != 1 || mmts[0].ID() != "mmt-1" || mmts[0].NumMachines() != 4 || mmts[0].Machine() != "gpu" || mmts[0].TotalCost() != 11.25,
 		"unexpected mmts: %+v", mmts)
 
-	if got, want := mmts[0].Link(), "https://lightning.ai/alice/default/jobs/dist-train?app_id=mmt"; got != want {
+	if got, want := mmts[0].Link(), "https://platform.lightning.ai/alice/default/jobs/dist-train?app_id=mmt"; got != want {
 		assert.Fail(t, fmt.Sprintf("mmt link = %q, want %q", got, want))
 	}
 

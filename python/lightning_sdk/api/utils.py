@@ -699,7 +699,7 @@ def _machine_to_compute_name(machine: Union[Machine, str]) -> str:
     return machine
 
 
-_DEFAULT_CLOUD_URL = "https://lightning.ai"
+_DEFAULT_CLOUD_URL = "https://platform.lightning.ai"
 _DEFAULT_REGISTRY_URL = "litcr.io"
 
 

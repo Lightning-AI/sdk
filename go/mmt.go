@@ -651,7 +651,7 @@ func (m *MMT) Link() string {
 	if m == nil || m.ownerName == "" || m.teamspace == "" || m.name == "" {
 		return ""
 	}
-	return fmt.Sprintf("https://lightning.ai/%s/%s/jobs/%s?app_id=mmt", m.ownerName, m.teamspace, m.name)
+	return fmt.Sprintf("https://platform.lightning.ai/%s/%s/jobs/%s?app_id=mmt", m.ownerName, m.teamspace, m.name)
 }
 
 func applyMMTOptions(opts ...MMTOptions) mmtOptions {

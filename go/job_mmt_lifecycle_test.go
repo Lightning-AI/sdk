@@ -291,7 +291,7 @@ func TestMMTListsSubJobsWithV2Route(t *testing.T) {
 	assert.Falsef(t, len(machines) != 1 || machines[0].ID() != "job-rank-0" || machines[0].Machine() != "gpu" || machines[0].Command() != "torchrun train.py" || machines[0].TotalCost() != 2.5,
 		"unexpected mmt machines: %+v", machines)
 
-	if got, want := machines[0].Link(), "https://lightning.ai/alice/default/jobs/dist-train-0"; got != want {
+	if got, want := machines[0].Link(), "https://platform.lightning.ai/alice/default/jobs/dist-train-0"; got != want {
 		assert.Fail(t, fmt.Sprintf("mmt subjob link = %q, want %q", got, want))
 	}
 
