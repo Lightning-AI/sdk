@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
-from lightning_sdk.cli.code import opencode
 from lightning_sdk.cli.code import models as coding_models
+from lightning_sdk.cli.code import opencode
 from lightning_sdk.cli.code.models import DEFAULT_MODEL, FALLBACK_MODELS
 from lightning_sdk.cli.code.remove import remove
 from lightning_sdk.cli.code.setup import setup
