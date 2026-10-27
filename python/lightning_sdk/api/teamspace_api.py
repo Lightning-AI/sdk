@@ -3,7 +3,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import requests
 from tqdm.auto import tqdm
@@ -40,6 +40,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1ExternalCluster,
     V1GCSFolderDataConnection,
     V1Job,
+    V1Membership,
     V1Model,
     V1ModelVersionArchive,
     V1MultiMachineJob,
@@ -106,6 +107,11 @@ def _resolve_secret_type(secret_type: Union[str, SecretType]) -> V1SecretType:
     return _SECRET_TYPE_TO_API[resolved]
 
 
+# Personal org ID (or None) per (client, user ID). The client is process-wide, so
+# this lists orgs at most once per user per process.
+_PERSONAL_ORG_IDS: Dict[Tuple[int, str], Optional[str]] = {}
+
+
 def _secret_matches_type(secret: V1Secret, secret_type: V1SecretType) -> bool:
     if secret_type == V1SecretType.UNSPECIFIED:
         return secret.type in (None, V1SecretType.UNSPECIFIED)
@@ -168,13 +174,14 @@ class TeamspaceApi:
         # cannot list projects the authed user is not a member of
         # -> list projects authed users are members of + filter later on
         res = self._client.projects_service_list_memberships(filter_by_user_id=True)
+        owner_ids = self._membership_owner_ids(owner_id, res.memberships)
 
         teamspaces = []
         for teamspace in res.memberships:
             # if name is provided, filter for teamspaces matching that name
             match_name = name is None or teamspace.name == name or teamspace.display_name == name
             # and only return teamspaces actually owned by the id
-            if match_name and teamspace.owner_id == owner_id:
+            if match_name and teamspace.owner_id in owner_ids:
                 teamspaces.append(self._get_teamspace_by_id(teamspace.project_id))
         return teamspaces
 
@@ -196,14 +203,39 @@ class TeamspaceApi:
             RuntimeError: If the name matches more than one teamspace.
         """
         res = self._client.projects_service_list_memberships(filter_by_user_id=True)
+        owner_ids = self._membership_owner_ids(owner_id, res.memberships)
         ids = [
             membership.project_id
             for membership in res.memberships
-            if membership.owner_id == owner_id and name in (membership.name, membership.display_name)
+            if membership.owner_id in owner_ids and name in (membership.name, membership.display_name)
         ]
         if len(ids) > 1:
             raise RuntimeError(f"{name} is no unique name for a Teamspace")
         return ids[0] if ids else None
+
+    def _membership_owner_ids(self, owner_id: str, memberships: List[V1Membership]) -> Set[str]:
+        """Return the owner IDs that teamspaces owned by ``owner_id`` are listed under.
+
+        Memberships list the teamspaces of a user's personal org under the org, not
+        the user. So when nothing is listed under the authed user's own ID, their
+        personal org matches too. Another user's ID can't be mapped to their org.
+        """
+        # /v1/auth/user rather than whoami, which the API lockdown blocks
+        if any(m.owner_id == owner_id for m in memberships) or owner_id != self._client.auth_service_get_user().id:
+            return {owner_id}
+
+        org_id = self._personal_org_id(owner_id)
+        return {owner_id} if org_id is None else {owner_id, org_id}
+
+    def _personal_org_id(self, user_id: str) -> Optional[str]:
+        """Return the ID of the personal org ``user_id`` created, or ``None`` if there is none."""
+        key = (id(self._client), user_id)
+        if key not in _PERSONAL_ORG_IDS:
+            orgs = self._client.organizations_service_list_organizations().organizations or []
+            _PERSONAL_ORG_IDS[key] = next(
+                (org.id for org in orgs if org.is_personal_org and org.creator_id == user_id), None
+            )
+        return _PERSONAL_ORG_IDS[key]
 
     def list_studios(self, teamspace_id: str, cloud_account: str = "") -> List[V1CloudSpace]:
         """List studios in teamspace.
