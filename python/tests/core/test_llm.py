@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from lightning_sdk.lightning_cloud.openapi import V1Organization
 from lightning_sdk.llm import LLM
 from lightning_sdk.llm import LLM as LLMCLIENT
 
@@ -121,6 +122,39 @@ def test_get_auth_info_missing_teamspace_raises(monkeypatch):
         LLM(name="openai/gpt-4o", teamspace=None)
 
 
+@patch("lightning_sdk.llm.llm.authenticate", new=MagicMock())
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_get_auth_info_defaults_to_personal_org_teamspace(monkeypatch):
+    LLMCLIENT._auth_info_cached = False
+    LLMCLIENT._cached_auth_info = {}
+    LLMCLIENT._llm_api_cache = {}
+    LLMCLIENT._public_assistants = {}
+
+    for var in ("LIGHTNING_TEAMSPACE", "LIGHTNING_CLOUD_PROJECT_ID", "LIGHTNING_USERNAME", "LIGHTNING_CLOUD_URL"):
+        monkeypatch.delenv(var, raising=False)
+
+    teamspace_api_mock = MagicMock()
+    teamspace_api_mock.list_teamspaces.return_value = [MagicMock(id="ts-id", name="ts-name")]
+    teamspace_api_mock.list_teamspaces.return_value[0].name = "ts-name"
+    monkeypatch.setattr("lightning_sdk.llm.llm.TeamspaceApi", lambda: teamspace_api_mock)
+
+    user_api_mock = MagicMock()
+    user_api_mock._client.auth_service_get_user.return_value.id = "user-id"
+    user_api_mock._get_organizations_for_authed_user.return_value = [
+        V1Organization(id="team-org", creator_id="user-id", is_personal_org=False),
+        V1Organization(id="personal-org", creator_id="user-id", is_personal_org=True),
+    ]
+    monkeypatch.setattr("lightning_sdk.llm.llm.UserApi", lambda: user_api_mock)
+
+    llm = object.__new__(LLM)
+    llm._model_provider, llm._model_name = "openai", "gpt-4o"
+    llm._get_auth_info()
+
+    teamspace_api_mock.list_teamspaces.assert_called_once_with(owner_id="personal-org")
+    assert LLMCLIENT._cached_auth_info["teamspace_name"] == "ts-name"
+    assert LLMCLIENT._cached_auth_info["teamspace_id"] == "ts-id"
+
+
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
 def test_get_model_id_uses_cache():
     # Reset shared class state to avoid side effects
@@ -216,12 +250,15 @@ def test_get_auth_info(monkeypatch):
     LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
 
     mock_resolve = MagicMock()
-    mock_resolve.return_value = "mock-object"
+    mock_resolve.return_value.name = "teamspace-name"
+    mock_resolve.return_value.id = "teamspace-id"
     monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", mock_resolve)
+    monkeypatch.delenv("LIGHTNING_TEAMSPACE", raising=False)
+    monkeypatch.delenv("LIGHTNING_CLOUD_PROJECT_ID", raising=False)
 
-    llm = LLM(name="openai/gpt-4o", teamspace="my-user/teamspace-name")
+    llm = LLM(name="openai/gpt-4o", teamspace="my-org/teamspace-name")
     assert llm._teamspace_name == "teamspace-name"
-    mock_resolve.assert_called_with(teamspace="teamspace-name", org=None, user="my-user")
+    mock_resolve.assert_called_once_with(teamspace="teamspace-name", org="my-org", user=None)
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())

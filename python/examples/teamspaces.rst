@@ -56,9 +56,10 @@ Run the companion script directly when you want to execute the SDK example:
 Operational notes
 -----------------
 
-- Prefer ``Teamspace("name", org="owner")`` or ``Teamspace("name", user="owner")``
-  in SDK code instead of relying on ambient config.
-- The SDK raises when it cannot infer whether the owner is a user or
-  organization. Passing ``org=`` or ``user=`` removes that ambiguity.
+- Prefer ``Teamspace("org/name")`` in SDK code instead of relying on ambient
+  config.
+- Teamspaces are owned by organizations, and your own teamspaces are in your
+  personal organization. The SDK raises when the owner isn't an organization
+  you are a member of.
 - Teamspace resource listings check permissions; a permission error means the
   authenticated identity cannot access that resource family in the teamspace.

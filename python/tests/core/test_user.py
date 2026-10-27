@@ -3,7 +3,6 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 
 
@@ -25,15 +24,14 @@ def test_user_init_from_env_var(internal_user_api_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_user_teamspaces(internal_user_api_mocker, internal_teamspace_api_list_mocker):
+def test_user_owns_no_teamspaces(internal_user_api_mocker):
     user = User("user-abc")
 
-    teamspaces = user.teamspaces
+    with pytest.raises(ValueError, match="Users can't own teamspaces.*'<org>/<teamspace>'"):
+        _ = user.teamspaces
 
-    assert len(user.teamspaces) == 2
-    for ts in teamspaces:
-        assert isinstance(ts, Teamspace)
-        assert ts.owner == user
+    with pytest.raises(ValueError, match="Users can't own teamspaces.*'<org>/<teamspace>'"):
+        user.create_teamspace("new-teamspace")
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -118,27 +116,3 @@ def test_user_delete_secret_invalid_name(internal_user_api_mocker):
         user.delete_secret("123_INVALID")
 
     mock_delete.assert_not_called()
-
-
-@mock.patch("lightning_sdk.teamspace.Teamspace.__init__", return_value=None)
-@mock.patch("lightning_sdk.user._get_authed_user")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_user_create_teamspace(mock_get_authed_user, mock_teamspace_init, internal_user_api_mocker):
-    user = User("user-abc")
-    mock_get_authed_user.return_value.id = user.id
-
-    with mock.patch.object(user._user_api, "create_teamspace") as mock_create:
-        user.create_teamspace("new-teamspace")
-
-    mock_create.assert_called_once_with("new-teamspace")
-    mock_teamspace_init.assert_called_once_with(name="new-teamspace", user=user)
-
-
-@mock.patch("lightning_sdk.user._get_authed_user")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_user_create_teamspace_not_authed_user(mock_get_authed_user, internal_user_api_mocker):
-    user = User("user-abc")
-    mock_get_authed_user.return_value.id = "different-user-id"
-
-    with pytest.raises(ValueError, match="Can only create teamspaces for currently authenticated user"):
-        user.create_teamspace("new-teamspace")

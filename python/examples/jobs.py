@@ -12,7 +12,6 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--teamspace", required=True, help="Teamspace name without owner.")
     parser.add_argument("--org", help="Organization that owns the teamspace.")
-    parser.add_argument("--user", help="User that owns the teamspace.")
 
     subcommands = parser.add_subparsers(dest="example", required=True)
 
@@ -43,7 +42,7 @@ def main() -> None:
     args = _parser().parse_args()
     if args.example == "studio":
         # sdk-studio-job-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
         studio = Studio(args.studio, teamspace=teamspace, create_ok=False)
 
         job = Job.run(
@@ -64,7 +63,7 @@ def main() -> None:
         # sdk-studio-job-end
     elif args.example == "image":
         # sdk-image-job-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
 
         job = Job.run(
             name=args.name,
@@ -81,7 +80,7 @@ def main() -> None:
         # sdk-image-job-end
     elif args.example == "artifacts":
         # sdk-job-artifacts-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
         job = Job(args.name, teamspace=teamspace)
 
         print(f"Artifacts: {job.artifacts_uri}")
