@@ -5,7 +5,7 @@ import rich_click as click
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.utils import _tree_path_info
 from lightning_sdk.cli.cp.completion import complete_remote_path
-from lightning_sdk.cli.utils.filesystem import resolve_lit_url
+from lightning_sdk.cli.utils.filesystem import resolve_lit_url_ref
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand
 
@@ -36,13 +36,13 @@ def ls_impl(path: str, recursive: bool = False, as_json: bool = False) -> None:
     if not path.startswith("lit://"):
         raise ValueError("Path must be a drive path starting with 'lit://'.")
 
-    selected_teamspace, remote_path = resolve_lit_url(path)
+    teamspace_ref, remote_path = resolve_lit_url_ref(path)
     remote_path = remote_path.strip("/")
 
     filesystem_api = FilesystemApi()
 
     def list_entries(folder: str) -> list:
-        return filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=folder, recursive=False)
+        return filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=folder, recursive=False)
 
     path_info = _tree_path_info(list_entries, remote_path)
     if not path_info["exists"]:
@@ -60,7 +60,7 @@ def ls_impl(path: str, recursive: bool = False, as_json: bool = False) -> None:
         print(remote_path)
         return
 
-    entries = filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=remote_path, recursive=recursive)
+    entries = filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=recursive)
     if as_json:
         echo_json(entries)
         return

@@ -21,7 +21,9 @@ def test_rm_file_deletes_it(fake_teamspace):
         assert path == "uploads/data"
         return [{"path": "test1.txt", "type": "blob", "size": 3}]
 
-    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace), mock.patch(
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace
+    ), mock.patch(
         "lightning_sdk.cli.utils.filesystem.parse_lit_url",
         return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data/test1.txt"},
     ), mock.patch("lightning_sdk.filesystem.FilesystemApi") as mock_api_cls:
@@ -36,7 +38,9 @@ def test_rm_directory_requires_recursive(fake_teamspace):
     def list_files(teamspace_id, path, recursive):
         return [{"path": "data", "type": "tree"}]
 
-    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace), mock.patch(
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace
+    ), mock.patch(
         "lightning_sdk.cli.utils.filesystem.parse_lit_url",
         return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data"},
     ), mock.patch("lightning_sdk.filesystem.FilesystemApi") as mock_api_cls:
@@ -51,7 +55,9 @@ def test_rm_directory_recursive_deletes_the_folder(fake_teamspace):
     def list_files(teamspace_id, path, recursive):
         return [{"path": "data", "type": "tree"}]
 
-    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace), mock.patch(
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace
+    ), mock.patch(
         "lightning_sdk.cli.utils.filesystem.parse_lit_url",
         return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data"},
     ), mock.patch("lightning_sdk.filesystem.FilesystemApi") as mock_api_cls:
@@ -63,7 +69,9 @@ def test_rm_directory_recursive_deletes_the_folder(fake_teamspace):
 
 
 def test_rm_missing_path_raises(fake_teamspace):
-    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace), mock.patch(
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace
+    ), mock.patch(
         "lightning_sdk.cli.utils.filesystem.parse_lit_url",
         return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": "uploads/data/missing.txt"},
     ), mock.patch("lightning_sdk.filesystem.FilesystemApi") as mock_api_cls:
@@ -73,7 +81,9 @@ def test_rm_missing_path_raises(fake_teamspace):
 
 
 def test_rm_refuses_teamspace_root(fake_teamspace):
-    with mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace), mock.patch(
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace
+    ), mock.patch(
         "lightning_sdk.cli.utils.filesystem.parse_lit_url",
         return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": ""},
     ), mock.patch("lightning_sdk.filesystem.FilesystemApi"), pytest.raises(ValueError, match="teamspace root"):
