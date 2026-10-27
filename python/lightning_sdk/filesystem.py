@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Generator, List, Optional, Tuple
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
+from lightning_sdk.api.teamspace_api import TeamspaceApi
 from lightning_sdk.api.utils import _RemoteApiError, _tree_path_info
-from lightning_sdk.cli.utils.filesystem import resolve_lit_url, resolve_lit_url_ref
-from lightning_sdk.teamspace import Teamspace
+from lightning_sdk.cli.utils.filesystem import resolve_lit_url_ref
 from lightning_sdk.utils.logging import TrackCallsMeta
 
 logger = logging.getLogger(__name__)
@@ -87,13 +87,13 @@ class Filesystem(metaclass=TrackCallsMeta):
             ValueError: If the path is a directory and ``recursive`` is ``False``,
                 or the path has no file or directory component.
         """
-        selected_teamspace, remote_path = resolve_lit_url(path)
+        teamspace_ref, remote_path = resolve_lit_url_ref(path)
         remote_path = remote_path.strip("/")
         if not remote_path:
             raise ValueError("Refusing to remove the teamspace root; pass a file or directory path.")
 
         def list_entries(folder: str) -> List[dict]:
-            return self._filesystem_api.list_files(teamspace_id=selected_teamspace.id, path=folder, recursive=False)
+            return self._filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=folder, recursive=False)
 
         info = _tree_path_info(list_entries, remote_path)
         if not info["exists"]:
@@ -105,9 +105,9 @@ class Filesystem(metaclass=TrackCallsMeta):
         if info["type"] == "directory":
             if not recursive:
                 raise ValueError(f"{remote_path!r} is a directory. Pass recursive=True to remove it.")
-            self._filesystem_api.delete_folder(selected_teamspace.id, remote_path)
+            self._filesystem_api.delete_folder(teamspace_ref.id, remote_path)
         else:
-            self._filesystem_api.delete_file(selected_teamspace.id, remote_path)
+            self._filesystem_api.delete_file(teamspace_ref.id, remote_path)
 
     def copy(
         self,
@@ -195,7 +195,7 @@ class Filesystem(metaclass=TrackCallsMeta):
                 self._filesystem_api.download_file(remote_path, target_path, teamspace_ref.id, progress_bar)
         else:
             # upload
-            selected_teamspace, remote_path = resolve_lit_url(destination)
+            teamspace_ref, remote_path = resolve_lit_url_ref(destination)
             if not os.path.exists(local_path):
                 raise FileNotFoundError(f"The provided path does not exist: {local_path}")
 
@@ -212,7 +212,7 @@ class Filesystem(metaclass=TrackCallsMeta):
                 for file_path in sorted(p for p in Path(local_path).rglob("*") if p.is_file()):
                     relative = file_path.relative_to(local_path).as_posix()
                     cloud_account = self._upload_file(
-                        selected_teamspace,
+                        teamspace_ref.id,
                         file_path=str(file_path),
                         remote_path=f"{root}/{relative}" if root else relative,
                         progress_bar=progress_bar,
@@ -221,14 +221,12 @@ class Filesystem(metaclass=TrackCallsMeta):
             else:
                 target = remote_dest
                 directory_target = (
-                    target.endswith("/")
-                    or not target.strip("/")
-                    or self._is_remote_directory(selected_teamspace.id, target)
+                    target.endswith("/") or not target.strip("/") or self._is_remote_directory(teamspace_ref.id, target)
                 )
                 if directory_target:
                     target = f"{target.strip('/')}/{os.path.basename(local_path)}".lstrip("/")
                 self._upload_file(
-                    selected_teamspace,
+                    teamspace_ref.id,
                     file_path=local_path,
                     remote_path=target,
                     progress_bar=progress_bar,
@@ -237,7 +235,7 @@ class Filesystem(metaclass=TrackCallsMeta):
 
     def _upload_file(
         self,
-        teamspace: Teamspace,
+        teamspace_id: str,
         file_path: str,
         remote_path: str,
         progress_bar: bool,
@@ -252,7 +250,7 @@ class Filesystem(metaclass=TrackCallsMeta):
         """
         try:
             self._filesystem_api.upload_file(
-                teamspace_id=teamspace.id,
+                teamspace_id=teamspace_id,
                 file_path=file_path,
                 remote_path=remote_path,
                 progress_bar=progress_bar,
@@ -266,7 +264,7 @@ class Filesystem(metaclass=TrackCallsMeta):
             if cloud_account is not None or not cluster_demanded:
                 raise
             try:
-                resolved = teamspace._teamspace_api._determine_cloud_account(teamspace.id)
+                resolved = TeamspaceApi()._determine_cloud_account(teamspace_id)
             except RuntimeError as resolve_error:
                 raise RuntimeError(
                     f"A cloud account is required to upload to {remote_path!r}. "
@@ -274,7 +272,7 @@ class Filesystem(metaclass=TrackCallsMeta):
                 ) from e
             warnings.warn(f"No cloud account specified. Using cloud account: {resolved}.")
             self._filesystem_api.upload_file(
-                teamspace_id=teamspace.id,
+                teamspace_id=teamspace_id,
                 file_path=file_path,
                 remote_path=remote_path,
                 progress_bar=progress_bar,

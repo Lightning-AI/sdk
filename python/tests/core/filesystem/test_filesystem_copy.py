@@ -144,7 +144,7 @@ def test_copy_raises_if_directory_without_recursive(
 @mock.patch("lightning_sdk.api.filesystem_api.requests.get")
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers", return_value=FAKE_AUTH_HEADERS)
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
+@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref")
 @mock.patch("lightning_sdk.cli.utils.filesystem.parse_lit_url")
 def test_copy_raises_if_remote_file_not_found(
     mock_parse_lit_url, mock_resolve, _mock_authenticate, mock_client_cls, mock_get, fake_teamspace, fake_path_result
@@ -181,7 +181,7 @@ def _upload_fs(fake_teamspace, destination):
             "lightning_sdk.cli.utils.filesystem.parse_lit_url",
             return_value={"teamspace": "my-teamspace", "owner": "my-org", "destination": destination},
         ),
-        mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace", return_value=fake_teamspace),
+        mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=fake_teamspace),
     )
     return fs, patches
 
@@ -331,6 +331,12 @@ def test_copy_upload_missing_local_path_raises(fake_teamspace):
         fs.copy("does/not/exist", "lit://my-org/my-teamspace/lightning_storage/my-storage/file.txt")
 
 
+@pytest.fixture()
+def teamspace_api():
+    with mock.patch("lightning_sdk.filesystem.TeamspaceApi") as teamspace_api_cls:
+        yield teamspace_api_cls.return_value
+
+
 _CLUSTER_REQUIRED_ERROR = _RemoteApiError(
     "Failed to request upload URLs for 'uploads/data.csv'. Status code: 400: "
     '{"error":"drive: invalid request: uploads require a ClusterID"}',
@@ -339,10 +345,10 @@ _CLUSTER_REQUIRED_ERROR = _RemoteApiError(
 )
 
 
-def test_copy_upload_falls_back_to_resolved_cloud_account(tmp_path, fake_teamspace):
+def test_copy_upload_falls_back_to_resolved_cloud_account(tmp_path, fake_teamspace, teamspace_api):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace._teamspace_api._determine_cloud_account.return_value = "default-cluster"
+    teamspace_api._determine_cloud_account.return_value = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/data.csv")
     fs._filesystem_api.list_files.return_value = []
@@ -351,15 +357,15 @@ def test_copy_upload_falls_back_to_resolved_cloud_account(tmp_path, fake_teamspa
     with patches[0], patches[1], pytest.warns(UserWarning, match="cloud account: default-cluster"):
         fs.copy(str(local), "lit://my-org/my-teamspace/uploads/data.csv")
 
-    fake_teamspace._teamspace_api._determine_cloud_account.assert_called_once_with(fake_teamspace.id)
+    teamspace_api._determine_cloud_account.assert_called_once_with(fake_teamspace.id)
     accounts = [call.kwargs["cloud_account"] for call in fs._filesystem_api.upload_file.call_args_list]
     assert accounts == [None, "default-cluster"]
 
 
-def test_copy_upload_directory_reuses_fallback_cloud_account(tmp_path, fake_teamspace):
+def test_copy_upload_directory_reuses_fallback_cloud_account(tmp_path, fake_teamspace, teamspace_api):
     (tmp_path / "a.csv").write_bytes(b"a")
     (tmp_path / "b.csv").write_bytes(b"b")
-    fake_teamspace._teamspace_api._determine_cloud_account.return_value = "default-cluster"
+    teamspace_api._determine_cloud_account.return_value = "default-cluster"
 
     fs, patches = _upload_fs(fake_teamspace, "uploads/dest")
     fs._filesystem_api.upload_file.side_effect = [_CLUSTER_REQUIRED_ERROR, None, None]
@@ -401,10 +407,10 @@ def test_copy_upload_does_not_second_guess_an_explicit_cloud_account(tmp_path, f
     assert fs._filesystem_api.upload_file.call_count == 1
 
 
-def test_copy_upload_errors_helpfully_when_no_cloud_account_resolves(tmp_path, fake_teamspace):
+def test_copy_upload_errors_helpfully_when_no_cloud_account_resolves(tmp_path, fake_teamspace, teamspace_api):
     local = tmp_path / "data.csv"
     local.write_bytes(b"x")
-    fake_teamspace._teamspace_api._determine_cloud_account.side_effect = RuntimeError(
+    teamspace_api._determine_cloud_account.side_effect = RuntimeError(
         "Could not determine the current cloud account. Please provide it manually as input."
     )
 

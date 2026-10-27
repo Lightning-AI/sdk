@@ -3,9 +3,6 @@ from typing import Optional, Tuple
 
 from lightning_sdk.api.org_api import OrgApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.cli.utils.resource_resolution import join_teamspace_slug
-from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace as resolve_cli_teamspace
-from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.utils.config import Config, DefaultConfigKeys
 from lightning_sdk.utils.filesystem import parse_lit_url
 from lightning_sdk.utils.resolve import _resolve_org_name, _resolve_teamspace_name
@@ -19,28 +16,13 @@ class TeamspaceRef:
     name: str
 
 
-def resolve_teamspace(teamspace: Optional[str], owner: Optional[str]) -> Teamspace:
-    return resolve_cli_teamspace(join_teamspace_slug(owner, teamspace))
-
-
-def resolve_lit_url(url: str) -> Tuple[Teamspace, str]:
-    """Parse a ``lit://`` URL and resolve its teamspace in one step.
-
-    Returns the resolved :class:`Teamspace` and the drive path within it
-    (``""`` for the teamspace root). The relative form (``lit:///<path>``)
-    resolves to the current teamspace.
-    """
-    parsed = parse_lit_url(url)
-    return resolve_teamspace(parsed["teamspace"], parsed["owner"]), parsed["destination"] or ""
-
-
 def resolve_teamspace_ref(teamspace: Optional[str], owner: Optional[str]) -> TeamspaceRef:
-    """Like :func:`resolve_teamspace`, for operations that need only the teamspace's ID.
+    """Resolve a teamspace to the parts its drive operations need.
 
     Teamspaces are owned by organizations, so a teamspace resolves from two
     requests, the organization and the user's memberships, instead of building a
-    full :class:`Teamspace`. A missing name or owner is taken from the current
-    teamspace's configuration, as :class:`Teamspace` does.
+    full :class:`~lightning_sdk.Teamspace`. A missing name or owner is taken from
+    the current teamspace's configuration, as :class:`~lightning_sdk.Teamspace` does.
 
     Raises:
         ValueError: If no teamspace is given or configured, the organization does
@@ -72,6 +54,10 @@ def _current_org_name() -> Optional[str]:
 
 
 def resolve_lit_url_ref(url: str) -> Tuple[TeamspaceRef, str]:
-    """Like :func:`resolve_lit_url`, resolving the teamspace with :func:`resolve_teamspace_ref`."""
+    """Parse a ``lit://`` URL and resolve its teamspace with :func:`resolve_teamspace_ref`.
+
+    Returns the teamspace and the drive path within it (``""`` for the teamspace
+    root). The relative form (``lit:///<path>``) resolves to the current teamspace.
+    """
     parsed = parse_lit_url(url)
     return resolve_teamspace_ref(parsed["teamspace"], parsed["owner"]), parsed["destination"] or ""

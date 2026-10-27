@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from lightning_sdk.cli.ls import ls_impl
 from lightning_sdk.filesystem import Filesystem
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
@@ -45,26 +46,22 @@ def tree():
         yield get
 
 
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_org_teamspace_resolves_from_org_and_memberships(resolve_teamspace, client, tree):
+def test_org_teamspace_resolves_from_org_and_memberships(client, tree):
     assert Filesystem().listdir("lit://my-org/my-teamspace/data") == ["a.txt"]
 
     client.organizations_service_get_organization.assert_called_once_with(id="", name="my-org")
     client.projects_service_list_memberships.assert_called_once_with(filter_by_user_id=True)
     client.projects_service_get_project.assert_not_called()
-    resolve_teamspace.assert_not_called()
     assert f"/v1/projects/{TEAMSPACE_ID}/artifacts/trees/data" in tree.call_args[0][0]
 
 
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_teamspace_matches_display_name(resolve_teamspace, client, tree):
+def test_teamspace_matches_display_name(client, tree):
     client.projects_service_list_memberships.return_value = SimpleNamespace(
         memberships=[membership(TEAMSPACE_ID, "general", display_name="My Teamspace")]
     )
 
     Filesystem().listdir("lit://my-org/My Teamspace/data")
 
-    resolve_teamspace.assert_not_called()
     assert f"/v1/projects/{TEAMSPACE_ID}/" in tree.call_args[0][0]
 
 
@@ -90,8 +87,7 @@ def config_file(tmp_path):
         yield path
 
 
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_relative_url_uses_teamspace_from_env(resolve_teamspace, client, tree, config_file, monkeypatch):
+def test_relative_url_uses_teamspace_from_env(client, tree, config_file, monkeypatch):
     monkeypatch.setenv("LIGHTNING_TEAMSPACE", "my-teamspace")
     monkeypatch.setenv("LIGHTNING_ORG", "my-org")
 
@@ -99,7 +95,6 @@ def test_relative_url_uses_teamspace_from_env(resolve_teamspace, client, tree, c
 
     client.organizations_service_get_organization.assert_called_once_with(id="", name="my-org")
     client.projects_service_get_project.assert_not_called()
-    resolve_teamspace.assert_not_called()
     assert f"/v1/projects/{TEAMSPACE_ID}/artifacts/trees/data" in tree.call_args[0][0]
 
 
@@ -134,8 +129,7 @@ def test_ambiguous_teamspace_name_is_an_error(client, tree):
         Filesystem().listdir("lit://my-org/my-teamspace/data")
 
 
-@mock.patch("lightning_sdk.cli.utils.filesystem.resolve_teamspace")
-def test_download_uses_the_lean_lookup(resolve_teamspace, client, tree, tmp_path):
+def test_download_uses_the_lean_lookup(client, tree, tmp_path):
     def fake_get(url, **kwargs):
         resp = mock.MagicMock()
         resp.status_code = 200
@@ -153,6 +147,25 @@ def test_download_uses_the_lean_lookup(resolve_teamspace, client, tree, tmp_path
 
     assert target.read_bytes() == b"x"
     client.projects_service_get_project.assert_not_called()
-    resolve_teamspace.assert_not_called()
     urls = [c[0][0] for c in tree.call_args_list]
     assert any(f"/v1/projects/{TEAMSPACE_ID}/artifacts/blobs/data/a.txt" in url for url in urls)
+
+
+def test_ls_uses_the_lean_lookup(client, tree, capsys):
+    def fake_get(url, **kwargs):
+        resp = mock.MagicMock()
+        resp.status_code = 200
+        if url.endswith("/artifacts/trees/"):
+            resp.json.return_value = {"tree": [{"path": "data", "type": "tree"}]}
+        else:
+            resp.json.return_value = {"tree": [{"path": "a.txt", "type": "blob", "size": 1}]}
+        return resp
+
+    tree.side_effect = fake_get
+
+    ls_impl("lit://my-org/my-teamspace/data")
+
+    assert capsys.readouterr().out.splitlines() == ["a.txt"]
+    client.projects_service_get_project.assert_not_called()
+    client.user_service_search_users.assert_not_called()
+    assert f"/v1/projects/{TEAMSPACE_ID}/artifacts/trees/data" in tree.call_args[0][0]
