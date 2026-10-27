@@ -106,9 +106,10 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
             logger.info("Authentication Successful")
             target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-successful"
         else:
+            reason = "no token in the callback" if not token else "state mismatch"
             logger.warning(
-                "Authentication Failed. This is most likely because you're using an older version of the CLI. "
-                "Please try to update the CLI and run `lightning login` again."
+                f"Authentication Failed ({reason}). If the browser was already signed in, the sign-in page "
+                "could not mint a CLI token. Run `lightning login` again, or update the CLI."
             )
             target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
 
