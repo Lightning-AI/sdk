@@ -97,13 +97,17 @@ def main_cli(ctx: click.Context) -> None:
 @main_cli.command
 def login() -> None:
     """Sign in to Lightning AI."""
-    if in_studio():
-        click.echo('"lightning login" is not required within a Studio')
+    auth = Auth()
+    if auth.api_key or auth.auth_token:
+        click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
         return
 
-    # always start a fresh session: an existing one may be about to expire
-    Auth.clear()
-    auth = Auth()
+    if in_studio():
+        # this is unexpected, as we automatically auth within a Studio
+        raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
+
+    # always start a fresh session: a saved one may have expired
+    auth.clear()
     try:
         with browser_authentication(True):
             auth.authenticate()

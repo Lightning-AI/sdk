@@ -263,33 +263,32 @@ def test_login_replaces_existing_session(monkeypatch, tmp_path):
     assert auth.auth_token == "sess_new"
 
 
-def test_login_ignores_credentials_in_env(monkeypatch, tmp_path):
+@pytest.mark.parametrize("env_var", ["LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"])
+def test_login_not_required_with_credentials_in_env(monkeypatch, tmp_path, env_var):
     _clear_auth(monkeypatch, tmp_path)
-    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "sess_expired")
-    browser_auth_started = False
+    monkeypatch.setenv(env_var, "from-env")
+    Auth().save(auth_token="sess_saved")
 
-    def _complete_browser_auth(auth: Auth) -> None:
-        nonlocal browser_auth_started
-        browser_auth_started = True
-        auth.auth_token = "sess_new"
+    def _fail_browser_auth(auth: Auth) -> None:
+        raise AssertionError("browser authentication should not start")
 
-    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
+    monkeypatch.setattr(Auth, "_run_server", _fail_browser_auth)
 
     result = CliRunner().invoke(main_cli, ["login"])
 
     assert result.exit_code == 0, result.output
-    assert browser_auth_started
+    assert "credentials are set in the environment" in result.output
+    assert Auth.secrets_file.exists()
 
 
 @patch.dict(os.environ, {"LIGHTNING_INTERACTIVE": "true", "LIGHTNING_CLOUD_SPACE_ID": "cloud-space-id"}, clear=True)
 @mock_command_logging
-def test_login_not_required_within_studio(monkeypatch):
-    mock_auth_cls = MagicMock()
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint.Auth", mock_auth_cls)
+def test_cannot_login_within_studio_without_credentials(monkeypatch):
+    mock_auth_instance = MagicMock(api_key=None, auth_token=None)
+    monkeypatch.setattr("lightning_sdk.cli.entrypoint.Auth", MagicMock(return_value=mock_auth_instance))
 
     result = CliRunner().invoke(login)
 
-    assert result.exit_code == 0
-    assert '"lightning login" is not required within a Studio' in result.output
-    mock_auth_cls.clear.assert_not_called()
-    mock_auth_cls.return_value.authenticate.assert_not_called()
+    assert result.exit_code == 1
+    assert "Unable to login within a Studio. Did you change your shell setup?" in str(result.exception)
+    mock_auth_instance.authenticate.assert_not_called()
