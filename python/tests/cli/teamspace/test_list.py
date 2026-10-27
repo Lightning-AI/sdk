@@ -15,8 +15,8 @@ def test_teamspace_list_json_is_sorted_and_skips_empty_owners():
     assert result.exit_code == 0, result.output
     assert json.loads(result.output) == {
         "teamspaces": [
-            {"owner": "acme", "name": "apps", "id": "ts-1"},
-            {"owner": "acme", "name": "research", "id": "ts-2"},
+            {"owner": "acme", "name": "apps"},
+            {"owner": "acme", "name": "research"},
         ]
     }
 

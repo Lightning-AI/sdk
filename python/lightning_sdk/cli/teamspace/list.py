@@ -14,9 +14,9 @@ from lightning_sdk.cli.utils.richt_print import rich_to_str
 def list_teamspaces(as_json: bool) -> None:
     """List the Teamspaces you have access to."""
     records = [
-        {"owner": owner, "name": name, "id": teamspace_id}
+        {"owner": owner, "name": name}
         for owner, teamspaces in sorted(accessible_teamspaces().items())
-        for name, teamspace_id in sorted(teamspaces.items())
+        for name in sorted(teamspaces)
     ]
     if as_json:
         echo_json({"teamspaces": records})
