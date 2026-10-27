@@ -220,8 +220,7 @@ class TeamspaceApi:
         the user. So when nothing is listed under the authed user's own ID, their
         personal org matches too. Another user's ID can't be mapped to their org.
         """
-        # /v1/auth/user rather than whoami, which the API lockdown blocks
-        if any(m.owner_id == owner_id for m in memberships) or owner_id != self._client.auth_service_get_user().id:
+        if any(m.owner_id == owner_id for m in memberships) or owner_id != self._get_authed_user_id():
             return {owner_id}
 
         org_id = self._personal_org_id(owner_id)

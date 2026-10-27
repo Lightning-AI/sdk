@@ -13,7 +13,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCreateModelVersionBody,
     V1CloudSpace,
     V1ClusterAccelerator,
-    V1GetUserResponse,
     V1ListMembershipsResponse,
     V1ListOrganizationsResponse,
     V1ListProjectClusterAcceleratorsResponse,
@@ -42,13 +41,10 @@ def test_get_teamspace(internal_teamspace_api_mocker):
     assert isinstance(project, V1Project)
 
 
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
-    return_value=V1GetUserResponse(id="user-abc"),
-    autospec=True,
-)
+@mock.patch("lightning_sdk.api.teamspace_api.AuthApi")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_get_teamspace_error(mock_get_user, internal_teamspace_api_mocker):
+def test_get_teamspace_error(mock_auth_api, internal_teamspace_api_mocker):
+    mock_auth_api.return_value.whoami.return_value.user_id = "user-abc"
     teamspace_api = TeamspaceApi()
 
     with pytest.raises(ValueError, match="Teamspace xyz does not exist"):
@@ -77,11 +73,7 @@ def test_list_teamspaces(internal_teamspace_api_list_mocker):
 def personal_org_memberships_mocker(mocker):
     """Memberships as listed once users moved to personal orgs: by org, never by user."""
     mocker.patch("lightning_sdk.api.teamspace_api._PERSONAL_ORG_IDS", {})
-    mocker.patch(
-        "lightning_sdk.lightning_cloud.openapi.api.auth_service_api.AuthServiceApi.auth_service_get_user",
-        return_value=V1GetUserResponse(id="user-abc"),
-        autospec=True,
-    )
+    mocker.patch("lightning_sdk.api.teamspace_api.AuthApi").return_value.whoami.return_value.user_id = "user-abc"
     memberships = [
         V1Membership(name="ts-abc", project_id="ts-abc001", owner_id="org-personal", owner_type="organization"),
         V1Membership(name="ts-def", project_id="ts-def001", owner_id="org-team", owner_type="organization"),
