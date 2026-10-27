@@ -47,7 +47,7 @@ from lightning_sdk.cli.rm import rm
 from lightning_sdk.cli.utils.auth import browser_authentication, logout_session
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.utils.resolve import _get_authed_user, in_studio
+from lightning_sdk.utils.resolve import in_studio
 
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
@@ -97,21 +97,16 @@ def main_cli(ctx: click.Context) -> None:
 @main_cli.command
 def login() -> None:
     """Sign in to Lightning AI."""
-    # try to fetch credentials, if successful (e.g. in a Studio or already logged in), no need to relogin
     auth = Auth()
-    if auth.api_key or auth.auth_token or auth.load():
-        try:
-            auth_user = _get_authed_user()
-            click.echo(f'You are currently logged in as "{auth_user.name}"')
-        except Exception:
-            click.echo("You are already logged in")
-        click.echo('"lightning login" is not required within a Studio or when already logged in')
+    if auth.api_key or auth.auth_token:
+        click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
         return
 
     if in_studio():
         # this is unexpected, as we automatically auth within a Studio
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
+    # always start a fresh session: a saved one may have expired
     auth.clear()
     try:
         with browser_authentication(True):
