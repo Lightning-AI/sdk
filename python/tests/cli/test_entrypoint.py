@@ -62,6 +62,40 @@ def test_explicit_login_can_start_browser_authentication(monkeypatch, tmp_path) 
     assert browser_auth_started
 
 
+def test_login_reports_success_and_failure(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    user = MagicMock()
+    user.name = "Test User"
+    monkeypatch.setattr("lightning_sdk.cli.entrypoint._get_authed_user", lambda: user)
+
+    def _save_token(auth: Auth) -> None:
+        auth.save(token="sess_user-1.secret", user_id="user-1")
+
+    monkeypatch.setattr(Auth, "_run_server", _save_token)
+    ok = CliRunner().invoke(main_cli, ["login"])
+    assert ok.exit_code == 0, ok.output
+    assert 'Successfully logged in as "Test User".' in ok.output
+
+    # the browser callback finished without saving a token
+    _clear_auth(monkeypatch, tmp_path / "second")
+    monkeypatch.setattr(Auth, "_run_server", lambda _auth: None)
+    failed = CliRunner().invoke(main_cli, ["login"])
+    assert failed.exit_code == 1
+    assert "Login failed" in str(failed.exception)
+
+
+def test_logout_reports_success_and_failure(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    ok = CliRunner().invoke(main_cli, ["logout"])
+    assert ok.exit_code == 0, ok.output
+    assert "Successfully logged out." in ok.output
+
+    monkeypatch.setattr("lightning_sdk.cli.entrypoint.logout_session", MagicMock(side_effect=OSError("denied")))
+    failed = CliRunner().invoke(main_cli, ["logout"])
+    assert failed.exit_code == 1
+    assert "Logout failed: denied" in str(failed.exception)
+
+
 def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -> None:
     _clear_auth(monkeypatch, tmp_path)
     browser_auth_starts = 0

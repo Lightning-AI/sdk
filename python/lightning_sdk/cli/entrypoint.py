@@ -47,7 +47,7 @@ from lightning_sdk.cli.rm import rm
 from lightning_sdk.cli.utils.auth import browser_authentication, logout_session
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.utils.resolve import in_studio
+from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
@@ -113,13 +113,27 @@ def login() -> None:
             auth.authenticate()
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+    except ValueError:
+        # the browser flow ended without the callback saving a token (see the warning it logs)
+        raise RuntimeError(
+            "Login failed: the browser sign-in finished without returning a token. Try running `lightning login` again"
+        ) from None
+
+    try:
+        click.echo(f'Successfully logged in as "{_get_authed_user().name}".')
+    except Exception:
+        # credentials are saved; only the lookup of the user's name failed
+        click.echo("Successfully logged in.")
 
 
 @main_cli.command
 def logout() -> None:
     """Sign out of the current session."""
-    auth = Auth()
-    logout_session(auth)
+    try:
+        logout_session(Auth())
+    except Exception as e:
+        raise RuntimeError(f"Logout failed: {e}") from e
+    click.echo("Successfully logged out.")
 
 
 # Add new command groups
@@ -164,6 +178,7 @@ main_cli.add_command(build_hidden_alias_group("files", file))
 main_cli.add_command(build_hidden_alias_group("folders", folder))
 main_cli.add_command(build_hidden_alias_group("datasets", dataset))
 main_cli.add_command(build_hidden_alias_group("studios", studio))
+main_cli.add_command(build_hidden_alias_group("teamspaces", teamspace))
 main_cli.add_command(build_hidden_alias_group("sandboxes", sandbox))
 main_cli.add_command(build_hidden_alias_group("base-studios", base_studio))
 
