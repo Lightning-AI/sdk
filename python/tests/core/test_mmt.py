@@ -618,11 +618,38 @@ def test_mmtv2_logs_follow_and_filters(mmt_api_get_job_by_name_mocker, internal_
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_mmtv2_logs_rejects_rank(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+def test_mmtv2_logs_rank_reads_that_machine(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    """The logs API has no rank parameter; a ranked read resolves the machine client-side."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = MMT("test-job", studio.teamspace)
 
-    with pytest.raises(ValueError, match="mmt.machines"):
+    monkeypatch.setattr(type(job), "status", mock.PropertyMock(return_value=Status.Running))
+    job._mmt_job_api.list_mmt_subjobs = mock.MagicMock(
+        return_value=[
+            V1Job(id="machine-0", name="test-job-0", spec=V1JobSpec(rank=0)),
+            V1Job(id="machine-1", name="test-job-1", spec=V1JobSpec(rank=1)),
+        ]
+    )
+    stream_mock = mock.MagicMock(return_value=[LogEntry(message="rank 1 line")])
+    job._logs_api.stream = stream_mock
+
+    assert job.logs(rank=1) == "rank 1 line"
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["job_ids"] == ["machine-1"]
+    assert kwargs["follow"] is False
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_mmtv2_logs_rank_out_of_range(mmt_api_get_job_by_name_mocker, internal_studio_init_mocker, monkeypatch):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = MMT("test-job", studio.teamspace)
+
+    monkeypatch.setattr(type(job), "status", mock.PropertyMock(return_value=Status.Running))
+    job._mmt_job_api.list_mmt_subjobs = mock.MagicMock(
+        return_value=[V1Job(id="machine-0", name="test-job-0", spec=V1JobSpec(rank=0))]
+    )
+
+    with pytest.raises(ValueError, match="out of range"):
         job.logs(rank=1)
 
 

@@ -1,12 +1,7 @@
-import json
 import time
 import warnings
-from contextlib import suppress
-from datetime import datetime, timezone
 from functools import lru_cache
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Union
-from urllib.error import URLError
-from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.request import urlopen
 
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
@@ -18,7 +13,6 @@ from lightning_sdk.api.utils import (
     resolve_tags,
 )
 from lightning_sdk.constants import __GLOBAL_LIGHTNING_UNIQUE_IDS_STORE__
-from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceCreateJobBody,
     JobsServiceUpdateJobBody,
@@ -36,15 +30,6 @@ from lightning_sdk.machine import Machine
 if TYPE_CHECKING:
     from lightning_sdk.status import Status
 
-# While following, recv() is given this timeout so we can periodically check whether the job has
-# finished. It must stay below the server's log-socket heartbeat (10s) so recv() actually wakes up
-# during quiet periods.
-_FOLLOW_POLL_INTERVAL = 5.0
-
-_DOWNLOAD_LOGS_MAX_RETRIES = 5
-_DOWNLOAD_LOGS_MIN_BACKOFF = 0.5
-_DOWNLOAD_LOGS_MAX_BACKOFF = 8.0
-
 
 def _keep_minutes_spec_kwargs(keep_minutes: Optional[int]) -> Dict[str, Any]:
     """Map a user timeout onto JobSpec fields sent to the backend.
@@ -61,75 +46,6 @@ def _keep_minutes_spec_kwargs(keep_minutes: Optional[int]) -> Dict[str, Any]:
         "reserve_machines_timeout_minutes": keep_minutes,
         "keep_machine_after_stop": True,
     }
-
-
-def _job_logs_ws_url(
-    teamspace_id: str,
-    job_id: str,
-    *,
-    follow: bool,
-    tail: Optional[int],
-    rank: Optional[int],
-) -> str:
-    """Build the ``wss://`` URL for following a job's logs over the controlplane websocket."""
-    parsed = urlparse(f"/v1/projects/{teamspace_id}/jobs/{job_id}/logs")
-    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query.update({"follow": str(follow).lower(), "direction": "forward"})
-    if rank is not None:
-        query["rank"] = str(rank)
-    if tail is not None:
-        query["tail"] = str(tail)
-    path = urlunparse(parsed._replace(query=urlencode(query)))
-
-    absolute = f"{_cloud_url().rstrip('/')}/{path.lstrip('/')}"
-    if absolute.startswith("https://"):
-        return "wss://" + absolute[len("https://") :]
-    if absolute.startswith("http://"):
-        return "ws://" + absolute[len("http://") :]
-    return absolute
-
-
-def _format_log_timestamp(value: object) -> Optional[str]:
-    """Best-effort convert a ``LogEntry`` timestamp into an ISO-8601 string.
-
-    The controlplane serialises the protobuf ``Timestamp`` as ``{"seconds": ..., "nanos": ...}``,
-    but we also accept an already-formatted string in case that ever changes.
-    """
-    if isinstance(value, dict):
-        seconds = value.get("seconds")
-        if seconds is None:
-            return None
-        epoch = float(seconds) + float(value.get("nanos", 0)) / 1e9
-        return datetime.fromtimestamp(epoch, tz=timezone.utc).isoformat()
-    if isinstance(value, str) and value:
-        return value
-    return None
-
-
-def _decode_log_messages(message: str, *, timestamps: bool = False) -> Iterator[str]:
-    """Decode a websocket log frame into individual log lines.
-
-    Args:
-        message: A raw websocket text frame (usually a JSON array of log entries).
-        timestamps: When ``True``, prepend each line with its ISO-8601 timestamp if available.
-    """
-    try:
-        payload = json.loads(message)
-    except json.JSONDecodeError:
-        yield message
-        return
-
-    entries = payload if isinstance(payload, list) else [payload]
-    for entry in entries:
-        if isinstance(entry, dict):
-            line = entry.get("message") or entry.get("Message") or json.dumps(entry)
-            if timestamps:
-                ts = _format_log_timestamp(entry.get("timestamp") or entry.get("Timestamp"))
-                if ts:
-                    line = f"{ts} {line}"
-            yield line
-        else:
-            yield str(entry)
 
 
 class JobApiV2:
@@ -454,49 +370,11 @@ class JobApiV2:
         """
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
 
-    def download_logs(
-        self,
-        job_id: str,
-        teamspace_id: str,
-        *,
-        deployment_id: Optional[str] = None,
-        rank: Optional[int] = None,
-        cloudspace_id: Optional[str] = None,
-        timestamps: bool = False,
-        max_retries: int = _DOWNLOAD_LOGS_MAX_RETRIES,
-    ) -> str:
-        """Download the stored logs for a job, retrying to prevent running-resource upload race."""
-        last_error: Optional[BaseException] = None
-        backoff = _DOWNLOAD_LOGS_MIN_BACKOFF
-        for attempt in range(max(1, max_retries)):
-            try:
-                resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
-                    project_id=teamspace_id,
-                    id=job_id,
-                    deployment_id=deployment_id or "",
-                    rank=rank or 0,
-                    cloudspace_id=cloudspace_id or "",
-                )
-                data = urlopen(resp.url).read().decode("utf-8")
-                if data:
-                    if timestamps:
-                        return str(data)
-                    return remove_datetime_prefix(str(data))
-                last_error = RuntimeError("The log download returned an empty response.")
-            except (URLError, OSError, ApiException) as ex:
-                last_error = ex
-
-            if attempt < max(1, max_retries) - 1:
-                time.sleep(backoff)
-                backoff = min(backoff * 2, _DOWNLOAD_LOGS_MAX_BACKOFF)
-
-        raise RuntimeError(
-            f"Could not download logs for job {job_id} after {max(1, max_retries)} attempts. "
-            "The logs may not have been uploaded yet; try again in a moment."
-        ) from last_error
-
     def get_logs_finished(self, job_id: str, teamspace_id: str, timestamps: bool = False) -> str:
-        """Download and return the completed log output for a v2 job.
+        """Download and return the saved log file of a finished job.
+
+        Only used for jobs whose lines are not in the logs API (jobs that finished before
+        logs moved to the current storage format).
 
         Args:
             job_id: The unique identifier of the job whose logs are fetched.
@@ -514,90 +392,6 @@ class JobApiV2:
         if timestamps:
             return str(data)
         return remove_datetime_prefix(str(data))
-
-    def stream_logs(
-        self,
-        job_id: str,
-        teamspace_id: str,
-        *,
-        follow: bool = True,
-        tail: Optional[int] = None,
-        rank: Optional[int] = None,
-        idle_timeout: Optional[float] = None,
-        reconnect: bool = True,
-        timestamps: bool = False,
-    ) -> Iterator[str]:
-        """Yield job log lines live over the controlplane websocket.
-
-        Reconnects automatically on transient drops while ``follow`` is set, so this can
-        stay open for the full lifetime of a long-running job.
-
-        Args:
-            job_id: The unique identifier of the job whose logs are streamed.
-            teamspace_id: The ID of the teamspace that owns the job.
-            follow: Keep the stream open and yield new lines as they are produced.
-            tail: Number of recent lines to emit before following.
-            rank: Distributed job rank to stream from.
-            idle_timeout: If set, stop the stream after this many seconds without data.
-            reconnect: Reconnect on transient socket drops while following.
-            timestamps: When ``True``, prepend each line with its ISO-8601 timestamp.
-
-        Yields:
-            Individual decoded log lines.
-        """
-        try:
-            import websocket
-            from websocket import (
-                WebSocketConnectionClosedException,
-                WebSocketTimeoutException,
-            )
-        except ImportError as ex:
-            raise RuntimeError(
-                "Streaming logs requires the 'websocket-client' package (pip install websocket-client)."
-            ) from ex
-
-        auth_header = Auth().authenticate()
-        url = _job_logs_ws_url(teamspace_id, job_id, follow=follow, tail=tail, rank=rank)
-
-        # For follow we poll recv() with a timeout so we can periodically check whether the job has
-        # finished: the server keeps the socket open (heartbeats only) after a job ends rather than
-        # closing it, so a plain blocking recv() would hang forever once the job is done.
-        recv_timeout = idle_timeout if idle_timeout is not None else (_FOLLOW_POLL_INTERVAL if follow else None)
-
-        while True:
-            ws = None
-            try:
-                kwargs: Dict = {"header": [f"Authorization: {auth_header}"]}
-                if recv_timeout is not None:
-                    kwargs["timeout"] = recv_timeout
-                ws = websocket.create_connection(url, **kwargs)
-                while True:
-                    try:
-                        message = ws.recv()
-                    except WebSocketTimeoutException:
-                        if follow:
-                            # quiet socket (heartbeats only): stop if the job is done, else keep waiting
-                            if self._is_job_finished(job_id, teamspace_id):
-                                return
-                            continue
-                        return  # idle timeout on a snapshot: treat the stream as finished
-                    except WebSocketConnectionClosedException:
-                        break  # fall through to reconnect logic
-                    if isinstance(message, bytes):
-                        message = message.decode("utf-8", errors="replace")
-                    if message == "":
-                        break
-                    yield from _decode_log_messages(message, timestamps=timestamps)
-            finally:
-                if ws is not None:
-                    with suppress(Exception):
-                        ws.close()
-
-            if not (follow and reconnect):
-                return
-            if self._is_job_finished(job_id, teamspace_id):
-                return  # socket dropped and the job is done — nothing more to stream
-            time.sleep(1)  # brief backoff before reconnecting, matches the CLI
 
     @staticmethod
     @lru_cache(maxsize=None)

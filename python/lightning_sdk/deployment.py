@@ -35,7 +35,7 @@ from lightning_sdk.api.deployment_api import (
     to_spec,
     to_strategy,
 )
-from lightning_sdk.api.job_api import JobApiV2
+from lightning_sdk.api.logs_api import LogsApi
 from lightning_sdk.api.utils import (
     AccessibleResource,
     logs_filename,
@@ -78,6 +78,10 @@ _ENV_NAME_ERROR = (
     "Environment variable names must start with a letter or underscore "
     "and contain only letters, numbers, and underscores."
 )
+
+# A running replica whose logs are not in the logs API yet has no saved history; its live
+# stream is tailed for this many seconds of silence so a download still captures something.
+_REPLICA_LOGS_IDLE_TIMEOUT = 8.0
 
 
 def _validate_env_names(env: Dict[str, str]) -> None:
@@ -538,7 +542,7 @@ class Deployment(metaclass=TrackCallsMeta):
         job_id: Optional[str] = None,
         timestamps: bool = False,
     ) -> str:
-        """Download a deployment replica's complete stored logs to a file and return the written path."""
+        """Download a deployment replica's stored logs to a file and return the written path."""
         if not self._deployment or not self.id:
             raise RuntimeError("This deployment has not been created.")
 
@@ -555,12 +559,18 @@ class Deployment(metaclass=TrackCallsMeta):
                 )
             job_id = jobs[0].id
 
-        text = JobApiV2().download_logs(
-            job_id=job_id,
-            teamspace_id=teamspace_id,
-            deployment_id=self.id,
-            timestamps=timestamps,
+        entries = LogsApi().stream(
+            teamspace_id,
+            job_ids=[job_id],
+            # A running replica whose lines are not in the logs API yet has no saved history;
+            # tail its live stream briefly so the download still captures what is there.
+            idle_timeout=_REPLICA_LOGS_IDLE_TIMEOUT,
+            fallback_to_live=True,
         )
+        lines = [entry.format(timestamps=timestamps) for entry in entries]
+        text = "\n".join(lines)
+        if lines:
+            text += "\n"
         dest = resolve_logs_path(None, logs_filename("deployment", self.name or self.id))
         dest.write_text(text, encoding="utf-8")
         return str(dest)
