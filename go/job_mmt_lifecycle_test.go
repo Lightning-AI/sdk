@@ -16,7 +16,6 @@ import (
 )
 
 func TestJobLifecycleUsesV2Routes(t *testing.T) {
-	var serverURL string
 	var seen []string
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -44,16 +43,20 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 				assert.Fail(t, fmt.Sprintf("cloudspaceId = %q, want studio-1", r.URL.Query().Get("cloudspaceId")))
 			}
 			_ = json.NewEncoder(w).Encode(map[string]any{})
-		case "GET /v1/projects/project-1/jobs/job-1/download-logs":
-			_ = json.NewEncoder(w).Encode(map[string]any{"url": serverURL + "/logs/job-1"})
-		case "GET /logs/job-1":
-			w.Header().Set("Content-Type", "text/plain")
-			_, _ = w.Write([]byte("[2026-06-16T10:00:00Z] first line\n[2026-06-16T10:00:01Z] second line\n"))
+		case "GET /v1/projects/project-1/page-logs":
+			if r.URL.Query().Get("jobIds") != "job-1" {
+				assert.Fail(t, fmt.Sprintf("jobIds = %q, want job-1", r.URL.Query().Get("jobIds")))
+			}
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"entries": []map[string]any{
+					{"message": "first line", "line": "1"},
+					{"message": "second line", "line": "2"},
+				},
+			})
 		default:
 			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
 		}
 	}))
-	serverURL = server.URL
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
 
@@ -70,14 +73,13 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 	logs, err := j.Logs()
 	require.NoErrorf(t, err,
 		"job.Logs returned error")
-	assert.Falsef(t, logs != "first line\nsecond line\n",
+	assert.Falsef(t, logs != "first line\nsecond line",
 		"logs = %q", logs)
 
 	want := []string{
 		"PUT /v1/projects/project-1/jobs/job-1",
 		"DELETE /v1/projects/project-1/jobs/job-1?cloudspaceId=studio-1",
-		"GET /v1/projects/project-1/jobs/job-1/download-logs",
-		"GET /logs/job-1",
+		"GET /v1/projects/project-1/page-logs?jobIds=job-1",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
@@ -87,6 +89,57 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 			"request %d = %q, want %q", i, seen[i], want[i])
 
 	}
+}
+
+func TestJobLogsFallBackToSavedFileWhenNotInLogsAPI(t *testing.T) {
+	var serverURL string
+	var seen []string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seen = append(seen, r.Method+" "+r.URL.RequestURI())
+		w.Header().Set("Content-Type", "application/json")
+		switch r.Method + " " + r.URL.Path {
+		case "GET /v1/projects/project-1/page-logs":
+			_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
+		case "GET /v1/projects/project-1/jobs/job-1/download-logs":
+			_ = json.NewEncoder(w).Encode(map[string]any{"url": serverURL + "/logs/job-1"})
+		case "GET /logs/job-1":
+			w.Header().Set("Content-Type", "text/plain")
+			_, _ = w.Write([]byte("[2026-06-16T10:00:00Z] first line\n[2026-06-16T10:00:01Z] second line\n"))
+		default:
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		}
+	}))
+	serverURL = server.URL
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "completed"})
+	logs, err := j.Logs()
+	require.NoErrorf(t, err, "job.Logs returned error")
+	assert.Equal(t, "first line\nsecond line\n", logs)
+	assert.Equal(t, []string{
+		"GET /v1/projects/project-1/page-logs?jobIds=job-1",
+		"GET /v1/projects/project-1/jobs/job-1/download-logs",
+		"GET /logs/job-1",
+	}, seen)
+}
+
+func TestJobLogsRunningWithoutHistoryDoesNotFallBack(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method+" "+r.URL.Path != "GET /v1/projects/project-1/page-logs" {
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		}
+		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "running"})
+	logs, err := j.Logs()
+	require.NoErrorf(t, err, "job.Logs returned error")
+	assert.Equal(t, "", logs)
 }
 
 func TestJobWaitPollsUntilTerminalState(t *testing.T) {
@@ -307,7 +360,6 @@ func TestMMTListsSubJobsWithV2Route(t *testing.T) {
 }
 
 func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
-	var serverURL string
 	var seen []string
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -328,16 +380,17 @@ func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
 					},
 				},
 			})
-		case "GET /v1/projects/project-1/jobs/job-rank-0/download-logs":
-			_ = json.NewEncoder(w).Encode(map[string]any{"url": serverURL + "/logs/job-rank-0"})
-		case "GET /logs/job-rank-0":
-			w.Header().Set("Content-Type", "text/plain")
-			_, _ = w.Write([]byte("[2026-06-16T10:00:00Z] rank 0 line\n"))
+		case "GET /v1/projects/project-1/page-logs":
+			if r.URL.Query().Get("jobIds") != "job-rank-0" {
+				assert.Fail(t, fmt.Sprintf("jobIds = %q, want job-rank-0", r.URL.Query().Get("jobIds")))
+			}
+			_ = json.NewEncoder(w).Encode(map[string]any{
+				"entries": []map[string]any{{"message": "rank 0 line", "line": "1"}},
+			})
 		default:
 			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
 		}
 	}))
-	serverURL = server.URL
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
 
@@ -345,13 +398,12 @@ func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
 	logs, err := m.Logs()
 	require.NoErrorf(t, err,
 		"mmt.Logs returned error")
-	assert.Falsef(t, logs != "rank 0 line\n",
+	assert.Falsef(t, logs != "rank 0 line",
 		"logs = %q", logs)
 
 	want := []string{
 		"GET /v1/projects/project-1/jobs?multiMachineJobId=mmt-1",
-		"GET /v1/projects/project-1/jobs/job-rank-0/download-logs",
-		"GET /logs/job-rank-0",
+		"GET /v1/projects/project-1/page-logs?jobIds=job-rank-0",
 	}
 	assert.Falsef(t, len(seen) != len(want),
 		"seen requests = %v, want %v", seen, want)
