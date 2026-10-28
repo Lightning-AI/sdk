@@ -44,7 +44,7 @@ from lightning_sdk.cli.legacy_redirects import (
 )
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import browser_authentication, logout_session
+from lightning_sdk.cli.utils.auth import browser_authentication, login_with_device_code, logout_session
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -95,7 +95,12 @@ def main_cli(ctx: click.Context) -> None:
 
 
 @main_cli.command
-def login() -> None:
+@click.option(
+    "--device",
+    is_flag=True,
+    help="Sign in from a machine without a browser, such as a remote server, by approving a code on another device.",
+)
+def login(device: bool) -> None:
     """Sign in to Lightning AI."""
     auth = Auth()
     if auth.api_key or auth.auth_token:
@@ -109,8 +114,11 @@ def login() -> None:
     # always start a fresh session: a saved one may have expired
     auth.clear()
     try:
-        with browser_authentication(True):
-            auth.authenticate()
+        if device:
+            login_with_device_code(auth)
+        else:
+            with browser_authentication(True):
+                auth.authenticate()
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
     except ValueError:
