@@ -114,6 +114,13 @@ def _get_cluster(
     return None
 
 
+def _strip_name(name: Optional[str]) -> Optional[str]:
+    """Strip surrounding whitespace, including around the ``/`` of an ``owner/name`` slug."""
+    if name is None:
+        return None
+    return "/".join(part.strip() for part in name.split("/", 1))
+
+
 def _resolve_org_name(name: Optional[str]) -> Optional[str]:
     """Return the organisation name, falling back to the env var and config when ``None``.
 
@@ -130,7 +137,7 @@ def _resolve_org_name(name: Optional[str]) -> Optional[str]:
 
         config = Config()
         name = config.get_value(DefaultConfigKeys.organization)
-    return name
+    return _strip_name(name)
 
 
 def _resolve_org(org: Optional[Union[str, "Organization"]]) -> Optional["Organization"]:
@@ -182,7 +189,7 @@ def _resolve_user_name(name: Optional[str]) -> Optional[str]:
 
         config = Config()
         name = config.get_value(DefaultConfigKeys.user)
-    return name
+    return _strip_name(name)
 
 
 def _resolve_user(user: Optional[Union[str, "User"]]) -> Optional["User"]:
@@ -222,7 +229,7 @@ def _resolve_teamspace_name(name: Optional[str]) -> Optional[str]:
 
         config = Config()
         name = config.get_value(DefaultConfigKeys.teamspace_name)
-    return name
+    return _strip_name(name)
 
 
 def _resolve_teamspace(
