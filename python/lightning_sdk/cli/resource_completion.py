@@ -22,14 +22,12 @@ def has_credentials() -> bool:
 
 
 def accessible_teamspaces() -> dict[str, dict[str, str]]:
-    """Return accessible teamspace IDs grouped by owner name."""
+    """Return accessible teamspace IDs grouped by the name of the org that owns them."""
     client = cached_lightning_client()
-    user = client.auth_service_get_user()
     organizations = client.organizations_service_list_organizations().organizations
     memberships = client.projects_service_list_memberships(filter_by_user_id=True).memberships
 
-    owner_names_by_id = {user.id: user.username}
-    owner_names_by_id.update({organization.id: organization.name for organization in organizations})
+    owner_names_by_id = {organization.id: organization.name for organization in organizations}
     teamspaces: dict[str, dict[str, str]] = {owner_name: {} for owner_name in owner_names_by_id.values()}
 
     for membership in memberships:

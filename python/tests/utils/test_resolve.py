@@ -174,7 +174,6 @@ def test_resolve_teamspace_name_env_var(provided):
 @pytest.mark.parametrize(
     ("teamspace_name", "org_name", "user_name", "expected_result"),
     [
-        ("ts-abc", None, "user-abc", {"name": "ts-abc", "user": {"name": "user-abc"}}),
         ("ts-def", "org-abc", None, {"name": "ts-def", "org": {"name": "org-abc"}}),
     ],
 )

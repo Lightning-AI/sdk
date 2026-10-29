@@ -130,9 +130,8 @@ def test_remote_completion_does_not_start_login_without_credentials(auth, access
     accessible_teamspaces.assert_not_called()
 
 
-def test_accessible_teamspaces_are_grouped_by_owner():
+def test_accessible_teamspaces_are_grouped_by_org():
     client = MagicMock()
-    client.auth_service_get_user.return_value = SimpleNamespace(id="user-1", username="personal")
     client.organizations_service_list_organizations.return_value = SimpleNamespace(
         organizations=[SimpleNamespace(id="org-1", name="acme")]
     )
@@ -144,12 +143,10 @@ def test_accessible_teamspaces_are_grouped_by_owner():
     )
 
     with patch("lightning_sdk.cli.resource_completion.cached_lightning_client", return_value=client):
-        assert _accessible_teamspaces() == {
-            "acme": {"research": "project-1"},
-            "personal": {"scratch": "project-2"},
-        }
+        assert _accessible_teamspaces() == {"acme": {"research": "project-1"}}
 
     client.projects_service_list_memberships.assert_called_once_with(filter_by_user_id=True)
+    client.auth_service_get_user.assert_not_called()
 
 
 def test_studio_listing_follows_pagination():

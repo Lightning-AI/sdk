@@ -12,7 +12,6 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--teamspace", required=True, help="Teamspace name without owner.")
     parser.add_argument("--org", help="Organization that owns the teamspace.")
-    parser.add_argument("--user", help="User that owns the teamspace.")
     parser.add_argument("--studio", default="sdk-tutorial-studio", help="Studio name.")
     parser.add_argument("--machine", default="CPU", help="Machine type.")
     parser.add_argument("--train-file", default="train.py", help="Local file to upload and run.")
@@ -24,7 +23,7 @@ def _parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _parser().parse_args()
     # sdk-studio-workflow-start
-    teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+    teamspace = Teamspace(args.teamspace, org=args.org)
 
     studio = Studio(
         name=args.studio,
