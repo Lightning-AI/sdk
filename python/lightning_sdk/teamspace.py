@@ -33,6 +33,7 @@ from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
+    _get_authed_user,
     _get_organizations_for_authed_user,
     _parse_model_and_version,
     _resolve_org,
@@ -1184,22 +1185,27 @@ def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name:
     message = error.args[0]
     if message.startswith("Teamspace") and message.endswith("does not exist"):
         entire_ts_name = f"{owner.name}/{teamspace_name}"
-
-        if isinstance(owner, User):
-            organizations = _get_organizations_for_authed_user()
-            message = (
-                f"Teamspace {entire_ts_name} does not exist. "
-                f"Is {teamspace_name} an organizational Teamspace? You are a member of the following organizations: "
-                f"{[o.name for o in organizations]}. Try specifying the `org` parameter instead "
-                "of `user` if the Teamspace belongs to the organization."
-            )
-        else:
-            # organization teamspace owner
-            user = User()
-            message = (
-                f"Teamspace {entire_ts_name} does not exist. "
-                f"Is {teamspace_name} a user Teamspace? "
-                f"Consider specifying user={user.name} instead of org={owner.name}."
-            )
+        message = f"Teamspace {entire_ts_name} does not exist."
+        # The hint is best-effort: a failed lookup must not mask the original error.
+        try:
+            message += _owner_hint(owner, teamspace_name)
+        except Exception:
+            message += f" Is {teamspace_name} owned by a different user or organization?"
 
     return ValueError(message, *error.args[1:])
+
+
+def _owner_hint(owner: Owner, teamspace_name: str) -> str:
+    """Suggests the other owner kind for a teamspace that was not found under ``owner``."""
+    if isinstance(owner, User):
+        organizations = _get_organizations_for_authed_user()
+        return (
+            f" Is {teamspace_name} an organizational Teamspace? You are a member of the following organizations: "
+            f"{[o.name for o in organizations]}. Try specifying the `org` parameter instead "
+            "of `user` if the Teamspace belongs to the organization."
+        )
+    # Organization owner: suggest the logged-in user, not just the LIGHTNING_USERNAME env var.
+    return (
+        f" Is {teamspace_name} a user Teamspace? "
+        f"Consider specifying user={_get_authed_user().name} instead of org={owner.name}."
+    )
