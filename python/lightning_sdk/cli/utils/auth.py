@@ -1,14 +1,15 @@
 """Non-interactive authentication helpers for CLI commands."""
 
 import base64
+import hashlib
 import hmac
 import json
 import os
-import time
+import secrets
 from contextlib import contextmanager, suppress
 from contextvars import ContextVar
 from pathlib import Path
-from typing import Generator, Optional
+from typing import Generator, Optional, Tuple
 from urllib.parse import urlencode
 
 import requests
@@ -20,12 +21,59 @@ from lightning_sdk.lightning_cloud.login import Auth, AuthServer, logger
 _BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
 _ORIGINAL_AUTH_SAVE = Auth.save
 
-_DEVICE_CLIENT_ID = "lightning-cli"
-_DEVICE_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
+_CLIENT_ID = "lightning-cli"
+_PASTE_ATTEMPTS = 3
 
 
 def _generate_state() -> str:
     return base64.urlsafe_b64encode(os.urandom(16)).rstrip(b"=").decode("ascii")
+
+
+def _pkce_pair() -> Tuple[str, str]:
+    """Return a PKCE `(verifier, S256 challenge)` pair."""
+    verifier = secrets.token_urlsafe(64)
+    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).rstrip(b"=")
+    return verifier, challenge.decode("ascii")
+
+
+def _authorize_url(redirect_uri: str, state: str, challenge: str) -> str:
+    query = urlencode(
+        {
+            "response_type": "code",
+            "client_id": _CLIENT_ID,
+            "redirect_uri": redirect_uri,
+            "state": state,
+            "code_challenge": challenge,
+            "code_challenge_method": "S256",
+        }
+    )
+    return f"{env.LIGHTNING_CLOUD_URL}/oidc/authorize?{query}"
+
+
+class _CodeRejected(Exception):
+    """The token endpoint refused the code; `str(e)` is its OAuth error."""
+
+
+def _exchange_code(code: str, verifier: str, redirect_uri: str) -> str:
+    """Trade an approved code and its PKCE verifier for a CLI session token."""
+    try:
+        response = requests.post(
+            f"{env.LIGHTNING_CLOUD_URL}/oidc/token",
+            data={
+                "grant_type": "authorization_code",
+                "client_id": _CLIENT_ID,
+                "code": code,
+                "code_verifier": verifier,
+                "redirect_uri": redirect_uri,
+            },
+            timeout=10,
+        )
+    except requests.ConnectionError as e:
+        raise ConnectionError(str(e)) from e
+    body = _json_body(response)
+    if response.ok and body.get("access_token"):
+        return body["access_token"]
+    raise _CodeRejected(body.get("error") or f"HTTP {response.status_code}")
 
 
 def _save_with_session_token(
@@ -52,26 +100,22 @@ def _save_with_session_token(
 
 
 def _login_with_browser(self: AuthServer, auth: Auth) -> None:
-    """Complete browser authentication without forwarding credentials back to `/me/apps`."""
+    """Sign in with an authorization code and PKCE, delivered to a callback on 127.0.0.1."""
     import webbrowser
 
     import uvicorn
-    from fastapi import FastAPI, Query
+    from fastapi import FastAPI
     from starlette.background import BackgroundTask
     from starlette.responses import RedirectResponse
 
     from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
 
     expected_state = _generate_state()
+    verifier, challenge = _pkce_pair()
     app = FastAPI()
     port = find_free_network_port()
-    base_url = self.get_auth_url(port)
-    redirect_uri = f"http://localhost:{port}/login-complete"
-    if urlencode({"redirectTo": redirect_uri}) in base_url:
-        stateful_redirect = f"{redirect_uri}?{urlencode({'state': expected_state})}"
-        url = base_url.replace(urlencode({"redirectTo": redirect_uri}), urlencode({"redirectTo": stateful_redirect}), 1)
-    else:
-        url = base_url
+    redirect_uri = f"http://127.0.0.1:{port}/callback"
+    url = _authorize_url(redirect_uri, expected_state, challenge)
 
     try:
         requests.head(url, timeout=10)
@@ -86,36 +130,34 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
 
     logger.info(f"login started for lightning.ai, opening {url}")
     if not webbrowser.open(url):
-        deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID")
-        if deployment_id:
+        if os.environ.get("LIGHTNING_DEPLOYMENT_ID"):
             raise RuntimeError(
                 "Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the "
                 "'Environment' section of the deployment settings."
             )
-        raise RuntimeError(
-            "Failed to authenticate to Lightning: no browser could be opened on this machine. "
-            "Run `lightning login --device` to sign in from another device."
-        )
+        click.echo("No browser could be opened on this machine.")
+        login_with_pasted_code(auth)
+        return
 
-    @app.get("/login-complete")
-    async def save_token(
-        token: str = "",
-        key: str = "",
-        state: str = "",
-        user_id: str = Query("", alias="userID"),
-    ) -> RedirectResponse:
-        state_valid = bool(state) and hmac.compare_digest(state, expected_state)
-        if token and state_valid:
-            auth.save(token=token, user_id=user_id, api_key=key)
+    @app.get("/callback")
+    def save_token(code: str = "", state: str = "", error: str = "") -> RedirectResponse:
+        failure = ""
+        if not state or not hmac.compare_digest(state, expected_state):
+            failure = "state mismatch"
+        elif error or not code:
+            failure = error or "no code in the callback"
+        else:
+            try:
+                auth.save(auth_token=_exchange_code(code, verifier, redirect_uri))
+            except (_CodeRejected, ConnectionError) as e:
+                failure = str(e)
+
+        if failure:
+            logger.warning(f"Authentication Failed ({failure}). Run `lightning login` again, or update the CLI.")
+            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
+        else:
             logger.info("Authentication Successful")
             target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-successful"
-        else:
-            reason = "no token in the callback" if not token else "state mismatch"
-            logger.warning(
-                f"Authentication Failed ({reason}). If the browser was already signed in, the sign-in page "
-                "could not mint a CLI token. Run `lightning login` again, or update the CLI."
-            )
-            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
 
         return RedirectResponse(
             url=target,
@@ -125,7 +167,7 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
     def stop_server() -> None:
         server.should_exit = True
 
-    server = uvicorn.Server(config=uvicorn.Config(app, port=port, log_level="error"))
+    server = uvicorn.Server(config=uvicorn.Config(app, host="127.0.0.1", port=port, log_level="error"))
     server.run()
 
 
@@ -133,63 +175,27 @@ Auth.save = _save_with_session_token
 AuthServer.login_with_browser = _login_with_browser
 
 
-def login_with_device_code(auth: Auth) -> None:
-    """Sign in by approving a code in a browser on any other device (RFC 8628 device authorization)."""
-    try:
-        response = requests.post(
-            f"{env.LIGHTNING_CLOUD_URL}/oidc/device_authorization",
-            data={"client_id": _DEVICE_CLIENT_ID},
-            timeout=10,
-        )
-    except requests.ConnectionError as e:
-        raise ConnectionError(str(e)) from e
-    grant = _json_body(response)
-    if "device_code" not in grant:
-        reason = grant.get("error") or f"HTTP {response.status_code}"
-        raise RuntimeError(
-            f"{env.LIGHTNING_CLOUD_URL} did not start a device login ({reason}). "
-            "It may not support `lightning login --device` yet."
-        )
-
+def login_with_pasted_code(auth: Auth) -> None:
+    """Sign in on a machine without a browser: approve on any device, then paste the code shown there."""
+    redirect_uri = f"{env.LIGHTNING_CLOUD_URL}/cli-login"
+    verifier, challenge = _pkce_pair()
     click.echo(
-        f"To sign in, open {grant['verification_uri']} on any device and enter this code:\n\n"
-        f"    {grant['user_code']}\n\n"
-        f"Waiting for approval. The code expires in {grant['expires_in'] // 60} minutes."
+        "To sign in, open this address in a browser on any device and approve the request:\n\n"
+        f"    {_authorize_url(redirect_uri, _generate_state(), challenge)}\n\n"
+        "The page then shows a code. Only paste a code from a page you opened this way; "
+        "never give it to anyone, as it gives full access to your Lightning account."
     )
-
-    interval = grant.get("interval", 5)
-    deadline = time.monotonic() + grant["expires_in"]
-    while time.monotonic() < deadline:
-        time.sleep(interval)
+    for attempt in range(_PASTE_ATTEMPTS):
+        code = click.prompt("Code").strip()
         try:
-            response = requests.post(
-                f"{env.LIGHTNING_CLOUD_URL}/oidc/token",
-                data={
-                    "grant_type": _DEVICE_GRANT_TYPE,
-                    "device_code": grant["device_code"],
-                    "client_id": _DEVICE_CLIENT_ID,
-                },
-                timeout=10,
-            )
-        except requests.RequestException:
-            # the code stays valid until it expires, so a lost poll is retried
-            continue
-        body = _json_body(response)
-        if response.ok and body.get("access_token"):
-            auth.save(auth_token=body["access_token"])
+            auth.save(auth_token=_exchange_code(code, verifier, redirect_uri))
             return
-        error = body.get("error")
-        if error == "authorization_pending":
-            continue
-        if error == "slow_down":
-            interval += 5
-            continue
-        if error == "access_denied":
-            raise RuntimeError("Login failed: the request was denied in the browser.")
-        if error == "expired_token":
-            break
-        raise RuntimeError(f"Login failed: {error or f'HTTP {response.status_code}'}.")
-    raise RuntimeError("Login failed: the code expired before it was approved. Run `lightning login --device` again.")
+        except _CodeRejected as e:
+            if str(e) != "invalid_grant":
+                raise RuntimeError(f"Login failed: {e}.") from None
+            if attempt < _PASTE_ATTEMPTS - 1:
+                click.echo("That code was not accepted. It works once and expires after a minute. Try again.")
+    raise RuntimeError("Login failed: the code was not accepted. Run `lightning login --no-browser` again.")
 
 
 def _json_body(response: requests.Response) -> dict:

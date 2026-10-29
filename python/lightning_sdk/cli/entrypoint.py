@@ -44,7 +44,7 @@ from lightning_sdk.cli.legacy_redirects import (
 )
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import browser_authentication, login_with_device_code, logout_session
+from lightning_sdk.cli.utils.auth import browser_authentication, login_with_pasted_code, logout_session
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -96,11 +96,11 @@ def main_cli(ctx: click.Context) -> None:
 
 @main_cli.command
 @click.option(
-    "--device",
+    "--no-browser",
     is_flag=True,
-    help="Sign in from a machine without a browser, such as a remote server, by approving a code on another device.",
+    help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
 )
-def login(device: bool) -> None:
+def login(no_browser: bool) -> None:
     """Sign in to Lightning AI."""
     auth = Auth()
     if auth.api_key or auth.auth_token:
@@ -114,8 +114,8 @@ def login(device: bool) -> None:
     # always start a fresh session: a saved one may have expired
     auth.clear()
     try:
-        if device:
-            login_with_device_code(auth)
+        if no_browser:
+            login_with_pasted_code(auth)
         else:
             with browser_authentication(True):
                 auth.authenticate()
