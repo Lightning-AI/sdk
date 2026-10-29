@@ -207,21 +207,68 @@ def test_user_model(monkeypatch, mock_user_model):
     assert llm.provider == "user-name"
 
 
-@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
-def test_get_auth_info(monkeypatch):
-    LLMCLIENT._llm_api_cache.clear()
+def _reset_llm_auth_cache():
     LLMCLIENT._auth_info_cached = False
     LLMCLIENT._cached_auth_info = {}
     LLMCLIENT._llm_api_cache = {}
     LLMCLIENT._public_assistants = {"openai/gpt-4o": {"id": "assistant-id-123", "context_length": 8192}}
 
-    mock_resolve = MagicMock()
-    mock_resolve.return_value = "mock-object"
+
+def _teamspace(name, teamspace_id):
+    t = MagicMock()
+    t.name = name
+    t.id = teamspace_id
+    return t
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_get_auth_info_user_owned_teamspace(monkeypatch):
+    _reset_llm_auth_cache()
+    # laptop: no teamspace env vars set
+    monkeypatch.delenv("LIGHTNING_TEAMSPACE")
+    monkeypatch.delenv("LIGHTNING_CLOUD_PROJECT_ID")
+
+    mock_resolve = MagicMock(return_value=_teamspace("teamspace-name", "user-ts-id"))
     monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", mock_resolve)
 
     llm = LLM(name="openai/gpt-4o", teamspace="my-user/teamspace-name")
+
+    mock_resolve.assert_called_once_with(teamspace="teamspace-name", org=None, user="my-user")
     assert llm._teamspace_name == "teamspace-name"
-    mock_resolve.assert_called_with(teamspace="teamspace-name", org=None, user="my-user")
+    assert llm._teamspace_id == "user-ts-id"
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_get_auth_info_user_owned_teamspace_overrides_studio(monkeypatch):
+    _reset_llm_auth_cache()
+    # inside a Studio, env vars point at the Studio's own teamspace
+    monkeypatch.setenv("LIGHTNING_TEAMSPACE", "studio-teamspace")
+    monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "studio-ts-id")
+
+    mock_resolve = MagicMock(return_value=_teamspace("teamspace-name", "user-ts-id"))
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", mock_resolve)
+
+    llm = LLM(name="openai/gpt-4o", teamspace="my-user/teamspace-name")
+
+    assert llm._teamspace_id == "user-ts-id"
+
+
+@patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
+def test_get_auth_info_org_owned_teamspace(monkeypatch):
+    _reset_llm_auth_cache()
+    monkeypatch.setenv("LIGHTNING_CLOUD_PROJECT_ID", "studio-ts-id")
+
+    def resolve(teamspace, org, user):
+        if user is not None:
+            raise ValueError("no such user")
+        return _teamspace(teamspace, "org-ts-id")
+
+    monkeypatch.setattr("lightning_sdk.llm.llm._resolve_teamspace", resolve)
+
+    llm = LLM(name="openai/gpt-4o", teamspace="my-org/teamspace-name")
+
+    assert llm._teamspace_name == "teamspace-name"
+    assert llm._teamspace_id == "org-ts-id"
 
 
 @patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=MagicMock())
