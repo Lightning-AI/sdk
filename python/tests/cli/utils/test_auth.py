@@ -5,8 +5,41 @@ import pytest
 import rich_click as click
 
 from lightning_sdk.cli.legacy.deploy._auth import _AuthLitServe, _AuthMode
-from lightning_sdk.cli.utils.auth import browser_authentication, logout_session, require_auth_header
+from lightning_sdk.cli.utils.auth import (
+    browser_authentication,
+    login_with_device_code,
+    logout_session,
+    require_auth_header,
+)
 from lightning_sdk.lightning_cloud.login import Auth
+
+_DEVICE_GRANT = {
+    "device_code": "device-code",
+    "user_code": "BCDF-GHJK",
+    "verification_uri": "https://lightning.ai/device",
+    "expires_in": 600,
+    "interval": 5,
+}
+
+
+def _response(status_code: int, body=None, json_error=None) -> MagicMock:
+    response = MagicMock(status_code=status_code, ok=status_code < 400)
+    response.json.side_effect = json_error
+    response.json.return_value = body
+    return response
+
+
+def _device_login_env(monkeypatch, tmp_path, responses: list) -> tuple:
+    """Point credentials at tmp_path, answer HTTP calls from `responses`, and record sleeps instead of sleeping."""
+    secrets_file = tmp_path / "credentials.json"
+    monkeypatch.setattr(Auth, "secrets_file", secrets_file)
+    for key in ("LIGHTNING_USER_ID", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN"):
+        monkeypatch.delenv(key, raising=False)
+    post = MagicMock(side_effect=responses)
+    sleeps: list = []
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.requests.post", post)
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.time.sleep", sleeps.append)
+    return secrets_file, post, sleeps
 
 
 def test_require_auth_header_uses_environment_credentials() -> None:
@@ -205,3 +238,79 @@ def test_login_with_browser_rejects_callback_without_matching_state(monkeypatch,
     assert not secrets_file.exists()
     assert not auth.auth_token
     assert not auth.api_key
+
+
+def test_login_with_device_code_saves_the_approved_session(monkeypatch, tmp_path, capsys) -> None:
+    """The CLI polls at the server's interval, backs off on `slow_down`, and saves the session it is given."""
+    secrets_file, post, sleeps = _device_login_env(
+        monkeypatch,
+        tmp_path,
+        [
+            _response(200, _DEVICE_GRANT),
+            _response(400, {"error": "authorization_pending"}),
+            _response(400, {"error": "slow_down"}),
+            _response(200, {"access_token": "sess_user-1.secret", "token_type": "Bearer", "expires_in": 604800}),
+        ],
+    )
+
+    login_with_device_code(Auth())
+
+    assert sleeps == [5, 5, 10]
+    assert post.call_args_list[0].args[0].endswith("/oidc/device_authorization")
+    assert post.call_args_list[0].kwargs["data"] == {"client_id": "lightning-cli"}
+    for poll in post.call_args_list[1:]:
+        assert poll.args[0].endswith("/oidc/token")
+        assert poll.kwargs["data"] == {
+            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+            "device_code": "device-code",
+            "client_id": "lightning-cli",
+        }
+    output = capsys.readouterr().out
+    assert "https://lightning.ai/device" in output
+    assert "BCDF-GHJK" in output
+    assert json.loads(secrets_file.read_text())["auth_token"] == "sess_user-1.secret"
+    assert (secrets_file.stat().st_mode & 0o777) == 0o600
+
+
+@pytest.mark.parametrize(
+    ("poll", "message"),
+    [
+        (_response(400, {"error": "access_denied"}), "denied in the browser"),
+        (_response(400, {"error": "expired_token"}), "code expired"),
+        (_response(400, {"error": "invalid_grant"}), "invalid_grant"),
+    ],
+)
+def test_login_with_device_code_stops_when_the_server_refuses(monkeypatch, tmp_path, poll, message) -> None:
+    secrets_file, _, _ = _device_login_env(monkeypatch, tmp_path, [_response(200, _DEVICE_GRANT), poll])
+
+    with pytest.raises(RuntimeError, match=message):
+        login_with_device_code(Auth())
+
+    assert not secrets_file.exists()
+
+
+def test_login_with_device_code_gives_up_when_the_code_expires(monkeypatch, tmp_path) -> None:
+    """Polling stops at `expires_in` even if the server never says the code expired."""
+    secrets_file, post, _ = _device_login_env(
+        monkeypatch, tmp_path, [_response(200, _DEVICE_GRANT), _response(400, {"error": "authorization_pending"})]
+    )
+    clock = iter([0, 300])
+    monkeypatch.setattr("lightning_sdk.cli.utils.auth.time.monotonic", lambda: next(clock, 600))
+
+    with pytest.raises(RuntimeError, match="code expired"):
+        login_with_device_code(Auth())
+
+    assert post.call_count == 2
+    assert not secrets_file.exists()
+
+
+@pytest.mark.parametrize(
+    "start",
+    [_response(404, {"code": 5}), _response(200, json_error=ValueError("an HTML page"))],
+    ids=["not found", "web app page"],
+)
+def test_login_with_device_code_explains_a_server_without_it(monkeypatch, tmp_path, start) -> None:
+    _device_login_env(monkeypatch, tmp_path, [start])
+
+    with pytest.raises(RuntimeError, match="may not support `lightning login --device` yet"):
+        login_with_device_code(Auth())

@@ -84,6 +84,33 @@ def test_login_reports_success_and_failure(monkeypatch, tmp_path) -> None:
     assert "Login failed" in str(failed.exception)
 
 
+def test_login_device_starts_a_fresh_device_login_instead_of_the_browser(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    Auth().save(auth_token="sess_expired")
+    user = MagicMock()
+    user.name = "Test User"
+    monkeypatch.setattr("lightning_sdk.cli.entrypoint._get_authed_user", lambda: user)
+    monkeypatch.setattr(
+        Auth,
+        "_run_server",
+        lambda _self: (_ for _ in ()).throw(AssertionError("browser auth reached")),
+    )
+
+    def _approve(auth: Auth) -> None:
+        assert not Auth.secrets_file.exists()
+        auth.save(auth_token="sess_new")
+
+    monkeypatch.setattr("lightning_sdk.cli.entrypoint.login_with_device_code", _approve)
+
+    result = CliRunner().invoke(main_cli, ["login", "--device"])
+
+    assert result.exit_code == 0, result.output
+    assert 'Successfully logged in as "Test User".' in result.output
+    auth = Auth()
+    assert auth.load()
+    assert auth.auth_token == "sess_new"
+
+
 def test_logout_reports_success_and_failure(monkeypatch, tmp_path) -> None:
     _clear_auth(monkeypatch, tmp_path)
     ok = CliRunner().invoke(main_cli, ["logout"])
@@ -270,6 +297,7 @@ def test_login_help():
     result_text = assert_help_contains("lightning login --help", "Usage: lightning login [OPTIONS]")
 
     assert "Sign in to Lightning AI." in result_text
+    assert "--device" in result_text
 
 
 @mock_command_logging

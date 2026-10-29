@@ -4,6 +4,7 @@ import base64
 import hmac
 import json
 import os
+import time
 from contextlib import contextmanager, suppress
 from contextvars import ContextVar
 from pathlib import Path
@@ -18,6 +19,9 @@ from lightning_sdk.lightning_cloud.login import Auth, AuthServer, logger
 
 _BROWSER_AUTH_ALLOWED = ContextVar("lightning_browser_auth_allowed", default=True)
 _ORIGINAL_AUTH_SAVE = Auth.save
+
+_DEVICE_CLIENT_ID = "lightning-cli"
+_DEVICE_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
 
 
 def _generate_state() -> str:
@@ -89,8 +93,8 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
                 "'Environment' section of the deployment settings."
             )
         raise RuntimeError(
-            "Failed to authenticate to Lightning. When running without access to a browser, "
-            "'LIGHTNING_API_KEY' should be exported."
+            "Failed to authenticate to Lightning: no browser could be opened on this machine. "
+            "Run `lightning login --device` to sign in from another device."
         )
 
     @app.get("/login-complete")
@@ -127,6 +131,73 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
 
 Auth.save = _save_with_session_token
 AuthServer.login_with_browser = _login_with_browser
+
+
+def login_with_device_code(auth: Auth) -> None:
+    """Sign in by approving a code in a browser on any other device (RFC 8628 device authorization)."""
+    try:
+        response = requests.post(
+            f"{env.LIGHTNING_CLOUD_URL}/oidc/device_authorization",
+            data={"client_id": _DEVICE_CLIENT_ID},
+            timeout=10,
+        )
+    except requests.ConnectionError as e:
+        raise ConnectionError(str(e)) from e
+    grant = _json_body(response)
+    if "device_code" not in grant:
+        reason = grant.get("error") or f"HTTP {response.status_code}"
+        raise RuntimeError(
+            f"{env.LIGHTNING_CLOUD_URL} did not start a device login ({reason}). "
+            "It may not support `lightning login --device` yet."
+        )
+
+    click.echo(
+        f"To sign in, open {grant['verification_uri']} on any device and enter this code:\n\n"
+        f"    {grant['user_code']}\n\n"
+        f"Waiting for approval. The code expires in {grant['expires_in'] // 60} minutes."
+    )
+
+    interval = grant.get("interval", 5)
+    deadline = time.monotonic() + grant["expires_in"]
+    while time.monotonic() < deadline:
+        time.sleep(interval)
+        try:
+            response = requests.post(
+                f"{env.LIGHTNING_CLOUD_URL}/oidc/token",
+                data={
+                    "grant_type": _DEVICE_GRANT_TYPE,
+                    "device_code": grant["device_code"],
+                    "client_id": _DEVICE_CLIENT_ID,
+                },
+                timeout=10,
+            )
+        except requests.RequestException:
+            # the code stays valid until it expires, so a lost poll is retried
+            continue
+        body = _json_body(response)
+        if response.ok and body.get("access_token"):
+            auth.save(auth_token=body["access_token"])
+            return
+        error = body.get("error")
+        if error == "authorization_pending":
+            continue
+        if error == "slow_down":
+            interval += 5
+            continue
+        if error == "access_denied":
+            raise RuntimeError("Login failed: the request was denied in the browser.")
+        if error == "expired_token":
+            break
+        raise RuntimeError(f"Login failed: {error or f'HTTP {response.status_code}'}.")
+    raise RuntimeError("Login failed: the code expired before it was approved. Run `lightning login --device` again.")
+
+
+def _json_body(response: requests.Response) -> dict:
+    try:
+        body = response.json()
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
 
 
 def logout_session(auth: Auth) -> None:
