@@ -1,7 +1,9 @@
+import json
 import os
 import warnings
 from unittest import mock
 
+import pytest
 from tqdm import tqdm
 
 
@@ -36,6 +38,12 @@ def test_tqdm_tty(_):
 
 class TestVersionChecker:
     """Tests for the VersionChecker class."""
+
+    @pytest.fixture(autouse=True)
+    def isolated_home(self, tmp_path, monkeypatch):
+        # the version cache lives under the home directory, so keep each test's cache separate
+        monkeypatch.setenv("HOME", str(tmp_path))
+        return tmp_path
 
     def test_version_checker_initialization(self):
         """Test that VersionChecker initializes with correct default values."""
@@ -274,3 +282,104 @@ class TestVersionChecker:
             assert "test-package" in message
             assert "3.5.7" in message
             assert "pip install -U test-package" in message
+
+    @staticmethod
+    def _pypi_response(latest: str = "2.0.0", releases=("1.0.0", "2.0.0")):
+        response = mock.Mock()
+        response.json.return_value = {
+            "releases": {version: [] for version in releases},
+            "info": {"version": latest, "yanked": False},
+        }
+        return response
+
+    @mock.patch("requests.get")
+    def test_version_check_reuses_cache_across_runs(self, mock_get):
+        """A new process starts with no in-memory result but should still find the file cache."""
+        from lightning_sdk.helpers import VersionChecker
+
+        mock_get.return_value = self._pypi_response()
+
+        assert VersionChecker()._get_newer_version("1.0.0") == "2.0.0"
+        assert VersionChecker()._get_newer_version("1.0.0") == "2.0.0"
+        assert mock_get.call_count == 1
+
+    @mock.patch("requests.get")
+    def test_version_check_refetches_after_a_day(self, mock_get):
+        from lightning_sdk.helpers import VersionChecker
+
+        mock_get.return_value = self._pypi_response()
+
+        with mock.patch("lightning_sdk.helpers.time") as mock_time:
+            mock_time.time.return_value = 1_000_000.0
+            VersionChecker()._get_newer_version("1.0.0")
+            mock_time.time.return_value = 1_000_000.0 + 24 * 60 * 60 + 1
+            VersionChecker()._get_newer_version("1.0.0")
+
+        assert mock_get.call_count == 2
+
+    @mock.patch("requests.get")
+    def test_version_check_refetches_when_installed_version_changes(self, mock_get):
+        from lightning_sdk.helpers import VersionChecker
+
+        mock_get.return_value = self._pypi_response(releases=("1.0.0", "1.5.0", "2.0.0"))
+
+        VersionChecker()._get_newer_version("1.0.0")
+        result = VersionChecker()._get_newer_version("1.5.0")
+
+        assert result == "2.0.0"
+        assert mock_get.call_count == 2
+
+    @mock.patch("requests.get")
+    def test_version_check_retries_after_network_failure(self, mock_get, isolated_home):
+        """A failed check is not cached, so a machine that comes back online gets a real check."""
+        import requests
+
+        from lightning_sdk.helpers import VersionChecker
+
+        mock_get.side_effect = requests.exceptions.RequestException("offline")
+
+        assert VersionChecker()._get_newer_version("1.0.0") is None
+        assert not (isolated_home / ".lightning" / "version_check.json").exists()
+
+        mock_get.side_effect = None
+        mock_get.return_value = self._pypi_response()
+
+        assert VersionChecker()._get_newer_version("1.0.0") == "2.0.0"
+        assert mock_get.call_count == 2
+
+    @mock.patch("requests.get")
+    def test_version_check_ignores_corrupt_cache(self, mock_get, isolated_home):
+        from lightning_sdk.helpers import VersionChecker
+
+        cache_file = isolated_home / ".lightning" / "version_check.json"
+        cache_file.parent.mkdir(parents=True)
+        cache_file.write_text("{not json")
+        mock_get.return_value = self._pypi_response()
+
+        assert VersionChecker()._get_newer_version("1.0.0") == "2.0.0"
+        assert mock_get.call_count == 1
+
+    @mock.patch("requests.get")
+    def test_version_check_ignores_cache_timestamp_in_future(self, mock_get, isolated_home):
+        from lightning_sdk.helpers import VersionChecker
+
+        cache_file = isolated_home / ".lightning" / "version_check.json"
+        cache_file.parent.mkdir(parents=True)
+        cache_file.write_text(json.dumps({"current_version": "1.0.0", "newer_version": None, "checked_at": 1e12}))
+        mock_get.return_value = self._pypi_response()
+
+        assert VersionChecker()._get_newer_version("1.0.0") == "2.0.0"
+        assert mock_get.call_count == 1
+
+    @mock.patch("requests.get")
+    def test_version_check_writes_cache_file(self, mock_get, isolated_home):
+        from lightning_sdk.helpers import VersionChecker
+
+        mock_get.return_value = self._pypi_response()
+
+        VersionChecker()._get_newer_version("1.0.0")
+
+        entry = json.loads((isolated_home / ".lightning" / "version_check.json").read_text())
+        assert entry["current_version"] == "1.0.0"
+        assert entry["newer_version"] == "2.0.0"
+        assert isinstance(entry["checked_at"], float)
