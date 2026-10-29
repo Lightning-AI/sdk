@@ -43,7 +43,10 @@ def test_ls_prints_entries_with_directory_suffix(capsys) -> None:
 
 def test_ls_file_prints_its_path(capsys) -> None:
     def list_files(teamspace_id, path, recursive):
-        return [{"path": "summary.html", "type": "blob", "size": 10}]
+        if path == "artifacts":
+            return [{"path": "summary.html", "type": "blob", "size": 10}]
+        # a file has no children to list
+        return []
 
     with mock.patch(
         "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=_fake_teamspace()
@@ -96,7 +99,10 @@ def test_ls_json_file_outputs_its_entry(capsys) -> None:
     import json
 
     def list_files(teamspace_id, path, recursive):
-        return [{"path": "summary.html", "type": "blob", "size": 10, "clusterId": "cluster-a"}]
+        if path == "artifacts":
+            return [{"path": "summary.html", "type": "blob", "size": 10, "clusterId": "cluster-a"}]
+        # a file has no children to list
+        return []
 
     with mock.patch(
         "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=_fake_teamspace()
@@ -127,3 +133,35 @@ def test_ls_recursive_lists_full_relative_paths(capsys) -> None:
         ls_impl("lit://my-org/my-teamspace/artifacts/reports", recursive=True)
 
     assert capsys.readouterr().out.splitlines() == ["summary.html", "img/chart.png"]
+
+
+def test_ls_non_empty_folder_skips_parent_listing(capsys) -> None:
+    calls = []
+
+    def list_files(teamspace_id, path, recursive):
+        calls.append(path)
+        return [{"path": "summary.html", "type": "blob", "size": 10}]
+
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=_fake_teamspace()
+    ), mock.patch("lightning_sdk.cli.ls.FilesystemApi") as mock_api_cls:
+        mock_api_cls.return_value.list_files.side_effect = list_files
+        ls_impl("lit://my-org/my-teamspace/artifacts/reports")
+
+    assert calls == ["artifacts/reports"]
+    assert capsys.readouterr().out.splitlines() == ["summary.html"]
+
+
+def test_ls_empty_folder_prints_nothing(capsys) -> None:
+    def list_files(teamspace_id, path, recursive):
+        if path == "artifacts":
+            return [{"path": "reports", "type": "tree"}]
+        return []
+
+    with mock.patch(
+        "lightning_sdk.cli.utils.filesystem.resolve_teamspace_ref", return_value=_fake_teamspace()
+    ), mock.patch("lightning_sdk.cli.ls.FilesystemApi") as mock_api_cls:
+        mock_api_cls.return_value.list_files.side_effect = list_files
+        ls_impl("lit://my-org/my-teamspace/artifacts/reports")
+
+    assert capsys.readouterr().out == ""
