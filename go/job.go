@@ -5,22 +5,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"path"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
 
-	sdkapi "github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client"
 	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/client/jobs_service"
 	"github.com/lightning-ai/sdk/go/internal/lightningcloud/openapi/generated/models"
 	"github.com/lightning-ai/sdk/go/internal/sdkclient"
 )
-
-var datetimePrefix = regexp.MustCompile(`(?m)^\[.*?\] `)
 
 // Job represents a Lightning single-machine job.
 type Job struct {
@@ -623,39 +617,11 @@ func (j *Job) Logs() (string, error) {
 		}
 	}
 	if len(lines) == 0 && !strings.EqualFold(j.status, "running") {
-		// nothing in the logs API: the job finished before logs moved to the current
-		// storage format, so fall back to its saved log file
-		return j.savedLogs(api)
+		// the job finished before logs moved to the current storage format; reading it
+		// queues its migration, so its lines appear once that finishes
+		return "", errors.New("this job's logs are still being migrated from older storage, try again shortly")
 	}
 	return strings.Join(lines, "\n"), nil
-}
-
-// savedLogs downloads the job's saved log file, for jobs whose lines are not in the logs API.
-func (j *Job) savedLogs(api *sdkapi.LightningSdkAPI) (string, error) {
-	resp, err := api.JobsService.JobsServiceDownloadJobLogs(
-		jobs_service.NewJobsServiceDownloadJobLogsParamsWithContext(context.Background()).
-			WithProjectID(j.teamspaceID).
-			WithID(j.id),
-	)
-	if err != nil {
-		return "", err
-	}
-	if resp.Payload == nil || resp.Payload.URL == "" {
-		return "", fmt.Errorf("download job logs returned empty URL")
-	}
-	logResp, err := http.Get(resp.Payload.URL)
-	if err != nil {
-		return "", err
-	}
-	defer logResp.Body.Close()
-	if logResp.StatusCode < 200 || logResp.StatusCode >= 300 {
-		return "", fmt.Errorf("download job logs returned status %d", logResp.StatusCode)
-	}
-	body, err := io.ReadAll(logResp.Body)
-	if err != nil {
-		return "", err
-	}
-	return datetimePrefix.ReplaceAllString(string(body), ""), nil
 }
 
 // Dict returns a JSON-friendly public representation of the job.
