@@ -50,7 +50,7 @@ def _authorize_url(redirect_uri: str, state: str, challenge: str) -> str:
     return f"{env.LIGHTNING_CLOUD_URL}/oidc/authorize?{query}"
 
 
-class _CodeRejected(Exception):
+class _CodeRejectedError(Exception):
     """The token endpoint refused the code; `str(e)` is its OAuth error."""
 
 
@@ -73,7 +73,7 @@ def _exchange_code(code: str, verifier: str, redirect_uri: str) -> str:
     body = _json_body(response)
     if response.ok and body.get("access_token"):
         return body["access_token"]
-    raise _CodeRejected(body.get("error") or f"HTTP {response.status_code}")
+    raise _CodeRejectedError(body.get("error") or f"HTTP {response.status_code}")
 
 
 def _save_with_session_token(
@@ -149,7 +149,7 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
         else:
             try:
                 auth.save(auth_token=_exchange_code(code, verifier, redirect_uri))
-            except (_CodeRejected, ConnectionError) as e:
+            except (_CodeRejectedError, ConnectionError) as e:
                 failure = str(e)
 
         if failure:
@@ -190,7 +190,7 @@ def login_with_pasted_code(auth: Auth) -> None:
         try:
             auth.save(auth_token=_exchange_code(code, verifier, redirect_uri))
             return
-        except _CodeRejected as e:
+        except _CodeRejectedError as e:
             if str(e) != "invalid_grant":
                 raise RuntimeError(f"Login failed: {e}.") from None
             if attempt < _PASTE_ATTEMPTS - 1:

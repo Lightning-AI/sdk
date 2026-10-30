@@ -1,8 +1,8 @@
 import base64
 import hashlib
 import json
-from urllib.parse import parse_qs, urlparse
 from unittest.mock import MagicMock, PropertyMock, patch
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 import rich_click as click
@@ -15,6 +15,7 @@ from lightning_sdk.cli.utils.auth import (
     require_auth_header,
 )
 from lightning_sdk.lightning_cloud.login import Auth
+
 
 def _response(status_code: int, body=None) -> MagicMock:
     response = MagicMock(status_code=status_code, ok=status_code < 400)
