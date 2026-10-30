@@ -485,7 +485,7 @@ class TestCommandLoggingGroup:
 # the runner catches exceptions before the interpreter ever sees them.
 
 # Rejected before any network call, so it exercises the failure path offline.
-_FAILING_COMMAND = ["cp", "lit:///a/b", "lit:///c/d"]
+_FAILING_COMMAND = ["config", "set", "cloud-provider", "not-a-provider"]
 
 
 class TestErrorsReachTheExcepthook:
@@ -509,7 +509,7 @@ class TestErrorsReachTheExcepthook:
         monkeypatch.setattr(sys, "excepthook", sys.__excepthook__)
         monkeypatch.setattr("lightning_sdk.cli.utils.logging._log_command", mock.Mock())
 
-        with pytest.raises(ValueError, match="Cannot copy between two remote URLs"):
+        with pytest.raises(ValueError, match="Could not resolve cloud provider"):
             main_cli.main(_FAILING_COMMAND, prog_name="lightning", standalone_mode=True)
 
 
@@ -558,7 +558,7 @@ def test_cli_reports_errors_as_a_panel_not_a_traceback(tmp_path):
 
     assert returncode == 1
     assert "Lightning CLI Error" in output
-    assert "Cannot copy between two remote URLs" in output
+    assert "Could not resolve cloud provider" in output
     assert "Traceback (most recent call last)" not in output
     assert "LIGHTNING_DEBUG=1" in output
 
@@ -569,4 +569,4 @@ def test_cli_shows_the_traceback_when_debug_is_set(tmp_path):
 
     assert returncode == 1
     assert "Full traceback" in output
-    assert "Cannot copy between two remote URLs" in output
+    assert "Could not resolve cloud provider" in output

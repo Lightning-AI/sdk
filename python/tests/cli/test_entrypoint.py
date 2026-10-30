@@ -27,8 +27,8 @@ def _clear_auth(monkeypatch, tmp_path) -> None:
 @pytest.mark.parametrize(
     ("cli", "args"),
     [
-        (main_cli, ["job", "list", "--teamspace", "owner/teamspace"]),
-        (main_cli, ["list", "jobs", "--teamspace", "owner/teamspace"]),
+        (main_cli, ["teamspace", "list"]),
+        (main_cli, ["ls", "lit://owner/teamspace/"]),
     ],
 )
 def test_resource_commands_never_start_browser_authentication(monkeypatch, tmp_path, cli, args) -> None:
