@@ -151,6 +151,12 @@ def _invoke(args: list[str], input: str | None = None) -> SimpleNamespace:
     return SimpleNamespace(exit_code=result.exit_code, output=result.output)
 
 
+def _invoke_command(command, args: list[str], input: str | None = None) -> SimpleNamespace:
+    """Run a sandbox command directly, for commands the CLI currently marks as temporarily unavailable."""
+    result = CliRunner().invoke(command, args, input=input, catch_exceptions=False)
+    return SimpleNamespace(exit_code=result.exit_code, output=result.output)
+
+
 @mock_command_logging
 def test_sandbox_help() -> None:
     assert_help_contains(
@@ -255,10 +261,9 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = _invoke(
+    result = _invoke_command(
+        sandbox_commands.create_sandbox,
         [
-            "sandbox",
-            "create",
             "--name",
             "cli-sandbox",
             "--instance-type",
@@ -277,7 +282,7 @@ def test_sandbox_create_forwards_options(_mock_log_command, monkeypatch) -> None
             "--persistent",
             "--timeout",
             "3600000",
-        ]
+        ],
     )
 
     assert result.exit_code == 0
@@ -303,7 +308,9 @@ def test_sandbox_create_docker_flag(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = _invoke(["sandbox", "create", "--name", "cli-sandbox", "--runtime", "node24", "--docker"])
+    result = _invoke_command(
+        sandbox_commands.create_sandbox, ["--name", "cli-sandbox", "--runtime", "node24", "--docker"]
+    )
 
     assert result.exit_code == 0
     assert client.create_kwargs is not None
@@ -369,7 +376,7 @@ def test_sandbox_create_connect_attaches(_mock_log_command, monkeypatch) -> None
 
     monkeypatch.setattr(sandbox_commands, "_attach_interactive_shell", _fake_attach)
 
-    result = _invoke(["sandbox", "create", "--name", "cli-sandbox", "--connect"])
+    result = _invoke_command(sandbox_commands.create_sandbox, ["--name", "cli-sandbox", "--connect"])
 
     assert result.exit_code == 0
     assert client.create_kwargs is not None
@@ -382,7 +389,7 @@ def test_sandbox_create_connect_rejects_json(_mock_log_command, monkeypatch) -> 
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = CliRunner().invoke(main_cli, ["sandbox", "create", "--connect", "--json"])
+    result = CliRunner().invoke(sandbox_commands.create_sandbox, ["--connect", "--json"])
 
     assert result.exit_code != 0
     assert "cannot be combined with --json" in result.output
@@ -396,7 +403,7 @@ def test_sandbox_create_connect_validates_tty_before_provisioning(_mock_log_comm
     client = FakeSandboxClient()
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = CliRunner().invoke(main_cli, ["sandbox", "create", "--name", "cli-sandbox", "--connect"])
+    result = CliRunner().invoke(sandbox_commands.create_sandbox, ["--name", "cli-sandbox", "--connect"])
 
     assert result.exit_code != 0
     assert "interactive terminal (TTY)" in result.output
@@ -414,7 +421,7 @@ def test_sandbox_lifecycle_commands(_mock_log_command, monkeypatch) -> None:
     assert _invoke(["sandbox", "stop", "sbx-1"]).exit_code == 0
     assert instance.stopped is True
 
-    assert _invoke(["sandbox", "start", "sbx-1"]).exit_code == 0
+    assert _invoke_command(sandbox_commands.start_sandbox, ["sbx-1"]).exit_code == 0
     assert instance.resumed is True
 
     result = _invoke(["sandbox", "delete", "sbx-1", "-y"])
@@ -471,10 +478,10 @@ def test_sandbox_run_command(_mock_log_command, monkeypatch) -> None:
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = _invoke(
+    # `sandbox run` is marked temporarily unavailable on the CLI, so exercise the command directly.
+    result = CliRunner().invoke(
+        sandbox_commands.run_sandbox_command,
         [
-            "sandbox",
-            "run",
             "sbx-1",
             "--cwd",
             "/tmp",
@@ -484,7 +491,8 @@ def test_sandbox_run_command(_mock_log_command, monkeypatch) -> None:
             "python",
             "-c",
             "print('hello')",
-        ]
+        ],
+        catch_exceptions=False,
     )
 
     assert result.exit_code == 0
@@ -502,7 +510,7 @@ def test_sandbox_run_command_uses_exit_code(_mock_log_command, monkeypatch) -> N
     client = FakeSandboxClient(instance)
     monkeypatch.setattr(sandbox_commands, "_sandbox_client", lambda **_: client)
 
-    result = CliRunner().invoke(main_cli, ["sandbox", "run", "sbx-1", "--", "false"])
+    result = CliRunner().invoke(sandbox_commands.run_sandbox_command, ["sbx-1", "--", "false"])
 
     assert result.exit_code == 7
     assert "hello" in result.output
