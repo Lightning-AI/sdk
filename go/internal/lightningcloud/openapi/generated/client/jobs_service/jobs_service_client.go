@@ -66,6 +66,8 @@ type ClientService interface {
 
 	JobsServiceCreateJob(params *JobsServiceCreateJobParams, opts ...ClientOption) (*JobsServiceCreateJobOK, error)
 
+	JobsServiceCreateJobGroup(params *JobsServiceCreateJobGroupParams, opts ...ClientOption) (*JobsServiceCreateJobGroupOK, error)
+
 	JobsServiceCreateMultiMachineJob(params *JobsServiceCreateMultiMachineJobParams, opts ...ClientOption) (*JobsServiceCreateMultiMachineJobOK, error)
 
 	JobsServiceCreateWorkloadTag(params *JobsServiceCreateWorkloadTagParams, opts ...ClientOption) (*JobsServiceCreateWorkloadTagOK, error)
@@ -357,6 +359,48 @@ func (a *Client) JobsServiceCreateJob(params *JobsServiceCreateJobParams, opts .
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*JobsServiceCreateJobDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+JobsServiceCreateJobGroup jobs service create job group API
+*/
+func (a *Client) JobsServiceCreateJobGroup(params *JobsServiceCreateJobGroupParams, opts ...ClientOption) (*JobsServiceCreateJobGroupOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewJobsServiceCreateJobGroupParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "JobsService_CreateJobGroup",
+		Method:             "POST",
+		PathPattern:        "/v1/projects/{projectId}/job-groups",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &JobsServiceCreateJobGroupReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*JobsServiceCreateJobGroupOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*JobsServiceCreateJobGroupDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

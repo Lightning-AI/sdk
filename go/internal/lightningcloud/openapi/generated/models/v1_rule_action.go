@@ -60,6 +60,9 @@ const (
 
 	// V1RuleActionGetNotified captures enum value "getNotified"
 	V1RuleActionGetNotified V1RuleAction = "getNotified"
+
+	// V1RuleActionInvoke captures enum value "invoke"
+	V1RuleActionInvoke V1RuleAction = "invoke"
 )
 
 // for schema
@@ -67,7 +70,7 @@ var v1RuleActionEnum []any
 
 func init() {
 	var res []V1RuleAction
-	if err := json.Unmarshal([]byte(`["unspecifiedAction","get","list","create","update","delete","ssh","viewLogs","getNotified"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["unspecifiedAction","get","list","create","update","delete","ssh","viewLogs","getNotified","invoke"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -45,6 +45,7 @@ class V1ResourceUsage(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'active_sessions': 'int',
         'billed_time_seconds': 'str',
         'bucket_start': 'datetime',
         'cluster_id': 'str',
@@ -60,6 +61,7 @@ class V1ResourceUsage(object):
     }
 
     attribute_map = {
+        'active_sessions': 'activeSessions',
         'billed_time_seconds': 'billedTimeSeconds',
         'bucket_start': 'bucketStart',
         'cluster_id': 'clusterId',
@@ -74,8 +76,9 @@ class V1ResourceUsage(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, billed_time_seconds: 'str' =None, bucket_start: 'datetime' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, resource_name: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, active_sessions: 'int' =None, billed_time_seconds: 'str' =None, bucket_start: 'datetime' =None, cluster_id: 'str' =None, cost: 'float' =None, created_at: 'datetime' =None, deleted_at: 'datetime' =None, id: 'str' =None, project_id: 'str' =None, resource_name: 'str' =None, resource_type: 'str' =None, saved_cost: 'float' =None, user_id: 'str' =None):  # noqa: E501
         """V1ResourceUsage - a model defined in Swagger"""  # noqa: E501
+        self._active_sessions = None
         self._billed_time_seconds = None
         self._bucket_start = None
         self._cluster_id = None
@@ -89,6 +92,8 @@ class V1ResourceUsage(object):
         self._saved_cost = None
         self._user_id = None
         self.discriminator = None
+        if active_sessions is not None:
+            self.active_sessions = active_sessions
         if billed_time_seconds is not None:
             self.billed_time_seconds = billed_time_seconds
         if bucket_start is not None:
@@ -113,6 +118,27 @@ class V1ResourceUsage(object):
             self.saved_cost = saved_cost
         if user_id is not None:
             self.user_id = user_id
+
+    @property
+    def active_sessions(self) -> 'int':
+        """Gets the active_sessions of this V1ResourceUsage.  # noqa: E501
+
+
+        :return: The active_sessions of this V1ResourceUsage.  # noqa: E501
+        :rtype: int
+        """
+        return self._active_sessions
+
+    @active_sessions.setter
+    def active_sessions(self, active_sessions: 'int'):
+        """Sets the active_sessions of this V1ResourceUsage.
+
+
+        :param active_sessions: The active_sessions of this V1ResourceUsage.  # noqa: E501
+        :type: int
+        """
+
+        self._active_sessions = active_sessions
 
     @property
     def billed_time_seconds(self) -> 'str':

@@ -81,6 +81,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'preferred_studio_provider': 'str',
         'show_model_apis_tab': 'bool',
         'start_studios_on_spot_instance': 'bool',
+        'studio_ports_access': 'V1StudioPortsAccess',
         'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
         'timezone': 'str',
@@ -125,6 +126,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'preferred_studio_provider': 'preferredStudioProvider',
         'show_model_apis_tab': 'showModelApisTab',
         'start_studios_on_spot_instance': 'startStudiosOnSpotInstance',
+        'studio_ports_access': 'studioPortsAccess',
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'timezone': 'timezone',
@@ -132,7 +134,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, location: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_model_apis_tab: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, studio_ports_access: 'V1StudioPortsAccess' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, workload_max_run_duration: 'str' =None):  # noqa: E501
         """OrganizationsServiceUpdateOrganizationBody - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_budgeting = None
@@ -170,6 +172,7 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         self._preferred_studio_provider = None
         self._show_model_apis_tab = None
         self._start_studios_on_spot_instance = None
+        self._studio_ports_access = None
         self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
         self._timezone = None
@@ -248,6 +251,8 @@ class OrganizationsServiceUpdateOrganizationBody(object):
             self.show_model_apis_tab = show_model_apis_tab
         if start_studios_on_spot_instance is not None:
             self.start_studios_on_spot_instance = start_studios_on_spot_instance
+        if studio_ports_access is not None:
+            self.studio_ports_access = studio_ports_access
         if switch_to_default_machine_on_idle is not None:
             self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
@@ -1014,6 +1019,27 @@ class OrganizationsServiceUpdateOrganizationBody(object):
         """
 
         self._start_studios_on_spot_instance = start_studios_on_spot_instance
+
+    @property
+    def studio_ports_access(self) -> 'V1StudioPortsAccess':
+        """Gets the studio_ports_access of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+
+
+        :return: The studio_ports_access of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :rtype: V1StudioPortsAccess
+        """
+        return self._studio_ports_access
+
+    @studio_ports_access.setter
+    def studio_ports_access(self, studio_ports_access: 'V1StudioPortsAccess'):
+        """Sets the studio_ports_access of this OrganizationsServiceUpdateOrganizationBody.
+
+
+        :param studio_ports_access: The studio_ports_access of this OrganizationsServiceUpdateOrganizationBody.  # noqa: E501
+        :type: V1StudioPortsAccess
+        """
+
+        self._studio_ports_access = studio_ports_access
 
     @property
     def switch_to_default_machine_on_idle(self) -> 'bool':

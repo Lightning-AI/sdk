@@ -604,6 +604,8 @@ class SchedulesServiceApi(object):
         :param str project_id: Required (required)
         :param str cloudspace_id: Required (required)
         :param str schedule_id: Required (required)
+        :param int page_size: Defaults to 100, at most 500
+        :param str page_token: next_page_token of the previous page
         :return: V1ListScheduleRunsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -627,12 +629,14 @@ class SchedulesServiceApi(object):
         :param str project_id: Required (required)
         :param str cloudspace_id: Required (required)
         :param str schedule_id: Required (required)
+        :param int page_size: Defaults to 100, at most 500
+        :param str page_token: next_page_token of the previous page
         :return: V1ListScheduleRunsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['project_id', 'cloudspace_id', 'schedule_id']  # noqa: E501
+        all_params = ['project_id', 'cloudspace_id', 'schedule_id', 'page_size', 'page_token']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -671,6 +675,10 @@ class SchedulesServiceApi(object):
             path_params['scheduleId'] = params['schedule_id']  # noqa: E501
 
         query_params = []
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'page_token' in params:
+            query_params.append(('pageToken', params['page_token']))  # noqa: E501
 
         header_params = {}
 
