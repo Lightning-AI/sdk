@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 
+import click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.job.rename import rename_job
@@ -28,7 +29,7 @@ def test_rename_job_resolves_and_renames() -> None:
         result = CliRunner().invoke(rename_job, ["old-name", "new-name", "--teamspace", "org/ts"])
 
     assert result.exit_code == 0
-    assert "Successfully renamed job to 'new-name'!" in result.output
+    assert "Successfully renamed job to 'new-name'!" in click.unstyle(result.output)
     job.rename.assert_called_once_with("new-name")
 
 
@@ -43,5 +44,5 @@ def test_rename_job_json_output() -> None:
         result = CliRunner().invoke(rename_job, ["old-name", "new-name", "--json"])
 
     assert result.exit_code == 0
-    assert '"name": "new-name"' in result.output
-    assert '"status": "renamed"' in result.output
+    assert '"name": "new-name"' in click.unstyle(result.output)
+    assert '"status": "renamed"' in click.unstyle(result.output)

@@ -5,6 +5,7 @@ from datetime import datetime
 from types import SimpleNamespace
 from unittest import mock
 
+import click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import main_cli
@@ -392,7 +393,7 @@ def test_sandbox_create_connect_rejects_json(_mock_log_command, monkeypatch) -> 
     result = CliRunner().invoke(sandbox_commands.create_sandbox, ["--connect", "--json"])
 
     assert result.exit_code != 0
-    assert "cannot be combined with --json" in result.output
+    assert "cannot be combined with --json" in click.unstyle(result.output)
     # We reject before provisioning anything.
     assert client.create_kwargs is None
 
@@ -455,7 +456,7 @@ def test_sandbox_update_requires_resume(_mock_log_command, monkeypatch) -> None:
     result = CliRunner().invoke(main_cli, ["sandbox", "update", "sbx-1"])
 
     assert result.exit_code != 0
-    assert "Use --resume" in result.output
+    assert "Use --resume" in click.unstyle(result.output)
 
 
 @mock.patch("lightning_sdk.cli.utils.logging._log_command")

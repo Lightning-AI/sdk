@@ -4,6 +4,7 @@ import json
 import stat
 from pathlib import Path
 
+import click
 import pytest
 import tomllib
 import yaml
@@ -127,7 +128,7 @@ def test_codex_setup_writes_only_its_profile(api, tool_homes: Path) -> None:
 
     result = invoke(setup, "codex")
     assert result.exit_code == 0
-    assert "codex --profile lightning" in result.output
+    assert "codex --profile lightning" in click.unstyle(result.output)
 
     assert (home / "config.toml").read_text() == 'model = "gpt-5"\n# mine\n'
     path = codex.profile_path()

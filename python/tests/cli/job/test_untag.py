@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 
+import click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.job.untag import untag_job
@@ -29,7 +30,7 @@ def test_untag_job_removes_tags() -> None:
         result = CliRunner().invoke(untag_job, ["my-job", "prod", "--teamspace", "org/ts"])
 
     assert result.exit_code == 0
-    assert "Tags on 'my-job': gpu" in result.output
+    assert "Tags on 'my-job': gpu" in click.unstyle(result.output)
     job.set_tags.assert_called_once_with(["gpu"])
 
 
@@ -45,7 +46,7 @@ def test_untag_job_all_removed() -> None:
         result = CliRunner().invoke(untag_job, ["my-job", "prod"])
 
     assert result.exit_code == 0
-    assert "All tags removed from 'my-job'" in result.output
+    assert "All tags removed from 'my-job'" in click.unstyle(result.output)
 
 
 @mock_command_logging
@@ -60,5 +61,5 @@ def test_untag_job_json_output() -> None:
         result = CliRunner().invoke(untag_job, ["my-job", "prod", "--json"])
 
     assert result.exit_code == 0
-    assert '"name": "my-job"' in result.output
-    assert '"tags"' in result.output
+    assert '"name": "my-job"' in click.unstyle(result.output)
+    assert '"tags"' in click.unstyle(result.output)
