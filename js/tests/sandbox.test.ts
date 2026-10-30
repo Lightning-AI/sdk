@@ -307,6 +307,44 @@ describe("Sandbox", () => {
       assert.equal(st.running, true);
     });
 
+    it("getCommandLogs reads the unified logs API and paginates", async () => {
+      enqueueJson(sampleV1({ status: "running", projectId: "proj-1" }));
+      const sb = await Sandbox.create({ name: "x", instanceType: "cpu-1" });
+
+      const seenUrls: string[] = [];
+      const pages: Array<unknown> = [
+        {
+          entries: [{ message: "line 1", timestamp: "2026-07-27T09:00:00Z" }],
+          nextPageToken: "tok-1",
+        },
+        { entries: [{ message: "line 2" }], nextPageToken: "" },
+      ];
+      globalThis.fetch = ((input) => {
+        seenUrls.push(String(input));
+        return Promise.resolve(jsonResponse(pages.shift()));
+      }) as typeof fetch;
+
+      const { logs } = await sb.getCommandLogs("cmd-9");
+
+      assert.deepEqual(logs, [
+        { timestamp: "2026-07-27T09:00:00Z", message: "line 1" },
+        { timestamp: "", message: "line 2" },
+      ]);
+      assert.equal(seenUrls.length, 2);
+      assert.match(seenUrls[0], /\/v1\/projects\/proj-1\/page-logs\?/);
+      assert.match(seenUrls[0], /sandboxId=sb-test/);
+      assert.match(seenUrls[0], /sandboxCommandIds=cmd-9/);
+      assert.doesNotMatch(seenUrls[0], /pageToken=/);
+      assert.match(seenUrls[1], /pageToken=tok-1/);
+    });
+
+    it("getCommandLogs rejects when the sandbox has no teamspace id", async () => {
+      enqueueJson(sampleV1({ status: "running", projectId: "" }));
+      const sb = await Sandbox.create({ name: "x", instanceType: "cpu-1" });
+
+      await assert.rejects(() => sb.getCommandLogs("cmd-9"), /no teamspace id/);
+    });
+
     it("runCommand({detached:true}).wait() polls until command exits", async () => {
       const sb = await runningSandbox();
       const responses: Array<unknown> = [

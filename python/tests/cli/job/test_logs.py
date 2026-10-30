@@ -84,26 +84,23 @@ def test_job_logs_follows_with_options() -> None:
 
 @mock_command_logging
 def test_job_logs_selects_mmt_rank() -> None:
+    """--rank is passed to the SDK, which resolves the machine client-side."""
     from lightning_sdk.cli.job.logs import logs_job
 
     mmt = MagicMock(spec=MMT)
     mmt.is_multi_machine = True
-    machine = MagicMock()
-    machine.logs.return_value = "rank one"
+    mmt.logs.return_value = "rank one"
     with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.job.logs.resolve_job",
         return_value=mmt,
-    ), patch(
-        "lightning_sdk.cli.job.logs.resolve_job_machine",
-        return_value=machine,
-    ) as resolve_rank:
+    ) as resolve_job:
         result = CliRunner().invoke(logs_job, ["distributed", "--rank", "1"])
 
     assert result.exit_code == 0
     assert "rank one" in result.output
-    resolve_rank.assert_called_once_with(mmt, 1)
-    machine.logs.assert_called_once_with(
-        follow=False, tail=None, rank=0, timestamps=False, since=None, until=None, query=None, severity=None
+    resolve_job.assert_called_once()
+    mmt.logs.assert_called_once_with(
+        follow=False, tail=None, rank=1, timestamps=False, since=None, until=None, query=None, severity=None
     )
 
 
@@ -124,7 +121,7 @@ def test_job_logs_merges_mmt_without_rank() -> None:
     assert "distributed-0" in result.output
     assert "distributed-1" in result.output
     mmt.logs.assert_called_once_with(
-        follow=False, tail=None, timestamps=False, since=None, until=None, query=None, severity=None
+        follow=False, tail=None, rank=None, timestamps=False, since=None, until=None, query=None, severity=None
     )
 
 
@@ -172,6 +169,46 @@ def test_job_logs_reports_sdk_errors_cleanly() -> None:
     assert result.exit_code != 0
     assert "Pending" in result.output
     assert not isinstance(result.exception, RuntimeError)
+
+
+@mock_command_logging
+def test_job_logs_reports_bad_rank_cleanly() -> None:
+    """An out-of-range or single-machine --rank surfaces as a CLI error, not a traceback."""
+    from lightning_sdk.cli.job.logs import logs_job
+
+    job = MagicMock()
+    job.logs.side_effect = ValueError("`rank` 99 is out of range; the multi-machine job has 2 machines (0-based).")
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=job
+    ):
+        result = CliRunner().invoke(logs_job, ["my-job", "--rank", "99"])
+
+    assert result.exit_code != 0
+    assert "out of range" in result.output
+    assert not isinstance(result.exception, ValueError)
+
+
+@mock_command_logging
+def test_job_logs_json_with_rank_reads_only_that_machine() -> None:
+    from lightning_sdk.cli.job.logs import logs_job
+
+    teamspace = MagicMock(id="ts-1")
+    mmt = MagicMock(spec=MMT)
+    mmt.is_multi_machine = True
+    mmt.resource_id = "mmt-1"
+    machine = MagicMock(resource_id="machine-1")
+    with patch("lightning_sdk.cli.job.logs.resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.cli.job.logs.resolve_job", return_value=mmt
+    ), patch("lightning_sdk.cli.job.logs.resolve_job_machine", return_value=machine) as resolve_machine, patch(
+        "lightning_sdk.cli.job.logs.read_logs"
+    ) as read_logs:
+        result = CliRunner().invoke(logs_job, ["distributed", "--rank", "1", "--json"])
+
+    assert result.exit_code == 0, result.output
+    resolve_machine.assert_called_once_with(mmt, 1)
+    selection = read_logs.call_args.args[0]
+    assert selection.job_ids == ["machine-1"]
+    assert selection.mmt_id is None
 
 
 @mock_command_logging

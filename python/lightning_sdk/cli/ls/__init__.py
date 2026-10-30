@@ -1,9 +1,11 @@
 """ls CLI command."""
 
+from contextlib import suppress
+
 import rich_click as click
 
 from lightning_sdk.api.filesystem_api import FilesystemApi
-from lightning_sdk.api.utils import _tree_path_info
+from lightning_sdk.api.utils import _RemoteApiError, _tree_path_info
 from lightning_sdk.cli.cp.completion import complete_remote_path
 from lightning_sdk.cli.utils.filesystem import resolve_lit_url_ref
 from lightning_sdk.cli.utils.json_output import echo_json
@@ -44,23 +46,33 @@ def ls_impl(path: str, recursive: bool = False, as_json: bool = False) -> None:
     def list_entries(folder: str) -> list:
         return filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=folder, recursive=False)
 
-    path_info = _tree_path_info(list_entries, remote_path)
-    if not path_info["exists"]:
-        raise FileNotFoundError(
-            f"The provided path does not exist in the teamspace drive: {remote_path!r}. "
-            "Note that empty folders may not be detected as existing."
-        )
+    # a non-empty folder listing with entries -> the folder exists
+    # only an empty or failed listing needs the parent listing -> distinguish whether the folder exists
+    entries = None
+    if remote_path:
+        with suppress(_RemoteApiError):
+            entries = filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=recursive)
 
-    if path_info["type"] == "file":
-        if as_json:
-            parent_path, _, target_name = remote_path.rpartition("/")
-            echo_json([entry for entry in list_entries(parent_path) if entry.get("path") == target_name])
+    if not entries:
+        path_info = _tree_path_info(list_entries, remote_path)
+        if not path_info["exists"]:
+            raise FileNotFoundError(
+                f"The provided path does not exist in the teamspace drive: {remote_path!r}. "
+                "Note that empty folders may not be detected as existing."
+            )
+
+        if path_info["type"] == "file":
+            if as_json:
+                parent_path, _, target_name = remote_path.rpartition("/")
+                echo_json([entry for entry in list_entries(parent_path) if entry.get("path") == target_name])
+                return
+            # print the file name if it's a file (bash-like behavior)
+            print(remote_path)
             return
-        # print the file name if it's a file (bash-like behavior)
-        print(remote_path)
-        return
 
-    entries = filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=recursive)
+        if entries is None:
+            entries = filesystem_api.list_files(teamspace_id=teamspace_ref.id, path=remote_path, recursive=recursive)
+
     if as_json:
         echo_json(entries)
         return

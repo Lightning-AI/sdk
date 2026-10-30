@@ -206,6 +206,8 @@ def _bare_job(name="my-job", *, deployment_id="", cloudspace_id="cs-1", num_mach
     job._teamspace = mock.MagicMock(id="ts-abc")
     job._num_machines = num_machines
     job._standalone_job_api = mock.MagicMock()
+    job._mmt_job_api = mock.MagicMock()
+    job._logs_api = mock.MagicMock()
     job._job = V1Job(id="job-1", name=name, deployment_id=deployment_id, spec=V1JobSpec(cloudspace_id=cloudspace_id))
     return job
 
@@ -213,36 +215,69 @@ def _bare_job(name="my-job", *, deployment_id="", cloudspace_id="cs-1", num_mach
 def test_download_logs_writes_default_named_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     job = _bare_job("my-job")
-    job._standalone_job_api.download_logs.return_value = "line-1\nline-2\n"
+    job._logs_api.stream = mock.MagicMock(
+        return_value=[LogEntry(message="line 1", line=1), LogEntry(message="line 2", line=2)]
+    )
 
     written = job.download_logs()
 
     assert written == str(tmp_path / "job-my-job.log")
-    assert (tmp_path / "job-my-job.log").read_text() == "line-1\nline-2\n"
-    job._standalone_job_api.download_logs.assert_called_once_with(
-        job_id="job-1",
-        teamspace_id="ts-abc",
-        deployment_id=None,
-        cloudspace_id="cs-1",
-        timestamps=False,
-    )
+    assert (tmp_path / "job-my-job.log").read_text() == "line 1\nline 2\n"
+    kwargs = job._logs_api.stream.call_args.kwargs
+    assert kwargs["job_ids"] == ["job-1"]
+    assert kwargs["follow"] is False
+    assert kwargs["tail"] is None
 
 
-def test_download_logs_forwards_deployment(tmp_path, monkeypatch):
+def test_download_logs_formats_timestamps(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    job = _bare_job("replica", deployment_id="dep-1")
-    job._standalone_job_api.download_logs.return_value = "x\n"
+    job = _bare_job("my-job")
+    job._logs_api.stream = mock.MagicMock(
+        return_value=[LogEntry(message="hello", timestamp=datetime(2026, 7, 27, 9, 0, tzinfo=timezone.utc))]
+    )
 
     written = job.download_logs(timestamps=True)
 
-    assert written == str(tmp_path / "job-replica.log")
-    job._standalone_job_api.download_logs.assert_called_once_with(
-        job_id="job-1",
-        teamspace_id="ts-abc",
-        deployment_id="dep-1",
-        cloudspace_id="cs-1",
-        timestamps=True,
+    assert written == str(tmp_path / "job-my-job.log")
+    assert (tmp_path / "job-my-job.log").read_text() == "2026-07-27T09:00:00+00:00 hello\n"
+
+
+def test_download_logs_falls_back_to_saved_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    job = _bare_job("my-job")
+    job._logs_api.stream = mock.MagicMock(return_value=[])
+    job._standalone_job_api.get_logs_finished = mock.MagicMock(return_value="saved 1\nsaved 2\n")
+
+    with mock.patch.object(Job, "status", new_callable=mock.PropertyMock, return_value=Status.Completed):
+        written = job.download_logs()
+
+    assert (tmp_path / "job-my-job.log").read_text() == "saved 1\nsaved 2\n"
+    assert written == str(tmp_path / "job-my-job.log")
+    job._standalone_job_api.get_logs_finished.assert_called_once_with(
+        job_id="job-1", teamspace_id="ts-abc", timestamps=False
     )
+
+
+def test_download_logs_multi_machine_writes_merged_timeline(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    job = _bare_job("dist", num_machines=2)
+    machines = (_bare_job("dist-0"), _bare_job("dist-1"))
+    machines[0]._job = V1Job(id="m-0", name="dist-0", spec=V1JobSpec(rank=0))
+    machines[1]._job = V1Job(id="m-1", name="dist-1", spec=V1JobSpec(rank=1))
+    job._logs_api.stream = mock.MagicMock(
+        return_value=[
+            LogEntry(message="zero", resource_id="m-0"),
+            LogEntry(message="one", resource_id="m-1"),
+        ]
+    )
+
+    with mock.patch.object(Job, "machines", new_callable=mock.PropertyMock, return_value=machines):
+        job.download_logs()
+
+    assert (tmp_path / "job-dist.log").read_text() == "[dist-0] zero\n[dist-1] one\n"
+    kwargs = job._logs_api.stream.call_args.kwargs
+    assert kwargs["mmt_id"] == "job-1"
+    assert kwargs["follow"] is False
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1179,7 +1214,7 @@ def test_job_logs_v2(
         studio.teamspace,
     )
 
-    assert job.logs == "⚡  ~ echo Hello\nHello\n"
+    assert job.logs == "⚡  ~ echo Hello\nHello"
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1380,11 +1415,8 @@ def test_job_logs_reads_logs_api(job_api_get_job_by_name_mocker, internal_studio
             LogEntry(message="line 2"),
         ],
     )
-    fallback = mock.MagicMock()
-    job._job_api.get_logs_finished = fallback
 
     assert job.logs == "line 1\nline 2"
-    fallback.assert_not_called()
     assert stream_mock.call_args.kwargs["job_ids"] == ["test-job-id"]
     assert stream_mock.call_args.kwargs["follow"] is False
     assert stream_mock.call_args.args == (job.teamspace.id,)
@@ -1413,10 +1445,10 @@ def test_job_logs_finished_falls_back_to_saved_file(job_api_get_job_by_name_mock
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    # no lines in the current log format (e.g. an older job): the saved log file is used instead
+    # no lines in the logs API (e.g. an older job): the saved log file is used instead
     _stub_logs_api(job, [])
     logs_mock = mock.MagicMock(return_value="line 1\nline 2\n")
-    job._job_api.get_logs_finished = logs_mock
+    job._standalone_job_api.get_logs_finished = logs_mock
 
     # the proxy behaves like the log text: equality, str(), .splitlines(), iteration
     assert job.logs == "line 1\nline 2\n"
@@ -1428,35 +1460,16 @@ def test_job_logs_finished_falls_back_to_saved_file(job_api_get_job_by_name_mock
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_job_logs_finished_saved_file_keeps_timestamps(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
-    """--timestamps must survive the saved-file fallback; it used to be stripped there."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
     _stub_logs_api(job, [])
     logs_mock = mock.MagicMock(return_value="[2026-08-13T14:15:03.797142418Z] line 1\n")
-    job._job_api.get_logs_finished = logs_mock
+    job._standalone_job_api.get_logs_finished = logs_mock
 
     assert job.logs(timestamps=True) == "[2026-08-13T14:15:03.797142418Z] line 1\n"
     logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id, timestamps=True)
-
-
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_filtered_read_does_not_fall_back(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = Job("test-job", studio.teamspace)
-
-    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    # the job IS in the logs API — an unfiltered read has lines, the filter just matched none
-    job._logs_api.stream = mock.MagicMock(
-        side_effect=lambda *a, **kw: [] if kw.get("query") or kw.get("severity") else [LogEntry(message="x")]
-    )
-    fallback = mock.MagicMock(return_value="everything\n")
-    job._job_api.get_logs_finished = fallback
-
-    # a filtered read matching nothing must stay empty rather than dump the unfiltered file
-    assert job.logs(query="nope") == ""
-    fallback.assert_not_called()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1470,11 +1483,29 @@ def test_job_logs_filtered_read_raises_when_only_saved_file_exists(
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
     _stub_logs_api(job, [])  # nothing in the logs API at all: only the saved file has lines
     fallback = mock.MagicMock(return_value="everything\n")
-    job._job_api.get_logs_finished = fallback
+    job._standalone_job_api.get_logs_finished = fallback
 
     with pytest.raises(RuntimeError, match="cannot be filtered server-side"):
         job.logs(query="nope")
-    # and it must still never dump the unfiltered file for a filtered read
+    fallback.assert_not_called()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_filtered_read_does_not_fall_back(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
+    # the job IS in the logs API — an unfiltered read has lines, the filter just matched none
+    job._logs_api.stream = mock.MagicMock(
+        side_effect=lambda *a, **kw: [] if kw.get("query") or kw.get("severity") else [LogEntry(message="x")]
+    )
+
+    fallback = mock.MagicMock(return_value="everything\n")
+    job._standalone_job_api.get_logs_finished = fallback
+
+    # a filtered read matching nothing must stay empty rather than dump the unfiltered file
+    assert job.logs(query="nope") == ""
     fallback.assert_not_called()
 
 
@@ -1484,24 +1515,64 @@ def test_job_logs_finished_tail(job_api_get_job_by_name_mocker, internal_studio_
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    stream_mock = _stub_logs_api(job, [])
-    job._job_api.get_logs_finished = mock.MagicMock(return_value="a\nb\nc\nd\n")
+    # the stub bypasses the client-side tail windowing, so all lines come back; what matters
+    # here is that the tail is requested from the API (it pages forward only)
+    stream_mock = _stub_logs_api(job, [LogEntry(message=m) for m in "abcd"])
 
-    assert job.logs(tail=2) == "c\nd"
-    # the API pages forward only, so the tail is requested from it too
+    assert job.logs(tail=2) == "a\nb\nc\nd"
     assert stream_mock.call_args.kwargs["tail"] == 2
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_rank_warns_when_finished(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_rank_on_single_machine_rejected(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
-    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    job._job_api.get_logs_finished = mock.MagicMock(return_value="done")
+    job._job = V1Job(id="test-job-id", state="completed", spec=V1JobSpec(rank=0))
+    job._prevent_refetch_latest = True
 
-    with pytest.warns(UserWarning, match="rank"):
+    with pytest.raises(ValueError, match="single machine"):
         _ = job.logs(rank=1)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_rank_matching_own_machine_reads_own_logs(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    """A machine of an MMT reading its own rank reads its own job, no sibling lookup."""
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job = V1Job(id="machine-2", state="completed", multi_machine_job_id="mmt-1", spec=V1JobSpec(rank=2))
+    job._prevent_refetch_latest = True
+    job._mmt_job_api = mock.MagicMock()
+    stream_mock = _stub_logs_api(job, [LogEntry(message="own line")])
+
+    assert job.logs(rank=2) == "own line"
+    assert stream_mock.call_args.kwargs["job_ids"] == ["machine-2"]
+    job._mmt_job_api.list_mmt_subjobs.assert_not_called()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_job_logs_rank_resolves_sibling_machine(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    """Reading another rank resolves that machine's job id client-side and reads it."""
+    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
+    job = Job("test-job", studio.teamspace)
+
+    job._job = V1Job(id="machine-1", state="running", multi_machine_job_id="mmt-1", spec=V1JobSpec(rank=1))
+    job._prevent_refetch_latest = True
+    job._mmt_job_api.list_mmt_subjobs = mock.MagicMock(
+        return_value=[
+            V1Job(id="machine-0", name="dist-0", spec=V1JobSpec(rank=0)),
+            V1Job(id="machine-2", name="dist-2", spec=V1JobSpec(rank=2)),
+        ]
+    )
+
+    def _stream(teamspace_id, **kwargs):
+        assert kwargs["job_ids"] == ["machine-2"]
+        return iter([LogEntry(message="rank 2 line")])
+
+    job._logs_api.stream = mock.MagicMock(side_effect=_stream)
+
+    assert job.logs(rank=2) == "rank 2 line"
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -1526,11 +1597,8 @@ def test_job_logs_follow_streams_from_logs_api(job_api_get_job_by_name_mocker, i
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
     stream_mock = _stub_logs_api(job, [LogEntry(message="live-1"), LogEntry(message="live-2")])
-    legacy = mock.MagicMock()
-    job._job_api.stream_logs = legacy
 
     assert list(job.logs(follow=True)) == ["live-1", "live-2"]
-    legacy.assert_not_called()
     kwargs = stream_mock.call_args.kwargs
     assert kwargs["follow"] is True
     assert kwargs["idle_timeout"] is None
@@ -1544,38 +1612,38 @@ def test_job_logs_follow_on_finished_returns_saved_lines(job_api_get_job_by_name
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    job._job_api.get_logs_finished = mock.MagicMock(return_value="a\nb\n")
-    _stub_logs_api(job, [])
-    stream_mock = mock.MagicMock()
-    job._job_api.stream_logs = stream_mock
+    stream_mock = _stub_logs_api(job, [LogEntry(message="a"), LogEntry(message="b")])
 
-    # following an already-finished job must NOT open a websocket (which would hang); it
+    # following an already-finished job must NOT open a follow socket (which would hang); it
     # returns the saved lines as an iterator and stops.
     assert list(job.logs(follow=True)) == ["a", "b"]
-    stream_mock.assert_not_called()
+    kwargs = stream_mock.call_args.kwargs
+    assert kwargs["follow"] is False
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_follow_delegates_to_api(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_follow_with_rank_streams_that_machine(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+    """follow + rank resolves the machine client-side and streams its logs from the logs API."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
-    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="running"))
-    stream_mock = mock.MagicMock(return_value=iter(["line-1", "line-2"]))
-    job._job_api.stream_logs = stream_mock
+    job._job = V1Job(id="machine-1", state="running", multi_machine_job_id="mmt-1", spec=V1JobSpec(rank=1))
+    job._prevent_refetch_latest = True
+    job._mmt_job_api.list_mmt_subjobs = mock.MagicMock(
+        return_value=[V1Job(id="machine-0", name="dist-0", spec=V1JobSpec(rank=0))]
+    )
 
-    result = list(job.logs(follow=True, tail=10, rank=1, timestamps=True))
+    def _stream(teamspace_id, **kwargs):
+        assert kwargs["job_ids"] == ["machine-0"]
+        assert kwargs["follow"] is True
+        assert kwargs["tail"] == 10
+        return iter([LogEntry(message="line-1"), LogEntry(message="line-2")])
+
+    job._logs_api.stream = mock.MagicMock(side_effect=_stream)
+
+    result = list(job.logs(follow=True, tail=10, rank=0, timestamps=True))
 
     assert result == ["line-1", "line-2"]
-    stream_mock.assert_called_once_with(
-        job_id="test-job-id",
-        teamspace_id=job.teamspace.id,
-        follow=True,
-        tail=10,
-        rank=1,
-        idle_timeout=None,
-        timestamps=True,
-    )
 
 
 def test_job_tags_read_the_names_off_the_job():

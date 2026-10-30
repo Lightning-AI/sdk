@@ -1,7 +1,11 @@
 import importlib
+import json
 import os
 import sys
+import time
 import warnings
+from contextlib import suppress
+from pathlib import Path
 from typing import Optional
 
 import requests
@@ -10,6 +14,44 @@ import tqdm.std
 from packaging import version as packaging_version
 
 from lightning_sdk.constants import _LIGHTNING_DISABLE_VERSION_CHECK
+
+_VERSION_CHECK_TIMEOUT_SECONDS = 2
+# the PyPI lookup runs at most once per this interval; the result is kept on disk in between
+_VERSION_CHECK_INTERVAL_SECONDS = 24 * 60 * 60
+
+
+def _version_cache_path() -> Path:
+    return Path.home() / ".lightning" / "version_check.json"
+
+
+def _read_version_cache(curr_version: str) -> Optional[dict]:
+    """The cached check for ``curr_version`` if it is fresh, else ``None``."""
+    try:
+        entry = json.loads(_version_cache_path().read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(entry, dict) or entry.get("current_version") != curr_version:
+        return None
+    checked_at = entry.get("checked_at")
+    newer_version = entry.get("newer_version")
+    if not isinstance(checked_at, (int, float)) or not (newer_version is None or isinstance(newer_version, str)):
+        return None
+    # a timestamp in the future would otherwise keep the entry alive indefinitely
+    if not 0 <= time.time() - checked_at < _VERSION_CHECK_INTERVAL_SECONDS:
+        return None
+    return entry
+
+
+def _write_version_cache(curr_version: str, newer_version: Optional[str]) -> None:
+    """Record the outcome of a check. Failing to write it only costs a repeated check next time."""
+    path = _version_cache_path()
+    entry = {"current_version": curr_version, "newer_version": newer_version, "checked_at": time.time()}
+    with suppress(OSError):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # write to a per-process file and rename, so concurrent commands never read a partial file
+        tmp_path = path.with_suffix(f".{os.getpid()}.tmp")
+        tmp_path.write_text(json.dumps(entry))
+        os.replace(tmp_path, path)
 
 
 class VersionChecker:
@@ -27,7 +69,7 @@ class VersionChecker:
     def _get_newer_version(self, curr_version: str) -> Optional[str]:
         """Check PyPI for a newer stable release of ``lightning-sdk``.
 
-        The result is cached after the first successful network call.
+        The result is kept in ``~/.lightning/version_check.json`` for a day, so most runs make no request.
 
         Args:
             curr_version: The currently installed version string (e.g. ``"0.9.0"``).
@@ -44,22 +86,36 @@ class VersionChecker:
             self._cached_version = None
             return None
 
-        try:
-            response = requests.get(f"https://pypi.org/pypi/{self.package_name}/json")
-            response_json = response.json()
-            releases = response_json["releases"]
-            if curr_version not in releases:
-                # Always return None if not installed from PyPI (e.g. dev versions)
-                self._cached_version = None
-                return None
-            latest_version = response_json["info"]["version"]
-            parsed_version = packaging_version.parse(latest_version)
-            is_invalid = response_json["info"]["yanked"] or parsed_version.is_devrelease or parsed_version.is_prerelease
-            self._cached_version = None if curr_version == latest_version or is_invalid else latest_version
+        cached = _read_version_cache(curr_version)
+        if cached is not None:
+            self._cached_version = cached["newer_version"]
             return self._cached_version
+
+        try:
+            newer_version = self._fetch_newer_version(curr_version)
         except requests.exceptions.RequestException:
+            # not cached, so the next run tries PyPI again once the network is back
             self._cached_version = None
             return None
+        _write_version_cache(curr_version, newer_version)
+        self._cached_version = newer_version
+        return newer_version
+
+    def _fetch_newer_version(self, curr_version: str) -> Optional[str]:
+        """Ask PyPI for the latest release. Raises ``requests.RequestException`` if PyPI can't be reached."""
+        # runs on every import until the result is cached, so a stalled PyPI must not hold up the command
+        response = requests.get(
+            f"https://pypi.org/pypi/{self.package_name}/json", timeout=_VERSION_CHECK_TIMEOUT_SECONDS
+        )
+        response_json = response.json()
+        releases = response_json["releases"]
+        if curr_version not in releases:
+            # Always return None if not installed from PyPI (e.g. dev versions)
+            return None
+        latest_version = response_json["info"]["version"]
+        parsed_version = packaging_version.parse(latest_version)
+        is_invalid = response_json["info"]["yanked"] or parsed_version.is_devrelease or parsed_version.is_prerelease
+        return None if curr_version == latest_version or is_invalid else latest_version
 
     def check_and_prompt_upgrade(self, curr_version: str) -> None:
         """Emit a ``UserWarning`` if a newer ``lightning-sdk`` release is available on PyPI.
