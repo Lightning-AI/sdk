@@ -29,6 +29,11 @@ def _generate_state() -> str:
     return base64.urlsafe_b64encode(os.urandom(16)).rstrip(b"=").decode("ascii")
 
 
+def _origin() -> str:
+    """Platform origin without a trailing slash, so paths are not `//cli-login`."""
+    return env.LIGHTNING_CLOUD_URL.rstrip("/")
+
+
 def _pkce_pair() -> Tuple[str, str]:
     """Return a PKCE `(verifier, S256 challenge)` pair."""
     verifier = secrets.token_urlsafe(64)
@@ -42,12 +47,13 @@ def _authorize_url(redirect_uri: str, state: str, challenge: str) -> str:
             "response_type": "code",
             "client_id": _CLIENT_ID,
             "redirect_uri": redirect_uri,
+            "scope": "openid",
             "state": state,
             "code_challenge": challenge,
             "code_challenge_method": "S256",
         }
     )
-    return f"{env.LIGHTNING_CLOUD_URL}/oidc/authorize?{query}"
+    return f"{_origin()}/oidc/authorize?{query}"
 
 
 class _CodeRejectedError(Exception):
@@ -58,7 +64,7 @@ def _exchange_code(code: str, verifier: str, redirect_uri: str) -> str:
     """Trade an approved code and its PKCE verifier for a CLI session token."""
     try:
         response = requests.post(
-            f"{env.LIGHTNING_CLOUD_URL}/oidc/token",
+            f"{_origin()}/oidc/token",
             data={
                 "grant_type": "authorization_code",
                 "client_id": _CLIENT_ID,
@@ -154,10 +160,10 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
 
         if failure:
             logger.warning(f"Authentication Failed ({failure}). Run `lightning login` again, or update the CLI.")
-            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
+            target = f"{_origin()}/cli-login-failed"
         else:
             logger.info("Authentication Successful")
-            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-successful"
+            target = f"{_origin()}/cli-login-successful"
 
         return RedirectResponse(
             url=target,
@@ -177,7 +183,7 @@ AuthServer.login_with_browser = _login_with_browser
 
 def login_with_pasted_code(auth: Auth) -> None:
     """Sign in on a machine without a browser: approve on any device, then paste the code shown there."""
-    redirect_uri = f"{env.LIGHTNING_CLOUD_URL}/cli-login"
+    redirect_uri = f"{_origin()}/cli-login"
     verifier, challenge = _pkce_pair()
     click.echo(
         "To sign in, open this address in a browser on any device and approve the request:\n\n"
@@ -223,7 +229,7 @@ def logout_session(auth: Auth) -> None:
     if isinstance(token, str) and token:
         with suppress(requests.RequestException):
             requests.post(
-                f"{env.LIGHTNING_CLOUD_URL}/v1/auth/logout",
+                f"{_origin()}/v1/auth/logout",
                 headers={"Authorization": f"Bearer {token}"},
                 timeout=10,
             )

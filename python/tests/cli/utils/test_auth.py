@@ -192,6 +192,7 @@ def test_login_with_browser_exchanges_the_code_with_pkce_on_loopback(monkeypatch
     assert url.path == "/oidc/authorize"
     assert query["client_id"] == "lightning-cli"
     assert query["response_type"] == "code"
+    assert query["scope"] == "openid"
     assert query["state"] == "fixed-state"
     assert query["code_challenge_method"] == "S256"
     assert query["redirect_uri"] == f"http://127.0.0.1:{captured['config'].port}/callback"
@@ -283,6 +284,19 @@ def _paste_login(monkeypatch, tmp_path, codes: list, responses: list) -> tuple:
     return secrets_file, post
 
 
+def test_login_with_pasted_code_strips_a_trailing_slash_from_the_origin(monkeypatch, tmp_path, capsys) -> None:
+    monkeypatch.setattr("lightning_sdk.lightning_cloud.env.LIGHTNING_CLOUD_URL", "http://localhost:9800/")
+    _paste_login(monkeypatch, tmp_path, ["the-code"], [_response(200, {"access_token": "sess_user-1.secret"})])
+
+    login_with_pasted_code(Auth())
+
+    url = next(word for word in capsys.readouterr().out.split() if "/oidc/authorize" in word)
+    query = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
+    assert url.startswith("http://localhost:9800/oidc/authorize?")
+    assert query["redirect_uri"] == "http://localhost:9800/cli-login"
+    assert query["scope"] == "openid"
+
+
 def test_login_with_pasted_code_prints_the_authorize_url_and_saves_the_session(monkeypatch, tmp_path, capsys) -> None:
     secrets_file, post = _paste_login(
         monkeypatch, tmp_path, [" the-code \n"], [_response(200, {"access_token": "sess_user-1.secret"})]
@@ -294,7 +308,9 @@ def test_login_with_pasted_code_prints_the_authorize_url_and_saves_the_session(m
     url = next(word for word in output.split() if "/oidc/authorize" in word)
     query = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
     assert query["client_id"] == "lightning-cli"
+    assert query["scope"] == "openid"
     assert query["redirect_uri"].endswith("/cli-login")
+    assert "//cli-login" not in query["redirect_uri"]
     assert query["code_challenge_method"] == "S256"
     assert "never give it to anyone" in output
 
