@@ -31,12 +31,12 @@ For interactive use, sign in with:
 
    lightning login
 
-On a machine without a browser, such as a remote server, sign in with a code
-that you enter from a browser on any other device:
+On a machine without a browser, such as a remote server, approve the login
+from a browser on any other device, then paste the code it shows:
 
 .. code-block:: bash
 
-   lightning login --device
+   lightning login --no-browser
 
 For non-interactive environments, configure credentials through environment
 variables instead:
