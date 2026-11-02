@@ -42,6 +42,7 @@ from lightning_sdk.cli.legacy_redirects import (
     build_legacy_forward_command,
     build_legacy_forward_group,
 )
+from lightning_sdk.cli.lockdown import apply_lockdown
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
 from lightning_sdk.cli.utils.auth import browser_authentication, login_with_device_code, logout_session
@@ -174,6 +175,9 @@ main_cli.add_command(edit)
 main_cli.add_command(ls)
 main_cli.add_command(rm)
 
+# Before the legacy forwards below, which hold references to these commands.
+apply_lockdown(main_cli)
+
 # hidden plural aliases for noun-first groups
 main_cli.add_command(build_hidden_alias_group("apis", api))
 main_cli.add_command(build_hidden_alias_group("jobs", job))
@@ -224,8 +228,8 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             {
                 "container": ("lightning container download", container.commands["download"]),
                 "dataset": ("lightning dataset download", dataset.commands["download"]),
-                "file": ("lightning cp", cp),
-                "folder": ("lightning cp -r", cp),
+                "file": ("lightning cp", main_cli.commands["cp"]),
+                "folder": ("lightning cp -r", main_cli.commands["cp"]),
                 "model": ("lightning model download", model.commands["download"]),
             },
         )
@@ -285,8 +289,8 @@ if os.environ.get("LIGHTNING_EXPERIMENTAL_CLI_ONLY", "0") != "1":
             "upload",
             {
                 "container": ("lightning container upload", container.commands["upload"]),
-                "file": ("lightning cp", cp),
-                "folder": ("lightning cp -r", cp),
+                "file": ("lightning cp", main_cli.commands["cp"]),
+                "folder": ("lightning cp -r", main_cli.commands["cp"]),
                 "model": ("lightning model upload", model.commands["upload"]),
             },
         )

@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, patch
 
+import click
 from click.testing import CliRunner
 
 from lightning_sdk.cli.job.tag import tag_job
@@ -29,7 +30,7 @@ def test_tag_job_adds_tags() -> None:
         result = CliRunner().invoke(tag_job, ["my-job", "prod", "gpu", "--teamspace", "org/ts"])
 
     assert result.exit_code == 0
-    assert "Tags set on 'my-job': prod, gpu" in result.output
+    assert "Tags set on 'my-job': prod, gpu" in click.unstyle(result.output)
     job.set_tags.assert_called_once()
     assert set(job.set_tags.call_args[0][0]) == {"prod", "gpu"}
 
@@ -46,5 +47,5 @@ def test_tag_job_json_output() -> None:
         result = CliRunner().invoke(tag_job, ["my-job", "prod", "--json"])
 
     assert result.exit_code == 0
-    assert '"name": "my-job"' in result.output
-    assert '"prod"' in result.output
+    assert '"name": "my-job"' in click.unstyle(result.output)
+    assert '"prod"' in click.unstyle(result.output)
