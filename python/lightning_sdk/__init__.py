@@ -24,9 +24,11 @@ from lightning_sdk.studio import Studio
 from lightning_sdk.teamspace import ConnectionType, FolderLocation, Teamspace
 from lightning_sdk.user import User
 from lightning_sdk.vm import VM
+from lightning_sdk.vm_network_group import VMNetworkGroup
 
 __all__ = [
     "MMT",
+    "VM",
     "ActivityFileFormat",
     "Agent",
     "BillingActivity",
@@ -52,7 +54,7 @@ __all__ = [
     "Studio",
     "Teamspace",
     "User",
-    "VM",
+    "VMNetworkGroup",
     "__version__",
 ]
 
