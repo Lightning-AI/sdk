@@ -1,8 +1,14 @@
 """CLI commands that are temporarily unavailable while the API lockdown is on."""
 
+import os
+
 import rich_click as click
 
 from lightning_sdk.cli.utils.unavailable import mark_temporarily_unavailable, mark_unavailable_groups
+from lightning_sdk.lightning_cloud import env
+
+# Unset, empty or truthy keeps the commands in UNAVAILABLE_COMMANDS unavailable. A false value such as 0 runs them.
+LOCKDOWN_ENV = "LIGHTNING_CLI_DISABLE_UNAVAILABLE_CMDS"
 
 UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "api deploy",
@@ -119,9 +125,14 @@ def apply_lockdown(root: click.Group) -> None:
     Call this after the commands are registered and before anything else takes a reference
     to them, such as the legacy forwards in the entrypoint, so those forwards are marked too.
 
+    Does nothing when ``LIGHTNING_CLI_DISABLE_UNAVAILABLE_CMDS`` is set to a false value such as ``0``,
+    so every command runs as usual. The commands stay unavailable by default.
+
     Raises:
         KeyError: If a listed path does not name a command under ``root``.
     """
+    if not env.truthy(os.getenv(LOCKDOWN_ENV) or "1"):
+        return
     for path in UNAVAILABLE_COMMANDS:
         *parents, name = path.split()
         group: click.Group = root
