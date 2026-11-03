@@ -172,7 +172,7 @@ class CloudAccountApi:
             teamspace_id: The teamspace whose global cloud accounts to list.
 
         Returns:
-            List[V1ExternalCluster]: Cloud accounts of type ``GLOBAL`` excluding aggregate providers.
+            List[V1ExternalCluster]: Cloud accounts of type ``GLOBAL``.
 
         Raises:
             ValueError: If no cloud accounts are associated with the teamspace.
@@ -181,10 +181,6 @@ class CloudAccountApi:
         if not cloud_accounts:
             raise ValueError(f"Teamspace {teamspace_id} does not exist")
         filtered_cloud_accounts = filter(lambda x: x.spec.cluster_type == V1ClusterType.GLOBAL, cloud_accounts)
-        # TODO: remove aggregate filter once finished
-        filtered_cloud_accounts = filter(
-            lambda x: x.spec.driver != V1CloudProvider.LIGHTNING_AGGREGATE, filtered_cloud_accounts
-        )
         return list(filtered_cloud_accounts)
 
     def get_cloud_account_provider_mapping(
@@ -284,13 +280,6 @@ class CloudAccountApi:
 
         if not cloud_account:
             return CloudProvider.AWS
-
-        if cloud_account.spec and cloud_account.spec.driver:
-            if cloud_account.spec.driver == V1CloudProvider.LIGHTNING:
-                return CloudProvider.LIGHTNING_AGGREGATE
-
-            if cloud_account.spec.driver == V1CloudProvider.DGX:
-                return CloudProvider.DGX
 
         if cloud_account.spec:
             if cloud_account.spec.aws_v1:
@@ -396,10 +385,8 @@ class CloudAccountApi:
         if cloud_provider in (
             CloudProvider.AWS,
             CloudProvider.GCP,
-            CloudProvider.DGX,
             CloudProvider.LAMBDA_LABS,
             CloudProvider.NEBIUS,
-            CloudProvider.LIGHTNING_AGGREGATE,
         ):
             return getattr(V1CloudProvider, str(cloud_provider))
 

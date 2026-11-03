@@ -26,10 +26,8 @@ class CloudProvider(Enum):
     AWS = "AWS"
     GCP = "GCP"
     LAMBDA_LABS = "LAMBDA_LABS"
-    DGX = "DGX"
     NEBIUS = "NEBIUS"
     LIGHTNING = "LIGHTNING"
-    LIGHTNING_AGGREGATE = "LIGHTNING_AGGREGATE"
 
     def __str__(self) -> str:
         """Converts the CloudProvider to a str."""

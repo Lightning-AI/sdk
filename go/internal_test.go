@@ -62,3 +62,11 @@ func TestOptionsKeepInheritedCloudAccount(t *testing.T) {
 	assert.Equal(t, "teamspace-account", applyMMTOptions(MMTOptions{Teamspace: ts}).cloud)
 	assert.Equal(t, "explicit-account", applyMMTOptions(MMTOptions{Teamspace: ts, Cloud: "explicit-account"}).cloud)
 }
+
+func TestIsCloudProviderRejectsRetiredProviders(t *testing.T) {
+	assert.True(t, isCloudProvider("lambda-labs"))
+	assert.True(t, isCloudProvider("lightning"))
+	// DGX and the Lightning aggregate were retired by the platform; such names are cloud accounts now.
+	assert.False(t, isCloudProvider("dgx"))
+	assert.False(t, isCloudProvider("lightning-aggregate"))
+}

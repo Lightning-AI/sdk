@@ -245,10 +245,8 @@ def test_provider_mapping_empty_when_teamspace_has_no_accounts(api):
     [
         (CloudProvider.AWS, V1CloudProvider.AWS),
         (CloudProvider.GCP, V1CloudProvider.GCP),
-        (CloudProvider.DGX, V1CloudProvider.DGX),
         (CloudProvider.LAMBDA_LABS, V1CloudProvider.LAMBDA_LABS),
         (CloudProvider.NEBIUS, V1CloudProvider.NEBIUS),
-        (CloudProvider.LIGHTNING_AGGREGATE, V1CloudProvider.LIGHTNING_AGGREGATE),
         (CloudProvider.LIGHTNING, V1CloudProvider.MACHINE),
         ("lightning", V1CloudProvider.MACHINE),
     ],
@@ -260,7 +258,8 @@ def test_cloud_provider_to_v1_cloud_provider(api, cloud_provider, v1_cloud_provi
 @pytest.mark.parametrize(
     ("cluster_spec", "expected_provider"),
     [
-        (V1ExternalClusterSpec(driver=V1CloudProvider.LIGHTNING), CloudProvider.LIGHTNING_AGGREGATE),
+        # the retired Lightning aggregate provider used the bare LIGHTNING driver
+        (V1ExternalClusterSpec(driver=V1CloudProvider.LIGHTNING), None),
         (V1ExternalClusterSpec(machine_v1=V1MachineDirectV1()), CloudProvider.LIGHTNING),
     ],
 )
