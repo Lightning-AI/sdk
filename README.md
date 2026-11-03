@@ -276,10 +276,6 @@ For the Python SDK and CLI, run `lightning login` or export
 `LIGHTNING_API_KEY` from Lightning AI account settings.
 Inside a Lightning Studio, this value is usually already available.
 
-On a machine without a browser, such as a remote server, run
-`lightning login --no-browser`. It prints an address to approve the login at,
-from a browser on any other device, then asks for the code that page shows.
-
 Sandbox-only API keys can also be passed through `LIGHTNING_SANDBOX_API_KEY` or
 configured directly in code with `Sandbox.configure(...)`.
 

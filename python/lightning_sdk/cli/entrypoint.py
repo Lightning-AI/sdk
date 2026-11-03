@@ -45,7 +45,12 @@ from lightning_sdk.cli.legacy_redirects import (
 from lightning_sdk.cli.lockdown import apply_lockdown
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import browser_authentication, login_with_pasted_code, logout_session
+from lightning_sdk.cli.utils.auth import (
+    browser_authentication,
+    login_with_pasted_code,
+    logout_session,
+    oidc_login_enabled,
+)
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -99,10 +104,13 @@ def main_cli(ctx: click.Context) -> None:
 @click.option(
     "--no-browser",
     is_flag=True,
+    hidden=True,
     help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
 )
 def login(no_browser: bool) -> None:
     """Sign in to Lightning AI."""
+    if no_browser and not oidc_login_enabled():
+        raise click.UsageError("`lightning login --no-browser` is not available yet.")
     auth = Auth()
     if auth.api_key or auth.auth_token:
         click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
