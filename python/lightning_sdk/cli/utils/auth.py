@@ -24,6 +24,14 @@ _ORIGINAL_AUTH_SAVE = Auth.save
 _CLIENT_ID = "lightning-cli"
 _PASTE_ATTEMPTS = 3
 
+# The authorization-code login needs GRID_AUTH_CLI_LOGIN_ENABLED on the control plane, which production
+# doesn't set yet. Until it does, `lightning login` uses the session-token login, and this opts in to test it.
+OIDC_LOGIN_ENV = "LIGHTNING_CLI_OIDC_LOGIN"
+
+
+def oidc_login_enabled() -> bool:
+    return env.truthy(os.getenv(OIDC_LOGIN_ENV))
+
 
 def _generate_state() -> str:
     return base64.urlsafe_b64encode(os.urandom(16)).rstrip(b"=").decode("ascii")
@@ -105,7 +113,7 @@ def _save_with_session_token(
         os.chmod(self.secrets_file, 0o600)
 
 
-def _login_with_browser(self: AuthServer, auth: Auth) -> None:
+def _login_with_authorization_code(self: AuthServer, auth: Auth) -> None:
     """Sign in with an authorization code and PKCE, delivered to a callback on 127.0.0.1."""
     import webbrowser
 
@@ -175,6 +183,91 @@ def _login_with_browser(self: AuthServer, auth: Auth) -> None:
 
     server = uvicorn.Server(config=uvicorn.Config(app, host="127.0.0.1", port=port, log_level="error"))
     server.run()
+
+
+def _login_with_session_token(self: AuthServer, auth: Auth) -> None:
+    """Sign in through the sign-in page, which hands a session token to a callback on localhost."""
+    import webbrowser
+
+    import uvicorn
+    from fastapi import FastAPI, Query
+    from starlette.background import BackgroundTask
+    from starlette.responses import RedirectResponse
+
+    from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
+
+    expected_state = _generate_state()
+    app = FastAPI()
+    port = find_free_network_port()
+    base_url = self.get_auth_url(port)
+    redirect_uri = f"http://localhost:{port}/login-complete"
+    if urlencode({"redirectTo": redirect_uri}) in base_url:
+        stateful_redirect = f"{redirect_uri}?{urlencode({'state': expected_state})}"
+        url = base_url.replace(urlencode({"redirectTo": redirect_uri}), urlencode({"redirectTo": stateful_redirect}), 1)
+    else:
+        url = base_url
+
+    try:
+        requests.head(url, timeout=10)
+    except requests.ConnectionError as e:
+        raise requests.ConnectionError(
+            f"No internet connection available. Please connect to a stable internet connection \n{e}"
+        ) from e
+    except requests.RequestException as e:
+        raise requests.RequestException(
+            f"An error occurred with the request. Please report this issue to Lightning Team \n{e}"
+        ) from e
+
+    logger.info(f"login started for lightning.ai, opening {url}")
+    if not webbrowser.open(url):
+        deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID")
+        if deployment_id:
+            raise RuntimeError(
+                "Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the "
+                "'Environment' section of the deployment settings."
+            )
+        raise RuntimeError(
+            "Failed to authenticate to Lightning. When running without access to a browser, "
+            "'LIGHTNING_API_KEY' should be exported."
+        )
+
+    @app.get("/login-complete")
+    async def save_token(
+        token: str = "",
+        key: str = "",
+        state: str = "",
+        user_id: str = Query("", alias="userID"),
+    ) -> RedirectResponse:
+        state_valid = bool(state) and hmac.compare_digest(state, expected_state)
+        if token and state_valid:
+            auth.save(token=token, user_id=user_id, api_key=key)
+            logger.info("Authentication Successful")
+            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-successful"
+        else:
+            reason = "no token in the callback" if not token else "state mismatch"
+            logger.warning(
+                f"Authentication Failed ({reason}). If the browser was already signed in, the sign-in page "
+                "could not mint a CLI token. Run `lightning login` again, or update the CLI."
+            )
+            target = f"{env.LIGHTNING_CLOUD_URL}/cli-login-failed"
+
+        return RedirectResponse(
+            url=target,
+            background=BackgroundTask(stop_server),
+        )
+
+    def stop_server() -> None:
+        server.should_exit = True
+
+    server = uvicorn.Server(config=uvicorn.Config(app, port=port, log_level="error"))
+    server.run()
+
+
+def _login_with_browser(self: AuthServer, auth: Auth) -> None:
+    if oidc_login_enabled():
+        _login_with_authorization_code(self, auth)
+    else:
+        _login_with_session_token(self, auth)
 
 
 Auth.save = _save_with_session_token

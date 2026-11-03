@@ -9,6 +9,7 @@ from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login, main_cli
 from lightning_sdk.cli.sandbox.commands import run_sandbox_command
+from lightning_sdk.cli.utils.auth import OIDC_LOGIN_ENV
 from lightning_sdk.cli.vm.ssh import ssh_vm
 from lightning_sdk.lightning_cloud.login import Auth
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging, run_cli
@@ -22,6 +23,7 @@ def _clear_auth(monkeypatch, tmp_path) -> None:
     monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
     monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
     monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv(OIDC_LOGIN_ENV, raising=False)
 
 
 @pytest.mark.parametrize(
@@ -86,6 +88,7 @@ def test_login_reports_success_and_failure(monkeypatch, tmp_path) -> None:
 
 def test_login_no_browser_starts_a_fresh_paste_login_instead_of_the_browser(monkeypatch, tmp_path) -> None:
     _clear_auth(monkeypatch, tmp_path)
+    monkeypatch.setenv(OIDC_LOGIN_ENV, "1")
     Auth().save(auth_token="sess_expired")
     user = MagicMock()
     user.name = "Test User"
@@ -109,6 +112,23 @@ def test_login_no_browser_starts_a_fresh_paste_login_instead_of_the_browser(monk
     auth = Auth()
     assert auth.load()
     assert auth.auth_token == "sess_new"
+
+
+def test_login_no_browser_is_refused_without_the_opt_in(monkeypatch, tmp_path) -> None:
+    _clear_auth(monkeypatch, tmp_path)
+    Auth().save(auth_token="sess_kept")
+    monkeypatch.setattr(
+        "lightning_sdk.cli.entrypoint.login_with_pasted_code",
+        lambda _auth: (_ for _ in ()).throw(AssertionError("paste login reached")),
+    )
+
+    result = CliRunner().invoke(main_cli, ["login", "--no-browser"])
+
+    assert result.exit_code == 2
+    assert "not available yet" in result.output
+    auth = Auth()
+    assert auth.load()
+    assert auth.auth_token == "sess_kept"
 
 
 def test_logout_reports_success_and_failure(monkeypatch, tmp_path) -> None:
@@ -297,7 +317,7 @@ def test_login_help():
     result_text = assert_help_contains("lightning login --help", "Usage: lightning login [OPTIONS]")
 
     assert "Sign in to Lightning AI." in result_text
-    assert "--no-browser" in result_text
+    assert "--no-browser" not in result_text
 
 
 @mock_command_logging
