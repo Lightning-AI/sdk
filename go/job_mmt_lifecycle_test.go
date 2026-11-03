@@ -111,6 +111,21 @@ func TestJobLogsErrorWhileMigratingToLogsAPI(t *testing.T) {
 	assert.Equal(t, []string{"GET /v1/projects/project-1/page-logs?jobIds=job-1"}, seen)
 }
 
+func TestJobLogsPendingWithoutHistoryIsEmpty(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+
+	// only a finished job can be waiting on a migration; one that hasn't started has no logs yet
+	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "pending"})
+	logs, err := j.Logs()
+	require.NoErrorf(t, err, "job.Logs returned error")
+	assert.Equal(t, "", logs)
+}
+
 func TestJobLogsRunningWithoutHistoryDoesNotFallBack(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -345,7 +360,7 @@ func TestMMTListsSubJobsWithV2Route(t *testing.T) {
 	}
 }
 
-func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
+func TestMMTLogsMergeEveryMachine(t *testing.T) {
 	var seen []string
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -358,20 +373,27 @@ func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
 			}
 			_ = json.NewEncoder(w).Encode(map[string]any{
 				"jobs": []map[string]any{
-					{
-						"id":        "job-rank-0",
-						"name":      "dist-train-0",
-						"projectId": "project-1",
-						"state":     "completed",
-					},
+					{"id": "job-rank-0", "name": "dist-train-0", "projectId": "project-1", "state": "completed"},
+					{"id": "job-rank-1", "name": "dist-train-1", "projectId": "project-1", "state": "completed"},
 				},
 			})
 		case "GET /v1/projects/project-1/page-logs":
-			if r.URL.Query().Get("jobIds") != "job-rank-0" {
-				assert.Fail(t, fmt.Sprintf("jobIds = %q, want job-rank-0", r.URL.Query().Get("jobIds")))
+			if r.URL.Query().Get("mmtId") != "mmt-1" {
+				assert.Fail(t, fmt.Sprintf("mmtId = %q, want mmt-1", r.URL.Query().Get("mmtId")))
+			}
+			if r.URL.Query().Get("pageToken") == "" {
+				_ = json.NewEncoder(w).Encode(map[string]any{
+					"entries": []map[string]any{
+						{"message": "+ lightning", "resourceId": "job-rank-0"},
+						{"message": "rank 0 line", "resourceId": "job-rank-0", "line": "1"},
+						{"message": "rank 1 line", "resourceId": "job-rank-1", "line": "1"},
+					},
+					"nextPageToken": "page-2",
+				})
+				return
 			}
 			_ = json.NewEncoder(w).Encode(map[string]any{
-				"entries": []map[string]any{{"message": "rank 0 line", "line": "1"}},
+				"entries": []map[string]any{{"message": "unknown rank line", "resourceId": "job-rank-9", "line": "2"}},
 			})
 		default:
 			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
@@ -382,23 +404,34 @@ func TestMMTLogsUseFirstSubJobLogs(t *testing.T) {
 
 	m := mustMMT(t, "mmt-1", "dist-train", "project-1")
 	logs, err := m.Logs()
-	require.NoErrorf(t, err,
-		"mmt.Logs returned error")
-	assert.Falsef(t, logs != "rank 0 line",
-		"logs = %q", logs)
-
-	want := []string{
+	require.NoErrorf(t, err, "mmt.Logs returned error")
+	assert.Equal(t, "[dist-train-0] rank 0 line\n[dist-train-1] rank 1 line\n[job-rank-9] unknown rank line", logs)
+	assert.Equal(t, []string{
 		"GET /v1/projects/project-1/jobs?multiMachineJobId=mmt-1",
-		"GET /v1/projects/project-1/page-logs?jobIds=job-rank-0",
-	}
-	assert.Falsef(t, len(seen) != len(want),
-		"seen requests = %v, want %v", seen, want)
+		"GET /v1/projects/project-1/page-logs?mmtId=mmt-1",
+		"GET /v1/projects/project-1/page-logs?mmtId=mmt-1&pageToken=page-2",
+	}, seen)
+}
 
-	for i := range want {
-		assert.Falsef(t, seen[i] != want[i],
-			"request %d = %q, want %q", i, seen[i], want[i])
+func TestMMTLogsFinishedWithoutHistoryReportsMigration(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		switch r.Method + " " + r.URL.Path {
+		case "GET /v1/projects/project-1/jobs":
+			_ = json.NewEncoder(w).Encode(map[string]any{"jobs": []map[string]any{}})
+		case "GET /v1/projects/project-1/page-logs":
+			_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
+		default:
+			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
+		}
+	}))
+	defer server.Close()
+	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
 
-	}
+	m := mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{Status: "completed"})
+	_, err := m.Logs()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "still being migrated")
 }
 
 // TestJobStopRequestsPlatformStopAction pins the request body of Job.Stop to
