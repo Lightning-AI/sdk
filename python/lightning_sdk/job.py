@@ -46,6 +46,10 @@ __all__ = [
 _RUNNING_LOGS_IDLE_TIMEOUT = 5.0
 
 
+def _logs_migrating_error() -> RuntimeError:
+    return RuntimeError("This job's logs are still being migrated from older storage. Try again shortly.")
+
+
 class _Logs:
     """A logs handle that is both a value and callable.
 
@@ -844,11 +848,10 @@ class Job(metaclass=TrackCallsMeta):
         ``since``, ``until``, ``query`` and ``severity`` are applied by the server, to both the
         saved logs and the live stream.
 
-        A finished job whose lines are not in the logs API falls back to its saved log file,
-        which cannot be filtered server-side. ``timestamps`` still works there, but ``query``
-        and ``severity`` raise :class:`RuntimeError` rather than silently returning nothing —
-        read unfiltered and filter locally for such a job. A running one with no history in
-        the logs API has its live stream tailed briefly instead.
+        A finished job whose lines are not in the logs API yet is still being migrated from
+        older storage, and raises :class:`RuntimeError`; reading it again shortly after
+        succeeds. A running one with no history in the logs API has its live stream tailed
+        briefly instead.
         """
         return _Logs(self._compute_logs)
 
@@ -861,8 +864,8 @@ class Job(metaclass=TrackCallsMeta):
 
         Reads every page of the job's history from the logs API. A multi-machine job
         downloads the merged timeline of all its machines, each line prefixed with its
-        machine name. A job whose lines are not in the logs API falls back to its saved
-        log file.
+        machine name. A finished job whose lines are not in the logs API yet raises
+        :class:`RuntimeError`, as :attr:`logs` does.
         """
         if self.is_multi_machine:
             text = self._download_multi_machine_logs(timestamps=timestamps)
@@ -873,16 +876,14 @@ class Job(metaclass=TrackCallsMeta):
         return str(dest)
 
     def _download_machine_logs(self, *, timestamps: bool) -> str:
-        """This machine's complete history, from the logs API or else its saved log file."""
+        """This machine's complete history from the logs API."""
         job = self._guaranteed_job
         lines = list(self._stream_entries(job, follow=False, tail=None, timestamps=timestamps))
         if lines:
             return "\n".join(lines) + "\n"
         if self.status == Status.Running:
             return ""
-        return self._standalone_job_api.get_logs_finished(
-            job_id=job.id, teamspace_id=self.teamspace.id, timestamps=timestamps
-        )
+        raise _logs_migrating_error()
 
     def _download_multi_machine_logs(self, *, timestamps: bool) -> str:
         lines = list(
@@ -892,12 +893,9 @@ class Job(metaclass=TrackCallsMeta):
         )
         if lines:
             return "\n".join(lines) + "\n"
-        # nothing in the logs API: stitch each machine's saved log file, prefixed like the merged timeline
-        out: List[str] = []
-        for machine in self.machines:
-            text = machine._download_machine_logs(timestamps=timestamps)
-            out.extend(f"[{machine.name}] {line}" for line in text.splitlines())
-        return "\n".join(out) + "\n" if out else ""
+        if self.status == Status.Running:
+            return ""
+        raise _logs_migrating_error()
 
     def _compute_logs(
         self,
@@ -988,27 +986,14 @@ class Job(metaclass=TrackCallsMeta):
             )
         )
         if not lines and status != Status.Running:
-            if query is not None or severity is not None:
-                # An empty filtered read is ambiguous: either the filter genuinely matched
-                # nothing, or this job's lines aren't in the logs API at all. Only the
-                # latter needs the saved-file fallback, which cannot filter — so probe
-                # unfiltered before deciding, rather than reporting "no matches" for a
-                # filter that was never applied.
-                if not any(self._stream_entries(read_job, follow=False, tail=1, timestamps=False)):
-                    raise RuntimeError(
-                        "This job's logs are only available as a saved file, which cannot be "
-                        "filtered server-side, so `query`/`severity` cannot be applied. Read "
-                        "the logs without them and filter locally."
-                    )
+            filtered = any(f is not None for f in (since, until, query, severity))
+            # An empty filtered read is ambiguous: the filter may have matched nothing, or the
+            # job's lines may not be in the logs API yet. Probe unfiltered to tell them apart.
+            if filtered and any(self._stream_entries(read_job, follow=False, tail=1, timestamps=False)):
                 return iter(()) if follow else ""
-            # Nothing in the logs API for this job (it finished before logs moved to the current
-            # storage format): fall back to its saved log file.
-            text = self._standalone_job_api.get_logs_finished(
-                job_id=read_job.id, teamspace_id=self.teamspace.id, timestamps=timestamps
-            )
-            if tail is not None:
-                text = "\n".join(text.splitlines()[-tail:])
-            return iter(text.splitlines()) if follow else text
+            # The job finished before logs moved to the current storage format. Reading it
+            # queues its migration, so its lines appear once that finishes.
+            raise _logs_migrating_error()
 
         # `follow` on an already-finished job returns the saved lines as an iterator (and stops),
         # keeping the return type consistent with the live-follow path.

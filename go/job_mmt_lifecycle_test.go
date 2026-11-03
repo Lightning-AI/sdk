@@ -91,38 +91,24 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 	}
 }
 
-func TestJobLogsFallBackToSavedFileWhenNotInLogsAPI(t *testing.T) {
-	var serverURL string
+func TestJobLogsErrorWhileMigratingToLogsAPI(t *testing.T) {
 	var seen []string
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		seen = append(seen, r.Method+" "+r.URL.RequestURI())
 		w.Header().Set("Content-Type", "application/json")
-		switch r.Method + " " + r.URL.Path {
-		case "GET /v1/projects/project-1/page-logs":
-			_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
-		case "GET /v1/projects/project-1/jobs/job-1/download-logs":
-			_ = json.NewEncoder(w).Encode(map[string]any{"url": serverURL + "/logs/job-1"})
-		case "GET /logs/job-1":
-			w.Header().Set("Content-Type", "text/plain")
-			_, _ = w.Write([]byte("[2026-06-16T10:00:00Z] first line\n[2026-06-16T10:00:01Z] second line\n"))
-		default:
+		if r.Method+" "+r.URL.Path != "GET /v1/projects/project-1/page-logs" {
 			assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
 		}
+		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
 	}))
-	serverURL = server.URL
 	defer server.Close()
 	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
 
 	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "completed"})
-	logs, err := j.Logs()
-	require.NoErrorf(t, err, "job.Logs returned error")
-	assert.Equal(t, "first line\nsecond line\n", logs)
-	assert.Equal(t, []string{
-		"GET /v1/projects/project-1/page-logs?jobIds=job-1",
-		"GET /v1/projects/project-1/jobs/job-1/download-logs",
-		"GET /logs/job-1",
-	}, seen)
+	_, err := j.Logs()
+	require.ErrorContains(t, err, "still being migrated")
+	assert.Equal(t, []string{"GET /v1/projects/project-1/page-logs?jobIds=job-1"}, seen)
 }
 
 func TestJobLogsRunningWithoutHistoryDoesNotFallBack(t *testing.T) {

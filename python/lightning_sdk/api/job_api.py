@@ -2,13 +2,11 @@ import time
 import warnings
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
-from urllib.request import urlopen
 
 from lightning_sdk.api.utils import _get_cloud_url as _cloud_url
 from lightning_sdk.api.utils import (
     _machine_to_compute_name,
     cached_lightning_client,
-    remove_datetime_prefix,
     resolve_path_mappings,
     resolve_tags,
 )
@@ -18,7 +16,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     JobsServiceUpdateJobBody,
     V1CloudProvider,
     V1ClusterAccelerator,
-    V1DownloadJobLogsResponse,
     V1EnvVar,
     V1Job,
     V1JobSpec,
@@ -369,29 +366,6 @@ class JobApiV2:
             cloudspace_id: The ID of the Studio (cloudspace) associated with the job, or ``None``.
         """
         self._client.jobs_service_delete_job(project_id=teamspace_id, id=job_id, cloudspace_id=cloudspace_id or "")
-
-    def get_logs_finished(self, job_id: str, teamspace_id: str, timestamps: bool = False) -> str:
-        """Download and return the saved log file of a finished job.
-
-        Only used for jobs whose lines are not in the logs API (jobs that finished before
-        logs moved to the current storage format).
-
-        Args:
-            job_id: The unique identifier of the job whose logs are fetched.
-            teamspace_id: The ID of the teamspace that owns the job.
-            timestamps: Keep each line's ``[<RFC3339>] `` prefix instead of stripping it.
-
-        Returns:
-            The decoded log text, with datetime prefixes stripped unless ``timestamps``.
-        """
-        resp: V1DownloadJobLogsResponse = self._client.jobs_service_download_job_logs(
-            project_id=teamspace_id, id=job_id
-        )
-
-        data = urlopen(resp.url).read().decode("utf-8")
-        if timestamps:
-            return str(data)
-        return remove_datetime_prefix(str(data))
 
     @staticmethod
     @lru_cache(maxsize=None)

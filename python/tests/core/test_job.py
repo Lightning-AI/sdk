@@ -242,20 +242,18 @@ def test_download_logs_formats_timestamps(tmp_path, monkeypatch):
     assert (tmp_path / "job-my-job.log").read_text() == "2026-07-27T09:00:00+00:00 hello\n"
 
 
-def test_download_logs_falls_back_to_saved_file(tmp_path, monkeypatch):
+def test_download_logs_raises_while_migrating(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     job = _bare_job("my-job")
     job._logs_api.stream = mock.MagicMock(return_value=[])
-    job._standalone_job_api.get_logs_finished = mock.MagicMock(return_value="saved 1\nsaved 2\n")
 
-    with mock.patch.object(Job, "status", new_callable=mock.PropertyMock, return_value=Status.Completed):
-        written = job.download_logs()
+    with (
+        mock.patch.object(Job, "status", new_callable=mock.PropertyMock, return_value=Status.Completed),
+        pytest.raises(RuntimeError, match="still being migrated"),
+    ):
+        job.download_logs()
 
-    assert (tmp_path / "job-my-job.log").read_text() == "saved 1\nsaved 2\n"
-    assert written == str(tmp_path / "job-my-job.log")
-    job._standalone_job_api.get_logs_finished.assert_called_once_with(
-        job_id="job-1", teamspace_id="ts-abc", timestamps=False
-    )
+    assert not (tmp_path / "job-my-job.log").exists()
 
 
 def test_download_logs_multi_machine_writes_merged_timeline(tmp_path, monkeypatch):
@@ -1440,73 +1438,44 @@ def test_job_logs_timestamps_and_filters(job_api_get_job_by_name_mocker, interna
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_finished_falls_back_to_saved_file(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_finished_raises_while_migrating(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    # no lines in the logs API (e.g. an older job): the saved log file is used instead
+    # no lines in the logs API: an older job whose logs haven't been migrated yet
     _stub_logs_api(job, [])
-    logs_mock = mock.MagicMock(return_value="line 1\nline 2\n")
-    job._standalone_job_api.get_logs_finished = logs_mock
 
-    # the proxy behaves like the log text: equality, str(), .splitlines(), iteration
-    assert job.logs == "line 1\nline 2\n"
-    assert str(job.logs) == "line 1\nline 2\n"
-    assert job.logs.splitlines() == ["line 1", "line 2"]
-    assert list(job.logs) == ["line 1", "line 2"]
-    logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id, timestamps=False)
+    with pytest.raises(RuntimeError, match="still being migrated"):
+        str(job.logs)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_finished_saved_file_keeps_timestamps(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
-    studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
-    job = Job("test-job", studio.teamspace)
-
-    job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    _stub_logs_api(job, [])
-    logs_mock = mock.MagicMock(return_value="[2026-08-13T14:15:03.797142418Z] line 1\n")
-    job._standalone_job_api.get_logs_finished = logs_mock
-
-    assert job.logs(timestamps=True) == "[2026-08-13T14:15:03.797142418Z] line 1\n"
-    logs_mock.assert_called_with(job_id="test-job-id", teamspace_id=job.teamspace.id, timestamps=True)
-
-
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_filtered_read_raises_when_only_saved_file_exists(
-    job_api_get_job_by_name_mocker, internal_studio_init_mocker
-):
+def test_job_logs_filtered_read_raises_while_migrating(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     """A filter the server never applied must not be reported as "no matches"."""
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
-    _stub_logs_api(job, [])  # nothing in the logs API at all: only the saved file has lines
-    fallback = mock.MagicMock(return_value="everything\n")
-    job._standalone_job_api.get_logs_finished = fallback
+    _stub_logs_api(job, [])
 
-    with pytest.raises(RuntimeError, match="cannot be filtered server-side"):
+    with pytest.raises(RuntimeError, match="still being migrated"):
         job.logs(query="nope")
-    fallback.assert_not_called()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_job_logs_filtered_read_does_not_fall_back(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
+def test_job_logs_filtered_read_matching_nothing_is_empty(job_api_get_job_by_name_mocker, internal_studio_init_mocker):
     studio = Studio(name="st-abc", teamspace="ts-abc", org="org-abc")
     job = Job("test-job", studio.teamspace)
 
     job._job_api.get_job = mock.MagicMock(return_value=V1Job(id="test-job-id", state="completed"))
     # the job IS in the logs API — an unfiltered read has lines, the filter just matched none
     job._logs_api.stream = mock.MagicMock(
-        side_effect=lambda *a, **kw: [] if kw.get("query") or kw.get("severity") else [LogEntry(message="x")]
+        side_effect=lambda *a, **kw: [] if kw.get("query") or kw.get("since") else [LogEntry(message="x")]
     )
 
-    fallback = mock.MagicMock(return_value="everything\n")
-    job._standalone_job_api.get_logs_finished = fallback
-
-    # a filtered read matching nothing must stay empty rather than dump the unfiltered file
     assert job.logs(query="nope") == ""
-    fallback.assert_not_called()
+    assert job.logs(since="2026-01-01T00:00:00Z") == ""
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
