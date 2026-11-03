@@ -4,8 +4,9 @@ import pytest
 import rich_click as click
 from click.testing import CliRunner
 
+from lightning_sdk.cli import lockdown
 from lightning_sdk.cli.entrypoint import main_cli
-from lightning_sdk.cli.lockdown import UNAVAILABLE_COMMANDS
+from lightning_sdk.cli.lockdown import LOCKDOWN_ENV, UNAVAILABLE_COMMANDS, apply_lockdown
 from lightning_sdk.cli.utils.unavailable import is_temporarily_unavailable, mark_temporarily_unavailable
 from lightning_sdk.exceptions import RECOVERY_URL, TemporarilyUnavailableError
 from tests.cli.help import command_text
@@ -196,3 +197,24 @@ def test_legacy_forwards_to_unavailable_commands_refuse_to_run(args: list[str]) 
 
     assert result.exit_code == 1
     assert _NOTICE in result.output
+
+
+@pytest.mark.parametrize(
+    ("value", "locked"),
+    [(None, True), ("", True), ("1", True), ("true", True), ("0", False), ("false", False)],
+)
+def test_lockdown_env_controls_the_gate(monkeypatch, value: str | None, locked: bool) -> None:
+    if value is None:
+        monkeypatch.delenv(LOCKDOWN_ENV, raising=False)
+    else:
+        monkeypatch.setenv(LOCKDOWN_ENV, value)
+    monkeypatch.setattr(lockdown, "UNAVAILABLE_COMMANDS", ("echo-thing",))
+    root = click.Group("root")
+    root.add_command(_echo)
+
+    apply_lockdown(root)
+
+    assert is_temporarily_unavailable(root.commands["echo-thing"]) is locked
+    if not locked:
+        result = CliRunner().invoke(root, ["echo-thing", "--name", "a"], catch_exceptions=False)
+        assert result.output == "hello a\n"
