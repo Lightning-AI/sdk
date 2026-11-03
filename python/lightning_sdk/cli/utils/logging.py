@@ -15,7 +15,9 @@ from rich.text import Text
 
 from lightning_sdk.__version__ import __version__
 from lightning_sdk.cli.utils import rich_to_str
+from lightning_sdk.cli.utils.lockdown_status import is_lockdown_refusal
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.exceptions import TemporarilyUnavailableError
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi.models.v1_create_sdk_command_history_request import (
     V1CreateSDKCommandHistoryRequest,
@@ -183,6 +185,18 @@ class LightningCommand(_HelpOptionNamesMixin, _GradientHelpMixin, rich_click.Ric
         for parameter in self.params:
             if parameter.name == "teamspace" and getattr(parameter, "_custom_shell_complete", None) is None:
                 parameter._custom_shell_complete = complete_teamspace
+
+    def invoke(self, ctx: click.Context) -> Any:
+        """Run the command, showing the temporarily-unavailable notice if the API lockdown refuses it.
+
+        The lockdown's flags can be out of date, or unreadable, so the server's refusal is what's certain.
+        """
+        try:
+            return super().invoke(ctx)
+        except Exception as e:
+            if is_lockdown_refusal(e):
+                raise TemporarilyUnavailableError(ctx.command_path) from e
+            raise
 
 
 class LightningGroup(_HelpOptionNamesMixin, _GradientHelpMixin, rich_click.RichGroup):  # type: ignore[misc]
