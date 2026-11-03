@@ -1,4 +1,5 @@
 import os
+import warnings
 from contextlib import nullcontext
 from unittest import mock
 
@@ -1023,3 +1024,21 @@ def test_studio_init_creates_studio_when_current_studio_in_different_teamspace(
     mock_create_cloudspace.assert_called()
     # The cross-teamspace current-studio lookup must have been skipped.
     mock_get_cloud_space.assert_not_called()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@pytest.mark.parametrize("disable_secrets", [True, False])
+def test_studio_disable_secrets_is_deprecated(internal_studio_init_mocker, disable_secrets):
+    with pytest.warns(DeprecationWarning, match="disable_secrets is deprecated"):
+        studio = Studio(name="st-abc", teamspace="org-abc/ts-abc", disable_secrets=disable_secrets)
+
+    assert studio._disable_secrets is disable_secrets
+
+
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_studio_without_disable_secrets_does_not_warn(internal_studio_init_mocker):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        studio = Studio(name="st-abc", teamspace="org-abc/ts-abc")
+
+    assert studio._disable_secrets is False
