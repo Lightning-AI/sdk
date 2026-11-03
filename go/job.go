@@ -581,25 +581,45 @@ func (j *Job) Logs() (string, error) {
 	if j == nil || j.teamspaceID == "" || j.id == "" {
 		return "", errors.New("job logs requires teamspace ID and job ID")
 	}
-	api, err := sdkclient.New()
+	lines, err := readLogs(j.teamspaceID, func(params *jobs_service.JobsServiceGetLogsParams) {
+		params.SetJobIds([]string{j.id})
+	}, nil)
 	if err != nil {
 		return "", err
+	}
+	if len(lines) == 0 && isJobTerminalStatus(j.status) {
+		return "", errLogsMigrating
+	}
+	return strings.Join(lines, "\n"), nil
+}
+
+// errLogsMigrating is returned for a finished job with nothing in the logs API: it finished
+// before logs moved to the current storage format, and reading it queues its migration, so
+// its lines appear once that finishes.
+var errLogsMigrating = errors.New("this job's logs are still being migrated from older storage, try again shortly")
+
+// readLogs reads every page of the logs selected by selector. When names is set, each
+// line is prefixed with the bracketed name of the machine (job) it came from.
+func readLogs(teamspaceID string, selector func(*jobs_service.JobsServiceGetLogsParams), names map[string]string) ([]string, error) {
+	api, err := sdkclient.New()
+	if err != nil {
+		return nil, err
 	}
 	var lines []string
 	var pageToken string
 	for {
 		params := jobs_service.NewJobsServiceGetLogsParamsWithContext(context.Background()).
-			WithProjectID(j.teamspaceID).
-			WithJobIds([]string{j.id})
+			WithProjectID(teamspaceID)
+		selector(params)
 		if pageToken != "" {
 			params = params.WithPageToken(&pageToken)
 		}
 		resp, err := api.JobsService.JobsServiceGetLogs(params)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		if resp.Payload == nil {
-			return "", fmt.Errorf("get job logs returned empty payload")
+			return nil, fmt.Errorf("get job logs returned empty payload")
 		}
 		for i, entry := range resp.Payload.Entries {
 			if entry == nil {
@@ -609,19 +629,21 @@ func (j *Job) Logs() (string, error) {
 			if pageToken == "" && i == 0 && entry.Message == "+ lightning" {
 				continue
 			}
-			lines = append(lines, entry.Message)
+			if names == nil {
+				lines = append(lines, entry.Message)
+				continue
+			}
+			name := names[entry.ResourceID]
+			if name == "" {
+				name = entry.ResourceID
+			}
+			lines = append(lines, "["+name+"] "+entry.Message)
 		}
 		pageToken = resp.Payload.NextPageToken
 		if pageToken == "" {
-			break
+			return lines, nil
 		}
 	}
-	if len(lines) == 0 && !strings.EqualFold(j.status, "running") {
-		// the job finished before logs moved to the current storage format; reading it
-		// queues its migration, so its lines appear once that finishes
-		return "", errors.New("this job's logs are still being migrated from older storage, try again shortly")
-	}
-	return strings.Join(lines, "\n"), nil
 }
 
 // Dict returns a JSON-friendly public representation of the job.

@@ -64,12 +64,16 @@ def test_machine_equal(machine_str: str, expected_enum: Machine):
     [
         ("LIGHTNING", CloudProvider.LIGHTNING),
         ("lightning", CloudProvider.LIGHTNING),
-        ("LIGHTNING_AGGREGATE", CloudProvider.LIGHTNING_AGGREGATE),
-        ("lightning_aggregate", CloudProvider.LIGHTNING_AGGREGATE),
     ],
 )
 def test_cloud_provider_from_str(provider_str: str, expected_enum: CloudProvider):
     assert CloudProvider.from_str(provider_str) == expected_enum
+
+
+@pytest.mark.parametrize("provider_str", ["DGX", "LIGHTNING_AGGREGATE"])
+def test_cloud_provider_from_str_rejects_retired_providers(provider_str: str):
+    with pytest.raises(ValueError, match="Unknown CloudProvider"):
+        CloudProvider.from_str(provider_str)
 
 
 @pytest.mark.parametrize(

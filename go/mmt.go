@@ -536,16 +536,32 @@ func (m *MMT) Machines() ([]*Job, error) {
 	}
 }
 
-// Logs returns logs from the first machine in the MMT.
+// Logs returns the merged logs of every machine in the MMT, each line prefixed
+// with the bracketed name of the machine it came from.
 func (m *MMT) Logs() (string, error) {
+	if m == nil || m.teamspaceID == "" || m.id == "" {
+		return "", errors.New("mmt logs requires teamspace ID and MMT ID")
+	}
 	machines, err := m.Machines()
 	if err != nil {
 		return "", err
 	}
-	if len(machines) == 0 {
-		return "", errors.New("mmt logs require at least one machine")
+	names := make(map[string]string, len(machines))
+	for _, machine := range machines {
+		if machine != nil {
+			names[machine.ID()] = machine.Name()
+		}
 	}
-	return machines[0].Logs()
+	lines, err := readLogs(m.teamspaceID, func(params *jobs_service.JobsServiceGetLogsParams) {
+		params.SetMmtID(&m.id)
+	}, names)
+	if err != nil {
+		return "", err
+	}
+	if len(lines) == 0 && isJobTerminalStatus(m.status) {
+		return "", errLogsMigrating
+	}
+	return strings.Join(lines, "\n"), nil
 }
 
 // Dict returns a JSON-friendly public representation of the MMT.
