@@ -30,7 +30,7 @@ from lightning_sdk.cli.legacy.upload import upload
 from lightning_sdk.cli.utils.auth import browser_authentication
 from lightning_sdk.cli.utils.coloring import CustomHelpFormatter
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud import cli_login
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:
@@ -73,10 +73,12 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
 @main_cli.command
 def login() -> None:
     """Login to Lightning AI Studios."""
+    auth = Auth()
+    auth.clear()
+
     try:
-        cli_login.login()
-    except cli_login.LoginError:
-        raise
+        with browser_authentication(True):
+            auth.authenticate()
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
 
@@ -84,7 +86,8 @@ def login() -> None:
 @main_cli.command
 def logout() -> None:
     """Logout from Lightning AI Studios."""
-    cli_login.logout()
+    auth = Auth()
+    auth.clear()
 
 
 # additional commands

@@ -18,7 +18,7 @@ import tempfile
 import time
 import webbrowser
 from datetime import datetime
-from typing import Any, Dict, Iterator, Optional, Sequence
+from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Tuple
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 import requests
@@ -27,15 +27,24 @@ from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth
 
 CLIENT_ID = "lightning-cli"
+# Production serves this login only from relaunch, so until then a new login
+# is the interim one unless this is set.
+OIDC_LOGIN_ENV = "LIGHTNING_CLI_OIDC_LOGIN"
 _KEYRING_SERVICE = CLIENT_ID
 _REFRESH_MARGIN = 300.0
 _PASTE_TRIES = 3
+_CALLBACK_TIMEOUT = 300.0
 
 _NOT_LOGGED_IN = "You are not logged in. Run `lightning login`."
 _LOGIN_ENDED = "Your login has expired or was revoked. Run `lightning login`."
+_REUSED = "refresh token was reused; the login is revoked"
 _LOGIN_REUSED = (
     "This login was revoked because a copy of it was used elsewhere. "
     "Run `lightning login` and consider rotating any keys this machine held."
+)
+_BROWSER_TIMED_OUT = (
+    "The browser didn't finish the login within 5 minutes, so nothing was saved. "
+    "Run `lightning login` again, or `lightning login --no-browser` to paste a code instead."
 )
 _NO_KEYCHAIN = (
     "No OS keychain is available to store the login. Run "
@@ -79,6 +88,11 @@ class LoginStatus:
 class Login(LoginStatus):
     access_token: str = dataclasses.field(repr=False)
     refresh_token: str = dataclasses.field(repr=False)
+
+
+def oidc_login_enabled() -> bool:
+    """Whether a new login uses this login rather than the interim one, read now."""
+    return env.truthy(os.environ.get(OIDC_LOGIN_ENV))
 
 
 def login(
@@ -128,21 +142,6 @@ def current_login() -> Optional[LoginStatus]:
         refresh_expires_at=login.refresh_expires_at,
         grant=login.grant,
     )
-
-
-def logout() -> None:
-    """Revoke the saved login on the server, then forget it on this machine."""
-    with _locked():
-        login = _load(_origin(), cached=False)
-        revoked = login is None or _revoke(login.refresh_token)
-        if login is not None:
-            _forget()
-    Auth.secrets_file.unlink(missing_ok=True)
-    if not revoked:
-        raise LoginError(
-            "Logged out on this machine, but Lightning couldn't be reached to "
-            "revoke the login. It may stay active until it expires."
-        )
 
 
 def _request_token(rejected: Optional[str] = None) -> Optional[str]:
@@ -198,18 +197,27 @@ class _Attempt:
             "storage": self.storage,
         })
         new = _login_from(body, self.storage, self.origin)
-        try:
-            with _locked():
+
+        def save() -> None:
+            try:
                 _save(new)
-        except LoginError:
-            _revoke(new.refresh_token)
-            raise
-        Auth.secrets_file.unlink(missing_ok=True)
+            except LoginError:
+                _revoke(new.refresh_token)
+                raise
+            Auth.secrets_file.unlink(missing_ok=True)
+
+        _replace_saved(save)
         return new
 
 
 def _browser_login(attempt: _Attempt) -> Optional[Login]:
-    with _callback_server(attempt) as (redirect_uri, wait):
+    redirect_uri = ""
+
+    def complete(query: Dict[str, str]) -> Login:
+        return _callback_login(attempt, query, redirect_uri)
+
+    with _callback_server("/callback", complete, _BROWSER_TIMED_OUT) as (port, wait):
+        redirect_uri = f"http://127.0.0.1:{port}/callback"
         url = attempt.authorize_url(redirect_uri)
         if not webbrowser.open(url):
             return None
@@ -221,46 +229,56 @@ def _browser_login(attempt: _Attempt) -> Optional[Login]:
 
 
 @contextlib.contextmanager
-def _callback_server(attempt: _Attempt) -> Iterator[Any]:
+def _callback_server(
+    path: str, complete: Callable[[Dict[str, str]], Any], timed_out: str
+) -> Iterator[Tuple[int, Callable[[], Any]]]:
+    """Serve one browser callback on 127.0.0.1, which ``complete`` turns into a login.
+
+    ``wait()`` returns what ``complete`` returned, raises what it raised, or
+    raises ``timed_out`` when no callback came within ``_CALLBACK_TIMEOUT``.
+    """
     import http.server
     import socketserver
 
+    origin = _origin()
     outcome = []
 
     class Callback(http.server.BaseHTTPRequestHandler):
         def do_GET(self) -> None:
             parts = urlsplit(self.path)
-            if parts.path != "/callback":
+            if parts.path != path:
                 self.send_error(404)
                 return
             query = {key: values[0] for key, values in parse_qs(parts.query).items()}
             try:
-                outcome.append(_callback_login(attempt, query, redirect_uri))
+                outcome.append(complete(query))
                 page = "cli-login-successful"
             except Exception as err:
                 outcome.append(err)
                 page = "cli-login-failed"
             self.send_response(302)
-            self.send_header("Location", f"{attempt.origin}/{page}")
+            self.send_header("Location", f"{origin}/{page}")
             self.end_headers()
 
         def log_message(self, format: str, *args: Any) -> None:
-            # The default logs the request line, which carries the code.
+            # The default logs the request line, which carries the code or token.
             pass
 
     with socketserver.TCPServer(("127.0.0.1", 0), Callback) as server:
         # A short timeout lets Ctrl-C interrupt the wait.
         server.timeout = 0.5
-        redirect_uri = f"http://127.0.0.1:{server.server_address[1]}/callback"
+        deadline = time.time() + _CALLBACK_TIMEOUT
 
-        def wait() -> Login:
+        def wait() -> Any:
             while not outcome:
+                if time.time() >= deadline:
+                    raise LoginError(timed_out)
                 server.handle_request()
             if isinstance(outcome[0], Exception):
                 raise outcome[0]
             return outcome[0]
 
-        yield redirect_uri, wait
+        yield server.server_address[1], wait
 
 
 def _callback_login(attempt: _Attempt, query: Dict[str, str], redirect_uri: str) -> Login:
@@ -321,7 +339,7 @@ def _fresh_login(url: str, min_remaining: float, rejected: Optional[str] = None)
             raise
         except _Refused as err:
             _forget()
-            message = _LOGIN_REUSED if "reused" in err.description else _LOGIN_ENDED
+            message = _LOGIN_REUSED if err.description == _REUSED else _LOGIN_ENDED
             raise LoginError(message) from None
         fresh = _login_from(body, login.storage, url)
         _save(fresh)
@@ -598,6 +616,47 @@ def _revoke(token: str) -> bool:
         return _post("/oidc/revoke", {"token": token}).status_code == 200
     except _Unreachable:
         return False
+
+
+def _revoke_session(token: str) -> bool:
+    try:
+        response = requests.post(
+            f"{_origin()}/v1/auth/logout",
+            headers={"Authorization": f"Bearer {token}", "User-Agent": env.USER_AGENT},
+            timeout=(env.LIGHTNING_CLOUD_CONNECT_TIMEOUT, env.LIGHTNING_CLOUD_READ_TIMEOUT),
+        )
+    except requests.RequestException:
+        return False
+    # A 401 says the session already doesn't work, which is all a revoke is for.
+    return response.status_code in (200, 401)
+
+
+def _saved_session() -> Optional[str]:
+    """The interim ``sess_`` login saved as ``auth_token`` in credentials.json."""
+    try:
+        data = json.loads(Auth.secrets_file.read_text())
+    except (OSError, ValueError):
+        return None
+    token = data.get("auth_token") if isinstance(data, dict) else None
+    if not isinstance(token, str) or not token.strip():
+        return None
+    return token.strip()
+
+
+def _replace_saved(save: Callable[[], Optional[str]]) -> None:
+    """Save a new login with ``save``, then revoke the logins it replaced.
+
+    ``save`` returns the session token it saved, if it saved one. A ``save``
+    that raises leaves the old logins saved and live.
+    """
+    with _locked():
+        replaced_login = _load(_origin(), cached=False)
+        replaced_session = _saved_session()
+        kept_session = save()
+    if replaced_login is not None:
+        _revoke(replaced_login.refresh_token)
+    if replaced_session is not None and replaced_session != kept_session:
+        _revoke_session(replaced_session)
 
 
 def _login_from(body: Dict[str, Any], storage: str, url: str) -> Login:

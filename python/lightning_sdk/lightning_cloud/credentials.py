@@ -4,12 +4,14 @@
 
 import contextlib
 import contextvars
+import dataclasses
+import enum
 import os
 import pathlib
-from typing import Iterator, Optional
+from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Tuple
 
 from lightning_sdk.lightning_cloud import cli_login, env
-from lightning_sdk.lightning_cloud.login import Auth, Keys
+from lightning_sdk.lightning_cloud.login import Auth, AuthServer, Keys
 
 _MISSING_CREDENTIALS = (
     "We couldn't find any credentials linked to your account. "
@@ -20,6 +22,23 @@ _LOGIN_FIRST = "No Lightning credentials are available. Run `lightning login` fi
 _browser_login_allowed = contextvars.ContextVar(
     "lightning_browser_login_allowed", default=True
 )
+
+
+class CredentialKind(str, enum.Enum):
+    TOKEN_FILE = "token_file"
+    ENV_TOKEN = "env_token"
+    LOGIN = "login"
+    SESSION = "session"
+
+
+@dataclasses.dataclass(frozen=True)
+class Credential:
+    kind: CredentialKind
+    token: str = dataclasses.field(repr=False)
+
+
+class LoginUnavailable(ValueError):
+    """A login option the interim login can't honour."""
 
 
 @contextlib.contextmanager
@@ -41,77 +60,147 @@ def _present(value: Optional[str]) -> Optional[str]:
     return text
 
 
+def _from_token_file() -> Optional[str]:
+    path = os.environ.get(env.LIGHTNING_AUTH_TOKEN_FILE)
+    if not path:
+        return None
+    try:
+        raw = pathlib.Path(path).read_text()
+    except FileNotFoundError:
+        return None
+    return _present(raw)
+
+
+def _from_env_token() -> Optional[str]:
+    return _present(os.environ.get(Keys.AUTH_TOKEN.value))
+
+
+# The order is the precedence. LIGHTNING_API_KEY and a saved api_key have no
+# row, because the control plane accepts a token, never a legacy key.
+_READERS = (
+    (CredentialKind.TOKEN_FILE, _from_token_file),
+    (CredentialKind.ENV_TOKEN, _from_env_token),
+    (CredentialKind.LOGIN, cli_login._request_token),
+    (CredentialKind.SESSION, cli_login._saved_session),
+)
+
+
+def _login_through_auth() -> None:
+    # An SDK CLI may turn browser login off by patching Auth.authenticate, so
+    # the source's own login goes through it rather than calling start_login.
+    Auth().authenticate()
+
+
 class CredentialSource:
-    def __init__(self) -> None:
-        self._may_open_browser = True
-        self._login_token: Optional[str] = None
+    """Works out the credential each request sends, when it is sent."""
 
-    def header(self) -> str:
-        token = self._token()
-        if token is None and self._may_open_browser:
-            if not _browser_login_allowed.get():
-                raise ValueError(_LOGIN_FIRST)
-            self._may_open_browser = False
-            Auth()._run_server()
-            token = self._token()
-        if not token:
-            raise ValueError(_MISSING_CREDENTIALS)
-        return f"Bearer {token}"
+    def __init__(self, login: Optional[Callable[[], object]] = None) -> None:
+        self._login = login or _login_through_auth
+        # None until the source has tried its one login, then what to say
+        # when a request still finds no credential.
+        self._refusal: Optional[str] = None
 
-    def refresh(self) -> bool:
-        """Refresh the login after the server refused its access token.
-
-        Only the saved login can refresh, and only when its token was the one
-        last handed out.
-        """
-        rejected = self._login_token
-        if rejected is None:
-            return False
-        fresh = self._saved_login_token(rejected)
-        return fresh is not None and fresh != rejected
-
-    def _token(self) -> Optional[str]:
-        self._login_token = None
-        for read in (
-            self._from_token_file,
-            self._from_env_token,
-            self._from_saved_login,
-        ):
+    def resolve(self) -> Optional[Credential]:
+        """The credential a request would send now. Never opens a browser."""
+        for kind, read in _READERS:
             token = read()
             if token:
-                return token
+                return Credential(kind, token)
         return None
 
-    def _from_token_file(self) -> Optional[str]:
-        path = os.environ.get(env.LIGHTNING_AUTH_TOKEN_FILE)
-        if not path:
-            return None
+    def header(self) -> str:
+        """``Bearer <token>`` for a request, logging in once when nothing is saved."""
+        credential = self._resolve()
+        if credential is None and self._refusal is None:
+            if not _browser_login_allowed.get():
+                raise ValueError(_LOGIN_FIRST)
+            self._refusal = _MISSING_CREDENTIALS
+            try:
+                self._login()
+            except ValueError as err:
+                self._refusal = str(err)
+                raise
+            credential = self._resolve()
+        if credential is None:
+            raise ValueError(self._refusal)
+        return f"Bearer {credential.token}"
+
+    def refresh(self, token: str) -> bool:
+        """After the server refused ``token``, whether a different one is now available."""
+        current = self._resolve()
+        if current is None:
+            return False
+        if current.kind is CredentialKind.LOGIN and current.token == token:
+            fresh = self._noting_refusal(lambda: cli_login._request_token(token))
+            return fresh is not None and fresh != token
+        return current.token != token
+
+    def _resolve(self) -> Optional[Credential]:
+        return self._noting_refusal(self.resolve)
+
+    def _noting_refusal(self, read: Callable[[], Any]) -> Any:
         try:
-            raw = pathlib.Path(path).read_text()
-        except FileNotFoundError:
-            return None
-        return _present(raw)
-
-    def _from_env_token(self) -> Optional[str]:
-        return _present(os.environ.get(Keys.AUTH_TOKEN.value))
-
-    def _from_saved_login(self) -> Optional[str]:
-        self._login_token = self._saved_login_token()
-        if self._login_token:
-            return self._login_token
-        auth = Auth()
-        if not auth.load():
-            return None
-        token = _present(auth.auth_token)
-        if token:
-            return token
-        return _present(auth.api_key)
-
-    def _saved_login_token(self, rejected: Optional[str] = None) -> Optional[str]:
-        try:
-            return cli_login._request_token(rejected)
+            return read()
         except cli_login.LoginError:
             # Every process sharing a refused login would otherwise open a
             # browser. Saying "run `lightning login`" once is enough.
-            self._may_open_browser = False
+            self._refusal = _MISSING_CREDENTIALS
             raise
+
+
+def start_login(
+    no_browser: bool = False,
+    insecure_storage: bool = False,
+    orgs: Optional[Sequence[str]] = None,
+    project: Optional[str] = None,
+    sign_in_params: Optional[Dict[str, str]] = None,
+) -> Optional[cli_login.Login]:
+    """Log in with the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects when this is called.
+
+    The new login returns the ``Login`` and ignores ``sign_in_params``. The
+    interim login returns None, and raises ``LoginUnavailable`` for any other
+    option, because it has no way to honour one.
+    """
+    if cli_login.oidc_login_enabled():
+        return cli_login.login(
+            no_browser=no_browser,
+            insecure_storage=insecure_storage,
+            orgs=orgs,
+            project=project,
+        )
+    unavailable = [
+        flag
+        for flag, given in (
+            ("--no-browser", no_browser),
+            ("--insecure-storage", insecure_storage),
+            ("--org", orgs),
+            ("--project", project),
+        )
+        if given
+    ]
+    if unavailable:
+        raise LoginUnavailable(
+            f"{', '.join(unavailable)} needs the new login. "
+            f"Set {cli_login.OIDC_LOGIN_ENV}=1 to use it."
+        )
+    AuthServer(sign_in_params).login_with_browser(Auth())
+    return None
+
+
+def logout() -> Tuple[CredentialKind, ...]:
+    """Forget every saved login on this machine and revoke each on the server.
+
+    Returns the kinds whose revoke failed, which may still work until they expire.
+    """
+    with cli_login._locked():
+        login = cli_login._load(cli_login._origin(), cached=False)
+        session = cli_login._saved_session()
+        if login is not None:
+            cli_login._forget()
+        Auth.secrets_file.unlink(missing_ok=True)
+    failed = []
+    if login is not None and not cli_login._revoke(login.refresh_token):
+        failed.append(CredentialKind.LOGIN)
+    if session is not None and not cli_login._revoke_session(session):
+        failed.append(CredentialKind.SESSION)
+    return tuple(failed)
