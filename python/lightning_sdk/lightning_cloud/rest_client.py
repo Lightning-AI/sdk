@@ -292,7 +292,10 @@ def credential_request_wrapper(func, source):
         except ApiException as err:
             if err.status != 401:
                 raise
-            if supplied or not source.refresh():
+            if supplied:
+                raise ConnectionError(_LOGIN_MESSAGE)
+            sent = headers["Authorization"][len("Bearer "):]
+            if not source.refresh(sent):
                 raise ConnectionError(_LOGIN_MESSAGE)
             headers["Authorization"] = source.header()
             try:

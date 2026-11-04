@@ -49,15 +49,14 @@ def test_token_file_is_reread_between_requests(isolated_credentials, monkeypatch
     assert seen == ["Bearer sess_one", "Bearer sess_two"]
 
 
-def test_saved_api_key_is_bearer_and_never_basic(isolated_credentials, monkeypatch) -> None:
+def test_a_saved_api_key_is_never_sent(isolated_credentials, monkeypatch) -> None:
     isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "key-1"}))
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
     monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
 
-    assert CredentialSource().header() == "Bearer key-1"
-    assert Auth().authenticate() == "Bearer key-1"
-    assert Auth().auth_header == "Bearer key-1"
-    assert Auth().get_auth_header("api_key") == "Bearer key-1"
+    assert CredentialSource().resolve() is None
+    with pytest.raises(ValueError, match="lightning login"):
+        Auth().get_auth_header()
 
 
 def test_a_legacy_session_login_still_sends_bearer(isolated_credentials) -> None:

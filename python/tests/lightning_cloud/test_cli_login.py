@@ -5,7 +5,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud import cli_login, credentials, env
 from lightning_sdk.lightning_cloud.login import Auth
 
 
@@ -92,7 +92,7 @@ def test_token_returns_the_access_token_and_logout_revokes_it(platform):
     assert cli_login.token() == "lit_ua_access"
     assert len(calls) == 1
 
-    cli_login.logout()
+    assert credentials.logout() == ()
 
     assert calls[-1][0] == "http://control-plane.test/oidc/revoke"
     assert calls[-1][1] == {"client_id": "lightning-cli", "token": "lit_ur_refresh"}

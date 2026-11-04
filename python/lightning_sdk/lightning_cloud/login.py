@@ -3,12 +3,17 @@
 # Make changes in the internal upstream repository instead.
 
 from enum import Enum
+import hmac
 import json
 import logging
 import os
 import pathlib
+import secrets
 from dataclasses import dataclass
-from typing import Optional, Literal
+from typing import Dict, Optional, Literal
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+import webbrowser
 
 import requests
 
@@ -70,18 +75,18 @@ class Auth:
 
     def save(
         self,
-        user_id: Optional[str] = None,
-        api_key: Optional[str] = None,
-        auth_token: Optional[str] = None,
+        token: str = "",
+        user_id: str = "",
+        api_key: str = "",
+        auth_token: str = "",
         # username: str = "",
     ) -> None:
-        """Replace the saved login with the given fields."""
-        given = {
+        """Replace the saved login with the given fields. ``token`` is ignored."""
+        stored = {
             Keys.USER_ID.suffix: user_id,
             Keys.API_KEY.suffix: api_key,
             Keys.AUTH_TOKEN.suffix: auth_token,
         }
-        stored = {key: value for key, value in given.items() if value}
 
         self.secrets_file.parent.mkdir(exist_ok=True, parents=True)
         payload = json.dumps(stored).encode()
@@ -163,10 +168,10 @@ class Auth:
         return self.get_auth_header()
 
     def _run_server(self) -> None:
-        """Log in through the browser, or by pasting a code when none opens."""
-        from lightning_sdk.lightning_cloud.cli_login import login
+        """Start the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects."""
+        from lightning_sdk.lightning_cloud.credentials import start_login
 
-        login()
+        start_login()
 
     def authenticate(self) -> Optional[str]:
         """Performs end to end authentication flow.
@@ -174,12 +179,12 @@ class Auth:
         Returns
         ----------
         authorization header to use when authentication completes. With no
-        credential, this opens a browser to log in, unless browser login is
-        turned off.
+        credential, this logs in through ``_run_server``, unless browser login
+        is turned off.
         """
         from lightning_sdk.lightning_cloud.credentials import CredentialSource
 
-        return CredentialSource().header()
+        return CredentialSource(login=self._run_server).header()
 
     def token_login(self, token_key: str, save_token: bool = True) -> Optional[str]:
         """Performs token-based authentication.
@@ -211,6 +216,7 @@ class Auth:
         config = Configuration()
         config.host = env.LIGHTNING_CLOUD_URL
         api_client = ApiClient(configuration=config)
+        api_client.user_agent = env.USER_AGENT
         auth_api = AuthServiceApi(api_client)
 
         logger.debug(f"Attempting token login to {config.host}")
@@ -287,6 +293,7 @@ class Auth:
         config.api_key['Authorization'] = self.auth_token
         
         api_client = ApiClient(configuration=config)
+        api_client.user_agent = env.USER_AGENT
         auth_api = AuthServiceApi(api_client)
 
         logger.debug(f"Attempting to refresh JWT token with duration {duration} seconds")
@@ -346,9 +353,89 @@ class Auth:
         
         # Create the API client
         client = ApiClient(configuration=config)
+        client.user_agent = env.USER_AGENT
         
         # Set the Authorization header directly in default_headers
         if auth_header:
             client.set_default_header('Authorization', auth_header)
         
         return client
+
+
+_INTERIM_TIMED_OUT = (
+    "The browser didn't finish the login within 5 minutes, so nothing was saved. "
+    "Run `lightning login` again."
+)
+
+
+class AuthServer:
+    """The interim browser login, which saves a ``sess_`` token as ``auth_token``."""
+
+    def __init__(self, sign_in_params: Optional[Dict[str, str]] = None) -> None:
+        self.sign_in_params = dict(sign_in_params or {})
+
+    def get_auth_url(self, port: int) -> str:
+        redirect_uri = f"http://localhost:{port}/login-complete"
+        params = urlencode(dict(redirectTo=redirect_uri, **self.sign_in_params))
+        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
+
+    def login_with_browser(self, auth: Auth) -> None:
+        from lightning_sdk.lightning_cloud import cli_login
+
+        state = secrets.token_urlsafe(32)
+
+        def complete(query: Dict[str, str]) -> None:
+            if not hmac.compare_digest(query.get("state", "").encode(), state.encode()):
+                raise cli_login.LoginError(
+                    "The login callback didn't match this login, so nothing was saved. "
+                    "Run `lightning login` again."
+                )
+            token = query.get("token", "")
+            if not token:
+                raise cli_login.LoginError(
+                    "The sign-in page sent no token, so nothing was saved. "
+                    "Run `lightning login` again, or update the SDK."
+                )
+
+            def save() -> str:
+                auth.save(auth_token=token, user_id=query.get("userID", ""))
+                cli_login._forget()
+                return token
+
+            cli_login._replace_saved(save)
+            logger.info("Authentication Successful")
+
+        with cli_login._callback_server("/login-complete", complete, _INTERIM_TIMED_OUT) as (port, wait):
+            redirect_uri = f"http://localhost:{port}/login-complete"
+            url = _with_state(self.get_auth_url(port), redirect_uri, state)
+            try:
+                requests.head(
+                    url,
+                    headers={"User-Agent": env.USER_AGENT},
+                    timeout=env.LIGHTNING_CLOUD_CONNECT_TIMEOUT,
+                )
+            except requests.RequestException as err:
+                raise cli_login.LoginError(
+                    f"Couldn't reach {env.LIGHTNING_CLOUD_URL}. Check your connection and try again."
+                ) from err
+            logger.info(f"login started for lightning.ai, opening {url}")
+            if not webbrowser.open(url):
+                if os.environ.get("LIGHTNING_DEPLOYMENT_ID"):
+                    raise cli_login.LoginError(cli_login._DEPLOYMENT)
+                raise cli_login.LoginError(
+                    "No browser could be opened to log in. Run `lightning login` where a "
+                    "browser is available, or set LIGHTNING_AUTH_TOKEN."
+                )
+            wait()
+
+
+def _with_state(url: str, redirect_uri: str, state: str) -> str:
+    # A subclass may build its own URL from get_auth_url(port), which knows no
+    # state, so the state goes onto whichever redirectTo names this callback.
+    parts = urlsplit(url)
+    stateful = f"{redirect_uri}?{urlencode(dict(state=state))}"
+    query = [
+        (key, stateful if key == "redirectTo" and value == redirect_uri else value)
+        for key, value in parse_qsl(parts.query, keep_blank_values=True)
+    ]
+    return urlunsplit(parts._replace(query=urlencode(query)))
