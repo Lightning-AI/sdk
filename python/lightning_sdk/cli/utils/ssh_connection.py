@@ -1,65 +1,99 @@
-import os
+"""This machine's Lightning SSH key: created here, and only its public half sent to the platform."""
+
 import platform
-import uuid
+import shutil
+import subprocess
 from pathlib import Path
-from typing import Optional
 
 import rich_click as click
 
-from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.api.ssh_key_api import SSHKeyApi, SSHKeyRegistrationError
 from lightning_sdk.cli.utils.auth import require_auth_header
-from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.utils.config import _DEFAULT_CONFIG_FILE_PATH
+
+# The web UI's setup script uses the same file, so the browser and CLI flows share one key per machine.
+SSH_KEY_NAME = "lightning_ed25519"
+_MAX_KEY_NAME_LENGTH = 256
 
 
-def configure_ssh_internal(force_download: bool = False) -> str:
-    """Internal function to configure SSH without Click decorators."""
-    auth = Auth()
+def ssh_key_path() -> Path:
+    return Path.home() / ".ssh" / SSH_KEY_NAME
+
+
+def configure_ssh_internal() -> str:
+    """Make sure this machine's SSH key exists and is registered to the signed-in user, and return its path."""
     require_auth_header()
-    if not auth.api_key and not auth.load():
-        raise click.UsageError("An API key is required. Run `lightning login` first.")
-    return download_ssh_keys(auth.api_key, force_download=force_download)
+    return str(ensure_ssh_key())
 
 
-def download_ssh_keys(
-    api_key: Optional[str],
-    force_download: bool = False,
-    ssh_key_name: str = "lightning_rsa",
-) -> str:
-    """Download the SSH key for a User."""
-    ssh_private_key_path = os.path.join(os.path.expanduser(os.path.dirname(_DEFAULT_CONFIG_FILE_PATH)), ssh_key_name)
+def ensure_ssh_key() -> Path:
+    """Create the SSH key if it's missing, and register its public key unless the account already has it.
 
-    os.makedirs(os.path.dirname(ssh_private_key_path), exist_ok=True)
+    An existing private key is never replaced.
+    """
+    key_path = ssh_key_path()
+    public_key_path = key_path.with_suffix(".pub")
+    if not key_path.exists():
+        _generate_key(key_path)
+        click.echo(f"Created SSH key {key_path}", err=True)
+    if not public_key_path.exists():
+        _write_public_key(key_path, public_key_path)
 
-    if not os.path.isfile(ssh_private_key_path) or force_download:
-        key_id = str(uuid.uuid4())
-        download_file(
-            f"{_get_cloud_url()}/setup/ssh-gen?t={api_key}&id={key_id}&machineName={platform.node()}",
-            Path(ssh_private_key_path),
-            overwrite=True,
-            chmod=0o600,
-        )
-        download_file(
-            f"{_get_cloud_url()}/setup/ssh-public?t={api_key}&id={key_id}",
-            Path(ssh_private_key_path + ".pub"),
-            overwrite=True,
-        )
+    public_key = public_key_path.read_text().strip()
+    api = SSHKeyApi()
+    if any(_same_key(registered.public_key, public_key) for registered in api.list_public_keys()):
+        return key_path
 
-    return ssh_private_key_path
+    name = _key_name(public_key)
+    try:
+        api.create_public_key(name=name, public_key=public_key)
+    except SSHKeyRegistrationError as e:
+        raise click.ClickException(
+            f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
+        ) from None
+    click.echo(f"Added SSH key '{name}' to your Lightning account", err=True)
+    return key_path
 
 
-def download_file(url: str, local_path: Path, overwrite: bool = True, chmod: Optional[int] = None) -> None:
-    """Download a file from a URL."""
-    import requests
+def _ssh_keygen() -> str:
+    path = shutil.which("ssh-keygen")
+    if path is None:
+        raise click.ClickException("ssh-keygen was not found. Install OpenSSH and run this again.")
+    return path
 
-    if os.path.isfile(local_path) and not overwrite:
-        raise FileExistsError(f"The file {local_path} already exists and overwrite is set to False.")
 
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
+def _generate_key(key_path: Path) -> None:
+    key_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    # No passphrase, so `lightning studio ssh` works without a terminal. stdin is closed so ssh-keygen
+    # can't prompt: if another process creates the key first, it refuses to overwrite it.
+    result = subprocess.run(
+        [_ssh_keygen(), "-q", "-t", "ed25519", "-N", "", "-C", _default_comment(), "-f", str(key_path)],
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise click.ClickException(f"ssh-keygen could not create {key_path}: {result.stderr.strip()}")
 
-    with open(local_path, "wb") as file:
-        for chunk in response.iter_content(chunk_size=8192):
-            file.write(chunk)
-    if chmod is not None:
-        os.chmod(local_path, 0o600)
+
+def _write_public_key(key_path: Path, public_key_path: Path) -> None:
+    # Inherits the terminal so ssh-keygen can ask for the passphrase of a key made with one.
+    result = subprocess.run([_ssh_keygen(), "-y", "-f", str(key_path)], stdout=subprocess.PIPE, text=True)
+    if result.returncode != 0:
+        raise click.ClickException(f"ssh-keygen could not read the public key from {key_path}")
+    public_key_path.write_text(result.stdout)
+
+
+def _default_comment() -> str:
+    # The web UI's script comments keys the same way, and the comment becomes the key's name.
+    return f"lightning@{platform.node()}"[:_MAX_KEY_NAME_LENGTH]
+
+
+def _key_name(public_key: str) -> str:
+    fields = public_key.split(maxsplit=2)
+    comment = fields[2].strip() if len(fields) > 2 else ""
+    return (comment or _default_comment())[:_MAX_KEY_NAME_LENGTH]
+
+
+def _same_key(registered: str, local: str) -> bool:
+    """Whether two public key lines hold the same key, whatever their comments."""
+    return (registered or "").split()[:2] == local.split()[:2]

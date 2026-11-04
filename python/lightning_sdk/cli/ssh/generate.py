@@ -31,5 +31,5 @@ def generate_ssh(name: Optional[str] = None, teamspace: Optional[str] = None) ->
     """Get SSH config entry for a studio."""
     resolved_teamspace = resolve_teamspace(teamspace)
     studio = resolve_studio(name, resolved_teamspace)
-    conf = generate_ssh_config(key_path="~/.ssh/lightning_rsa", user=f"s_{studio._studio.id}", host=studio.name)
+    conf = generate_ssh_config(user=f"s_{studio._studio.id}", host=studio.name)
     Console().print(f"# ssh s_{studio._studio.id}@ssh.lightning.ai\n\n" + conf)
