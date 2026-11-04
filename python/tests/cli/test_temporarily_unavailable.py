@@ -11,6 +11,7 @@ from lightning_sdk.cli.entrypoint import main_cli
 from lightning_sdk.cli.lockdown import GATED_COMMANDS, LOCKDOWN_ENV, UNAVAILABLE_COMMANDS, apply_lockdown
 from lightning_sdk.cli.utils.lockdown_status import (
     LOCKDOWN_FLAG,
+    STUDIO_SSH_FLAG,
     STUDIOS_START_STOP_FLAG,
     STUDIOS_SWITCHING_FLAG,
     UPLOADS_FLAG,
@@ -280,6 +281,51 @@ def test_studio_switch_stays_unavailable_while_only_start_and_stop_are_open(monk
     assert is_temporarily_unavailable(_resolve("studio switch"))
     _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True, STUDIOS_SWITCHING_FLAG: True})
     assert not is_temporarily_unavailable(_resolve("studio switch"))
+
+
+class _ReachedError(Exception):
+    """Raised by the first step of a command's own logic, to show it ran past the gate."""
+
+
+_STUDIO_SSH_RUNS = [
+    (["studio", "ssh", "--name", "dev"], "lightning_sdk.cli.studio.ssh.resolve_teamspace"),
+    (["connect", "studio", "--name", "dev"], "lightning_sdk.cli.studio.ssh.resolve_teamspace"),
+    (["ssh", "configure", "--name", "dev"], "lightning_sdk.cli.ssh.configure.resolve_teamspace"),
+    (["configure", "ssh", "--name", "dev"], "lightning_sdk.cli.ssh.configure.resolve_teamspace"),
+]
+
+
+@pytest.mark.parametrize(
+    "flags",
+    [
+        {LOCKDOWN_FLAG: True},
+        {LOCKDOWN_FLAG: True, STUDIO_SSH_FLAG: False},
+        {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True, STUDIOS_SWITCHING_FLAG: True},
+    ],
+)
+@pytest.mark.parametrize(("args", "first_step"), _STUDIO_SSH_RUNS)
+def test_studio_ssh_commands_refuse_to_run_while_studio_ssh_is_closed(
+    monkeypatch, flags: dict[str, bool], args: list[str], first_step: str
+) -> None:
+    _set_flags(monkeypatch, flags)
+
+    with patch(first_step) as step:
+        result = CliRunner().invoke(main_cli, args)
+
+    assert result.exit_code == 1
+    assert _NOTICE in result.output
+    assert step.call_count == 0
+
+
+@pytest.mark.parametrize(("args", "first_step"), _STUDIO_SSH_RUNS)
+def test_studio_ssh_commands_run_once_studio_ssh_opens(monkeypatch, args: list[str], first_step: str) -> None:
+    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIO_SSH_FLAG: True})
+
+    with patch(first_step, side_effect=_ReachedError):
+        result = CliRunner().invoke(main_cli, args)
+
+    assert isinstance(result.exception, _ReachedError)
+    assert _NOTICE not in result.output
 
 
 @pytest.mark.parametrize("path", ["job run", "studio start", "rm"])
