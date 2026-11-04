@@ -11,10 +11,11 @@ from lightning_sdk.cli.entrypoint import main_cli
 from lightning_sdk.cli.lockdown import GATED_COMMANDS, LOCKDOWN_ENV, UNAVAILABLE_COMMANDS, apply_lockdown
 from lightning_sdk.cli.utils.lockdown_status import (
     LOCKDOWN_FLAG,
-    STUDIO_SSH_FLAG,
-    STUDIOS_START_STOP_FLAG,
-    STUDIOS_SWITCHING_FLAG,
-    UPLOADS_FLAG,
+    RW_FILESYSTEM,
+    STUDIO_SIDECAR_AUTH,
+    STUDIO_SSH,
+    STUDIO_SWITCHING,
+    STUDIOS,
 )
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.unavailable import is_temporarily_unavailable, mark_temporarily_unavailable
@@ -223,6 +224,15 @@ def _set_flags(monkeypatch: pytest.MonkeyPatch, flags: Optional[dict[str, bool]]
     monkeypatch.setattr("lightning_sdk.cli.utils.lockdown_status.lockdown_flags", lambda: flags)
 
 
+def _held(*capabilities: str) -> dict[str, bool]:
+    """The lockdown flags of a caller who holds ``capabilities`` while the lockdown is on."""
+    return {LOCKDOWN_FLAG: True, **dict.fromkeys(capabilities, True)}
+
+
+# What starting and stopping a Studio needs.
+_STUDIO_START_STOP = (STUDIOS, STUDIO_SIDECAR_AUTH)
+
+
 @pytest.mark.parametrize("path", GATED_COMMANDS)
 def test_gated_command_is_unavailable_while_its_capability_is_closed(path: str) -> None:
     assert is_temporarily_unavailable(_resolve(path))
@@ -230,13 +240,13 @@ def test_gated_command_is_unavailable_while_its_capability_is_closed(path: str) 
 
 @pytest.mark.parametrize(("path", "flags"), GATED_COMMANDS.items())
 def test_gated_command_is_available_once_its_capabilities_open(monkeypatch, path: str, flags: tuple[str, ...]) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, **dict.fromkeys(flags, True)})
+    _set_flags(monkeypatch, _held(*flags))
 
     assert not is_temporarily_unavailable(_resolve(path))
 
 
 def test_studio_create_needs_environment_templates_as_well_as_studios(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True})
+    _set_flags(monkeypatch, _held(*_STUDIO_START_STOP))
 
     assert is_temporarily_unavailable(_resolve("studio create"))
     assert not is_temporarily_unavailable(_resolve("studio start"))
@@ -275,11 +285,11 @@ def test_studio_cp_refuses_only_uploads_while_uploads_are_closed(args: list[str]
 
 
 def test_studio_switch_stays_unavailable_while_only_start_and_stop_are_open(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True})
+    _set_flags(monkeypatch, _held(*_STUDIO_START_STOP))
 
     assert not is_temporarily_unavailable(_resolve("studio start"))
     assert is_temporarily_unavailable(_resolve("studio switch"))
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True, STUDIOS_SWITCHING_FLAG: True})
+    _set_flags(monkeypatch, _held(*_STUDIO_START_STOP, STUDIO_SWITCHING))
     assert not is_temporarily_unavailable(_resolve("studio switch"))
 
 
@@ -298,9 +308,8 @@ _STUDIO_SSH_RUNS = [
 @pytest.mark.parametrize(
     "flags",
     [
-        {LOCKDOWN_FLAG: True},
-        {LOCKDOWN_FLAG: True, STUDIO_SSH_FLAG: False},
-        {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True, STUDIOS_SWITCHING_FLAG: True},
+        _held(),
+        _held(STUDIOS, STUDIO_SIDECAR_AUTH, STUDIO_SWITCHING),
     ],
 )
 @pytest.mark.parametrize(("args", "first_step"), _STUDIO_SSH_RUNS)
@@ -319,7 +328,7 @@ def test_studio_ssh_commands_refuse_to_run_while_studio_ssh_is_closed(
 
 @pytest.mark.parametrize(("args", "first_step"), _STUDIO_SSH_RUNS)
 def test_studio_ssh_commands_run_once_studio_ssh_opens(monkeypatch, args: list[str], first_step: str) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIO_SSH_FLAG: True})
+    _set_flags(monkeypatch, _held(STUDIO_SSH))
 
     with patch(first_step, side_effect=_ReachedError):
         result = CliRunner().invoke(main_cli, args)
@@ -343,7 +352,7 @@ def test_unreadable_flags_keep_the_always_unavailable_commands_refused_and_let_g
 
 
 def test_rm_runs_once_uploads_open(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, UPLOADS_FLAG: True})
+    _set_flags(monkeypatch, _held(RW_FILESYSTEM))
 
     with patch("lightning_sdk.cli.rm.Filesystem") as filesystem:
         result = CliRunner().invoke(main_cli, ["rm", "lit:///uploads/a.txt"])
@@ -379,7 +388,7 @@ def test_cp_refuses_to_upload_while_uploads_are_closed() -> None:
 
 
 def test_cp_uploads_once_uploads_open(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, UPLOADS_FLAG: True})
+    _set_flags(monkeypatch, _held(RW_FILESYSTEM))
 
     with patch("lightning_sdk.cli.cp.Filesystem") as filesystem:
         result = CliRunner().invoke(main_cli, ["cp", "a.txt", "lit:///uploads/a.txt"])
@@ -389,7 +398,7 @@ def test_cp_uploads_once_uploads_open(monkeypatch) -> None:
 
 
 def test_group_notice_goes_once_one_of_its_commands_is_available(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True})
+    _set_flags(monkeypatch, _held(*_STUDIO_START_STOP))
 
     result = CliRunner().invoke(main_cli, ["studio", "--help"], catch_exceptions=False)
 
@@ -398,7 +407,7 @@ def test_group_notice_goes_once_one_of_its_commands_is_available(monkeypatch) ->
 
 
 def test_help_of_an_available_gated_command_has_no_notice(monkeypatch) -> None:
-    _set_flags(monkeypatch, {LOCKDOWN_FLAG: True, STUDIOS_START_STOP_FLAG: True})
+    _set_flags(monkeypatch, _held(*_STUDIO_START_STOP))
 
     text = command_text("lightning studio start --help")
 
