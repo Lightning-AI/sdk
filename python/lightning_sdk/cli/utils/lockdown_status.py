@@ -1,10 +1,12 @@
-"""What the API lockdown lets through right now, as the control plane's ``/v1/config`` reports it.
+"""What the API lockdown lets through for the caller right now, as the control plane's ``/v1/config`` reports it.
 
-The control plane sets the flags in grid-backend/pkg/storage/server/external_config.go. They only decide
-which notice the CLI shows: the server enforces the lockdown, so while they can't be read the CLI lets the
-commands it can open run, and turns the server's refusal into the same notice instead.
+The control plane sets the flags in grid-backend/pkg/storage/server/external_config.go. The capabilities are
+the caller's own, so the request carries the caller's credentials. They only decide which notice the CLI shows:
+the server enforces the lockdown, so while they can't be read the CLI lets the commands it can open run, and
+turns the server's refusal into the same notice instead.
 """
 
+import hashlib
 import json
 import os
 import time
@@ -15,14 +17,20 @@ from typing import Any, Optional
 import requests
 
 from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 LOCKDOWN_FLAG = "apiLockdown"
-UPLOADS_FLAG = "apiLockdownRWFilesystem"
-STUDIOS_START_STOP_FLAG = "apiLockdownStudiosStartStop"
-STUDIOS_SWITCHING_FLAG = "apiLockdownStudiosSwitching"
-ENVIRONMENT_TEMPLATES_FLAG = "apiLockdownEnvironmentTemplates"
-STUDIO_SSH_FLAG = "apiLockdownStudioSSH"
+# Comma-separated names of the capabilities the caller holds. A capability missing from it is closed.
+CAPABILITIES_FLAG = "apiLockdownCapabilities"
+
+# The capabilities the CLI's gated commands need, named as grid-backend/pkg/apilockdown/capabilities.go names them.
+RW_FILESYSTEM = "rw-filesystem"
+STUDIOS = "studios"
+STUDIO_SIDECAR_AUTH = "studio-sidecar-auth"
+STUDIO_SWITCHING = "studio-switching"
+ENVIRONMENT_TEMPLATES = "environment-templates"
+STUDIO_SSH = "studio-ssh"
 
 _FETCH_TIMEOUT_SECONDS = 2
 # short, so a capability the lockdown opens reaches the CLI within minutes
@@ -38,17 +46,21 @@ def _cache_path() -> Path:
 
 
 def lockdown_flags() -> Optional[dict[str, bool]]:
-    """The lockdown's flags from ``/v1/config``, or ``None`` when they can't be read.
+    """The lockdown's flags for the caller from ``/v1/config``, or ``None`` when they can't be read.
 
-    They are fetched at most once per process, and read from a cache on disk for a few minutes after that.
+    The result maps ``LOCKDOWN_FLAG`` to whether the lockdown is on, and each capability the caller holds to ``True``.
+    They are fetched at most once per process, and read from a cache on disk for a few minutes after that. The
+    cache is kept per account, so a different signed-in user never reads another user's capabilities.
     """
     global _flags
     if _flags is _UNREAD:
-        _flags = _read_cache()
+        auth_header = _auth_header()
+        account = _account(auth_header)
+        _flags = _read_cache(account)
         if _flags is None:
-            _flags = _fetch()
+            _flags = _fetch(auth_header)
             if _flags is not None:
-                _write_cache(_flags)
+                _write_cache(_flags, account)
     return _flags
 
 
@@ -58,32 +70,68 @@ def lockdown_on() -> bool:
     return flags is None or flags.get(LOCKDOWN_FLAG, True)
 
 
-def capability_closed(flag: str) -> bool:
-    """Whether the lockdown is on and keeps closed the capability ``flag`` reports.
+def capability_closed(capability: str) -> bool:
+    """Whether the lockdown is on and keeps the caller from the ``capability``.
 
     ``False`` while the flags can't be read: if the capability is closed, the server refuses the command.
     """
     flags = lockdown_flags()
-    return flags is not None and flags.get(LOCKDOWN_FLAG, True) and not flags.get(flag, False)
+    return flags is not None and flags.get(LOCKDOWN_FLAG, True) and not flags.get(capability, False)
 
 
-def _fetch() -> Optional[dict[str, bool]]:
+def _auth_header() -> Optional[str]:
+    """The caller's authorization header, or ``None`` when signed out.
+
+    Reads the saved credentials unless the environment sets some, as the rest of the CLI does.
+    """
+    auth = Auth()
+    if not (auth.api_key or auth.auth_token):
+        auth.load()
     try:
-        response = requests.get(f"{env.LIGHTNING_CLOUD_URL}/v1/config", timeout=_FETCH_TIMEOUT_SECONDS)
+        return auth.get_auth_header()
+    except ValueError:
+        return None
+
+
+def _account(auth_header: Optional[str]) -> str:
+    """A key for the caller's cache entries that doesn't reveal the credentials. Empty when signed out."""
+    if auth_header is None:
+        return ""
+    return hashlib.sha256(auth_header.encode()).hexdigest()
+
+
+def _parse_flags(flags: list[dict[str, Any]]) -> dict[str, bool]:
+    """The control plane's feature flags as the lockdown reads them. Raises ``KeyError`` for a flag without a name."""
+    parsed: dict[str, bool] = {}
+    for flag in flags:
+        name = flag["name"]
+        if name == CAPABILITIES_FLAG:
+            for capability in (flag.get("value") or "").split(","):
+                if capability.strip():
+                    parsed[capability.strip()] = True
+        else:
+            parsed[name] = flag.get("value") == "true"
+    return parsed
+
+
+def _fetch(auth_header: Optional[str]) -> Optional[dict[str, bool]]:
+    headers = {"Authorization": auth_header} if auth_header else {}
+    try:
+        response = requests.get(f"{env.LIGHTNING_CLOUD_URL}/v1/config", headers=headers, timeout=_FETCH_TIMEOUT_SECONDS)
         response.raise_for_status()
-        return {flag["name"]: flag.get("value") == "true" for flag in response.json().get("featureFlags") or []}
+        return _parse_flags(response.json().get("featureFlags") or [])
     except (requests.RequestException, ValueError, TypeError, KeyError, AttributeError):
         # not cached, so the next command tries again
         return None
 
 
-def _read_cache() -> Optional[dict[str, bool]]:
-    """The cached flags for this cloud URL if they are fresh, else ``None``."""
+def _read_cache(account: str) -> Optional[dict[str, bool]]:
+    """The cached flags for this cloud URL and account if they are fresh, else ``None``."""
     try:
         entry = json.loads(_cache_path().read_text())
     except (OSError, ValueError):
         return None
-    if not isinstance(entry, dict) or entry.get("url") != env.LIGHTNING_CLOUD_URL:
+    if not isinstance(entry, dict) or entry.get("url") != env.LIGHTNING_CLOUD_URL or entry.get("account") != account:
         return None
     checked_at = entry.get("checked_at")
     flags = entry.get("flags")
@@ -95,10 +143,10 @@ def _read_cache() -> Optional[dict[str, bool]]:
     return {name: value is True for name, value in flags.items()}
 
 
-def _write_cache(flags: dict[str, bool]) -> None:
+def _write_cache(flags: dict[str, bool], account: str) -> None:
     """Record the flags. Failing to write them only costs a repeated fetch next time."""
     path = _cache_path()
-    entry = {"url": env.LIGHTNING_CLOUD_URL, "flags": flags, "checked_at": time.time()}
+    entry = {"url": env.LIGHTNING_CLOUD_URL, "account": account, "flags": flags, "checked_at": time.time()}
     with suppress(OSError):
         path.parent.mkdir(parents=True, exist_ok=True)
         # write to a per-process file and rename, so concurrent commands never read a partial file

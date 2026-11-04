@@ -8,11 +8,12 @@ import rich_click as click
 
 from lightning_sdk.cli.utils import lockdown_status
 from lightning_sdk.cli.utils.lockdown_status import (
-    ENVIRONMENT_TEMPLATES_FLAG,
-    STUDIO_SSH_FLAG,
-    STUDIOS_START_STOP_FLAG,
-    STUDIOS_SWITCHING_FLAG,
-    UPLOADS_FLAG,
+    ENVIRONMENT_TEMPLATES,
+    RW_FILESYSTEM,
+    STUDIO_SIDECAR_AUTH,
+    STUDIO_SSH,
+    STUDIO_SWITCHING,
+    STUDIOS,
 )
 from lightning_sdk.cli.utils.unavailable import mark_temporarily_unavailable, mark_unavailable_groups
 from lightning_sdk.lightning_cloud import env
@@ -107,19 +108,21 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "vm ssh",
 )
 
+# The capabilities each command needs, all of them. Starting and stopping need the Studio's sidecar to keep
+# renewing its token, so they need studio-sidecar-auth as well as studios.
 GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
-    "base-studio list": (ENVIRONMENT_TEMPLATES_FLAG,),
-    "edit": (UPLOADS_FLAG,),
-    "file upload": (UPLOADS_FLAG,),
-    "folder upload": (UPLOADS_FLAG,),
-    "rm": (UPLOADS_FLAG,),
-    "ssh configure": (STUDIO_SSH_FLAG,),
-    "studio create": (STUDIOS_START_STOP_FLAG, ENVIRONMENT_TEMPLATES_FLAG),
-    "studio env list": (STUDIOS_START_STOP_FLAG,),
-    "studio ssh": (STUDIO_SSH_FLAG,),
-    "studio start": (STUDIOS_START_STOP_FLAG,),
-    "studio stop": (STUDIOS_START_STOP_FLAG,),
-    "studio switch": (STUDIOS_SWITCHING_FLAG,),
+    "base-studio list": (ENVIRONMENT_TEMPLATES,),
+    "edit": (RW_FILESYSTEM,),
+    "file upload": (RW_FILESYSTEM,),
+    "folder upload": (RW_FILESYSTEM,),
+    "rm": (RW_FILESYSTEM,),
+    "ssh configure": (STUDIO_SSH,),
+    "studio create": (STUDIOS, STUDIO_SIDECAR_AUTH, ENVIRONMENT_TEMPLATES),
+    "studio env list": (STUDIOS, STUDIO_SIDECAR_AUTH),
+    "studio ssh": (STUDIO_SSH,),
+    "studio start": (STUDIOS, STUDIO_SIDECAR_AUTH),
+    "studio stop": (STUDIOS, STUDIO_SIDECAR_AUTH),
+    "studio switch": (STUDIO_SWITCHING,),
 }
 
 
@@ -128,7 +131,7 @@ def _lockdown_on(_params: Mapping[str, Any]) -> bool:
 
 
 def _capabilities_closed(flags: tuple[str, ...]) -> Callable[[Mapping[str, Any]], bool]:
-    return lambda _params: any(lockdown_status.capability_closed(flag) for flag in flags)
+    return lambda _params: any(lockdown_status.capability_closed(capability) for capability in flags)
 
 
 def _upload_closed(params: Mapping[str, Any]) -> bool:
@@ -142,7 +145,7 @@ def _upload_closed(params: Mapping[str, Any]) -> bool:
     """
     source = params.get("source")
     uploading = isinstance(source, str) and not source.startswith("lit://")
-    return uploading and lockdown_status.capability_closed(UPLOADS_FLAG)
+    return uploading and lockdown_status.capability_closed(RW_FILESYSTEM)
 
 
 def _deploying(params: Mapping[str, Any]) -> bool:
