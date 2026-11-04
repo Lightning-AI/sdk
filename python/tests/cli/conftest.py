@@ -1,7 +1,8 @@
 import pytest
 
 from lightning_sdk.cli.entrypoint import main_cli
-from lightning_sdk.cli.lockdown import UNAVAILABLE_COMMANDS
+from lightning_sdk.cli.lockdown import LOCKDOWN_COMMANDS
+from lightning_sdk.cli.utils.lockdown_status import LOCKDOWN_FLAG
 from lightning_sdk.cli.utils.unavailable import unmarked_command
 
 
@@ -11,12 +12,18 @@ def _fixture_run_commands_unlocked(monkeypatch):
 
     The gate is checked on the real CLI in ``test_temporarily_unavailable.py``, which overrides this fixture.
     """
-    for path in UNAVAILABLE_COMMANDS:
+    for path in LOCKDOWN_COMMANDS:
         *parents, name = path.split()
         group = main_cli
         for parent in parents:
             group = group.commands[parent]
         monkeypatch.setitem(group.commands, name, unmarked_command(group.commands[name]))
+
+
+@pytest.fixture(autouse=True)
+def _fixture_lockdown_on(monkeypatch):
+    """Read the lockdown as on with every capability it can open closed, instead of fetching /v1/config."""
+    monkeypatch.setattr("lightning_sdk.cli.utils.lockdown_status.lockdown_flags", lambda: {LOCKDOWN_FLAG: True})
 
 
 @pytest.fixture(autouse=True)
