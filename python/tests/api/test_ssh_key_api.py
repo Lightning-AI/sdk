@@ -38,23 +38,6 @@ def test_create_sends_the_public_key_with_the_login_token(_login_token) -> None:
     assert json.loads(request.call_args.kwargs["body"]) == {"name": "lightning@laptop", "publicKey": PUBLIC_KEY}
 
 
-def test_list_uses_the_login_token(_login_token) -> None:
-    body = {"sshKeys": [{"id": "key-1", "name": "laptop", "publicKey": PUBLIC_KEY}]}
-    with patch("urllib3.PoolManager.request", return_value=_response(200, body)) as request:
-        keys = SSHKeyApi().list_public_keys()
-
-    assert [key.public_key for key in keys] == [PUBLIC_KEY]
-    method, url = request.call_args.args[:2]
-    assert method == "GET"
-    assert url.endswith("/v1/ssh-keys")
-    assert request.call_args.kwargs["headers"]["Authorization"] == "Bearer sess_cli-login-token"
-
-
-def test_list_without_keys_is_empty(_login_token) -> None:
-    with patch("urllib3.PoolManager.request", return_value=_response(200, {})):
-        assert SSHKeyApi().list_public_keys() == []
-
-
 def test_create_refusal_carries_the_platform_message(_login_token) -> None:
     refusal = "This SSH public key can't be added. Please generate a new key and add that instead."
     with patch(

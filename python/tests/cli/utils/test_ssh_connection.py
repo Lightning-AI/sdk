@@ -4,7 +4,6 @@ import shutil
 import stat
 import subprocess
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -25,7 +24,6 @@ def home(tmp_path, monkeypatch) -> Path:
 @pytest.fixture()
 def api():
     api = MagicMock()
-    api.list_public_keys.return_value = []
     with patch("lightning_sdk.cli.utils.ssh_connection.SSHKeyApi", return_value=api):
         yield api
 
@@ -56,21 +54,16 @@ def test_creates_an_ed25519_key_without_a_passphrase_and_registers_it(home, api)
 
 
 @needs_ssh_keygen
-def test_reuses_a_key_the_account_already_has(home, api) -> None:
-    key_path = home / ".ssh" / "lightning_ed25519"
-    _make_key(key_path, "lightning@laptop")
-    private_key = key_path.read_bytes()
-    key_type, blob, _ = key_path.with_suffix(".pub").read_text().split(maxsplit=2)
-    # Registered under another name and comment: the key itself is what's compared.
-    api.list_public_keys.return_value = [
-        SimpleNamespace(name="other", public_key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOther other@host"),
-        SimpleNamespace(name="renamed", public_key=f"{key_type} {blob} renamed@elsewhere"),
-    ]
+def test_a_second_run_registers_the_same_key_again(home, api) -> None:
+    """The platform returns a key the account already has, so a repeat needs no check here."""
+    first = ensure_ssh_key()
+    private_key = first.read_bytes()
 
-    assert ensure_ssh_key() == key_path
+    assert ensure_ssh_key() == first
 
-    api.create_public_key.assert_not_called()
-    assert key_path.read_bytes() == private_key
+    assert first.read_bytes() == private_key
+    assert api.create_public_key.call_count == 2
+    assert api.create_public_key.call_args_list[0] == api.create_public_key.call_args_list[1]
 
 
 @needs_ssh_keygen
@@ -131,7 +124,7 @@ def test_configure_requires_login_first(home, api) -> None:
         configure_ssh_internal()
 
     assert not (home / ".ssh").exists()
-    api.list_public_keys.assert_not_called()
+    api.create_public_key.assert_not_called()
 
 
 def test_cli_has_no_setup_token_routes() -> None:

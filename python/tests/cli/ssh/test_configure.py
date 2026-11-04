@@ -1,7 +1,6 @@
 import shutil
 import subprocess
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -130,7 +129,6 @@ def home(tmp_path, monkeypatch) -> Path:
 @pytest.fixture()
 def ssh_key_api():
     api = MagicMock()
-    api.list_public_keys.return_value = []
     with patch("lightning_sdk.cli.utils.ssh_connection.SSHKeyApi", return_value=api), patch(
         "requests.get", side_effect=AssertionError("SSH setup must not download anything")
     ):
@@ -187,14 +185,13 @@ def test_configure_again_reuses_the_key_and_leaves_the_config(home, ssh_key_api,
     key_path = home / ".ssh" / "lightning_ed25519"
     private_key = key_path.read_bytes()
     config = (home / ".ssh" / "config").read_text()
-    registered = SimpleNamespace(public_key=key_path.with_suffix(".pub").read_text())
-    ssh_key_api.list_public_keys.return_value = [registered]
-    ssh_key_api.create_public_key.reset_mock()
+    first_registration = ssh_key_api.create_public_key.call_args
 
     result = _configure(studio, "--overwrite")
 
     assert result.exit_code == 0, result.output
-    ssh_key_api.create_public_key.assert_not_called()
+    assert ssh_key_api.create_public_key.call_count == 2
+    assert ssh_key_api.create_public_key.call_args == first_registration
     assert key_path.read_bytes() == private_key
     assert (home / ".ssh" / "config").read_text() == config
     assert "already uses this key for dev" in result.output

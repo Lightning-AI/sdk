@@ -1,7 +1,6 @@
 import shutil
 import subprocess
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -36,15 +35,14 @@ def test_ssh_resolves_before_downloading_keys() -> None:
 
 
 @pytest.mark.skipif(shutil.which("ssh-keygen") is None, reason="needs OpenSSH's ssh-keygen")
-def test_ssh_uses_the_local_key_and_registers_it_once(tmp_path, monkeypatch) -> None:
-    """The key is made on this machine, registered if the account lacks it, and passed to ssh as is."""
+def test_ssh_uses_the_local_key_and_registers_it(tmp_path, monkeypatch) -> None:
+    """The key is made on this machine once, registered on each run, and passed to ssh as is."""
     from lightning_sdk.cli.studio.ssh import ssh_impl
 
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     studio = MagicMock()
     studio._studio.id = "studio-id"
     api = MagicMock()
-    api.list_public_keys.return_value = []
     run = MagicMock()
     real_run = subprocess.run
 
@@ -59,13 +57,11 @@ def test_ssh_uses_the_local_key_and_registers_it_once(tmp_path, monkeypatch) -> 
         "lightning_sdk.cli.studio.ssh.subprocess.run", run_all_but_ssh
     ):
         ssh_impl(name="dev", teamspace=None, option=["StrictHostKeyChecking no", "LogLevel=ERROR"])
-        api.list_public_keys.return_value = [
-            SimpleNamespace(public_key=(tmp_path / ".ssh" / "lightning_ed25519.pub").read_text())
-        ]
         ssh_impl(name="dev", teamspace=None, option=None)
 
     key_path = str(tmp_path / ".ssh" / "lightning_ed25519")
-    api.create_public_key.assert_called_once()
+    public_key = (tmp_path / ".ssh" / "lightning_ed25519.pub").read_text().strip()
+    assert [c.kwargs["public_key"] for c in api.create_public_key.call_args_list] == [public_key, public_key]
     assert run.call_args_list[0].args[0] == [
         "ssh",
         "-i",

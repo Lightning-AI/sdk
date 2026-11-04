@@ -1,5 +1,4 @@
 import json
-from typing import List
 
 from lightning_sdk.api.utils import ApiException, cached_lightning_client
 from lightning_sdk.lightning_cloud.openapi import V1CreateSSHPublicKeyRequest, V1SSHPublicKey
@@ -21,16 +20,13 @@ def _error_message(e: ApiException) -> str:
 class SSHKeyApi:
     """Internal API client for the SSH public keys registered to the signed-in user."""
 
-    def list_public_keys(self) -> List[V1SSHPublicKey]:
-        return cached_lightning_client().s_sh_public_key_service_list_ssh_public_keys().ssh_keys or []
-
     def create_public_key(self, name: str, public_key: str) -> V1SSHPublicKey:
-        """Register ``public_key`` under ``name``.
+        """Register ``public_key`` under ``name``. If the account already has it, the platform returns it unchanged.
 
         Raises:
             SSHKeyRegistrationError: With the platform's reason, e.g. that the key is held by another account.
         """
-        # Not retried: a create that timed out after succeeding would register the key twice.
+        # Not retried: once retries run out, the client raises a bare Exception without the platform's message.
         client = cached_lightning_client(retry=False)
         try:
             return client.s_sh_public_key_service_create_ssh_public_key(

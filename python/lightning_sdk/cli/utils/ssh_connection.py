@@ -26,9 +26,10 @@ def configure_ssh_internal() -> str:
 
 
 def ensure_ssh_key() -> Path:
-    """Create the SSH key if it's missing, and register its public key unless the account already has it.
+    """Create the SSH key if it's missing, and register its public key with the signed-in user's account.
 
-    An existing private key is never replaced.
+    The private key is never replaced. The platform returns the key unchanged when the account already has it,
+    so this is safe to call on every connect.
     """
     key_path = ssh_key_path()
     public_key_path = key_path.with_suffix(".pub")
@@ -39,18 +40,12 @@ def ensure_ssh_key() -> Path:
         _write_public_key(key_path, public_key_path)
 
     public_key = public_key_path.read_text().strip()
-    api = SSHKeyApi()
-    if any(_same_key(registered.public_key, public_key) for registered in api.list_public_keys()):
-        return key_path
-
-    name = _key_name(public_key)
     try:
-        api.create_public_key(name=name, public_key=public_key)
+        SSHKeyApi().create_public_key(name=_key_name(public_key), public_key=public_key)
     except SSHKeyRegistrationError as e:
         raise click.ClickException(
             f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
         ) from None
-    click.echo(f"Added SSH key '{name}' to your Lightning account", err=True)
     return key_path
 
 
@@ -92,8 +87,3 @@ def _key_name(public_key: str) -> str:
     fields = public_key.split(maxsplit=2)
     comment = fields[2].strip() if len(fields) > 2 else ""
     return (comment or _default_comment())[:_MAX_KEY_NAME_LENGTH]
-
-
-def _same_key(registered: str, local: str) -> bool:
-    """Whether two public key lines hold the same key, whatever their comments."""
-    return (registered or "").split()[:2] == local.split()[:2]
