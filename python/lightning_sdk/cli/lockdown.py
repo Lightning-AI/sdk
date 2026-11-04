@@ -1,5 +1,6 @@
 """CLI commands that are temporarily unavailable while the API lockdown is on."""
 
+import os
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -13,6 +14,10 @@ from lightning_sdk.cli.utils.lockdown_status import (
     UPLOADS_FLAG,
 )
 from lightning_sdk.cli.utils.unavailable import mark_temporarily_unavailable, mark_unavailable_groups
+from lightning_sdk.lightning_cloud import env
+
+# Unset, empty or truthy keeps the commands in UNAVAILABLE_COMMANDS unavailable. A false value such as 0 runs them.
+LOCKDOWN_ENV = "LIGHTNING_CLI_DISABLE_UNAVAILABLE_CMDS"
 
 # Unavailable whenever the lockdown is on. Some make no request the lockdown blocks, but the services
 # they rely on don't work yet: LitCR is offline, and code.lightning.ai doesn't accept keys yet.
@@ -166,9 +171,14 @@ def apply_lockdown(root: click.Group) -> None:
     Call this after the commands are registered and before anything else takes a reference
     to them, such as the legacy forwards in the entrypoint, so those forwards are marked too.
 
+    Does nothing when ``LIGHTNING_CLI_DISABLE_UNAVAILABLE_CMDS`` is set to a false value such as ``0``,
+    so every command runs as usual. The commands stay unavailable by default.
+
     Raises:
         KeyError: If a listed path does not name a command under ``root``.
     """
+    if not env.truthy(os.getenv(LOCKDOWN_ENV) or "1"):
+        return
     gates = {
         **{path: _lockdown_on for path in UNAVAILABLE_COMMANDS},
         **{path: _capabilities_closed(flags) for path, flags in GATED_COMMANDS.items()},
