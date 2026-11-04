@@ -17,8 +17,8 @@ def generate_ssh_config(host: str, user: str) -> str:
         "  IdentitiesOnly yes\n"
         "  ServerAliveInterval 15\n"
         "  ServerAliveCountMax 4\n"
-        "  StrictHostKeyChecking no\n"
-        "  UserKnownHostsFile /dev/null\n"
+        "  StrictHostKeyChecking accept-new\n"
+        "  UserKnownHostsFile ~/.ssh/lightning_known_hosts\n"
     )
 
 

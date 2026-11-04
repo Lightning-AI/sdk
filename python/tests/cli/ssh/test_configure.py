@@ -173,8 +173,8 @@ def test_configure_creates_a_local_key_registers_it_and_adds_the_entry(home, ssh
         "  IdentitiesOnly yes\n"
         "  ServerAliveInterval 15\n"
         "  ServerAliveCountMax 4\n"
-        "  StrictHostKeyChecking no\n"
-        "  UserKnownHostsFile /dev/null\n"
+        "  StrictHostKeyChecking accept-new\n"
+        "  UserKnownHostsFile ~/.ssh/lightning_known_hosts\n"
     )
     assert "Added dev to ~/.ssh/config" in result.output
 
@@ -240,20 +240,42 @@ def test_entry_is_added_after_one_that_only_has_the_old_key(home) -> None:
     assert config_path.read_text() == config
 
 
-@pytest.mark.skipif(shutil.which("ssh") is None, reason="needs OpenSSH's ssh")
+needs_ssh = pytest.mark.skipif(shutil.which("ssh") is None, reason="needs OpenSSH's ssh")
+
+
+def _ssh_settings(config_path: Path, host: str) -> list:
+    """The settings ssh would use for ``host``, from ``ssh -G``, which doesn't connect."""
+    return subprocess.run(
+        ["ssh", "-G", "-F", str(config_path), host],
+        capture_output=True,
+        text=True,
+        check=True,
+        stdin=subprocess.DEVNULL,
+    ).stdout.splitlines()
+
+
+@needs_ssh
+def test_ssh_checks_the_host_key_with_a_new_entry(home) -> None:
+    config_path = home / ".ssh" / "config"
+    add_ssh_config(host="dev", user="s_studio-id")
+
+    resolved = _ssh_settings(config_path, "dev")
+
+    assert "stricthostkeychecking accept-new" in resolved
+    # ssh expands ~ from the user database rather than $HOME, so only the file name is checked.
+    known_hosts = [line for line in resolved if line.startswith("userknownhostsfile ")]
+    assert len(known_hosts) == 1
+    assert known_hosts[0].endswith("/.ssh/lightning_known_hosts")
+
+
+@needs_ssh
 def test_ssh_offers_both_keys_for_a_host_with_an_old_entry(home) -> None:
     config_path = home / ".ssh" / "config"
     config_path.parent.mkdir()
     config_path.write_text(OLD_RSA_ENTRY)
     add_ssh_config(host="dev", user="s_studio-id")
 
-    resolved = subprocess.run(
-        ["ssh", "-G", "-F", str(config_path), "dev"],
-        capture_output=True,
-        text=True,
-        check=True,
-        stdin=subprocess.DEVNULL,
-    ).stdout.splitlines()
+    resolved = _ssh_settings(config_path, "dev")
 
     identity_files = [line.split(maxsplit=1)[1] for line in resolved if line.startswith("identityfile ")]
     assert identity_files[0] == "/home/me/.ssh/lightning_rsa"
