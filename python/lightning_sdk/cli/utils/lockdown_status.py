@@ -22,6 +22,7 @@ UPLOADS_FLAG = "apiLockdownRWFilesystem"
 STUDIOS_START_STOP_FLAG = "apiLockdownStudiosStartStop"
 STUDIOS_SWITCHING_FLAG = "apiLockdownStudiosSwitching"
 ENVIRONMENT_TEMPLATES_FLAG = "apiLockdownEnvironmentTemplates"
+STUDIO_SSH_FLAG = "apiLockdownStudioSSH"
 
 _FETCH_TIMEOUT_SECONDS = 2
 # short, so a capability the lockdown opens reaches the CLI within minutes
