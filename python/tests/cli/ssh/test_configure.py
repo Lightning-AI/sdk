@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import click
 import pytest
 
 from lightning_sdk.api.ssh_key_api import SSHKeyRegistrationError
@@ -207,7 +208,7 @@ def test_configure_shows_the_platform_refusal(home, ssh_key_api, studio) -> None
 
     assert result.exit_code == 1
     # rich wraps the error in a box, so drop its border before matching.
-    assert refusal in " ".join(result.output.replace("│", " ").split())
+    assert refusal in " ".join(click.unstyle(result.output).replace("│", " ").split())
     assert not (home / ".ssh" / "config").exists()
 
 
