@@ -1,19 +1,22 @@
 """SSH configure command."""
 
-from pathlib import Path
 from typing import Optional
 
 import rich_click as click
 from rich.console import Console
 
-from lightning_sdk.api.utils import _get_cloud_url
 from lightning_sdk.cli.resource_completion import complete_studio
-from lightning_sdk.cli.ssh.common import generate_ssh_config
+from lightning_sdk.cli.ssh.common import add_ssh_config
 from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
-from lightning_sdk.cli.utils.ssh_connection import download_file
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.cli.utils.ssh_connection import ensure_ssh_key
+
+OVERWRITE_HELP = "Deprecated, and has no effect: the SSH key is never replaced."
+OVERWRITE_WARNING = (
+    "--overwrite no longer replaces the SSH key. To make a new one, delete {key_path} and its .pub file, "
+    "then run this again."
+)
 
 
 @click.command("configure", cls=LightningCommand)
@@ -37,51 +40,26 @@ from lightning_sdk.lightning_cloud.login import Auth
     is_flag=True,
     flag_value=True,
     default=False,
-    help="Whether to overwrite the SSH key and config if they already exist.",
+    help=OVERWRITE_HELP,
 )
 def configure_ssh(name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False) -> None:
     """Get SSH config entry for a studio."""
-    import platform
-    import uuid
-
     resolved_teamspace = resolve_teamspace(teamspace)
     studio = resolve_studio(name, resolved_teamspace)
 
-    auth = Auth()
     require_auth_header()
-    if not auth.api_key and not auth.load():
-        raise click.UsageError("An API key is required. Run `lightning login` first.")
+    configure_studio_ssh(studio.name, f"s_{studio._studio.id}", overwrite=overwrite)
+
+
+def configure_studio_ssh(host: str, user: str, overwrite: bool = False) -> None:
+    """Set up this machine's SSH key and add the ``~/.ssh/config`` entry ``host`` for ``user``."""
     console = Console()
-    ssh_dir = Path.home() / ".ssh"
-    ssh_dir.mkdir(parents=True, exist_ok=True)
+    key_path = ensure_ssh_key()
+    if overwrite:
+        console.print(OVERWRITE_WARNING.format(key_path=key_path), style="yellow")
+    console.print(f"Using SSH key {key_path}")
 
-    key_path = ssh_dir / "lightning_rsa"
-    config_path = ssh_dir / "config"
-
-    if not key_path.exists() or not (key_path.with_suffix(".pub")).exists() or overwrite:
-        key_id = str(uuid.uuid4())
-        download_file(
-            f"{_get_cloud_url()}/setup/ssh-gen?t={auth.api_key}&id={key_id}&machineName={platform.node()}",
-            key_path,
-            overwrite=overwrite,
-            chmod=0o600,
-        )
-        download_file(
-            f"{_get_cloud_url()}/setup/ssh-public?t={auth.api_key}&id={key_id}",
-            key_path.with_suffix(".pub"),
-            overwrite=overwrite,
-        )
-        console.print(f"SSH key generated and saved to {key_path}")
+    if add_ssh_config(host=host, user=user):
+        console.print(f"Added {host} to ~/.ssh/config")
     else:
-        console.print(f"SSH key already exists at {key_path}")
-
-    config_content = generate_ssh_config(key_path=str(key_path), user=f"s_{studio._studio.id}", host=studio.name)
-    if config_path.exists() and f"Host {studio.name}" in config_path.read_text():
-        console.print("SSH config already contains the required configuration.")
-        return
-
-    with config_path.open("a") as config_file:
-        config_file.write("\n")
-        config_file.write(config_content)
-        config_file.write("\n")
-    console.print(f"SSH config updated at {config_path}")
+        console.print(f"~/.ssh/config already uses this key for {host}")

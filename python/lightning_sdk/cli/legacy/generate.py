@@ -3,6 +3,7 @@ from typing import Optional
 import click
 from rich.console import Console
 
+from lightning_sdk.cli.ssh.common import generate_ssh_config
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 
 
@@ -33,19 +34,6 @@ def ssh(name: Optional[str] = None, teamspace: Optional[str] = None) -> None:
     """Get SSH config entry for a studio."""
     studio = resolve_studio(name, resolve_teamspace(teamspace))
 
-    conf = _generate_ssh_config(key_path="~/.ssh/lightning_rsa", user=f"s_{studio._studio.id}", host=studio.name)
+    conf = generate_ssh_config(user=f"s_{studio._studio.id}", host=studio.name)
     # Print the SSH config
     Console().print(f"# ssh s_{studio._studio.id}@ssh.lightning.ai\n\n" + conf)
-
-
-def _generate_ssh_config(key_path: str, host: str, user: str) -> str:
-    return f"""Host {host}
-      User {user}
-      Hostname ssh.lightning.ai
-      IdentityFile {key_path}
-      IdentitiesOnly yes
-      ServerAliveInterval 15
-      ServerAliveCountMax 4
-      StrictHostKeyChecking no
-      UserKnownHostsFile=/dev/null
-    """
