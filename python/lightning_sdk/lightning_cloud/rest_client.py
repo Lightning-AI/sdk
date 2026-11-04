@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, Optional, Sequence
 import urllib3
 
 from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.openapi import (
     ApiClient,
     AssistantsServiceApi,
@@ -61,7 +61,7 @@ def create_swagger_client(check_context: bool = True, with_auth: bool = True):
         If true, check if the context is set. It's only false for APIs that
         doesn't need the context information i.e login
     with_auth: bool
-        If true, it uses user's Authorization for the api client
+        If true, GridRestClient attaches Authorization on each request.
     """
     if check_context and not env.CONTEXT:
         raise RuntimeError(
@@ -80,9 +80,7 @@ def create_swagger_client(check_context: bool = True, with_auth: bool = True):
         env.LIGHTNING_CLOUD_READ_TIMEOUT,
     )
     api_client = ApiClient(configuration)
-    if with_auth:
-        api_client.default_headers["Authorization"] = Auth().authenticate()
-    api_client.user_agent = f"Grid-CLI-{env.VERSION}"
+    api_client.user_agent = env.USER_AGENT
     return api_client
 
 
@@ -119,8 +117,15 @@ class GridRestClient(
 ):
 
     def __init__(self, api_client: Optional[ApiClient] = None, with_auth: bool = True):
-        api_client = api_client if api_client else create_swagger_client(with_auth=with_auth)
-        api_client.request = request_auth_warning_wrapper(api_client.request)
+        api_client = (
+            api_client if api_client else create_swagger_client(with_auth=with_auth)
+        )
+        if with_auth:
+            api_client.request = credential_request_wrapper(
+                api_client.request, CredentialSource()
+            )
+        else:
+            api_client.request = request_auth_warning_wrapper(api_client.request)
         super().__init__(api_client)
 
 
@@ -202,7 +207,10 @@ class LightningClient(GridRestClient):
                  retry: bool = True,
                  max_tries: Optional[int] = 10,
                  with_auth: bool = True) -> None:
-        super().__init__(api_client=create_swagger_client(with_auth=with_auth))
+        super().__init__(
+            api_client=create_swagger_client(with_auth=with_auth),
+            with_auth=with_auth,
+        )
         if retry:
             for base_class in GridRestClient.__mro__:
                 for name, attribute in base_class.__dict__.items():
@@ -261,6 +269,42 @@ def _without_none(values: Dict[str, Any]) -> Dict[str, Any]:
     return {key: value for key, value in values.items() if value is not None}
 
 
+_LOGIN_MESSAGE = "Authentication failed. Please run `lightning login`."
+
+
+def _has_authorization(headers: Optional[dict]) -> bool:
+    if not headers:
+        return False
+    return any(str(key).lower() == "authorization" for key in headers)
+
+
+def credential_request_wrapper(func, source):
+    @functools.wraps(func)
+    def wrap(*args, **kwargs):
+        incoming = kwargs.get("headers")
+        supplied = _has_authorization(incoming)
+        headers = dict(incoming or {})
+        if not supplied:
+            headers["Authorization"] = source.header()
+        kwargs["headers"] = headers
+        try:
+            return func(*args, **kwargs)
+        except ApiException as err:
+            if err.status != 401:
+                raise
+            if supplied or not source.refresh():
+                raise ConnectionError(_LOGIN_MESSAGE)
+            headers["Authorization"] = source.header()
+            try:
+                return func(*args, **kwargs)
+            except ApiException as retry_err:
+                if retry_err.status == 401:
+                    raise ConnectionError(_LOGIN_MESSAGE)
+                raise
+
+    return wrap
+
+
 def request_auth_warning_wrapper(func):
 
     @functools.wraps(func)
@@ -270,7 +314,7 @@ def request_auth_warning_wrapper(func):
             return response
         except ApiException as err:
             if err.status == 401:
-                raise ConnectionError("Authentication failed. Please run `lightning login`.")
+                raise ConnectionError(_LOGIN_MESSAGE)
             raise err
 
     return wrap

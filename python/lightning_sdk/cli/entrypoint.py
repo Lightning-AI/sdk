@@ -2,7 +2,10 @@
 
 import os
 import sys
+from contextlib import suppress
+from typing import Optional
 
+import requests
 import rich_click as click
 
 from lightning_sdk import __version__
@@ -45,13 +48,9 @@ from lightning_sdk.cli.legacy_redirects import (
 from lightning_sdk.cli.lockdown import apply_lockdown
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import (
-    browser_authentication,
-    login_with_pasted_code,
-    logout_session,
-    oidc_login_enabled,
-)
+from lightning_sdk.cli.utils.auth import browser_authentication
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
+from lightning_sdk.lightning_cloud import cli_login
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
@@ -104,13 +103,22 @@ def main_cli(ctx: click.Context) -> None:
 @click.option(
     "--no-browser",
     is_flag=True,
-    hidden=True,
     help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
 )
-def login(no_browser: bool) -> None:
+@click.option(
+    "--org",
+    "orgs",
+    metavar="A,B",
+    help="Comma-separated organizations to ask for when the login is approved.",
+)
+@click.option("--project", help="Teamspace to ask for when the login is approved.")
+@click.option(
+    "--insecure-storage",
+    is_flag=True,
+    help="Store the login in a file only you can read when no OS keychain is available.",
+)
+def login(no_browser: bool, orgs: Optional[str], project: Optional[str], insecure_storage: bool) -> None:
     """Sign in to Lightning AI."""
-    if no_browser and not oidc_login_enabled():
-        raise click.UsageError("`lightning login --no-browser` is not available yet.")
     auth = Auth()
     if auth.api_key or auth.auth_token:
         click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
@@ -120,21 +128,18 @@ def login(no_browser: bool) -> None:
         # this is unexpected, as we automatically auth within a Studio
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
-    # always start a fresh session: a saved one may have expired
-    auth.clear()
+    org_list = [org.strip() for org in orgs.split(",") if org.strip()] if orgs else None
     try:
-        if no_browser:
-            login_with_pasted_code(auth)
-        else:
-            with browser_authentication(True):
-                auth.authenticate()
+        cli_login.login(
+            no_browser=no_browser,
+            insecure_storage=insecure_storage,
+            orgs=org_list,
+            project=project,
+        )
+    except cli_login.LoginError:
+        raise
     except ConnectionError:
         raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
-    except ValueError:
-        # the browser flow ended without the callback saving a token (see the warning it logs)
-        raise RuntimeError(
-            "Login failed: the browser sign-in finished without returning a token. Try running `lightning login` again"
-        ) from None
 
     try:
         click.echo(f'Successfully logged in as "{_get_authed_user().name}".')
@@ -143,13 +148,32 @@ def login(no_browser: bool) -> None:
         click.echo("Successfully logged in.")
 
 
+def _saved_session_token() -> Optional[str]:
+    """A `sess_` token saved by an older SDK, so logout can revoke it too."""
+    auth = Auth()
+    try:
+        if auth.load() and isinstance(auth.auth_token, str) and auth.auth_token.startswith("sess_"):
+            return auth.auth_token
+    except Exception:
+        pass
+    return None
+
+
 @main_cli.command
 def logout() -> None:
     """Sign out of the current session."""
+    legacy = _saved_session_token()
     try:
-        logout_session(Auth())
+        cli_login.logout()
     except Exception as e:
         raise RuntimeError(f"Logout failed: {e}") from e
+    if legacy:
+        with suppress(requests.RequestException):
+            requests.post(
+                f"{_cloud_url().rstrip('/')}/v1/auth/logout",
+                headers={"Authorization": f"Bearer {legacy}"},
+                timeout=10,
+            )
     click.echo("Successfully logged out.")
 
 

@@ -3,8 +3,11 @@
 # Make changes in the internal upstream repository instead.
 
 import os
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Optional
+
+from lightning_sdk.lightning_cloud.__version__ import __version__
 
 
 def truthy(val) -> bool:
@@ -19,6 +22,15 @@ def truthy(val) -> bool:
         return False
 
     return bool(val)
+
+
+def _user_agent() -> str:
+    # A lightning-sdk agent is checked against the SDK's minimum version, so
+    # only the installed SDK may claim that name.
+    try:
+        return f"lightning-sdk/{version('lightning_sdk')}"
+    except PackageNotFoundError:
+        return f"lightning-cloud/{__version__}"
 
 
 def _float_env(name: str, default: Optional[float]) -> Optional[float]:
@@ -40,6 +52,9 @@ LIGHTNING_CLOUD_READ_TIMEOUT = _float_env("LIGHTNING_CLOUD_READ_TIMEOUT", 30.0)
 SSL_CA_CERT = os.getenv("REQUESTS_CA_BUNDLE",
                         default=os.getenv("SSL_CERT_FILE", default=None))
 VERSION = os.getenv("VERSION", "0.0.1")
+USER_AGENT = _user_agent()
+# Name only. Read the path from the environment on each request.
+LIGHTNING_AUTH_TOKEN_FILE = "LIGHTNING_AUTH_TOKEN_FILE"
 DEBUG = truthy(os.getenv("DEBUG"))
 CONTEXT = os.getenv("CONTEXT", "staging-3")
 LIGHTNING_SETTINGS_PATH = os.getenv(
@@ -48,6 +63,9 @@ LIGHTNING_SETTINGS_PATH = os.getenv(
 LIGHTNING_CREDENTIAL_PATH = os.getenv(
     'LIGHTNING_CREDENTIAL_PATH',
     str(Path.home() / '.lightning' / 'credentials.json'))
+LIGHTNING_LOGIN_PATH = os.getenv(
+    'LIGHTNING_LOGIN_PATH',
+    str(Path.home() / '.lightning' / 'login.json'))
 
 DOT_IGNORE_FILENAME = ".lightningignore"
 

@@ -86,6 +86,7 @@ def _clear_lightning_env_vars(monkeypatch):
         if name.startswith("LIGHTNING_"):
             monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("LIGHTNING_API_KEY", "dummy-api-key")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "dummy-auth-token")
 
 
 @pytest.fixture(autouse=True)
@@ -1779,7 +1780,7 @@ def internal_slurm_run_mocker(mocker, monkeypatch):
 @pytest.fixture()
 def mocker_auth(mocker):
     mocker.patch(
-        "lightning_sdk.lightning_cloud.rest_client.Auth",
+        "lightning_sdk.lightning_cloud.credentials.Auth",
         autospec=True,
     )
 

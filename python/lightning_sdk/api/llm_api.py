@@ -4,16 +4,15 @@ import datetime
 import json
 import os
 import threading
-import time
 import warnings
 from typing import Any, AsyncGenerator, Dict, Generator, List, Optional, Union
-from urllib.parse import urlencode
 
 from rich.prompt import Confirm
 
 from lightning_sdk.api.utils import cached_lightning_client
-from lightning_sdk.lightning_cloud import env
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud import cli_login
+from lightning_sdk.lightning_cloud.credentials import browser_login
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi.models import (
     StreamResultOfV1ConversationResponseChunk,
     V1ConversationResponseChunk,
@@ -21,19 +20,6 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1ResponseChoice,
     V1ResponseChoiceDelta,
 )
-
-LITAI_CODE = os.environ.get("LITAI_CODE", "x334uv8t7v")
-
-
-class _AuthServer(AuthServer):
-    def __init__(self, model: str, *args: Any, **kwargs: Any) -> None:
-        self._model = model
-        super().__init__(*args, **kwargs)
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode({"redirectTo": redirect_uri, "okbhrt": LITAI_CODE, "litaimodel": self._model})
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
 
 
 class _AuthLitAI(Auth):
@@ -55,15 +41,19 @@ class _AuthLitAI(Auth):
                     "Login cancelled. Please login at https://platform.lightning.ai/sign-up. "
                     "Or run `lightning login` to login."
                 )
-        print("Opening browser for authentication...")
-        print("Please come back to the terminal after logging in.")
-        time.sleep(1)
-        _AuthServer(self._model).login_with_browser(self)
+        cli_login.login()
 
 
 def authenticate(model: str, shall_confirm: bool = True) -> None:
     auth = _AuthLitAI(model, shall_confirm)
-    auth.authenticate()
+    with browser_login(False):
+        try:
+            auth.authenticate()
+        except ValueError:
+            pass
+        else:
+            return
+    auth._run_server()
 
 
 class LLMApi:

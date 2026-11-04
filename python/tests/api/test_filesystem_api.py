@@ -9,7 +9,7 @@ from lightning_sdk.api.utils import _DOWNLOAD_MAX_TRIES
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -31,7 +31,7 @@ def test_download_file(_authenticate_mock, _mock_auth, mock_requests_get, tmpdir
 @mock.patch("lightning_sdk.api.filesystem_api.tqdm")
 @mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_download_folder(_mock_auth, authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
     authenticate_mock.return_value = "test-token-123"
     filesystem_api = FilesystemApi()
@@ -60,7 +60,7 @@ def test_download_folder(_mock_auth, authenticate_mock, mock_executor, mock_tqdm
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -86,7 +86,7 @@ def test_download_file_rejects_an_error_document(_authenticate_mock, _mock_auth,
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -110,7 +110,7 @@ def test_download_file_retries_a_dropped_connection(_authenticate_mock, _mock_au
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -139,7 +139,7 @@ def test_download_file_retries_a_truncated_body(_authenticate_mock, _mock_auth, 
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -163,7 +163,7 @@ def test_download_file_does_not_retry_a_denial(_authenticate_mock, _mock_auth, m
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_download_folder_does_not_report_success_on_a_partial_download(
     _mock_auth, _authenticate_mock, inline_executor_cls, tmp_path
 ):
@@ -189,7 +189,7 @@ def test_download_folder_does_not_report_success_on_a_partial_download(
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -208,7 +208,7 @@ def test_list_files_returns_tree(_authenticate_mock, _mock_auth, mock_requests_g
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -226,7 +226,7 @@ def test_list_files_returns_empty_when_tree_missing(_authenticate_mock, _mock_au
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -251,7 +251,7 @@ def test_list_files_passes_correct_url_and_params(_authenticate_mock, _mock_auth
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -270,7 +270,7 @@ def test_list_files_non_recursive_by_default(_authenticate_mock, _mock_auth, moc
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
@@ -286,7 +286,7 @@ def test_list_files_raises_on_non_200(_authenticate_mock, _mock_auth, mock_reque
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 @mock.patch(
     "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},

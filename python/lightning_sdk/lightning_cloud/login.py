@@ -2,7 +2,6 @@
 # Do not edit it directly; changes will be overwritten.
 # Make changes in the internal upstream repository instead.
 
-import base64
 from enum import Enum
 import json
 import logging
@@ -10,9 +9,6 @@ import os
 import pathlib
 from dataclasses import dataclass
 from typing import Optional, Literal
-from urllib.parse import urlencode
-
-import webbrowser
 
 import requests
 
@@ -56,9 +52,6 @@ class Auth:
             if getattr(self, key.suffix) is None:
                 setattr(self, key.suffix, os.environ.get(key.value, None))
 
-        # used by authenticate method
-        self._with_env_var = bool(self.api_key or self.auth_token)
-
     def load(self) -> bool:
         """Load credentials from disk and update properties with credentials.
 
@@ -75,30 +68,33 @@ class Auth:
                 setattr(self, key.suffix, credentials.get(key.suffix, None))
             return True
 
-    def save(self,
-             token: str = "",
-             user_id: str = "",
-             api_key: str = "",
-             auth_token: str = "",
-             # username: str = "",
-        ) -> None:
-        """save credentials to disk."""
-        self.secrets_file.parent.mkdir(exist_ok=True, parents=True)
-        with self.secrets_file.open("w") as f:
-            json.dump(
-                {
-                    # f"{Keys.USERNAME.suffix}": username,
-                    f"{Keys.USER_ID.suffix}": user_id,
-                    f"{Keys.API_KEY.suffix}": api_key,
-                    f"{Keys.AUTH_TOKEN.suffix}": auth_token,
-                },
-                f,
-            )
+    def save(
+        self,
+        user_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        auth_token: Optional[str] = None,
+        # username: str = "",
+    ) -> None:
+        """Replace the saved login with the given fields."""
+        given = {
+            Keys.USER_ID.suffix: user_id,
+            Keys.API_KEY.suffix: api_key,
+            Keys.AUTH_TOKEN.suffix: auth_token,
+        }
+        stored = {key: value for key, value in given.items() if value}
 
-        # self.username = username
-        self.user_id = user_id
-        self.api_key = api_key
-        self.auth_token = auth_token
+        self.secrets_file.parent.mkdir(exist_ok=True, parents=True)
+        payload = json.dumps(stored).encode()
+        fd = os.open(self.secrets_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        try:
+            os.write(fd, payload)
+        finally:
+            os.close(fd)
+        # os.open's mode applies only to a new file, so an existing one needs chmod.
+        os.chmod(self.secrets_file, 0o600)
+
+        for key in Keys:
+            setattr(self, key.suffix, stored.get(key.suffix))
         logger.debug("credentials saved successfully")
 
     @classmethod
@@ -111,24 +107,25 @@ class Auth:
         logger.debug("credentials removed successfully")
 
     def get_auth_header(self, override: Optional[AuthOverride] = None) -> Optional[str]:
-        """Get authentication header with optional override.
-        
-        By default, uses the automatic priority selection (auth_token > api_key).
-        You can override this for specific cases where you need a different auth method.
-        
+        """Get a Bearer authentication header, with an optional override.
+
+        By default, returns the credential every request would send: the file
+        named by ``LIGHTNING_AUTH_TOKEN_FILE``, then ``LIGHTNING_AUTH_TOKEN``,
+        then the saved login. It never opens a browser.
+
         Parameters
         ----------
         override : AuthOverride, optional
-            Override the default authentication method:
-            - "auth_token": Force use of JWT auth token (Bearer)
-            - "api_key": Force use of API key (Basic/Bearer)
-            - None: Use automatic selection (default)
-            
+            Use a token held by this instance instead:
+            - "auth_token": this instance's auth token
+            - "api_key": this instance's API key
+            - None: the credential every request would send (default)
+
         Returns
         -------
         Optional[str]
             The authorization header for the specified method.
-            
+
         Raises
         ------
         ValueError
@@ -141,7 +138,7 @@ class Auth:
                     "Please use token_login() method first."
                 )
             return f"Bearer {self.auth_token}"
-        
+
         elif override == "api_key":
             if not self.api_key:
                 raise ValueError(
@@ -149,63 +146,40 @@ class Auth:
                     "Please set LIGHTNING_API_KEY environment variable "
                     "or use authenticate() method."
                 )
-            if self.user_id:
-                token = f"{self.user_id}:{self.api_key}"
-                return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
             return f"Bearer {self.api_key}"
-        
+
         elif override is None:
-            # Use the original automatic selection logic (default behavior)
-            if self.auth_token:
-                return f"Bearer {self.auth_token}"
-            elif self.api_key:
-                if self.user_id:
-                    token = f"{self.user_id}:{self.api_key}"
-                    return f"Basic {base64.b64encode(token.encode('ascii')).decode('ascii')}"  # noqa E501
-                return f"Bearer {self.api_key}"
-            else:
-                raise ValueError(
-                    "No authentication credentials available. Please authenticate first using "
-                    "token_login() or authenticate() methods."
-                )
-        
+            from lightning_sdk.lightning_cloud.credentials import CredentialSource, browser_login
+
+            with browser_login(False):
+                return CredentialSource().header()
+
         else:
             raise ValueError(f"Invalid authentication override: {override}")
 
     @property
     def auth_header(self) -> Optional[str]:
-        """authentication header used by lightning-cloud client (automatic selection)."""
+        """The credential every request would send, without opening a browser."""
         return self.get_auth_header()
 
     def _run_server(self) -> None:
-        """start a server to complete authentication."""
-        AuthServer().login_with_browser(self)
+        """Log in through the browser, or by pasting a code when none opens."""
+        from lightning_sdk.lightning_cloud.cli_login import login
+
+        login()
 
     def authenticate(self) -> Optional[str]:
         """Performs end to end authentication flow.
 
         Returns
         ----------
-        authorization header to use when authentication completes.
+        authorization header to use when authentication completes. With no
+        credential, this opens a browser to log in, unless browser login is
+        turned off.
         """
-        if self._with_env_var:
-            logger.debug("successfully loaded credentials from env")
-            return self.auth_header
+        from lightning_sdk.lightning_cloud.credentials import CredentialSource
 
-        if not self.load():
-            logger.debug(
-                "failed to load credentials, opening browser to get new.")
-            self._run_server()
-            return self.auth_header
-
-        elif self.auth_token:
-            return self.auth_header
-        elif self.api_key:
-            return self.auth_header
-
-        raise ValueError(
-            "We couldn't find any credentials linked to your account. Please try logging in using the CLI command `lightning login`"
-        )
+        return CredentialSource().header()
 
     def token_login(self, token_key: str, save_token: bool = True) -> Optional[str]:
         """Performs token-based authentication.
@@ -273,7 +247,7 @@ class Auth:
         else:
             logger.info("Successfully authenticated using auth token (not saved to disk).")
 
-        return self.auth_header
+        return f"Bearer {jwt_token}"
 
     def refresh_token(self, duration: int = 43200) -> Optional[str]:
         """Refreshes the current JWT token.
@@ -343,7 +317,7 @@ class Auth:
         self.save(auth_token=new_jwt_token)
         logger.info("Successfully refreshed JWT token.")
 
-        return self.auth_header
+        return f"Bearer {new_jwt_token}"
 
     def create_api_client(self, override: Optional[AuthOverride] = None) -> 'ApiClient':
         """Create an API client with optional authentication override.
@@ -378,77 +352,3 @@ class Auth:
             client.set_default_header('Authorization', auth_header)
         
         return client
-
-
-class AuthServer:
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode(dict(redirectTo=redirect_uri))
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
-
-    def login_with_browser(self, auth: Auth) -> None:
-        # Deferred: the login callback server is only needed here, and these
-        # imports are too slow to pay on every CLI startup.
-        import uvicorn
-        from fastapi import FastAPI, Query, Request
-        from starlette.background import BackgroundTask
-        from starlette.responses import RedirectResponse
-
-        from lightning_sdk.lightning_cloud.utils.network import find_free_network_port
-
-        app = FastAPI()
-        port = find_free_network_port()
-        url = self.get_auth_url(port)
-        try:
-            # check if server is reachable or catch any network errors
-            requests.head(url)
-        except requests.ConnectionError as e:
-            raise requests.ConnectionError(
-                f"No internet connection available. Please connect to a stable internet connection \n{e}"  # noqa E501
-            )
-        except requests.RequestException as e:
-            raise requests.RequestException(
-                f"An error occurred with the request. Please report this issue to Lightning Team \n{e}"  # noqa E501
-            )
-
-        logger.info(f"login started for lightning.ai, opening {url}")
-        ok = webbrowser.open(url)
-        if not ok:
-            # can't open a browser, authentication failed
-            deployment_id = os.environ.get("LIGHTNING_DEPLOYMENT_ID", None)
-            if deployment_id is not None and deployment_id != "":
-                raise RuntimeError("Failed to authenticate to Lightning. Ensure that you have selected 'Include SDK credentials' in the 'Environment' section of the deployment settings.")
-            raise RuntimeError("Failed to authenticate to Lightning. When running without access to a browser, 'LIGHTNING_API_KEY' should be exported.")
-
-        @app.get("/login-complete")
-        async def save_token(request: Request,
-                             token="",
-                             key="",
-                             user_id: str = Query("", alias="userID")):
-            if token:
-                auth.save(token=token,
-                          # username=user_id,
-                          user_id=user_id,
-                          api_key=key)
-                logger.info("Authentication Successful")
-            else:
-                logger.warning(
-                    "Authentication Failed. This is most likely because you're using an older version of the CLI. \n"  # noqa E501
-                    "Please try to update the CLI or open an issue with this information \n"  # noqa E501
-                    f"expected token in {request.query_params.items()}")
-
-            # Include the credentials in the redirect so that UI will also be logged in
-            params = urlencode(dict(token=token, key=key, userID=user_id))
-
-            return RedirectResponse(
-                url=f"{env.LIGHTNING_CLOUD_URL}/me/apps?{params}",
-                # The response background task is being executed right after the server finished writing the response
-                background=BackgroundTask(stop_server))
-
-        def stop_server():
-            server.should_exit = True
-
-        server = uvicorn.Server(
-            config=uvicorn.Config(app, port=port, log_level="error"))
-        server.run()
