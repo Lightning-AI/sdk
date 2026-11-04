@@ -152,8 +152,7 @@ class TestLogCommand:
     @mock.patch("lightning_sdk.cli.utils.logging.LightningClient")
     def test_log_command_skips_without_credentials(self, mock_client_class, mock_auth_class):
         """Test command logging does not trigger authentication when no credentials exist."""
-        auth = mock.Mock(api_key=None, auth_token=None)
-        auth.load.return_value = False
+        auth = mock.Mock(auth_header=None)
         mock_auth_class.return_value = auth
 
         _log_command(message="Test message", duration=100)

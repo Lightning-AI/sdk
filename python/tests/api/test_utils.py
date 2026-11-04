@@ -790,21 +790,27 @@ def test_resolve_path_mappings():
     assert path_mappings[1].connection_path == ""
 
 
+@pytest.fixture()
+def upload_auth(monkeypatch):
+    headers = {"Authorization": "Bearer test-token"}
+    monkeypatch.setattr(
+        "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
+        lambda: headers,
+    )
+    return headers
+
+
 def _make_single_part_blob_uploader(tmp_path, progress_bar=False, extra_headers=None, content=b"hello world"):
     file_path = tmp_path / "test_file.txt"
     file_path.write_bytes(content)
-    with mock.patch(
-        "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
-        return_value={"Authorization": "Bearer test-token"},
-    ):
-        return utils._BlobUploader(
-            client=Mock(),
-            endpoint_base=_TEST_ENDPOINT_BASE,
-            file_path=str(file_path),
-            remote_path="test_file.txt",
-            progress_bar=progress_bar,
-            extra_headers=extra_headers,
-        )
+    return utils._BlobUploader(
+        client=Mock(),
+        endpoint_base=_TEST_ENDPOINT_BASE,
+        file_path=str(file_path),
+        remote_path="test_file.txt",
+        progress_bar=progress_bar,
+        extra_headers=extra_headers,
+    )
 
 
 def _configure_single_part_create(mock_requests, url="http://example.com/upload", headers=None):
@@ -812,7 +818,7 @@ def _configure_single_part_create(mock_requests, url="http://example.com/upload"
 
 
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_basic(mock_requests, tmp_path):
+def test_single_part_uploader_basic(mock_requests, tmp_path, upload_auth):
     uploader = _make_single_part_blob_uploader(tmp_path)
     _configure_single_part_create(mock_requests)
 
@@ -836,7 +842,7 @@ def test_single_part_uploader_basic(mock_requests, tmp_path):
 
 
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path):
+def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path, upload_auth):
     uploader = _make_single_part_blob_uploader(tmp_path, progress_bar=True)
     _configure_single_part_create(mock_requests)
 
@@ -852,7 +858,7 @@ def test_single_part_uploader_with_progress_bar(mock_requests, tmp_path):
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path):
+def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path, upload_auth):
     uploader = _make_single_part_blob_uploader(tmp_path)
     _configure_single_part_create(mock_requests)
 
@@ -870,7 +876,7 @@ def test_single_part_uploader_retries_on_http_error(mock_requests, _, tmp_path):
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_path):
+def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_path, upload_auth):
     uploader = _make_single_part_blob_uploader(tmp_path)
     _configure_single_part_create(mock_requests)
 
@@ -887,7 +893,7 @@ def test_single_part_uploader_retries_on_transient_status(mock_requests, _, tmp_
 
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_retries_auth_errors_with_fresh_url(mock_requests, _, tmp_path):
+def test_single_part_uploader_retries_auth_errors_with_fresh_url(mock_requests, _, tmp_path, upload_auth):
     uploader = _make_single_part_blob_uploader(tmp_path)
     _configure_single_part_create(mock_requests)
 
@@ -911,7 +917,9 @@ def test_single_part_uploader_retries_auth_errors_with_fresh_url(mock_requests, 
 @pytest.mark.parametrize("content", [b"hello world", b""])
 @mock.patch("time.sleep", return_value=None)
 @mock.patch("lightning_sdk.api.utils.requests")
-def test_single_part_uploader_does_not_retry_client_error(mock_requests, _, tmp_path, content, status_code):
+def test_single_part_uploader_does_not_retry_client_error(
+    mock_requests, _, tmp_path, content, status_code, upload_auth
+):
     uploader = _make_single_part_blob_uploader(tmp_path, content=content)
     _configure_single_part_create(mock_requests)
 

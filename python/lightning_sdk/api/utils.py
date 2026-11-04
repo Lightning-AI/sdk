@@ -254,7 +254,6 @@ class _BlobUploader:
         if self.filesize > self.chunk_size * _MAX_UPLOAD_PARTS:
             self.chunk_size = math.ceil(self.filesize / _MAX_UPLOAD_PARTS)
         self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
-        self._auth_headers = _authenticate_and_get_auth_headers()
 
     def __call__(self) -> None:
         """Execute the upload, dispatching to single-part or multipart."""
@@ -299,7 +298,7 @@ class _BlobUploader:
         body: Dict[str, Any] = {"blobs": [blob]}
         if self.cluster_id:
             body["cluster_id"] = self.cluster_id
-        r = requests.post(url, json=body, headers=self._auth_headers, timeout=30)
+        r = requests.post(url, json=body, headers=_authenticate_and_get_auth_headers(), timeout=30)
         if r.status_code >= 500 or r.status_code == 429:
             raise HTTPError(
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r

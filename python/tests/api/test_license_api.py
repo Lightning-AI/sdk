@@ -40,8 +40,8 @@ def test_license_api_initialization(mock_cloud_url, mock_api_class, mock_auth_cl
     license_api = LicenseApi(test_token)
 
     mock_auth_class.assert_called_once()
-    mock_auth_instance.token_login.assert_called_once_with(test_token, save_token=True)
-    mock_auth_instance.create_api_client.assert_called_once()
+    mock_auth_instance.token_login.assert_called_once_with(test_token, save_token=False)
+    mock_auth_instance.create_api_client.assert_called_once_with(override="auth_token")
     mock_api_class.assert_called_once_with(mock_client)
     assert license_api._api == mock_api_instance
 

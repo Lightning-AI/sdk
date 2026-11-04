@@ -506,7 +506,6 @@ class LogsApi:
                 "Following logs requires the 'websocket-client' package (pip install websocket-client)."
             ) from ex
 
-        auth_header = Auth().authenticate()
         url = _websocket_url(follow_url)
         # Poll `recv()` rather than blocking on it, so `stop` and `idle_timeout` get a chance to
         # run. The poll has to stay below the server's heartbeat interval: a heartbeat resets the
@@ -521,6 +520,7 @@ class LogsApi:
         while True:
             ws = None
             try:
+                auth_header = Auth().authenticate()
                 # The handshake gets a longer budget than the deliberately short read poll.
                 ws = websocket.create_connection(
                     url, header=[f"Authorization: {auth_header}"], timeout=_CONNECT_TIMEOUT

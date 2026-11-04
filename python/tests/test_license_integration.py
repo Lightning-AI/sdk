@@ -40,7 +40,8 @@ def test_full_license_validation_workflow(mock_cloud_url, mock_api_class, mock_a
 
     # Assert
     assert result is True
-    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=True)
+    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=False)
+    mock_auth_instance.create_api_client.assert_called_once_with(override="auth_token")
     mock_api_instance.product_license_service_validate_license.assert_called_once()
 
 
@@ -71,7 +72,8 @@ def test_full_license_validation_workflow_failure(mock_cloud_url, mock_api_class
 
     # Assert
     assert result is False
-    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=True)
+    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=False)
+    mock_auth_instance.create_api_client.assert_called_once_with(override="auth_token")
     mock_api_instance.product_license_service_validate_license.assert_called_once()
 
 
@@ -101,5 +103,20 @@ def test_full_license_validation_workflow_exception(mock_cloud_url, mock_api_cla
         license_obj.validate()
 
     assert str(exc_info.value) == f"Invalid license key {license_key} for product {product_name}"
-    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=True)
+    mock_auth_instance.token_login.assert_called_once_with(license_key, save_token=False)
+    mock_auth_instance.create_api_client.assert_called_once_with(override="auth_token")
     mock_api_instance.product_license_service_validate_license.assert_called_once()
+
+
+def test_license_validation_leaves_the_saved_login_unchanged():
+    from lightning_sdk.api.license_api import LicenseApi
+
+    fake_auth = Mock()
+
+    with patch("lightning_sdk.api.license_api.Auth", return_value=fake_auth), patch(
+        "lightning_sdk.api.license_api.ProductLicenseServiceApi"
+    ):
+        LicenseApi("license-key")
+
+    fake_auth.token_login.assert_called_once_with("license-key", save_token=False)
+    fake_auth.save.assert_not_called()

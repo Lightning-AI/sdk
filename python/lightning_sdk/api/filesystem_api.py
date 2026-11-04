@@ -31,7 +31,6 @@ class FilesystemApi:
 
     def __init__(self) -> None:
         self._client = cached_lightning_client()
-        self._auth_headers = _authenticate_and_get_auth_headers()
 
     @property
     def client(self) -> LightningClient:
@@ -75,7 +74,7 @@ class FilesystemApi:
             r = requests.get(
                 f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
                 params=query_params,
-                headers=self._auth_headers,
+                headers=_authenticate_and_get_auth_headers(),
             )
             if r.status_code != 200:
                 raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
@@ -164,7 +163,7 @@ class FilesystemApi:
             try:
                 r = requests.get(
                     url,
-                    headers=self._auth_headers,
+                    headers=_authenticate_and_get_auth_headers(),
                     stream=True,
                     allow_redirects=True,
                     timeout=(_DOWNLOAD_CONNECT_TIMEOUT_SECONDS, _DOWNLOAD_READ_TIMEOUT_SECONDS),
@@ -288,7 +287,7 @@ class FilesystemApi:
         r = requests.delete(
             f"{self._client.api_client.configuration.host}"
             f"/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path.strip('/')}",
-            headers=self._auth_headers,
+            headers=_authenticate_and_get_auth_headers(),
         )
         if r.status_code not in (200, 204):
             raise _RemoteApiError(
@@ -311,7 +310,7 @@ class FilesystemApi:
         r = requests.delete(
             f"{self._client.api_client.configuration.host}"
             f"/v1/projects/{teamspace_id}/artifacts/trees/{remote_path.strip('/')}",
-            headers=self._auth_headers,
+            headers=_authenticate_and_get_auth_headers(),
         )
         if r.status_code not in (200, 204):
             raise _RemoteApiError(

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from lightning_sdk.lightning_cloud import env as lightning_env
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.openapi import JobsServiceApi, SandboxesServiceApi
 from lightning_sdk.lightning_cloud.openapi.models import (
     SandboxesServiceCreateSandboxDirectoryBody,
@@ -17,7 +17,7 @@ from lightning_sdk.lightning_cloud.openapi.models import (
     V1SandboxSnapshot,
 )
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import LightningClient, credential_request_wrapper
 
 
 @dataclass
@@ -228,10 +228,9 @@ class SandboxApi:
     def _ensure_auth(self) -> None:
         if self._auth_configured:
             return
-        auth_header = Auth().authenticate()
-        if not auth_header:
-            raise RuntimeError("Missing credentials: set api_key via configure() or use lightning login / env vars.")
-        self._client.api_client.set_default_header("Authorization", auth_header)
+        self._client.api_client.request = credential_request_wrapper(
+            self._client.api_client.request, CredentialSource()
+        )
         self._auth_configured = True
 
     @property
@@ -243,11 +242,13 @@ class SandboxApi:
         return str(self._client.api_client.configuration.host).rstrip("/")
 
     def auth_header(self) -> str:
-        """Return the configured Authorization header, authenticating lazily when needed."""
+        """Return the Authorization header the next request would send."""
         self._ensure_auth()
-        headers = getattr(self._client.api_client, "default_headers", {})
-        auth = headers.get("Authorization", "") if isinstance(headers, dict) else ""
-        return str(auth or "")
+        if self._config.get("api_key"):
+            headers = getattr(self._client.api_client, "default_headers", {})
+            auth = headers.get("Authorization", "") if isinstance(headers, dict) else ""
+            return str(auth or "")
+        return CredentialSource().header()
 
     def sandboxes(self) -> SandboxesServiceApi:
         self._ensure_auth()
