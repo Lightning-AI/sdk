@@ -34,7 +34,7 @@ LONG_HELP_OPTION_NAMES = ["--help"]
 
 def _auth_header_without_browser() -> Optional[str]:
     auth = Auth()
-    if not (auth.api_key or auth.auth_token):
+    if not auth.auth_token:
         try:
             if not auth.load():
                 return None

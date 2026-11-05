@@ -41,7 +41,7 @@ def test_the_interim_login_saves_the_sess_as_auth_token_and_the_next_request_sen
     [sign_in] = platform.sign_ins
     assert re.fullmatch(r"http://localhost:\d+/login-complete\?state=[\w-]+", sign_in["redirectTo"])
     saved = _saved()
-    assert saved == {"user_id": "user-1", "api_key": "", "auth_token": saved["auth_token"]}
+    assert saved == {"user_id": "user-1", "auth_token": saved["auth_token"]}
     assert saved["auth_token"].startswith("sess_")
     assert browser.landed == f"{platform.url}/cli-login-successful"
     assert CredentialSource().resolve().kind is CredentialKind.SESSION
@@ -118,7 +118,7 @@ def test_the_interim_login_never_saves_the_legacy_key_the_callback_carries(platf
     start_login()
     browser.finish()
 
-    assert _saved()["api_key"] == ""
+    assert "api_key" not in _saved()
     assert "key_legacy" not in Auth.secrets_file.read_text()
 
 

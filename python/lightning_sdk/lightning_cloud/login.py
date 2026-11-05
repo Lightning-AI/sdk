@@ -29,12 +29,11 @@ from lightning_sdk.lightning_cloud.openapi.models.v1_refresh_request import \
 logger = logging.getLogger(__name__)
 
 # Authentication override types
-AuthOverride = Literal["auth_token", "api_key"]
+AuthOverride = Literal["auth_token"]
 
 class Keys(Enum):
     # USERNAME = "LIGHTNING_USERNAME"
     USER_ID = "LIGHTNING_USER_ID"
-    API_KEY = "LIGHTNING_API_KEY"
     AUTH_TOKEN = "LIGHTNING_AUTH_TOKEN"
 
     @property
@@ -46,7 +45,6 @@ class Keys(Enum):
 class Auth:
     # username: Optional[str] = None
     user_id: Optional[str] = None
-    api_key: Optional[str] = None
     auth_token: Optional[str] = None
 
     secrets_file = pathlib.Path(env.LIGHTNING_CREDENTIAL_PATH)
@@ -81,10 +79,12 @@ class Auth:
         auth_token: str = "",
         # username: str = "",
     ) -> None:
-        """Replace the saved login with the given fields. ``token`` is ignored."""
+        """Replace the saved login. ``token`` and ``api_key`` are ignored.
+
+        The CLI on main still calls ``save(token=..., api_key=...)``.
+        """
         stored = {
             Keys.USER_ID.suffix: user_id,
-            Keys.API_KEY.suffix: api_key,
             Keys.AUTH_TOKEN.suffix: auth_token,
         }
 
@@ -116,18 +116,14 @@ class Auth:
 
         By default, returns the credential every request would send: the file
         named by ``LIGHTNING_AUTH_TOKEN_FILE``, then ``LIGHTNING_AUTH_TOKEN``,
-        then the saved login, then ``LIGHTNING_API_KEY`` while
-        ``LIGHTNING_CLI_OIDC_LOGIN`` is unset. That key is
-        ``Basic base64(<LIGHTNING_USER_ID>:<LIGHTNING_API_KEY>)`` when
-        ``LIGHTNING_USER_ID`` is set, and Bearer otherwise. A saved ``api_key``
-        is never used. This never opens a browser.
+        then the saved login, then the interim session. This never opens a
+        browser.
 
         Parameters
         ----------
         override : AuthOverride, optional
             Use a token held by this instance instead:
             - "auth_token": this instance's auth token, as Bearer
-            - "api_key": this instance's API key, as Bearer
             - None: the credential every request would send (default)
 
         Returns
@@ -147,15 +143,6 @@ class Auth:
                     "Please use token_login() method first."
                 )
             return f"Bearer {self.auth_token}"
-
-        elif override == "api_key":
-            if not self.api_key:
-                raise ValueError(
-                    "API key override requested but no API key available. "
-                    "Please set LIGHTNING_API_KEY environment variable "
-                    "or use authenticate() method."
-                )
-            return f"Bearer {self.api_key}"
 
         elif override is None:
             from lightning_sdk.lightning_cloud.credentials import CredentialSource, browser_login
@@ -184,9 +171,7 @@ class Auth:
         ----------
         authorization header to use when authentication completes. With no
         credential, this logs in through ``_run_server``, unless browser login
-        is turned off. While ``LIGHTNING_CLI_OIDC_LOGIN`` is unset, an
-        ``LIGHTNING_API_KEY`` with nothing ahead of it is that header: Basic
-        when ``LIGHTNING_USER_ID`` is set, Bearer otherwise.
+        is turned off.
         """
         from lightning_sdk.lightning_cloud.credentials import CredentialSource
 
