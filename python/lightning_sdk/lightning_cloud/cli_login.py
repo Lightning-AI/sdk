@@ -48,7 +48,7 @@ _BROWSER_TIMED_OUT = (
 )
 _NO_KEYCHAIN = (
     "No OS keychain is available to store the login. Run "
-    "`lightning login --insecure-storage` to keep it in a file only you can read."
+    "`lightning login --no-keychain` to keep it in a file only you can read."
 )
 _PASTE_WARNING = (
     "The code gives access to your Lightning account. Paste it only into the "
@@ -97,10 +97,10 @@ def oidc_login_enabled() -> bool:
 
 def login(
     no_browser: bool = False,
-    insecure_storage: bool = False,
+    no_keychain: bool = False,
 ) -> Login:
     """Log in through the browser, or by pasting the code the login page shows."""
-    if insecure_storage:
+    if no_keychain:
         storage = _FileStorage.kind
     elif _keychain_available():
         storage = _KeychainStorage.kind
@@ -387,7 +387,7 @@ class _KeychainStorage:
 
 
 class _FileStorage:
-    """Tokens in the login file itself, for --insecure-storage."""
+    """Tokens in the login file itself, for --no-keychain."""
 
     kind = "file"
 

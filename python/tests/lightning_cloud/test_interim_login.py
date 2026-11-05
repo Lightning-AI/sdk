@@ -183,7 +183,7 @@ def test_the_switch_is_read_when_each_login_starts(platform, monkeypatch):
     ("options", "named"),
     [
         ({"no_browser": True}, "--no-browser"),
-        ({"insecure_storage": True}, "--insecure-storage"),
+        ({"no_keychain": True}, "--no-keychain"),
     ],
 )
 def test_without_the_switch_an_option_only_the_new_login_has_is_refused(platform, monkeypatch, options, named):
