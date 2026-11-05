@@ -1278,7 +1278,7 @@ def test_upload_file_leading_slash(
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_response = mock.Mock()
     mock_response.status_code = 200
-    mock_response.headers = {"content-length": "1024"}
+    mock_response.headers = {"content-length": "1024", "x-amz-meta-mtime": "1700000000.123456789"}
     mock_response.iter_content = mock.Mock(return_value=[b"data" * 256])
     mock_requests_get.return_value = mock_response
 
@@ -1286,6 +1286,8 @@ def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
 
     filepath = os.path.join(tmpdir, "file1")
     studio_api.download_file("file1", filepath, "st-abc", "ts-abc", "cluster-abc")
+    assert os.stat(filepath).st_mtime_ns == 1700000000123456789
+    mock_requests_get.assert_called_once()
     mock_authenticate.assert_called_once_with()
 
 
@@ -2218,3 +2220,30 @@ def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
     params = [call[1]["params"] for call in mock_requests_get.call_args_list]
     assert "cursor" not in params[0]
     assert params[1]["cursor"] == "cursor-1"
+
+
+@mock.patch("lightning_sdk.api.studio_api._authenticate_and_get_auth_headers")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+@mock.patch("requests.get", autospec=True)
+def test_download_folder_preserves_mtime(mock_get, _mock_client, _mock_auth, tmp_path, inline_executor_cls):
+    api = StudioApi()
+    api.list_files = mock.Mock(return_value=[{"path": "nested/file.txt", "size": 4}])
+    response = mock.Mock(status_code=200)
+    response.headers = {"content-length": "4", "x-goog-meta-mtime": "2023-11-14T22:13:20.123456789Z"}
+    response.iter_content.return_value = iter([b"data"])
+    mock_get.return_value = response
+
+    with mock.patch("lightning_sdk.api.studio_api.ThreadPoolExecutor", inline_executor_cls):
+        api.download_folder(
+            "data",
+            str(tmp_path),
+            "st-abc",
+            "ts-abc",
+            "cluster-abc",
+            progress_bar=False,
+        )
+
+    target = tmp_path / "nested/file.txt"
+    assert target.read_bytes() == b"data"
+    assert target.stat().st_mtime_ns == 1700000000123456789
+    mock_get.assert_called_once()

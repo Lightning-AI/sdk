@@ -888,12 +888,15 @@ def _stub_response(status_code: int, body: bytes) -> mock.Mock:
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_requests_get.return_value = _stub_response(200, b"data" * 256)
+    mock_requests_get.return_value.headers["x-amz-meta-mtime"] = "1700000000.123456789"
 
     teamspace_api = TeamspaceApi()
 
     filepath = os.path.join(tmpdir, "file1")
     teamspace_api.download_file("file1", filepath, "ts-abc", "cluster-abc")
     assert Path(filepath).read_bytes() == b"data" * 256
+    assert Path(filepath).stat().st_mtime_ns == 1700000000123456789
+    mock_requests_get.assert_called_once()
     mock_authenticate.assert_called_once_with()
 
 
@@ -1344,3 +1347,22 @@ def test_list_workload_tags_tolerates_a_teamspace_with_no_tags():
     teamspace_api._client.jobs_service_list_workload_tags.return_value = V1ListWorkloadTagsResponse(tags=None)
 
     assert teamspace_api.list_workload_tags("ts-abc") == []
+
+
+@mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+@mock.patch("requests.get", autospec=True)
+def test_download_folder_preserves_mtime(mock_get, _mock_client, _mock_auth, tmp_path, inline_executor_cls):
+    api = TeamspaceApi()
+    api.list_files = mock.Mock(return_value=[{"path": "nested/file.txt", "size": 4}])
+    response = _stub_response(200, b"data")
+    response.headers["x-goog-meta-mtime"] = "2023-11-14T22:13:20.123456789Z"
+    mock_get.return_value = response
+
+    with mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor", inline_executor_cls):
+        api.download_folder("data", str(tmp_path), "ts-abc", progress_bar=False)
+
+    target = tmp_path / "nested/file.txt"
+    assert target.read_bytes() == b"data"
+    assert target.stat().st_mtime_ns == 1700000000123456789
+    mock_get.assert_called_once()
