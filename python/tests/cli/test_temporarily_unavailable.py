@@ -12,6 +12,7 @@ from lightning_sdk.cli.lockdown import GATED_COMMANDS, LOCKDOWN_ENV, UNAVAILABLE
 from lightning_sdk.cli.utils.lockdown_status import (
     LOCKDOWN_FLAG,
     RW_FILESYSTEM,
+    STUDIO_DELETE,
     STUDIO_SIDECAR_AUTH,
     STUDIO_SSH,
     STUDIO_SWITCHING,
@@ -208,6 +209,7 @@ def test_commands_the_lockdown_allows_stay_runnable(path: str) -> None:
         ["upload", "folder", "a"],
         ["list", "jobs"],
         ["delete", "job", "job-1"],
+        ["delete", "studio", "dev"],
         ["stop", "studio", "--name", "dev"],
         ["start", "studio", "--name", "dev"],
     ],
@@ -282,6 +284,14 @@ def test_studio_cp_refuses_only_uploads_while_uploads_are_closed(args: list[str]
 
     assert (_NOTICE in result.output) is uploading
     assert filesystem.return_value.copy.call_count == (0 if uploading else 1)
+
+
+def test_studio_delete_stays_unavailable_until_studio_delete_is_open(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(STUDIOS))
+
+    assert is_temporarily_unavailable(_resolve("studio delete"))
+    _set_flags(monkeypatch, _held(STUDIOS, STUDIO_DELETE))
+    assert not is_temporarily_unavailable(_resolve("studio delete"))
 
 
 def test_studio_switch_stays_unavailable_while_only_start_and_stop_are_open(monkeypatch) -> None:
