@@ -151,6 +151,23 @@ def test_with_the_switch_unset_login_says_an_api_key_needs_no_login(platform, br
     assert not Auth.secrets_file.exists()
 
 
+def test_with_the_switch_unset_login_replaces_a_saved_session_that_outranks_an_api_key(
+    platform, browser, monkeypatch
+) -> None:
+    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
+    previous = platform.mint_session("user-1")
+    Auth().save(auth_token=previous)
+
+    result = _invoke(main_cli, ["login"])
+
+    assert result.exit_code == 0, _text(result)
+    assert _LOGIN_NOT_REQUIRED not in _text(result)
+    assert platform.sign_ins
+    assert previous in platform.logouts()
+    assert _saved_session() not in ("", previous)
+
+
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 def test_with_the_switch_set_login_warns_that_an_api_key_is_ignored_and_continues(
     platform, browser, monkeypatch, cli

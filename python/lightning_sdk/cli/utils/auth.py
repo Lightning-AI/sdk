@@ -7,7 +7,13 @@ from typing import Any, Dict, Optional, Sequence
 import click
 
 from lightning_sdk.lightning_cloud import cli_login, env
-from lightning_sdk.lightning_cloud.credentials import CredentialKind, LoginUnavailable, logout, start_login
+from lightning_sdk.lightning_cloud.credentials import (
+    CredentialKind,
+    CredentialSource,
+    LoginUnavailable,
+    logout,
+    start_login,
+)
 from lightning_sdk.lightning_cloud.credentials import browser_login as browser_authentication
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
@@ -86,14 +92,18 @@ def run_login(
         )
     if _env_set("LIGHTNING_API_KEY"):
         if not cli_login.oidc_login_enabled():
+            # A saved login outranks the key, so a stale one can only be replaced by logging in.
+            sent = CredentialSource().resolve()
+            if sent is not None and sent.kind is CredentialKind.LEGACY_KEY:
+                click.echo(
+                    '"lightning login" is not required within a Studio or when credentials are set in the environment'
+                )
+                return
+        else:
             click.echo(
-                '"lightning login" is not required within a Studio or when credentials are set in the environment'
+                "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
+                err=True,
             )
-            return
-        click.echo(
-            "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
-            err=True,
-        )
     if in_studio():
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
