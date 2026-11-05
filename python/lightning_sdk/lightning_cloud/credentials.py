@@ -8,7 +8,7 @@ import dataclasses
 import enum
 import os
 import pathlib
-from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 
 from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer, Keys
@@ -164,8 +164,6 @@ class CredentialSource:
 def start_login(
     no_browser: bool = False,
     insecure_storage: bool = False,
-    orgs: Optional[Sequence[str]] = None,
-    project: Optional[str] = None,
     sign_in_params: Optional[Dict[str, str]] = None,
 ) -> Optional[cli_login.Login]:
     """Log in with the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects when this is called.
@@ -178,16 +176,12 @@ def start_login(
         return cli_login.login(
             no_browser=no_browser,
             insecure_storage=insecure_storage,
-            orgs=orgs,
-            project=project,
         )
     unavailable = [
         flag
         for flag, given in (
             ("--no-browser", no_browser),
             ("--insecure-storage", insecure_storage),
-            ("--org", orgs),
-            ("--project", project),
         )
         if given
     ]

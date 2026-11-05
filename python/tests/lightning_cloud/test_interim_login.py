@@ -184,8 +184,6 @@ def test_the_switch_is_read_when_each_login_starts(platform, monkeypatch):
     [
         ({"no_browser": True}, "--no-browser"),
         ({"insecure_storage": True}, "--insecure-storage"),
-        ({"orgs": ["acme"]}, "--org"),
-        ({"project": "research"}, "--project"),
     ],
 )
 def test_without_the_switch_an_option_only_the_new_login_has_is_refused(platform, monkeypatch, options, named):
@@ -200,11 +198,10 @@ def test_without_the_switch_an_option_only_the_new_login_has_is_refused(platform
     assert platform.requests == []
 
 
-def test_with_the_switch_the_new_login_takes_the_hints_and_ignores_sign_in_params(platform, browser, _oidc_login):
-    made = start_login(orgs=["acme"], project="research", sign_in_params={"okbhrt": "code"})
+def test_with_the_switch_the_new_login_ignores_sign_in_params(platform, browser, _oidc_login):
+    made = start_login(sign_in_params={"okbhrt": "code"})
 
     [consent] = platform.authorizations
-    assert (consent["orgs_hint"], consent["project_hint"]) == ("acme", "research")
     assert "okbhrt" not in consent
     assert made.grant == {"orgs": "all", "permissions": ["read", "write"]}
 

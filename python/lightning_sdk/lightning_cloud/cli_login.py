@@ -18,7 +18,7 @@ import tempfile
 import time
 import webbrowser
 from datetime import datetime
-from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 import requests
@@ -98,8 +98,6 @@ def oidc_login_enabled() -> bool:
 def login(
     no_browser: bool = False,
     insecure_storage: bool = False,
-    orgs: Optional[Sequence[str]] = None,
-    project: Optional[str] = None,
 ) -> Login:
     """Log in through the browser, or by pasting the code the login page shows."""
     if insecure_storage:
@@ -108,7 +106,7 @@ def login(
         storage = _KeychainStorage.kind
     else:
         raise LoginError(_NO_KEYCHAIN)
-    attempt = _Attempt(_origin(), storage, orgs, project)
+    attempt = _Attempt(_origin(), storage)
     if not no_browser:
         done = _browser_login(attempt)
         if done is not None:
@@ -157,22 +155,11 @@ def _request_token(rejected: Optional[str] = None) -> Optional[str]:
 class _Attempt:
     """One login: its state, its PKCE verifier and where it will be stored."""
 
-    def __init__(
-        self,
-        origin: str,
-        storage: str,
-        orgs: Optional[Sequence[str]],
-        project: Optional[str],
-    ) -> None:
+    def __init__(self, origin: str, storage: str) -> None:
         self.origin = origin
         self.storage = storage
         self.state = secrets.token_urlsafe(32)
         self._verifier = secrets.token_urlsafe(48)
-        self._hints = {}
-        if orgs:
-            self._hints["orgs_hint"] = orgs if isinstance(orgs, str) else ",".join(orgs)
-        if project:
-            self._hints["project_hint"] = project
 
     def authorize_url(self, redirect_uri: str) -> str:
         digest = hashlib.sha256(self._verifier.encode()).digest()
@@ -184,7 +171,6 @@ class _Attempt:
             "state": self.state,
             "code_challenge": base64.urlsafe_b64encode(digest).rstrip(b"=").decode(),
             "code_challenge_method": "S256",
-            **self._hints,
         }
         return f"{self.origin}/oidc/authorize?{urlencode(query)}"
 

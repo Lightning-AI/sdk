@@ -97,22 +97,12 @@ def test_status_shows_grant_storage_and_expiries_without_tokens(platform, browse
     assert not hasattr(status, "refresh_token")
 
 
-def test_org_and_project_hints_reach_the_consent_page(platform, browser):
-    cli_login.login(orgs=["acme", "beta"], project="research")
+def test_the_authorize_url_carries_no_org_or_project_hint(platform, browser):
+    cli_login.login()
 
     consent = platform.authorizations[0]
-    assert consent["orgs_hint"] == "acme,beta"
-    assert consent["project_hint"] == "research"
-
-
-def test_paste_back_sends_the_same_hints_as_the_browser(platform, monkeypatch, capsys):
-    _paste_codes(monkeypatch, platform, capsys, ["CODE"])
-
-    cli_login.login(no_browser=True, orgs=["acme", "beta"], project="research")
-
-    consent = platform.authorizations[0]
-    assert consent["orgs_hint"] == "acme,beta"
-    assert consent["project_hint"] == "research"
+    assert "orgs_hint" not in consent
+    assert "project_hint" not in consent
 
 
 def test_the_loopback_answers_other_paths_with_404_and_keeps_waiting(platform, monkeypatch):
