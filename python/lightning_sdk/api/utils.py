@@ -728,6 +728,10 @@ _DOWNLOAD_MAX_TRIES = 5
 # Statuses that signal a temporary condition rather than a fault in the request.
 _RETRYABLE_DOWNLOAD_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 
+_S3_R2_MTIME_HEADER = "x-amz-meta-mtime"
+_GCS_MTIME_HEADER = "x-goog-meta-mtime"
+_GCS_RESERVED_MTIME_HEADER = "x-goog-meta-goog-reserved-file-mtime"
+
 
 class _TransientDownloadError(RuntimeError):
     """A download failure worth retrying: a dropped connection, a timeout, or a temporary server condition."""
@@ -804,9 +808,9 @@ class _RetryableProgress:
 
 
 def _original_download_mtime_ns(response: requests.Response) -> int:
-    value = response.headers.get("x-amz-meta-mtime")
-    if value is None and "x-goog-meta-mtime" not in response.headers:
-        value = response.headers.get("x-goog-meta-goog-reserved-file-mtime")
+    value = response.headers.get(_S3_R2_MTIME_HEADER)
+    if value is None and _GCS_MTIME_HEADER not in response.headers:
+        value = response.headers.get(_GCS_RESERVED_MTIME_HEADER)
     if value is not None:
         if re.fullmatch(r"-?[0-9]{1,10}(?:\.[0-9]{1,9})?", value) is None:
             raise ValueError("invalid modification time metadata")
@@ -814,7 +818,7 @@ def _original_download_mtime_ns(response: requests.Response) -> int:
         fraction_ns = int(fraction.ljust(9, "0"))
         mtime_ns = int(whole) * 1_000_000_000
         mtime_ns += -fraction_ns if value.startswith("-") else fraction_ns
-    elif (value := response.headers.get("x-goog-meta-mtime")) is not None:
+    elif (value := response.headers.get(_GCS_MTIME_HEADER)) is not None:
         match = re.fullmatch(r"(.*:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})", value)
         if match is None:
             raise ValueError("invalid modification time metadata")
