@@ -228,7 +228,7 @@ def _login_with_session_token(self: AuthServer, auth: Auth) -> None:
             )
         raise RuntimeError(
             "Failed to authenticate to Lightning. When running without access to a browser, "
-            "'LIGHTNING_API_KEY' should be exported."
+            "'LIGHTNING_AUTH_TOKEN' should be exported."
         )
 
     @app.get("/login-complete")
