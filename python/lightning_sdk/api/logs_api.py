@@ -522,8 +522,8 @@ class LogsApi:
         refreshed = False
         while True:
             ws = None
+            auth_header = Auth().auth_header
             try:
-                auth_header = Auth().auth_header
                 # The handshake gets a longer budget than the deliberately short read poll.
                 ws = websocket.create_connection(
                     url, header=[f"Authorization: {auth_header}"], timeout=_CONNECT_TIMEOUT

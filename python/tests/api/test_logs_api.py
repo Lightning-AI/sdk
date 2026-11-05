@@ -13,6 +13,7 @@ from lightning_sdk.api.logs_api import (
     _websocket_url,
     parse_log_entries,
 )
+from lightning_sdk.lightning_cloud.cli_login import LoginError
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1GetLogsResponse, V1JobLogEntry
 
@@ -412,6 +413,23 @@ def test_follow_says_to_log_in_when_a_refused_token_cannot_refresh(fake_websocke
 
     assert _sent_tokens(fake_websocket) == [["Authorization: Bearer old-token"]]
     sleep.assert_not_called()
+
+
+def test_follow_fails_at_once_when_the_token_file_cannot_be_read(fake_websocket, monkeypatch, tmp_path) -> None:
+    token_path = tmp_path / "token"
+    token_path.mkdir()
+    monkeypatch.setattr("lightning_sdk.api.logs_api.Auth", Auth)
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(token_path))
+    stop = mock.MagicMock(return_value=True)
+
+    with mock.patch("lightning_sdk.api.logs_api.time.sleep") as sleep, pytest.raises(
+        LoginError, match="which can't be read"
+    ):
+        list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", stop=stop))
+
+    fake_websocket.create_connection.assert_not_called()
+    sleep.assert_not_called()
+    stop.assert_not_called()
 
 
 def test_follow_reconnects_once_with_a_refreshed_token(fake_websocket, token_file) -> None:
