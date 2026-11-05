@@ -45,7 +45,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import _LOGIN_MESSAGE, LightningClient
 from lightning_sdk.machine import Machine
 
 
@@ -1274,7 +1274,11 @@ def to_iso_z(dt: datetime) -> str:
 
 
 class CredentialAuth(AuthBase):
-    """Sets ``Authorization`` when a request is prepared, and retries one 401 after a refresh."""
+    """Sets ``Authorization`` when a request is prepared, and retries one 401 after a refresh.
+
+    A 401 that no refresh fixes raises ``ConnectionError`` saying to run ``lightning login``,
+    as the generated client does.
+    """
 
     def __init__(self, source: Optional[CredentialSource] = None) -> None:
         self._source = source or CredentialSource()
@@ -1287,18 +1291,24 @@ class CredentialAuth(AuthBase):
         if not user_agent or user_agent == requests.utils.default_user_agent():
             request.headers["User-Agent"] = env.USER_AGENT
 
+        retried = False
+
         def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
-            if getattr(handle, "retried", False) or response.status_code != 401:
+            nonlocal retried
+            if retried or response.status_code != 401:
                 return response
-            if not self._source.refresh(header):
-                return response
-            handle.retried = True
             # The connection stays checked out until the body is read, so the retry can reuse it.
             _ = response.content
             response.close()
+            if not self._source.refresh(header):
+                raise ConnectionError(_LOGIN_MESSAGE)
+            retried = True
             prepared = response.request.copy()
             prepared.headers["Authorization"] = self._source.header()
             retry = response.connection.send(prepared, **kwargs)
+            if retry.status_code == 401:
+                retry.close()
+                raise ConnectionError(_LOGIN_MESSAGE)
             retry.history.append(response)
             retry.request = prepared
             return retry

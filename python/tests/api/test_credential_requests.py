@@ -1,5 +1,6 @@
 """Raw requests take a credential handler, and a 401 is retried once with a fresh token."""
 
+import re
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -20,12 +21,16 @@ from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform
 from tests.lightning_cloud.utils.keyrings import MemoryKeyring
 
 _REAL_THREAD = threading.Thread
+_LOGIN_FAILED = "Authentication failed. Please run `lightning login`."
 
 
 class _RetryServer:
-    """Answers 401 for ``old-token`` after rewriting the token file, then 200."""
+    """Answers 401 for ``old-token`` after rewriting the token file, then 200.
 
-    def __init__(self, token_path):
+    With ``rotate=False`` the token file is left alone, so the 401 can't be refreshed.
+    """
+
+    def __init__(self, token_path, rotate=True):
         seen = []
         user_agents = []
 
@@ -46,7 +51,8 @@ class _RetryServer:
                 seen.append(token)
                 user_agents.append(self.headers.get("User-Agent"))
                 if token == "old-token":
-                    token_path.write_text("new-token")
+                    if rotate:
+                        token_path.write_text("new-token")
                     status, body = 401, b'{"error":"expired"}'
                 elif "usage-report" in self.path:
                     status, body = 200, b"col\n"
@@ -76,19 +82,63 @@ class _RetryServer:
         self._httpd.server_close()
 
 
-@pytest.fixture()
-def refreshed_token(monkeypatch, tmp_path):
+def _serve_token_file(monkeypatch, tmp_path, rotate):
     threading.Thread = _REAL_THREAD
     for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"):
         monkeypatch.delenv(name, raising=False)
     token_path = tmp_path / "token"
     token_path.write_text("old-token")
     monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(token_path))
-    server = _RetryServer(token_path)
+    server = _RetryServer(token_path, rotate=rotate)
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", server.url)
     monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", server.url)
+    return server
+
+
+@pytest.fixture()
+def refreshed_token(monkeypatch, tmp_path):
+    server = _serve_token_file(monkeypatch, tmp_path, rotate=True)
     yield server
     server.stop()
+
+
+@pytest.fixture()
+def stale_token(monkeypatch, tmp_path):
+    server = _serve_token_file(monkeypatch, tmp_path, rotate=False)
+    yield server
+    server.stop()
+
+
+def _blob_request(url, tmp_path):
+    local = tmp_path / "blob.bin"
+    local.write_bytes(b"hi")
+    uploader = _BlobUploader(
+        client=None,
+        endpoint_base=f"{url}/v1/projects/ts/artifacts",
+        file_path=str(local),
+        remote_path="blob.bin",
+        progress_bar=False,
+    )
+    uploader._post_blob_request("/blobs", {"path": "blob.bin"}, "request upload URLs for")
+
+
+_RAW_PATHS = {
+    "filesystem list": lambda url, tmp_path: FilesystemApi().list_files("ts", "data"),
+    "filesystem download": lambda url, tmp_path: FilesystemApi()._download_single_file("a.bin", tmp_path / "a", "ts"),
+    "studio tree": lambda url, tmp_path: StudioApi().get_tree("st", "ts", "data"),
+    "teamspace tree": lambda url, tmp_path: TeamspaceApi().get_tree("ts", "data"),
+    "billing csv": lambda url, tmp_path: BillingApi()._download_activity_csv(
+        "/v1/billing/usage-report/download/detailed", "org"
+    ),
+    "blob upload": _blob_request,
+}
+
+
+@pytest.mark.parametrize("call", _RAW_PATHS.values(), ids=_RAW_PATHS.keys())
+def test_a_raw_request_refused_with_a_401_no_refresh_fixes_says_to_log_in(stale_token, tmp_path, call):
+    with pytest.raises(ConnectionError, match=re.escape(_LOGIN_FAILED)):
+        call(stale_token.url, tmp_path)
+    assert stale_token.seen == ["old-token"]
 
 
 def test_a_raw_request_sends_the_sdk_user_agent(refreshed_token):
@@ -130,16 +180,7 @@ def test_billing_csv_retries_a_401(refreshed_token):
 
 
 def test_blob_upload_retries_a_401(refreshed_token, tmp_path):
-    local = tmp_path / "blob.bin"
-    local.write_bytes(b"hi")
-    uploader = _BlobUploader(
-        client=None,
-        endpoint_base=f"{refreshed_token.url}/v1/projects/ts/artifacts",
-        file_path=str(local),
-        remote_path="blob.bin",
-        progress_bar=False,
-    )
-    uploader._post_blob_request("/blobs", {"path": "blob.bin"}, "request upload URLs for")
+    _blob_request(refreshed_token.url, tmp_path)
     assert refreshed_token.seen == ["old-token", "new-token"]
 
 
