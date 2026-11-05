@@ -128,6 +128,25 @@ def test_token_file_is_reread_between_requests(isolated_credentials, monkeypatch
     assert seen == ["Bearer sess_one", "Bearer sess_two"]
 
 
+def test_an_unreadable_token_file_is_named_wherever_a_credential_is_read(isolated_credentials, monkeypatch, tmp_path):
+    isolated_credentials.write_text(json.dumps({"auth_token": "sess_saved"}))
+    monkeypatch.setenv(env.LIGHTNING_AUTH_TOKEN_FILE, str(tmp_path))
+    named = re.escape(f"{env.LIGHTNING_AUTH_TOKEN_FILE} names {tmp_path}, which can't be read")
+    seen = []
+
+    def request(method, url, headers=None, **kwargs):
+        seen.append(headers)
+        return "ok"
+
+    with pytest.raises(LoginError, match=named):
+        CredentialSource().resolve()
+    with pytest.raises(LoginError, match=named):
+        Auth().get_auth_header()
+    with pytest.raises(LoginError, match=named):
+        GridRestClient(api_client=_Api(request), with_auth=True).api_client.request("GET", "http://example")
+    assert seen == []
+
+
 @_SWITCH
 def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isolated_credentials, monkeypatch, switch):
     _set_switch(monkeypatch, switch)

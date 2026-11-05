@@ -569,6 +569,7 @@ def _post(path: str, form: Dict[str, str]) -> requests.Response:
             data={"client_id": CLIENT_ID, **form},
             headers={"User-Agent": env.USER_AGENT},
             timeout=(env.LIGHTNING_CLOUD_CONNECT_TIMEOUT, env.LIGHTNING_CLOUD_READ_TIMEOUT),
+            verify=env.SSL_CA_CERT,
         )
     except requests.RequestException as err:
         raise _Unreachable(f"Couldn't reach {origin}. Check your connection and try again.") from err
@@ -610,6 +611,7 @@ def _revoke_session(token: str) -> bool:
             f"{_origin()}/v1/auth/logout",
             headers={"Authorization": f"Bearer {token}", "User-Agent": env.USER_AGENT},
             timeout=(env.LIGHTNING_CLOUD_CONNECT_TIMEOUT, env.LIGHTNING_CLOUD_READ_TIMEOUT),
+            verify=env.SSL_CA_CERT,
         )
     except requests.RequestException:
         return False

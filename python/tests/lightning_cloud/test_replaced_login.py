@@ -1,12 +1,14 @@
 import json
 import webbrowser
+from urllib.parse import urlsplit
 
 import keyring
 import pytest
+import requests
 
-from lightning_sdk.lightning_cloud import cli_login
+from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.cli_login import LoginError
-from lightning_sdk.lightning_cloud.credentials import start_login
+from lightning_sdk.lightning_cloud.credentials import logout, start_login
 from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 from tests.lightning_cloud.utils.fake_platform import FakeBrowser
@@ -87,8 +89,7 @@ def test_replacing_a_login_says_when_that_revoke_fails(platform, monkeypatch, ca
 
     assert platform.family_active(old.refresh_token)
     assert (
-        "The saved login could not be revoked on the server and may work until it expires."
-        in capsys.readouterr().err
+        "The saved login could not be revoked on the server and may work until it expires." in capsys.readouterr().err
     )
 
 
@@ -103,3 +104,26 @@ def test_replacing_a_session_says_when_that_revoke_fails(platform, monkeypatch, 
     err = capsys.readouterr().err
     assert "The saved session could not be revoked on the server and may work until it expires." in err
     assert "The saved login could not be revoked" not in err
+
+
+def test_logins_revokes_and_logout_trust_the_configured_ca_bundle(platform, monkeypatch, tmp_path):
+    bundle = str(tmp_path / "ca.pem")
+    monkeypatch.setattr(env, "SSL_CA_CERT", bundle)
+    sent = []
+    send = requests.adapters.HTTPAdapter.send
+
+    def recording_send(adapter, request, **kwargs):
+        # The fake browser only sends GETs; the SDK's login calls are HEAD and POST.
+        if request.method in ("HEAD", "POST"):
+            sent.append((urlsplit(request.url).path, kwargs.get("verify")))
+        return send(adapter, request, **kwargs)
+
+    monkeypatch.setattr(requests.adapters.HTTPAdapter, "send", recording_send)
+
+    _log_in(platform, monkeypatch, "interim", "user-a")
+    _log_in(platform, monkeypatch, "oidc", "user-b")
+    _log_in(platform, monkeypatch, "oidc", "user-c")
+    assert logout() == ()
+
+    assert {path for path, _ in sent} == {"/sign-in", "/oidc/token", "/oidc/revoke", "/v1/auth/logout"}
+    assert {verify for _, verify in sent} == {bundle}
