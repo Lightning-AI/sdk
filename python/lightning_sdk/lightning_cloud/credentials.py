@@ -174,7 +174,7 @@ class CredentialSource:
 
 def start_login(
     no_browser: bool = False,
-    insecure_storage: bool = False,
+    no_keychain: bool = False,
     sign_in_params: Optional[Dict[str, str]] = None,
 ) -> Optional[cli_login.Login]:
     """Log in with the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects when this is called.
@@ -186,13 +186,13 @@ def start_login(
     if cli_login.oidc_login_enabled():
         return cli_login.login(
             no_browser=no_browser,
-            insecure_storage=insecure_storage,
+            no_keychain=no_keychain,
         )
     unavailable = [
         flag
         for flag, given in (
             ("--no-browser", no_browser),
-            ("--insecure-storage", insecure_storage),
+            ("--no-keychain", no_keychain),
         )
         if given
     ]

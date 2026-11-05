@@ -211,10 +211,10 @@ def test_a_deployment_without_a_browser_says_to_include_sdk_credentials(platform
         cli_login.login()
 
 
-def test_without_a_keychain_login_refuses_and_names_insecure_storage(platform, browser):
+def test_without_a_keychain_login_refuses_and_names_no_keychain(platform, browser):
     keyring.set_keyring(fail.Keyring())
 
-    with pytest.raises(LoginError, match="--insecure-storage"):
+    with pytest.raises(LoginError, match="--no-keychain"):
         cli_login.login()
 
     assert browser.visited == []
@@ -231,7 +231,7 @@ def test_a_keychain_that_refuses_the_save_revokes_the_new_login_and_keeps_the_ol
 
     keyring.set_keyring(Refusing())
 
-    with pytest.raises(LoginError, match="--insecure-storage"):
+    with pytest.raises(LoginError, match="--no-keychain"):
         cli_login.login()
 
     [revoked] = platform.calls_to("/oidc/revoke")
@@ -242,10 +242,10 @@ def test_a_keychain_that_refuses_the_save_revokes_the_new_login_and_keeps_the_ol
     assert platform.logouts() == []
 
 
-def test_insecure_storage_keeps_the_login_in_a_file_only_the_user_can_read(platform, browser, clock):
+def test_no_keychain_keeps_the_login_in_a_file_only_the_user_can_read(platform, browser, clock):
     keyring.set_keyring(fail.Keyring())
 
-    made = cli_login.login(insecure_storage=True)
+    made = cli_login.login(no_keychain=True)
 
     assert platform.calls_to("/oidc/token")[0]["storage"] == "file"
     assert platform.family_storage(made.refresh_token) == "file"
