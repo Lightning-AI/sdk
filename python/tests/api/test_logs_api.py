@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta, timezone
 from unittest import mock
 
@@ -12,7 +13,10 @@ from lightning_sdk.api.logs_api import (
     _websocket_url,
     parse_log_entries,
 )
+from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.lightning_cloud.openapi import V1GetLogsResponse, V1JobLogEntry
+
+_LOGIN_FAILED = "Authentication failed. Please run `lightning login`."
 
 
 def _api(*pages):
@@ -275,6 +279,12 @@ class _FakeClosedError(_FakeWebSocketError):
     pass
 
 
+class _FakeBadStatusError(_FakeWebSocketError):
+    def __init__(self, status_code):
+        super().__init__(f"Handshake status {status_code}")
+        self.status_code = status_code
+
+
 @pytest.fixture()
 def fake_websocket(monkeypatch):
     """Stand in for the websocket-client module used by ``LogsApi.follow``."""
@@ -282,6 +292,7 @@ def fake_websocket(monkeypatch):
     module.WebSocketException = _FakeWebSocketError
     module.WebSocketTimeoutException = _FakeTimeoutError
     module.WebSocketConnectionClosedException = _FakeClosedError
+    module.WebSocketBadStatusException = _FakeBadStatusError
     monkeypatch.setitem(__import__("sys").modules, "websocket", module)
     monkeypatch.setattr("lightning_sdk.api.logs_api.Auth", mock.MagicMock())
     return module
@@ -375,6 +386,73 @@ def test_follow_reconnects_after_a_failed_handshake(fake_websocket) -> None:
 
     assert [e.message for e in entries] == ["before", "after"]
     assert fake_websocket.create_connection.call_count == 3
+
+
+@pytest.fixture()
+def token_file(fake_websocket, monkeypatch, tmp_path):
+    """Follow with the real credential source, reading a token file the test controls."""
+    monkeypatch.setattr("lightning_sdk.api.logs_api.Auth", Auth)
+    path = tmp_path / "token"
+    path.write_text("old-token")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(path))
+    return path
+
+
+def _sent_tokens(fake_websocket):
+    return [call.kwargs["header"] for call in fake_websocket.create_connection.call_args_list]
+
+
+def test_follow_says_to_log_in_when_a_refused_token_cannot_refresh(fake_websocket, token_file) -> None:
+    fake_websocket.create_connection.side_effect = _FakeBadStatusError(401)
+
+    with mock.patch("lightning_sdk.api.logs_api.time.sleep") as sleep, pytest.raises(
+        ConnectionError, match=re.escape(_LOGIN_FAILED)
+    ):
+        list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs"))
+
+    assert _sent_tokens(fake_websocket) == [["Authorization: Bearer old-token"]]
+    sleep.assert_not_called()
+
+
+def test_follow_reconnects_once_with_a_refreshed_token(fake_websocket, token_file) -> None:
+    def handshake(url, header, timeout):
+        if header == ["Authorization: Bearer old-token"]:
+            token_file.write_text("new-token")
+            raise _FakeBadStatusError(401)
+        return _FakeSocket(['[{"message":"live"}]'])
+
+    fake_websocket.create_connection.side_effect = handshake
+
+    entries = list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs", stop=lambda: True))
+
+    assert [e.message for e in entries] == ["live"]
+    assert _sent_tokens(fake_websocket) == [
+        ["Authorization: Bearer old-token"],
+        ["Authorization: Bearer new-token"],
+    ]
+
+
+def test_follow_says_to_log_in_when_the_refreshed_token_is_refused_too(fake_websocket, token_file) -> None:
+    def handshake(url, header, timeout):
+        token_file.write_text("new-token")
+        raise _FakeBadStatusError(401)
+
+    fake_websocket.create_connection.side_effect = handshake
+
+    with pytest.raises(ConnectionError, match=re.escape(_LOGIN_FAILED)):
+        list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs"))
+
+    assert fake_websocket.create_connection.call_count == 2
+
+
+def test_follow_stops_on_a_forbidden_handshake(fake_websocket, token_file) -> None:
+    fake_websocket.create_connection.side_effect = _FakeBadStatusError(403)
+
+    with mock.patch("lightning_sdk.api.logs_api.time.sleep") as sleep, pytest.raises(_FakeBadStatusError):
+        list(LogsApi(client=mock.MagicMock()).follow("wss://host/logs"))
+
+    assert fake_websocket.create_connection.call_count == 1
+    sleep.assert_not_called()
 
 
 def test_follow_does_not_swallow_a_failed_handshake_without_reconnect(fake_websocket) -> None:
