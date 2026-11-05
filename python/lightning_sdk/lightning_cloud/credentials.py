@@ -78,6 +78,11 @@ def _from_token_file() -> Optional[str]:
         raw = pathlib.Path(path).read_text()
     except FileNotFoundError:
         return None
+    except OSError as err:
+        raise cli_login.LoginError(
+            f"{env.LIGHTNING_AUTH_TOKEN_FILE} names {path}, which can't be read "
+            f"({err.strerror or err}). Fix the file or unset {env.LIGHTNING_AUTH_TOKEN_FILE}."
+        ) from err
     return _present(raw)
 
 
