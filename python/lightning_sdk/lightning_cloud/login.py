@@ -404,6 +404,7 @@ class AuthServer:
                     url,
                     headers={"User-Agent": env.USER_AGENT},
                     timeout=env.LIGHTNING_CLOUD_CONNECT_TIMEOUT,
+                    verify=env.SSL_CA_CERT,
                 )
             except requests.RequestException as err:
                 raise cli_login.LoginError(
