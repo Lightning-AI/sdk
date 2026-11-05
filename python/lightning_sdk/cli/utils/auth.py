@@ -38,6 +38,9 @@ def run_login(
     no_keychain: bool = False,
 ) -> None:
     """Run the login the switch selects, without dropping the saved login first."""
+    if in_studio():
+        raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
+
     if _env_set(env.LIGHTNING_AUTH_TOKEN_FILE):
         raise click.UsageError(
             "LIGHTNING_AUTH_TOKEN_FILE is set, so a new login would not be what requests send. "
@@ -53,8 +56,6 @@ def run_login(
             "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
             err=True,
         )
-    if in_studio():
-        raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
     if no_keychain and cli_login.oidc_login_enabled():
         click.echo(f"This login is kept in a file at {env.LIGHTNING_LOGIN_PATH}.", err=True)

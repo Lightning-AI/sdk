@@ -211,6 +211,19 @@ def test_a_studio_without_credentials_still_refuses_to_log_in(monkeypatch) -> No
     assert "Unable to login within a Studio" in str(result.exception)
 
 
+def test_a_studio_with_a_workload_token_still_refuses_to_log_in(monkeypatch) -> None:
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", "/workload/token")
+    monkeypatch.setenv("LIGHTNING_INTERACTIVE", "true")
+    monkeypatch.setenv("LIGHTNING_CLOUD_SPACE_ID", "studio-1")
+
+    result = _invoke(main_cli, ["login"])
+
+    assert result.exit_code != 0
+    assert "Unable to login within a Studio" in str(result.exception)
+
+
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 def test_logout_revokes_both_kinds_and_names_the_one_the_server_refused(platform, browser, monkeypatch, cli) -> None:
     monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
