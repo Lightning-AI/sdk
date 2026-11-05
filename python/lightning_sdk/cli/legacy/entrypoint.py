@@ -75,13 +75,13 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
     help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
 )
 @click.option(
-    "--insecure-storage",
+    "--no-keychain",
     is_flag=True,
     help="Keep the login in a file instead of the OS keychain.",
 )
-def login(no_browser: bool, insecure_storage: bool) -> None:
+def login(no_browser: bool, no_keychain: bool) -> None:
     """Login to Lightning AI Studios."""
-    run_login(no_browser=no_browser, insecure_storage=insecure_storage)
+    run_login(no_browser=no_browser, no_keychain=no_keychain)
 
 
 @main_cli.command

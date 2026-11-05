@@ -35,7 +35,7 @@ def _env_set(name: str) -> bool:
 
 def run_login(
     no_browser: bool = False,
-    insecure_storage: bool = False,
+    no_keychain: bool = False,
 ) -> None:
     """Run the login the switch selects, without dropping the saved login first."""
     if _env_set(env.LIGHTNING_AUTH_TOKEN_FILE):
@@ -56,12 +56,12 @@ def run_login(
     if in_studio():
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
-    if insecure_storage and cli_login.oidc_login_enabled():
+    if no_keychain and cli_login.oidc_login_enabled():
         click.echo(f"This login is kept in a file at {env.LIGHTNING_LOGIN_PATH}.", err=True)
     try:
         start_login(
             no_browser=no_browser,
-            insecure_storage=insecure_storage,
+            no_keychain=no_keychain,
         )
     except LoginUnavailable as err:
         raise click.UsageError(str(err)) from err

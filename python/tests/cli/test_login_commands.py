@@ -105,7 +105,7 @@ def test_login_uses_the_interim_flow_when_the_switch_is_unset(platform, browser,
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 @pytest.mark.parametrize(
     "args",
-    [["--no-browser"], ["--insecure-storage"]],
+    [["--no-browser"], ["--no-keychain"]],
 )
 def test_interim_login_refuses_flags_the_new_login_needs(isolated, cli, args) -> None:
     result = _invoke(cli, ["login", *args])
@@ -187,10 +187,10 @@ def test_login_with_the_switch_uses_the_new_login(platform, browser, monkeypatch
     assert not platform.sign_ins
 
 
-def test_insecure_storage_warns_and_names_the_login_file(platform, browser, monkeypatch) -> None:
+def test_no_keychain_warns_and_names_the_login_file(platform, browser, monkeypatch) -> None:
     monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
 
-    result = _invoke(main_cli, ["login", "--insecure-storage"])
+    result = _invoke(main_cli, ["login", "--no-keychain"])
 
     assert result.exit_code == 0, _text(result)
     assert env.LIGHTNING_LOGIN_PATH in _text(result)
