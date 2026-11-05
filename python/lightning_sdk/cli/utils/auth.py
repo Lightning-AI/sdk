@@ -6,7 +6,7 @@ import click
 
 from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.credentials import (
-    CredentialKind,
+    REVOKE_FAILED,
     LoginUnavailable,
     logout,
     start_login,
@@ -16,11 +16,6 @@ from lightning_sdk.lightning_cloud.login import Auth
 from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 __all__ = ["browser_authentication", "require_auth_header", "run_login", "run_logout"]
-
-_REVOKE_FAILED = {
-    CredentialKind.LOGIN: ("The saved login could not be revoked on the server and may work until it expires."),
-    CredentialKind.SESSION: ("The saved session could not be revoked on the server and may work until it expires."),
-}
 
 
 def require_auth_header() -> str:
@@ -82,9 +77,7 @@ def run_logout() -> None:
     failed = logout()
     click.echo("Logged out on this machine.")
     for kind in failed:
-        click.echo(
-            _REVOKE_FAILED.get(
-                kind,
-                f"The {kind.value} credential could not be revoked on the server and may work until it expires.",
-            )
-        )
+        click.echo(REVOKE_FAILED[kind])
+    for name in (env.LIGHTNING_AUTH_TOKEN_FILE, "LIGHTNING_AUTH_TOKEN"):
+        if _env_set(name):
+            click.echo(f"Requests still authenticate with {name}. Unset it.")

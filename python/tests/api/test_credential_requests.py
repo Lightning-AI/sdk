@@ -6,12 +6,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import keyring
 import pytest
+import requests
 
 from lightning_sdk.api.billing_api import BillingApi
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.api.utils import _BlobUploader
+from lightning_sdk.api.utils import CredentialAuth, _BlobUploader
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import CredentialSource, start_login
 from lightning_sdk.lightning_cloud.login import Auth
@@ -26,6 +27,7 @@ class _RetryServer:
 
     def __init__(self, token_path):
         seen = []
+        user_agents = []
 
         class Handler(BaseHTTPRequestHandler):
             protocol_version = "HTTP/1.1"
@@ -42,6 +44,7 @@ class _RetryServer:
             def _reply(self):
                 token = self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
                 seen.append(token)
+                user_agents.append(self.headers.get("User-Agent"))
                 if token == "old-token":
                     token_path.write_text("new-token")
                     status, body = 401, b'{"error":"expired"}'
@@ -61,6 +64,7 @@ class _RetryServer:
                 return
 
         self.seen = seen
+        self.user_agents = user_agents
         self._httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.url = f"http://127.0.0.1:{self._httpd.server_address[1]}"
         self._thread = _REAL_THREAD(target=self._httpd.serve_forever, daemon=True)
@@ -85,6 +89,24 @@ def refreshed_token(monkeypatch, tmp_path):
     monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", server.url)
     yield server
     server.stop()
+
+
+def test_a_raw_request_sends_the_sdk_user_agent(refreshed_token):
+    FilesystemApi().list_files("ts", "data")
+    assert refreshed_token.user_agents == [env.USER_AGENT, env.USER_AGENT]
+
+    requests.get(
+        f"{refreshed_token.url}/custom",
+        headers={"User-Agent": "caller-agent"},
+        auth=CredentialAuth(),
+        timeout=5,
+    )
+    assert refreshed_token.user_agents[-1] == "caller-agent"
+
+    prepared = requests.Request("GET", f"{refreshed_token.url}/bare").prepare()
+    assert "User-Agent" not in prepared.headers
+    CredentialAuth()(prepared)
+    assert prepared.headers["User-Agent"] == env.USER_AGENT
 
 
 def test_filesystem_list_retries_a_401(refreshed_token):

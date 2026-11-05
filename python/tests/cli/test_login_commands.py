@@ -225,6 +225,108 @@ def test_logout_revokes_both_kinds_and_names_the_one_the_server_refused(platform
     assert CredentialSource().resolve() is None
 
 
+@pytest.mark.parametrize("cli", [main_cli, legacy_cli])
+def test_logout_says_when_an_environment_credential_still_wins(isolated, monkeypatch, cli) -> None:
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "still-sent")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(isolated / "token"))
+
+    result = _invoke(cli, ["logout"])
+
+    text = _text(result)
+    assert result.exit_code == 0, text
+    assert "Requests still authenticate with LIGHTNING_AUTH_TOKEN_FILE. Unset it." in text
+    assert "Requests still authenticate with LIGHTNING_AUTH_TOKEN. Unset it." in text
+    assert "still-sent" not in text
+
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "  ")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", "")
+    quiet = _invoke(cli, ["logout"])
+    assert "still authenticate" not in _text(quiet)
+
+
+def _login_with_grant(platform, monkeypatch, grant) -> None:
+    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
+    original = platform._issue
+
+    def issue(family):
+        body = original(family)
+        body["lightning_grant"] = grant
+        return body
+
+    platform._issue = issue
+    assert _invoke(main_cli, ["login"]).exit_code == 0
+
+
+def test_auth_status_shows_every_teamspace_in_an_org(platform, browser, monkeypatch) -> None:
+    platform.orgs = [{"id": "org-1", "name": "Acme"}]
+    _login_with_grant(
+        platform,
+        monkeypatch,
+        {"orgs": [{"org": "org-1", "projects": "all"}], "permissions": ["read"]},
+    )
+
+    text = _text(_invoke(main_cli, ["auth", "status"]))
+
+    assert "all in Acme" in text
+    assert "a, l, l" not in text
+
+
+def test_auth_status_shows_a_mixed_grant(platform, browser, monkeypatch) -> None:
+    platform.orgs = [{"id": "org-1", "name": "Acme"}]
+    platform.memberships = [{"projectId": "proj-9", "name": "research"}]
+    _login_with_grant(
+        platform,
+        monkeypatch,
+        {
+            "orgs": [
+                {"org": "org-1", "projects": ["proj-9"]},
+                {"org": "org-missing", "projects": "all"},
+            ],
+            "permissions": ["read"],
+        },
+    )
+
+    text = _text(_invoke(main_cli, ["auth", "status"]))
+
+    assert "Acme" in text
+    assert "research" in text
+    assert "all in org-missing" in text
+    assert "a, l, l" not in text
+
+
+def test_an_unreadable_token_file_is_an_error_not_a_traceback(isolated, monkeypatch, tmp_path) -> None:
+    directory = tmp_path / "not-a-file"
+    directory.mkdir()
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(directory))
+
+    for command in (["auth", "status"], ["auth", "token"]):
+        result = _invoke(main_cli, command)
+        text = _text(result)
+        assert result.exit_code != 0, text
+        assert "Is a directory" in text
+        assert "Traceback" not in text
+
+
+def test_a_refused_login_is_an_error_not_a_traceback(platform, browser, monkeypatch) -> None:
+    platform.access_ttl = 60
+    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
+    original = platform.token
+
+    def refuse(form):
+        if form.get("grant_type") == "refresh_token":
+            return 400, {"error": "invalid_grant", "error_description": "invalid refresh token"}
+        return original(form)
+
+    monkeypatch.setattr(platform, "token", refuse)
+    for command in (["auth", "status"], ["auth", "token"]):
+        assert _invoke(main_cli, ["login"]).exit_code == 0
+        result = _invoke(main_cli, command)
+        text = _text(result)
+        assert result.exit_code != 0, text
+        assert "Your login has expired or was revoked. Run `lightning login`." in text
+        assert "Traceback" not in text
+
+
 def test_auth_status_names_each_source_and_never_a_token(platform, browser, monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     assert _invoke(main_cli, ["login"]).exit_code == 0

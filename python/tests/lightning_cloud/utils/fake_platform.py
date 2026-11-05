@@ -39,6 +39,8 @@ class FakePlatform:
         self.sign_ins = []
         self.reuse_events = []
         self.blocked = False
+        self.orgs = None
+        self.memberships = None
         self.token_keys = {}
         self._codes = {}
         self._families = {}
@@ -278,6 +280,10 @@ def _handler(platform):
                 self.send_response(302)
                 self.send_header("Location", landing)
                 self.end_headers()
+            elif parts.path == "/v1/orgs" and platform.orgs is not None:
+                self._json(200, {"organizations": platform.orgs})
+            elif parts.path == "/v1/memberships" and platform.memberships is not None:
+                self._json(200, {"memberships": platform.memberships})
             elif parts.path == "/v1/auth/user":
                 bearer = self.headers.get("Authorization", "")
                 token = bearer[len("Bearer ") :] if bearer.startswith("Bearer ") else ""

@@ -33,6 +33,7 @@ from requests.auth import AuthBase
 from requests.exceptions import HTTPError
 from tqdm.auto import tqdm
 
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCompleteMultiPartUploadBody,
@@ -1281,6 +1282,10 @@ class CredentialAuth(AuthBase):
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
         header = self._source.header()
         request.headers["Authorization"] = header
+        # requests writes its own agent before auth runs.
+        user_agent = request.headers.get("User-Agent")
+        if not user_agent or user_agent == requests.utils.default_user_agent():
+            request.headers["User-Agent"] = env.USER_AGENT
 
         def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
             if getattr(handle, "retried", False) or response.status_code != 401:

@@ -62,8 +62,15 @@ def _grant_lines(grant: Dict[str, Any], orgs: Dict[str, str], teamspaces: Dict[s
         if not isinstance(scope, dict):
             continue
         org_id = str(scope.get("org", ""))
-        shown_orgs.append(orgs.get(org_id, org_id))
-        for project in scope.get("projects") or []:
+        org_name = orgs.get(org_id, org_id)
+        shown_orgs.append(org_name)
+        projects = scope.get("projects")
+        if projects == "all":
+            shown_teamspaces.append(f"all in {org_name}")
+            continue
+        if not isinstance(projects, list):
+            continue
+        for project in projects:
             project_id = str(project)
             shown_teamspaces.append(teamspaces.get(project_id, project_id))
     return ", ".join(shown_orgs) or "none", ", ".join(shown_teamspaces) or "none"
@@ -92,7 +99,10 @@ def _add_user(table: Table, user: Dict[str, Optional[str]]) -> None:
 @click.command("status", cls=LightningCommand)
 def status() -> None:
     """Show the credential requests send, who it belongs to, and what a saved login reaches."""
-    credential = CredentialSource().resolve()
+    try:
+        credential = CredentialSource().resolve()
+    except (OSError, cli_login.LoginError) as err:
+        raise click.ClickException(str(err)) from err
     if credential is None:
         raise click.ClickException(_NOT_LOGGED_IN)
 
@@ -111,10 +121,7 @@ def status() -> None:
         table.add_row("Permissions", _UNKNOWN_REACH)
         table.add_row("Expiry", _UNKNOWN_REACH)
     else:
-        if login.grant.get("orgs") == "all":
-            orgs, teamspaces = "all", "all"
-        else:
-            orgs, teamspaces = _grant_lines(login.grant, _org_names(client), _teamspace_names(client))
+        orgs, teamspaces = _grant_lines(login.grant, _org_names(client), _teamspace_names(client))
         permissions = ", ".join(login.grant.get("permissions") or []) or "none"
         table.add_row("Orgs", orgs)
         table.add_row("Teamspaces", teamspaces)

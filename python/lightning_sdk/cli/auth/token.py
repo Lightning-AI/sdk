@@ -25,7 +25,10 @@ def _note(credential: Credential) -> str:
 @click.command("token", cls=LightningCommand)
 def token() -> None:
     """Print the credential requests send. A saved login has at least 30 minutes left."""
-    credential = CredentialSource().resolve()
+    try:
+        credential = CredentialSource().resolve()
+    except (OSError, cli_login.LoginError) as err:
+        raise click.ClickException(str(err)) from err
     if credential is None:
         raise click.ClickException(_NOT_LOGGED_IN)
     if credential.kind is CredentialKind.LOGIN:
