@@ -1,17 +1,23 @@
 """Login, logout, auth status and auth token, against the fake platform."""
 
 import json
+import re
 import threading
 import webbrowser
 from types import SimpleNamespace
 
+import click
 import keyring
 import pytest
 from click.testing import CliRunner
 
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.entrypoint import main_cli
+from lightning_sdk.cli.legacy.deploy._auth import _AuthMode
+from lightning_sdk.cli.legacy.deploy._auth import authenticate as litserve_authenticate
 from lightning_sdk.cli.legacy.entrypoint import main_cli as legacy_cli
+from lightning_sdk.cli.utils import lockdown_status
+from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import CredentialSource, logout
 from lightning_sdk.lightning_cloud.login import Auth
@@ -305,6 +311,13 @@ def test_an_unreadable_token_file_is_an_error_not_a_traceback(isolated, monkeypa
         assert result.exit_code != 0, text
         assert "Is a directory" in text
         assert "Traceback" not in text
+
+    named = f"LIGHTNING_AUTH_TOKEN_FILE names {directory}, which can't be read"
+    assert lockdown_status._auth_header() is None
+    with pytest.raises(click.UsageError, match=re.escape(named)):
+        require_auth_header()
+    with pytest.raises(click.UsageError, match=re.escape(named)):
+        litserve_authenticate(_AuthMode.DEPLOY)
 
 
 def test_a_refused_login_is_an_error_not_a_traceback(platform, browser, monkeypatch) -> None:

@@ -32,8 +32,8 @@ def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
     with browser_login(False):
         try:
             CredentialSource().header()
-        except ValueError as err:
-            raise click.UsageError("No Lightning credentials are available. Run `lightning login` first.") from err
+        except (ValueError, ConnectionError) as err:
+            raise click.UsageError(str(err)) from err
 
 
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
