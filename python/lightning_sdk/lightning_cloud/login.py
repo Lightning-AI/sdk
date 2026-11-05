@@ -73,16 +73,11 @@ class Auth:
 
     def save(
         self,
-        token: str = "",
         user_id: str = "",
-        api_key: str = "",
         auth_token: str = "",
         # username: str = "",
     ) -> None:
-        """Replace the saved login. ``token`` and ``api_key`` are ignored.
-
-        The CLI on main still calls ``save(token=..., api_key=...)``.
-        """
+        """Replace the saved login."""
         stored = {
             Keys.USER_ID.suffix: user_id,
             Keys.AUTH_TOKEN.suffix: auth_token,

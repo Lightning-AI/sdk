@@ -9,7 +9,6 @@ import click
 from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.credentials import (
     CredentialKind,
-    CredentialSource,
     LoginUnavailable,
     logout,
     start_login,
@@ -91,19 +90,10 @@ def run_login(
             "Unset it and run `lightning login` again."
         )
     if _env_set("LIGHTNING_API_KEY"):
-        if not cli_login.oidc_login_enabled():
-            # A saved login outranks the key, so a stale one can only be replaced by logging in.
-            sent = CredentialSource().resolve()
-            if sent is not None and sent.kind is CredentialKind.LEGACY_KEY:
-                click.echo(
-                    '"lightning login" is not required within a Studio or when credentials are set in the environment'
-                )
-                return
-        else:
-            click.echo(
-                "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
-                err=True,
-            )
+        click.echo(
+            "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
+            err=True,
+        )
     if in_studio():
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
@@ -112,11 +102,14 @@ def run_login(
     if insecure_storage and cli_login.oidc_login_enabled():
         click.echo(f"This login is kept in a file at {env.LIGHTNING_LOGIN_PATH}.", err=True)
     try:
+        if (asked_orgs or asked_project) and not cli_login.oidc_login_enabled():
+            flags = [flag for flag, given in (("--org", asked_orgs), ("--project", asked_project)) if given]
+            raise LoginUnavailable(
+                f"{', '.join(flags)} needs the new login. Set {cli_login.OIDC_LOGIN_ENV}=1 to use it."
+            )
         done = start_login(
             no_browser=no_browser,
             insecure_storage=insecure_storage,
-            orgs=asked_orgs,
-            project=asked_project,
         )
     except LoginUnavailable as err:
         raise click.UsageError(str(err)) from err
