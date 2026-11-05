@@ -69,6 +69,40 @@ def test_litai_puts_okbhrt_and_litaimodel_on_the_interim_sign_in(monkeypatch, tm
         platform.stop()
 
 
+def test_litai_treats_a_legacy_key_as_an_existing_credential(monkeypatch):
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN_FILE", raising=False)
+    monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
+    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
+    asked = []
+    monkeypatch.setattr(
+        "lightning_sdk.api.llm_api.Confirm.ask",
+        lambda *_args, **_kwargs: asked.append(True) or True,
+    )
+    opened = []
+    monkeypatch.setattr(webbrowser, "open", lambda *_args, **_kwargs: opened.append(True))
+
+    litai_authenticate("story-model")
+
+    assert asked == []
+    assert opened == []
+
+
+def test_litserve_treats_a_legacy_key_as_an_existing_credential(monkeypatch):
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN_FILE", raising=False)
+    monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
+    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
+    opened = []
+    monkeypatch.setattr(webbrowser, "open", lambda *_args, **_kwargs: opened.append(True))
+
+    litserve_authenticate(_AuthMode.DEPLOY)
+
+    assert opened == []
+
+
 def test_litai_does_nothing_when_a_credential_already_exists(monkeypatch):
     monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "env-token")
     asked = []

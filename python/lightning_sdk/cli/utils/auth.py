@@ -85,6 +85,11 @@ def run_login(
             "Unset it and run `lightning login` again."
         )
     if _env_set("LIGHTNING_API_KEY"):
+        if not cli_login.oidc_login_enabled():
+            click.echo(
+                '"lightning login" is not required within a Studio or when credentials are set in the environment'
+            )
+            return
         click.echo(
             "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
             err=True,

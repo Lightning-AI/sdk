@@ -28,6 +28,8 @@ def token() -> None:
     credential = CredentialSource().resolve()
     if credential is None:
         raise click.ClickException(_NOT_LOGGED_IN)
+    if credential.kind is CredentialKind.LEGACY_KEY:
+        raise click.ClickException("A legacy key is never printed. Run `lightning login`.")
     if credential.kind is CredentialKind.LOGIN:
         try:
             click.echo(cli_login.token())

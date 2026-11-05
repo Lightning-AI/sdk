@@ -1281,12 +1281,11 @@ class CredentialAuth(AuthBase):
     def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
         header = self._source.header()
         request.headers["Authorization"] = header
-        sent = header[len("Bearer ") :] if header.startswith("Bearer ") else header
 
         def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
             if getattr(handle, "retried", False) or response.status_code != 401:
                 return response
-            if not self._source.refresh(sent):
+            if not self._source.refresh(header):
                 return response
             handle.retried = True
             # The connection stays checked out until the body is read, so the retry can reuse it.

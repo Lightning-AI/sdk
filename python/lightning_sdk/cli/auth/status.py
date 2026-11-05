@@ -78,6 +78,8 @@ def _source(credential: Credential) -> str:
         login = cli_login.current_login()
         storage = login.storage if login is not None else "login"
         return f"login ({storage})"
+    if credential.kind is CredentialKind.LEGACY_KEY:
+        return "LIGHTNING_API_KEY (legacy key, until the new login is switched on)"
     return "interim session login"
 
 

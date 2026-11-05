@@ -1,17 +1,19 @@
 """Raw requests take a credential handler, and a 401 is retried once with a fresh token."""
 
+import base64
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import keyring
 import pytest
+import requests
 
 from lightning_sdk.api.billing_api import BillingApi
 from lightning_sdk.api.filesystem_api import FilesystemApi
 from lightning_sdk.api.studio_api import StudioApi
 from lightning_sdk.api.teamspace_api import TeamspaceApi
-from lightning_sdk.api.utils import _BlobUploader
+from lightning_sdk.api.utils import CredentialAuth, _BlobUploader
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import CredentialSource, start_login
 from lightning_sdk.lightning_cloud.login import Auth
@@ -105,6 +107,47 @@ def test_teamspace_tree_retries_a_401(refreshed_token):
 def test_billing_csv_retries_a_401(refreshed_token):
     BillingApi()._download_activity_csv("/v1/billing/usage-report/download/detailed", "org")
     assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_a_401_on_a_basic_legacy_key_is_not_retried(monkeypatch):
+    threading.Thread = _REAL_THREAD
+    for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_AUTH_TOKEN_FILE", "LIGHTNING_CLI_OIDC_LOGIN"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
+    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
+    seen = []
+    expected = f"Basic {base64.b64encode(b'user-1:key-1').decode('ascii')}"
+
+    class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_GET(self):  # noqa: N802
+            seen.append(self.headers.get("Authorization"))
+            body = b'{"error":"unauthenticated"}'
+            self.send_response(401)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, fmt, *args):
+            return
+
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = _REAL_THREAD(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        response = requests.get(
+            f"http://127.0.0.1:{httpd.server_address[1]}/v1/auth/user",
+            auth=CredentialAuth(),
+            timeout=10,
+        )
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+        httpd.server_close()
+
+    assert response.status_code == 401
+    assert seen == [expected]
 
 
 def test_blob_upload_retries_a_401(refreshed_token, tmp_path):
