@@ -27,6 +27,7 @@ CAPABILITIES_FLAG = "apiLockdownCapabilities"
 # The capabilities the CLI's gated commands need, named as grid-backend/pkg/apilockdown/capabilities.go names them.
 RW_FILESYSTEM = "rw-filesystem"
 STUDIOS = "studios"
+STUDIO_DELETE = "studio-delete"
 STUDIO_SIDECAR_AUTH = "studio-sidecar-auth"
 STUDIO_SWITCHING = "studio-switching"
 ENVIRONMENT_TEMPLATES = "environment-templates"

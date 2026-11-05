@@ -264,3 +264,39 @@ def test_list_files_follows_cursor_pages(_mock_auth, mock_requests_get):
     assert params[1]["cursor"] == "cursor-1"
     assert params[2]["cursor"] == "cursor-2"
     assert all(p["recursive"] == "true" and p["atMost"] == "1" for p in params)
+
+
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
+@mock.patch("lightning_sdk.api.utils.LightningClient")
+@mock.patch("requests.get", autospec=True)
+def test_download_folder_preserves_each_file_mtime(mock_get, _mock_client, _mock_auth, tmp_path, inline_executor_cls):
+    api = FilesystemApi()
+    api.list_files = mock.Mock(
+        return_value=[
+            {"path": "first.txt", "type": "blob", "size": 4},
+            {"path": "nested/second.txt", "type": "blob", "size": 4},
+        ]
+    )
+
+    def download_response(url, **kwargs):
+        metadata = (
+            {"X-Amz-Meta-Mtime": "1700000000.123456789"}
+            if url.endswith("first.txt")
+            else {"Last-Modified": "Tue, 14 Nov 2023 22:13:21 GMT"}
+        )
+        response = requests.Response()
+        response.status_code = 200
+        response.headers = requests.structures.CaseInsensitiveDict({"Content-Length": "4", **metadata})
+        response.iter_content = mock.Mock(return_value=iter([b"data"]))
+        return response
+
+    mock_get.side_effect = download_response
+    with mock.patch("lightning_sdk.api.filesystem_api.ThreadPoolExecutor", inline_executor_cls):
+        api.download_folder("data", str(tmp_path), "ts-abc", progress_bar=False)
+
+    assert (tmp_path / "first.txt").read_bytes() == b"data"
+    assert (tmp_path / "nested/second.txt").read_bytes() == b"data"
+    assert (tmp_path / "first.txt").stat().st_mtime_ns == 1700000000123456789
+    assert (tmp_path / "nested/second.txt").stat().st_mtime_ns == 1700000001000000000
+    assert mock_get.call_count == 2
+    api.list_files.assert_called_once_with("ts-abc", "data", recursive=True)

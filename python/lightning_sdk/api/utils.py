@@ -9,6 +9,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from enum import Enum
 from functools import lru_cache, partial
 from pathlib import Path
@@ -728,6 +729,10 @@ _DOWNLOAD_MAX_TRIES = 5
 # Statuses that signal a temporary condition rather than a fault in the request.
 _RETRYABLE_DOWNLOAD_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
 
+_S3_R2_MTIME_HEADER = "x-amz-meta-mtime"
+_GCS_MTIME_HEADER = "x-goog-meta-mtime"
+_GCS_RESERVED_MTIME_HEADER = "x-goog-meta-goog-reserved-file-mtime"
+
 
 class _TransientDownloadError(RuntimeError):
     """A download failure worth retrying: a dropped connection, a timeout, or a temporary server condition."""
@@ -803,6 +808,52 @@ class _RetryableProgress:
         self._count = 0.0
 
 
+def _original_download_mtime_ns(response: requests.Response) -> int:
+    value = response.headers.get(_S3_R2_MTIME_HEADER)
+    if value is None and _GCS_MTIME_HEADER not in response.headers:
+        value = response.headers.get(_GCS_RESERVED_MTIME_HEADER)
+    if value is not None:
+        if re.fullmatch(r"-?[0-9]{1,10}(?:\.[0-9]{1,9})?", value) is None:
+            raise ValueError("invalid modification time metadata")
+        whole, _, fraction = value.partition(".")
+        fraction_ns = int(fraction.ljust(9, "0"))
+        mtime_ns = int(whole) * 1_000_000_000
+        mtime_ns += -fraction_ns if value.startswith("-") else fraction_ns
+    elif (value := response.headers.get(_GCS_MTIME_HEADER)) is not None:
+        match = re.fullmatch(r"(.*:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})", value)
+        if match is None:
+            raise ValueError("invalid modification time metadata")
+        timestamp = datetime.fromisoformat(match[1] + match[3].replace("Z", "+00:00"))
+        elapsed = timestamp - datetime(1970, 1, 1, tzinfo=timezone.utc)
+        mtime_ns = (elapsed.days * 86400 + elapsed.seconds) * 1_000_000_000
+        mtime_ns += int((match[2] or "").ljust(9, "0"))
+    else:
+        raise ValueError("original modification time metadata is missing")
+    if not -(2**63) <= mtime_ns < 2**63:
+        raise ValueError("modification time metadata is out of range")
+    return mtime_ns
+
+
+def _preserve_download_mtime(response: requests.Response, local_path: str, remote_path: str) -> None:
+    try:
+        try:
+            mtime_ns = _original_download_mtime_ns(response)
+        except ValueError:
+            value = response.headers.get("last-modified")
+            if value is None:
+                raise ValueError("no usable modification time in the download response") from None
+            timestamp = parsedate_to_datetime(value)
+            if timestamp.tzinfo is None:
+                raise ValueError("Last-Modified has no timezone") from None
+            elapsed = timestamp - datetime(1970, 1, 1, tzinfo=timezone.utc)
+            mtime_ns = (elapsed.days * 86400 + elapsed.seconds) * 1_000_000_000
+            if not -(2**63) <= mtime_ns < 2**63:
+                raise ValueError("Last-Modified is out of range") from None
+        os.utime(local_path, ns=(os.stat(local_path).st_atime_ns, mtime_ns))
+    except (ValueError, OSError, OverflowError) as exc:
+        warnings.warn(f"Could not preserve modification time for {remote_path!r}: {exc}", stacklevel=2)
+
+
 def _stream_download_to_file(
     response: requests.Response,
     local_path: Union[str, Path],
@@ -841,6 +892,7 @@ def _stream_download_to_file(
                     f"but {written} bytes arrived"
                 )
 
+        _preserve_download_mtime(response, tmp_name, remote_path)
         os.replace(tmp_name, str(local_path))
     except BaseException:
         with contextlib.suppress(OSError):

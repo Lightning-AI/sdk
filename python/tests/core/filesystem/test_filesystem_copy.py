@@ -48,7 +48,7 @@ def test_copy_download_file(mock_parse_lit_url, mock_resolve, mock_client_cls, m
         if "trees" in url:
             resp.json.return_value = {"tree": [{"path": "data/model.ckpt", "type": "blob", "size": 1024}]}
         else:
-            resp.headers = {"content-length": "1024"}
+            resp.headers = {"content-length": "1024", "x-amz-meta-mtime": "1700000000.123456789"}
             resp.iter_content.side_effect = lambda *a, **kw: iter([b"x" * 1024])
         return resp
 
@@ -62,6 +62,8 @@ def test_copy_download_file(mock_parse_lit_url, mock_resolve, mock_client_cls, m
     calls = [c[0][0] for c in mock_get.call_args_list]
     assert any("blobs" in url for url in calls)
     assert target.read_bytes() == b"x" * 1024
+    assert mock_get.call_count == 2
+    assert target.stat().st_mtime_ns == 1700000000123456789
 
 
 @mock.patch("lightning_sdk.api.filesystem_api._collect_download_results")
