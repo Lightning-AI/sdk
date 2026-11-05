@@ -10,6 +10,7 @@ from lightning_sdk.cli.utils import lockdown_status
 from lightning_sdk.cli.utils.lockdown_status import (
     ENVIRONMENT_TEMPLATES,
     RW_FILESYSTEM,
+    STUDIO_DELETE,
     STUDIO_SIDECAR_AUTH,
     STUDIO_SSH,
     STUDIO_SWITCHING,
@@ -88,7 +89,6 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "sandbox stop",
     "sandbox update",
     "studio connect",
-    "studio delete",
     "studio env delete",
     "studio env set",
     "studio list",
@@ -109,7 +109,8 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
 )
 
 # The capabilities each command needs, all of them. Starting and stopping need the Studio's sidecar to keep
-# renewing its token, so they need studio-sidecar-auth as well as studios.
+# renewing its token, so they need studio-sidecar-auth as well as studios. Deleting needs studio-delete as
+# well as studios: the config lists only the capabilities the caller holds, not their prerequisites.
 GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "base-studio list": (ENVIRONMENT_TEMPLATES,),
     "edit": (RW_FILESYSTEM,),
@@ -118,6 +119,7 @@ GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "rm": (RW_FILESYSTEM,),
     "ssh configure": (STUDIO_SSH,),
     "studio create": (STUDIOS, STUDIO_SIDECAR_AUTH, ENVIRONMENT_TEMPLATES),
+    "studio delete": (STUDIOS, STUDIO_DELETE),
     "studio env list": (STUDIOS, STUDIO_SIDECAR_AUTH),
     "studio ssh": (STUDIO_SSH,),
     "studio start": (STUDIOS, STUDIO_SIDECAR_AUTH),
