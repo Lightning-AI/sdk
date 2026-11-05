@@ -639,10 +639,17 @@ def _replace_saved(save: Callable[[], Optional[str]]) -> None:
         replaced_login = _load(_origin(), cached=False)
         replaced_session = _saved_session()
         kept_session = save()
-    if replaced_login is not None:
-        _revoke(replaced_login.refresh_token)
-    if replaced_session is not None and replaced_session != kept_session:
-        _revoke_session(replaced_session)
+    # credentials imports this module, so the shared wording is imported at the call.
+    from lightning_sdk.lightning_cloud.credentials import REVOKE_FAILED, CredentialKind
+
+    if replaced_login is not None and not _revoke(replaced_login.refresh_token):
+        _say(REVOKE_FAILED[CredentialKind.LOGIN])
+    if (
+        replaced_session is not None
+        and replaced_session != kept_session
+        and not _revoke_session(replaced_session)
+    ):
+        _say(REVOKE_FAILED[CredentialKind.SESSION])
 
 
 def _login_from(body: Dict[str, Any], storage: str, url: str) -> Login:

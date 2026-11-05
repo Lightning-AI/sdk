@@ -31,6 +31,12 @@ class CredentialKind(str, enum.Enum):
     SESSION = "session"
 
 
+REVOKE_FAILED = {
+    CredentialKind.LOGIN: "The saved login could not be revoked on the server and may work until it expires.",
+    CredentialKind.SESSION: "The saved session could not be revoked on the server and may work until it expires.",
+}
+
+
 @dataclasses.dataclass(frozen=True)
 class Credential:
     kind: CredentialKind
@@ -200,13 +206,16 @@ def logout() -> Tuple[CredentialKind, ...]:
     Returns the kinds whose revoke failed, which may still work until they expire.
     """
     with cli_login._locked():
-        login = cli_login._load(cli_login._origin(), cached=False)
+        origin = cli_login._origin()
+        metadata = cli_login._read_metadata()
+        login = cli_login._load(origin, cached=False)
         session = cli_login._saved_session()
-        if login is not None:
+        saved_here = isinstance(metadata, dict) and metadata.get("url") == origin
+        if saved_here:
             cli_login._forget()
         Auth.secrets_file.unlink(missing_ok=True)
     failed = []
-    if login is not None and not cli_login._revoke(login.refresh_token):
+    if saved_here and (login is None or not cli_login._revoke(login.refresh_token)):
         failed.append(CredentialKind.LOGIN)
     if session is not None and not cli_login._revoke_session(session):
         failed.append(CredentialKind.SESSION)

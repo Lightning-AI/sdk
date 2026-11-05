@@ -344,6 +344,18 @@ def test_logout_that_cannot_reach_the_server_still_forgets_locally(platform, bro
     _nothing_saved(platform.url)
 
 
+def test_logout_forgets_a_login_whose_keychain_cannot_be_read(platform, browser):
+    cli_login.login()
+    path = pathlib.Path(env.LIGHTNING_LOGIN_PATH)
+    assert path.is_file()
+    keyring.set_keyring(fail.Keyring())
+
+    assert logout() == (CredentialKind.LOGIN,)
+
+    assert not path.exists()
+    assert platform.calls_to("/oidc/revoke") == []
+
+
 def test_logout_with_nothing_saved_revokes_nothing(platform):
     assert logout() == ()
     assert platform.requests == []

@@ -77,3 +77,29 @@ def test_a_login_that_fails_leaves_the_old_login_saved_and_live(platform, monkey
     assert platform.accepts(old.token)
     assert platform.calls_to("/oidc/revoke") == []
     assert platform.logouts() == []
+
+
+def test_replacing_a_login_says_when_that_revoke_fails(platform, monkeypatch, capsys):
+    old = _log_in(platform, monkeypatch, "oidc", "user-a")
+    monkeypatch.setattr(platform, "revoke", lambda *args: (503, {}))
+
+    _log_in(platform, monkeypatch, "oidc", "user-b")
+
+    assert platform.family_active(old.refresh_token)
+    assert (
+        "The saved login could not be revoked on the server and may work until it expires."
+        in capsys.readouterr().err
+    )
+
+
+def test_replacing_a_session_says_when_that_revoke_fails(platform, monkeypatch, capsys):
+    session = platform.mint_session("user-a")
+    Auth.secrets_file.write_text(json.dumps({"auth_token": session}))
+    monkeypatch.setattr(platform, "logout", lambda *args: (503, {}))
+
+    _log_in(platform, monkeypatch, "oidc", "user-b")
+
+    assert platform.accepts(session)
+    err = capsys.readouterr().err
+    assert "The saved session could not be revoked on the server and may work until it expires." in err
+    assert "The saved login could not be revoked" not in err
