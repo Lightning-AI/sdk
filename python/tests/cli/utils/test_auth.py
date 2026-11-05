@@ -107,6 +107,7 @@ def test_browser_authentication_blocks_subclass_callback_server(monkeypatch, tmp
     """The guard must also block SDK auth subclasses with custom callback servers."""
     monkeypatch.setattr(Auth, "secrets_file", tmp_path / "credentials.json")
     monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
+    monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
 
     class CustomAuth(Auth):
         browser_started = False

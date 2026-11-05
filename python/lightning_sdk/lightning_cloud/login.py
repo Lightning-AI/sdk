@@ -112,18 +112,22 @@ class Auth:
         logger.debug("credentials removed successfully")
 
     def get_auth_header(self, override: Optional[AuthOverride] = None) -> Optional[str]:
-        """Get a Bearer authentication header, with an optional override.
+        """Get an authorization header, with an optional override.
 
         By default, returns the credential every request would send: the file
         named by ``LIGHTNING_AUTH_TOKEN_FILE``, then ``LIGHTNING_AUTH_TOKEN``,
-        then the saved login. It never opens a browser.
+        then the saved login, then ``LIGHTNING_API_KEY`` while
+        ``LIGHTNING_CLI_OIDC_LOGIN`` is unset. That key is
+        ``Basic base64(<LIGHTNING_USER_ID>:<LIGHTNING_API_KEY>)`` when
+        ``LIGHTNING_USER_ID`` is set, and Bearer otherwise. A saved ``api_key``
+        is never used. This never opens a browser.
 
         Parameters
         ----------
         override : AuthOverride, optional
             Use a token held by this instance instead:
-            - "auth_token": this instance's auth token
-            - "api_key": this instance's API key
+            - "auth_token": this instance's auth token, as Bearer
+            - "api_key": this instance's API key, as Bearer
             - None: the credential every request would send (default)
 
         Returns
@@ -180,7 +184,9 @@ class Auth:
         ----------
         authorization header to use when authentication completes. With no
         credential, this logs in through ``_run_server``, unless browser login
-        is turned off.
+        is turned off. While ``LIGHTNING_CLI_OIDC_LOGIN`` is unset, an
+        ``LIGHTNING_API_KEY`` with nothing ahead of it is that header: Basic
+        when ``LIGHTNING_USER_ID`` is set, Bearer otherwise.
         """
         from lightning_sdk.lightning_cloud.credentials import CredentialSource
 

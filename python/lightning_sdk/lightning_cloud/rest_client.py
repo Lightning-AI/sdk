@@ -294,8 +294,7 @@ def credential_request_wrapper(func, source):
                 raise
             if supplied:
                 raise ConnectionError(_LOGIN_MESSAGE)
-            sent = headers["Authorization"][len("Bearer "):]
-            if not source.refresh(sent):
+            if not source.refresh(headers["Authorization"]):
                 raise ConnectionError(_LOGIN_MESSAGE)
             headers["Authorization"] = source.header()
             try:
