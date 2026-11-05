@@ -1,0 +1,183 @@
+"""Raw requests take a credential handler, and a 401 is retried once with a fresh token."""
+
+import threading
+import webbrowser
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+import keyring
+import pytest
+
+from lightning_sdk.api.billing_api import BillingApi
+from lightning_sdk.api.filesystem_api import FilesystemApi
+from lightning_sdk.api.studio_api import StudioApi
+from lightning_sdk.api.teamspace_api import TeamspaceApi
+from lightning_sdk.api.utils import _BlobUploader
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.credentials import CredentialSource, start_login
+from lightning_sdk.lightning_cloud.login import Auth
+from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform
+from tests.lightning_cloud.utils.keyrings import MemoryKeyring
+
+_REAL_THREAD = threading.Thread
+
+
+class _RetryServer:
+    """Answers 401 for ``old-token`` after rewriting the token file, then 200."""
+
+    def __init__(self, token_path):
+        seen = []
+
+        class Handler(BaseHTTPRequestHandler):
+            protocol_version = "HTTP/1.1"
+
+            def do_GET(self):  # noqa: N802
+                self._reply()
+
+            def do_POST(self):  # noqa: N802
+                length = int(self.headers.get("Content-Length", "0"))
+                if length:
+                    self.rfile.read(length)
+                self._reply()
+
+            def _reply(self):
+                token = self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+                seen.append(token)
+                if token == "old-token":
+                    token_path.write_text("new-token")
+                    status, body = 401, b'{"error":"expired"}'
+                elif "usage-report" in self.path:
+                    status, body = 200, b"col\n"
+                elif self.path.endswith("/blobs"):
+                    status, body = 200, b'{"results":[]}'
+                else:
+                    status, body = 200, b'{"tree":[]}'
+                self.send_response(status)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, fmt, *args):
+                return
+
+        self.seen = seen
+        self._httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.url = f"http://127.0.0.1:{self._httpd.server_address[1]}"
+        self._thread = _REAL_THREAD(target=self._httpd.serve_forever, daemon=True)
+        self._thread.start()
+
+    def stop(self):
+        self._httpd.shutdown()
+        self._thread.join(timeout=5)
+        self._httpd.server_close()
+
+
+@pytest.fixture()
+def refreshed_token(monkeypatch, tmp_path):
+    threading.Thread = _REAL_THREAD
+    for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    token_path = tmp_path / "token"
+    token_path.write_text("old-token")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(token_path))
+    server = _RetryServer(token_path)
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", server.url)
+    monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", server.url)
+    yield server
+    server.stop()
+
+
+def test_filesystem_list_retries_a_401(refreshed_token):
+    FilesystemApi().list_files("ts", "data")
+    assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_studio_tree_retries_a_401(refreshed_token):
+    StudioApi().get_tree("st", "ts", "data")
+    assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_teamspace_tree_retries_a_401(refreshed_token):
+    TeamspaceApi().get_tree("ts", "data")
+    assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_billing_csv_retries_a_401(refreshed_token):
+    BillingApi()._download_activity_csv("/v1/billing/usage-report/download/detailed", "org")
+    assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_blob_upload_retries_a_401(refreshed_token, tmp_path):
+    local = tmp_path / "blob.bin"
+    local.write_bytes(b"hi")
+    uploader = _BlobUploader(
+        client=None,
+        endpoint_base=f"{refreshed_token.url}/v1/projects/ts/artifacts",
+        file_path=str(local),
+        remote_path="blob.bin",
+        progress_bar=False,
+    )
+    uploader._post_blob_request("/blobs", {"path": "blob.bin"}, "request upload URLs for")
+    assert refreshed_token.seen == ["old-token", "new-token"]
+
+
+def test_folder_download_refreshes_when_the_access_token_expires_midway(monkeypatch, tmp_path, inline_executor_cls):
+    threading.Thread = _REAL_THREAD
+    for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN_FILE"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
+    monkeypatch.setattr(Auth, "secrets_file", tmp_path / "credentials.json")
+    monkeypatch.setattr(env, "LIGHTNING_LOGIN_PATH", str(tmp_path / "login.json"))
+    previous = keyring.get_keyring()
+    keyring.set_keyring(MemoryKeyring())
+    platform = FakePlatform()
+    monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", platform.url)
+    monkeypatch.setenv("LIGHTNING_CLOUD_URL", platform.url)
+    browser = FakeBrowser(platform)
+    monkeypatch.setattr(webbrowser, "open", browser.open)
+    seen = []
+
+    class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
+        def do_GET(self):  # noqa: N802
+            token = self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+            seen.append(token)
+            if len(seen) == 1:
+                platform.expire_access_tokens()
+                status, body = 401, b"expired"
+            elif platform.accepts(token):
+                status, body = 200, b"x"
+            else:
+                status, body = 401, b"rejected"
+            self.send_response(status)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, fmt, *args):
+            return
+
+    download = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    download_thread = _REAL_THREAD(target=download.serve_forever, daemon=True)
+    download_thread.start()
+    try:
+        start_login()
+        browser.finish()
+        first = CredentialSource().resolve().token
+        api = StudioApi()
+        api.list_files = lambda *_args, **_kwargs: [{"path": "a.bin", "size": 1}]
+        api._client.api_client.configuration.host = f"http://127.0.0.1:{download.server_address[1]}"
+        monkeypatch.setattr("lightning_sdk.api.studio_api.ThreadPoolExecutor", inline_executor_cls)
+        api.download_folder("folder", str(tmp_path / "out"), "st", "ts", "cluster", progress_bar=False)
+        assert seen[0] == first
+        assert seen[1] != first
+        assert platform.accepts(seen[1])
+        assert (tmp_path / "out" / "a.bin").read_bytes() == b"x"
+    finally:
+        browser.finish()
+        platform.stop()
+        download.shutdown()
+        download_thread.join(timeout=5)
+        download.server_close()
+        keyring.set_keyring(previous)

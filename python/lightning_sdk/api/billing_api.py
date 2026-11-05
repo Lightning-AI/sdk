@@ -27,9 +27,9 @@ from typing import IO, Any, Dict, List, Optional
 import requests
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_auth_headers,
     _raise_for_download_status,
     cached_lightning_client,
+    credential_auth,
 )
 
 
@@ -309,7 +309,7 @@ class BillingApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}{endpoint}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
             stream=True,
             allow_redirects=True,
         )

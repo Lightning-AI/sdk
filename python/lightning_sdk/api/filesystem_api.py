@@ -12,7 +12,6 @@ from lightning_sdk.api.utils import (
     _DOWNLOAD_MAX_TRIES,
     _DOWNLOAD_READ_TIMEOUT_SECONDS,
     _RETRYABLE_DOWNLOAD_STATUSES,
-    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _paged_tree_entries,
@@ -22,6 +21,8 @@ from lightning_sdk.api.utils import (
     _stream_download_to_file,
     _TransientDownloadError,
     cached_lightning_client,
+    credential_auth,
+    request_auth,
 )
 from lightning_sdk.lightning_cloud.rest_client import LightningClient
 
@@ -74,7 +75,7 @@ class FilesystemApi:
             r = requests.get(
                 f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
                 params=query_params,
-                headers=_authenticate_and_get_auth_headers(),
+                auth=credential_auth(),
             )
             if r.status_code != 200:
                 raise _RemoteApiError(f"Failed to list files: {r.status_code}", status_code=r.status_code)
@@ -134,6 +135,7 @@ class FilesystemApi:
         pbar: Optional[tqdm] = None,
         progress_bar: bool = False,
         expected_size: Optional[int] = None,
+        auth: Optional[object] = None,
     ) -> None:
         """Download a single artifact file.
 
@@ -156,6 +158,7 @@ class FilesystemApi:
         """
         url = f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path}"
         owned_pbar = None
+        request = request_auth(auth)
 
         @backoff.on_exception(backoff.expo, _TransientDownloadError, max_tries=_DOWNLOAD_MAX_TRIES)
         def download() -> None:
@@ -163,7 +166,7 @@ class FilesystemApi:
             try:
                 r = requests.get(
                     url,
-                    headers=_authenticate_and_get_auth_headers(),
+                    auth=request,
                     stream=True,
                     allow_redirects=True,
                     timeout=(_DOWNLOAD_CONNECT_TIMEOUT_SECONDS, _DOWNLOAD_READ_TIMEOUT_SECONDS),
@@ -252,6 +255,7 @@ class FilesystemApi:
                 mininterval=1,
             )
 
+        auth = credential_auth()
         try:
             with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 futures = [
@@ -262,6 +266,7 @@ class FilesystemApi:
                         teamspace_id,
                         pbar,
                         expected_size=entry.get("size"),
+                        auth=auth,
                     )
                     for entry in files
                 ]
@@ -287,7 +292,7 @@ class FilesystemApi:
         r = requests.delete(
             f"{self._client.api_client.configuration.host}"
             f"/v1/projects/{teamspace_id}/artifacts/blobs/{remote_path.strip('/')}",
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
         )
         if r.status_code not in (200, 204):
             raise _RemoteApiError(
@@ -310,7 +315,7 @@ class FilesystemApi:
         r = requests.delete(
             f"{self._client.api_client.configuration.host}"
             f"/v1/projects/{teamspace_id}/artifacts/trees/{remote_path.strip('/')}",
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
         )
         if r.status_code not in (200, 204):
             raise _RemoteApiError(

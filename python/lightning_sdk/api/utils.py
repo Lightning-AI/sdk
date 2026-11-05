@@ -29,10 +29,11 @@ from typing import (
 
 import backoff
 import requests
+from requests.auth import AuthBase
 from requests.exceptions import HTTPError
 from tqdm.auto import tqdm
 
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCompleteMultiPartUploadBody,
     ModelsStoreCreateMultiPartUploadBody,
@@ -298,7 +299,7 @@ class _BlobUploader:
         body: Dict[str, Any] = {"blobs": [blob]}
         if self.cluster_id:
             body["cluster_id"] = self.cluster_id
-        r = requests.post(url, json=body, headers=_authenticate_and_get_auth_headers(), timeout=30)
+        r = requests.post(url, json=body, auth=credential_auth(), timeout=30)
         if r.status_code >= 500 or r.status_code == 429:
             raise HTTPError(
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
@@ -1271,6 +1272,44 @@ def to_iso_z(dt: datetime) -> str:
     return dt.isoformat(timespec="milliseconds")
 
 
-def _authenticate_and_get_auth_headers() -> Dict[str, str]:
-    """Resolve the caller's credentials and return the HTTP headers carrying them."""
-    return {"Authorization": Auth().authenticate()}
+class CredentialAuth(AuthBase):
+    """Sets ``Authorization`` when a request is prepared, and retries one 401 after a refresh."""
+
+    def __init__(self, source: Optional[CredentialSource] = None) -> None:
+        self._source = source or CredentialSource()
+
+    def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
+        header = self._source.header()
+        request.headers["Authorization"] = header
+        sent = header[len("Bearer ") :] if header.startswith("Bearer ") else header
+
+        def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
+            if getattr(handle, "retried", False) or response.status_code != 401:
+                return response
+            if not self._source.refresh(sent):
+                return response
+            handle.retried = True
+            # The connection stays checked out until the body is read, so the retry can reuse it.
+            _ = response.content
+            response.close()
+            prepared = response.request.copy()
+            prepared.headers["Authorization"] = self._source.header()
+            retry = response.connection.send(prepared, **kwargs)
+            retry.history.append(response)
+            retry.request = prepared
+            return retry
+
+        request.register_hook("response", handle)
+        return request
+
+
+def credential_auth(source: Optional[CredentialSource] = None) -> CredentialAuth:
+    """A requests auth handler that reads :class:`CredentialSource` for each request."""
+    return CredentialAuth(source)
+
+
+def request_auth(auth: object = None) -> CredentialAuth:
+    """The auth object a download worker should use, or a fresh one when it wasn't given one."""
+    if isinstance(auth, CredentialAuth):
+        return auth
+    return credential_auth()

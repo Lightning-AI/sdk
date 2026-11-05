@@ -9,7 +9,6 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _DummyBody,
@@ -20,6 +19,8 @@ from lightning_sdk.api.utils import (
     _stream_download_to_file,
     _tree_path_info,
     cached_lightning_client,
+    credential_auth,
+    request_auth,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
@@ -1001,7 +1002,7 @@ class StudioApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
         )
         return r.json()
 
@@ -1111,7 +1112,7 @@ class StudioApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
             stream=True,
             allow_redirects=True,
         )
@@ -1139,7 +1140,7 @@ class StudioApi:
         download_dir: Path,
         studio_id: str,
         teamspace_id: str,
-        auth_headers: Dict[str, str],
+        auth: object,
         pbar: Optional[tqdm],
     ) -> None:
         """Download a single file from Studio with progress tracking.
@@ -1150,7 +1151,7 @@ class StudioApi:
             download_dir: Local directory where the downloaded file is written.
             studio_id: Studio (cloud space) ID containing the file.
             teamspace_id: ID of the owning teamspace.
-            auth_headers: HTTP headers carrying the caller's credentials.
+            auth: Credential handler for this file's request.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
         Raises:
@@ -1164,7 +1165,7 @@ class StudioApi:
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{file_path}",
-            headers=auth_headers,
+            auth=request_auth(auth),
             stream=True,
         )
 
@@ -1212,7 +1213,7 @@ class StudioApi:
             print(f"No files found in {path}")
             return
 
-        auth_headers = _authenticate_and_get_auth_headers()
+        auth = credential_auth()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -1237,7 +1238,7 @@ class StudioApi:
                         download_dir,
                         studio_id,
                         teamspace_id,
-                        auth_headers,
+                        auth,
                         pbar,
                     )
                     for file_info in files
@@ -1275,7 +1276,7 @@ class StudioApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}"
 
-        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
+        r = requests.delete(url, auth=credential_auth(), timeout=30)
 
         if r.status_code == 204:
             return
@@ -1306,7 +1307,7 @@ class StudioApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}"
 
-        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
+        r = requests.delete(url, auth=credential_auth(), timeout=30)
 
         if r.status_code == 204:
             return

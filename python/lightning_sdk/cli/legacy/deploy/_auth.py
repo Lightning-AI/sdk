@@ -11,7 +11,7 @@ from lightning_sdk.api import UserApi
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.utils.resource_resolution import resolve_teamspace
 from lightning_sdk.cli.utils.teamspace_option import resolve_teamspace as _resolve_teamspace_option
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud.credentials import CredentialSource, browser_login
 from lightning_sdk.lightning_cloud.openapi import V1CloudSpace
 from lightning_sdk.utils.resolve import _get_authed_user
 
@@ -23,24 +23,17 @@ class _AuthMode(Enum):
     DEPLOY = "deploy"
 
 
-class _AuthLitServe(Auth):
-    def __init__(self, mode: _AuthMode, shall_confirm: bool = False) -> None:
-        super().__init__()
-        self._mode = mode
-        self._shall_confirm = shall_confirm
-
-    def _run_server(self) -> None:
-        raise click.UsageError("No Lightning credentials are available. Run `lightning login` first.")
-
-
 def authenticate(mode: _AuthMode, shall_confirm: bool = True) -> None:
     """Validate existing Lightning AI credentials.
 
     Credentials must already be configured. Run ``lightning login`` first when
-    credentials are unavailable.
+    credentials are unavailable. This never opens a browser.
     """
-    auth = _AuthLitServe(mode, shall_confirm)
-    auth.authenticate()
+    with browser_login(False):
+        try:
+            CredentialSource().header()
+        except ValueError as err:
+            raise click.UsageError("No Lightning credentials are available. Run `lightning login` first.") from err
 
 
 def select_teamspace(teamspace: Optional[str], org: Optional[str], user: Optional[str]) -> Teamspace:
