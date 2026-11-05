@@ -79,11 +79,9 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
     is_flag=True,
     help="Keep the login in a file instead of the OS keychain.",
 )
-@click.option("--org", default=None, help="Comma-separated orgs this login should be limited to.")
-@click.option("--project", default=None, help="Teamspace this login should be limited to.")
-def login(no_browser: bool, insecure_storage: bool, org: str, project: str) -> None:
+def login(no_browser: bool, insecure_storage: bool) -> None:
     """Login to Lightning AI Studios."""
-    run_login(no_browser=no_browser, insecure_storage=insecure_storage, orgs=org, project=project)
+    run_login(no_browser=no_browser, insecure_storage=insecure_storage)
 
 
 @main_cli.command

@@ -1,8 +1,6 @@
 """CLI authentication commands, on top of the vendored credential source."""
 
-import json
 import os
-from typing import Any, Dict, Optional, Sequence
 
 import click
 
@@ -40,43 +38,9 @@ def _env_set(name: str) -> bool:
     return bool(os.environ.get(name, "").strip())
 
 
-def _org_list(orgs: Optional[str]) -> Optional[Sequence[str]]:
-    if not orgs:
-        return None
-    names = [part.strip() for part in orgs.split(",") if part.strip()]
-    return names or None
-
-
-def _grant_reaches_further(grant: Dict[str, Any], orgs: Optional[Sequence[str]], project: Optional[str]) -> bool:
-    """Whether ``grant`` covers more than the orgs and project the user asked for."""
-    scopes = grant.get("orgs")
-    asked = {org for org in orgs or [] if org}
-    if scopes == "all":
-        return bool(asked or project)
-    if not isinstance(scopes, list):
-        return False
-    for scope in scopes:
-        if not isinstance(scope, dict):
-            continue
-        org = str(scope.get("org", ""))
-        projects = scope.get("projects")
-        if asked and org not in asked:
-            return True
-        if not project:
-            continue
-        if not isinstance(projects, list) or not projects:
-            return True
-        named = [str(item) for item in projects]
-        if project not in named or len(named) > 1:
-            return True
-    return False
-
-
 def run_login(
     no_browser: bool = False,
     insecure_storage: bool = False,
-    orgs: Optional[str] = None,
-    project: Optional[str] = None,
 ) -> None:
     """Run the login the switch selects, without dropping the saved login first."""
     if _env_set(env.LIGHTNING_AUTH_TOKEN_FILE):
@@ -97,27 +61,16 @@ def run_login(
     if in_studio():
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
-    asked_orgs = _org_list(orgs)
-    asked_project = project.strip() if isinstance(project, str) and project.strip() else None
     if insecure_storage and cli_login.oidc_login_enabled():
         click.echo(f"This login is kept in a file at {env.LIGHTNING_LOGIN_PATH}.", err=True)
     try:
-        if (asked_orgs or asked_project) and not cli_login.oidc_login_enabled():
-            flags = [flag for flag, given in (("--org", asked_orgs), ("--project", asked_project)) if given]
-            raise LoginUnavailable(
-                f"{', '.join(flags)} needs the new login. Set {cli_login.OIDC_LOGIN_ENV}=1 to use it."
-            )
-        done = start_login(
+        start_login(
             no_browser=no_browser,
             insecure_storage=insecure_storage,
         )
     except LoginUnavailable as err:
         raise click.UsageError(str(err)) from err
 
-    wider = done is not None and (asked_orgs or asked_project)
-    if wider and _grant_reaches_further(done.grant, asked_orgs, asked_project):
-        grant = json.dumps(done.grant, sort_keys=True)
-        click.echo(f"This login reaches more than you asked for. The grant is {grant}.")
     try:
         click.echo(f'Successfully logged in as "{_get_authed_user().name}".')
     except Exception:

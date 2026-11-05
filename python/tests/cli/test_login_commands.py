@@ -1,8 +1,6 @@
 """Login, logout, auth status and auth token, against the fake platform."""
 
-import getpass
 import json
-import sys
 import threading
 import webbrowser
 from types import SimpleNamespace
@@ -17,7 +15,7 @@ from lightning_sdk.cli.legacy.entrypoint import main_cli as legacy_cli
 from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import CredentialSource, logout
 from lightning_sdk.lightning_cloud.login import Auth
-from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform, OtherDevice
+from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform
 from tests.lightning_cloud.utils.keyrings import MemoryKeyring
 
 _REAL_THREAD = threading.Thread
@@ -101,7 +99,7 @@ def test_login_uses_the_interim_flow_when_the_switch_is_unset(platform, browser,
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 @pytest.mark.parametrize(
     "args",
-    [["--no-browser"], ["--insecure-storage"], ["--org", "acme"], ["--project", "research"]],
+    [["--no-browser"], ["--insecure-storage"]],
 )
 def test_interim_login_refuses_flags_the_new_login_needs(isolated, cli, args) -> None:
     result = _invoke(cli, ["login", *args])
@@ -192,44 +190,6 @@ def test_insecure_storage_warns_and_names_the_login_file(platform, browser, monk
     assert env.LIGHTNING_LOGIN_PATH in _text(result)
     assert "file" in _text(result)
     assert CredentialSource().resolve().kind.value == "login"
-
-
-@pytest.mark.parametrize("args", [["--org", "acme"], ["--no-browser", "--org", "acme"]])
-def test_login_names_a_grant_that_reaches_further_than_the_hints(platform, browser, monkeypatch, args) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-    if "--no-browser" in args:
-
-        def read_terminal():
-            sys.stderr.flush()
-            captured = getattr(sys.stderr, "buffer", sys.stderr)
-            raw = captured.getvalue() if hasattr(captured, "getvalue") else ""
-            return raw.decode() if isinstance(raw, bytes) else raw
-
-        device = OtherDevice(platform, read_terminal, ["CODE"])
-        monkeypatch.setattr(getpass, "getpass", device.getpass)
-
-    result = _invoke(main_cli, ["login", *args])
-
-    assert result.exit_code == 0, _text(result)
-    assert "reaches more than you asked for" in _text(result)
-    assert '"orgs": "all"' in _text(result)
-
-
-def test_login_stays_quiet_when_the_grant_matches_the_hints(platform, browser, monkeypatch) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-    original = platform._issue
-
-    def matching(family):
-        body = original(family)
-        body["lightning_grant"] = {"orgs": [{"org": "acme", "projects": ["research"]}], "permissions": ["read"]}
-        return body
-
-    platform._issue = matching
-
-    result = _invoke(main_cli, ["login", "--org", "acme", "--project", "research"])
-
-    assert result.exit_code == 0, _text(result)
-    assert "reaches more than you asked for" not in _text(result)
 
 
 def test_a_studio_without_credentials_still_refuses_to_log_in(monkeypatch) -> None:
