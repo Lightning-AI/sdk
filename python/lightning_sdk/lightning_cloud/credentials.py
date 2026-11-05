@@ -2,14 +2,13 @@
 # Do not edit it directly; changes will be overwritten.
 # Make changes in the internal upstream repository instead.
 
-import base64
 import contextlib
 import contextvars
 import dataclasses
 import enum
 import os
 import pathlib
-from typing import Any, Callable, Dict, Iterator, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 
 from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer, Keys
@@ -30,20 +29,21 @@ class CredentialKind(str, enum.Enum):
     ENV_TOKEN = "env_token"
     LOGIN = "login"
     SESSION = "session"
-    LEGACY_KEY = "legacy_key"
+
+
+REVOKE_FAILED = {
+    CredentialKind.LOGIN: "The saved login could not be revoked on the server and may work until it expires.",
+    CredentialKind.SESSION: "The saved session could not be revoked on the server and may work until it expires.",
+}
 
 
 @dataclasses.dataclass(frozen=True)
 class Credential:
     kind: CredentialKind
     token: str = dataclasses.field(repr=False)
-    user_id: Optional[str] = None
 
     @property
     def header(self) -> str:
-        if self.kind is CredentialKind.LEGACY_KEY and self.user_id:
-            raw = f"{self.user_id}:{self.token}".encode("ascii")
-            return f"Basic {base64.b64encode(raw).decode('ascii')}"
         return f"Bearer {self.token}"
 
 
@@ -85,21 +85,12 @@ def _from_env_token() -> Optional[str]:
     return _present(os.environ.get(Keys.AUTH_TOKEN.value))
 
 
-def _from_legacy_key() -> Optional[str]:
-    # Studios and jobs still inject this key, and the control plane accepts the
-    # header main sends. The switch removes the row.
-    if cli_login.oidc_login_enabled():
-        return None
-    return _present(os.environ.get(Keys.API_KEY.value))
-
-
-# The order is the precedence. A saved api_key has no row in either state.
+# The order is the precedence.
 _READERS = (
     (CredentialKind.TOKEN_FILE, _from_token_file),
     (CredentialKind.ENV_TOKEN, _from_env_token),
     (CredentialKind.LOGIN, cli_login._request_token),
     (CredentialKind.SESSION, cli_login._saved_session),
-    (CredentialKind.LEGACY_KEY, _from_legacy_key),
 )
 
 
@@ -124,8 +115,7 @@ class CredentialSource:
             token = read()
             if not token:
                 continue
-            user_id = _present(os.environ.get(Keys.USER_ID.value)) if kind is CredentialKind.LEGACY_KEY else None
-            return Credential(kind, token, user_id)
+            return Credential(kind, token)
         return None
 
     def header(self) -> str:
@@ -148,11 +138,11 @@ class CredentialSource:
     def refresh(self, sent: str) -> bool:
         """Whether the request that sent ``sent`` should be retried.
 
-        ``sent`` is the Authorization value (``Bearer <token>`` or ``Basic <blob>``),
-        or a bare token, which counts as ``Bearer <token>``. True when a different
-        credential is now available, or when the login refreshed the token it sent.
+        ``sent`` is the Authorization value (``Bearer <token>``), or a bare token,
+        which counts as ``Bearer <token>``. True when a different credential is
+        now available, or when the login refreshed the token it sent.
         """
-        header = sent if sent.startswith(("Bearer ", "Basic ")) else f"Bearer {sent}"
+        header = sent if sent.startswith("Bearer ") else f"Bearer {sent}"
         current = self._resolve()
         if current is None:
             return False
@@ -180,8 +170,6 @@ class CredentialSource:
 def start_login(
     no_browser: bool = False,
     insecure_storage: bool = False,
-    orgs: Optional[Sequence[str]] = None,
-    project: Optional[str] = None,
     sign_in_params: Optional[Dict[str, str]] = None,
 ) -> Optional[cli_login.Login]:
     """Log in with the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects when this is called.
@@ -194,16 +182,12 @@ def start_login(
         return cli_login.login(
             no_browser=no_browser,
             insecure_storage=insecure_storage,
-            orgs=orgs,
-            project=project,
         )
     unavailable = [
         flag
         for flag, given in (
             ("--no-browser", no_browser),
             ("--insecure-storage", insecure_storage),
-            ("--org", orgs),
-            ("--project", project),
         )
         if given
     ]
@@ -222,13 +206,16 @@ def logout() -> Tuple[CredentialKind, ...]:
     Returns the kinds whose revoke failed, which may still work until they expire.
     """
     with cli_login._locked():
-        login = cli_login._load(cli_login._origin(), cached=False)
+        origin = cli_login._origin()
+        metadata = cli_login._read_metadata()
+        login = cli_login._load(origin, cached=False)
         session = cli_login._saved_session()
-        if login is not None:
+        saved_here = isinstance(metadata, dict) and metadata.get("url") == origin
+        if saved_here:
             cli_login._forget()
         Auth.secrets_file.unlink(missing_ok=True)
     failed = []
-    if login is not None and not cli_login._revoke(login.refresh_token):
+    if saved_here and (login is None or not cli_login._revoke(login.refresh_token)):
         failed.append(CredentialKind.LOGIN)
     if session is not None and not cli_login._revoke_session(session):
         failed.append(CredentialKind.SESSION)

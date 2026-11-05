@@ -1,4 +1,3 @@
-import base64
 import importlib
 import importlib.metadata
 import json
@@ -144,17 +143,23 @@ def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isol
         Auth().authenticate(),
         Auth().auth_header,
         Auth().get_auth_header(),
-        Auth().get_auth_header("api_key"),
     ]
     assert all(header.startswith("Bearer ") for header in headers), headers
     assert _sent_to_the_api(platform) == [f"Bearer {session}"]
 
 
-def test_with_the_switch_set_an_env_key_and_a_saved_api_key_are_not_sent(platform, isolated_credentials, monkeypatch):
-    _set_switch(monkeypatch, "oidc")
-    isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "key-saved"}))
-    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
-    monkeypatch.setenv("LIGHTNING_API_KEY", "key-env")
+@pytest.mark.parametrize("user_id", ["user-1", None])
+@_SWITCH
+def test_an_env_api_key_and_a_saved_api_key_are_never_sent(
+    platform, isolated_credentials, monkeypatch, switch, user_id
+):
+    _set_switch(monkeypatch, switch)
+    isolated_credentials.write_text(json.dumps({"user_id": "saved-user", "api_key": "key-saved"}))
+    if user_id is None:
+        monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
+    else:
+        monkeypatch.setenv("LIGHTNING_USER_ID", f" {user_id} ")
+    monkeypatch.setenv("LIGHTNING_API_KEY", " key-env\n")
 
     assert CredentialSource().resolve() is None
     with browser_login(False):
@@ -165,89 +170,6 @@ def test_with_the_switch_set_an_env_key_and_a_saved_api_key_are_not_sent(platfor
     with pytest.raises(ValueError, match=_exactly(_LOGIN_FIRST)):
         _ = Auth().auth_header
     assert platform.requests == []
-
-
-def test_with_the_switch_unset_a_user_id_and_api_key_are_sent_as_main_sends_them(
-    platform, isolated_credentials, monkeypatch
-):
-    user_id = "user-1"
-    api_key = "key-1"
-    isolated_credentials.write_text(json.dumps({"user_id": "saved-user", "api_key": "key-saved"}))
-    monkeypatch.setenv("LIGHTNING_USER_ID", f" {user_id} ")
-    monkeypatch.setenv("LIGHTNING_API_KEY", f" {api_key}\n")
-    expected = f"Basic {base64.b64encode(f'{user_id}:{api_key}'.encode('ascii')).decode('ascii')}"
-
-    with pytest.raises(ConnectionError):
-        LightningClient().auth_service_get_user()
-
-    assert _sent_to_the_api(platform) == [expected]
-    assert Auth().auth_header == expected
-
-
-def test_with_the_switch_unset_an_api_key_alone_is_sent_as_bearer(platform, monkeypatch):
-    monkeypatch.setenv("LIGHTNING_USER_ID", " \n")
-    monkeypatch.setenv("LIGHTNING_API_KEY", " key-only\n")
-
-    with pytest.raises(ConnectionError):
-        LightningClient().auth_service_get_user()
-
-    assert _sent_to_the_api(platform) == ["Bearer key-only"]
-    assert Auth().auth_header == "Bearer key-only"
-
-
-def test_a_token_file_an_env_token_a_new_login_and_a_saved_session_each_beat_the_legacy_key(
-    platform, browser, isolated_credentials, monkeypatch, tmp_path
-):
-    monkeypatch.setenv("LIGHTNING_USER_ID", "user-key")
-    monkeypatch.setenv("LIGHTNING_API_KEY", "key-env")
-    file_session = platform.mint_session("user-file")
-    env_session = platform.mint_session("user-env")
-    token_file = tmp_path / "token"
-    token_file.write_text(file_session + "\n")
-    monkeypatch.setenv(env.LIGHTNING_AUTH_TOKEN_FILE, str(token_file))
-    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", env_session)
-    made = cli_login.login()
-    browser.finish()
-
-    def sent(header):
-        platform.requests.clear()
-        user = LightningClient().auth_service_get_user().id
-        assert _sent_to_the_api(platform) == [header]
-        assert Auth().auth_header == header
-        return user
-
-    assert sent(f"Bearer {file_session}") == "user-file"
-    token_file.unlink()
-    assert sent(f"Bearer {env_session}") == "user-env"
-    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN")
-    assert sent(f"Bearer {made.access_token}") == "user-1"
-    logout()
-    saved = platform.mint_session("user-saved")
-    isolated_credentials.write_text(json.dumps({"user_id": "user-saved", "api_key": "key-saved", "auth_token": saved}))
-    assert sent(f"Bearer {saved}") == "user-saved"
-
-
-@_SWITCH
-def test_a_saved_api_key_is_never_sent(platform, isolated_credentials, monkeypatch, switch):
-    _set_switch(monkeypatch, switch)
-    isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "key-saved"}))
-
-    with browser_login(False), pytest.raises(ValueError, match=_exactly(_LOGIN_FIRST)):
-        LightningClient().auth_service_get_user()
-    with pytest.raises(ValueError, match=_exactly(_LOGIN_FIRST)):
-        _ = Auth().auth_header
-    assert platform.requests == []
-
-
-def test_a_401_on_the_legacy_key_says_run_lightning_login_once(platform, monkeypatch):
-    monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
-    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
-
-    with pytest.raises(ConnectionError) as refused:
-        LightningClient().auth_service_get_user()
-
-    assert str(refused.value) == _LOGIN_FAILED
-    assert _sent_to_the_api(platform) == [f"Basic {base64.b64encode(b'user-1:key-1').decode('ascii')}"]
 
 
 @_SWITCH
@@ -688,9 +610,10 @@ def test_save_replaces_the_saved_login(isolated_credentials):
     auth = Auth()
     auth.save(user_id="user-1", api_key="key-1")
     auth.save(token="ignored", auth_token="sess_1")
-    assert json.loads(path.read_text()) == {"user_id": "", "api_key": "", "auth_token": "sess_1"}
+    assert json.loads(path.read_text()) == {"user_id": "", "auth_token": "sess_1"}
+    assert "api_key" not in path.read_text()
+    assert "key-1" not in path.read_text()
     assert not auth.user_id
-    assert not auth.api_key
     assert auth.auth_token == "sess_1"
 
 
