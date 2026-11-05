@@ -10,7 +10,6 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from lightning_sdk import __version__
-from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli.legacy.configure import configure
 from lightning_sdk.cli.legacy.connect import connect
 from lightning_sdk.cli.legacy.create import create
@@ -27,10 +26,9 @@ from lightning_sdk.cli.legacy.start import start
 from lightning_sdk.cli.legacy.stop import stop
 from lightning_sdk.cli.legacy.switch import switch
 from lightning_sdk.cli.legacy.upload import upload
-from lightning_sdk.cli.utils.auth import browser_authentication
+from lightning_sdk.cli.utils.auth import browser_authentication, run_login, run_logout
 from lightning_sdk.cli.utils.coloring import CustomHelpFormatter
 from lightning_sdk.constants import _LIGHTNING_DEBUG
-from lightning_sdk.lightning_cloud.login import Auth
 
 
 def _notify_exception(exception_type: Type[BaseException], value: BaseException, tb: Optional[TracebackType]) -> None:
@@ -71,23 +69,27 @@ main_cli.context_class.formatter_class = CustomHelpFormatter
 
 
 @main_cli.command
-def login() -> None:
+@click.option(
+    "--no-browser",
+    is_flag=True,
+    help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
+)
+@click.option(
+    "--insecure-storage",
+    is_flag=True,
+    help="Keep the login in a file instead of the OS keychain.",
+)
+@click.option("--org", default=None, help="Comma-separated orgs this login should be limited to.")
+@click.option("--project", default=None, help="Teamspace this login should be limited to.")
+def login(no_browser: bool, insecure_storage: bool, org: str, project: str) -> None:
     """Login to Lightning AI Studios."""
-    auth = Auth()
-    auth.clear()
-
-    try:
-        with browser_authentication(True):
-            auth.authenticate()
-    except ConnectionError:
-        raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
+    run_login(no_browser=no_browser, insecure_storage=insecure_storage, orgs=org, project=project)
 
 
 @main_cli.command
 def logout() -> None:
     """Logout from Lightning AI Studios."""
-    auth = Auth()
-    auth.clear()
+    run_logout()
 
 
 # additional commands

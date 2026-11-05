@@ -1,5 +1,6 @@
-"""Show the saved CLI login."""
+"""Show the credential requests send, and what a saved login reaches."""
 
+import os
 from datetime import datetime
 from typing import Any, Dict, Optional
 
@@ -9,10 +10,11 @@ from rich.table import Table
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.lightning_cloud import cli_login
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud.credentials import Credential, CredentialKind, CredentialSource
 
-_NOT_LOGGED_IN = "You are not logged in. Run `lightning login` first."
+_NOT_LOGGED_IN = "You are not logged in. Run `lightning login`."
+_UNKNOWN_REACH = "not known locally"
 
 
 def _stamp(epoch: float) -> str:
@@ -47,15 +49,15 @@ def _teamspace_names(client: Any) -> Dict[str, str]:
     return {member.project_id: member.name for member in memberships if getattr(member, "project_id", None)}
 
 
-def _grant_lines(grant: Dict[str, Any], orgs: Dict[str, str], teamspaces: Dict[str, str]) -> tuple[str, str]:
+def _grant_lines(grant: Dict[str, Any], orgs: Dict[str, str], teamspaces: Dict[str, str]) -> tuple:
     scopes = grant.get("orgs")
     if scopes == "all":
         return "all", "all"
     if not isinstance(scopes, list) or not scopes:
         return "none", "none"
 
-    shown_orgs: list[str] = []
-    shown_teamspaces: list[str] = []
+    shown_orgs = []
+    shown_teamspaces = []
     for scope in scopes:
         if not isinstance(scope, dict):
             continue
@@ -67,49 +69,56 @@ def _grant_lines(grant: Dict[str, Any], orgs: Dict[str, str], teamspaces: Dict[s
     return ", ".join(shown_orgs) or "none", ", ".join(shown_teamspaces) or "none"
 
 
-def _legacy_session() -> bool:
-    auth = Auth()
-    return bool(auth.load() and auth.auth_token)
+def _source(credential: Credential) -> str:
+    if credential.kind is CredentialKind.TOKEN_FILE:
+        return f"token file {os.environ.get(env.LIGHTNING_AUTH_TOKEN_FILE, '')}"
+    if credential.kind is CredentialKind.ENV_TOKEN:
+        return "LIGHTNING_AUTH_TOKEN"
+    if credential.kind is CredentialKind.LOGIN:
+        login = cli_login.current_login()
+        storage = login.storage if login is not None else "login"
+        return f"login ({storage})"
+    return "interim session login"
 
 
-@click.command("status", cls=LightningCommand)
-def status() -> None:
-    """Show who is logged in, the login's reach, its permissions and when it expires."""
-    login = cli_login.current_login()
-    client = cached_lightning_client()
-    user = _user(client)
-
-    if login is None:
-        if not _legacy_session():
-            raise click.ClickException(_NOT_LOGGED_IN)
-        table = Table(show_header=False, box=None)
-        table.add_column("Field", style="bold")
-        table.add_column("Value")
-        table.add_row("User", user.get("username") or user.get("email") or user.get("id") or "unknown")
-        table.add_row("Login", "session token saved by an older SDK")
-        table.add_row("Expiry", "managed by the server")
-        table.add_row("Hint", "Run `lightning login` to use the new login.")
-        click.echo(rich_to_str(table), color=True)
-        return
-
-    if login.grant.get("orgs") == "all":
-        orgs, teamspaces = "all", "all"
-    else:
-        orgs, teamspaces = _grant_lines(login.grant, _org_names(client), _teamspace_names(client))
-    permissions = ", ".join(login.grant.get("permissions") or []) or "none"
-
-    table = Table(show_header=False, box=None)
-    table.add_column("Field", style="bold")
-    table.add_column("Value")
+def _add_user(table: Table, user: Dict[str, Optional[str]]) -> None:
     table.add_row("User", user.get("username") or user.get("email") or user.get("id") or "unknown")
     if user.get("email"):
         table.add_row("Email", user["email"])
     if user.get("id"):
         table.add_row("User ID", user["id"])
-    table.add_row("Storage", login.storage)
-    table.add_row("Orgs", orgs)
-    table.add_row("Teamspaces", teamspaces)
-    table.add_row("Permissions", permissions)
-    table.add_row("Access expires", _stamp(login.access_expires_at))
-    table.add_row("Login expires", _stamp(login.refresh_expires_at))
+
+
+@click.command("status", cls=LightningCommand)
+def status() -> None:
+    """Show the credential requests send, who it belongs to, and what a saved login reaches."""
+    credential = CredentialSource().resolve()
+    if credential is None:
+        raise click.ClickException(_NOT_LOGGED_IN)
+
+    client = cached_lightning_client()
+    user = _user(client)
+    table = Table(show_header=False, box=None)
+    table.add_column("Field", style="bold")
+    table.add_column("Value")
+    _add_user(table, user)
+    table.add_row("Source", _source(credential))
+
+    login = cli_login.current_login() if credential.kind is CredentialKind.LOGIN else None
+    if login is None:
+        table.add_row("Orgs", _UNKNOWN_REACH)
+        table.add_row("Teamspaces", _UNKNOWN_REACH)
+        table.add_row("Permissions", _UNKNOWN_REACH)
+        table.add_row("Expiry", _UNKNOWN_REACH)
+    else:
+        if login.grant.get("orgs") == "all":
+            orgs, teamspaces = "all", "all"
+        else:
+            orgs, teamspaces = _grant_lines(login.grant, _org_names(client), _teamspace_names(client))
+        permissions = ", ".join(login.grant.get("permissions") or []) or "none"
+        table.add_row("Orgs", orgs)
+        table.add_row("Teamspaces", teamspaces)
+        table.add_row("Permissions", permissions)
+        table.add_row("Access expires", _stamp(login.access_expires_at))
+        table.add_row("Login expires", _stamp(login.refresh_expires_at))
     click.echo(rich_to_str(table), color=True)
