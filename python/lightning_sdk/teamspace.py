@@ -33,11 +33,9 @@ from lightning_sdk.owner import Owner
 from lightning_sdk.user import User
 from lightning_sdk.utils.logging import TrackCallsMeta
 from lightning_sdk.utils.resolve import (
-    _get_organizations_for_authed_user,
     _parse_model_and_version,
     _resolve_org,
     _resolve_teamspace_name,
-    _resolve_user,
     skip_studio_init,
 )
 
@@ -80,18 +78,21 @@ class ConnectionType(Enum):
         return self.value
 
 
+_ORG_OWNER_HINT = (
+    "Teamspaces are owned by organizations, and your own teamspaces are in your personal organization. "
+    "Specify the teamspace as '<org>/<teamspace>'."
+)
+
+
 class Teamspace(metaclass=TrackCallsMeta):
     """A teamspace is a collection of Studios, Clusters, Members and an associated Budget.
 
     Args:
-        name: the name of the teamspace, either a bare name or an ``owner/teamspace`` slug
+        name: the name of the teamspace, either a bare name or an ``org/teamspace`` slug
         org: the owning organization. Deprecated — pass the owner as part of ``name`` instead,
-            e.g. ``name="owner/teamspace"``.
-        user: the owning user. Deprecated — pass the owner as part of ``name`` instead,
-            e.g. ``name="owner/teamspace"``.
-
-    Note:
-        Either user or organization should be specified.
+            e.g. ``name="org/teamspace"``.
+        user: no longer supported, since teamspaces are owned by organizations. Passing it raises
+            a ``ValueError``.
 
     Note:
         Arguments will be automatically inferred from environment variables if possible,
@@ -108,47 +109,37 @@ class Teamspace(metaclass=TrackCallsMeta):
         self._teamspace_api = TeamspaceApi()
         self._cloud_account_api = CloudAccountApi()
 
+        if user is not None:
+            raise ValueError(f"Teamspaces can't be looked up by user. {_ORG_OWNER_HINT}")
+
         name = _resolve_teamspace_name(name)
 
         if name is None:
             raise ValueError("Teamspace name wasn't provided and could not be inferred from environment")
 
-        if org is not None or user is not None:
+        if org is not None:
             warnings.warn(
-                "Passing 'org'/'user' is deprecated. Provide the owner as part of 'name' instead, "
-                "e.g. name='owner/teamspace'.",
+                "Passing 'org' is deprecated. Provide the owner as part of 'name' instead, e.g. name='org/teamspace'.",
                 DeprecationWarning,
             )
 
         if "/" in name:
-            if org is not None or user is not None:
+            if org is not None:
                 raise ValueError(
-                    "The owner was specified both as part of 'name' (e.g. 'owner/teamspace') and via "
-                    "'org'/'user'. Please only specify the owner once."
+                    "The owner was specified both as part of 'name' (e.g. 'org/teamspace') and via "
+                    "'org'. Please only specify the owner once."
                 )
 
-            slug_owner, name = name.split("/", 1)
+            org, name = name.split("/", 1)
             try:
-                resolved_org = cast(Organization, _resolve_org(slug_owner))
-                self._teamspace_api.get_teamspace(name=name, owner_id=resolved_org.id)
-                org = resolved_org
-            except Exception:
-                org = None
-                user = _resolve_user(slug_owner)
-
-        if user is not None and org is not None:
-            raise ValueError("User and org are mutually exclusive. Please only specify the one who owns the teamspace.")
-
-        if user is not None:
-            self._user = _resolve_user(user)
-            # don't parse org if user was explicitly provided
-            self._org = None
+                self._org = _resolve_org(org)
+            except ValueError as e:
+                raise ValueError(f"'{org}' is not an organization you are a member of. {_ORG_OWNER_HINT}") from e
         else:
-            self._user = _resolve_user(user)
             self._org = _resolve_org(org)
 
-        # If still no user or org resolved, try config defaults
-        if self._user is None and self._org is None:
+        # If still no org resolved, try config defaults
+        if self._org is None:
             from lightning_sdk.utils.config import Config, DefaultConfigKeys
 
             config = Config()
@@ -159,19 +150,17 @@ class Teamspace(metaclass=TrackCallsMeta):
                 if owner_type.lower() == "organization":
                     self._org = _resolve_org(owner_name)
                 elif owner_type.lower() == "user":
-                    self._user = _resolve_user(owner_name)
+                    raise ValueError(
+                        f"Your default teamspace is saved as owned by user '{owner_name}'. {_ORG_OWNER_HINT} "
+                        "Run 'lightning config set teamspace <org>/<teamspace>' to update it."
+                    )
 
-        self._owner: Owner
-        if self._user is None and self._org is None:
+        if self._org is None:
             raise RuntimeError(
-                "Neither user or org are specified, but one of them has to be the owner of the Teamspace"
+                f"No organization specified for teamspace '{name}'. Specify it as '<org>/<teamspace>', set "
+                "LIGHTNING_ORG, or run 'lightning config set teamspace <org>/<teamspace>'."
             )
-        elif self._org is not None:
-            self._owner = self._org
-
-        else:
-            assert self._user is not None
-            self._owner = self._user
+        self._owner: Owner = self._org
 
         try:
             self._teamspace = self._teamspace_api.get_teamspace(name=name, owner_id=self.owner.id)
@@ -1175,7 +1164,7 @@ def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name:
 
     Args:
         error: The original ValueError raised during teamspace resolution.
-        owner: The owner (user or org) used in the lookup.
+        owner: The organization used in the lookup.
         teamspace_name: The name of the teamspace that could not be found.
 
     Returns:
@@ -1183,23 +1172,6 @@ def _resolve_valueerror_message(error: ValueError, owner: Owner, teamspace_name:
     """
     message = error.args[0]
     if message.startswith("Teamspace") and message.endswith("does not exist"):
-        entire_ts_name = f"{owner.name}/{teamspace_name}"
-
-        if isinstance(owner, User):
-            organizations = _get_organizations_for_authed_user()
-            message = (
-                f"Teamspace {entire_ts_name} does not exist. "
-                f"Is {teamspace_name} an organizational Teamspace? You are a member of the following organizations: "
-                f"{[o.name for o in organizations]}. Try specifying the `org` parameter instead "
-                "of `user` if the Teamspace belongs to the organization."
-            )
-        else:
-            # organization teamspace owner
-            user = User()
-            message = (
-                f"Teamspace {entire_ts_name} does not exist. "
-                f"Is {teamspace_name} a user Teamspace? "
-                f"Consider specifying user={user.name} instead of org={owner.name}."
-            )
+        message = f"Teamspace {owner.name}/{teamspace_name} does not exist, or you are not a member of it."
 
     return ValueError(message, *error.args[1:])

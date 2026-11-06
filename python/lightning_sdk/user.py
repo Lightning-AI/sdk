@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class User(Owner):
-    """Represents a user owner of teamspaces and studios.
+    """Represents a user.
 
     Args:
         name: the name of the user
@@ -86,26 +86,29 @@ class User(Owner):
         self._user_api.delete_secret(key)
 
     def create_teamspace(self, name: str) -> "Teamspace":
-        """Create a new teamspace owned by this user.
+        """Not supported: teamspaces are owned by organizations.
 
-        Can only be called for the currently authenticated user.
-
-        Args:
-            name: The name for the new teamspace.
-
-        Returns:
-            Teamspace: The newly created teamspace.
+        Use :meth:`Organization.create_teamspace` instead.
 
         Raises:
-            ValueError: If called for a user other than the authenticated user.
+            ValueError: Always.
         """
-        from lightning_sdk.teamspace import Teamspace
+        from lightning_sdk.teamspace import _ORG_OWNER_HINT
 
-        if not _get_authed_user().id == self.id:
-            raise ValueError("Can only create teamspaces for currently authenticated user")
+        raise ValueError(f"Users can't own teamspaces. {_ORG_OWNER_HINT}")
 
-        self._user_api.create_teamspace(name)
-        return Teamspace(name=name, user=self)
+    @property
+    def teamspaces(self) -> List["Teamspace"]:
+        """Not supported: teamspaces are owned by organizations.
+
+        Use :attr:`Organization.teamspaces` instead.
+
+        Raises:
+            ValueError: Always.
+        """
+        from lightning_sdk.teamspace import _ORG_OWNER_HINT
+
+        raise ValueError(f"Users can't own teamspaces. {_ORG_OWNER_HINT}")
 
     @property
     def organizations(self) -> List["Organization"]:

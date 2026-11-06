@@ -205,7 +205,7 @@ class LLM:
         caches the result on the class so subsequent ``LLM`` instances reuse it.
 
         Args:
-            teamspace_owner: Username or organisation that owns the target teamspace.
+            teamspace_owner: Organisation that owns the target teamspace.
             teamspace_name: Name of the target teamspace (or organisation name when
                 ``teamspace_owner`` is ``None``).
 
@@ -217,19 +217,16 @@ class LLM:
             if teamspace_owner and teamspace_name:
                 # org with specific teamspace
                 try:
-                    t = _resolve_teamspace(teamspace=teamspace_name, org=None, user=teamspace_owner)
-                except Exception:
-                    try:
-                        t = _resolve_teamspace(teamspace=teamspace_name, org=teamspace_owner, user=None)
-                    except Exception as err:
-                        raise ValueError(
-                            f"Teamspace {teamspace_owner}/{teamspace_name} not found."
-                            "Please verify owner name (username or organization) and the teamspace name are correct."
-                        ) from err
-                    if t is None:
-                        raise ValueError(f"Teamspace {teamspace_owner}/{teamspace_name} not found.") from None
-                    os.environ["LIGHTNING_TEAMSPACE"] = t.name
-                    os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
+                    t = _resolve_teamspace(teamspace=teamspace_name, org=teamspace_owner, user=None)
+                except Exception as err:
+                    raise ValueError(
+                        f"Teamspace {teamspace_owner}/{teamspace_name} not found. "
+                        "Please verify the organization name and the teamspace name are correct."
+                    ) from err
+                if t is None:
+                    raise ValueError(f"Teamspace {teamspace_owner}/{teamspace_name} not found.") from None
+                os.environ["LIGHTNING_TEAMSPACE"] = t.name
+                os.environ["LIGHTNING_CLOUD_PROJECT_ID"] = t.id
 
             elif teamspace_name and teamspace_owner is None:
                 # if only org name is given, use the default teamspace
@@ -260,7 +257,13 @@ class LLM:
                         teamspace_api = TeamspaceApi()
                         user_api = UserApi()
                         authed_user = user_api._client.auth_service_get_user()
-                        teamspaces = teamspace_api.list_teamspaces(owner_id=authed_user.id) or []
+                        # default to a teamspace in the user's personal org
+                        personal_org = next(
+                            org
+                            for org in user_api._get_organizations_for_authed_user()
+                            if org.is_personal_org and org.creator_id == authed_user.id
+                        )
+                        teamspaces = teamspace_api.list_teamspaces(owner_id=personal_org.id) or []
                         default_teamspace = teamspaces[0]
                         teamspace_name = default_teamspace.name
                         teamspace_id = default_teamspace.id

@@ -13,7 +13,6 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--teamspace", required=True, help="Teamspace name without owner.")
     parser.add_argument("--org", help="Organization that owns the teamspace.")
-    parser.add_argument("--user", help="User that owns the teamspace.")
 
     subcommands = parser.add_subparsers(dest="example", required=True)
     subcommands.add_parser("inspect", help="Inspect teamspace metadata and resources.")
@@ -30,7 +29,7 @@ def main() -> None:
     args = _parser().parse_args()
     if args.example == "inspect":
         # sdk-teamspace-inspect-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
 
         print(f"Teamspace: {teamspace.owner.name}/{teamspace.name}")
         print(f"ID: {teamspace.id}")
@@ -48,7 +47,7 @@ def main() -> None:
         # sdk-teamspace-inspect-end
     elif args.example == "job":
         # sdk-teamspace-job-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
         studio = Studio(args.studio, teamspace=teamspace, create_ok=False)
 
         job = Job.run(
@@ -63,7 +62,7 @@ def main() -> None:
         # sdk-teamspace-job-end
     elif args.example == "set-secret":
         # sdk-teamspace-secret-start
-        teamspace = Teamspace(args.teamspace, org=args.org, user=args.user)
+        teamspace = Teamspace(args.teamspace, org=args.org)
         teamspace.set_secret(
             key="HF_TOKEN_FOR_TUTORIAL",
             value=os.environ["HF_TOKEN"],

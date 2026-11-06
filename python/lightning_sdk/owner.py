@@ -41,20 +41,12 @@ class Owner(ABC, metaclass=TrackCallsABCMeta):
         """All teamspaces owned by this owner.
 
         Returns:
-            List[Teamspace]: Every teamspace belonging to this user or organisation.
+            List[Teamspace]: Every teamspace belonging to this organisation.
         """
         from lightning_sdk.teamspace import Teamspace
-        from lightning_sdk.user import User
-
-        if isinstance(self, User):
-            user = self
-            org = None
-        else:
-            user = None
-            org = cast("Organization", self)
 
         _teamspaces = self._teamspace_api.list_teamspaces(owner_id=self.id, name=None) or []
-        return [Teamspace(name=t.name, user=user, org=org) for t in _teamspaces]
+        return [Teamspace(name=t.name, org=cast("Organization", self)) for t in _teamspaces]
 
     def __eq__(self, o: object) -> bool:
         """Checks for equality with provided object."""

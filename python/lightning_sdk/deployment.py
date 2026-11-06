@@ -140,7 +140,7 @@ class Deployment(metaclass=TrackCallsMeta):
         if resolved_teamspace is None:
             raise ValueError(
                 "Could not determine the teamspace for your deployment. Pass a teamspace as "
-                "'owner/teamspace', set one of LIGHTNING_TEAMSPACE / LIGHTNING_ORG (or LIGHTNING_USERNAME), "
+                "'org/teamspace', set LIGHTNING_TEAMSPACE and LIGHTNING_ORG, "
                 "or configure a default with 'lightning config set teamspace'."
             )
         self._teamspace = resolved_teamspace

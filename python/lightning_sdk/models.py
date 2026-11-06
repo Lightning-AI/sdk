@@ -8,8 +8,7 @@ from lightning_sdk.api.utils import AccessibleResource, Experiment, raise_access
 from lightning_sdk.lightning_cloud.openapi import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.models import V1Membership, V1OwnerType
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.user import User
-from lightning_sdk.utils.resolve import _get_authed_user, _resolve_teamspace
+from lightning_sdk.utils.resolve import _resolve_teamspace
 
 if TYPE_CHECKING:
     from lightning_sdk.teamspace import Teamspace
@@ -33,34 +32,23 @@ class UploadedModelInfo:
     cloud_account: str
 
 
-def _get_teamspace_and_path(
-    ts: V1Membership, org_api: OrgApi, user_api: UserApi, authed_user: User
-) -> Tuple[str, Dict[str, Any]]:
+def _get_teamspace_and_path(ts: V1Membership, org_api: OrgApi) -> Tuple[str, Dict[str, Any]]:
     """Return a ``(display_path, kwargs)`` tuple for a teamspace membership.
 
     Args:
         ts: The teamspace membership record.
         org_api: API client used to look up organisation names.
-        user_api: API client used to look up user names.
-        authed_user: The currently authenticated user.
 
     Returns:
         Tuple[str, Dict[str, Any]]: A display path such as ``"org/teamspace"`` and a dict
         of keyword arguments suitable for constructing a :class:`~lightning_sdk.Teamspace`.
 
     Raises:
-        RuntimeError: If the membership has an unknown owner type.
+        RuntimeError: If the membership isn't owned by an organization.
     """
     if ts.owner_type == V1OwnerType.ORGANIZATION:
         org = org_api._get_org_by_id(ts.owner_id)
         return f"{org.name}/{ts.name}", {"name": ts.name, "org": org.name}
-
-    if ts.owner_type == V1OwnerType.USER and ts.owner_id != authed_user.id:
-        user = user_api._get_user_by_id(ts.owner_id)  # todo: check also the name
-        return f"{user.username}/{ts.name}", {"name": ts.name, "user": User(name=user.username)}
-
-    if ts.owner_type == V1OwnerType.USER:
-        return f"{authed_user.name}/{ts.name}", {"name": ts.name, "user": authed_user}
 
     raise RuntimeError(f"Unknown organization type {ts.owner_type}")
 
@@ -69,16 +57,10 @@ def _list_teamspaces() -> List[str]:
     """Return display paths for all teamspaces accessible to the authenticated user.
 
     Returns:
-        List[str]: Paths in ``"owner/teamspace"`` format for every accessible teamspace.
+        List[str]: Paths in ``"org/teamspace"`` format for every accessible teamspace.
     """
     org_api = OrgApi()
-    user_api = UserApi()
-    authed_user = _get_authed_user()
-
-    return [
-        _get_teamspace_and_path(ts, org_api, user_api, authed_user)[0]
-        for ts in user_api._get_all_teamspace_memberships("")
-    ]
+    return [_get_teamspace_and_path(ts, org_api)[0] for ts in UserApi()._get_all_teamspace_memberships("")]
 
 
 def _get_teamspace(name: str, organization: str) -> "Teamspace":
@@ -86,16 +68,13 @@ def _get_teamspace(name: str, organization: str) -> "Teamspace":
     from lightning_sdk.teamspace import Teamspace
 
     org_api = OrgApi()
-    user_api = UserApi()
-    authed_user = _get_authed_user()
-
     requested_teamspace = f"{organization}/{name}".lower()
 
-    for ts in user_api._get_all_teamspace_memberships(""):
+    for ts in UserApi()._get_all_teamspace_memberships(""):
         if ts.name != name:
             continue
 
-        teamspace_path, teamspace = _get_teamspace_and_path(ts, org_api, user_api, authed_user)
+        teamspace_path, teamspace = _get_teamspace_and_path(ts, org_api)
         if requested_teamspace == teamspace_path:
             return Teamspace(**teamspace)
 

@@ -28,6 +28,7 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1Membership,
     V1ModelVersionArchive,
     V1MultiMachineJob,
+    V1Organization,
     V1Project,
     V1ProjectSettings,
     V1ProjectTab,
@@ -48,71 +49,65 @@ class MyDummyExperiment:
         self.id = id
 
 
-@pytest.mark.parametrize("user", ["user-abc", None, -1])
 @pytest.mark.parametrize("org", ["org-abc", None, -1])
 @mock.patch.dict(os.environ, clear=True)
 @mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_init(
-    internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
-):
+def test_teamspace_init(internal_teamspace_api_list_mocker, internal_get_org_api_mocker, org):
     # convert -1 to actual objects since we can't do that outside without mocking API calls
-    if user == -1:
-        user = User("user-abc")
-
     if org == -1:
         org = Organization("org-abc")
 
-    if user is None and org is None:
-        context = pytest.raises(
-            RuntimeError,
-            match="Neither user or org are specified, but one of them has to be the owner of the Teamspace",
-        )
-    elif user is not None and org is not None:
-        context = pytest.raises(
-            ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
-        )
+    if org is None:
+        context = pytest.raises(RuntimeError, match="No organization specified for teamspace 'ts-abc'")
     else:
         context = nullcontext()
 
     with context:
+        Teamspace("ts-abc", org=org)
+
+
+@pytest.mark.parametrize("user", ["user-abc", -1])
+@pytest.mark.parametrize("org", ["org-abc", None])
+@mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_init_user_raises(internal_user_api_mocker, user, org):
+    if user == -1:
+        user = User("user-abc")
+
+    with pytest.raises(ValueError, match="Teamspaces can't be looked up by user.*'<org>/<teamspace>'"):
         Teamspace("ts-abc", user=user, org=org)
 
 
-@pytest.mark.parametrize("user", ["user-abc", None, -1])
-@pytest.mark.parametrize("org", ["org-abc", None, -1])
+@pytest.mark.parametrize(
+    ("env", "org_resolves"),
+    [
+        ({"LIGHTNING_ORG": "org-abc"}, True),
+        ({"LIGHTNING_ORG": "org-abc", "LIGHTNING_USERNAME": "user-abc"}, True),
+        ({"LIGHTNING_USERNAME": "user-abc"}, False),
+        ({}, False),
+    ],
+)
 @mock.patch("lightning_sdk.utils.config._DEFAULT_CONFIG_FILE_PATH", "/nonexistent/config.yaml")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_init_env(
-    internal_teamspace_api_list_mocker, internal_user_api_mocker, internal_get_org_api_mocker, user, org
-):
-    if user is None and org is None:
-        context = pytest.raises(
-            RuntimeError,
-            match="Neither user or org are specified, but one of them has to be the owner of the Teamspace",
-        )
-    elif user is not None and org is not None:
-        if user == -1 or org == -1:
-            context = nullcontext()
-        else:
-            context = pytest.raises(
-                ValueError,
-                match="User and org are mutually exclusive. Please only specify the one who owns the teamspace.",
-            )
-    else:
+def test_teamspace_init_env(internal_teamspace_api_list_mocker, internal_get_org_api_mocker, env, org_resolves):
+    if org_resolves:
         context = nullcontext()
+    else:
+        context = pytest.raises(RuntimeError, match="No organization specified for teamspace 'ts-abc'")
 
-    new_dict = {}
-    if user == -1:
-        new_dict["LIGHTNING_USERNAME"] = "user-abc"
-        user = None
+    with context, mock.patch.dict(os.environ, env, clear=True):
+        Teamspace("ts-abc")
 
-    if org == -1:
-        new_dict["LIGHTNING_ORG"] = "org-abc"
-        org = None
 
-    with context, mock.patch.dict(os.environ, new_dict, clear=True):
-        Teamspace("ts-abc", user=user, org=org)
+@mock.patch.dict(os.environ, clear=True)
+@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+def test_teamspace_saved_user_owner_raises():
+    config = {"teamspace.owner_type": "user", "teamspace.owner": "user-abc"}
+    with mock.patch(
+        "lightning_sdk.utils.config.Config.get_value", side_effect=lambda key: config.get(key)
+    ), pytest.raises(ValueError, match="saved as owned by user 'user-abc'.*lightning config set teamspace"):
+        Teamspace("ts-abc")
 
 
 @mock.patch.dict(os.environ, clear=True)
@@ -128,10 +123,11 @@ def test_teamspace_list_clusters_studios_user(
     _mock_authenticate,
     internal_studio_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     internal_teamspace_api_cluster_list_mocker,
     internal_teamspace_api_list_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     studios = ts.studios
 
@@ -163,89 +159,44 @@ def test_teamspace_list_clusters_studios_org(
     assert len(studios) == 3
 
 
-@pytest.mark.parametrize(
-    ("kwargs", "expected"),
-    [
-        ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
-        ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
-    ],
-)
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_repr(
-    _mock_authenticate,
-    internal_teamspace_api_list_mocker,
-    internal_get_org_api_mocker,
-    internal_user_api_mocker,
-    kwargs,
-    expected,
-):
-    ts = Teamspace(name="ts-abc", **kwargs)
-    assert repr(ts) == expected
+def test_repr(_mock_authenticate, internal_teamspace_api_list_mocker, internal_get_org_api_mocker):
+    ts = Teamspace(name="org-abc/ts-abc")
+    assert repr(ts) == "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"
 
 
-@pytest.mark.parametrize(
-    ("kwargs", "expected"),
-    [
-        ({"user": "user-abc"}, "Teamspace(name=ts-abc, owner=User(name=user-abc))"),
-        ({"org": "org-abc"}, "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"),
-    ],
-)
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth.authenticate", return_value="my-auth-header")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_str(
-    _mock_authenticate,
-    internal_teamspace_api_list_mocker,
-    internal_get_org_api_mocker,
-    internal_user_api_mocker,
-    kwargs,
-    expected,
-):
-    ts = Teamspace(name="ts-abc", **kwargs)
-    assert str(ts) == expected
-
-
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_error_user_and_org():
-    with pytest.raises(
-        ValueError, match="User and org are mutually exclusive. Please only specify the one who owns the teamspace."
-    ):
-        Teamspace(name="ts-abc", user="foo", org="bar")
+def test_str(_mock_authenticate, internal_teamspace_api_list_mocker, internal_get_org_api_mocker):
+    ts = Teamspace(name="org-abc/ts-abc")
+    assert str(ts) == "Teamspace(name=ts-abc, owner=Organization(name=org-abc))"
 
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_slug_resolves_as_org(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+def test_teamspace_slug_resolves_as_org(mock_resolve_org, mock_teamspace_api):
     mock_org = mock_resolve_org.return_value
     mock_org.id = "org-1"
-    mock_resolve_user.return_value = None
     mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
 
     ts = Teamspace("my-org/my-ts")
 
     mock_resolve_org.assert_any_call("my-org")
-    assert mock.call("my-org") not in mock_resolve_user.call_args_list
     assert ts.owner is mock_org
 
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_slug_falls_back_to_user_when_owner_is_not_an_org(
-    mock_resolve_org, mock_resolve_user, mock_teamspace_api
-):
+def test_teamspace_slug_with_non_org_owner_raises(mock_resolve_org, mock_teamspace_api):
     mock_resolve_org.side_effect = ValueError("Organization 'someone' does not exist or you are not a member of it.")
-    mock_user = mock_resolve_user.return_value
-    mock_user.id = "user-1"
-    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
 
-    ts = Teamspace("someone/my-ts")
+    with pytest.raises(ValueError, match="'someone' is not an organization you are a member of.*'<org>/<teamspace>'"):
+        Teamspace("someone/my-ts")
 
-    mock_resolve_user.assert_any_call("someone")
-    assert ts.owner is mock_user
+    mock_teamspace_api().get_teamspace.assert_not_called()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
@@ -254,39 +205,20 @@ def test_teamspace_slug_conflicts_with_explicit_org_raises():
         Teamspace(name="my-org/my-ts", org="another-org")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_slug_conflicts_with_explicit_user_raises():
-    with pytest.raises(ValueError, match="specified both as part of 'name'"):
-        Teamspace(name="my-org/my-ts", user="another-user")
-
-
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_org_kwarg_emits_deprecation_warning(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
-    mock_resolve_user.return_value = None
+def test_teamspace_org_kwarg_emits_deprecation_warning(mock_resolve_org, mock_teamspace_api):
     mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
 
-    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
+    with pytest.warns(DeprecationWarning, match="'org' is deprecated"):
         Teamspace(name="my-ts", org="my-org")
 
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_user_kwarg_emits_deprecation_warning(mock_resolve_user, mock_teamspace_api):
-    mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
-
-    with pytest.warns(DeprecationWarning, match="'org'/'user' is deprecated"):
-        Teamspace(name="my-ts", user="my-user")
-
-
-@mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_slug_without_org_or_user_does_not_warn(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+def test_teamspace_slug_without_org_does_not_warn(mock_resolve_org, mock_teamspace_api):
     mock_org = mock_resolve_org.return_value
     mock_org.id = "org-1"
     mock_teamspace_api().get_teamspace.return_value = mock.MagicMock(name="my-ts", id="ts-1")
@@ -302,10 +234,11 @@ def test_create_agent(
     _mock_authenticate,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     internal_teamspace_api_create_agent_mocker,
     internal_agents_api_get_agent_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
     agent = ts.create_agent(
         name="test-sdk",
         base_url="test-sdk",
@@ -320,9 +253,10 @@ def test_create_agent(
 def test_upload_model_single_file(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with pytest.raises(FileNotFoundError):
         ts.upload_model(path=(tmp_path / "does-not-exist.ckpt"), name="user/modelname")
@@ -342,7 +276,7 @@ def test_upload_model_single_file(
         version=None,
         metadata={"weather": "sunny or rainy", "lightning-sdk": lightning_sdk.__version__},
         private=True,
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         cloud_account="test-cluster-id",
         experiment=None,
     )
@@ -351,7 +285,7 @@ def test_upload_model_single_file(
         version="v3",
         local_path=file_path,
         remote_path="checkpoint.pt",
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         progress_bar=True,
     )
     ts._teamspace_api._complete_model_upload.assert_called_once()
@@ -364,7 +298,7 @@ def test_upload_model_single_file(
     ts._teamspace_api.delete_model = mock.Mock()
     ts.delete_model("user/modelname")
     ts._teamspace_api.delete_model.assert_called_once_with(
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         name="user/modelname",
         version=None,
     )
@@ -375,10 +309,11 @@ def test_upload_model_single_file(
 def test_upload_file_normalizes_remote_path_to_posix(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
     """Remote paths must be POSIX-style; os.path.normpath yields "\\" on Windows (rejected by the backend)."""
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     file_path = tmp_path / "config.yaml"
     file_path.touch()
@@ -403,9 +338,10 @@ def test_upload_file_normalizes_remote_path_to_posix(
 def test_upload_model_single_file_experiment(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     dummy_experiment = MyDummyExperiment(id="exp_abc")
 
@@ -429,7 +365,7 @@ def test_upload_model_single_file_experiment(
         version=None,
         metadata={"weather": "sunny or rainy", "lightning-sdk": lightning_sdk.__version__},
         private=True,
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         cloud_account="test-cluster-id",
         experiment=dummy_experiment,
     )
@@ -438,7 +374,7 @@ def test_upload_model_single_file_experiment(
         version="v3",
         local_path=file_path,
         remote_path="checkpoint.pt",
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         progress_bar=True,
     )
     ts._teamspace_api._complete_model_upload.assert_called_once()
@@ -451,7 +387,7 @@ def test_upload_model_single_file_experiment(
     ts._teamspace_api.delete_model = mock.Mock()
     ts.delete_model("user/modelname")
     ts._teamspace_api.delete_model.assert_called_once_with(
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         name="user/modelname",
         version=None,
     )
@@ -462,9 +398,10 @@ def test_upload_model_single_file_experiment(
 def test_upload_model_multiple_files(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     # Attempt to upload empty folder raises error
     upload_path = tmp_path / "empty"
@@ -491,7 +428,7 @@ def test_upload_model_multiple_files(
     call_args = {
         "model_id": "test-model-id",
         "version": "v3",
-        "teamspace_id": "ts-abc002",
+        "teamspace_id": "ts-abc001",
         "progress_bar": True,
     }
     ts._teamspace_api.upload_model_file.assert_any_call(
@@ -509,7 +446,7 @@ def test_upload_model_multiple_files(
     ts._teamspace_api.delete_model = mock.Mock()
     ts.delete_model("user/modelname:v3")
     ts._teamspace_api.delete_model.assert_called_once_with(
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         name="user/modelname",
         version="v3",
     )
@@ -520,9 +457,10 @@ def test_upload_model_multiple_files(
 def test_upload_model_auto_resumes_incomplete_upload(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
     file_path = tmp_path / "checkpoint.pt"
     file_path.touch()
 
@@ -553,7 +491,7 @@ def test_upload_model_auto_resumes_incomplete_upload(
     ts._teamspace_api.upload_model_file.assert_not_called()
     # Should complete the upload
     ts._teamspace_api._complete_model_upload.assert_called_once_with(
-        model_id="existing-model-id", version="v2", teamspace_id="ts-abc002"
+        model_id="existing-model-id", version="v2", teamspace_id="ts-abc001"
     )
     assert result.name == "modelname"
     assert result.version == "v2"
@@ -564,9 +502,10 @@ def test_upload_model_auto_resumes_incomplete_upload(
 def test_upload_model_auto_skip_completed(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
     file1 = tmp_path / "checkpoint.pt"
     file1.touch()
     (tmp_path / "extra").mkdir()
@@ -611,12 +550,13 @@ def test_download_model(
     download_model_files_mock,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
     monkeypatch,
     folder,
 ):
     monkeypatch.chdir(tmp_path)
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
     get_model_version_mock.return_value = V1ModelVersionArchive(
         model_id="model-id",
         version="v3",
@@ -627,7 +567,7 @@ def test_download_model(
     result = ts.download_model("user/modelname", download_dir=folder)
     get_model_version_mock.assert_called_with(
         client=mock.ANY,
-        teamspace_id="ts-abc002",
+        teamspace_id="ts-abc001",
         name="user/modelname",
         version=None,
     )
@@ -635,7 +575,7 @@ def test_download_model(
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
         teamspace_name="ts-abc",
-        teamspace_owner_name="user-abc",
+        teamspace_owner_name="org-abc",
         name="user/modelname",
         version="default",
         download_dir=Path(folder) if folder else tmp_path,
@@ -652,9 +592,10 @@ def test_download_model_version(
     download_model_files_mock,
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     tmp_path,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
     get_model_version_mock.return_value = V1ModelVersionArchive(
         model_id="model-id",
         version="v3",
@@ -663,12 +604,12 @@ def test_download_model_version(
 
     ts.download_model("user/modelname:v3", download_dir=tmp_path)
     get_model_version_mock.assert_called_with(
-        client=mock.ANY, teamspace_id="ts-abc002", name="user/modelname", version="v3"
+        client=mock.ANY, teamspace_id="ts-abc001", name="user/modelname", version="v3"
     )
     download_model_files_mock.assert_called_with(
         client=mock.ANY,
         teamspace_name="ts-abc",
-        teamspace_owner_name="user-abc",
+        teamspace_owner_name="org-abc",
         name="user/modelname",
         version="v3",
         download_dir=tmp_path,
@@ -738,10 +679,9 @@ def test_list_mmts(
 
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+def test_list_machines(mock_resolve_org, mock_teamspace_api):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
             instance_id="instance-id", slug="t4-x-2", slug_multi_cloud="lit-t4-2", resources=V1Resources(cpu=4, gpu=2)
@@ -767,12 +707,9 @@ def test_list_machines(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
 @mock.patch.dict(os.environ, clear=True)
 @mock.patch("lightning_sdk.teamspace.CloudAccountApi")
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_machines_global_cloud_account(
-    mock_resolve_org, mock_resolve_user, mock_teamspace_api, mock_cloud_account_api
-):
+def test_list_machines_global_cloud_account(mock_resolve_org, mock_teamspace_api, mock_cloud_account_api):
     mock_cloud_account_1 = mock.MagicMock()
     mock_cloud_account_1.id = "global-cloud-account-1"
     mock_cloud_account_2 = mock.MagicMock()
@@ -805,10 +742,9 @@ def test_list_machines_global_cloud_account(
 
 @mock.patch.dict(os.environ, {"LIGHTNING_CLUSTER_ID": "env-cloud-account"})
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mock_teamspace_api):
+def test_list_machines_env_cloud_account(mock_resolve_org, mock_teamspace_api):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
             instance_id="instance-id", slug="t4-x-2", slug_multi_cloud="lit-t4-2", resources=V1Resources(cpu=4, gpu=2)
@@ -834,12 +770,9 @@ def test_list_machines_env_cloud_account(mock_resolve_org, mock_resolve_user, mo
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace.CloudAccountApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_machines_with_machine_filter(
-    mock_resolve_org, mock_resolve_user, mock_cloud_account_api, mock_teamspace_api
-):
+def test_list_machines_with_machine_filter(mock_resolve_org, mock_cloud_account_api, mock_teamspace_api):
     mock_teamspace_api().list_machines.return_value = [
         V1ClusterAccelerator(
             instance_id="instance-id",
@@ -869,12 +802,9 @@ def test_list_machines_with_machine_filter(
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.teamspace.CloudAccountApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_list_machines_with_invalid_machine(
-    mock_resolve_org, mock_resolve_user, mock_cloud_account_api, mock_teamspace_api
-):
+def test_list_machines_with_invalid_machine(mock_resolve_org, mock_cloud_account_api, mock_teamspace_api):
     mock_teamspace_api().get_teamspace().id = "teamspace-id"
 
     mock_org = mock_resolve_org.return_value
@@ -905,12 +835,10 @@ def test_list_machines_with_invalid_machine(
     ],
 )
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
 @mock.patch("lightning_sdk.teamspace._resolve_org")
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_default_cloud_account_resolution(
     mock_resolve_org,
-    mock_resolve_user,
     mock_teamspace_api,
     teamspace_preferred_cluster,
     org_default_cloud_account,
@@ -924,7 +852,7 @@ def test_teamspace_default_cloud_account_resolution(
     # Set up org mock (only relevant fallback owner type)
     mock_org = mock.Mock(spec=Organization)
     mock_org.default_cloud_account = org_default_cloud_account
-    mock_resolve_org.return_value = mock_org if org_default_cloud_account is not None else None
+    mock_resolve_org.return_value = mock_org
 
     # Always pass org as owner since only org is relevant here
     teamspace = Teamspace(name="teamspace-name", org="test-org")
@@ -936,8 +864,9 @@ def test_teamspace_default_cloud_account_resolution(
 def test_teamspace_secrets_property(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     mock_secrets = {"API_KEY": "***REDACTED***", "DATABASE_URL": "***REDACTED***"}
 
@@ -945,20 +874,21 @@ def test_teamspace_secrets_property(
         secrets = ts.secrets
 
     assert secrets == mock_secrets
-    mock_get.assert_called_once_with("ts-abc002")
+    mock_get.assert_called_once_with("ts-abc001")
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_set_secret(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with mock.patch.object(ts._teamspace_api, "set_secret") as mock_set:
         ts.set_secret("NEW_SECRET", "secret_value")
 
-    mock_set.assert_called_once_with("ts-abc002", "NEW_SECRET", "secret_value", secret_type=SecretType.GENERIC)
+    mock_set.assert_called_once_with("ts-abc001", "NEW_SECRET", "secret_value", secret_type=SecretType.GENERIC)
 
 
 @pytest.mark.parametrize("secret_type", [SecretType.HF_TOKEN, "hf_token"])
@@ -966,22 +896,24 @@ def test_teamspace_set_secret(
 def test_teamspace_set_secret_hf_token(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
     secret_type,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with mock.patch.object(ts._teamspace_api, "set_secret") as mock_set:
         ts.set_secret("HF_TOKEN", "hf_xxx", secret_type=secret_type)
 
-    mock_set.assert_called_once_with("ts-abc002", "HF_TOKEN", "hf_xxx", secret_type=secret_type)
+    mock_set.assert_called_once_with("ts-abc001", "HF_TOKEN", "hf_xxx", secret_type=secret_type)
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_set_secret_invalid_name(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with pytest.raises(
         ValueError,
@@ -994,21 +926,23 @@ def test_teamspace_set_secret_invalid_name(
 def test_teamspace_delete_secret(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete:
         ts.delete_secret("OLD_SECRET")
 
-    mock_delete.assert_called_once_with("ts-abc002", "OLD_SECRET")
+    mock_delete.assert_called_once_with("ts-abc001", "OLD_SECRET")
 
 
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_delete_secret_invalid_name(
     internal_teamspace_api_list_mocker,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     with mock.patch.object(ts._teamspace_api, "delete_secret") as mock_delete, pytest.raises(
         ValueError,
@@ -1024,28 +958,36 @@ def test_teamspace_delete_secret_invalid_name(
 def test_new_folder_agnostic(
     mock_cloud_account_client,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
     mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
-                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+                name="ts-abc",
+                display_name="ts-abc",
+                project_id="ts-abc001",
+                owner_id="org-abc",
+                owner_type="organization",
             ),
         ],
     )
 
     mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
-        id="ts-abc002",
+        id="ts-abc001",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
-        owner_id="user-abc",
-        owner_type="user",
+        owner_id="org-abc",
+        owner_type="organization",
     )
 
     mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
         id="user-abc", username="user-abc"
     )
+    mock_cloud_account_client().organizations_service_get_organization.return_value = V1Organization(
+        id="org-abc", name="org-abc"
+    )
 
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     mock_project_response = V1ListProjectClustersResponse(
         clusters=[
@@ -1084,28 +1026,36 @@ def test_new_folder_agnostic(
 def test_new_folder_byoc(
     mock_cloud_account_client,
     internal_user_api_mocker,
+    internal_get_org_api_mocker,
 ):
     mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
-                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+                name="ts-abc",
+                display_name="ts-abc",
+                project_id="ts-abc001",
+                owner_id="org-abc",
+                owner_type="organization",
             ),
         ],
     )
 
     mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
-        id="ts-abc002",
+        id="ts-abc001",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
-        owner_id="user-abc",
-        owner_type="user",
+        owner_id="org-abc",
+        owner_type="organization",
     )
 
     mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
         id="user-abc", username="user-abc"
     )
+    mock_cloud_account_client().organizations_service_get_organization.return_value = V1Organization(
+        id="org-abc", name="org-abc"
+    )
 
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     mock_project_response = V1ListProjectClustersResponse(
         clusters=[
@@ -1154,24 +1104,31 @@ def test_new_connection_efs(mock_cloud_account_client, internal_user_api_mocker,
     mock_cloud_account_client().projects_service_list_memberships.return_value = V1ListMembershipsResponse(
         [
             V1Membership(
-                name="ts-abc", display_name="ts-abc", project_id="ts-abc002", owner_id="user-abc", owner_type="user"
+                name="ts-abc",
+                display_name="ts-abc",
+                project_id="ts-abc001",
+                owner_id="org-abc",
+                owner_type="organization",
             ),
         ],
     )
 
     mock_cloud_account_client().projects_service_get_project.return_value = V1Project(
-        id="ts-abc002",
+        id="ts-abc001",
         name="ts-abc",
         project_settings=V1ProjectSettings(preferred_cluster="aws-cluster"),
-        owner_id="user-abc",
-        owner_type="user",
+        owner_id="org-abc",
+        owner_type="organization",
     )
 
     mock_cloud_account_client().auth_service_get_user.return_value = V1GetUserResponse(
         id="user-abc", username="user-abc"
     )
+    mock_cloud_account_client().organizations_service_get_organization.return_value = V1Organization(
+        id="org-abc", name="org-abc"
+    )
 
-    ts = Teamspace("ts-abc", user="user-abc")
+    ts = Teamspace("org-abc/ts-abc")
 
     mock_project_response = V1ListProjectClustersResponse(
         clusters=[
@@ -1232,14 +1189,14 @@ def _clear_teamspace_permission_cache():
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+def test_teamspace_studios_property_when_allowed(mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.studios succeeds when Studios permission is allowed."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Studios enabled
     mock_project = V1Project(
@@ -1263,7 +1220,7 @@ def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspa
     mock_teamspace_api_module.return_value.list_cloud_accounts.return_value = [mock_cloud_account]
     mock_teamspace_api_module.return_value.list_studios.return_value = []
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     # Should not raise
     studios = ts.studios
@@ -1272,14 +1229,14 @@ def test_teamspace_studios_property_when_allowed(mock_resolve_user, mock_teamspa
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+def test_teamspace_studios_property_when_denied(mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.studios raises PermissionError when Studios permission is denied."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Studios disabled
     mock_project = V1Project(
@@ -1298,7 +1255,7 @@ def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspac
     # Mock _get_authed_user_id to prevent authentication calls
     mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     with pytest.raises(PermissionError, match="Access to Studios has been disabled"):
         _ = ts.studios
@@ -1306,14 +1263,14 @@ def test_teamspace_studios_property_when_denied(mock_resolve_user, mock_teamspac
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+def test_teamspace_jobs_property_when_allowed(mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.jobs succeeds when Jobs permission is allowed."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Jobs enabled
     mock_project = V1Project(
@@ -1333,7 +1290,7 @@ def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_
     # Mock empty job list response
     mock_teamspace_api_module.return_value.list_jobs.return_value = []
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     # Should not raise
     jobs = ts.jobs
@@ -1342,14 +1299,14 @@ def test_teamspace_jobs_property_when_allowed(mock_resolve_user, mock_teamspace_
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
-def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module):
+def test_teamspace_jobs_property_when_denied(mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module):
     """Test that Teamspace.jobs raises PermissionError when Jobs permission is denied."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Jobs disabled
     mock_project = V1Project(
@@ -1368,7 +1325,7 @@ def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_a
     # Mock _get_authed_user_id to prevent authentication calls
     mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     with pytest.raises(PermissionError, match="Access to Jobs has been disabled"):
         _ = ts.jobs
@@ -1376,16 +1333,16 @@ def test_teamspace_jobs_property_when_denied(mock_resolve_user, mock_teamspace_a
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_multi_machine_jobs_property_when_allowed(
-    mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
+    mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module
 ):
     """Test that Teamspace.multi_machine_jobs succeeds when Jobs permission is allowed."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Jobs enabled
     mock_project = V1Project(
@@ -1405,7 +1362,7 @@ def test_teamspace_multi_machine_jobs_property_when_allowed(
     # Mock empty MMT list response
     mock_teamspace_api_module.return_value.list_mmts.return_value = []
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     # Should not raise
     mmts = ts.multi_machine_jobs
@@ -1414,16 +1371,16 @@ def test_teamspace_multi_machine_jobs_property_when_allowed(
 
 @mock.patch("lightning_sdk.teamspace.TeamspaceApi")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
-@mock.patch("lightning_sdk.teamspace._resolve_user")
+@mock.patch("lightning_sdk.teamspace._resolve_org")
 @pytest.mark.project_permission_test()
 @mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
 def test_teamspace_multi_machine_jobs_property_when_denied(
-    mock_resolve_user, mock_teamspace_api, mock_teamspace_api_module
+    mock_resolve_org, mock_teamspace_api, mock_teamspace_api_module
 ):
     """Test that Teamspace.multi_machine_jobs raises PermissionError when Jobs permission is denied."""
-    mock_user = mock.Mock(spec=User)
-    mock_user.name = "test-user"
-    mock_resolve_user.return_value = mock_user
+    mock_org = mock.Mock(spec=Organization)
+    mock_org.name = "test-org"
+    mock_resolve_org.return_value = mock_org
 
     # Mock the teamspace with Jobs disabled
     mock_project = V1Project(
@@ -1442,7 +1399,7 @@ def test_teamspace_multi_machine_jobs_property_when_denied(
     # Mock _get_authed_user_id to prevent authentication calls
     mock_teamspace_api_module.return_value._get_authed_user_id.return_value = "test-user-id"
 
-    ts = Teamspace("test-teamspace", user="test-user")
+    ts = Teamspace("test-org/test-teamspace")
 
     with pytest.raises(PermissionError, match="Access to Jobs has been disabled"):
         _ = ts.multi_machine_jobs
