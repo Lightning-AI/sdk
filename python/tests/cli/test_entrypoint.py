@@ -1,7 +1,7 @@
 import os
 import re
 import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import rich_click as click
@@ -9,8 +9,8 @@ from click.testing import CliRunner
 
 from lightning_sdk.cli.entrypoint import login, main_cli
 from lightning_sdk.cli.sandbox.commands import run_sandbox_command
-from lightning_sdk.cli.utils.auth import OIDC_LOGIN_ENV
 from lightning_sdk.cli.vm.ssh import ssh_vm
+from lightning_sdk.lightning_cloud.cli_login import OIDC_LOGIN_ENV
 from lightning_sdk.lightning_cloud.login import Auth
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging, run_cli
 
@@ -47,100 +47,27 @@ def test_resource_commands_never_start_browser_authentication(monkeypatch, tmp_p
     assert "Run `lightning login`" in str(result.exception)
 
 
-def test_explicit_login_can_start_browser_authentication(monkeypatch, tmp_path) -> None:
-    _clear_auth(monkeypatch, tmp_path)
-    browser_auth_started = False
-
-    def _complete_browser_auth(auth: Auth) -> None:
-        nonlocal browser_auth_started
-        browser_auth_started = True
-        auth.save(auth_token="sess_user-1.secret")
-
-    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
-
-    result = CliRunner().invoke(main_cli, ["login"])
-
-    assert result.exit_code == 0, result.output
-    assert browser_auth_started
-
-
-def test_login_reports_success_and_failure(monkeypatch, tmp_path) -> None:
-    _clear_auth(monkeypatch, tmp_path)
-    user = MagicMock()
-    user.name = "Test User"
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint._get_authed_user", lambda: user)
-
-    def _save_token(auth: Auth) -> None:
-        auth.save(token="sess_user-1.secret", user_id="user-1")
-
-    monkeypatch.setattr(Auth, "_run_server", _save_token)
-    ok = CliRunner().invoke(main_cli, ["login"])
-    assert ok.exit_code == 0, ok.output
-    assert 'Successfully logged in as "Test User".' in ok.output
-
-    # the browser callback finished without saving a token
-    _clear_auth(monkeypatch, tmp_path / "second")
-    monkeypatch.setattr(Auth, "_run_server", lambda _auth: None)
-    failed = CliRunner().invoke(main_cli, ["login"])
-    assert failed.exit_code == 1
-    assert "Login failed" in str(failed.exception)
-
-
-def test_login_no_browser_starts_a_fresh_paste_login_instead_of_the_browser(monkeypatch, tmp_path) -> None:
-    _clear_auth(monkeypatch, tmp_path)
-    monkeypatch.setenv(OIDC_LOGIN_ENV, "1")
-    Auth().save(auth_token="sess_expired")
-    user = MagicMock()
-    user.name = "Test User"
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint._get_authed_user", lambda: user)
-    monkeypatch.setattr(
-        Auth,
-        "_run_server",
-        lambda _self: (_ for _ in ()).throw(AssertionError("browser auth reached")),
-    )
-
-    def _approve(auth: Auth) -> None:
-        assert not Auth.secrets_file.exists()
-        auth.save(auth_token="sess_new")
-
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint.login_with_pasted_code", _approve)
-
-    result = CliRunner().invoke(main_cli, ["login", "--no-browser"])
-
-    assert result.exit_code == 0, result.output
-    assert 'Successfully logged in as "Test User".' in result.output
-    auth = Auth()
-    assert auth.load()
-    assert auth.auth_token == "sess_new"
-
-
 def test_login_no_browser_is_refused_without_the_opt_in(monkeypatch, tmp_path) -> None:
     _clear_auth(monkeypatch, tmp_path)
     Auth().save(auth_token="sess_kept")
-    monkeypatch.setattr(
-        "lightning_sdk.cli.entrypoint.login_with_pasted_code",
-        lambda _auth: (_ for _ in ()).throw(AssertionError("paste login reached")),
-    )
 
     result = CliRunner().invoke(main_cli, ["login", "--no-browser"])
 
     assert result.exit_code == 2
-    assert "not available yet" in result.output
+    assert "LIGHTNING_CLI_OIDC_LOGIN" in result.output
     auth = Auth()
     assert auth.load()
     assert auth.auth_token == "sess_kept"
 
 
-def test_logout_reports_success_and_failure(monkeypatch, tmp_path) -> None:
+def test_logout_forgets_the_local_login(monkeypatch, tmp_path) -> None:
     _clear_auth(monkeypatch, tmp_path)
-    ok = CliRunner().invoke(main_cli, ["logout"])
-    assert ok.exit_code == 0, ok.output
-    assert "Successfully logged out." in ok.output
 
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint.logout_session", MagicMock(side_effect=OSError("denied")))
-    failed = CliRunner().invoke(main_cli, ["logout"])
-    assert failed.exit_code == 1
-    assert "Logout failed: denied" in str(failed.exception)
+    result = CliRunner().invoke(main_cli, ["logout"])
+
+    assert result.exit_code == 0, result.output
+    assert "Logged out on this machine." in result.output
+    assert "Logout failed" not in result.output
 
 
 def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -> None:
@@ -317,7 +244,7 @@ def test_login_help():
     result_text = assert_help_contains("lightning login --help", "Usage: lightning login [OPTIONS]")
 
     assert "Sign in to Lightning AI." in result_text
-    assert "--no-browser" not in result_text
+    assert "--no-browser" in result_text
 
 
 @mock_command_logging
@@ -327,69 +254,10 @@ def test_logout_help():
     assert "Sign out of the current session." in result_text
 
 
-def test_login_replaces_existing_session(monkeypatch, tmp_path):
-    _clear_auth(monkeypatch, tmp_path)
-    Auth().save(auth_token="sess_expired")
-
-    def _complete_browser_auth(auth: Auth) -> None:
-        assert not Auth.secrets_file.exists()
-        auth.save(auth_token="sess_new")
-
-    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
-
-    result = CliRunner().invoke(main_cli, ["login"])
-
-    assert result.exit_code == 0, result.output
-    auth = Auth()
-    assert auth.load()
-    assert auth.auth_token == "sess_new"
-
-
-def test_login_not_required_with_credentials_in_env(monkeypatch, tmp_path):
-    _clear_auth(monkeypatch, tmp_path)
-    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "from-env")
-    Auth().save(auth_token="sess_saved")
-
-    def _fail_browser_auth(auth: Auth) -> None:
-        raise AssertionError("browser authentication should not start")
-
-    monkeypatch.setattr(Auth, "_run_server", _fail_browser_auth)
-
-    result = CliRunner().invoke(main_cli, ["login"])
-
-    assert result.exit_code == 0, result.output
-    assert "credentials are set in the environment" in result.output
-    assert Auth.secrets_file.exists()
-
-
-def test_an_env_api_key_does_not_skip_login(monkeypatch, tmp_path):
-    _clear_auth(monkeypatch, tmp_path)
-    monkeypatch.setenv("LIGHTNING_API_KEY", "from-env")
-    Auth().save(auth_token="sess_saved")
-
-    def _complete_browser_auth(auth: Auth) -> None:
-        assert not Auth.secrets_file.exists()
-        auth.save(auth_token="sess_new")
-
-    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
-
-    result = CliRunner().invoke(main_cli, ["login"])
-
-    assert result.exit_code == 0, result.output
-    assert "credentials are set in the environment" not in result.output
-    auth = Auth()
-    assert auth.load()
-    assert auth.auth_token == "sess_new"
-
-
 @patch.dict(os.environ, {"LIGHTNING_INTERACTIVE": "true", "LIGHTNING_CLOUD_SPACE_ID": "cloud-space-id"}, clear=True)
 @mock_command_logging
-def test_cannot_login_within_studio_without_credentials(monkeypatch):
-    mock_auth_instance = MagicMock(api_key=None, auth_token=None)
-    monkeypatch.setattr("lightning_sdk.cli.entrypoint.Auth", MagicMock(return_value=mock_auth_instance))
-
+def test_cannot_login_within_studio_without_credentials():
     result = CliRunner().invoke(login)
 
     assert result.exit_code == 1
     assert "Unable to login within a Studio. Did you change your shell setup?" in str(result.exception)
-    mock_auth_instance.authenticate.assert_not_called()

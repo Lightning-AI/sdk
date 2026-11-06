@@ -9,8 +9,8 @@ class LicenseApi:
     def __init__(self, login_token: str) -> None:
         self._cloud_url = _cloud_url()
         self._auth = Auth()
-        self._auth.token_login(login_token, save_token=True)
-        self._client = self._auth.create_api_client()
+        self._auth.token_login(login_token, save_token=False)
+        self._client = self._auth.create_api_client(override="auth_token")
         self._api = ProductLicenseServiceApi(self._client)
 
     def validate_license(self, license_key: str, product_id: str) -> bool:

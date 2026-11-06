@@ -6,7 +6,6 @@ import sys
 import rich_click as click
 
 from lightning_sdk import __version__
-from lightning_sdk.api.studio_api import _cloud_url
 from lightning_sdk.cli import groups as cli_groups
 from lightning_sdk.cli.completion import completion
 
@@ -45,15 +44,8 @@ from lightning_sdk.cli.legacy_redirects import (
 from lightning_sdk.cli.lockdown import apply_lockdown
 from lightning_sdk.cli.ls import ls
 from lightning_sdk.cli.rm import rm
-from lightning_sdk.cli.utils.auth import (
-    browser_authentication,
-    login_with_pasted_code,
-    logout_session,
-    oidc_login_enabled,
-)
+from lightning_sdk.cli.utils.auth import browser_authentication, run_login, run_logout
 from lightning_sdk.cli.utils.logging import CommandLoggingGroup, logging_excepthook
-from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.utils.resolve import _get_authed_user, in_studio
 
 click.rich_click.COMMAND_GROUPS = {
     "lightning": [
@@ -104,53 +96,22 @@ def main_cli(ctx: click.Context) -> None:
 @click.option(
     "--no-browser",
     is_flag=True,
-    hidden=True,
     help="Sign in without a browser on this machine: approve on another device, then paste the code it shows.",
 )
-def login(no_browser: bool) -> None:
+@click.option(
+    "--no-keychain",
+    is_flag=True,
+    help="Keep the login in a file instead of the OS keychain.",
+)
+def login(no_browser: bool, no_keychain: bool) -> None:
     """Sign in to Lightning AI."""
-    if no_browser and not oidc_login_enabled():
-        raise click.UsageError("`lightning login --no-browser` is not available yet.")
-    auth = Auth()
-    if auth.auth_token:
-        click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
-        return
-
-    if in_studio():
-        # this is unexpected, as we automatically auth within a Studio
-        raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
-
-    # always start a fresh session: a saved one may have expired
-    auth.clear()
-    try:
-        if no_browser:
-            login_with_pasted_code(auth)
-        else:
-            with browser_authentication(True):
-                auth.authenticate()
-    except ConnectionError:
-        raise RuntimeError(f"Unable to connect to {_cloud_url()}. Please check your internet connection.") from None
-    except ValueError:
-        # the browser flow ended without the callback saving a token (see the warning it logs)
-        raise RuntimeError(
-            "Login failed: the browser sign-in finished without returning a token. Try running `lightning login` again"
-        ) from None
-
-    try:
-        click.echo(f'Successfully logged in as "{_get_authed_user().name}".')
-    except Exception:
-        # credentials are saved; only the lookup of the user's name failed
-        click.echo("Successfully logged in.")
+    run_login(no_browser=no_browser, no_keychain=no_keychain)
 
 
 @main_cli.command
 def logout() -> None:
     """Sign out of the current session."""
-    try:
-        logout_session(Auth())
-    except Exception as e:
-        raise RuntimeError(f"Logout failed: {e}") from e
-    click.echo("Successfully logged out.")
+    run_logout()
 
 
 # Add new command groups

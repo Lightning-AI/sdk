@@ -627,11 +627,10 @@ def test_lightning_client_without_auth_does_not_send_authorization(monkeypatch):
 def test_save_replaces_the_saved_login(isolated_credentials):
     path = isolated_credentials
     auth = Auth()
-    auth.save(user_id="user-1", api_key="key-1")
-    auth.save(token="ignored", auth_token="sess_1")
+    auth.save(user_id="user-1")
+    auth.save(auth_token="sess_1")
     assert json.loads(path.read_text()) == {"user_id": "", "auth_token": "sess_1"}
     assert "api_key" not in path.read_text()
-    assert "key-1" not in path.read_text()
     assert not auth.user_id
     assert auth.auth_token == "sess_1"
 

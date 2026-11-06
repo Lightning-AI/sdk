@@ -36,15 +36,15 @@ def test_configure_rejects_organization_id_kwarg():
 
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_config_api_without_api_key_uses_lightning_auth():
-    with mock.patch("lightning_sdk.api.sandbox_api.Auth") as auth_cls:
-        auth_cls.return_value.authenticate.return_value = "Basic auth"
+    with mock.patch("lightning_sdk.api.sandbox_api.CredentialSource") as source_cls:
+        source_cls.return_value.header.return_value = "Bearer auth"
         api = SandboxConfig(base_url="https://x").api()
-        auth_cls.return_value.authenticate.assert_not_called()
-        api.sandboxes()
+        source_cls.return_value.header.assert_not_called()
+        assert api.auth_header() == "Bearer auth"
 
     assert api.config_get("api_key") is None
     assert api.config_get("base_url") == "https://x"
-    auth_cls.return_value.authenticate.assert_called_once()
+    source_cls.return_value.header.assert_called_once()
 
 
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())

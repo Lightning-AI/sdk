@@ -120,9 +120,7 @@ def test_remote_completion_silently_ignores_api_failures(_accessible_teamspaces)
 @patch("lightning_sdk.cli.cp.completion._accessible_teamspaces")
 @patch("lightning_sdk.cli.resource_completion.Auth")
 def test_remote_completion_does_not_start_login_without_credentials(auth, accessible_teamspaces):
-    auth.return_value.api_key = None
-    auth.return_value.auth_token = None
-    auth.return_value.load.return_value = False
+    auth.return_value.auth_header = None
 
     items = _complete_argument("source", "lit://")
 

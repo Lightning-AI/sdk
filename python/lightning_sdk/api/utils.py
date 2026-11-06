@@ -30,10 +30,12 @@ from typing import (
 
 import backoff
 import requests
+from requests.auth import AuthBase
 from requests.exceptions import HTTPError
 from tqdm.auto import tqdm
 
-from lightning_sdk.lightning_cloud.login import Auth
+from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.openapi import (
     ModelsStoreCompleteMultiPartUploadBody,
     ModelsStoreCreateMultiPartUploadBody,
@@ -44,7 +46,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 )
 from lightning_sdk.lightning_cloud.openapi.models.v1_model_version_archive import V1ModelVersionArchive
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import _LOGIN_MESSAGE, LightningClient
 from lightning_sdk.machine import Machine
 
 
@@ -255,7 +257,6 @@ class _BlobUploader:
         if self.filesize > self.chunk_size * _MAX_UPLOAD_PARTS:
             self.chunk_size = math.ceil(self.filesize / _MAX_UPLOAD_PARTS)
         self.max_workers = int(os.environ.get("LIGHTNING_MULTI_PART_MAX_WORKERS", _MAX_WORKERS))
-        self._auth_headers = _authenticate_and_get_auth_headers()
 
     def __call__(self) -> None:
         """Execute the upload, dispatching to single-part or multipart."""
@@ -300,7 +301,7 @@ class _BlobUploader:
         body: Dict[str, Any] = {"blobs": [blob]}
         if self.cluster_id:
             body["cluster_id"] = self.cluster_id
-        r = requests.post(url, json=body, headers=self._auth_headers, timeout=30)
+        r = requests.post(url, json=body, auth=credential_auth(), timeout=30)
         if r.status_code >= 500 or r.status_code == 429:
             raise HTTPError(
                 f"Transient error trying to {action} '{self.remote_path}'. Status code: {r.status_code}", response=r
@@ -1324,6 +1325,61 @@ def to_iso_z(dt: datetime) -> str:
     return dt.isoformat(timespec="milliseconds")
 
 
-def _authenticate_and_get_auth_headers() -> Dict[str, str]:
-    """Resolve the caller's credentials and return the HTTP headers carrying them."""
-    return {"Authorization": Auth().authenticate()}
+class CredentialAuth(AuthBase):
+    """Sets ``Authorization`` when a request is prepared, and retries one 401 after a refresh.
+
+    A 401 that no refresh fixes raises ``ConnectionError`` saying to run ``lightning login``,
+    as the generated client does. A 401 to a request that didn't carry the credential, such
+    as a redirect to another host, is returned as it is.
+    """
+
+    def __init__(self, source: Optional[CredentialSource] = None) -> None:
+        self._source = source or CredentialSource()
+
+    def __call__(self, request: requests.PreparedRequest) -> requests.PreparedRequest:
+        header = self._source.header()
+        request.headers["Authorization"] = header
+        # requests writes its own agent before auth runs.
+        user_agent = request.headers.get("User-Agent")
+        if not user_agent or user_agent == requests.utils.default_user_agent():
+            request.headers["User-Agent"] = env.USER_AGENT
+
+        retried = False
+
+        def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
+            nonlocal retried
+            if retried or response.status_code != 401:
+                return response
+            # Redirects reuse this hook, and requests drops the header on a cross-host redirect.
+            if response.request.headers.get("Authorization") != header:
+                return response
+            # The connection stays checked out until the body is read, so the retry can reuse it.
+            _ = response.content
+            response.close()
+            if not self._source.refresh(header):
+                raise ConnectionError(_LOGIN_MESSAGE)
+            retried = True
+            prepared = response.request.copy()
+            prepared.headers["Authorization"] = self._source.header()
+            retry = response.connection.send(prepared, **kwargs)
+            if retry.status_code == 401:
+                retry.close()
+                raise ConnectionError(_LOGIN_MESSAGE)
+            retry.history.append(response)
+            retry.request = prepared
+            return retry
+
+        request.register_hook("response", handle)
+        return request
+
+
+def credential_auth(source: Optional[CredentialSource] = None) -> CredentialAuth:
+    """A requests auth handler that reads :class:`CredentialSource` for each request."""
+    return CredentialAuth(source)
+
+
+def request_auth(auth: object = None) -> CredentialAuth:
+    """The auth object a download worker should use, or a fresh one when it wasn't given one."""
+    if isinstance(auth, CredentialAuth):
+        return auth
+    return credential_auth()

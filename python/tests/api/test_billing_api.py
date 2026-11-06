@@ -13,6 +13,7 @@ from lightning_sdk.api.billing_api import (
     BillingResourceUsage,
     _build_activity_query_params,
 )
+from lightning_sdk.api.utils import CredentialAuth
 
 # ---- dataclasses: _from_api ------------------------------------------------
 
@@ -288,12 +289,8 @@ def test_get_activity_filter_values_with_project_id(mock_client):
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
-    return_value={"Authorization": "Bearer test-token"},
-)
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_get_session_activity_csv(mock_authenticate, mock_requests_get, tmp_path):
+def test_get_session_activity_csv(mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "4"}
@@ -307,21 +304,16 @@ def test_get_session_activity_csv(mock_authenticate, mock_requests_get, tmp_path
 
     assert result is None
     assert writer.getvalue() == "data"
-    mock_authenticate.assert_called_once_with()
     mock_requests_get.assert_called_once()
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/detailed")
     assert call_args[1]["params"] == {"orgId": "org-1"}
-    assert call_args[1]["headers"] == {"Authorization": "Bearer test-token"}
+    assert isinstance(call_args[1]["auth"], CredentialAuth)
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
-    return_value={"Authorization": "Bearer test-token"},
-)
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_get_session_activity_json_default_format(mock_authenticate, mock_requests_get, tmp_path):
+def test_get_session_activity_json_default_format(mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "21"}
@@ -340,12 +332,8 @@ def test_get_session_activity_json_default_format(mock_authenticate, mock_reques
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
-    return_value={"Authorization": "Bearer test-token"},
-)
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_path):
+def test_get_resource_activity_csv(mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "4"}
@@ -365,19 +353,14 @@ def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_pat
 
     assert result is None
     assert writer.getvalue() == "data"
-    mock_authenticate.assert_called_once_with()
     call_args = mock_requests_get.call_args
     assert call_args[0][0].endswith("/v1/billing/usage-report/download/summary")
     assert call_args[1]["params"] == {"orgId": "org-1", "projectIds": ["proj-1"], "limit": 5}
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch(
-    "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
-    return_value={"Authorization": "Bearer test-token"},
-)
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_get_resource_activity_json_default_format(mock_authenticate, mock_requests_get, tmp_path):
+def test_get_resource_activity_json_default_format(mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
     mock_response.headers = {"content-length": "21"}

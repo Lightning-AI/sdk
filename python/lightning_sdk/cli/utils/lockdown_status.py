@@ -81,16 +81,10 @@ def capability_closed(capability: str) -> bool:
 
 
 def _auth_header() -> Optional[str]:
-    """The caller's authorization header, or ``None`` when signed out.
-
-    Reads the saved credentials unless the environment sets some, as the rest of the CLI does.
-    """
-    auth = Auth()
-    if not auth.auth_token:
-        auth.load()
+    """The credential requests would send, or ``None`` when there isn't one."""
     try:
-        return auth.get_auth_header()
-    except ValueError:
+        return Auth().auth_header
+    except (ValueError, ConnectionError):
         return None
 
 

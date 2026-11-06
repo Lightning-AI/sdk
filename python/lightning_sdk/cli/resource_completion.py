@@ -13,12 +13,10 @@ from lightning_sdk.utils.config import Config, DefaultConfigKeys
 
 def has_credentials() -> bool:
     """Check for existing credentials without starting the browser login flow."""
-    auth = Auth()
-    if auth.auth_token:
-        return True
-    if not auth.load():
+    try:
+        return bool(Auth().auth_header)
+    except Exception:
         return False
-    return bool(auth.auth_token)
 
 
 def accessible_teamspaces() -> dict[str, dict[str, str]]:
