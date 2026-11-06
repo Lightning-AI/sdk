@@ -4,7 +4,11 @@ from unittest import mock
 
 import pytest
 
-from lightning_sdk.api.billing_api import ActivityFileFormat
+from lightning_sdk.api.billing_api import (
+    ActivityFileFormat,
+    BillingActivitySubfilters,
+    BillingWorkloadTagSubfilter,
+)
 from lightning_sdk.organization import BillingActivityCursor, BillingActivityFilters, Organization
 from lightning_sdk.teamspace import Teamspace
 
@@ -17,6 +21,7 @@ def _make_org(org_id="org-1"):
     org._resolve_billing_teamspaces = Organization._resolve_billing_teamspaces.__get__(org)
     org.get_activity = Organization.get_activity.__get__(org)
     org.get_activity_filter_values = Organization.get_activity_filter_values.__get__(org)
+    org.get_activity_filter_resource_names = Organization.get_activity_filter_resource_names.__get__(org)
     org.get_session_activity = Organization.get_session_activity.__get__(org)
     org.get_resource_activity = Organization.get_resource_activity.__get__(org)
     return org
@@ -90,6 +95,8 @@ def test_get_activity_defaults():
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
         start=None,
         end=None,
         limit=None,
@@ -105,9 +112,17 @@ def test_get_activity_with_filters_and_cursor(mock_resolve_teamspace):
     ts1 = _make_teamspace("ts-1", org)
     mock_resolve_teamspace.return_value = ts1
 
-    filters = BillingActivityFilters(resource_types=["Studio"], resource_ids=["res-1"], user_ids=["user-1"], limit=5)
+    subfilters = BillingActivitySubfilters(job=BillingWorkloadTagSubfilter(tag_ids=["tag-1"]))
+    filters = BillingActivityFilters(
+        resource_types=["job"],
+        resource_ids=["res-1"],
+        user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=subfilters,
+        limit=5,
+    )
     cursor = BillingActivityCursor(
-        search_after=datetime(2026, 1, 1), search_after_resource_id="res-1", search_after_resource_type="Studio"
+        search_after=datetime(2026, 1, 1), search_after_resource_id="res-1", search_after_resource_type="job"
     )
 
     org.get_activity(teamspace=ts1, filters=filters, cursor=cursor)
@@ -115,15 +130,17 @@ def test_get_activity_with_filters_and_cursor(mock_resolve_teamspace):
     org._billing_api.get_activity.assert_called_once_with(
         org_id="org-1",
         project_ids=["ts-1"],
-        resource_types=["Studio"],
+        resource_types=["job"],
         resource_ids=["res-1"],
         user_ids=["user-1"],
+        cluster_ids=["cluster-1"],
+        subfilters=subfilters,
         start=None,
         end=None,
         limit=5,
         search_after=datetime(2026, 1, 1),
         search_after_resource_id="res-1",
-        search_after_resource_type="Studio",
+        search_after_resource_type="job",
     )
 
 
@@ -150,6 +167,33 @@ def test_get_activity_filter_values_single_teamspace_scope(mock_resolve_teamspac
     org._billing_api.get_activity_filter_values.assert_called_once_with(org_id="org-1", project_id="ts-1")
 
 
+# ---- get_activity_filter_resource_names ---------------------------------
+
+
+def test_get_activity_filter_resource_names_org_scope():
+    org = _make_org("org-1")
+
+    result = org.get_activity_filter_resource_names()
+
+    assert result is org._billing_api.get_activity_filter_resource_names.return_value
+    org._billing_api.get_activity_filter_resource_names.assert_called_once_with(
+        org_id="org-1", project_id=None, search_query=None, page_size=None, page_token=None
+    )
+
+
+@mock.patch("lightning_sdk.organization._resolve_teamspace")
+def test_get_activity_filter_resource_names_forwards_args(mock_resolve_teamspace):
+    org = _make_org("org-1")
+    teamspace = _make_teamspace("ts-1", org)
+    mock_resolve_teamspace.return_value = teamspace
+
+    org.get_activity_filter_resource_names(teamspace=teamspace, search_query="train", page_size=50, page_token="tok")
+
+    org._billing_api.get_activity_filter_resource_names.assert_called_once_with(
+        org_id="org-1", project_id="ts-1", search_query="train", page_size=50, page_token="tok"
+    )
+
+
 # ---- get_session_activity / get_resource_activity -----------------------
 
 
@@ -167,12 +211,10 @@ def test_get_session_activity_forwards_args():
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
         start=None,
         end=None,
-        limit=None,
-        search_after=None,
-        search_after_resource_id=None,
-        search_after_resource_type=None,
     )
 
 
@@ -190,12 +232,10 @@ def test_get_session_activity_defaults_to_json():
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
         start=None,
         end=None,
-        limit=None,
-        search_after=None,
-        search_after_resource_id=None,
-        search_after_resource_type=None,
     )
 
 
@@ -204,7 +244,7 @@ def test_get_resource_activity_forwards_args(mock_resolve_teamspace):
     org = _make_org("org-1")
     teamspace = _make_teamspace("ts-1", org)
     mock_resolve_teamspace.return_value = teamspace
-    filters = BillingActivityFilters(limit=100)
+    filters = BillingActivityFilters(cluster_ids=["cluster-1"], limit=100)
     writer = io.StringIO()
 
     org.get_resource_activity(format=ActivityFileFormat.CSV, writer=writer, teamspace=teamspace, filters=filters)
@@ -217,12 +257,10 @@ def test_get_resource_activity_forwards_args(mock_resolve_teamspace):
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=["cluster-1"],
+        subfilters=None,
         start=None,
         end=None,
-        limit=100,
-        search_after=None,
-        search_after_resource_id=None,
-        search_after_resource_type=None,
     )
 
 
@@ -240,10 +278,8 @@ def test_get_resource_activity_defaults_to_json():
         resource_types=None,
         resource_ids=None,
         user_ids=None,
+        cluster_ids=None,
+        subfilters=None,
         start=None,
         end=None,
-        limit=None,
-        search_after=None,
-        search_after_resource_id=None,
-        search_after_resource_type=None,
     )
