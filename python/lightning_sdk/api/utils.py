@@ -1329,7 +1329,8 @@ class CredentialAuth(AuthBase):
     """Sets ``Authorization`` when a request is prepared, and retries one 401 after a refresh.
 
     A 401 that no refresh fixes raises ``ConnectionError`` saying to run ``lightning login``,
-    as the generated client does.
+    as the generated client does. A 401 to a request that didn't carry the credential, such
+    as a redirect to another host, is returned as it is.
     """
 
     def __init__(self, source: Optional[CredentialSource] = None) -> None:
@@ -1348,6 +1349,9 @@ class CredentialAuth(AuthBase):
         def handle(response: requests.Response, **kwargs: Any) -> requests.Response:
             nonlocal retried
             if retried or response.status_code != 401:
+                return response
+            # Redirects reuse this hook, and requests drops the header on a cross-host redirect.
+            if response.request.headers.get("Authorization") != header:
                 return response
             # The connection stays checked out until the body is read, so the retry can reuse it.
             _ = response.content

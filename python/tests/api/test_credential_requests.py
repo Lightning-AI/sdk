@@ -184,6 +184,53 @@ def test_blob_upload_retries_a_401(refreshed_token, tmp_path):
     assert refreshed_token.seen == ["old-token", "new-token"]
 
 
+def test_a_401_from_another_host_after_a_redirect_is_returned_without_sending_the_token(monkeypatch, tmp_path):
+    threading.Thread = _REAL_THREAD
+    for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    token_path = tmp_path / "token"
+    token_path.write_text("old-token")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(token_path))
+    seen = {"api": [], "storage": []}
+
+    def handler(name, status, location=None):
+        class Handler(BaseHTTPRequestHandler):
+            protocol_version = "HTTP/1.1"
+
+            def do_GET(self):  # noqa: N802
+                seen[name].append(self.headers.get("Authorization"))
+                if name == "storage":
+                    token_path.write_text("new-token")
+                self.send_response(status)
+                if location:
+                    self.send_header("Location", location)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+
+            def log_message(self, fmt, *args):
+                return
+
+        return Handler
+
+    storage = ThreadingHTTPServer(("127.0.0.1", 0), handler("storage", 401))
+    api = ThreadingHTTPServer(
+        ("127.0.0.1", 0), handler("api", 302, f"http://localhost:{storage.server_address[1]}/blob")
+    )
+    threads = [_REAL_THREAD(target=server.serve_forever, daemon=True) for server in (api, storage)]
+    for thread in threads:
+        thread.start()
+    try:
+        response = requests.get(f"http://127.0.0.1:{api.server_address[1]}/download", auth=CredentialAuth(), timeout=5)
+    finally:
+        for server, thread in zip((api, storage), threads):
+            server.shutdown()
+            thread.join(timeout=5)
+            server.server_close()
+
+    assert response.status_code == 401
+    assert seen == {"api": ["Bearer old-token"], "storage": [None]}
+
+
 def test_folder_download_refreshes_when_the_access_token_expires_midway(monkeypatch, tmp_path, inline_executor_cls):
     threading.Thread = _REAL_THREAD
     for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN_FILE"):
