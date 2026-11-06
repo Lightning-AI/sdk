@@ -21,6 +21,7 @@ dependencies = [ # alphabetically sorted
     "rich-click", # for rich CLI help formatting
     "docker", # for lit-container-registry
     "fastapi", # for lightning-cloud
+    "keyring", # for the CLI login
     "packaging", # for version checks
     "pyyaml", # for config handling
     "requests", # for downloading files via urls

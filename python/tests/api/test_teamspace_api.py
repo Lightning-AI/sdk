@@ -29,7 +29,7 @@ class MyDummyExperiment:
         self.id = id
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_teamspace(internal_teamspace_api_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -37,7 +37,7 @@ def test_get_teamspace(internal_teamspace_api_mocker):
     assert isinstance(project, V1Project)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_teamspace_error(internal_teamspace_api_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -45,7 +45,7 @@ def test_get_teamspace_error(internal_teamspace_api_mocker):
         teamspace_api.get_teamspace("xyz", "org-def")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_teamspaces(internal_teamspace_api_list_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -64,7 +64,7 @@ def test_list_teamspaces(internal_teamspace_api_list_mocker):
 
 
 @mock.patch("lightning_sdk.api.teamspace_api.AuthApi")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_studios(mock_auth_api, internal_studio_api_list_mocker):
     mock_auth_api.return_value.whoami.return_value.user_id = "user-abc"
     teamspace_api = TeamspaceApi()
@@ -76,7 +76,7 @@ def test_list_studios(mock_auth_api, internal_studio_api_list_mocker):
         assert isinstance(st, V1CloudSpace)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_clusters(internal_teamspace_api_cluster_list_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -87,7 +87,7 @@ def test_list_clusters(internal_teamspace_api_cluster_list_mocker):
         assert isinstance(cl, V1ProjectClusterBinding)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_agent(internal_teamspace_api_create_agent_mocker):
     teamspace_api = TeamspaceApi()
     agent = teamspace_api.create_agent(
@@ -105,7 +105,7 @@ def test_create_agent(internal_teamspace_api_create_agent_mocker):
 
 
 @mock.patch("lightning_sdk.api.teamspace_api._ModelFileUploader")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_upload_model_file(uploader_mock):
     teamspace_api = TeamspaceApi()
     teamspace_api.upload_model_file(
@@ -128,7 +128,7 @@ def test_upload_model_file(uploader_mock):
     uploader_mock().assert_called_with()  # .__call__()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_try_get_cluster_id():
     # cluster set via env variable
     teamspace_api = TeamspaceApi()
@@ -159,7 +159,7 @@ def test_try_get_cluster_id():
         _ = teamspace_api._determine_cloud_account("teamspace-id")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_delete_model():
     teamspace_api = TeamspaceApi()
     # create a content reused in following cases
@@ -195,7 +195,7 @@ def test_create_delete_model():
     teamspace_api._client.models_store_delete_model.assert_called_with(project_id="ts-abc", model_id="model-id")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_delete_model_with_experiment():
     teamspace_api = TeamspaceApi()
     experiment = MyDummyExperiment(id="exp-abc")
@@ -238,7 +238,7 @@ def test_create_delete_model_with_experiment():
     teamspace_api._client.models_store_delete_model.assert_called_with(project_id="ts-abc", model_id="model-id")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_delete_model_version():
     teamspace_api = TeamspaceApi()
     # mock the models_store_list_models and models_store_create_model_version for existing model
@@ -281,7 +281,7 @@ def test_create_delete_model_version():
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_delete_model_version_with_experiment():
     teamspace_api = TeamspaceApi()
     # mock the models_store_list_models and models_store_create_model_version for existing model
@@ -329,7 +329,7 @@ def test_create_delete_model_version_with_experiment():
 
 
 @mock.patch("lightning_sdk.api.cloud_account_api.CloudAccountApi")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_machines(mock_cloud_account_api_class):
     mock_cloud_account_api = mock.Mock()
     mock_cloud_account_api_class.return_value = mock_cloud_account_api
@@ -358,7 +358,7 @@ def test_list_machines(mock_cloud_account_api_class):
 
 
 @mock.patch("lightning_sdk.api.cloud_account_api.CloudAccountApi")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_machines_with_specific_machine(mock_cloud_account_api_class):
     mock_cloud_account_api = mock.Mock()
     mock_cloud_account_api_class.return_value = mock_cloud_account_api
@@ -417,7 +417,7 @@ def test_list_machines_with_specific_machine(mock_cloud_account_api_class):
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_model_errors(internal_teamspace_api_mocker):
     teamspace_api = TeamspaceApi()
 
@@ -444,7 +444,7 @@ def test_get_model_errors(internal_teamspace_api_mocker):
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_tree(mock_authenticate, mock_requests_get):
     """Test get_tree retrieves directory structure from teamspace drive."""
     mock_response = mock.MagicMock()
@@ -525,7 +525,7 @@ def test_get_tree(mock_authenticate, mock_requests_get):
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response, expected_result):
     mock_response = mock.MagicMock()
     mock_response.json.return_value = tree_response
@@ -624,7 +624,7 @@ def test_get_path_info(mock_authenticate, mock_requests_get, path, tree_response
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_files(
     mock_authenticate,
     mock_requests_get,
@@ -684,7 +684,7 @@ def _make_upload_teamspace_api():
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_upload_file(
     tqdm_mock,
     requests_put_mock,
@@ -761,7 +761,7 @@ def test_upload_file(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_upload_file_uploads_paths_pass_through(
     requests_put_mock,
     requests_post_mock,
@@ -794,7 +794,7 @@ def test_upload_file_uploads_paths_pass_through(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_upload_file_with_headers(
     tqdm_mock,
     requests_put_mock,
@@ -841,7 +841,7 @@ def test_upload_file_with_headers(
     "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
     new=mock.MagicMock(return_value={"Authorization": "Bearer test-token"}),
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_upload_file_without_headers(
     requests_put_mock,
     requests_post_mock,
@@ -885,7 +885,7 @@ def _stub_response(status_code: int, body: bytes) -> mock.Mock:
 @mock.patch(
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
     mock_requests_get.return_value = _stub_response(200, b"data" * 256)
     mock_requests_get.return_value.headers["x-amz-meta-mtime"] = "1700000000.123456789"
@@ -904,7 +904,7 @@ def test_download_file(mock_authenticate, mock_requests_get, tmpdir):
 @mock.patch(
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_file_rejects_an_error_document(_mock_authenticate, mock_requests_get, tmpdir):
     mock_requests_get.return_value = _stub_response(403, _S3_ERROR_BODY)
 
@@ -918,7 +918,7 @@ def test_download_file_rejects_an_error_document(_mock_authenticate, mock_reques
 
 
 @mock.patch("requests.get", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_single_file_rejects_an_error_document_under_200(mock_requests_get, tmp_path):
     # A 2 MiB object that comes back as a 278-byte body under a 200 is only detectable
     # against the size the listing reported.
@@ -936,7 +936,7 @@ def test_download_single_file_rejects_an_error_document_under_200(mock_requests_
 @mock.patch(
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers", return_value={"Authorization": "Bearer token"}
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_folder_does_not_report_success_on_a_partial_download(
     _mock_authenticate, inline_executor_cls, tmp_path
 ):
@@ -962,7 +962,7 @@ def test_download_folder_does_not_report_success_on_a_partial_download(
 @mock.patch("lightning_sdk.api.teamspace_api.tqdm")
 @mock.patch("lightning_sdk.api.teamspace_api.ThreadPoolExecutor")
 @mock.patch("lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_collect, tmpdir):
     authenticate_mock.return_value = {"Authorization": "Bearer test-token-123"}
 
@@ -993,7 +993,7 @@ def test_download_folder(authenticate_mock, mock_executor, mock_tqdm, mock_colle
     assert mock_tqdm.call_args.kwargs["total"] == 3000  # 1000 + 2000
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_secrets():
     teamspace_api = TeamspaceApi()
 
@@ -1010,7 +1010,7 @@ def test_get_secrets():
     assert secrets["DATABASE_URL"] == "***REDACTED***"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_set_secret_create_new():
     teamspace_api = TeamspaceApi()
 
@@ -1029,7 +1029,7 @@ def test_set_secret_create_new():
 
 
 @pytest.mark.parametrize("secret_type", [SecretType.HF_TOKEN, "hf_token"])
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_set_secret_create_new_with_type(secret_type):
     teamspace_api = TeamspaceApi()
 
@@ -1041,7 +1041,7 @@ def test_set_secret_create_new_with_type(secret_type):
         mock_create.assert_called_once_with("ts-abc", "HF_TOKEN", "hf_xxx", secret_type=V1SecretType.HF_TOKEN)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_set_secret_invalid_type_raises():
     teamspace_api = TeamspaceApi()
 
@@ -1051,7 +1051,7 @@ def test_set_secret_invalid_type_raises():
         teamspace_api.set_secret("ts-abc", "NAME", "value", secret_type="not_a_type")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_set_secret_update_existing():
     teamspace_api = TeamspaceApi()
 
@@ -1068,7 +1068,7 @@ def test_set_secret_update_existing():
         mock_update.assert_called_once_with("ts-abc", "secret-1", "new_secret_value")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_set_generic_secret_does_not_update_same_name_typed_secret():
     teamspace_api = TeamspaceApi()
     existing_secrets = [
@@ -1084,7 +1084,7 @@ def test_set_generic_secret_does_not_update_same_name_typed_secret():
     mock_create.assert_called_once_with("ts-abc", "API_KEY", "new_secret_value", secret_type=V1SecretType.UNSPECIFIED)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_delete_secret_resolves_generic_secret_id():
     teamspace_api = TeamspaceApi()
     existing_secrets = [
@@ -1100,7 +1100,7 @@ def test_delete_secret_resolves_generic_secret_id():
     mock_delete.assert_called_once_with(project_id="ts-abc", id="generic-secret")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_delete_secret_rejects_missing_generic_secret():
     teamspace_api = TeamspaceApi()
     existing_secrets = [
@@ -1116,7 +1116,7 @@ def test_delete_secret_rejects_missing_generic_secret():
 
 
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_secrets_api_call(mock_client):
     mock_client().secret_service_list_secrets.return_value.secrets = [
         V1Secret(id="secret-1", name="API_KEY"),
@@ -1131,7 +1131,7 @@ def test_get_secrets_api_call(mock_client):
 
 
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_secret_api_call(mock_client):
     teamspace_api = TeamspaceApi()
 
@@ -1146,7 +1146,7 @@ def test_create_secret_api_call(mock_client):
 
 
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_secret_api_call_with_type(mock_client):
     teamspace_api = TeamspaceApi()
 
@@ -1157,7 +1157,7 @@ def test_create_secret_api_call_with_type(mock_client):
 
 
 @mock.patch("lightning_sdk.api.utils.LightningClient")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_update_secret_api_call(mock_client):
     teamspace_api = TeamspaceApi()
 
@@ -1192,7 +1192,7 @@ def test_update_secret_api_call(mock_client):
         ("INVALID$SECRET", False),  # contains dollar sign
     ],
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_verify_secret_name(secret_name, expected):
     teamspace_api = TeamspaceApi()
     result = teamspace_api.verify_secret_name(secret_name)
@@ -1204,7 +1204,7 @@ def test_verify_secret_name(secret_name, expected):
     "lightning_sdk.api.teamspace_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
     """A truncated listing is followed page by page until nextCursor comes back empty."""
     pages = [
@@ -1227,7 +1227,7 @@ def test_list_files_follows_cursor_pages(_mock_authenticate, mock_requests_get):
     assert params[1]["cursor"] == "cursor-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_model_version_keeps_metadata():
     """Metadata must reach every version, not just the first.
 
@@ -1260,7 +1260,7 @@ def _tags_client(*tags: V1WorkloadTag) -> mock.MagicMock:
     return client
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_jobs_filters_on_tag_ids():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = mock.MagicMock()
@@ -1272,7 +1272,7 @@ def test_list_jobs_filters_on_tag_ids():
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_jobs_omits_the_tag_filter_when_unset():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = mock.MagicMock()
@@ -1282,7 +1282,7 @@ def test_list_jobs_omits_the_tag_filter_when_unset():
     teamspace_api._client.jobs_service_list_jobs.assert_called_once_with(project_id="ts-abc", standalone=True)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_mmts_filters_on_tag_ids_client_side():
     tagged = mock.MagicMock(tags=[V1WorkloadTag(id="tag-1", name="prod")])
     also_tagged = mock.MagicMock(tags=[V1WorkloadTag(id="tag-2", name="staging")])
@@ -1298,7 +1298,7 @@ def test_list_mmts_filters_on_tag_ids_client_side():
     assert teamspace_api.list_mmts("ts-abc") == [tagged, also_tagged, untagged]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 @pytest.mark.parametrize("name", ["team a", "TEAM A", "  team   a  ", "Team\tA"])
 def test_resolve_tag_ids_matches_names_the_way_the_platform_stores_them(name):
     teamspace_api = TeamspaceApi()
@@ -1307,7 +1307,7 @@ def test_resolve_tag_ids_matches_names_the_way_the_platform_stores_them(name):
     assert teamspace_api.resolve_tag_ids("ts-abc", [name]) == ["tag-1"]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_resolve_tag_ids_keeps_the_order_the_names_were_given():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = _tags_client(
@@ -1319,7 +1319,7 @@ def test_resolve_tag_ids_keeps_the_order_the_names_were_given():
     teamspace_api._client.jobs_service_list_workload_tags.assert_called_once_with(project_id="ts-abc")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_resolve_tag_ids_rejects_an_unknown_tag():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = _tags_client(
@@ -1331,7 +1331,7 @@ def test_resolve_tag_ids_rejects_an_unknown_tag():
         teamspace_api.resolve_tag_ids("ts-abc", ["nightly"])
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_resolve_tag_ids_says_when_the_teamspace_has_no_tags():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = _tags_client()
@@ -1340,7 +1340,7 @@ def test_resolve_tag_ids_says_when_the_teamspace_has_no_tags():
         teamspace_api.resolve_tag_ids("ts-abc", ["prod"])
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_workload_tags_tolerates_a_teamspace_with_no_tags():
     teamspace_api = TeamspaceApi()
     teamspace_api._client = mock.MagicMock()

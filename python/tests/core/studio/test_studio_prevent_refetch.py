@@ -61,7 +61,7 @@ from lightning_sdk.utils.resolve import prevent_refetch_studio
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_status_and_machine_use_cached_code_status_when_refetch_prevented(
     mock_get_teamspace,
     mock_get_org,
@@ -148,7 +148,7 @@ def test_status_and_machine_use_cached_code_status_when_refetch_prevented(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_status_still_refetches_when_not_prevented(
     mock_get_teamspace,
     mock_get_org,

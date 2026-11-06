@@ -86,7 +86,7 @@ def _auth_header() -> Optional[str]:
     Reads the saved credentials unless the environment sets some, as the rest of the CLI does.
     """
     auth = Auth()
-    if not (auth.api_key or auth.auth_token):
+    if not auth.auth_token:
         auth.load()
     try:
         return auth.get_auth_header()

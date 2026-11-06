@@ -44,7 +44,7 @@ jobs:
     - name: Login passthrough
       run: lightning login # since we are providing the credentials, this should be a no-op
       env:
-        LIGHTNING_API_KEY: dummy-api-key
+        LIGHTNING_AUTH_TOKEN: dummy-auth-token
 
     - name: Tests
       working-directory: python/tests

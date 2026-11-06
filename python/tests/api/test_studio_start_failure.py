@@ -28,7 +28,7 @@ def instance(instance_id="new", phase=State.PENDING, message=None, ready=False):
 
 @pytest.fixture()
 def start_api(mocker):
-    mocker.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+    mocker.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
     api = StudioApi()
     api._client = mock.MagicMock()
     api._client.cloud_space_service_start_cloud_space_instance.return_value = V1StartCloudSpaceInstanceResponse()

@@ -103,8 +103,10 @@ def test_require_auth_header_instructs_login_without_opening_browser() -> None:
     auth.authenticate.assert_not_called()
 
 
-def test_browser_authentication_blocks_subclass_callback_server() -> None:
+def test_browser_authentication_blocks_subclass_callback_server(monkeypatch, tmp_path) -> None:
     """The guard must also block SDK auth subclasses with custom callback servers."""
+    monkeypatch.setattr(Auth, "secrets_file", tmp_path / "credentials.json")
+    monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
 
     class CustomAuth(Auth):
         browser_started = False
@@ -115,7 +117,7 @@ def test_browser_authentication_blocks_subclass_callback_server() -> None:
         def _run_server(self) -> None:
             self.browser_started = True
 
-    auth = CustomAuth(api_key="", auth_token="")
+    auth = CustomAuth(auth_token="")
 
     with browser_authentication(False), pytest.raises(ValueError, match="lightning login"):
         auth.authenticate()
@@ -126,7 +128,6 @@ def test_browser_authentication_blocks_subclass_callback_server() -> None:
 def test_litserve_auth_uses_saved_credentials_without_starting_callback_server() -> None:
     """Deployment authentication must not start callback auth when credentials exist."""
     auth = _AuthLitServe(_AuthMode.DEPLOY)
-    auth.api_key = "key"
 
     with patch.object(
         auth,
@@ -154,11 +155,9 @@ def test_auth_save_stores_session_token_as_auth_token(monkeypatch, tmp_path) -> 
     auth.save(token="sess_user-1.secret", user_id="user-1", api_key="")
 
     assert auth.auth_token == "sess_user-1.secret"
-    assert auth.api_key == ""
     assert auth.auth_header == "Bearer sess_user-1.secret"
     assert json.loads(secrets_file.read_text()) == {
         "user_id": "user-1",
-        "api_key": "",
         "auth_token": "sess_user-1.secret",
     }
     assert (secrets_file.stat().st_mode & 0o777) == 0o600
@@ -357,7 +356,6 @@ def test_session_token_login_rejects_callback_without_matching_state(monkeypatch
 
     assert not secrets_file.exists()
     assert not auth.auth_token
-    assert not auth.api_key
 
 
 def _paste_login(monkeypatch, tmp_path, codes: list, responses: list) -> tuple:

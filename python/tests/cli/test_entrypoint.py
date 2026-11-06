@@ -54,7 +54,7 @@ def test_explicit_login_can_start_browser_authentication(monkeypatch, tmp_path) 
     def _complete_browser_auth(auth: Auth) -> None:
         nonlocal browser_auth_started
         browser_auth_started = True
-        auth.api_key = "api-key"
+        auth.save(auth_token="sess_user-1.secret")
 
     monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
 
@@ -150,7 +150,7 @@ def test_cli_browser_auth_policy_is_reset_after_command(monkeypatch, tmp_path) -
     def _complete_browser_auth(auth: Auth) -> None:
         nonlocal browser_auth_starts
         browser_auth_starts += 1
-        auth.api_key = "api-key"
+        auth.save(auth_token="sess_user-1.secret")
 
     monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
 
@@ -345,10 +345,9 @@ def test_login_replaces_existing_session(monkeypatch, tmp_path):
     assert auth.auth_token == "sess_new"
 
 
-@pytest.mark.parametrize("env_var", ["LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"])
-def test_login_not_required_with_credentials_in_env(monkeypatch, tmp_path, env_var):
+def test_login_not_required_with_credentials_in_env(monkeypatch, tmp_path):
     _clear_auth(monkeypatch, tmp_path)
-    monkeypatch.setenv(env_var, "from-env")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "from-env")
     Auth().save(auth_token="sess_saved")
 
     def _fail_browser_auth(auth: Auth) -> None:
@@ -361,6 +360,26 @@ def test_login_not_required_with_credentials_in_env(monkeypatch, tmp_path, env_v
     assert result.exit_code == 0, result.output
     assert "credentials are set in the environment" in result.output
     assert Auth.secrets_file.exists()
+
+
+def test_an_env_api_key_does_not_skip_login(monkeypatch, tmp_path):
+    _clear_auth(monkeypatch, tmp_path)
+    monkeypatch.setenv("LIGHTNING_API_KEY", "from-env")
+    Auth().save(auth_token="sess_saved")
+
+    def _complete_browser_auth(auth: Auth) -> None:
+        assert not Auth.secrets_file.exists()
+        auth.save(auth_token="sess_new")
+
+    monkeypatch.setattr(Auth, "_run_server", _complete_browser_auth)
+
+    result = CliRunner().invoke(main_cli, ["login"])
+
+    assert result.exit_code == 0, result.output
+    assert "credentials are set in the environment" not in result.output
+    auth = Auth()
+    assert auth.load()
+    assert auth.auth_token == "sess_new"
 
 
 @patch.dict(os.environ, {"LIGHTNING_INTERACTIVE": "true", "LIGHTNING_CLOUD_SPACE_ID": "cloud-space-id"}, clear=True)

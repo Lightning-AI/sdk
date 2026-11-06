@@ -112,7 +112,7 @@ def login(no_browser: bool) -> None:
     if no_browser and not oidc_login_enabled():
         raise click.UsageError("`lightning login --no-browser` is not available yet.")
     auth = Auth()
-    if auth.api_key or auth.auth_token:
+    if auth.auth_token:
         click.echo('"lightning login" is not required within a Studio or when credentials are set in the environment')
         return
 

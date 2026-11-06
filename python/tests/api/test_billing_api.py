@@ -292,7 +292,7 @@ def test_get_activity_filter_values_with_project_id(mock_client):
     "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_session_activity_csv(mock_authenticate, mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
@@ -320,7 +320,7 @@ def test_get_session_activity_csv(mock_authenticate, mock_requests_get, tmp_path
     "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_session_activity_json_default_format(mock_authenticate, mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
@@ -344,7 +344,7 @@ def test_get_session_activity_json_default_format(mock_authenticate, mock_reques
     "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
@@ -376,7 +376,7 @@ def test_get_resource_activity_csv(mock_authenticate, mock_requests_get, tmp_pat
     "lightning_sdk.api.billing_api._authenticate_and_get_auth_headers",
     return_value={"Authorization": "Bearer test-token"},
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_resource_activity_json_default_format(mock_authenticate, mock_requests_get, tmp_path):
     mock_response = mock.Mock()
     mock_response.status_code = 200
