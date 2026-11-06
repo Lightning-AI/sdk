@@ -1,13 +1,17 @@
-"""Generic secret commands for the authenticated user."""
+"""Generic secret commands for the authenticated user.
+
+They call ``UserApi`` without looking up the user first: that lookup calls ``/v1/auth/whoami``, which the API
+lockdown blocks.
+"""
 
 import rich_click as click
 from rich.table import Table
 
+from lightning_sdk.api import UserApi
 from lightning_sdk.cli.utils.configuration import read_secret_value, secret_records, validate_name
 from lightning_sdk.cli.utils.json_output import echo_json
 from lightning_sdk.cli.utils.logging import LightningCommand, LightningGroup
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.utils.resolve import _get_authed_user
 
 
 @click.group("secret", cls=LightningGroup)
@@ -19,7 +23,7 @@ def secret() -> None:
 @click.option("--json", "as_json", is_flag=True, default=False, help="Output as JSON.")
 def list_secrets(as_json: bool) -> None:
     """List generic user secrets."""
-    records = secret_records(_get_authed_user().secrets)
+    records = secret_records(UserApi().get_secrets())
     if as_json:
         echo_json({"secrets": records})
         return
@@ -40,7 +44,7 @@ def set_secret(key: str, value_stdin: bool, as_json: bool) -> None:
     """Create or update a generic user secret."""
     validate_name(key)
     value = read_secret_value(value_stdin)
-    _get_authed_user().set_secret(key, value)
+    UserApi().set_secret(key, value)
     if as_json:
         echo_json({"name": key, "status": "set"})
         return
@@ -53,7 +57,7 @@ def set_secret(key: str, value_stdin: bool, as_json: bool) -> None:
 def delete_secret(key: str, as_json: bool) -> None:
     """Delete a generic user secret."""
     validate_name(key)
-    _get_authed_user().delete_secret(key)
+    UserApi().delete_secret(key)
     if as_json:
         echo_json({"name": key, "status": "deleted"})
         return

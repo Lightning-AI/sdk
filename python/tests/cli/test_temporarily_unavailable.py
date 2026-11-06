@@ -17,6 +17,9 @@ from lightning_sdk.cli.utils.lockdown_status import (
     STUDIO_SSH,
     STUDIO_SWITCHING,
     STUDIOS,
+    TEAMSPACE_SECRETS,
+    TEAMSPACE_SECRETS_WRITE,
+    USER_SETTINGS,
 )
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.unavailable import is_temporarily_unavailable, mark_temporarily_unavailable
@@ -345,6 +348,59 @@ def test_studio_ssh_commands_run_once_studio_ssh_opens(monkeypatch, args: list[s
 
     assert isinstance(result.exception, _ReachedError)
     assert _NOTICE not in result.output
+
+
+_USER_SECRET_STEP = "lightning_sdk.cli.user.secret.UserApi"
+_TEAMSPACE_SECRET_STEP = "lightning_sdk.cli.teamspace.secret.resolve_teamspace"
+_SECRET_CAPABILITIES = (USER_SETTINGS, TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE)
+
+# Each secret command, the capabilities it needs, and the first step of its own logic
+_SECRET_RUNS = [
+    (["user", "secret", "list"], (USER_SETTINGS,), _USER_SECRET_STEP),
+    (["user", "secret", "set", "TOKEN", "--value-stdin"], (USER_SETTINGS,), _USER_SECRET_STEP),
+    (["user", "secret", "delete", "TOKEN"], (USER_SETTINGS,), _USER_SECRET_STEP),
+    (["teamspace", "secret", "list"], (TEAMSPACE_SECRETS,), _TEAMSPACE_SECRET_STEP),
+    (
+        ["teamspace", "secret", "set", "TOKEN", "--value-stdin"],
+        (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
+        _TEAMSPACE_SECRET_STEP,
+    ),
+    (
+        ["teamspace", "secret", "delete", "TOKEN"],
+        (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
+        _TEAMSPACE_SECRET_STEP,
+    ),
+]
+
+
+@pytest.mark.parametrize(("args", "capabilities", "first_step"), _SECRET_RUNS)
+def test_secret_commands_run_once_their_capabilities_open(
+    monkeypatch, args: list[str], capabilities: tuple[str, ...], first_step: str
+) -> None:
+    _set_flags(monkeypatch, _held(*capabilities))
+
+    with patch(first_step, side_effect=_ReachedError):
+        result = CliRunner().invoke(main_cli, args, input="value")
+
+    assert isinstance(result.exception, _ReachedError)
+    assert _NOTICE not in result.output
+
+
+@pytest.mark.parametrize(
+    ("args", "missing", "first_step"),
+    [(args, missing, step) for args, capabilities, step in _SECRET_RUNS for missing in capabilities],
+)
+def test_secret_commands_refuse_to_run_while_any_capability_is_closed(
+    monkeypatch, args: list[str], missing: str, first_step: str
+) -> None:
+    _set_flags(monkeypatch, _held(*(c for c in _SECRET_CAPABILITIES if c != missing)))
+
+    with patch(first_step) as step:
+        result = CliRunner().invoke(main_cli, args, input="value")
+
+    assert result.exit_code == 1
+    assert _NOTICE in result.output
+    assert step.call_count == 0
 
 
 @pytest.mark.parametrize("path", ["job run", "studio start", "rm"])
