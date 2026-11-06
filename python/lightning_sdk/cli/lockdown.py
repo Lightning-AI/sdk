@@ -15,6 +15,9 @@ from lightning_sdk.cli.utils.lockdown_status import (
     STUDIO_SSH,
     STUDIO_SWITCHING,
     STUDIOS,
+    TEAMSPACE_SECRETS,
+    TEAMSPACE_SECRETS_WRITE,
+    USER_SETTINGS,
 )
 from lightning_sdk.cli.utils.unavailable import mark_temporarily_unavailable, mark_unavailable_groups
 from lightning_sdk.lightning_cloud import env
@@ -95,12 +98,6 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "studio ls",
     "studio open",
     "studio rm",
-    "teamspace secret delete",
-    "teamspace secret list",
-    "teamspace secret set",
-    "user secret delete",
-    "user secret list",
-    "user secret set",
     "vm create",
     "vm delete",
     "vm inspect",
@@ -110,7 +107,8 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
 
 # The capabilities each command needs, all of them. Starting and stopping need the Studio's sidecar to keep
 # renewing its token, so they need studio-sidecar-auth as well as studios. Deleting needs studio-delete as
-# well as studios: the config lists only the capabilities the caller holds, not their prerequisites.
+# well as studios: the config lists only the capabilities the caller holds, not their prerequisites. Setting
+# or deleting a teamspace secret lists the secrets first, so it needs teamspace-secrets as well.
 GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "base-studio list": (ENVIRONMENT_TEMPLATES,),
     "edit": (RW_FILESYSTEM,),
@@ -125,6 +123,12 @@ GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "studio start": (STUDIOS, STUDIO_SIDECAR_AUTH),
     "studio stop": (STUDIOS, STUDIO_SIDECAR_AUTH),
     "studio switch": (STUDIO_SWITCHING,),
+    "teamspace secret delete": (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
+    "teamspace secret list": (TEAMSPACE_SECRETS,),
+    "teamspace secret set": (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
+    "user secret delete": (USER_SETTINGS,),
+    "user secret list": (USER_SETTINGS,),
+    "user secret set": (USER_SETTINGS,),
 }
 
 
