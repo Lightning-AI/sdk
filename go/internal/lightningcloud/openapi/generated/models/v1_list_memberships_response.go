@@ -26,6 +26,9 @@ type V1ListMembershipsResponse struct {
 
 	// memberships
 	Memberships []*V1Membership `json:"memberships"`
+
+	// set only when the request set page. count of matches before the slice.
+	TotalCount string `json:"totalCount,omitempty"`
 }
 
 // Validate validates this v1 list memberships response

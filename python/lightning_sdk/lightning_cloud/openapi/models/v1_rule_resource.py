@@ -90,6 +90,7 @@ class V1RuleResource(object):
     K8S_JOB = "k8s_job"
     SANDBOX = "sandbox"
     WORKLOADTAG = "workloadTag"
+    MODELAPI = "modelAPI"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

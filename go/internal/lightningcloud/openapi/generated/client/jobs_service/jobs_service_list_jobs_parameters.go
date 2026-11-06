@@ -72,6 +72,12 @@ type JobsServiceListJobsParams struct {
 	// DeploymentID.
 	DeploymentID *string
 
+	/* GroupID.
+
+	   Only jobs belonging to this job group
+	*/
+	GroupID *string
+
 	// Limit.
 	//
 	// Format: int64
@@ -213,6 +219,17 @@ func (o *JobsServiceListJobsParams) WithDeploymentID(deploymentID *string) *Jobs
 // SetDeploymentID adds the deploymentId to the jobs service list jobs params
 func (o *JobsServiceListJobsParams) SetDeploymentID(deploymentID *string) {
 	o.DeploymentID = deploymentID
+}
+
+// WithGroupID adds the groupID to the jobs service list jobs params
+func (o *JobsServiceListJobsParams) WithGroupID(groupID *string) *JobsServiceListJobsParams {
+	o.SetGroupID(groupID)
+	return o
+}
+
+// SetGroupID adds the groupId to the jobs service list jobs params
+func (o *JobsServiceListJobsParams) SetGroupID(groupID *string) {
+	o.GroupID = groupID
 }
 
 // WithLimit adds the limit to the jobs service list jobs params
@@ -362,6 +379,23 @@ func (o *JobsServiceListJobsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		if qDeploymentID != "" {
 
 			if err := r.SetQueryParam("deploymentId", qDeploymentID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.GroupID != nil {
+
+		// query param groupId
+		var qrGroupID string
+
+		if o.GroupID != nil {
+			qrGroupID = *o.GroupID
+		}
+		qGroupID := qrGroupID
+		if qGroupID != "" {
+
+			if err := r.SetQueryParam("groupId", qGroupID); err != nil {
 				return err
 			}
 		}

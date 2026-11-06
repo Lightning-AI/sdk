@@ -83,6 +83,7 @@ type JobsServiceListJobResourcesParams struct {
 	- JOB_TYPE_SLURM_JOB: Slurm jobs
 	- JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs
 	- JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
+	- JOB_TYPE_JOB_GROUP: Groups of independent jobs submitted together
 	*/
 	JobTypes []string
 

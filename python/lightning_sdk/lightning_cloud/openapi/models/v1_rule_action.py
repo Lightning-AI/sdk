@@ -50,6 +50,7 @@ class V1RuleAction(object):
     SSH = "ssh"
     VIEWLOGS = "viewLogs"
     GETNOTIFIED = "getNotified"
+    INVOKE = "invoke"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

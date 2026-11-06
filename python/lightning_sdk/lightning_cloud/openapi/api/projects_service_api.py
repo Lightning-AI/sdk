@@ -1578,6 +1578,11 @@ class ProjectsServiceApi(object):
         :param str organization_id:
         :param bool filter_by_user_id:
         :param bool disable_org_migration_compat:
+        :param int page: absent: return every membership and ignore page_size. 1-based when set; 0 is invalid.
+        :param int page_size: applied only when page is set. 0 uses the server default of 50. values above 100 are capped.
+        :param str search: case-insensitive substring of display_name. applied before the page slice. empty matches everything.
+        :param str sort_by: display_name or created_at. empty means display_name. unknown values are invalid.
+        :param str sort_order: asc or desc. empty means asc. unknown values are invalid.
         :return: V1ListMembershipsResponse
                  If the method is called asynchronously,
                  returns the request thread.
@@ -1601,12 +1606,17 @@ class ProjectsServiceApi(object):
         :param str organization_id:
         :param bool filter_by_user_id:
         :param bool disable_org_migration_compat:
+        :param int page: absent: return every membership and ignore page_size. 1-based when set; 0 is invalid.
+        :param int page_size: applied only when page is set. 0 uses the server default of 50. values above 100 are capped.
+        :param str search: case-insensitive substring of display_name. applied before the page slice. empty matches everything.
+        :param str sort_by: display_name or created_at. empty means display_name. unknown values are invalid.
+        :param str sort_order: asc or desc. empty means asc. unknown values are invalid.
         :return: V1ListMembershipsResponse
                  If the method is called asynchronously,
                  returns the request thread.
         """
 
-        all_params = ['organization_id', 'filter_by_user_id', 'disable_org_migration_compat']  # noqa: E501
+        all_params = ['organization_id', 'filter_by_user_id', 'disable_org_migration_compat', 'page', 'page_size', 'search', 'sort_by', 'sort_order']  # noqa: E501
         all_params.append('async_req')
         all_params.append('_return_http_data_only')
         all_params.append('_preload_content')
@@ -1633,6 +1643,16 @@ class ProjectsServiceApi(object):
             query_params.append(('filterByUserId', params['filter_by_user_id']))  # noqa: E501
         if 'disable_org_migration_compat' in params:
             query_params.append(('disableOrgMigrationCompat', params['disable_org_migration_compat']))  # noqa: E501
+        if 'page' in params:
+            query_params.append(('page', params['page']))  # noqa: E501
+        if 'page_size' in params:
+            query_params.append(('pageSize', params['page_size']))  # noqa: E501
+        if 'search' in params:
+            query_params.append(('search', params['search']))  # noqa: E501
+        if 'sort_by' in params:
+            query_params.append(('sortBy', params['sort_by']))  # noqa: E501
+        if 'sort_order' in params:
+            query_params.append(('sortOrder', params['sort_order']))  # noqa: E501
 
         header_params = {}
 

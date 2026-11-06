@@ -102,6 +102,7 @@ class V1Organization(object):
         'storage_overuse_bytes': 'str',
         'storage_overuse_deletion_at': 'datetime',
         'storage_overuse_notification_count': 'int',
+        'studio_ports_access': 'V1StudioPortsAccess',
         'switch_to_default_machine_on_idle': 'bool',
         'teamspace_default_credits': 'float',
         'timezone': 'str',
@@ -168,6 +169,7 @@ class V1Organization(object):
         'storage_overuse_bytes': 'storageOveruseBytes',
         'storage_overuse_deletion_at': 'storageOveruseDeletionAt',
         'storage_overuse_notification_count': 'storageOveruseNotificationCount',
+        'studio_ports_access': 'studioPortsAccess',
         'switch_to_default_machine_on_idle': 'switchToDefaultMachineOnIdle',
         'teamspace_default_credits': 'teamspaceDefaultCredits',
         'timezone': 'timezone',
@@ -176,7 +178,7 @@ class V1Organization(object):
         'workload_max_run_duration': 'workloadMaxRunDuration'
     }
 
-    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_billing_activity_page_v2: 'bool' =None, allow_billing_breakdown_page_v2: 'bool' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, default_teamspace_ids: 'list[str]' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, nairr: 'bool' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_max_mmt_capacity: 'bool' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None, mmt_ib_membership_enabled: 'bool' =None):  # noqa: E501
+    def __init__(self, alerts_config: 'V1OrgAlertsConfig' =None, allow_billing_activity_page_v2: 'bool' =None, allow_billing_breakdown_page_v2: 'bool' =None, allow_budgeting: 'bool' =None, allow_cloud_space_publish: 'bool' =None, allow_credits_auto_replenish: 'bool' =None, allow_external_project_duplication: 'bool' =None, allow_guest: 'bool' =None, allow_lightning_hosted_models: 'bool' =None, allow_marketplace: 'bool' =None, allow_member_invitations: 'bool' =None, allow_member_teamspace_creation: 'bool' =None, auto_invite_by_domain: 'bool' =None, auto_join_domain_validations: 'dict(str, V1AutoJoinDomainValidation)' =None, auto_join_domains: 'list[str]' =None, auto_replenish_amount: 'float' =None, auto_replenish_threshold: 'float' =None, auto_switch_machine: 'bool' =None, created_at: 'datetime' =None, creator_id: 'str' =None, default_machine_image_version: 'str' =None, default_machine_type: 'str' =None, default_project_id: 'str' =None, default_teamspace_ids: 'list[str]' =None, description: 'str' =None, disable_coding_agents: 'bool' =None, disable_public_templates: 'bool' =None, disallow_aws_saas: 'bool' =None, disallow_dgx_saas: 'bool' =None, disallow_gcp_saas: 'bool' =None, disallow_lambda_saas: 'bool' =None, disallow_lightning_saas: 'bool' =None, disallow_nebius_saas: 'bool' =None, display_name: 'str' =None, domain: 'str' =None, email: 'str' =None, featured_gallery: 'bool' =None, full_story_end_date: 'datetime' =None, full_story_start_date: 'datetime' =None, general_teamspace: 'bool' =None, id: 'str' =None, is_personal_org: 'bool' =None, last_storage_overuse_notification_sent_at: 'datetime' =None, location: 'str' =None, nairr: 'bool' =None, name: 'str' =None, preferred_cluster: 'str' =None, preferred_deployment_provider: 'str' =None, preferred_studio_provider: 'str' =None, show_max_mmt_capacity: 'bool' =None, show_model_apis_tab: 'bool' =None, skip_phone_verification: 'bool' =None, start_studios_on_spot_instance: 'bool' =None, storage_overuse_bytes: 'str' =None, storage_overuse_deletion_at: 'datetime' =None, storage_overuse_notification_count: 'int' =None, switch_to_default_machine_on_idle: 'bool' =None, teamspace_default_credits: 'float' =None, timezone: 'str' =None, twitter_username: 'str' =None, updated_at: 'datetime' =None, workload_max_run_duration: 'str' =None, mmt_ib_membership_enabled: 'bool' =None, studio_ports_access: 'V1StudioPortsAccess' =None):  # noqa: E501
         """V1Organization - a model defined in Swagger"""  # noqa: E501
         self._alerts_config = None
         self._allow_billing_activity_page_v2 = None
@@ -235,6 +237,7 @@ class V1Organization(object):
         self._storage_overuse_bytes = None
         self._storage_overuse_deletion_at = None
         self._storage_overuse_notification_count = None
+        self._studio_ports_access = None
         self._switch_to_default_machine_on_idle = None
         self._teamspace_default_credits = None
         self._timezone = None
@@ -356,6 +359,8 @@ class V1Organization(object):
             self.storage_overuse_deletion_at = storage_overuse_deletion_at
         if storage_overuse_notification_count is not None:
             self.storage_overuse_notification_count = storage_overuse_notification_count
+        if studio_ports_access is not None:
+            self.studio_ports_access = studio_ports_access
         if switch_to_default_machine_on_idle is not None:
             self.switch_to_default_machine_on_idle = switch_to_default_machine_on_idle
         if teamspace_default_credits is not None:
@@ -1573,6 +1578,27 @@ class V1Organization(object):
         """
 
         self._storage_overuse_notification_count = storage_overuse_notification_count
+
+    @property
+    def studio_ports_access(self) -> 'V1StudioPortsAccess':
+        """Gets the studio_ports_access of this V1Organization.  # noqa: E501
+
+
+        :return: The studio_ports_access of this V1Organization.  # noqa: E501
+        :rtype: V1StudioPortsAccess
+        """
+        return self._studio_ports_access
+
+    @studio_ports_access.setter
+    def studio_ports_access(self, studio_ports_access: 'V1StudioPortsAccess'):
+        """Sets the studio_ports_access of this V1Organization.
+
+
+        :param studio_ports_access: The studio_ports_access of this V1Organization.  # noqa: E501
+        :type: V1StudioPortsAccess
+        """
+
+        self._studio_ports_access = studio_ports_access
 
     @property
     def switch_to_default_machine_on_idle(self) -> 'bool':
