@@ -1209,6 +1209,12 @@ class Job(metaclass=TrackCallsMeta):
             except ApiException as ex:
                 if ex.status != 404:
                     raise
+                # Multi-machine routes are refused while the lockdown is on, so a missing
+                # standalone job stays missing.
+                from lightning_sdk.cli.utils.lockdown_status import multi_machine_routes_closed
+
+                if multi_machine_routes_closed():
+                    raise
                 # Switch to the multi-machine API, then sync the real machine count from the payload.
                 self._num_machines = 2
                 self._attach_job(self._job_api.get_job_by_name(name=self._name, teamspace_id=self._teamspace.id))

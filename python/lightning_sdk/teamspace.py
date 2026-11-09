@@ -292,6 +292,8 @@ class Teamspace(metaclass=TrackCallsMeta):
     def jobs(self) -> Tuple["Job", ...]:
         """All standalone and multi-machine jobs in this teamspace.
 
+        While the API lockdown is on, multi-machine jobs are left out: those routes are refused.
+
         Returns:
             tuple[Job, ...]: Every Job belonging to this teamspace.
 
@@ -316,12 +318,14 @@ class Teamspace(metaclass=TrackCallsMeta):
             tags: Only return jobs carrying at least one of these tags. ``None`` returns every job.
 
         Returns:
-            tuple[Job, ...]: The matching Jobs, standalone ones first.
+            tuple[Job, ...]: The matching Jobs, standalone ones first. While the API lockdown is on,
+            multi-machine jobs are left out: those routes are refused.
 
         Raises:
             PermissionError: If the authenticated user cannot access Jobs in this teamspace.
             ValueError: If the teamspace has no tag by one of the given names.
         """
+        from lightning_sdk.cli.utils.lockdown_status import multi_machine_routes_closed
         from lightning_sdk.job import Job
 
         raise_access_error_if_not_allowed(AccessibleResource.Jobs, self.id)
@@ -334,10 +338,12 @@ class Teamspace(metaclass=TrackCallsMeta):
             job = Job(name=j2.name, teamspace=self, _fetch_job=False)
             job._attach_job(j2)
             jobs.append(job)
-        for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id, tag_ids=tag_ids):
-            job = Job(name=m2.name, teamspace=self, _fetch_job=False)
-            job._attach_job(m2)
-            jobs.append(job)
+        # Multi-machine routes are refused while the lockdown is on.
+        if not multi_machine_routes_closed():
+            for m2 in self._teamspace_api.list_mmts(teamspace_id=self.id, tag_ids=tag_ids):
+                job = Job(name=m2.name, teamspace=self, _fetch_job=False)
+                job._attach_job(m2)
+                jobs.append(job)
 
         return tuple(jobs)
 

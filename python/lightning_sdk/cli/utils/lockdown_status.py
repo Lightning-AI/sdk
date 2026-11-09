@@ -35,6 +35,8 @@ STUDIO_SSH = "studio-ssh"
 USER_SETTINGS = "user-settings"
 TEAMSPACE_SECRETS = "teamspace-secrets"
 TEAMSPACE_SECRETS_WRITE = "teamspace-secrets-write"
+JOBS = "jobs"
+JOB_LIFECYCLE = "job-lifecycle"
 
 _FETCH_TIMEOUT_SECONDS = 2
 # short, so a capability the lockdown opens reaches the CLI within minutes
@@ -81,6 +83,15 @@ def capability_closed(capability: str) -> bool:
     """
     flags = lockdown_flags()
     return flags is not None and flags.get(LOCKDOWN_FLAG, True) and not flags.get(capability, False)
+
+
+def multi_machine_routes_closed() -> bool:
+    """Whether the lockdown is on, so multi-machine job routes are refused.
+
+    ``False`` while the flags can't be read. The request still goes out, and a refusal shows the usual notice.
+    """
+    flags = lockdown_flags()
+    return flags is not None and flags.get(LOCKDOWN_FLAG, True)
 
 
 def _auth_header() -> Optional[str]:

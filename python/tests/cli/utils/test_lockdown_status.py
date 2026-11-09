@@ -13,6 +13,7 @@ from lightning_sdk.cli.utils.lockdown_status import (
     capability_closed,
     lockdown_flags,
     lockdown_on,
+    multi_machine_routes_closed,
 )
 from lightning_sdk.lightning_cloud import env
 
@@ -183,21 +184,24 @@ def test_flags_it_cannot_read_are_none_and_not_cached(monkeypatch, fetch: MagicM
 
 
 @pytest.mark.parametrize(
-    ("flags", "on", "rw_filesystem_closed"),
+    ("flags", "on", "rw_filesystem_closed", "mmt_closed"),
     [
-        ({LOCKDOWN_FLAG: True}, True, True),
-        ({LOCKDOWN_FLAG: True, RW_FILESYSTEM: True}, True, False),
-        # holding other capabilities doesn't open this one
-        ({LOCKDOWN_FLAG: True, STUDIOS: True}, True, True),
-        ({LOCKDOWN_FLAG: False}, False, False),
+        ({LOCKDOWN_FLAG: True}, True, True, True),
+        ({LOCKDOWN_FLAG: True, RW_FILESYSTEM: True}, True, False, True),
+        # holding other capabilities doesn't open this one, or the multi-machine routes
+        ({LOCKDOWN_FLAG: True, STUDIOS: True}, True, True, True),
+        ({LOCKDOWN_FLAG: False}, False, False, False),
         # a control plane that doesn't send apiLockdown is read as locked down, as the CLI was before the flags
-        ({}, True, True),
+        ({}, True, True, True),
         # unreadable: the server enforces the lockdown, so only the commands it never opens stay refused
-        (None, True, False),
+        (None, True, False, False),
     ],
 )
-def test_lockdown_on_and_capability_closed(monkeypatch, flags, on: bool, rw_filesystem_closed: bool) -> None:
+def test_lockdown_on_and_capability_closed(
+    monkeypatch, flags, on: bool, rw_filesystem_closed: bool, mmt_closed: bool
+) -> None:
     monkeypatch.setattr(lockdown_status, "lockdown_flags", lambda: flags)
 
     assert lockdown_on() is on
     assert capability_closed(RW_FILESYSTEM) is rw_filesystem_closed
+    assert multi_machine_routes_closed() is mmt_closed

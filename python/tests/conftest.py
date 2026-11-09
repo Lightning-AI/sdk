@@ -69,6 +69,17 @@ from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
 
 @pytest.fixture(autouse=True)
+def _lockdown_off_unless_a_test_says_otherwise(monkeypatch):
+    """Don't fetch /v1/config. The lockdown is off unless a test, or the CLI suite, says it is on."""
+    from lightning_sdk.cli.utils.lockdown_status import LOCKDOWN_FLAG
+
+    monkeypatch.setattr(
+        "lightning_sdk.cli.utils.lockdown_status.lockdown_flags",
+        lambda: {LOCKDOWN_FLAG: False},
+    )
+
+
+@pytest.fixture(autouse=True)
 def _clear_lightning_env_vars(monkeypatch):
     """Reset ambient LIGHTNING_* env vars to CI's baseline so the suite is hermetic in a Studio.
 
