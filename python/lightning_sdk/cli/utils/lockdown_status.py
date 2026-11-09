@@ -37,6 +37,7 @@ TEAMSPACE_SECRETS = "teamspace-secrets"
 TEAMSPACE_SECRETS_WRITE = "teamspace-secrets-write"
 JOBS = "jobs"
 JOB_LIFECYCLE = "job-lifecycle"
+JOB_SSH = "job-ssh"
 
 _FETCH_TIMEOUT_SECONDS = 2
 # short, so a capability the lockdown opens reaches the CLI within minutes

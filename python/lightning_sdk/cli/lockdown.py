@@ -10,6 +10,7 @@ from lightning_sdk.cli.utils import lockdown_status
 from lightning_sdk.cli.utils.lockdown_status import (
     ENVIRONMENT_TEMPLATES,
     JOB_LIFECYCLE,
+    JOB_SSH,
     JOBS,
     RW_FILESYSTEM,
     STUDIO_DELETE,
@@ -57,7 +58,6 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "deployment secret set",
     "deployment update",
     "job logs download",
-    "job ssh",
     "license download",
     "license download-all",
     "mmt delete",
@@ -104,7 +104,8 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
 # well as studios: the config lists only the capabilities the caller holds, not their prerequisites. Setting
 # or deleting a teamspace secret lists the secrets first, so it needs teamspace-secrets as well. Job
 # commands need jobs and job-lifecycle. Running one also looks up the cluster and its accelerators, which
-# studios opens.
+# studios opens. SSHing into a job looks it up by name, which needs jobs and job-lifecycle, registers the
+# local key, which needs studio-ssh, and then logs in to the SSH gateway as the job, which needs job-ssh.
 GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "base-studio list": (ENVIRONMENT_TEMPLATES,),
     "edit": (RW_FILESYSTEM,),
@@ -115,6 +116,7 @@ GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "job list": (JOBS, JOB_LIFECYCLE),
     "job rename": (JOBS, JOB_LIFECYCLE),
     "job run": (JOBS, JOB_LIFECYCLE, STUDIOS),
+    "job ssh": (JOBS, JOB_LIFECYCLE, STUDIO_SSH, JOB_SSH),
     "job stop": (JOBS, JOB_LIFECYCLE),
     "job tag": (JOBS, JOB_LIFECYCLE),
     "job untag": (JOBS, JOB_LIFECYCLE),

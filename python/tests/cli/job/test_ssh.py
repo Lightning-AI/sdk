@@ -113,6 +113,27 @@ def test_ssh_selects_mmt_rank() -> None:
     run.assert_called_once_with(["ssh", "-i", "/tmp/lightning_rsa", "j_rank1@ssh.lightning.ai"])
 
 
+@pytest.mark.parametrize(
+    ("returncode", "lockdown_on", "hinted"),
+    [(255, True, True), (255, False, False), (0, True, False), (1, True, False)],
+)
+def test_ssh_explains_a_failed_login_while_the_lockdown_is_on(returncode: int, lockdown_on: bool, hinted: bool) -> None:
+    job = MagicMock()
+    job.name = "train"
+    job.status = Status.Running
+    job.id = "job_01abc"
+
+    with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.ssh.resolve_job", return_value=job
+    ), patch("lightning_sdk.cli.job.ssh.configure_ssh_internal", return_value="/tmp/key"), patch(
+        "lightning_sdk.cli.job.ssh.subprocess.run", return_value=MagicMock(returncode=returncode)
+    ), patch("lightning_sdk.cli.utils.lockdown_status.lockdown_on", return_value=lockdown_on):
+        result = CliRunner().invoke(ssh_job, ["train"])
+
+    assert result.exit_code == 0, result.output
+    assert ("only a Job's owner can SSH into it" in result.output) is hinted
+
+
 def test_ssh_reports_a_missing_ssh_client() -> None:
     job = MagicMock()
     job.name = "train"
