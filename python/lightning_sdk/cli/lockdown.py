@@ -9,6 +9,8 @@ import rich_click as click
 from lightning_sdk.cli.utils import lockdown_status
 from lightning_sdk.cli.utils.lockdown_status import (
     ENVIRONMENT_TEMPLATES,
+    JOB_LIFECYCLE,
+    JOBS,
     RW_FILESYSTEM,
     STUDIO_DELETE,
     STUDIO_SIDECAR_AUTH,
@@ -54,16 +56,8 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "deployment secret list",
     "deployment secret set",
     "deployment update",
-    "job delete",
-    "job inspect",
-    "job list",
     "job logs download",
-    "job rename",
-    "job run",
     "job ssh",
-    "job stop",
-    "job tag",
-    "job untag",
     "license download",
     "license download-all",
     "mmt delete",
@@ -108,12 +102,22 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
 # The capabilities each command needs, all of them. Starting and stopping need the Studio's sidecar to keep
 # renewing its token, so they need studio-sidecar-auth as well as studios. Deleting needs studio-delete as
 # well as studios: the config lists only the capabilities the caller holds, not their prerequisites. Setting
-# or deleting a teamspace secret lists the secrets first, so it needs teamspace-secrets as well.
+# or deleting a teamspace secret lists the secrets first, so it needs teamspace-secrets as well. Job
+# commands need jobs and job-lifecycle. Running one also looks up the cluster and its accelerators, which
+# studios opens.
 GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "base-studio list": (ENVIRONMENT_TEMPLATES,),
     "edit": (RW_FILESYSTEM,),
     "file upload": (RW_FILESYSTEM,),
     "folder upload": (RW_FILESYSTEM,),
+    "job delete": (JOBS, JOB_LIFECYCLE),
+    "job inspect": (JOBS, JOB_LIFECYCLE),
+    "job list": (JOBS, JOB_LIFECYCLE),
+    "job rename": (JOBS, JOB_LIFECYCLE),
+    "job run": (JOBS, JOB_LIFECYCLE, STUDIOS),
+    "job stop": (JOBS, JOB_LIFECYCLE),
+    "job tag": (JOBS, JOB_LIFECYCLE),
+    "job untag": (JOBS, JOB_LIFECYCLE),
     "rm": (RW_FILESYSTEM,),
     "ssh configure": (STUDIO_SSH,),
     "studio create": (STUDIOS, STUDIO_SIDECAR_AUTH, ENVIRONMENT_TEMPLATES),

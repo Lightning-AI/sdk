@@ -10,6 +10,8 @@ from lightning_sdk.cli import lockdown
 from lightning_sdk.cli.entrypoint import main_cli
 from lightning_sdk.cli.lockdown import GATED_COMMANDS, LOCKDOWN_ENV, UNAVAILABLE_COMMANDS, apply_lockdown
 from lightning_sdk.cli.utils.lockdown_status import (
+    JOB_LIFECYCLE,
+    JOBS,
     LOCKDOWN_FLAG,
     RW_FILESYSTEM,
     STUDIO_DELETE,
@@ -413,8 +415,54 @@ def test_every_marked_command_is_available_once_the_lockdown_is_off(monkeypatch,
 def test_unreadable_flags_keep_the_always_unavailable_commands_refused_and_let_gated_ones_run(monkeypatch) -> None:
     _set_flags(monkeypatch, None)
 
-    assert is_temporarily_unavailable(_resolve("job run"))
+    assert is_temporarily_unavailable(_resolve("job ssh"))
+    assert not is_temporarily_unavailable(_resolve("job run"))
     assert not is_temporarily_unavailable(_resolve("studio start"))
+
+
+_JOB_COMMANDS = (JOBS, JOB_LIFECYCLE)
+
+
+def test_job_run_needs_studios_as_well_as_the_job_capabilities(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_COMMANDS))
+
+    assert is_temporarily_unavailable(_resolve("job run"))
+    assert not is_temporarily_unavailable(_resolve("job list"))
+
+    _set_flags(monkeypatch, _held(*_JOB_COMMANDS, STUDIOS))
+    assert not is_temporarily_unavailable(_resolve("job run"))
+
+
+def test_job_run_runs_once_its_capabilities_open(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_COMMANDS, STUDIOS))
+
+    with patch("lightning_sdk.cli.job.run.resolve_teamspace", side_effect=_ReachedError):
+        result = CliRunner().invoke(main_cli, ["job", "run", *_RUN_OPTIONS])
+
+    assert isinstance(result.exception, _ReachedError)
+    assert _NOTICE not in result.output
+
+
+@pytest.mark.parametrize("missing", _JOB_COMMANDS)
+def test_job_commands_refuse_to_run_while_either_capability_is_closed(monkeypatch, missing: str) -> None:
+    _set_flags(monkeypatch, _held(*(capability for capability in (*_JOB_COMMANDS, STUDIOS) if capability != missing)))
+
+    with patch(_JOB_SDK) as sdk:
+        result = CliRunner().invoke(main_cli, ["job", "run", *_RUN_OPTIONS])
+
+    assert result.exit_code == 1
+    assert _NOTICE in result.output
+    assert sdk.call_count == 0
+    assert is_temporarily_unavailable(_resolve("job stop"))
+
+
+def test_job_ssh_and_log_download_stay_unavailable_when_job_commands_open(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_COMMANDS, STUDIOS, STUDIO_SSH))
+
+    assert is_temporarily_unavailable(_resolve("job ssh"))
+    assert is_temporarily_unavailable(_resolve("job logs download"))
+    assert not is_temporarily_unavailable(_resolve("job list"))
+    assert not is_temporarily_unavailable(_resolve("job stop"))
 
 
 def test_rm_runs_once_uploads_open(monkeypatch) -> None:

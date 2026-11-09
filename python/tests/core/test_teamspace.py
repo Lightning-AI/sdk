@@ -711,6 +711,29 @@ def test_list_jobs(
     assert listed_jobs[-1].is_multi_machine
 
 
+@mock.patch("lightning_sdk.cli.utils.lockdown_status.multi_machine_routes_closed", return_value=True)
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
+@mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_jobs")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
+def test_list_jobs_skips_multi_machine_jobs_while_those_routes_are_closed(
+    list_jobs_mock,
+    list_mmts_mock,
+    _closed,
+    internal_get_org_api_mocker,
+    internal_teamspace_api_mocker,
+    internal_user_api_mocker,
+):
+    list_jobs_mock.return_value = [V1Job(name="jobv2-1")]
+    list_mmts_mock.return_value = [V1MultiMachineJob(name="mmtv2-1")]
+    ts = Teamspace("ts-abc", org="org-abc")
+
+    listed_jobs = ts.list_jobs()
+
+    assert [job.name for job in listed_jobs] == ["jobv2-1"]
+    assert not listed_jobs[0].is_multi_machine
+    list_mmts_mock.assert_not_called()
+
+
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.list_mmts")
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_mmts(
