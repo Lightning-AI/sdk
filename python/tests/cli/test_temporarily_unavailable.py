@@ -21,7 +21,7 @@ from lightning_sdk.cli.utils.lockdown_status import (
     STUDIOS,
     TEAMSPACE_SECRETS,
     TEAMSPACE_SECRETS_WRITE,
-    USER_SETTINGS,
+    USER_SECRETS,
 )
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.unavailable import is_temporarily_unavailable, mark_temporarily_unavailable
@@ -354,13 +354,13 @@ def test_studio_ssh_commands_run_once_studio_ssh_opens(monkeypatch, args: list[s
 
 _USER_SECRET_STEP = "lightning_sdk.cli.user.secret.UserApi"
 _TEAMSPACE_SECRET_STEP = "lightning_sdk.cli.teamspace.secret.resolve_teamspace"
-_SECRET_CAPABILITIES = (USER_SETTINGS, TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE)
+_SECRET_CAPABILITIES = (USER_SECRETS, TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE)
 
 # Each secret command, the capabilities it needs, and the first step of its own logic
 _SECRET_RUNS = [
-    (["user", "secret", "list"], (USER_SETTINGS,), _USER_SECRET_STEP),
-    (["user", "secret", "set", "TOKEN", "--value-stdin"], (USER_SETTINGS,), _USER_SECRET_STEP),
-    (["user", "secret", "delete", "TOKEN"], (USER_SETTINGS,), _USER_SECRET_STEP),
+    (["user", "secret", "list"], (USER_SECRETS,), _USER_SECRET_STEP),
+    (["user", "secret", "set", "TOKEN", "--value-stdin"], (USER_SECRETS,), _USER_SECRET_STEP),
+    (["user", "secret", "delete", "TOKEN"], (USER_SECRETS,), _USER_SECRET_STEP),
     (["teamspace", "secret", "list"], (TEAMSPACE_SECRETS,), _TEAMSPACE_SECRET_STEP),
     (
         ["teamspace", "secret", "set", "TOKEN", "--value-stdin"],
@@ -386,6 +386,12 @@ def test_secret_commands_run_once_their_capabilities_open(
 
     assert isinstance(result.exception, _ReachedError)
     assert _NOTICE not in result.output
+
+
+def test_user_settings_does_not_open_user_secret_commands(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held("user-settings"))
+
+    assert is_temporarily_unavailable(_resolve("user secret list"))
 
 
 @pytest.mark.parametrize(

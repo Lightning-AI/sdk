@@ -19,7 +19,7 @@ from lightning_sdk.cli.utils.lockdown_status import (
     STUDIOS,
     TEAMSPACE_SECRETS,
     TEAMSPACE_SECRETS_WRITE,
-    USER_SETTINGS,
+    USER_SECRETS,
 )
 from lightning_sdk.cli.utils.unavailable import mark_temporarily_unavailable, mark_unavailable_groups
 from lightning_sdk.lightning_cloud import env
@@ -130,9 +130,9 @@ GATED_COMMANDS: Mapping[str, tuple[str, ...]] = {
     "teamspace secret delete": (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
     "teamspace secret list": (TEAMSPACE_SECRETS,),
     "teamspace secret set": (TEAMSPACE_SECRETS, TEAMSPACE_SECRETS_WRITE),
-    "user secret delete": (USER_SETTINGS,),
-    "user secret list": (USER_SETTINGS,),
-    "user secret set": (USER_SETTINGS,),
+    "user secret delete": (USER_SECRETS,),
+    "user secret list": (USER_SECRETS,),
+    "user secret set": (USER_SECRETS,),
 }
 
 
