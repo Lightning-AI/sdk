@@ -11,6 +11,7 @@ from lightning_sdk.cli.entrypoint import main_cli
 from lightning_sdk.cli.lockdown import GATED_COMMANDS, LOCKDOWN_ENV, UNAVAILABLE_COMMANDS, apply_lockdown
 from lightning_sdk.cli.utils.lockdown_status import (
     JOB_LIFECYCLE,
+    JOB_SSH,
     JOBS,
     LOCKDOWN_FLAG,
     RW_FILESYSTEM,
@@ -411,7 +412,7 @@ def test_secret_commands_refuse_to_run_while_any_capability_is_closed(
     assert step.call_count == 0
 
 
-@pytest.mark.parametrize("path", ["job run", "studio start", "rm"])
+@pytest.mark.parametrize("path", ["job run", "job ssh", "studio start", "rm"])
 def test_every_marked_command_is_available_once_the_lockdown_is_off(monkeypatch, path: str) -> None:
     _set_flags(monkeypatch, {LOCKDOWN_FLAG: False})
 
@@ -421,8 +422,9 @@ def test_every_marked_command_is_available_once_the_lockdown_is_off(monkeypatch,
 def test_unreadable_flags_keep_the_always_unavailable_commands_refused_and_let_gated_ones_run(monkeypatch) -> None:
     _set_flags(monkeypatch, None)
 
-    assert is_temporarily_unavailable(_resolve("job ssh"))
+    assert is_temporarily_unavailable(_resolve("job logs download"))
     assert not is_temporarily_unavailable(_resolve("job run"))
+    assert not is_temporarily_unavailable(_resolve("job ssh"))
     assert not is_temporarily_unavailable(_resolve("studio start"))
 
 
@@ -462,13 +464,39 @@ def test_job_commands_refuse_to_run_while_either_capability_is_closed(monkeypatc
     assert is_temporarily_unavailable(_resolve("job stop"))
 
 
-def test_job_ssh_and_log_download_stay_unavailable_when_job_commands_open(monkeypatch) -> None:
-    _set_flags(monkeypatch, _held(*_JOB_COMMANDS, STUDIOS, STUDIO_SSH))
+# What SSHing into a job needs.
+_JOB_SSH = (*_JOB_COMMANDS, STUDIO_SSH, JOB_SSH)
+
+
+def test_job_ssh_is_available_once_its_capabilities_open(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_SSH))
+
+    assert not is_temporarily_unavailable(_resolve("job ssh"))
+
+
+@pytest.mark.parametrize("missing", _JOB_SSH)
+def test_job_ssh_is_unavailable_while_any_capability_is_closed(monkeypatch, missing: str) -> None:
+    _set_flags(monkeypatch, _held(*(capability for capability in _JOB_SSH if capability != missing), STUDIOS))
 
     assert is_temporarily_unavailable(_resolve("job ssh"))
+
+
+def test_job_log_download_stays_unavailable_when_job_ssh_opens(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_SSH, STUDIOS))
+
     assert is_temporarily_unavailable(_resolve("job logs download"))
     assert not is_temporarily_unavailable(_resolve("job list"))
     assert not is_temporarily_unavailable(_resolve("job stop"))
+
+
+def test_job_ssh_runs_once_its_capabilities_open(monkeypatch) -> None:
+    _set_flags(monkeypatch, _held(*_JOB_SSH))
+
+    with patch("lightning_sdk.cli.job.ssh.resolve_teamspace", side_effect=_ReachedError):
+        result = CliRunner().invoke(main_cli, ["job", "ssh", "train"])
+
+    assert isinstance(result.exception, _ReachedError)
+    assert _NOTICE not in result.output
 
 
 def test_rm_runs_once_uploads_open(monkeypatch) -> None:
