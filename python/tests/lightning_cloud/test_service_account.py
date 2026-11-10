@@ -57,16 +57,6 @@ def test_the_token_file_and_environment_token_win_and_the_key_beats_a_login(
     assert source.resolve() == Credential(CredentialKind.LOGIN, made.access_token)
 
 
-def test_a_value_other_than_a_key_is_never_exchanged_or_sent(platform, browser, monkeypatch):
-    made = cli_login.login()
-    browser.finish()
-    monkeypatch.setenv("LIGHTNING_API_KEY", "legacy-user-key")
-
-    assert service_account.key() is None
-    assert CredentialSource().resolve() == Credential(CredentialKind.LOGIN, made.access_token)
-    assert platform.key_exchanges() == []
-
-
 def test_the_token_is_reused_until_five_minutes_before_it_expires(platform, key, clock):
     first = service_account.token()
     clock.advance(_HOUR - 301)
@@ -113,12 +103,15 @@ def test_a_revoked_key_is_named_with_what_to_do(platform, key):
         LightningClient().auth_service_get_user()
 
 
-def test_an_unknown_key_is_refused_without_opening_a_browser(platform, monkeypatch):
-    monkeypatch.setenv("LIGHTNING_API_KEY", "lit_sa_unknown")
+def test_any_value_is_exchanged_and_one_that_isnt_a_key_is_refused_without_a_browser(platform, monkeypatch):
+    # A user API key from before service accounts, left exported.
+    monkeypatch.setenv("LIGHTNING_API_KEY", "legacy-user-key")
 
     with pytest.raises(LoginError, match="invalid service account key") as refused:
         CredentialSource().header()
-    assert "lit_sa_unknown" not in str(refused.value)
+    assert "legacy-user-key" not in str(refused.value)
+    assert platform.key_exchanges() == [{"grant_type": "client_credentials", "client_secret": "legacy-user-key"}]
+    assert platform.authorizations_sent("/v1/auth/user") == []
 
 
 def test_a_deployment_without_the_grant_says_so(platform, key):

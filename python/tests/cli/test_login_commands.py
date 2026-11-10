@@ -134,48 +134,9 @@ def test_login_refuses_while_an_environment_credential_wins(isolated, monkeypatc
     monkeypatch.setenv("LIGHTNING_API_KEY", "lit_sa_set")
     refused = _invoke(cli, ["login"])
     assert refused.exit_code == 2
-    assert "LIGHTNING_API_KEY holds a service-account key, so a new login would not be what requests send." in _text(
-        refused
-    )
+    assert "LIGHTNING_API_KEY is set, so a new login would not be what requests send." in _text(refused)
     assert "lit_sa_set" not in _text(refused)
     assert not Auth.secrets_file.exists()
-
-
-@pytest.mark.parametrize("cli", [main_cli, legacy_cli])
-@pytest.mark.parametrize("switch", ["interim", "oidc"])
-def test_login_warns_that_a_value_other_than_a_key_is_ignored_and_continues(
-    platform, browser, monkeypatch, cli, switch
-) -> None:
-    if switch == "oidc":
-        monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-    monkeypatch.setenv("LIGHTNING_API_KEY", "legacy-user-key")
-
-    result = _invoke(cli, ["login"])
-
-    assert result.exit_code == 0, _text(result)
-    assert (
-        "LIGHTNING_API_KEY is not a service-account key, so it is ignored. This login continues without it."
-        in result.stderr
-    )
-    assert "legacy-user-key" not in _text(result)
-    assert platform.key_exchanges() == []
-    if switch == "oidc":
-        assert CredentialSource().resolve().token.startswith("lit_ua_")
-        assert platform.authorizations
-    else:
-        assert _saved_session().startswith("sess_")
-        assert platform.sign_ins
-
-
-@pytest.mark.parametrize("cli", [main_cli, legacy_cli])
-def test_login_no_browser_with_a_value_other_than_a_key_still_names_the_switch(isolated, monkeypatch, cli) -> None:
-    monkeypatch.setenv("LIGHTNING_API_KEY", "legacy-user-key")
-
-    result = _invoke(cli, ["login", "--no-browser"])
-
-    assert result.exit_code == 2, _text(result)
-    assert "LIGHTNING_CLI_OIDC_LOGIN" in _text(result)
-    assert "legacy-user-key" not in _text(result)
 
 
 def test_login_keeps_the_previous_session_until_the_new_one_is_saved(platform, browser) -> None:
@@ -428,12 +389,10 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
     monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
     monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
-    exchanged = len(platform.key_exchanges())
     legacy = _invoke(main_cli, ["auth", "status"])
     assert legacy.exit_code != 0
-    assert _NOT_LOGGED_IN in _text(legacy)
+    assert "Lightning refused the key in LIGHTNING_API_KEY: invalid service account key." in _text(legacy)
     assert "key-1" not in _text(legacy)
-    assert len(platform.key_exchanges()) == exchanged
 
 
 def test_auth_token_prints_what_requests_send_and_refuses_a_short_login(platform, monkeypatch) -> None:

@@ -21,7 +21,6 @@ from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.cli_login import LoginError
 
 KEY_ENV = "LIGHTNING_API_KEY"
-_KEY_PREFIX = "lit_sa_"
 # Exchange again with this long left, so no request leaves with a token that
 # expires on the way.
 _REFRESH_MARGIN = 300.0
@@ -53,17 +52,17 @@ os.register_at_fork(after_in_child=_reset_after_fork)
 
 
 def key() -> Optional[str]:
-    """The service-account key in ``LIGHTNING_API_KEY``, or None.
+    """The key in ``LIGHTNING_API_KEY``, or None when it is unset or blank.
 
-    Any other value, such as a user API key from before service accounts, is
-    ignored and never sent.
+    Its shape isn't checked: a value that isn't a service-account key is
+    refused by the exchange like any invalid credential.
     """
     value = (os.environ.get(KEY_ENV) or "").strip()
-    return value if value.startswith(_KEY_PREFIX) else None
+    return value or None
 
 
 def token(rejected: Optional[str] = None) -> Optional[str]:
-    """An access token for the service-account key in ``LIGHTNING_API_KEY``, or None without one.
+    """An access token for the key in ``LIGHTNING_API_KEY``, or None without one.
 
     ``rejected`` is a token the server refused, which forces a new exchange
     unless another thread has already replaced it.
