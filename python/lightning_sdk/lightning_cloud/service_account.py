@@ -1,7 +1,3 @@
-# This file is vendored.
-# Do not edit it directly; changes will be overwritten.
-# Make changes in the internal upstream repository instead.
-
 """The service-account key in ``LIGHTNING_API_KEY``, exchanged for short-lived access tokens.
 
 The key is sent only to the token endpoint. Requests carry the access token it
