@@ -28,7 +28,9 @@ class FakePlatform:
 
     The new login is the lightning-cli OAuth client. The interim login is the
     sign-in page handing a ``sess_`` token to a localhost callback. Refresh has
-    no reuse grace, so any refresh race shows up as a reuse event.
+    no reuse grace, so any refresh race shows up as a reuse event. A
+    service-account key is exchanged with ``client_credentials`` and no
+    client_id, as the control plane serves it.
     """
 
     def __init__(self, access_ttl=3600):
@@ -42,6 +44,9 @@ class FakePlatform:
         self.orgs = None
         self.memberships = None
         self.token_keys = {}
+        self.service_account_keys = {}
+        # (status, body) the key exchange answers with instead, when set.
+        self.key_exchange_answer = None
         self._codes = {}
         self._families = {}
         self._refresh = {}
@@ -106,6 +111,25 @@ class FakePlatform:
             for access in self._access.values():
                 access["expires_at"] = 0
 
+    def add_service_account_key(self, account="sa-1"):
+        """An org admin creating a key for ``account``."""
+        key = "lit_sa_" + secrets.token_urlsafe(24)
+        with self._lock:
+            self.service_account_keys[key] = {"active": True, "storage": None, "current": None, "user": account}
+        return key
+
+    def revoke_service_account_key(self, key):
+        """Revoking a key also ends every token exchanged from it."""
+        with self._lock:
+            self.service_account_keys[key]["active"] = False
+
+    def revoke_access_token(self, token):
+        with self._lock:
+            self._access[token]["expires_at"] = 0
+
+    def key_exchanges(self):
+        return [form for form in self.calls_to("/oidc/token") if form.get("grant_type") == "client_credentials"]
+
     def calls_to(self, path):
         return [form for call_path, form, _ in self.calls if call_path == path]
 
@@ -156,14 +180,17 @@ class FakePlatform:
         return urlunsplit(callback._replace(query=urlencode(params, doseq=True)))
 
     def token(self, form):
-        if form.get("client_id") != CLIENT_ID:
-            return 401, {"error": "invalid_client"}
-        with self._lock:
-            if form.get("grant_type") == "authorization_code":
-                return self._exchange(form)
-            if form.get("grant_type") == "refresh_token":
-                return self._rotate(form)
-        return 400, {"error": "unsupported_grant_type"}
+        if form.get("client_id") == CLIENT_ID:
+            with self._lock:
+                if form.get("grant_type") == "authorization_code":
+                    return self._exchange(form)
+                if form.get("grant_type") == "refresh_token":
+                    return self._rotate(form)
+            return 400, {"error": "unsupported_grant_type"}
+        if form.get("grant_type") == "client_credentials":
+            with self._lock:
+                return self._exchange_key(form)
+        return 401, {"error": "invalid_client"}
 
     def revoke(self, form):
         if form.get("client_id") != CLIENT_ID:
@@ -206,6 +233,25 @@ class FakePlatform:
         family = {"active": True, "storage": storage, "current": None, "user": code["user"]}
         self._families[id(family)] = family
         return 200, self._issue(family)
+
+    def _exchange_key(self, form):
+        if self.key_exchange_answer is not None:
+            return self.key_exchange_answer
+        record = self.service_account_keys.get(form.get("client_secret", ""))
+        if record is None:
+            return 401, {"error": "invalid_client", "error_description": "invalid service account key"}
+        if not record["active"]:
+            return 401, {"error": "invalid_client", "error_description": "service account key revoked"}
+        if form.get("client_id") and form["client_id"] != record["user"]:
+            return 401, {"error": "invalid_client", "error_description": "client_id is not the key's service account"}
+        access = "lit_ua_" + secrets.token_urlsafe(24)
+        self._access[access] = {"family": record, "expires_at": time.time() + self.access_ttl}
+        return 200, {
+            "access_token": access,
+            "token_type": "Bearer",
+            "expires_in": self.access_ttl,
+            "lightning_grant": {"orgs": [{"org": "org-1", "projects": "all"}], "permissions": ["read", "write"]},
+        }
 
     def _rotate(self, form):
         presented = form.get("refresh_token", "")

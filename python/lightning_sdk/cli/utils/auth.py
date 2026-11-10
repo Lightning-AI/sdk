@@ -4,7 +4,7 @@ import os
 
 import click
 
-from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud import cli_login, env, service_account
 from lightning_sdk.lightning_cloud.credentials import (
     REVOKE_FAILED,
     LoginUnavailable,
@@ -51,9 +51,14 @@ def run_login(
             "LIGHTNING_AUTH_TOKEN is set, so a new login would not be what requests send. "
             "Unset it and run `lightning login` again."
         )
+    if service_account.key() is not None:
+        raise click.UsageError(
+            "LIGHTNING_API_KEY holds a service-account key, so a new login would not be what requests send. "
+            "Unset it and run `lightning login` again."
+        )
     if _env_set("LIGHTNING_API_KEY"):
         click.echo(
-            "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
+            "LIGHTNING_API_KEY is not a service-account key, so it is ignored. This login continues without it.",
             err=True,
         )
 
@@ -82,3 +87,5 @@ def run_logout() -> None:
     for name in (env.LIGHTNING_AUTH_TOKEN_FILE, "LIGHTNING_AUTH_TOKEN"):
         if _env_set(name):
             click.echo(f"Requests still authenticate with {name}. Unset it.")
+    if service_account.key() is not None:
+        click.echo("Requests still authenticate with LIGHTNING_API_KEY. Unset it.")

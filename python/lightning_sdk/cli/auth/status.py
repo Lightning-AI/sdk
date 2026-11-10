@@ -81,6 +81,8 @@ def _source(credential: Credential) -> str:
         return f"token file {os.environ.get(env.LIGHTNING_AUTH_TOKEN_FILE, '')}"
     if credential.kind is CredentialKind.ENV_TOKEN:
         return "LIGHTNING_AUTH_TOKEN"
+    if credential.kind is CredentialKind.SERVICE_ACCOUNT:
+        return "service-account key in LIGHTNING_API_KEY"
     if credential.kind is CredentialKind.LOGIN:
         login = cli_login.current_login()
         storage = login.storage if login is not None else "login"
