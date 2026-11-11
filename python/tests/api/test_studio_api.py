@@ -404,34 +404,33 @@ def test_delete_studio_returns_once_marked_deleted(mock_delete_cloud_space, mock
     assert url.endswith("/v1/projects/ts-abc/cloudspaces/st-abc")
 
 
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
-    autospec=True,
-)
+# The next two fail at the HTTP layer so the real client, with or without its retry wrapper, is exercised.
+@mock.patch("lightning_sdk.lightning_cloud.openapi.rest.RESTClientObject.request")
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_delete_studio_permission_error(mock_delete_cloud_space):
+def test_delete_studio_permission_error(mock_request):
     from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-    mock_delete_cloud_space.side_effect = ApiException(status=403, reason="Forbidden")
+    mock_request.side_effect = ApiException(status=403, reason="Forbidden")
 
     with pytest.raises(PermissionError, match="don't have permission to delete this Studio"):
         StudioApi().delete_studio("st-abc", "ts-abc")
 
+    # a refusal is final: the retrying client would send it again before giving up
+    mock_request.assert_called_once()
 
-@mock.patch(
-    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
-    autospec=True,
-)
+
+@mock.patch("lightning_sdk.lightning_cloud.openapi.rest.RESTClientObject.request")
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
-def test_delete_studio_reraises_other_api_errors(mock_delete_cloud_space):
+def test_delete_studio_reraises_other_api_errors(mock_request):
     from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-    mock_delete_cloud_space.side_effect = ApiException(status=500, reason="Internal Server Error")
+    mock_request.side_effect = ApiException(status=500, reason="Internal Server Error")
 
     with pytest.raises(ApiException) as caught:
         StudioApi().delete_studio("st-abc", "ts-abc")
 
     assert caught.value.status == 500
+    mock_request.assert_called_once()
 
 
 def test_studio_delete_names_the_studio_in_the_permission_error():

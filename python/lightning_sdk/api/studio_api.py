@@ -58,7 +58,6 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
-from lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api import CloudSpaceServiceApi
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
 
@@ -1015,14 +1014,15 @@ class StudioApi:
         """
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
 
-        # One request, not the shared client's retries: a slow shutdown and a refusal are both final.
+        # One request, not the shared client's retries: a slow shutdown and a refusal are both final,
+        # and the retrying client turns a 403 into a bare Exception.
+        client = cached_lightning_client(retry=False)
         outcome: Dict[str, BaseException] = {}
         finished = Event()
 
         def request() -> None:
             try:
-                CloudSpaceServiceApi.cloud_space_service_delete_cloud_space(
-                    self._client,
+                client.cloud_space_service_delete_cloud_space(
                     project_id=teamspace_id,
                     id=studio_id,
                     _request_timeout=(env.LIGHTNING_CLOUD_CONNECT_TIMEOUT, _STUDIO_DELETE_READ_TIMEOUT),
@@ -1034,7 +1034,7 @@ class StudioApi:
 
         Thread(target=request, daemon=True).start()
         while not finished.wait(0.5):
-            if _studio_marked_deleted(self._client.api_client.configuration.host, teamspace_id, studio_id):
+            if _studio_marked_deleted(client.api_client.configuration.host, teamspace_id, studio_id):
                 return
 
         error = outcome.get("error")
