@@ -475,8 +475,17 @@ class Studio(metaclass=TrackCallsMeta):
         self._studio_api.stop_studio(self._studio.id, self._teamspace.id)
 
     def delete(self) -> None:
-        """Deletes the current Studio."""
-        self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
+        """Deletes the Studio.
+
+        Returns once the Studio is deleted. A running machine keeps shutting down after this returns.
+
+        Raises:
+            PermissionError: If this caller may not delete the Studio.
+        """
+        try:
+            self._studio_api.delete_studio(self._studio.id, self._teamspace.id)
+        except PermissionError as exc:
+            raise PermissionError(f"You don't have permission to delete Studio {self.name!r}.") from exc
 
     def duplicate(
         self,

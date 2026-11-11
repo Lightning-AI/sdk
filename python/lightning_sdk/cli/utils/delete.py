@@ -62,7 +62,10 @@ def register_delete_command(
                 default=False,
                 abort=True,
             )
-        delete()
+        try:
+            delete()
+        except PermissionError as exc:
+            raise click.ClickException(str(exc)) from exc
         click.echo(f"{label} deleted")
 
     callback = click.option(

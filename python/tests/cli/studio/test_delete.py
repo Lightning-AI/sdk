@@ -32,6 +32,19 @@ def test_delete_studio_uses_positional_name_and_yes_flag() -> None:
     resource.delete.assert_called_once_with()
 
 
+def test_delete_studio_permission_error_is_a_clean_message() -> None:
+    resource = MagicMock()
+    resource.delete.side_effect = PermissionError("You don't have permission to delete Studio 'other'.")
+    with patch("lightning_sdk.studio.Studio", return_value=resource):
+        group = click.Group()
+        register_commands(group)
+        result = CliRunner().invoke(group, ["delete", "other", "-y"])
+
+    assert result.exit_code == 1
+    assert "You don't have permission to delete Studio 'other'." in result.output
+    assert "Traceback" not in result.output
+
+
 @mock_command_logging
 def test_studios_delete_help() -> None:
     text = assert_help_contains(
