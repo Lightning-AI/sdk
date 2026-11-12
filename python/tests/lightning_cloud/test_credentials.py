@@ -153,7 +153,6 @@ def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isol
     session = platform.mint_session("user-1")
     isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "key-1", "auth_token": session}))
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
-    monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
 
     assert LightningClient().auth_service_get_user().id == "user-1"
     assert Auth().create_api_client().default_headers["Authorization"] == f"Bearer {session}"
@@ -169,7 +168,7 @@ def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isol
 
 @pytest.mark.parametrize("user_id", ["user-1", None])
 @_SWITCH
-def test_an_env_api_key_and_a_saved_api_key_are_never_sent(
+def test_an_env_api_key_reaches_only_the_exchange_and_a_saved_api_key_is_never_sent(
     platform, isolated_credentials, monkeypatch, switch, user_id
 ):
     _set_switch(monkeypatch, switch)
@@ -180,6 +179,13 @@ def test_an_env_api_key_and_a_saved_api_key_are_never_sent(
         monkeypatch.setenv("LIGHTNING_USER_ID", f" {user_id} ")
     monkeypatch.setenv("LIGHTNING_API_KEY", " key-env\n")
 
+    with pytest.raises(LoginError, match="Lightning refused the key in LIGHTNING_API_KEY"):
+        CredentialSource().resolve()
+    assert [form["client_secret"] for form in platform.key_exchanges()] == ["key-env"]
+    assert _sent_to_the_api(platform) == []
+
+    monkeypatch.delenv("LIGHTNING_API_KEY")
+    platform.requests.clear()
     assert CredentialSource().resolve() is None
     with browser_login(False):
         with pytest.raises(ValueError, match=_exactly(_LOGIN_FIRST)):

@@ -52,9 +52,9 @@ def run_login(
             "Unset it and run `lightning login` again."
         )
     if _env_set("LIGHTNING_API_KEY"):
-        click.echo(
-            "LIGHTNING_API_KEY is ignored until service accounts. This login continues without it.",
-            err=True,
+        raise click.UsageError(
+            "LIGHTNING_API_KEY is set, so a new login would not be what requests send. "
+            "Unset it and run `lightning login` again."
         )
 
     if no_keychain and cli_login.oidc_login_enabled():
@@ -79,6 +79,6 @@ def run_logout() -> None:
     click.echo("Logged out on this machine.")
     for kind in failed:
         click.echo(REVOKE_FAILED[kind])
-    for name in (env.LIGHTNING_AUTH_TOKEN_FILE, "LIGHTNING_AUTH_TOKEN"):
+    for name in (env.LIGHTNING_AUTH_TOKEN_FILE, "LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY"):
         if _env_set(name):
             click.echo(f"Requests still authenticate with {name}. Unset it.")

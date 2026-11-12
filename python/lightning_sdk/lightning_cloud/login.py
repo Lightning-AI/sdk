@@ -111,8 +111,8 @@ class Auth:
 
         By default, returns the credential every request would send: the file
         named by ``LIGHTNING_AUTH_TOKEN_FILE``, then ``LIGHTNING_AUTH_TOKEN``,
-        then the saved login, then the interim session. This never opens a
-        browser.
+        then the service-account key in ``LIGHTNING_API_KEY``, then the saved
+        login, then the interim session. This never opens a browser.
 
         Parameters
         ----------

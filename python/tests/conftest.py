@@ -101,6 +101,14 @@ def _clear_lightning_env_vars(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _forget_exchanged_service_account_token(monkeypatch):
+    """The exchanged token lives for the process, so each test starts without one."""
+    from lightning_sdk.lightning_cloud import service_account
+
+    monkeypatch.setattr(service_account, "_current", None)
+
+
+@pytest.fixture(autouse=True)
 def _clean_studio_thread_local_state():
     """Automatically ensure clean Studio thread-local state for every test."""
     from lightning_sdk.studio import Studio

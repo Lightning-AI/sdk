@@ -17,6 +17,11 @@ def _note(credential: Credential) -> str:
         origin = f"the token file {path}"
     elif credential.kind is CredentialKind.ENV_TOKEN:
         origin = "LIGHTNING_AUTH_TOKEN"
+    elif credential.kind is CredentialKind.SERVICE_ACCOUNT:
+        return (
+            "This token was exchanged for the service-account key in LIGHTNING_API_KEY "
+            "and lasts an hour. It is what requests send."
+        )
     else:
         origin = "the interim session login"
     return f"This token is from {origin}. It is what requests send."

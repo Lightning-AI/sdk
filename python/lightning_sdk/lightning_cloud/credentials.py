@@ -10,7 +10,7 @@ import os
 import pathlib
 from typing import Any, Callable, Dict, Iterator, Optional, Tuple
 
-from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud import cli_login, env, service_account
 from lightning_sdk.lightning_cloud.login import Auth, AuthServer, Keys
 
 _MISSING_CREDENTIALS = (
@@ -27,6 +27,7 @@ _browser_login_allowed = contextvars.ContextVar(
 class CredentialKind(str, enum.Enum):
     TOKEN_FILE = "token_file"
     ENV_TOKEN = "env_token"
+    SERVICE_ACCOUNT = "service_account"
     LOGIN = "login"
     SESSION = "session"
 
@@ -94,6 +95,7 @@ def _from_env_token() -> Optional[str]:
 _READERS = (
     (CredentialKind.TOKEN_FILE, _from_token_file),
     (CredentialKind.ENV_TOKEN, _from_env_token),
+    (CredentialKind.SERVICE_ACCOUNT, service_account.token),
     (CredentialKind.LOGIN, cli_login._request_token),
     (CredentialKind.SESSION, cli_login._saved_session),
 )
@@ -145,7 +147,7 @@ class CredentialSource:
 
         ``sent`` is the Authorization value (``Bearer <token>``), or a bare token,
         which counts as ``Bearer <token>``. True when a different credential is
-        now available, or when the login refreshed the token it sent.
+        now available, or when the login or the service-account key replaced the token it sent.
         """
         header = sent if sent.startswith("Bearer ") else f"Bearer {sent}"
         current = self._resolve()
@@ -153,10 +155,14 @@ class CredentialSource:
             return False
         if current.header != header:
             return True
-        if current.kind is not CredentialKind.LOGIN:
+        if current.kind is CredentialKind.LOGIN:
+            renew = cli_login._request_token
+        elif current.kind is CredentialKind.SERVICE_ACCOUNT:
+            renew = service_account.token
+        else:
             return False
         token = current.token
-        fresh = self._noting_refusal(lambda: cli_login._request_token(token))
+        fresh = self._noting_refusal(lambda: renew(token))
         return fresh is not None and fresh != token
 
     def _resolve(self) -> Optional[Credential]:
