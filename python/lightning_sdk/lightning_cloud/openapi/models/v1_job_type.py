@@ -49,6 +49,7 @@ class V1JobType(object):
     SLURM_JOB = "JOB_TYPE_SLURM_JOB"
     MULTI_MACHINE_JOB = "JOB_TYPE_MULTI_MACHINE_JOB"
     DEFAULT_JOBS = "JOB_TYPE_DEFAULT_JOBS"
+    JOB_GROUP = "JOB_TYPE_JOB_GROUP"
     """
     Attributes:
       swagger_types (dict): The key is attribute name

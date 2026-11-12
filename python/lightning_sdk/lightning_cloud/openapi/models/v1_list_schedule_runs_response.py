@@ -45,19 +45,45 @@ class V1ListScheduleRunsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
+        'next_page_token': 'str',
         'schedule_runs': 'list[V1ScheduleRun]'
     }
 
     attribute_map = {
+        'next_page_token': 'nextPageToken',
         'schedule_runs': 'scheduleRuns'
     }
 
-    def __init__(self, schedule_runs: 'list[V1ScheduleRun]' =None):  # noqa: E501
+    def __init__(self, next_page_token: 'str' =None, schedule_runs: 'list[V1ScheduleRun]' =None):  # noqa: E501
         """V1ListScheduleRunsResponse - a model defined in Swagger"""  # noqa: E501
+        self._next_page_token = None
         self._schedule_runs = None
         self.discriminator = None
+        if next_page_token is not None:
+            self.next_page_token = next_page_token
         if schedule_runs is not None:
             self.schedule_runs = schedule_runs
+
+    @property
+    def next_page_token(self) -> 'str':
+        """Gets the next_page_token of this V1ListScheduleRunsResponse.  # noqa: E501
+
+
+        :return: The next_page_token of this V1ListScheduleRunsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._next_page_token
+
+    @next_page_token.setter
+    def next_page_token(self, next_page_token: 'str'):
+        """Sets the next_page_token of this V1ListScheduleRunsResponse.
+
+
+        :param next_page_token: The next_page_token of this V1ListScheduleRunsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._next_page_token = next_page_token
 
     @property
     def schedule_runs(self) -> 'list[V1ScheduleRun]':

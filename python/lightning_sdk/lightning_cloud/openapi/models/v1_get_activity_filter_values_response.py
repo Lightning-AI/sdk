@@ -46,6 +46,7 @@ class V1GetActivityFilterValuesResponse(object):
     """
     swagger_types = {
         'cluster_ids': 'list[str]',
+        'named_resource_types': 'list[V1NamedFilterValue]',
         'project_ids': 'list[str]',
         'resource_types': 'list[str]',
         'subfilters': 'V1ActivitySubfilterValues',
@@ -54,15 +55,17 @@ class V1GetActivityFilterValuesResponse(object):
 
     attribute_map = {
         'cluster_ids': 'clusterIds',
+        'named_resource_types': 'namedResourceTypes',
         'project_ids': 'projectIds',
         'resource_types': 'resourceTypes',
         'subfilters': 'subfilters',
         'user_ids': 'userIds'
     }
 
-    def __init__(self, cluster_ids: 'list[str]' =None, project_ids: 'list[str]' =None, resource_types: 'list[str]' =None, subfilters: 'V1ActivitySubfilterValues' =None, user_ids: 'list[str]' =None):  # noqa: E501
+    def __init__(self, cluster_ids: 'list[str]' =None, named_resource_types: 'list[V1NamedFilterValue]' =None, project_ids: 'list[str]' =None, resource_types: 'list[str]' =None, subfilters: 'V1ActivitySubfilterValues' =None, user_ids: 'list[str]' =None):  # noqa: E501
         """V1GetActivityFilterValuesResponse - a model defined in Swagger"""  # noqa: E501
         self._cluster_ids = None
+        self._named_resource_types = None
         self._project_ids = None
         self._resource_types = None
         self._subfilters = None
@@ -70,6 +73,8 @@ class V1GetActivityFilterValuesResponse(object):
         self.discriminator = None
         if cluster_ids is not None:
             self.cluster_ids = cluster_ids
+        if named_resource_types is not None:
+            self.named_resource_types = named_resource_types
         if project_ids is not None:
             self.project_ids = project_ids
         if resource_types is not None:
@@ -101,6 +106,27 @@ class V1GetActivityFilterValuesResponse(object):
         self._cluster_ids = cluster_ids
 
     @property
+    def named_resource_types(self) -> 'list[V1NamedFilterValue]':
+        """Gets the named_resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
+
+
+        :return: The named_resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :rtype: list[V1NamedFilterValue]
+        """
+        return self._named_resource_types
+
+    @named_resource_types.setter
+    def named_resource_types(self, named_resource_types: 'list[V1NamedFilterValue]'):
+        """Sets the named_resource_types of this V1GetActivityFilterValuesResponse.
+
+
+        :param named_resource_types: The named_resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
+        :type: list[V1NamedFilterValue]
+        """
+
+        self._named_resource_types = named_resource_types
+
+    @property
     def project_ids(self) -> 'list[str]':
         """Gets the project_ids of this V1GetActivityFilterValuesResponse.  # noqa: E501
 
@@ -125,6 +151,7 @@ class V1GetActivityFilterValuesResponse(object):
     def resource_types(self) -> 'list[str]':
         """Gets the resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
 
+        Legacy: raw ids only. Prefer named_resource_types.  # noqa: E501
 
         :return: The resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
         :rtype: list[str]
@@ -135,6 +162,7 @@ class V1GetActivityFilterValuesResponse(object):
     def resource_types(self, resource_types: 'list[str]'):
         """Sets the resource_types of this V1GetActivityFilterValuesResponse.
 
+        Legacy: raw ids only. Prefer named_resource_types.  # noqa: E501
 
         :param resource_types: The resource_types of this V1GetActivityFilterValuesResponse.  # noqa: E501
         :type: list[str]
