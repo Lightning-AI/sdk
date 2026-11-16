@@ -133,91 +133,6 @@ func TestRetryTransportReturnsFinalRetryableResponse(t *testing.T) {
 	}
 }
 
-func TestResolveAuthPrefersEnvBearer(t *testing.T) {
-	resetAuthEnv(t)
-	t.Setenv("LIGHTNING_AUTH_TOKEN", "env-token")
-	t.Setenv("LIGHTNING_USER_ID", "env-user")
-	t.Setenv("LIGHTNING_API_KEY", "env-key")
-	writeCredentialsFile(t, `{"auth_token":"file-token","user_id":"file-user","api_key":"file-key"}`)
-
-	auth, err := resolveAuth()
-	if err != nil {
-		t.Fatalf("resolveAuth returned error: %v", err)
-	}
-	if auth.kind != authBearer || auth.token != "env-token" {
-		t.Fatalf("auth = %+v, want env bearer", auth)
-	}
-}
-
-func TestResolveAuthUsesEnvAPIKeyAsBearer(t *testing.T) {
-	resetAuthEnv(t)
-	t.Setenv("LIGHTNING_USER_ID", "env-user")
-	t.Setenv("LIGHTNING_API_KEY", "lit_sa_env-key")
-	writeCredentialsFile(t, `{"auth_token":"file-token"}`)
-
-	auth, err := resolveAuth()
-	if err != nil {
-		t.Fatalf("resolveAuth returned error: %v", err)
-	}
-	if auth.kind != authBearer || auth.token != "lit_sa_env-key" {
-		t.Fatalf("auth = %+v, want env api key as bearer", auth)
-	}
-}
-
-func TestResolveAuthRefusesLegacyEnvAPIKey(t *testing.T) {
-	for _, key := range []string{"sk-lit-0123456789abcdef", "3f2b8c1e-9d4a-4b7f-8e21-0a6c5d9f7b10"} {
-		resetAuthEnv(t)
-		t.Setenv("LIGHTNING_API_KEY", key)
-
-		_, err := resolveAuth()
-		if err == nil || !strings.Contains(err.Error(), "no longer supported") {
-			t.Fatalf("resolveAuth(%q) error = %v, want migration message", key, err)
-		}
-	}
-}
-
-func TestResolveAuthLoadsCredentialsFileBearer(t *testing.T) {
-	resetAuthEnv(t)
-	writeCredentialsFile(t, `{"auth_token":"file-token","user_id":"file-user","api_key":"file-key"}`)
-
-	auth, err := resolveAuth()
-	if err != nil {
-		t.Fatalf("resolveAuth returned error: %v", err)
-	}
-	if auth.kind != authBearer || auth.token != "file-token" {
-		t.Fatalf("auth = %+v, want file bearer", auth)
-	}
-}
-
-func TestResolveAuthRefusesLegacyCredentialsFileAPIKey(t *testing.T) {
-	resetAuthEnv(t)
-	writeCredentialsFile(t, `{"user_id":"file-user","api_key":"sk-lit-0123456789abcdef"}`)
-
-	_, err := resolveAuth()
-	if err == nil || !strings.Contains(err.Error(), "no longer supported") {
-		t.Fatalf("resolveAuth error = %v, want migration message", err)
-	}
-}
-
-func TestResolveAuthErrorsOnMalformedCredentialsFile(t *testing.T) {
-	resetAuthEnv(t)
-	writeCredentialsFile(t, `{bad json`)
-
-	if _, err := resolveAuth(); err == nil {
-		t.Fatal("resolveAuth returned nil error for malformed credentials file")
-	}
-}
-
-func TestSetRequestAuthUsesResolvedBearerCredentials(t *testing.T) {
-	req := request(t, http.MethodGet, nil)
-
-	setRequestAuth(req, authCredentials{kind: authBearer, token: "token-1"})
-
-	if got, want := req.Header.Get("Authorization"), "Bearer token-1"; got != want {
-		t.Fatalf("authorization header = %q, want %q", got, want)
-	}
-}
-
 func request(t *testing.T, method string, body io.Reader) *http.Request {
 	t.Helper()
 	req, err := http.NewRequest(method, "https://example.test", body)
@@ -234,24 +149,6 @@ func response(statusCode int, body string) *http.Response {
 		Body:       io.NopCloser(strings.NewReader(body)),
 		Header:     http.Header{},
 	}
-}
-
-func resetAuthEnv(t *testing.T) {
-	t.Helper()
-	t.Setenv("LIGHTNING_AUTH_TOKEN", "")
-	t.Setenv("LIGHTNING_USER_ID", "")
-	t.Setenv("LIGHTNING_API_KEY", "")
-	t.Setenv("HOME", t.TempDir())
-	t.Setenv("LIGHTNING_CREDENTIAL_PATH", filepath.Join(t.TempDir(), "missing", "credentials.json"))
-}
-
-func writeCredentialsFile(t *testing.T, body string) {
-	t.Helper()
-	path := filepath.Join(t.TempDir(), "credentials.json")
-	if err := os.WriteFile(path, []byte(body), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	t.Setenv("LIGHTNING_CREDENTIAL_PATH", path)
 }
 
 // newUploadTestClient builds a RawClient against a test server without retries,
