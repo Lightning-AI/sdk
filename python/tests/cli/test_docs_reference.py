@@ -48,9 +48,9 @@ def test_every_visible_command_has_a_reference_page():
     visible = {name for name, command in main_cli.commands.items() if not command.hidden}
     documented = set(_reference_pages())
     missing = sorted(visible - documented - ON_INDEX_PAGE)
-    assert not missing, (
-        f"No page in docs/cli for: {', '.join(missing)}. Add one like docs/cli/cp.rst and list it in index.rst."
-    )
+    assert (
+        not missing
+    ), f"No page in docs/cli for: {', '.join(missing)}. Add one like docs/cli/cp.rst and list it in index.rst."
 
 
 def test_every_reference_page_is_in_the_index():
