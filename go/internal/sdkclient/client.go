@@ -4,14 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
@@ -32,17 +30,16 @@ func New() (*client.LightningSdkAPI, error) {
 	if err != nil {
 		return nil, err
 	}
-	auth, err := resolveAuth()
-	if err != nil {
-		return nil, err
-	}
 	basePath := strings.TrimRight(parsed.Path, "/")
 	if basePath == "" {
 		basePath = "/"
 	}
 	transport := httptransport.New(parsed.Host, basePath, []string{parsed.Scheme})
-	transport.Transport = retryTransport{base: http.DefaultTransport, maxTries: defaultRetries}
-	setGeneratedAuth(transport, auth)
+	transport.Transport = retryTransport{
+		base:        http.DefaultTransport,
+		maxTries:    defaultRetries,
+		credentials: newCredentialSource(parsed),
+	}
 
 	return client.New(transport, strfmt.Default), nil
 }
@@ -50,7 +47,6 @@ func New() (*client.LightningSdkAPI, error) {
 type RawClient struct {
 	baseURL    *url.URL
 	httpClient *http.Client
-	auth       authCredentials
 }
 
 func NewRaw() (*RawClient, error) {
@@ -58,16 +54,15 @@ func NewRaw() (*RawClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	auth, err := resolveAuth()
-	if err != nil {
-		return nil, err
-	}
 	return &RawClient{
 		baseURL: parsed,
 		httpClient: &http.Client{
-			Transport: retryTransport{base: http.DefaultTransport, maxTries: defaultRetries},
+			Transport: retryTransport{
+				base:        http.DefaultTransport,
+				maxTries:    defaultRetries,
+				credentials: newCredentialSource(parsed),
+			},
 		},
-		auth: auth,
 	}, nil
 }
 
@@ -88,7 +83,6 @@ func (c *RawClient) Do(ctx context.Context, method, requestPath string, query ur
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	setRequestAuth(req, c.auth)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -111,7 +105,6 @@ func (c *RawClient) Download(ctx context.Context, requestPath string, query url.
 	if err != nil {
 		return err
 	}
-	setRequestAuth(req, c.auth)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
@@ -314,102 +307,14 @@ func baseURL() (*url.URL, error) {
 	return url.Parse(baseURL)
 }
 
-type authKind int
-
-const (
-	authNone authKind = iota
-	authBearer
-)
-
-type authCredentials struct {
-	kind  authKind
-	token string
-}
-
-type credentialsFile struct {
-	APIKey    string `json:"api_key"`
-	AuthToken string `json:"auth_token"`
-}
-
-// legacyAPIKeyMessage is returned for a legacy user (UUID) or org (sk-lit-) key. The SDK never sends Basic auth.
-const legacyAPIKeyMessage = "LIGHTNING_API_KEY holds a legacy API key, which is no longer supported. Create a service-account key (lit_sa_) and set LIGHTNING_API_KEY to it. If you are on an older lightning-sdk, run: pip install -U lightning-sdk"
-
-var legacyUUIDPattern = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
-
-// apiKeyCredentials sends an API key as a Bearer token, refusing the legacy formats.
-func apiKeyCredentials(apiKey string) (authCredentials, error) {
-	if strings.HasPrefix(apiKey, "sk-lit-") || legacyUUIDPattern.MatchString(apiKey) {
-		return authCredentials{}, errors.New(legacyAPIKeyMessage)
-	}
-	return authCredentials{kind: authBearer, token: apiKey}, nil
-}
-
-func resolveAuth() (authCredentials, error) {
-	if authToken := os.Getenv("LIGHTNING_AUTH_TOKEN"); authToken != "" {
-		return authCredentials{kind: authBearer, token: authToken}, nil
-	}
-	if apiKey := os.Getenv("LIGHTNING_API_KEY"); apiKey != "" {
-		return apiKeyCredentials(apiKey)
-	}
-	credentials, ok, err := loadCredentialsFile()
-	if err != nil || !ok {
-		return authCredentials{}, err
-	}
-	if credentials.AuthToken != "" {
-		return authCredentials{kind: authBearer, token: credentials.AuthToken}, nil
-	}
-	if credentials.APIKey != "" {
-		return apiKeyCredentials(credentials.APIKey)
-	}
-	return authCredentials{}, nil
-}
-
-func loadCredentialsFile() (credentialsFile, bool, error) {
-	path, ok := credentialsPath()
-	if !ok {
-		return credentialsFile{}, false, nil
-	}
-	file, err := os.Open(path)
-	if errors.Is(err, os.ErrNotExist) {
-		return credentialsFile{}, false, nil
-	}
-	if err != nil {
-		return credentialsFile{}, false, err
-	}
-	defer file.Close()
-	var credentials credentialsFile
-	if err := json.NewDecoder(file).Decode(&credentials); err != nil {
-		return credentialsFile{}, false, err
-	}
-	return credentials, true, nil
-}
-
-func credentialsPath() (string, bool) {
-	if path := os.Getenv("LIGHTNING_CREDENTIAL_PATH"); path != "" {
-		return path, true
-	}
-	home, err := os.UserHomeDir()
-	if err != nil || home == "" {
-		return "", false
-	}
-	return filepath.Join(home, ".lightning", "credentials.json"), true
-}
-
-func setGeneratedAuth(transport *httptransport.Runtime, auth authCredentials) {
-	if auth.kind == authBearer {
-		transport.DefaultAuthentication = httptransport.BearerToken(auth.token)
-	}
-}
-
-func setRequestAuth(req *http.Request, auth authCredentials) {
-	if auth.kind == authBearer {
-		req.Header.Set("Authorization", "Bearer "+auth.token)
-	}
-}
-
+// retryTransport sends each request with the credential found when it is
+// sent, retries throttling and server errors, and sends a request refused with
+// 401 once more when a fresh credential is available.
 type retryTransport struct {
 	base     http.RoundTripper
 	maxTries int
+	// credentials is nil to send requests without one.
+	credentials *credentialSource
 }
 
 type retryableStatusError struct {
@@ -421,6 +326,32 @@ func (e retryableStatusError) Error() string {
 }
 
 func (rt retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	authorization, err := rt.credentials.authorization(req)
+	if err != nil {
+		closeRequestBody(req)
+		return nil, err
+	}
+	resp, err := rt.send(req, authorization)
+	if err != nil || resp.StatusCode != http.StatusUnauthorized || authorization == "" || !replayable(req) {
+		return resp, err
+	}
+	resend, err := rt.credentials.refresh(req.Context(), authorization)
+	if err != nil {
+		discardResponse(resp)
+		return nil, err
+	}
+	if !resend {
+		return resp, nil
+	}
+	discardResponse(resp)
+	authorization, err = rt.credentials.authorization(req)
+	if err != nil {
+		return nil, err
+	}
+	return rt.send(req, authorization)
+}
+
+func (rt retryTransport) send(req *http.Request, authorization string) (*http.Response, error) {
 	base := rt.base
 	if base == nil {
 		base = http.DefaultTransport
@@ -435,7 +366,7 @@ func (rt retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	err := retry.Do(
 		func() error {
 			attempt++
-			retryReq, err := requestForRetry(req)
+			retryReq, err := requestForRetry(req, authorization)
 			if err != nil {
 				return retry.Unrecoverable(err)
 			}
@@ -466,7 +397,7 @@ func (rt retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return nil, err
 }
 
-func requestForRetry(req *http.Request) (*http.Request, error) {
+func requestForRetry(req *http.Request, authorization string) (*http.Request, error) {
 	retryReq := req.Clone(req.Context())
 	if req.Body != nil && req.GetBody != nil {
 		body, err := req.GetBody()
@@ -475,7 +406,29 @@ func requestForRetry(req *http.Request) (*http.Request, error) {
 		}
 		retryReq.Body = body
 	}
+	if authorization != "" {
+		retryReq.Header.Set("Authorization", authorization)
+	}
+	if retryReq.Header.Get("User-Agent") == "" {
+		retryReq.Header.Set("User-Agent", userAgent())
+	}
 	return retryReq, nil
+}
+
+// replayable reports whether req's body can be sent again.
+func replayable(req *http.Request) bool {
+	return req.Body == nil || req.Body == http.NoBody || req.GetBody != nil
+}
+
+func closeRequestBody(req *http.Request) {
+	if req.Body != nil {
+		_ = req.Body.Close()
+	}
+}
+
+func discardResponse(resp *http.Response) {
+	_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
+	_ = resp.Body.Close()
 }
 
 func shouldRetry(statusCode int) bool {

@@ -15,8 +15,7 @@ import (
 func filesystemTestTeamspace(t *testing.T, serverURL string) *lit.Teamspace {
 	t.Helper()
 	t.Setenv("LIGHTNING_CLOUD_URL", serverURL)
-	t.Setenv("LIGHTNING_USER_ID", "user-1")
-	t.Setenv("LIGHTNING_API_KEY", "key-1")
+	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 	ts, err := lit.GetTeamspace("default", lit.TeamspaceOptions{ID: "project-1", Owner: testOwner{id: "user-1", name: "alice"}})
 	require.NoError(t, err)
 	return ts
