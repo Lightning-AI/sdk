@@ -60,7 +60,6 @@ def test_teamspace_studios_property_succeeds_when_enabled(mock_teamspace_api, mo
 
     mock_teamspace_api.return_value.get_teamspace.return_value = mock_project
     mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
-    mock_teamspace_api.return_value.list_lightningapps.return_value = []
 
     # Create a teamspace instance
     ts = Teamspace.__new__(Teamspace)
