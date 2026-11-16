@@ -28,7 +28,7 @@ func TestJobExposesStartAndStopTimes(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	existing, err := lit.GetJob("train", lit.JobOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -54,7 +54,7 @@ func TestJobExposesRunAttemptFields(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	existing, err := lit.GetJob("train", lit.JobOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -171,7 +171,7 @@ func TestJobArtifactHelpersUseTheDrivePath(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{"tree": []map[string]any{}})
 	})
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	job, err := lit.GetJob("train", lit.JobOptions{ID: "job-studio", Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -256,7 +256,7 @@ func TestJobUsesDefaultClientAndV2GeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 	existing, err := lit.GetJob("train", lit.JobOptions{Teamspace: ts})
@@ -404,7 +404,7 @@ func TestJobRunMapsAdvancedV2Options(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunJob(
 		"train-advanced",
@@ -472,7 +472,7 @@ func TestJobRunMapsKeepMinutes(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunJob(
 		"train-reserve",
@@ -514,7 +514,7 @@ func TestJobRunOmitsKeepMinutesWhenUnset(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	_, err := lit.RunJob(
 		"train-plain",
@@ -582,7 +582,7 @@ func TestJobRunMapsScratchDisksForStudioJobs(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunJob(
 		"train-scratch",
@@ -684,7 +684,7 @@ func TestJobRunUsesExplicitTeamspace(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunJob(
 		"train-resolved",

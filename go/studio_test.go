@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestStudioGetWithIDUsesSimpleStruct(t *testing.T) {
@@ -71,7 +72,7 @@ func TestStudioGetUsesExplicitTeamspace(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_USERNAME", "")
 	t.Setenv("LIGHTNING_ORG", "")
 	t.Setenv("LIGHTNING_TEAMSPACE", "")
@@ -125,7 +126,7 @@ func TestStudioCreateUsesExplicitTeamspace(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	interruptible := true
 	s, err := lit.CreateStudio(
@@ -184,7 +185,7 @@ func TestStudioStartUsesTeamspaceInterruptibleDefault(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s, err := lit.GetStudio("dev", lit.StudioOptions{ID: "studio-1", Teamspace: mustTeamspace(t, "project-1", "")})
 	require.NoErrorf(t, err,
@@ -232,7 +233,7 @@ func TestStudioStartMapsStartOptions(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	initialInterruptible := true
 	s, err := lit.GetStudio("dev", lit.StudioOptions{ID: "studio-1", Teamspace: mustTeamspace(t, "project-1", ""), Machine: "CPU", Interruptible: &initialInterruptible})

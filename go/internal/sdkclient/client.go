@@ -409,9 +409,6 @@ func requestForRetry(req *http.Request, authorization string) (*http.Request, er
 	if authorization != "" {
 		retryReq.Header.Set("Authorization", authorization)
 	}
-	if retryReq.Header.Get("User-Agent") == "" {
-		retryReq.Header.Set("User-Agent", userAgent())
-	}
 	return retryReq, nil
 }
 

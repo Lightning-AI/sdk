@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestMMTGetWithIDUsesSimpleStruct(t *testing.T) {
@@ -63,7 +64,7 @@ func TestMMTExposesPublicDictionaryAndJSON(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 	m, err := lit.GetMMT("dist-train", lit.MMTOptions{ID: "mmt-1", Teamspace: ts, Studio: mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Teamspace: ts}), Command: "torchrun train.py", Status: "completed", Machine: "gpu", TotalCost: 4.5})
@@ -130,7 +131,7 @@ func TestMMTArtifactsFanOutOverMachines(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	m, err := lit.GetMMT("dist-train", lit.MMTOptions{ID: "mmt-1", Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -198,7 +199,7 @@ func TestMMTUsesDefaultClientAndV2GeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "")
 	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: ts})
@@ -302,7 +303,7 @@ func TestMMTGetUsesExplicitTeamspace(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -344,7 +345,7 @@ func TestMMTGetMapsTopLevelStudioID(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
 	require.NoErrorf(t, err,
@@ -370,7 +371,7 @@ func TestMMTExposesStartAndStopTimes(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	existing, err := lit.GetMMT("dist-train", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
 	require.NoErrorf(t, err,
@@ -446,7 +447,7 @@ func TestMMTRunMapsAdvancedV2Options(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunMMT(
 		"dist-train-advanced",
@@ -517,7 +518,7 @@ func TestMMTRunMapsKeepMinutes(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunMMT(
 		"dist-train-reserve",
@@ -584,7 +585,7 @@ func TestMMTRunOmitsFaultToleranceWithoutRetries(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	_, err := lit.RunMMT(
 		"dist-train",
@@ -606,7 +607,7 @@ func TestMMTRunRejectsSingleMachine(t *testing.T) {
 		assert.Fail(t, fmt.Sprintf("unexpected request: %s %s", r.Method, r.URL.RequestURI()))
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	_, err := lit.RunMMT("dist-train", 1, "gpu", "torchrun train.py", lit.MMTOptions{Teamspace: mustTeamspace(t, "project-1", "")})
 	require.Error(t, err,
@@ -652,7 +653,7 @@ func TestMMTRunUsesExplicitTeamspace(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	created, err := lit.RunMMT(
 		"dist-train-resolved",

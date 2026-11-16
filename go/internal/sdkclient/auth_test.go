@@ -15,6 +15,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 // fakePlatform serves the API and its /oidc/token exchange, recording what
@@ -174,16 +176,6 @@ func mustGet(t *testing.T, c *RawClient) {
 	}
 }
 
-func resetAuthEnv(t *testing.T) {
-	t.Helper()
-	t.Setenv(tokenFileEnv, "")
-	t.Setenv(authTokenEnv, "")
-	t.Setenv("LIGHTNING_USER_ID", "")
-	t.Setenv(apiKeyEnv, "")
-	t.Setenv("HOME", t.TempDir())
-	t.Setenv("LIGHTNING_CREDENTIAL_PATH", filepath.Join(t.TempDir(), "missing", "credentials.json"))
-}
-
 func writeCredentialsFile(t *testing.T, body string) {
 	t.Helper()
 	path := filepath.Join(t.TempDir(), "credentials.json")
@@ -204,7 +196,7 @@ func writeTokenFile(t *testing.T, contents string) string {
 }
 
 func TestCredentialPrecedence(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	writeCredentialsFile(t, `{"auth_token":"saved-token","api_key":"saved-key"}`)
@@ -232,7 +224,7 @@ func TestCredentialPrecedence(t *testing.T) {
 }
 
 func TestTokenFileIsReadForEveryRequest(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	path := writeTokenFile(t, "first")
@@ -250,7 +242,7 @@ func TestTokenFileIsReadForEveryRequest(t *testing.T) {
 }
 
 func TestUnreadableTokenFileFailsBeforeSending(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	t.Setenv(authTokenEnv, "env-token")
@@ -273,7 +265,7 @@ func TestMissingOrBlankTokenFileFallsThrough(t *testing.T) {
 		"blank":   func(t *testing.T) { writeTokenFile(t, " \n\t") },
 	} {
 		t.Run(name, func(t *testing.T) {
-			resetAuthEnv(t)
+			sdktest.ClearCredentials(t)
 			p := newFakePlatform(t)
 			c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 			t.Setenv(authTokenEnv, "env-token")
@@ -288,7 +280,7 @@ func TestMissingOrBlankTokenFileFallsThrough(t *testing.T) {
 }
 
 func TestUserIDNeverSendsBasic(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	t.Setenv("LIGHTNING_USER_ID", "user-1")
@@ -301,7 +293,7 @@ func TestUserIDNeverSendsBasic(t *testing.T) {
 }
 
 func TestSavedAPIKeyIsNotSent(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	t.Setenv("LIGHTNING_USER_ID", "user-1")
@@ -314,7 +306,7 @@ func TestSavedAPIKeyIsNotSent(t *testing.T) {
 }
 
 func TestMalformedCredentialsFileHoldsNoCredential(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	writeCredentialsFile(t, `{bad json`)
@@ -326,7 +318,7 @@ func TestMalformedCredentialsFileHoldsNoCredential(t *testing.T) {
 }
 
 func TestServiceAccountKeyIsExchangedAndOnlyTheTokenSent(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	t.Setenv(apiKeyEnv, " lit_sa_key\n")
@@ -347,9 +339,6 @@ func TestServiceAccountKeyIsExchangedAndOnlyTheTokenSent(t *testing.T) {
 	}
 	if got := exchange.header.Get("Content-Type"); got != "application/x-www-form-urlencoded" {
 		t.Errorf("exchange Content-Type = %q", got)
-	}
-	if got := exchange.header.Get("User-Agent"); got != userAgent() {
-		t.Errorf("exchange User-Agent = %q, want %q", got, userAgent())
 	}
 	if got := exchange.header.Get("Authorization"); got != "" {
 		t.Errorf("exchange Authorization = %q, want none", got)
@@ -376,7 +365,7 @@ func TestServiceAccountKeyIsExchangedAndOnlyTheTokenSent(t *testing.T) {
 }
 
 func TestServiceAccountTokenIsReplacedNearExpiry(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	clock := newFakeClock()
 	c := newTestRawClient(t, p.URL, newTestAccounts(clock))
@@ -396,7 +385,7 @@ func TestServiceAccountTokenIsReplacedNearExpiry(t *testing.T) {
 }
 
 func TestServiceAccountTokenIsReplacedAfterUnauthorized(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	p.apiStatus = func(authorization string) int {
 		if authorization == "Bearer sa-1" {
@@ -420,7 +409,7 @@ func TestServiceAccountTokenIsReplacedAfterUnauthorized(t *testing.T) {
 }
 
 func TestServiceAccountKeyRefusedAfterUnauthorizedIsReported(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	p.exchangeReply = func(n int) (int, string) {
 		if n == 1 {
@@ -452,7 +441,7 @@ func TestServiceAccountKeepsUnexpiredTokenWhileExchangeIsDown(t *testing.T) {
 		{name: "unreachable", want: "couldn't reach"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			resetAuthEnv(t)
+			sdktest.ClearCredentials(t)
 			p := newFakePlatform(t)
 			var down atomic.Bool
 			p.exchangeReply = func(n int) (int, string) {
@@ -533,7 +522,7 @@ func TestServiceAccountExchangeErrors(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			resetAuthEnv(t)
+			sdktest.ClearCredentials(t)
 			p := newFakePlatform(t)
 			p.exchangeReply = func(int) (int, string) { return tc.status, tc.body }
 			c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
@@ -552,7 +541,7 @@ func TestServiceAccountExchangeErrors(t *testing.T) {
 }
 
 func TestServiceAccountExchangesAreSerialized(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
 	t.Setenv(apiKeyEnv, "lit_sa_key")
@@ -579,7 +568,7 @@ func TestServiceAccountExchangesAreSerialized(t *testing.T) {
 }
 
 func TestUnauthorizedIsResentOnceWithANewCredential(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	path := writeTokenFile(t, "old")
 	p.apiStatus = func(authorization string) int {
@@ -606,7 +595,7 @@ func TestUnauthorizedIsResentOnceWithANewCredential(t *testing.T) {
 }
 
 func TestUnauthorizedWithTheSameCredentialIsNotResent(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	p.apiStatus = func(string) int { return http.StatusUnauthorized }
 	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
@@ -622,7 +611,7 @@ func TestUnauthorizedWithTheSameCredentialIsNotResent(t *testing.T) {
 }
 
 func TestUnauthorizedIsResentAtMostOnce(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	p := newFakePlatform(t)
 	path := writeTokenFile(t, "token-0")
 	var refusals atomic.Int32
@@ -644,7 +633,7 @@ func TestUnauthorizedIsResentAtMostOnce(t *testing.T) {
 }
 
 func TestCallerAuthorizationIsKept(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	writeTokenFile(t, "file-token")
 	var sent []string
 	transport := retryTransport{
@@ -669,7 +658,7 @@ func TestCallerAuthorizationIsKept(t *testing.T) {
 }
 
 func TestUnreplayableBodyIsNotResent(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	path := writeTokenFile(t, "old")
 	attempts := 0
 	transport := retryTransport{
@@ -696,7 +685,7 @@ func TestUnreplayableBodyIsNotResent(t *testing.T) {
 }
 
 func TestCredentialIsNotSentToAnotherOrigin(t *testing.T) {
-	resetAuthEnv(t)
+	sdktest.ClearCredentials(t)
 	t.Setenv(authTokenEnv, "env-token")
 	var mu sync.Mutex
 	seen := map[string]string{}
@@ -725,34 +714,5 @@ func TestCredentialIsNotSentToAnotherOrigin(t *testing.T) {
 	}
 	if got, ok := seen["other"]; !ok || got != "" {
 		t.Fatalf("redirect target Authorization = %q (reached: %v), want none", got, ok)
-	}
-}
-
-func TestRequestsSendTheSDKUserAgent(t *testing.T) {
-	resetAuthEnv(t)
-	p := newFakePlatform(t)
-	c := newTestRawClient(t, p.URL, newTestAccounts(newFakeClock()))
-
-	mustGet(t, c)
-	apiRequests, _ := p.received()
-	got := apiRequests[0].header.Get("User-Agent")
-	if got != userAgent() || !strings.HasPrefix(got, "lightning-sdk-go/") {
-		t.Fatalf("User-Agent = %q, want lightning-sdk-go/<version>", got)
-	}
-}
-
-func TestSDKVersion(t *testing.T) {
-	for version, want := range map[string]string{
-		"":                                     "dev",
-		"(devel)":                              "dev",
-		"v1.2.3":                               "1.2.3",
-		"v0.0.0-20261113150405-abcdef123456":   "2026.11.13.dev150405+abcdef123456",
-		"v1.2.4-0.20261113150405-abcdef123456": "2026.11.13.dev150405+abcdef123456",
-		"v1.2.3-pre.0.20261113150405-abcdef123456": "2026.11.13.dev150405+abcdef123456",
-		"v0.0.0-20261113150405-abcdef123456+dirty": "2026.11.13.dev150405+abcdef123456",
-	} {
-		if got := sdkVersion(version); got != want {
-			t.Errorf("sdkVersion(%q) = %q, want %q", version, got, want)
-		}
 	}
 }

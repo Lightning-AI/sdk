@@ -106,7 +106,7 @@ func TestTeamspaceGetUsesExplicitOwner(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts, err := lit.GetTeamspace("default", lit.TeamspaceOptions{Owner: testOwner{id: "user-1", name: "alice"}})
 	require.NoErrorf(t, err,
@@ -186,7 +186,7 @@ func TestTeamspaceGetUsesExplicitOrgOwner(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	org, err := lit.GetOrganization("acme", lit.OrganizationOptions{ID: "org-1"})
 	require.NoErrorf(t, err,
@@ -245,7 +245,7 @@ func TestTeamspaceCreateUsesExplicitOrgOwner(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	org, err := lit.GetOrganization("acme", lit.OrganizationOptions{ID: "org-1"})
 	require.NoErrorf(t, err,

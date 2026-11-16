@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestUserGetWithIDUsesSimpleStruct(t *testing.T) {
@@ -61,7 +62,7 @@ func TestUserGetResolvesEnvUsername(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_USERNAME", "alice")
 
 	u, err := lit.GetUser("")

@@ -301,7 +301,6 @@ func (c *serviceAccountCache) exchange(ctx context.Context, origin, key string) 
 		return "", 0, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("User-Agent", userAgent())
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return "", 0, &exchangeUnavailableError{

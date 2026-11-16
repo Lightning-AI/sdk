@@ -9,6 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestUserSecretsAndSetSecretUseGeneratedRoutes(t *testing.T) {
@@ -41,7 +43,7 @@ func TestUserSecretsAndSetSecretUseGeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	u := mustUser(t, "user-1", "alice")
 	secrets, err := u.Secrets()
@@ -100,7 +102,7 @@ func TestTeamspaceSecretsAndSetSecretUseGeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 	secrets, err := ts.Secrets()
@@ -158,7 +160,7 @@ func TestUserSecretsDeleteAndTypedCollision(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	u := mustUser(t, "user-1", "alice")
 	require.NoError(t, u.SetSecret("TOKEN", "created"))
@@ -207,7 +209,7 @@ func TestTeamspaceSecretsDeleteAndTypedCollision(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 	require.NoError(t, ts.SetSecret("TOKEN", "created"))
