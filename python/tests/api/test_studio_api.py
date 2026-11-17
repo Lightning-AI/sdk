@@ -364,6 +364,89 @@ def test_delete_studio(mock_delete_cloud_space):
     studio_api = StudioApi()
     studio_api.delete_studio("st-abc", "ts-abc")
 
+    mock_delete_cloud_space.assert_called_once()
+    assert mock_delete_cloud_space.call_args.kwargs["project_id"] == "ts-abc"
+    assert mock_delete_cloud_space.call_args.kwargs["id"] == "st-abc"
+    assert mock_delete_cloud_space.call_args.kwargs["_request_timeout"][1] > 30
+
+
+@mock.patch("lightning_sdk.api.studio_api.requests.get")
+@mock.patch(
+    "lightning_sdk.lightning_cloud.openapi.api.cloud_space_service_api.CloudSpaceServiceApi.cloud_space_service_delete_cloud_space",
+    autospec=True,
+)
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
+def test_delete_studio_returns_once_marked_deleted(mock_delete_cloud_space, mock_get):
+    """A running Studio is deleted when its record says so, before its machine finishes powering off."""
+    from threading import Event
+    from time import monotonic
+
+    release = Event()
+
+    def block(*_args, **_kwargs):
+        release.wait(5)
+        return V1DeleteCloudSpaceResponse()
+
+    mock_delete_cloud_space.side_effect = block
+    response = mock.Mock(status_code=200)
+    response.json.return_value = {"state": V1CloudSpaceState.DELETED}
+    mock_get.return_value = response
+
+    started = monotonic()
+    try:
+        StudioApi().delete_studio("st-abc", "ts-abc")
+        elapsed = monotonic() - started
+    finally:
+        release.set()
+
+    assert elapsed < 3
+    url = mock_get.call_args.args[0]
+    assert url.endswith("/v1/projects/ts-abc/cloudspaces/st-abc")
+
+
+# The next two fail at the HTTP layer so the real client, with or without its retry wrapper, is exercised.
+@mock.patch("lightning_sdk.lightning_cloud.openapi.rest.RESTClientObject.request")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
+def test_delete_studio_permission_error(mock_request):
+    from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+
+    mock_request.side_effect = ApiException(status=403, reason="Forbidden")
+
+    with pytest.raises(PermissionError, match="don't have permission to delete this Studio"):
+        StudioApi().delete_studio("st-abc", "ts-abc")
+
+    # a refusal is final: the retrying client would send it again before giving up
+    mock_request.assert_called_once()
+
+
+@mock.patch("lightning_sdk.lightning_cloud.openapi.rest.RESTClientObject.request")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
+def test_delete_studio_reraises_other_api_errors(mock_request):
+    from lightning_sdk.lightning_cloud.openapi.rest import ApiException
+
+    mock_request.side_effect = ApiException(status=500, reason="Internal Server Error")
+
+    with pytest.raises(ApiException) as caught:
+        StudioApi().delete_studio("st-abc", "ts-abc")
+
+    assert caught.value.status == 500
+    mock_request.assert_called_once()
+
+
+def test_studio_delete_names_the_studio_in_the_permission_error():
+    from types import SimpleNamespace
+
+    from lightning_sdk.studio import Studio
+
+    studio = Studio.__new__(Studio)
+    studio._studio_api = mock.MagicMock()
+    studio._studio = SimpleNamespace(id="st-abc", name="other")
+    studio._teamspace = SimpleNamespace(id="ts-abc")
+    studio._studio_api.delete_studio.side_effect = PermissionError("You don't have permission to delete this Studio.")
+
+    with pytest.raises(PermissionError, match="Studio 'other'"):
+        studio.delete()
+
 
 @pytest.mark.parametrize(
     ("name", "expected_machine"),
