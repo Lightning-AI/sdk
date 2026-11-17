@@ -6,7 +6,6 @@ import sys
 import rich_click as click
 
 from lightning_sdk import __version__
-from lightning_sdk.cli import groups as cli_groups
 from lightning_sdk.cli.completion import completion
 
 # Import legacy groups directly from groups.py
@@ -52,7 +51,7 @@ click.rich_click.COMMAND_GROUPS = {
         {"name": "GET STARTED", "commands": ["login", "logout", "config", "completion"]},
         {"name": "COMPUTE", "commands": ["studio", "base-studio", "machine", "vm", "container", "sandbox"]},
         {"name": "TRAIN & DEPLOY", "commands": ["job", "mmt", "model", "deployment", "pipeline"]},
-        {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "ssh", "license"]},
+        {"name": "ACCESS", "commands": ["user", "teamspace", "auth", "ssh"]},
         {"name": "DATA & FILES", "commands": ["cp", "ls", "rm", "edit", "connection"]},
         {"name": "CODING", "commands": ["code"]},
     ]
@@ -138,7 +137,6 @@ main_cli.add_command(sandbox)
 main_cli.add_command(base_studio)
 main_cli.add_command(dataset)
 main_cli.add_command(connection)
-main_cli.add_command(cli_groups.license)
 main_cli.add_command(cp)
 main_cli.add_command(edit)
 main_cli.add_command(ls)

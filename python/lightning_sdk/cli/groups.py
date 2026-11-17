@@ -19,7 +19,6 @@ from lightning_sdk.cli.file import register_commands as register_file_commands
 from lightning_sdk.cli.folder import register_commands as register_folder_commands
 from lightning_sdk.cli.job import register_commands as register_job_commands
 from lightning_sdk.cli.legacy_redirects import DeprecatedGroup
-from lightning_sdk.cli.license import register_commands as register_license_commands
 from lightning_sdk.cli.machine import register_commands as register_machine_commands
 from lightning_sdk.cli.mmt import register_commands as register_mmt_commands
 from lightning_sdk.cli.model import register_commands as register_model_commands
@@ -181,11 +180,6 @@ def base_studio() -> None:
     """Reusable Studio environment images."""
 
 
-@click.group(name="license", cls=LightningGroup)
-def license() -> None:  # noqa: A001
-    """View and manage product licenses."""
-
-
 @click.group(name="dataset", cls=LightningGroup, hidden=True)
 def dataset() -> None:
     """Download datasets."""
@@ -278,7 +272,6 @@ register_file_commands(file)
 register_folder_commands(folder)
 register_ssh_commands(ssh)
 register_base_studio_commands(base_studio)
-register_license_commands(license)
 register_dataset_commands(dataset)
 register_connection_commands(connection)
 register_cp_commands(cp)

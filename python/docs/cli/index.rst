@@ -128,7 +128,6 @@ reference.
    sandbox
    vm
    base-studio
-   license
    cp
    ls
    rm

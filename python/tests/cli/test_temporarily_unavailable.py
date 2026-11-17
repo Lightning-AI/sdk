@@ -45,7 +45,6 @@ _ALLOWED_COMMANDS = (
     "config get user",
     "config set cloud-provider",
     "config set org",
-    "license list",
     "completion status",
     "api dockerize",
     "config set studio",

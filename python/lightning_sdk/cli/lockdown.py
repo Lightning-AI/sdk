@@ -58,8 +58,6 @@ UNAVAILABLE_COMMANDS: tuple[str, ...] = (
     "deployment secret set",
     "deployment update",
     "job logs download",
-    "license download",
-    "license download-all",
     "mmt delete",
     "mmt inspect",
     "mmt list",

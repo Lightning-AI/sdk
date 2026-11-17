@@ -25,8 +25,6 @@ class DefaultConfigKeys:
     cloud_account: str = "cloud_account.name"
     cloud_provider: str = "cloud_provider.name"
 
-    license: str = "license"
-
 
 class ConfigProxy:
     def __init__(self, root: "Config", *path: str) -> None:
@@ -125,7 +123,7 @@ class Config:
         """Gets a subconfig from the config using dot notation.
 
         Args:
-            key_path: the dot-separated path to the subconfig (e.g. "license")
+            key_path: the dot-separated path to the subconfig (e.g. "studio")
 
         Returns:
             The subconfig if found, None otherwise

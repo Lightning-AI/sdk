@@ -1,4 +1,4 @@
-"""LitAI, LitServe and license validation stay on the credential source."""
+"""LitAI and LitServe stay on the credential source."""
 
 import threading
 import webbrowser
@@ -6,7 +6,6 @@ import webbrowser
 import click
 import pytest
 
-from lightning_sdk.api.license_api import LicenseApi
 from lightning_sdk.api.llm_api import authenticate as litai_authenticate
 from lightning_sdk.cli.legacy.deploy._auth import _AuthMode
 from lightning_sdk.cli.legacy.deploy._auth import authenticate as litserve_authenticate
@@ -83,20 +82,3 @@ def test_litai_does_nothing_when_a_credential_already_exists(monkeypatch):
 
     assert asked == []
     assert opened == []
-
-
-def test_license_validation_leaves_the_saved_login_unchanged(monkeypatch, tmp_path):
-    threading.Thread = _REAL_THREAD
-    secrets = tmp_path / "credentials.json"
-    original = b'{"auth_token": "sess_kept"}\n'
-    secrets.write_bytes(original)
-    monkeypatch.setattr(Auth, "secrets_file", secrets)
-    platform = FakePlatform()
-    platform.token_keys["license-token"] = "user-1"
-    monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", platform.url)
-    monkeypatch.setenv("LIGHTNING_CLOUD_URL", platform.url)
-    try:
-        LicenseApi("license-token")
-        assert secrets.read_bytes() == original
-    finally:
-        platform.stop()
