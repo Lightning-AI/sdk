@@ -58,9 +58,9 @@ The SDK swaps the key for a short-lived token and sends only the token. Before
 each request it uses the first credential it finds:
 
 1. The token file named by `LIGHTNING_AUTH_TOKEN_FILE`, re-read every time.
-2. A token in `LIGHTNING_AUTH_TOKEN`.
-3. A service-account key in `LIGHTNING_API_KEY`.
-4. The login saved in `~/.lightning/credentials.json`, or the file named by
+1. A token in `LIGHTNING_AUTH_TOKEN`.
+1. A service-account key in `LIGHTNING_API_KEY`.
+1. The login saved in `~/.lightning/credentials.json`, or the file named by
    `LIGHTNING_CREDENTIAL_PATH`.
 
 Inside a Lightning Studio, a credential is usually already set.
