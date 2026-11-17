@@ -122,6 +122,5 @@ reference.
    studio
    sandbox
    base-studio
-   license
    cp
    code

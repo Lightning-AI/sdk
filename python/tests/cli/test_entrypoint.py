@@ -166,7 +166,6 @@ def test_help():
 
     # ACCESS
     assert "ssh       Configure SSH access to Studios." in text
-    assert "license   View and manage product licenses." in text
 
     # DATA & FILES
     assert "cp        Copy between local, Studios, Drive." in text
@@ -198,7 +197,6 @@ def test_help_uvx():
         assert "cp        Copy between local," in result_text
         assert "contain…  Run and manage containers." in result_text
         assert "job       Run batch jobs and sweeps." in result_text
-        assert "license   View and manage product" in result_text
         assert "machine   Browse GPU and CPU machine" in result_text
         assert "mmt       Multi-node distributed" in result_text
         assert "sandbox   Ephemeral sandboxes for" in result_text

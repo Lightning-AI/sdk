@@ -1,19 +1,15 @@
-import json
 import os
-from pathlib import Path
 from typing import Optional
 
 import click
 from rich.console import Console
 
 from lightning_sdk.api.lit_container_api import LitContainerApi
-from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.legacy.exceptions import StudioCliError
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
 from lightning_sdk.exceptions import DeprecatedCommand, DeprecatedError
 from lightning_sdk.models import download_model
 from lightning_sdk.studio import Studio
-from lightning_sdk.utils.resolve import _get_authed_user
 
 
 def _expand_remote_path(path: str) -> str:
@@ -160,62 +156,3 @@ def _resolve_studio(studio: Optional[str]) -> Studio:
             f"Could not find the given Studio {studio} to download files from. "
             "Please contact Lightning AI directly to resolve this issue."
         ) from e
-
-
-@download.command(name="licenses")
-def download_licenses() -> None:
-    """Download licenses for all user's products/packages.
-
-    Example:
-      lightning download licenses
-
-    """
-    user = _get_authed_user()
-    response = cached_lightning_client().product_license_service_list_licenses(owner_id=user.id)
-    licenses = response.licenses or []
-
-    user_home = Path.home()
-    lit_dir = user_home / ".lightning"
-    lit_dir.mkdir(parents=True, exist_ok=True)
-    licenses_file = lit_dir / "licenses.json"
-
-    licenses_short = {product_license.product_id: product_license.license_key for product_license in licenses}
-    with licenses_file.open("w") as fp:
-        json.dump(licenses_short, fp, indent=4)
-    Console().print(f"Licenses downloaded to {licenses_file}", style="green")
-
-
-@download.command(name="license")
-@click.argument("name")
-def download_license(name: str) -> None:
-    """Download license for specific products/packages.
-
-    Example:
-      lightning download license NAME
-
-    NAME: The name of the product/package to download the license for.
-    """
-    user = _get_authed_user()
-    response = cached_lightning_client().product_license_service_list_licenses(owner_id=user.id)
-    licenses = response.licenses or []
-    licenses_short = {product_license.product_id: product_license.license_key for product_license in licenses}
-
-    if name not in licenses_short:
-        Console().print(f"Missing valid license for {name}", style="red")
-        return
-
-    user_home = Path.home()
-    lit_dir = user_home / ".lightning"
-    lit_dir.mkdir(parents=True, exist_ok=True)
-    licenses_file = lit_dir / "licenses.json"
-
-    licenses_loaded = {}
-    if licenses_file.exists():
-        with licenses_file.open("r") as fp:
-            licenses_loaded = json.load(fp)
-
-    licenses_loaded[name] = licenses_short[name]
-
-    with licenses_file.open("w") as fp:
-        json.dump(licenses_loaded, fp, indent=4)
-    Console().print(f"Updated license for {name} in {licenses_file}", style="green")
