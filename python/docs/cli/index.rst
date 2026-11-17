@@ -110,18 +110,27 @@ reference.
    :maxdepth: 1
 
    config
+   auth
+   user
+   teamspace
    job
    mmt
    machine
    deployment
    container
    model
+   pipeline
    file
    folder
+   connection
    ssh
    studio
    sandbox
+   vm
    base-studio
    license
    cp
+   ls
+   rm
+   edit
    code
