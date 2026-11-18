@@ -43,8 +43,13 @@ class FakePlatform:
         self.blocked = False
         self.orgs = None
         self.memberships = None
+        # The org roles each user holds, by org id then user id, for GET /v1/orgs/{org}/roles?userId=.
+        self.org_roles = None
         self.token_keys = {}
         self.service_account_keys = {}
+        # What a key exchange says about the account, as the server sends it. None leaves the fields out,
+        # as a server that predates them does.
+        self.service_account_details = None
         # (status, body) the key exchange answers with instead, when set.
         self.key_exchange_answer = None
         self._codes = {}
@@ -246,12 +251,15 @@ class FakePlatform:
             return 401, {"error": "invalid_client", "error_description": "client_id is not the key's service account"}
         access = "lit_ua_" + secrets.token_urlsafe(24)
         self._access[access] = {"family": record, "expires_at": time.time() + self.access_ttl}
-        return 200, {
+        body = {
             "access_token": access,
             "token_type": "Bearer",
             "expires_in": self.access_ttl,
             "lightning_grant": {"orgs": [{"org": "org-1", "projects": "all"}], "permissions": ["read", "write"]},
         }
+        if self.service_account_details is not None:
+            body.update(self.service_account_details)
+        return 200, body
 
     def _rotate(self, form):
         presented = form.get("refresh_token", "")
@@ -330,6 +338,12 @@ def _handler(platform):
                 self._json(200, {"organizations": platform.orgs})
             elif parts.path == "/v1/memberships" and platform.memberships is not None:
                 self._json(200, {"memberships": platform.memberships})
+            elif (
+                platform.org_roles is not None and parts.path.startswith("/v1/orgs/") and parts.path.endswith("/roles")
+            ):
+                org_id = parts.path[len("/v1/orgs/") : -len("/roles")]
+                user_id = query.get("userId", "")
+                self._json(200, {"roles": platform.org_roles.get(org_id, {}).get(user_id, [])})
             elif parts.path == "/v1/auth/user":
                 bearer = self.headers.get("Authorization", "")
                 token = bearer[len("Bearer ") :] if bearer.startswith("Bearer ") else ""
