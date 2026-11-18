@@ -3,17 +3,12 @@
 # Make changes in the internal upstream repository instead.
 
 from enum import Enum
-import hmac
 import json
 import logging
 import os
 import pathlib
-import secrets
 from dataclasses import dataclass
-from typing import Dict, Optional, Literal
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
-
-import webbrowser
+from typing import Optional, Literal
 
 import requests
 
@@ -154,7 +149,7 @@ class Auth:
         return self.get_auth_header()
 
     def _run_server(self) -> None:
-        """Start the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects."""
+        """Start the browser login."""
         from lightning_sdk.lightning_cloud.credentials import start_login
 
         start_login()
@@ -346,83 +341,3 @@ class Auth:
             client.set_default_header('Authorization', auth_header)
         
         return client
-
-
-_INTERIM_TIMED_OUT = (
-    "The browser didn't finish the login within 5 minutes, so nothing was saved. "
-    "Run `lightning login` again."
-)
-
-
-class AuthServer:
-    """The interim browser login, which saves a ``sess_`` token as ``auth_token``."""
-
-    def __init__(self, sign_in_params: Optional[Dict[str, str]] = None) -> None:
-        self.sign_in_params = dict(sign_in_params or {})
-
-    def get_auth_url(self, port: int) -> str:
-        redirect_uri = f"http://localhost:{port}/login-complete"
-        params = urlencode(dict(redirectTo=redirect_uri, **self.sign_in_params))
-        return f"{env.LIGHTNING_CLOUD_URL}/sign-in?{params}"
-
-    def login_with_browser(self, auth: Auth) -> None:
-        from lightning_sdk.lightning_cloud import cli_login
-
-        state = secrets.token_urlsafe(32)
-
-        def complete(query: Dict[str, str]) -> None:
-            if not hmac.compare_digest(query.get("state", "").encode(), state.encode()):
-                raise cli_login.LoginError(
-                    "The login callback didn't match this login, so nothing was saved. "
-                    "Run `lightning login` again."
-                )
-            token = query.get("token", "")
-            if not token:
-                raise cli_login.LoginError(
-                    "The sign-in page sent no token, so nothing was saved. "
-                    "Run `lightning login` again, or update the SDK."
-                )
-
-            def save() -> str:
-                auth.save(auth_token=token, user_id=query.get("userID", ""))
-                cli_login._forget()
-                return token
-
-            cli_login._replace_saved(save)
-            logger.info("Authentication Successful")
-
-        with cli_login._callback_server("/login-complete", complete, _INTERIM_TIMED_OUT) as (port, wait):
-            redirect_uri = f"http://localhost:{port}/login-complete"
-            url = _with_state(self.get_auth_url(port), redirect_uri, state)
-            try:
-                requests.head(
-                    url,
-                    headers={"User-Agent": env.USER_AGENT},
-                    timeout=env.LIGHTNING_CLOUD_CONNECT_TIMEOUT,
-                    verify=env.SSL_CA_CERT,
-                )
-            except requests.RequestException as err:
-                raise cli_login.LoginError(
-                    f"Couldn't reach {env.LIGHTNING_CLOUD_URL}. Check your connection and try again."
-                ) from err
-            logger.info(f"login started for lightning.ai, opening {url}")
-            if not webbrowser.open(url):
-                if os.environ.get("LIGHTNING_DEPLOYMENT_ID"):
-                    raise cli_login.LoginError(cli_login._DEPLOYMENT)
-                raise cli_login.LoginError(
-                    "No browser could be opened to log in. Run `lightning login` where a "
-                    "browser is available, or set LIGHTNING_AUTH_TOKEN."
-                )
-            wait()
-
-
-def _with_state(url: str, redirect_uri: str, state: str) -> str:
-    # A subclass may build its own URL from get_auth_url(port), which knows no
-    # state, so the state goes onto whichever redirectTo names this callback.
-    parts = urlsplit(url)
-    stateful = f"{redirect_uri}?{urlencode(dict(state=state))}"
-    query = [
-        (key, stateful if key == "redirectTo" and value == redirect_uri else value)
-        for key, value in parse_qsl(parts.query, keep_blank_values=True)
-    ]
-    return urlunsplit(parts._replace(query=urlencode(query)))

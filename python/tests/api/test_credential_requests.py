@@ -235,7 +235,6 @@ def test_folder_download_refreshes_when_the_access_token_expires_midway(monkeypa
     threading.Thread = _REAL_THREAD
     for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN_FILE"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     monkeypatch.setattr(Auth, "secrets_file", tmp_path / "credentials.json")
     monkeypatch.setattr(env, "LIGHTNING_LOGIN_PATH", str(tmp_path / "login.json"))
     previous = keyring.get_keyring()

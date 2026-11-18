@@ -4,10 +4,9 @@ import os
 
 import click
 
-from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.credentials import (
     REVOKE_FAILED,
-    LoginUnavailable,
     logout,
     start_login,
 )
@@ -37,7 +36,7 @@ def run_login(
     no_browser: bool = False,
     no_keychain: bool = False,
 ) -> None:
-    """Run the login the switch selects, without dropping the saved login first."""
+    """Log in, without dropping the saved login first."""
     if in_studio():
         raise RuntimeError("Unable to login within a Studio. Did you change your shell setup?") from None
 
@@ -57,15 +56,9 @@ def run_login(
             "Unset it and run `lightning login` again."
         )
 
-    if no_keychain and cli_login.oidc_login_enabled():
+    if no_keychain:
         click.echo(f"This login is kept in a file at {env.LIGHTNING_LOGIN_PATH}.", err=True)
-    try:
-        start_login(
-            no_browser=no_browser,
-            no_keychain=no_keychain,
-        )
-    except LoginUnavailable as err:
-        raise click.UsageError(str(err)) from err
+    start_login(no_browser=no_browser, no_keychain=no_keychain)
 
     try:
         click.echo(f'Successfully logged in as "{_get_authed_user().name}".')

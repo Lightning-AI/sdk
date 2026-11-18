@@ -1,6 +1,5 @@
 """Login, logout, auth status and auth token, against the fake platform."""
 
-import json
 import re
 import threading
 import webbrowser
@@ -43,7 +42,6 @@ def isolated(monkeypatch, tmp_path):
         "LIGHTNING_AUTH_TOKEN_FILE",
         "LIGHTNING_API_KEY",
         "LIGHTNING_USER_ID",
-        "LIGHTNING_CLI_OIDC_LOGIN",
     ):
         monkeypatch.delenv(name, raising=False)
     credentials = tmp_path / "credentials.json"
@@ -86,35 +84,6 @@ def _invoke(cli, args):
     return CliRunner().invoke(cli, args)
 
 
-def _saved_session() -> str:
-    data = json.loads(Auth.secrets_file.read_text())
-    return data["auth_token"]
-
-
-@pytest.mark.parametrize("cli", [main_cli, legacy_cli])
-def test_login_uses_the_interim_flow_when_the_switch_is_unset(platform, browser, cli) -> None:
-    result = _invoke(cli, ["login"])
-
-    assert result.exit_code == 0, _text(result)
-    assert _saved_session().startswith("sess_")
-    assert platform.sign_ins
-    assert not platform.authorizations
-    assert 'Successfully logged in as "ada".' in result.output
-
-
-@pytest.mark.parametrize("cli", [main_cli, legacy_cli])
-@pytest.mark.parametrize(
-    "args",
-    [["--no-browser"], ["--no-keychain"]],
-)
-def test_interim_login_refuses_flags_the_new_login_needs(isolated, cli, args) -> None:
-    result = _invoke(cli, ["login", *args])
-
-    assert result.exit_code == 2, _text(result)
-    assert "LIGHTNING_CLI_OIDC_LOGIN" in _text(result)
-    assert not Auth.secrets_file.exists()
-
-
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 def test_login_refuses_while_an_environment_credential_wins(isolated, monkeypatch, cli) -> None:
     token_file = isolated / "token"
@@ -139,7 +108,7 @@ def test_login_refuses_while_an_environment_credential_wins(isolated, monkeypatc
     assert not Auth.secrets_file.exists()
 
 
-def test_login_keeps_the_previous_session_until_the_new_one_is_saved(platform, browser) -> None:
+def test_login_replaces_and_revokes_a_saved_interim_session(platform, browser) -> None:
     previous = platform.mint_session("user-1")
     Auth().save(auth_token=previous)
 
@@ -147,14 +116,12 @@ def test_login_keeps_the_previous_session_until_the_new_one_is_saved(platform, b
 
     assert result.exit_code == 0, _text(result)
     assert previous in platform.logouts()
-    assert _saved_session() != previous
-    assert _saved_session().startswith("sess_")
+    assert not Auth.secrets_file.exists()
+    assert CredentialSource().resolve().token.startswith("lit_ua_")
 
 
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
-def test_login_with_the_switch_uses_the_new_login(platform, browser, monkeypatch, cli) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-
+def test_login_uses_the_new_login(platform, browser, cli) -> None:
     result = _invoke(cli, ["login"])
 
     assert result.exit_code == 0, _text(result)
@@ -164,8 +131,6 @@ def test_login_with_the_switch_uses_the_new_login(platform, browser, monkeypatch
 
 
 def test_no_keychain_warns_and_names_the_login_file(platform, browser, monkeypatch) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-
     result = _invoke(main_cli, ["login", "--no-keychain"])
 
     assert result.exit_code == 0, _text(result)
@@ -202,7 +167,6 @@ def test_a_studio_with_a_workload_token_still_refuses_to_log_in(monkeypatch) -> 
 
 @pytest.mark.parametrize("cli", [main_cli, legacy_cli])
 def test_logout_revokes_both_kinds_and_names_the_one_the_server_refused(platform, browser, monkeypatch, cli) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     assert _invoke(cli, ["login"]).exit_code == 0
     session = platform.mint_session("user-1")
     Auth().save(auth_token=session)
@@ -244,7 +208,6 @@ def test_logout_says_when_an_environment_credential_still_wins(isolated, monkeyp
 
 
 def _login_with_grant(platform, monkeypatch, grant) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     original = platform._issue
 
     def issue(family):
@@ -315,7 +278,6 @@ def test_an_unreadable_token_file_is_an_error_not_a_traceback(isolated, monkeypa
 
 def test_a_refused_login_is_an_error_not_a_traceback(platform, browser, monkeypatch) -> None:
     platform.access_ttl = 60
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     original = platform.token
 
     def refuse(form):
@@ -334,7 +296,6 @@ def test_a_refused_login_is_an_error_not_a_traceback(platform, browser, monkeypa
 
 
 def test_auth_status_names_each_source_and_never_a_token(platform, browser, monkeypatch, tmp_path) -> None:
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     assert _invoke(main_cli, ["login"]).exit_code == 0
     login_token = CredentialSource().resolve().token
 
@@ -388,7 +349,6 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
 
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
     monkeypatch.setenv("LIGHTNING_API_KEY", "key-1")
-    monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
     legacy = _invoke(main_cli, ["auth", "status"])
     assert legacy.exit_code != 0
     assert "Lightning refused the key in LIGHTNING_API_KEY: invalid service account key." in _text(legacy)
@@ -433,7 +393,6 @@ def test_auth_token_refuses_a_short_lived_login_without_a_fallback(monkeypatch, 
     threading.Thread = _REAL_THREAD
     for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN_FILE"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
     credentials = tmp_path / "credentials.json"
     monkeypatch.setattr(Auth, "secrets_file", credentials)
     monkeypatch.setattr(env, "LIGHTNING_LOGIN_PATH", str(tmp_path / "login.json"))

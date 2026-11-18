@@ -36,7 +36,6 @@ _MISSING = (
 _LOGIN_FAILED = "Authentication failed. Please run `lightning login`."
 _LOGIN_FIRST = "No Lightning credentials are available. Run `lightning login` first."
 _HOUR = 3600
-_SWITCH = pytest.mark.parametrize("switch", ["interim", "oidc"])
 
 
 def _exactly(message):
@@ -49,13 +48,6 @@ def isolated_credentials(isolated_login, monkeypatch):
     # reaching the real Lightning.
     monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", "http://127.0.0.1:9")
     return Auth.secrets_file
-
-
-def _set_switch(monkeypatch, switch):
-    if switch == "oidc":
-        monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-    else:
-        monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
 
 
 def _sent_to_the_api(platform):
@@ -147,9 +139,7 @@ def test_an_unreadable_token_file_is_named_wherever_a_credential_is_read(isolate
     assert seen == []
 
 
-@_SWITCH
-def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isolated_credentials, monkeypatch, switch):
-    _set_switch(monkeypatch, switch)
+def test_a_saved_session_is_bearer_not_basic(platform, isolated_credentials, monkeypatch):
     session = platform.mint_session("user-1")
     isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "key-1", "auth_token": session}))
     monkeypatch.setenv("LIGHTNING_USER_ID", "user-1")
@@ -167,11 +157,9 @@ def test_a_saved_login_is_bearer_not_basic_in_either_switch_state(platform, isol
 
 
 @pytest.mark.parametrize("user_id", ["user-1", None])
-@_SWITCH
 def test_an_env_api_key_reaches_only_the_exchange_and_a_saved_api_key_is_never_sent(
-    platform, isolated_credentials, monkeypatch, switch, user_id
+    platform, isolated_credentials, monkeypatch, user_id
 ):
-    _set_switch(monkeypatch, switch)
     isolated_credentials.write_text(json.dumps({"user_id": "saved-user", "api_key": "key-saved"}))
     if user_id is None:
         monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
@@ -197,34 +185,23 @@ def test_an_env_api_key_reaches_only_the_exchange_and_a_saved_api_key_is_never_s
     assert platform.requests == []
 
 
-@_SWITCH
-def test_with_no_credential_the_source_logs_in_once_with_the_login_the_switch_selects(
-    platform, browser, monkeypatch, switch
-):
-    _set_switch(monkeypatch, switch)
+def test_with_no_credential_the_source_logs_in_once(platform, browser):
     source = CredentialSource()
 
     first = source.header()
     browser.finish()
 
     assert source.header() == first
-    if switch == "oidc":
-        assert first == f"Bearer {cli_login.token(min_remaining=0)}"
-        assert (len(platform.authorizations), len(platform.sign_ins)) == (1, 0)
-    else:
-        assert first == f"Bearer {json.loads(Auth.secrets_file.read_text())['auth_token']}"
-        assert (len(platform.authorizations), len(platform.sign_ins)) == (0, 1)
-        assert not [path for _, path, _ in platform.requests if path.startswith("/oidc/")]
+    assert first == f"Bearer {cli_login.token(min_remaining=0)}"
+    assert (len(platform.authorizations), len(platform.sign_ins)) == (1, 0)
 
 
-@_SWITCH
-def test_a_token_login_then_a_browser_login_as_another_user_sends_the_second_users_token(platform, monkeypatch, switch):
+def test_a_token_login_then_a_browser_login_as_another_user_sends_the_second_users_token(platform, monkeypatch):
     platform.token_keys["key-a"] = "user-a"
     Auth().token_login("key-a")
     assert LightningClient().auth_service_get_user().id == "user-a"
     first = json.loads(Auth.secrets_file.read_text())["auth_token"]
 
-    _set_switch(monkeypatch, switch)
     browser = FakeBrowser(platform, user="user-b")
     monkeypatch.setattr("webbrowser.open", browser.open)
     start_login()
@@ -243,14 +220,13 @@ def test_a_later_login_replaces_the_earlier_one_and_the_next_request_sends_it(is
 
     Auth()._run_server()
     GridRestClient(api_client=_Api(request), with_auth=True).api_client.request("GET", "http://example")
-    saved = json.loads(isolated_credentials.read_text())["auth_token"]
+    saved = cli_login.token(min_remaining=0)
     assert seen == [f"Bearer {saved}"]
     assert platform.accepts(saved)
+    assert not isolated_credentials.exists()
 
 
-@_SWITCH
-def test_a_session_saved_by_the_stable_sdk_still_sends_bearer(isolated_credentials, monkeypatch, switch):
-    _set_switch(monkeypatch, switch)
+def test_a_session_saved_by_the_stable_sdk_still_sends_bearer(isolated_credentials):
     isolated_credentials.write_text(json.dumps({"user_id": "user-1", "api_key": "", "auth_token": "sess_interim"}))
     seen = []
 
@@ -261,10 +237,8 @@ def test_a_session_saved_by_the_stable_sdk_still_sends_bearer(isolated_credentia
     assert seen == ["Bearer sess_interim"]
 
 
-@_SWITCH
-def test_a_saved_new_login_is_sent_whatever_the_switch_says(platform, browser, monkeypatch, switch):
+def test_a_saved_new_login_is_sent(platform, browser):
     made = cli_login.login()
-    _set_switch(monkeypatch, switch)
 
     assert LightningClient().auth_service_get_user().id == "user-1"
     assert _sent_to_the_api(platform) == [f"Bearer {made.access_token}"]
@@ -676,22 +650,18 @@ def test_user_agent_without_the_sdk_names_lightning_cloud(monkeypatch):
     assert _user_agent_with(monkeypatch, version) == f"lightning-cloud/{__version__}"
 
 
-def test_every_request_names_the_installed_sdk(platform, browser, monkeypatch):
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
-    start_login()
-    LightningClient().auth_service_get_user()
-    monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN")
+def test_every_request_names_the_installed_sdk(platform, browser):
+    Auth().save(auth_token=platform.mint_session("user-1"))
     start_login()
     browser.finish()
     LightningClient().auth_service_get_user()
     logout()
 
-    browser_pages = {("GET", "/oidc/authorize"), ("GET", "/sign-in")}
+    browser_pages = {("GET", "/oidc/authorize")}
     sent = {(method, path): headers.get("User-Agent") for method, path, headers in platform.requests}
     assert set(sent) - browser_pages == {
         ("POST", "/oidc/token"),
         ("POST", "/oidc/revoke"),
-        ("HEAD", "/sign-in"),
         ("GET", "/v1/auth/user"),
         ("POST", "/v1/auth/logout"),
     }
