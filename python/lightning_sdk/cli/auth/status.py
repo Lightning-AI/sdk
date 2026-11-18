@@ -210,12 +210,13 @@ def status() -> None:
     table.add_row("Source", _source(credential))
 
     account = me.get("serviceAccount")
+    described = bool(me.get("credentialKind"))
     login = cli_login.current_login() if credential.kind is CredentialKind.LOGIN else None
     if isinstance(account, dict) and account.get("id"):
         _add_service_account(table, client, account, me)
-    elif me.get("credentialKind") or login is not None:
+    elif described or login is not None:
         # A server that doesn't describe the credential still leaves a saved login's own grant.
-        grant = me if me.get("credentialKind") else _login_grant(client, login.grant)
+        grant = _login_grant(client, login.grant) if login is not None and not described else me
         orgs, teamspaces = _grant_lines(grant)
         table.add_row("Orgs", orgs)
         table.add_row("Teamspaces", teamspaces)
@@ -224,7 +225,7 @@ def status() -> None:
         if isinstance(workload, dict) and workload.get("resourceId"):
             kind = workload.get("resourceType", "")
             table.add_row("Workload", f"{_WORKLOAD_LABELS.get(kind, kind)} {workload['resourceId']}".strip())
-        if me.get("credentialKind"):
+        if described:
             _add_expiry(table, "Access expires", me.get("expiresAt"))
         elif login is not None:
             table.add_row("Access expires", _stamp(login.access_expires_at))
