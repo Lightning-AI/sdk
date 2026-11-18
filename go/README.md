@@ -36,8 +36,17 @@ studios, and production endpoints.
 Add the module:
 
 ```bash
-go get github.com/lightning-ai/sdk/go
+go get github.com/lightning-ai/sdk/go@latest
 ```
+
+To pin a release, ask for its Go version:
+
+```bash
+go get github.com/lightning-ai/sdk/go@v0.YYYYMMDD.N
+```
+
+Release `vYYYY.MM.DD` is Go version `v0.YYYYMMDD.0`, and a later release the
+same day, `vYYYY.MM.DD.postN`, is `v0.YYYYMMDD.(N+1)`.
 
 Authenticate with the same environment used by other Lightning SDKs:
 

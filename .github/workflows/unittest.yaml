@@ -92,6 +92,8 @@ jobs:
       run: |
         go test -count=1 -json ./... > test.json || true
         cat test.json | "$(go env GOPATH)/bin/tparse" -smallscreen -sort elapsed
+    - name: Test Go release tag mapping
+      run: python3 .github/scripts/test_go_release_tag.py -v
 
   guardian-unittest:
     runs-on: ubuntu-latest

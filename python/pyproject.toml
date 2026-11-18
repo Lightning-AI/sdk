@@ -84,6 +84,11 @@ sandbox = "lightning_sdk.cli.groups:sandbox"
 [tool.setuptools_scm]
 root = ".."
 
+# Only release tags carry the package version. Go module tags (go/v...) sit on the same
+# commits and would otherwise be picked up as the version.
+[tool.setuptools_scm.scm.git]
+describe_command = "git describe --dirty --tags --long --abbrev=40 --match v[0-9]*"
+
 [tool.setuptools.packages.find]
 where = ["."]
 exclude = ["tests*", "examples*", "demo*", "docs*"]
