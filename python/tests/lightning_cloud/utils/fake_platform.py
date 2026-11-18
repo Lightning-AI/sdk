@@ -47,9 +47,11 @@ class FakePlatform:
         self.org_roles = None
         self.token_keys = {}
         self.service_account_keys = {}
-        # What a key exchange says about the account, as the server sends it. None leaves the fields out,
-        # as a server that predates them does.
-        self.service_account_details = None
+        # What GET /v1/auth/whoami says about each user's credential, by user id, beyond who they are. A user
+        # with nothing here gets only who they are, as a server that predates the credential fields answers.
+        self.credentials = {}
+        # Tokens the platform issued outside these logins, such as a Studio's workload token, by token.
+        self.bearer_tokens = {}
         # (status, body) the key exchange answers with instead, when set.
         self.key_exchange_answer = None
         self._codes = {}
@@ -96,7 +98,7 @@ class FakePlatform:
                 return session["user"] if session["active"] else None
             if self._access_ok(token):
                 return self._access[token]["family"]["user"]
-            return None
+            return self.bearer_tokens.get(token)
 
     def session_active(self, token):
         with self._lock:
@@ -251,15 +253,12 @@ class FakePlatform:
             return 401, {"error": "invalid_client", "error_description": "client_id is not the key's service account"}
         access = "lit_ua_" + secrets.token_urlsafe(24)
         self._access[access] = {"family": record, "expires_at": time.time() + self.access_ttl}
-        body = {
+        return 200, {
             "access_token": access,
             "token_type": "Bearer",
             "expires_in": self.access_ttl,
             "lightning_grant": {"orgs": [{"org": "org-1", "projects": "all"}], "permissions": ["read", "write"]},
         }
-        if self.service_account_details is not None:
-            body.update(self.service_account_details)
-        return 200, body
 
     def _rotate(self, form):
         presented = form.get("refresh_token", "")
@@ -344,6 +343,15 @@ def _handler(platform):
                 org_id = parts.path[len("/v1/orgs/") : -len("/roles")]
                 user_id = query.get("userId", "")
                 self._json(200, {"roles": platform.org_roles.get(org_id, {}).get(user_id, [])})
+            elif parts.path == "/v1/auth/whoami":
+                bearer = self.headers.get("Authorization", "")
+                user = platform.user_of(bearer[len("Bearer ") :] if bearer.startswith("Bearer ") else "")
+                if user is None:
+                    self._json(401, {"code": 16, "message": "unauthenticated"})
+                else:
+                    self._json(
+                        200, {"authType": "AUTH_TYPE_USER", "userId": user, **platform.credentials.get(user, {})}
+                    )
             elif parts.path == "/v1/auth/user":
                 bearer = self.headers.get("Authorization", "")
                 token = bearer[len("Bearer ") :] if bearer.startswith("Bearer ") else ""

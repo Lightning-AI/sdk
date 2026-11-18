@@ -9,7 +9,6 @@ import hashlib
 import os
 import threading
 import time
-from datetime import datetime
 from typing import Any, Dict, Optional, Tuple
 
 import requests
@@ -28,29 +27,11 @@ class _Unavailable(LoginError):
 
 
 @dataclasses.dataclass(frozen=True)
-class KeyDetails:
-    """What the exchange says about the key: the account it acts as, and when things expire.
-
-    A server that predates these fields leaves them empty.
-    """
-
-    account_id: Optional[str]
-    account_name: Optional[str]
-    # An account always belongs to one org, whether or not it is a member of it.
-    org_id: Optional[str]
-    org_name: Optional[str]
-    permissions: Tuple[str, ...]
-    access_expires_at: float
-    key_expires_at: Optional[float]
-
-
-@dataclasses.dataclass(frozen=True)
 class _Token:
     # A digest of the origin and key, so a changed key or URL exchanges again.
     identity: str
     access_token: str = dataclasses.field(repr=False)
     expires_at: float
-    details: KeyDetails
 
 
 _lock = threading.Lock()
@@ -93,63 +74,14 @@ def token(rejected: Optional[str] = None) -> Optional[str]:
         if held is not None and _usable(held, rejected):
             return held.access_token
         try:
-            access_token, expires_in, body = _exchange(origin, presented)
+            access_token, expires_in = _exchange(origin, presented)
         except _Unavailable:
             # An outage says nothing about the key, so a token with time left keeps working.
             if held is not None and rejected is None and held.expires_at > time.time():
                 return held.access_token
             raise
-        expires_at = time.time() + expires_in
-        _current = _Token(identity, access_token, expires_at, _details(body, expires_at))
+        _current = _Token(identity, access_token, time.time() + expires_in)
         return access_token
-
-
-def details() -> Optional[KeyDetails]:
-    """What the exchange said about the key in ``LIGHTNING_API_KEY``, exchanging it if needed.
-
-    None without a key.
-    """
-    if token() is None:
-        return None
-    with _lock:
-        return _current.details if _current is not None else None
-
-
-def _details(body: Dict[str, Any], access_expires_at: float) -> KeyDetails:
-    account = body.get("service_account")
-    account = account if isinstance(account, dict) else {}
-    grant = body.get("lightning_grant")
-    grant = grant if isinstance(grant, dict) else {}
-    org_id = _text(account.get("org_id"))
-    if org_id is None:
-        # A key's grant names its account's one org.
-        scopes = grant.get("orgs")
-        if isinstance(scopes, list) and scopes and isinstance(scopes[0], dict):
-            org_id = _text(scopes[0].get("org"))
-    permissions = grant.get("permissions")
-    return KeyDetails(
-        account_id=_text(account.get("id")),
-        account_name=_text(account.get("name")),
-        org_id=org_id,
-        org_name=_text(account.get("org_name")),
-        permissions=tuple(p for p in permissions if isinstance(p, str)) if isinstance(permissions, list) else (),
-        access_expires_at=access_expires_at,
-        key_expires_at=_timestamp(body.get("key_expires_at")),
-    )
-
-
-def _text(value: Any) -> Optional[str]:
-    return value if isinstance(value, str) and value else None
-
-
-def _timestamp(value: Any) -> Optional[float]:
-    if not isinstance(value, str) or not value:
-        return None
-    try:
-        # fromisoformat only accepts a trailing Z from Python 3.11.
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
-    except ValueError:
-        return None
 
 
 def _usable(held: _Token, rejected: Optional[str]) -> bool:
@@ -162,7 +94,7 @@ def _origin() -> str:
     return env.LIGHTNING_CLOUD_URL.rstrip("/")
 
 
-def _exchange(origin: str, presented: str) -> Tuple[str, float, Dict[str, Any]]:
+def _exchange(origin: str, presented: str) -> Tuple[str, float]:
     try:
         response = requests.post(
             f"{origin}/oidc/token",
@@ -185,7 +117,7 @@ def _exchange(origin: str, presented: str) -> Tuple[str, float, Dict[str, Any]]:
         expires_in = body.get("expires_in")
         valid_expiry = isinstance(expires_in, (int, float)) and not isinstance(expires_in, bool) and expires_in > 0
         if isinstance(access_token, str) and access_token and valid_expiry:
-            return access_token, float(expires_in), body
+            return access_token, float(expires_in)
         raise LoginError(f"Lightning answered the {KEY_ENV} exchange without a usable token.")
     if status == 401 and error == "invalid_client":
         reason = str(body.get("error_description", "")) or "invalid service account key"

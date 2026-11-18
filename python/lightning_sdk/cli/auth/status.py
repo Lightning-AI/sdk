@@ -1,8 +1,9 @@
-"""Show the credential requests send, and what a saved login reaches."""
+"""Show the credential requests send, who it acts as, and what it reaches."""
 
+import json
 import os
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import rich_click as click
 from rich.table import Table
@@ -10,11 +11,10 @@ from rich.table import Table
 from lightning_sdk.api.utils import cached_lightning_client
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.richt_print import rich_to_str
-from lightning_sdk.lightning_cloud import cli_login, env, service_account
+from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.credentials import Credential, CredentialKind, CredentialSource
 
 _NOT_LOGGED_IN = "You are not logged in. Run `lightning login`."
-_UNKNOWN_REACH = "not known locally"
 _UNKNOWN = "not known"
 # The members list calls the owner role Admin.
 _ROLE_LABELS = {
@@ -23,22 +23,30 @@ _ROLE_LABELS = {
     "ProjectAdministrator": "Administrator",
     "InvokeOnly": "Invoke only",
 }
+_WORKLOAD_LABELS = {"cloudSpaceInstance": "Studio", "job": "Job", "sandbox": "Sandbox"}
 
 
 def _stamp(epoch: float) -> str:
     return datetime.fromtimestamp(epoch).astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
 
 
-def _user(client: Any) -> Dict[str, Optional[str]]:
+def _timestamp(value: Any) -> Optional[float]:
+    if not isinstance(value, str) or not value:
+        return None
     try:
-        user = client.auth_service_get_user()
+        return datetime.fromisoformat(value).timestamp()
+    except ValueError:
+        return None
+
+
+def _whoami(client: Any) -> Dict[str, Any]:
+    """The server's description of the credential. Read raw, so fields newer than this client still arrive."""
+    try:
+        response = client.auth_service_whoami(_preload_content=False)
+        body = json.loads(response.data)
     except Exception:
         return {}
-    return {
-        "id": getattr(user, "id", None),
-        "username": getattr(user, "username", None),
-        "email": getattr(user, "email", None),
-    }
+    return body if isinstance(body, dict) else {}
 
 
 def _org_names(client: Any) -> Dict[str, str]:
@@ -57,31 +65,55 @@ def _teamspace_names(client: Any) -> Dict[str, str]:
     return {member.project_id: member.name for member in memberships if getattr(member, "project_id", None)}
 
 
-def _grant_lines(grant: Dict[str, Any], orgs: Dict[str, str], teamspaces: Dict[str, str]) -> tuple:
+def _login_grant(client: Any, grant: Dict[str, Any]) -> Dict[str, Any]:
+    """A saved login's grant in whoami's shape, named from the caller's orgs and teamspaces."""
     scopes = grant.get("orgs")
-    if scopes == "all":
-        return "all", "all"
-    if not isinstance(scopes, list) or not scopes:
-        return "none", "none"
-
-    shown_orgs = []
-    shown_teamspaces = []
+    described: Dict[str, Any] = {"allOrgs": scopes == "all", "orgs": [], "permissions": grant.get("permissions")}
+    if not isinstance(scopes, list):
+        return described
+    orgs = _org_names(client)
+    teamspaces = _teamspace_names(client)
     for scope in scopes:
         if not isinstance(scope, dict):
             continue
         org_id = str(scope.get("org", ""))
-        org_name = orgs.get(org_id, org_id)
-        shown_orgs.append(org_name)
         projects = scope.get("projects")
-        if projects == "all":
+        described["orgs"].append(
+            {
+                "orgId": org_id,
+                "orgName": orgs.get(org_id),
+                "allProjects": projects == "all",
+                "projects": [
+                    {"id": str(p), "name": teamspaces.get(str(p))}
+                    for p in (projects if isinstance(projects, list) else [])
+                ],
+            }
+        )
+    return described
+
+
+def _grant_lines(grant: Dict[str, Any]) -> Tuple[str, str]:
+    if grant.get("allOrgs"):
+        return "all", "all"
+    shown_orgs: List[str] = []
+    shown_teamspaces: List[str] = []
+    for scope in grant.get("orgs") or []:
+        if not isinstance(scope, dict):
+            continue
+        org_name = scope.get("orgName") or scope.get("orgId") or "unknown"
+        shown_orgs.append(org_name)
+        if scope.get("allProjects"):
             shown_teamspaces.append(f"all in {org_name}")
             continue
-        if not isinstance(projects, list):
-            continue
-        for project in projects:
-            project_id = str(project)
-            shown_teamspaces.append(teamspaces.get(project_id, project_id))
+        for project in scope.get("projects") or []:
+            if isinstance(project, dict):
+                shown_teamspaces.append(project.get("name") or project.get("id") or "unknown")
     return ", ".join(shown_orgs) or "none", ", ".join(shown_teamspaces) or "none"
+
+
+def _permissions(grant: Dict[str, Any]) -> str:
+    permissions = grant.get("permissions")
+    return ", ".join(p for p in permissions if isinstance(p, str)) if isinstance(permissions, list) else "none"
 
 
 def _source(credential: Credential) -> str:
@@ -122,45 +154,46 @@ def _account_teamspaces(client: Any) -> str:
     return ", ".join(shown) or "none"
 
 
-def _add_service_account(table: Table, client: Any, user: Dict[str, Optional[str]]) -> None:
-    """Who a key acts as, and what it reaches: its org always, its roles from its memberships."""
-    try:
-        details = service_account.details()
-    except cli_login.LoginError as err:
-        raise click.ClickException(str(err)) from err
-    if details is None or details.account_id is None:
-        # A server that doesn't name the account in the exchange.
-        _add_user(table, user)
-    else:
-        name = details.account_name or "unnamed"
-        table.add_row("Service account", f"{name} ({details.account_id})")
-    table.add_row("Source", "service-account key in LIGHTNING_API_KEY")
-    if details is None:
+def _add_identity(table: Table, client: Any, me: Dict[str, Any]) -> None:
+    account = me.get("serviceAccount")
+    if isinstance(account, dict) and account.get("id"):
+        table.add_row("Service account", f"{account.get('name') or 'unnamed'} ({account['id']})")
         return
-    org_id = details.org_id
-    if org_id is None:
+    if not me:
+        try:
+            user = client.auth_service_get_user()
+            me = {"userId": user.id, "username": user.username, "email": user.email}
+        except Exception:
+            me = {}
+    table.add_row("User", me.get("username") or me.get("email") or me.get("userId") or "unknown")
+    if me.get("email"):
+        table.add_row("Email", me["email"])
+    if me.get("userId"):
+        table.add_row("User ID", me["userId"])
+
+
+def _add_service_account(table: Table, client: Any, account: Dict[str, Any], me: Dict[str, Any]) -> None:
+    """An account's org always, and what it reaches through its roles, which its grant doesn't narrow."""
+    org_id = account.get("orgId")
+    if not org_id:
         table.add_row("Org", _UNKNOWN)
     else:
-        table.add_row("Org", f"{details.org_name} ({org_id})" if details.org_name else org_id)
-        if details.account_id is not None:
-            table.add_row("Org role", _org_role(client, org_id, details.account_id))
+        table.add_row("Org", f"{account['orgName']} ({org_id})" if account.get("orgName") else org_id)
+        table.add_row("Org role", _org_role(client, org_id, account["id"]))
     table.add_row("Teamspaces", _account_teamspaces(client))
-    table.add_row("Permissions", ", ".join(details.permissions) or "none")
-    table.add_row("Access expires", _stamp(details.access_expires_at))
-    table.add_row("Key expires", _stamp(details.key_expires_at) if details.key_expires_at is not None else _UNKNOWN)
+    table.add_row("Permissions", _permissions(me))
+    _add_expiry(table, "Access expires", me.get("expiresAt"))
+    _add_expiry(table, "Key expires", me.get("keyExpiresAt"))
 
 
-def _add_user(table: Table, user: Dict[str, Optional[str]]) -> None:
-    table.add_row("User", user.get("username") or user.get("email") or user.get("id") or "unknown")
-    if user.get("email"):
-        table.add_row("Email", user["email"])
-    if user.get("id"):
-        table.add_row("User ID", user["id"])
+def _add_expiry(table: Table, label: str, value: Any) -> None:
+    at = _timestamp(value)
+    table.add_row(label, _stamp(at) if at is not None else _UNKNOWN)
 
 
 @click.command("status", cls=LightningCommand)
 def status() -> None:
-    """Show the credential requests send, who it belongs to, and what a saved login reaches."""
+    """Show the credential requests send, who it acts as, and what it reaches."""
     try:
         credential = CredentialSource().resolve()
     except (OSError, cli_login.LoginError) as err:
@@ -169,29 +202,35 @@ def status() -> None:
         raise click.ClickException(_NOT_LOGGED_IN)
 
     client = cached_lightning_client()
-    user = _user(client)
+    me = _whoami(client)
     table = Table(show_header=False, box=None)
     table.add_column("Field", style="bold")
     table.add_column("Value")
-    if credential.kind is CredentialKind.SERVICE_ACCOUNT:
-        _add_service_account(table, client, user)
-        click.echo(rich_to_str(table), color=True)
-        return
-    _add_user(table, user)
+    _add_identity(table, client, me)
     table.add_row("Source", _source(credential))
 
+    account = me.get("serviceAccount")
     login = cli_login.current_login() if credential.kind is CredentialKind.LOGIN else None
-    if login is None:
-        table.add_row("Orgs", _UNKNOWN_REACH)
-        table.add_row("Teamspaces", _UNKNOWN_REACH)
-        table.add_row("Permissions", _UNKNOWN_REACH)
-        table.add_row("Expiry", _UNKNOWN_REACH)
-    else:
-        orgs, teamspaces = _grant_lines(login.grant, _org_names(client), _teamspace_names(client))
-        permissions = ", ".join(login.grant.get("permissions") or []) or "none"
+    if isinstance(account, dict) and account.get("id"):
+        _add_service_account(table, client, account, me)
+    elif me.get("credentialKind") or login is not None:
+        # A server that doesn't describe the credential still leaves a saved login's own grant.
+        grant = me if me.get("credentialKind") else _login_grant(client, login.grant)
+        orgs, teamspaces = _grant_lines(grant)
         table.add_row("Orgs", orgs)
         table.add_row("Teamspaces", teamspaces)
-        table.add_row("Permissions", permissions)
-        table.add_row("Access expires", _stamp(login.access_expires_at))
-        table.add_row("Login expires", _stamp(login.refresh_expires_at))
+        table.add_row("Permissions", _permissions(grant))
+        workload = me.get("workload")
+        if isinstance(workload, dict) and workload.get("resourceId"):
+            kind = workload.get("resourceType", "")
+            table.add_row("Workload", f"{_WORKLOAD_LABELS.get(kind, kind)} {workload['resourceId']}".strip())
+        if me.get("credentialKind"):
+            _add_expiry(table, "Access expires", me.get("expiresAt"))
+        elif login is not None:
+            table.add_row("Access expires", _stamp(login.access_expires_at))
+        if login is not None:
+            table.add_row("Login expires", _stamp(login.refresh_expires_at))
+    else:
+        for field in ("Orgs", "Teamspaces", "Permissions", "Expires"):
+            table.add_row(field, _UNKNOWN)
     click.echo(rich_to_str(table), color=True)
