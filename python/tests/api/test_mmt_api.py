@@ -17,7 +17,7 @@ from lightning_sdk.machine import Machine
 from lightning_sdk.status import Status
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job(_mock_auth):
     job_api = MMTApiV2()
 
@@ -113,7 +113,7 @@ def test_mmt_v2_submit_job(_mock_auth):
     create_job_mock.assert_called_once_with(project_id="ts-abc", body=body)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_threads_placement_group_id(_mock_auth):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -143,7 +143,7 @@ def test_mmt_v2_submit_job_threads_placement_group_id(_mock_auth):
     assert body.spec.placement_group_id == "pg-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_threads_keep_minutes(_mock_auth):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -175,7 +175,7 @@ def test_mmt_v2_submit_job_threads_keep_minutes(_mock_auth):
 
 
 @pytest.mark.parametrize("timeout", [None, 0])
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_omits_unset_keep_minutes(_mock_auth, timeout):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -206,7 +206,7 @@ def test_mmt_v2_submit_job_omits_unset_keep_minutes(_mock_auth, timeout):
     assert body.spec.keep_machine_after_stop is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_rejects_negative_keep_minutes(_mock_auth):
     job_api = MMTApiV2()
     job_api._client.jobs_service_create_multi_machine_job = mock.MagicMock()
@@ -233,7 +233,7 @@ def test_mmt_v2_submit_job_rejects_negative_keep_minutes(_mock_auth):
         )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_threads_tags(_mock_auth):
     mmt_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -263,7 +263,7 @@ def test_mmt_v2_submit_job_threads_tags(_mock_auth):
     assert body.tags == ["prod"]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_mmt_by_name(_mock_auth):
     job_api = MMTApiV2()
 
@@ -274,7 +274,7 @@ def test_get_mmt_by_name(_mock_auth):
     get_job_by_name_mock.assert_called_once_with(name="test-job", project_id="ts-abc")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_mmt(_mock_auth):
     job_api = MMTApiV2()
 
@@ -298,7 +298,7 @@ def test_get_mmt(_mock_auth):
         ("MultiMachineJob_STATE_DELETED", Status.Stopped),
     ],
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_translate_state(_mock_auth, internal_state, expected_state):
     job_api = MMTApiV2()
     assert job_api._job_state_to_external(internal_state) == expected_state
@@ -345,7 +345,7 @@ def test_machine_translate(
         ),
     ],
 )
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_stop(_mock_auth, job_states: List[str], total_calls_get_job: int, called_update_job: bool):
     job_api = MMTApiV2()
 
@@ -384,7 +384,7 @@ def test_mmt_stop(_mock_auth, job_states: List[str], total_calls_get_job: int, c
         update_job_mock.assert_not_called()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_delete(_mock_auth):
     job_api = MMTApiV2()
 
@@ -409,7 +409,7 @@ def test_get_studio_name_returns_none_when_cloudspace_missing():
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_auto_derives_fault_tolerance_from_max_run_attempts(_mock_auth):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -444,7 +444,7 @@ def test_mmt_v2_submit_job_auto_derives_fault_tolerance_from_max_run_attempts(_m
     assert body.fault_tolerance.strategy == "MULTI_MACHINE_JOB_FAULT_TOLERANCE_STRATEGY_RECREATE_ALL_NODES"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_unset(_mock_auth):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -476,7 +476,7 @@ def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_unset(_mo
     assert body.fault_tolerance is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_leq_one(_mock_auth):
     job_api = MMTApiV2()
     create_job_mock = mock.MagicMock()
@@ -508,7 +508,7 @@ def test_mmt_v2_submit_job_omits_fault_tolerance_when_max_run_attempts_leq_one(_
     assert body.fault_tolerance is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_set_tags_sends_request(_mock_auth):
     from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
 
@@ -526,7 +526,7 @@ def test_mmt_set_tags_sends_request(_mock_auth):
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_mmt_set_tags_sends_empty_list(_mock_auth):
     from lightning_sdk.lightning_cloud.openapi import JobsServiceSetWorkloadTagsBody
 

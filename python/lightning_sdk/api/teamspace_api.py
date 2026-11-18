@@ -11,7 +11,6 @@ from tqdm.auto import tqdm
 from lightning_sdk.api.auth_api import AuthApi
 from lightning_sdk.api.utils import (
     Experiment,
-    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _download_model_files,
@@ -23,6 +22,8 @@ from lightning_sdk.api.utils import (
     _stream_download_to_file,
     _tree_path_info,
     cached_lightning_client,
+    credential_auth,
+    request_auth,
 )
 from lightning_sdk.data_connection import BucketCredentials
 from lightning_sdk.lightning_cloud.openapi import (
@@ -764,7 +765,7 @@ class TeamspaceApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/trees/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
         )
         return r.json()
 
@@ -889,7 +890,7 @@ class TeamspaceApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
             stream=True,
         )
 
@@ -915,7 +916,7 @@ class TeamspaceApi:
         base_path: str,
         download_dir: Path,
         teamspace_id: str,
-        auth_headers: Dict[str, str],
+        auth: object,
         cloud_account: Optional[str] = None,
         pbar: Optional[tqdm] = None,
     ) -> None:
@@ -926,7 +927,7 @@ class TeamspaceApi:
             base_path: Base directory path prepended to the relative file path when building the request URL.
             download_dir: Local directory where the downloaded file is written.
             teamspace_id: ID of the owning teamspace.
-            auth_headers: HTTP headers carrying the caller's credentials.
+            auth: Credential handler for this file's request.
             cloud_account: Optional cloud account ID used to locate the artifact.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
@@ -946,7 +947,7 @@ class TeamspaceApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/blobs/{file_path}",
             params=query_params,
-            headers=auth_headers,
+            auth=request_auth(auth),
             stream=True,
         )
 
@@ -990,7 +991,7 @@ class TeamspaceApi:
             print(f"No files found in {path}")
             return
 
-        auth_headers = _authenticate_and_get_auth_headers()
+        auth = credential_auth()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -1014,7 +1015,7 @@ class TeamspaceApi:
                         path,
                         download_dir,
                         teamspace_id,
-                        auth_headers,
+                        auth,
                         cloud_account,
                         pbar,
                     )

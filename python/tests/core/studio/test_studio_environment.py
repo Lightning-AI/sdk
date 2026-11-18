@@ -16,7 +16,7 @@ def list_cloudspaces_side_effect(existing_studios):
     return _list_cloudspaces_side_effect
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_env_property():
     """Test that Studio.env property calls StudioApi.get_env correctly."""
     from lightning_sdk.lightning_cloud.openapi import V1EnvVar
@@ -44,7 +44,7 @@ def test_studio_env_property():
     studio._studio_api.get_env.assert_called_once_with(mock_studio)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_set_env_partial_true():
     """Test that Studio.set_env calls StudioApi.set_env correctly with partial=True."""
     mock_studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")
@@ -62,7 +62,7 @@ def test_studio_set_env_partial_true():
     studio._studio_api.set_env.assert_called_once_with(mock_studio, "ts-abc", new_env, partial=True)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_set_env_partial_false():
     """Test that Studio.set_env calls StudioApi.set_env correctly with partial=False."""
     mock_studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")
@@ -80,7 +80,7 @@ def test_studio_set_env_partial_false():
     studio._studio_api.set_env.assert_called_once_with(mock_studio, "ts-abc", new_env, partial=False)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_set_env_validates_names_and_accepts_empty_values():
     studio = Studio.__new__(Studio)
     studio._studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")
@@ -99,7 +99,7 @@ def test_studio_set_env_validates_names_and_accepts_empty_values():
     assert studio._studio_api.set_env.call_count == 1
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_delete_env_preserves_unrelated_variables():
     studio = Studio.__new__(Studio)
     studio._studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")
@@ -114,7 +114,7 @@ def test_studio_delete_env_preserves_unrelated_variables():
     studio._studio_api.set_env.assert_called_once_with(studio._studio, "ts-abc", {"KEEP": "yes"}, partial=False)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_studio_delete_env_handles_final_missing_and_invalid_names():
     studio = Studio.__new__(Studio)
     studio._studio = V1CloudSpace(id="st-abc", name="st-abc", cluster_id="c-abc")

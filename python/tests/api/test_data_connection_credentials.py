@@ -14,7 +14,7 @@ from lightning_sdk.lightning_cloud.openapi import (
 
 def _api_with_connections(*connections, credentials=None):
     """Build a TeamspaceApi whose generated client is mocked out."""
-    with mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock()):
+    with mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock()):
         api = TeamspaceApi()
 
     client = mock.MagicMock()
@@ -50,7 +50,7 @@ def test_unknown_connection_name_lists_the_ones_that_exist():
 
 def test_no_connections_at_all_is_not_a_crash():
     """An empty teamspace returns no list at all, rather than an empty one."""
-    with mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock()):
+    with mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock()):
         api = TeamspaceApi()
     client = mock.MagicMock()
     client.data_connection_service_list_data_connections.return_value = V1ListDataConnectionsResponse(

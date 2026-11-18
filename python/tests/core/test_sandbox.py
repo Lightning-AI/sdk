@@ -28,7 +28,7 @@ def _v1(**kwargs) -> V1Sandbox:
     return V1Sandbox(**defaults)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_resolve_sandbox_api_rejects_config_and_api_together():
     cfg = SandboxConfig(api_key="k", base_url="https://x")
     fake_api = mock.MagicMock()
@@ -36,7 +36,7 @@ def test_resolve_sandbox_api_rejects_config_and_api_together():
         _resolve_sandbox_api(sandbox_api=fake_api, config=cfg)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_waits_until_running():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -56,7 +56,7 @@ def test_create_sandbox_waits_until_running():
     mock_sb.sandboxes_service_get_sandbox.assert_called_once()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_raises_on_terminal_status():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -68,7 +68,7 @@ def test_create_sandbox_raises_on_terminal_status():
             create_sandbox(name="n", sandbox_api=api)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_omits_project_id_without_api_response():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -85,7 +85,7 @@ def test_create_sandbox_omits_project_id_without_api_response():
     assert body.project_id is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_restore_omits_project_id_prefetch():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -101,7 +101,7 @@ def test_create_sandbox_restore_omits_project_id_prefetch():
     assert body.snapshot_id == "snap-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_sends_explicit_project_id():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -114,7 +114,7 @@ def test_create_sandbox_sends_explicit_project_id():
     assert body.project_id == "proj-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_sends_image_and_secret_ref():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -134,21 +134,21 @@ def test_create_sandbox_sends_image_and_secret_ref():
     assert body.runtime is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_rejects_image_with_runtime():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     with pytest.raises(ValueError, match="mutually exclusive"):
         create_sandbox(name="n", sandbox_api=api, runtime="python", image="ghcr.io/org/img:latest")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_rejects_secret_ref_without_image():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     with pytest.raises(ValueError, match="only valid together with 'image'"):
         create_sandbox(name="n", sandbox_api=api, image_secret_ref="my-secret")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_docker_maps_runtime_to_variant():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -161,7 +161,7 @@ def test_create_sandbox_docker_maps_runtime_to_variant():
     assert body.runtime == "node24-docker"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_docker_defaults_runtime():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -174,7 +174,7 @@ def test_create_sandbox_docker_defaults_runtime():
     assert body.runtime == "node24-docker"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_docker_does_not_double_suffix():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     mock_sb = mock.MagicMock()
@@ -187,21 +187,21 @@ def test_create_sandbox_docker_does_not_double_suffix():
     assert body.runtime == "python313-docker"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_docker_rejects_image():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     with pytest.raises(ValueError, match="cannot be combined with 'image'"):
         create_sandbox(name="n", sandbox_api=api, image="ghcr.io/org/img:latest", docker=True)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_create_sandbox_docker_rejects_snapshot_id():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test", "organization_id": "org-1"})
     with pytest.raises(ValueError, match="cannot be combined with 'snapshot_id'"):
         create_sandbox(name="n", sandbox_api=api, snapshot_id="snap-1", docker=True)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
     from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
 
@@ -217,7 +217,7 @@ def test_sandbox_instance_snapshot_omits_project_id_for_org_scoped_sandbox():
     assert body.project_id is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_snapshot_maps_project_id_required_error():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
     sb_svc = mock.MagicMock()
@@ -233,7 +233,7 @@ def test_sandbox_instance_snapshot_maps_project_id_required_error():
         sb.snapshot(wait=False)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_snapshot_sends_project_id_from_sandbox_row():
     from lightning_sdk.lightning_cloud.openapi import V1SandboxSnapshot
 
@@ -251,7 +251,7 @@ def test_sandbox_instance_snapshot_sends_project_id_from_sandbox_row():
     assert info.id == "snap-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_stop_sends_project_id_from_sandbox_row():
     api = SandboxApi({"api_key": "unit-key", "base_url": "https://unit.test"})
     sb_svc = mock.MagicMock()
@@ -266,7 +266,7 @@ def test_sandbox_instance_stop_sends_project_id_from_sandbox_row():
     assert body.project_id == "proj-on-sandbox"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_client_snapshot_helpers():
     from lightning_sdk.lightning_cloud.openapi import V1ListSandboxSnapshotsResponse, V1SandboxSnapshot
 
@@ -286,7 +286,7 @@ def test_sandbox_client_snapshot_helpers():
     sb_svc.sandboxes_service_delete_sandbox_snapshot.assert_called_once_with("snap-1")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_run_command_string_and_args():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
@@ -300,7 +300,7 @@ def test_sandbox_instance_run_command_string_and_args():
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_run_command_auto_splits_simple_command():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="", output="", exit_code=0)
@@ -314,7 +314,7 @@ def test_sandbox_instance_run_command_auto_splits_simple_command():
     assert kwargs["args"] == ["-a"]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_run_command_run_command_opts():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="d1", output="", exit_code=0)
@@ -345,7 +345,7 @@ def test_sandbox_instance_run_command_run_command_opts():
     )
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_run_command_non_detached_returns_finished_command():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
@@ -360,7 +360,7 @@ def test_sandbox_instance_run_command_non_detached_returns_finished_command():
     assert cmd.output == "hi"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_command_wait_polls_until_done_for_detached():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c-bg", output="", exit_code=0)
@@ -382,7 +382,7 @@ def test_command_wait_polls_until_done_for_detached():
     assert cmd.output == "done\n"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_command_wait_returns_immediately_when_already_finished():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c1", output="hi", exit_code=0)
@@ -395,7 +395,7 @@ def test_command_wait_returns_immediately_when_already_finished():
     mock_api.get_command.assert_not_called()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_command_kill_calls_kill_command():
     mock_api = mock.MagicMock()
     mock_api.run_command.return_value = CommandResult(cmd_id="c-k", output="", exit_code=0)
@@ -407,7 +407,7 @@ def test_command_kill_calls_kill_command():
     mock_api.kill_command.assert_called_once_with("sb-k", "c-k", "org-k")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_wait_for_command_polls_until_done():
     mock_api = mock.MagicMock()
     mock_api.get_command.side_effect = [
@@ -425,7 +425,7 @@ def test_sandbox_instance_wait_for_command_polls_until_done():
     mock_api.get_command.assert_called_with("sb-w", "c-1", "org-w")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_wait_for_command_times_out():
     mock_api = mock.MagicMock()
     mock_api.get_command.return_value = CommandStatus(output="", exit_code=0, running=True)
@@ -440,7 +440,7 @@ def test_sandbox_instance_wait_for_command_times_out():
         sb.wait_for_command("c-1", timeout=1.0, poll_interval=0.0)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_read_file_returns_none_on_404():
     mock_api = mock.MagicMock()
     sb_svc = mock.MagicMock()
@@ -452,7 +452,7 @@ def test_sandbox_instance_read_file_returns_none_on_404():
     assert sb.read_file("/missing") is None
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_stop_swallows_404():
     mock_api = mock.MagicMock()
     sb_svc = mock.MagicMock()
@@ -463,7 +463,7 @@ def test_sandbox_instance_stop_swallows_404():
     sb.stop()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_list_builds_result():
     sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test"))
     sb_svc = mock.MagicMock()
@@ -488,7 +488,7 @@ def test_sandbox_instance_list_builds_result():
     sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with(page_token="pt", limit=10)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_list_sandboxes_omits_organization_id_when_not_configured():
     sdk = Sandbox(SandboxConfig(api_key="unit-key", base_url="https://unit.test"))
     sb_svc = mock.MagicMock()
@@ -500,7 +500,7 @@ def test_list_sandboxes_omits_organization_id_when_not_configured():
     sb_svc.sandboxes_service_list_sandboxes.assert_called_once_with()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_write_files_uses_write_file():
     mock_api = mock.MagicMock()
     sb = SandboxInstance(_v1(id="sb-6"), sandbox_api=mock_api)
@@ -518,7 +518,7 @@ def test_sandbox_instance_write_files_uses_write_file():
     sb.write_file.assert_any_call("/b", "B")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_port_urls_and_get_port_url():
     url = "https://8080-sb-7-s.cloudspaces.litng.ai"
     sb = SandboxInstance(_v1(id="sb-7", ports=["8080"], port_urls={"8080": url}))
@@ -528,7 +528,7 @@ def test_sandbox_instance_port_urls_and_get_port_url():
     assert sb.get_port_url("8080") == url
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_instance_get_port_url_raises_for_unexposed_port():
     sb = SandboxInstance(_v1(id="sb-8"))
 
@@ -537,7 +537,7 @@ def test_sandbox_instance_get_port_url_raises_for_unexposed_port():
         sb.get_port_url(9000)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_entry_create_forwards_to_create_sandbox():
     mock_inst = mock.MagicMock()
     with mock.patch("lightning_sdk.sandbox.sandbox.create_sandbox", return_value=mock_inst) as m_create:
@@ -550,7 +550,7 @@ def test_sandbox_entry_create_forwards_to_create_sandbox():
     assert m_create.call_args.kwargs["sandbox_api"] is sdk.api
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_create_classmethod_forwards():
     mock_inst = mock.MagicMock()
     cfg = SandboxConfig(api_key="k", base_url="https://unit.test")
@@ -567,7 +567,7 @@ def test_sandbox_create_classmethod_forwards():
     assert received.config_get("base_url") == "https://unit.test"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_create_without_config_uses_configured_globals():
     """Sandbox.configure() defaults must reach Sandbox.create() when no config= is passed."""
     import lightning_sdk.sandbox.base as base
@@ -589,7 +589,7 @@ def test_sandbox_create_without_config_uses_configured_globals():
         base._default_api().reset()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_client_without_config_uses_configured_globals():
     """Sandbox() (the client) must honor Sandbox.configure() defaults, like Sandbox.create()."""
     import lightning_sdk.sandbox.base as base
@@ -610,7 +610,7 @@ def test_sandbox_client_without_config_uses_configured_globals():
         base._default_api().reset()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_client_with_config_uses_isolated_client():
     """An explicit config gets its own client, not the shared global one."""
     import lightning_sdk.sandbox.base as base
@@ -620,7 +620,7 @@ def test_sandbox_client_with_config_uses_isolated_client():
     assert client.api.config_get("api_key") == "explicit-key"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_create_resolves_teamspace_to_project_id():
     mock_inst = mock.MagicMock()
     cfg = SandboxConfig(api_key="k", base_url="https://unit.test")
@@ -635,7 +635,7 @@ def test_sandbox_create_resolves_teamspace_to_project_id():
     assert m_create.call_args.kwargs["project_id"] == "proj-1"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_resolve_teamspace_id_accepts_owner_teamspace_name():
     resolved = mock.MagicMock()
     resolved.id = "proj-1"
@@ -648,7 +648,7 @@ def test_resolve_teamspace_id_accepts_owner_teamspace_name():
 def test_resolve_teamspace_id_falls_back_to_memberships(mocker):
     from lightning_sdk.lightning_cloud.openapi import V1ListMembershipsResponse, V1Membership
 
-    mocker.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+    mocker.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
     m_resolve = mocker.patch("lightning_sdk.utils.resolve._resolve_teamspace", side_effect=Exception("fail"))
 
     membership = V1Membership(
@@ -671,7 +671,7 @@ def test_resolve_teamspace_id_falls_back_to_memberships(mocker):
     m_resolve.assert_any_call("teamspace", org=None, user="owner")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_entry_get_and_list_use_sdk_api():
     sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
     with mock.patch.object(sdk.api, "get_sandbox", return_value=_v1(id="sb-x")) as m_get, mock.patch.object(
@@ -687,7 +687,7 @@ def test_sandbox_entry_get_and_list_use_sdk_api():
     m_list.assert_called_once_with(page_token=None, limit=3, project_id=None)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_sandbox_list_resolves_teamspace_to_project_id():
     sdk = Sandbox(SandboxConfig(api_key="k", base_url="https://unit.test"))
     with mock.patch.object(
@@ -701,7 +701,7 @@ def test_sandbox_list_resolves_teamspace_to_project_id():
     m_list.assert_called_once_with(page_token=None, limit=3, project_id="proj-1")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_configure_updates_globals_and_resets_client():
     import lightning_sdk.sandbox.base as base
 

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import functools
 import sys
+from collections.abc import Callable, Mapping
 from typing import Any, cast
 
 import click
@@ -45,12 +47,24 @@ def render_notice(command_path: str, detail: str | None = None, *, group: bool =
     return rich_to_str(panel)
 
 
-def _with_help_notice(cmd: click.Command, detail: str | None = None, *, group: bool = False) -> click.Command:
-    """Return a copy of ``cmd`` whose help starts with the notice. The copy still runs as before."""
+def _always() -> bool:
+    return True
+
+
+def _always_unavailable(_params: Mapping[str, Any]) -> bool:
+    return True
+
+
+def _with_help_notice(
+    cmd: click.Command, detail: str | None = None, *, group: bool = False, shown: Callable[[], bool] = _always
+) -> click.Command:
+    """Return a copy of ``cmd`` whose help starts with the notice while ``shown()``. The copy still runs as before."""
     marked = copy.copy(cmd)
     original_get_help = cmd.get_help
 
     def _get_help(ctx: click.Context) -> str:
+        if not shown():
+            return original_get_help(ctx)
         terminal = sys.stdout.isatty()
         notice = render_notice(ctx.command_path, detail, group=group, terminal=terminal)
         # The help text is printed as-is, so the styles are dropped unless it goes to a terminal.
@@ -62,12 +76,17 @@ def _with_help_notice(cmd: click.Command, detail: str | None = None, *, group: b
     return marked
 
 
-def mark_temporarily_unavailable(cmd: click.Command, detail: str | None = None) -> click.Command:
-    """Return a copy of ``cmd`` that raises :class:`TemporarilyUnavailableError` when run.
+def mark_temporarily_unavailable(
+    cmd: click.Command,
+    detail: str | None = None,
+    *,
+    unavailable: Callable[[Mapping[str, Any]], bool] = _always_unavailable,
+) -> click.Command:
+    """Return a copy of ``cmd`` that raises :class:`TemporarilyUnavailableError` when run while it is unavailable.
 
-    The copy keeps the original's parameters and help, and its help text starts with the
-    notice, so ``--help`` still works. The original is left untouched, so code that imports
-    the command directly keeps working.
+    The copy keeps the original's parameters and help, and while it is unavailable its help
+    text starts with the notice, so ``--help`` still works. The original is left untouched, so
+    code that imports the command directly keeps working.
 
     ``invoke`` is replaced as well as ``callback``: a wrapper such as ``DeprecatedGroup``
     may already have wrapped ``invoke`` and would otherwise run the original command.
@@ -75,37 +94,58 @@ def mark_temporarily_unavailable(cmd: click.Command, detail: str | None = None) 
     Args:
         cmd: The command to mark as temporarily unavailable.
         detail: Optional text added to the notice, such as a workaround or an expected return.
+        unavailable: Whether the command is unavailable, given the parameters it is run with. It is
+            asked again on every run, and with no parameters for ``--help`` and the group notice.
 
     Returns:
         click.Command: The marked copy to register in place of ``cmd``.
     """
-    marked = _with_help_notice(cmd, detail)
+    marked = _with_help_notice(cmd, detail, shown=lambda: unavailable({}))
     dynamic_cmd = cast(Any, marked)
+    original_callback = cmd.callback
+    original_invoke = cmd.invoke
 
     def _refuse(ctx: click.Context) -> None:
         raise TemporarilyUnavailableError(ctx.command_path, detail)
 
-    def _unavailable_callback(*_args: Any, **_kwargs: Any) -> None:
-        _refuse(click.get_current_context())
+    def _gated_callback(*args: Any, **kwargs: Any) -> Any:
+        if unavailable(kwargs):
+            _refuse(click.get_current_context())
+        return original_callback(*args, **kwargs) if original_callback is not None else None
 
-    dynamic_cmd.callback = _unavailable_callback
-    dynamic_cmd.invoke = _refuse
-    dynamic_cmd._lightning_unavailable = True
+    def _gated_invoke(ctx: click.Context) -> Any:
+        if unavailable(ctx.params):
+            _refuse(ctx)
+        return original_invoke(ctx)
+
+    dynamic_cmd.callback = _gated_callback
+    dynamic_cmd.invoke = _gated_invoke
+    dynamic_cmd._lightning_unavailable = unavailable
     dynamic_cmd._lightning_original = cmd
     return marked
 
 
 def mark_unavailable_groups(root: click.Group) -> None:
-    """Add the group notice to the help of each group under ``root`` whose commands are all unavailable.
+    """Add the group notice to the help of each group under ``root`` whose commands are all marked.
 
-    Such a group still runs (it only shows its help), so it is not refused. Call this after the
-    commands are marked, so that nested groups such as ``studio env`` count too.
+    The notice shows only while all of them are unavailable. Such a group still runs (it only
+    shows its help), so it is not refused. Call this after the commands are marked, so that
+    nested groups such as ``studio env`` count too.
     """
     for name, cmd in root.commands.items():
         if isinstance(cmd, click.Group):
             mark_unavailable_groups(cmd)
-            if not is_temporarily_unavailable(cmd) and _all_unavailable(cmd):
-                root.commands[name] = _with_help_notice(cmd, group=True)
+            if not _is_marked(cmd) and _all_marked(cmd):
+                root.commands[name] = _with_help_notice(cmd, group=True, shown=functools.partial(_all_unavailable, cmd))
+
+
+def _all_marked(cmd: click.Command) -> bool:
+    """Whether ``cmd`` is marked, or is a group with at least one command and all of them are marked."""
+    if _is_marked(cmd):
+        return True
+    if isinstance(cmd, click.Group) and cmd.commands:
+        return all(_all_marked(sub) for sub in cmd.commands.values())
+    return False
 
 
 def _all_unavailable(cmd: click.Command) -> bool:
@@ -117,9 +157,14 @@ def _all_unavailable(cmd: click.Command) -> bool:
     return False
 
 
+def _is_marked(cmd: click.Command) -> bool:
+    return getattr(cmd, "_lightning_unavailable", None) is not None
+
+
 def is_temporarily_unavailable(cmd: click.Command) -> bool:
-    """Whether ``cmd`` was returned by :func:`mark_temporarily_unavailable`."""
-    return bool(getattr(cmd, "_lightning_unavailable", False))
+    """Whether ``cmd`` was returned by :func:`mark_temporarily_unavailable` and is unavailable right now."""
+    unavailable = getattr(cmd, "_lightning_unavailable", None)
+    return unavailable is not None and unavailable({})
 
 
 def unmarked_command(cmd: click.Command) -> click.Command:

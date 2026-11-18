@@ -5,6 +5,7 @@ from typing import Optional
 
 import rich_click as click
 
+from lightning_sdk.cli.utils import lockdown_status
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_job, resolve_job_machine, resolve_teamspace
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal
@@ -12,6 +13,12 @@ from lightning_sdk.status import Status
 
 _SSH_HOST = "ssh.lightning.ai"
 _JOB_ID_PREFIX = "job_"
+# ssh exits with 255 when the connection fails, such as when the gateway refuses the login
+_SSH_CONNECTION_FAILED = 255
+_LOCKDOWN_SSH_HINT = (
+    "While the API lockdown is on, only a Job's owner can SSH into it, "
+    "and only into a single-machine Job that isn't part of a Deployment."
+)
 
 
 def _ssh_user_for_job_id(job_id: str) -> str:
@@ -71,15 +78,11 @@ def ssh_impl(
 
     ssh_user = _ssh_user_for_job_id(job_id)
 
-    def _run(key_path: str) -> None:
-        command = f"ssh -i {key_path} {ssh_user}@{_SSH_HOST}"
-        subprocess.run(command.split())
-
+    key_path = configure_ssh_internal()
     try:
-        _run(configure_ssh_internal())
-    except Exception:
-        # Redownload keys in case they are stale, then retry once.
-        try:
-            _run(configure_ssh_internal(force_download=True))
-        except Exception:
-            raise click.ClickException("Failed to establish SSH connection") from None
+        result = subprocess.run(f"ssh -i {key_path} {ssh_user}@{_SSH_HOST}".split())
+    except OSError:
+        raise click.ClickException("Failed to establish SSH connection") from None
+    # The gateway shows no banner when it refuses a login, only ssh's own "Permission denied (publickey)".
+    if result.returncode == _SSH_CONNECTION_FAILED and lockdown_status.lockdown_on():
+        click.echo(_LOCKDOWN_SSH_HINT, err=True)

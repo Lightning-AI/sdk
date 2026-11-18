@@ -61,7 +61,7 @@ class _DummyResponse:
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_run_command(
     mock_get_teamspace,
     mock_get_org,
@@ -174,7 +174,7 @@ def test_run_command(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_run_command_error(
     mock_get_teamspace,
     mock_get_org,
@@ -283,7 +283,7 @@ def test_run_command_error(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_run_command_exit_code(
     mock_get_teamspace,
     mock_get_org,
@@ -397,7 +397,7 @@ def test_run_command_exit_code(
 )
 @mock.patch("lightning_sdk.api.org_api.OrgApi.get_org", autospec=True)
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi.get_teamspace", autospec=True)
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_run_command_and_detach(
     mock_get_teamspace,
     mock_get_org,

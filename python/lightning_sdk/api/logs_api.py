@@ -22,8 +22,9 @@ from typing import Any, Callable, Deque, Dict, Iterator, List, Optional, Sequenc
 from urllib.parse import urlparse
 
 from lightning_sdk.api.utils import _get_cloud_url
+from lightning_sdk.lightning_cloud.credentials import CredentialSource
 from lightning_sdk.lightning_cloud.login import Auth
-from lightning_sdk.lightning_cloud.rest_client import LightningClient
+from lightning_sdk.lightning_cloud.rest_client import _LOGIN_MESSAGE, LightningClient
 
 # While tailing, ``recv()`` is given this timeout so a quiet socket can be re-checked (the server
 # holds the connection open with heartbeats rather than closing it). It must stay below the
@@ -497,6 +498,7 @@ class LogsApi:
         try:
             import websocket
             from websocket import (
+                WebSocketBadStatusException,
                 WebSocketConnectionClosedException,
                 WebSocketException,
                 WebSocketTimeoutException,
@@ -506,7 +508,6 @@ class LogsApi:
                 "Following logs requires the 'websocket-client' package (pip install websocket-client)."
             ) from ex
 
-        auth_header = Auth().authenticate()
         url = _websocket_url(follow_url)
         # Poll `recv()` rather than blocking on it, so `stop` and `idle_timeout` get a chance to
         # run. The poll has to stay below the server's heartbeat interval: a heartbeat resets the
@@ -518,8 +519,10 @@ class LogsApi:
         last_line_at = time.monotonic()
 
         backoff = _MIN_RECONNECT_BACKOFF
+        refreshed = False
         while True:
             ws = None
+            auth_header = Auth().auth_header
             try:
                 # The handshake gets a longer budget than the deliberately short read poll.
                 ws = websocket.create_connection(
@@ -530,6 +533,7 @@ class LogsApi:
                     on_socket(ws)
                 # Connected cleanly: reset the backoff so the next blip recovers fast
                 backoff = _MIN_RECONNECT_BACKOFF
+                refreshed = False
                 while True:
                     try:
                         message = ws.recv()
@@ -554,6 +558,15 @@ class LogsApi:
                                 continue
                             recent.add(entry)
                         yield entry
+            except WebSocketBadStatusException as err:
+                # Reconnecting with a credential the server refused would loop forever.
+                if err.status_code == 401:
+                    if refreshed or not CredentialSource().refresh(auth_header):
+                        raise ConnectionError(_LOGIN_MESSAGE) from err
+                    refreshed = True
+                    continue
+                if err.status_code == 403 or not reconnect or idle_timeout is not None:
+                    raise
             except (WebSocketException, OSError):
                 if not reconnect or idle_timeout is not None:
                     raise

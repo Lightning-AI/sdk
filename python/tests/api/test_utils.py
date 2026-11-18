@@ -1,3 +1,5 @@
+import os
+import warnings
 from concurrent.futures import Future
 from typing import Optional
 from unittest import mock
@@ -9,6 +11,7 @@ import requests
 import lightning_sdk.api.utils
 from lightning_sdk.api import utils
 from lightning_sdk.api.utils import (
+    CredentialAuth,
     _BlobUploader,
     _collect_download_results,
     _download_model_files,
@@ -37,9 +40,6 @@ _TEST_SIGNED_PUT_URL = "https://storage.example.com/signed-put-url"
 def _make_mocked_blob_uploader(monkeypatch, file_path, remote_path, **kwargs):
     # Threadpools don't like mocks as input, so we just use a regular map here
     monkeypatch.setattr(lightning_sdk.api.utils.ThreadPoolExecutor, "map", map)
-    monkeypatch.setattr(
-        lightning_sdk.api.utils, "_authenticate_and_get_auth_headers", lambda: {"Authorization": "Bearer test-token"}
-    )
     return _BlobUploader(
         client=Mock(),
         endpoint_base=_TEST_ENDPOINT_BASE,
@@ -113,7 +113,7 @@ def test_blob_uploader_multipart(tmp_path, monkeypatch):
 
     create_call = post_mock.call_args_list[0]
     assert create_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
-    assert create_call.kwargs["headers"] == {"Authorization": "Bearer test-token"}
+    assert isinstance(create_call.kwargs["auth"], CredentialAuth)
     assert create_call.kwargs["json"] == {
         "cluster_id": "test-cluster-id",
         "blobs": [{"path": "path/to/file/on/remote", "parts": 3, "part_size": 4}],
@@ -793,18 +793,14 @@ def test_resolve_path_mappings():
 def _make_single_part_blob_uploader(tmp_path, progress_bar=False, extra_headers=None, content=b"hello world"):
     file_path = tmp_path / "test_file.txt"
     file_path.write_bytes(content)
-    with mock.patch(
-        "lightning_sdk.api.utils._authenticate_and_get_auth_headers",
-        return_value={"Authorization": "Bearer test-token"},
-    ):
-        return utils._BlobUploader(
-            client=Mock(),
-            endpoint_base=_TEST_ENDPOINT_BASE,
-            file_path=str(file_path),
-            remote_path="test_file.txt",
-            progress_bar=progress_bar,
-            extra_headers=extra_headers,
-        )
+    return utils._BlobUploader(
+        client=Mock(),
+        endpoint_base=_TEST_ENDPOINT_BASE,
+        file_path=str(file_path),
+        remote_path="test_file.txt",
+        progress_bar=progress_bar,
+        extra_headers=extra_headers,
+    )
 
 
 def _configure_single_part_create(mock_requests, url="http://example.com/upload", headers=None):
@@ -824,7 +820,7 @@ def test_single_part_uploader_basic(mock_requests, tmp_path):
     assert mock_requests.post.call_count == 1
     post_call = mock_requests.post.call_args
     assert post_call.args[0] == f"{_TEST_ENDPOINT_BASE}/blobs"
-    assert post_call.kwargs["headers"] == {"Authorization": "Bearer test-token"}
+    assert isinstance(post_call.kwargs["auth"], CredentialAuth)
 
     # one PUT straight to the signed storage URL, with no token
     assert mock_requests.put.call_count == 1
@@ -1081,3 +1077,163 @@ def test_resolve_tags_leaves_unset_tags_unset(tags):
 
 def test_resolve_tags_strips_surrounding_whitespace():
     assert resolve_tags(["  prod  ", "team a"]) == ["prod", "team a"]
+
+
+@pytest.mark.parametrize(
+    ("metadata", "expected_ns"),
+    [
+        ({"x-amz-meta-mtime": "1700000000.123456789"}, 1700000000123456789),
+        ({"x-amz-meta-mtime": "0"}, 0),
+        ({"x-amz-meta-mtime": "-0.25"}, -250000000),
+        ({"x-goog-meta-mtime": "2023-11-14T22:13:20.123456789Z"}, 1700000000123456789),
+        ({"x-goog-meta-mtime": "2023-11-14T23:13:20.123+01:00"}, 1700000000123000000),
+        ({"x-goog-meta-mtime": "2023-11-14T22:13:20Z"}, 1700000000000000000),
+        ({"x-goog-meta-goog-reserved-file-mtime": "1700000000"}, 1700000000000000000),
+        (
+            {
+                "x-goog-meta-mtime": "2023-11-14T22:13:20.123456789Z",
+                "x-goog-meta-goog-reserved-file-mtime": "1700000000",
+            },
+            1700000000123456789,
+        ),
+    ],
+)
+def test_stream_download_preserves_original_mtime(tmp_path, metadata, expected_ns):
+    response = _fake_stream_response(b"payload", headers=metadata)
+    target = tmp_path / "file.bin"
+
+    with mock.patch("lightning_sdk.api.utils.os.replace", wraps=os.replace) as replace_mock:
+        _stream_download_to_file(response, target, "some/file")
+
+    assert target.stat().st_mtime_ns == expected_ns
+    assert target.read_bytes() == b"payload"
+    replace_mock.assert_called_once()
+    assert [p.name for p in tmp_path.iterdir()] == ["file.bin"]
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {},
+        {"last-modified": "invalid"},
+        {"last-modified": "Tue, 14 Nov 2023 22:13:20"},
+        {"last-modified": "Sun, 14 Nov 9999 22:13:20 GMT"},
+        {"x-amz-meta-mtime": "not a timestamp"},
+        {"x-amz-meta-mtime": "NaN"},
+        {"x-amz-meta-mtime": "Infinity"},
+        {"x-amz-meta-mtime": "1e999999999"},
+        {"x-amz-meta-mtime": "9" * 100},
+        {"x-amz-meta-mtime": "9223372036.854775808"},
+        {"x-goog-meta-mtime": "invalid"},
+        {"x-goog-meta-mtime": "2023-11-14T22:13:20"},
+        {"x-goog-meta-mtime": "9999-11-14T22:13:20Z"},
+        {"x-goog-meta-goog-reserved-file-mtime": "invalid"},
+    ],
+)
+def test_stream_download_warns_without_usable_mtime(tmp_path, metadata):
+    response = _fake_stream_response(b"payload", headers=metadata)
+    target = tmp_path / "file.bin"
+
+    with pytest.warns(UserWarning, match="Could not preserve modification time for 'some/file'"):
+        _stream_download_to_file(response, target, "some/file")
+
+    assert target.read_bytes() == b"payload"
+    assert target.stat().st_mtime_ns != 1700000000000000000
+
+
+def test_stream_download_warns_if_filesystem_cannot_preserve_mtime(tmp_path):
+    response = _fake_stream_response(b"payload", headers={"x-amz-meta-mtime": "1700000000"})
+    target = tmp_path / "file.bin"
+    with (
+        mock.patch("lightning_sdk.api.utils.os.utime", side_effect=OSError("unsupported")),
+        pytest.warns(UserWarning, match="unsupported"),
+    ):
+        _stream_download_to_file(response, target, "some/file")
+
+    assert target.read_bytes() == b"payload"
+
+
+def test_failed_download_does_not_apply_mtime_or_replace_existing_file(tmp_path):
+    target = tmp_path / "file.bin"
+    target.write_bytes(b"existing")
+    original_mtime = target.stat().st_mtime_ns
+    response = _fake_stream_response(b"short", headers={"content-length": "100", "x-amz-meta-mtime": "1700000000"})
+
+    with mock.patch("lightning_sdk.api.utils.os.utime") as utime_mock, pytest.raises(RuntimeError):
+        _stream_download_to_file(response, target, "some/file")
+
+    utime_mock.assert_not_called()
+    assert target.stat().st_mtime_ns == original_mtime
+    assert target.read_bytes() == b"existing"
+    assert [p.name for p in tmp_path.iterdir()] == ["file.bin"]
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        {},
+        {"x-amz-meta-mtime": "invalid"},
+        {"x-amz-meta-mtime": "9223372036.854775808"},
+        {"x-goog-meta-mtime": "invalid"},
+        {"x-goog-meta-goog-reserved-file-mtime": "invalid"},
+    ],
+)
+def test_stream_download_falls_back_to_last_modified(tmp_path, metadata):
+    response = _fake_stream_response(
+        b"payload",
+        headers={
+            **metadata,
+            "last-modified": "Tue, 14 Nov 2023 22:13:20 GMT",
+        },
+    )
+    target = tmp_path / "file.bin"
+
+    with warnings.catch_warnings(record=True) as caught:
+        _stream_download_to_file(response, target, "some/file")
+
+    assert not caught
+    assert target.stat().st_mtime_ns == 1700000000000000000
+    assert target.read_bytes() == b"payload"
+
+
+def test_stream_download_prefers_original_metadata_to_last_modified(tmp_path):
+    response = _fake_stream_response(
+        b"payload",
+        headers={
+            "x-amz-meta-mtime": "1700000000.123456789",
+            "last-modified": "Wed, 15 Nov 2023 22:13:20 GMT",
+        },
+    )
+    target = tmp_path / "file.bin"
+
+    _stream_download_to_file(response, target, "some/file")
+
+    assert target.stat().st_mtime_ns == 1700000000123456789
+    assert target.stat().st_mtime_ns != 1700086400000000000
+
+
+def test_stream_download_preserves_atime_and_sets_mtime_before_replacement(tmp_path):
+    target = tmp_path / "file.bin"
+    target.write_bytes(b"existing")
+    response = _fake_stream_response(b"replacement", headers={"x-amz-meta-mtime": "1700000000.123456789"})
+    original_utime, original_replace = os.utime, os.replace
+
+    def set_times(path, *, ns):
+        assert ns == (os.stat(path).st_atime_ns, 1700000000123456789)
+        original_utime(path, ns=ns)
+
+    def replace(source, destination):
+        assert os.stat(source).st_mtime_ns == 1700000000123456789
+        assert target.read_bytes() == b"existing"
+        original_replace(source, destination)
+
+    with (
+        mock.patch("lightning_sdk.api.utils.os.utime", side_effect=set_times) as utime_mock,
+        mock.patch("lightning_sdk.api.utils.os.replace", side_effect=replace) as replace_mock,
+    ):
+        _stream_download_to_file(response, target, "some/file")
+
+    utime_mock.assert_called_once()
+    replace_mock.assert_called_once()
+    assert target.read_bytes() == b"replacement"
+    assert target.stat().st_mtime_ns == 1700000000123456789

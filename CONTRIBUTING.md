@@ -79,6 +79,10 @@ interactions behind the API layer.
 
 ## Pull requests
 
+- This repository is public. Describe the code change and its behavior in
+  commit messages, pull requests and comments, and leave out internal context:
+  who asked for it, links to private repositories or internal tools, ticket
+  numbers, and internal process.
 - Keep changes scoped and avoid unrelated cleanup.
 - Add or update focused tests for behavior changes.
 - Update public documentation when an API or workflow changes.

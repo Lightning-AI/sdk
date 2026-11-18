@@ -18,7 +18,7 @@ mock_cluster_metrics_error = [
 ]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_billing_usage_with_empty_metrics(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(return_value=V1ListClusterMetricsResponse(cluster_metrics=[]))
@@ -33,7 +33,7 @@ def test_get_billing_usage_with_empty_metrics(_mock_auth):
     get_k8s_mock.assert_called_once_with("test")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_billing_usage_metrics_with_no_range(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(
@@ -51,7 +51,7 @@ def test_get_billing_usage_metrics_with_no_range(_mock_auth):
     get_k8s_mock.assert_called_once_with("test")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_gets_calculates_metrics_with_start_and_end_dates(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     start_date = datetime(2025, 11, 19, 11, 30)
@@ -68,7 +68,7 @@ def test_gets_calculates_metrics_with_start_and_end_dates(_mock_auth):
     assert result[1]["num_allocated_gpus"] == 4.0
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_gets_calculates_metrics_with_only_start_date(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     date = datetime(2025, 11, 19, 12, 30)
@@ -83,7 +83,7 @@ def test_gets_calculates_metrics_with_only_start_date(_mock_auth):
     get_k8s_mock.assert_called_once_with("user-abc", start_date=date)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_gets_calculates_metrics_with_only_end_date(_mock_auth):
     k8s_api = K8sClusterApi("user-abc")
     date = datetime(2025, 11, 19, 12, 30)
@@ -98,7 +98,7 @@ def test_gets_calculates_metrics_with_only_end_date(_mock_auth):
     get_k8s_mock.assert_called_once_with("user-abc", end_date=date)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_gets_raises_error_with_nonexistant_cluster(_mock_auth):
     k8s_api = K8sClusterApi("fakey-abc")
     date = datetime(2025, 11, 19, 12, 30)
@@ -111,7 +111,7 @@ def test_gets_raises_error_with_nonexistant_cluster(_mock_auth):
     get_k8s_mock.assert_called_once_with("fakey-abc", end=date)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_billing_usage_metrics_print_to_stdout(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(
@@ -127,7 +127,7 @@ def test_get_billing_usage_metrics_print_to_stdout(_mock_auth):
     get_k8s_mock.assert_called_once_with("test")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_billing_usage_with_dates_get_folded_into_same_hour(_mock_auth):
     k8s_api = K8sClusterApi("test")
     test_cluster = [
@@ -163,7 +163,7 @@ def test_get_billing_usage_with_dates_get_folded_into_same_hour(_mock_auth):
     get_k8s_mock.assert_called_once_with("test")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth")
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
 def test_get_billing_usage_metrics_with_max_gpus_safety_check(_mock_auth):
     k8s_api = K8sClusterApi("test")
     get_k8s_mock = mock.Mock(

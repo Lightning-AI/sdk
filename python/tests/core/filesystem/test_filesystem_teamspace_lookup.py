@@ -7,7 +7,6 @@ from lightning_sdk.cli.ls import ls_impl
 from lightning_sdk.filesystem import Filesystem
 from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 
-FAKE_AUTH_HEADERS = {"Authorization": "Bearer fake-token"}
 HOST = "https://lightning.ai"
 ORG_ID = "org-1"
 TEAMSPACE_ID = "ts-123"
@@ -35,10 +34,6 @@ def client():
 @pytest.fixture()
 def tree():
     with (
-        mock.patch(
-            "lightning_sdk.api.filesystem_api._authenticate_and_get_auth_headers",
-            return_value=FAKE_AUTH_HEADERS,
-        ),
         mock.patch("lightning_sdk.api.filesystem_api.requests.get") as get,
     ):
         get.return_value.status_code = 200

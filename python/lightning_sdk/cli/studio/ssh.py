@@ -42,16 +42,10 @@ def ssh_impl(name: Optional[str], teamspace: Optional[str], option: Optional[Lis
 
     ssh_private_key_path = configure_ssh_internal()
 
-    ssh_options = " -o " + " -o ".join(option) if option else ""
-    ssh_command = f"ssh -i {ssh_private_key_path}{ssh_options} s_{studio._studio.id}@ssh.lightning.ai"
+    ssh_options = [arg for value in option or () for arg in ("-o", value)]
+    ssh_command = ["ssh", "-i", ssh_private_key_path, *ssh_options, f"s_{studio._studio.id}@ssh.lightning.ai"]
 
     try:
-        subprocess.run(ssh_command.split())
-    except Exception:
-        # redownload the keys to be sure they are up to date
-        ssh_private_key_path = configure_ssh_internal(force_download=True)
-        try:
-            subprocess.run(ssh_command.split())
-        except Exception:
-            # TODO: make this a generic CLI error
-            raise RuntimeError("Failed to establish SSH connection") from None
+        subprocess.run(ssh_command)
+    except OSError as e:
+        raise click.ClickException(f"Failed to establish SSH connection: {e}") from None

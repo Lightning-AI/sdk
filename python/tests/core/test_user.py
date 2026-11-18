@@ -7,7 +7,7 @@ from lightning_sdk.teamspace import Teamspace
 from lightning_sdk.user import User
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_init_from_name(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -16,7 +16,7 @@ def test_user_init_from_name(internal_user_api_mocker):
 
 
 @mock.patch.dict(os.environ, {"LIGHTNING_USERNAME": "my-user-name"})
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_init_from_env_var(internal_user_api_mocker):
     user = User()
 
@@ -24,7 +24,7 @@ def test_user_init_from_env_var(internal_user_api_mocker):
     assert user.id == "my-user-name"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_teamspaces(internal_user_api_mocker, internal_teamspace_api_list_mocker):
     user = User("user-abc")
 
@@ -36,7 +36,7 @@ def test_user_teamspaces(internal_user_api_mocker, internal_teamspace_api_list_m
         assert ts.owner == user
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_equality(internal_user_api_mocker):
     assert User("my-username") == User("my-username")
     assert User("my-username") != User("your-username")
@@ -46,24 +46,24 @@ class SubUser(User):
     pass
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_inequality_user_subclass(internal_user_api_mocker):
     assert User("my-username") != SubUser("my-username")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_repr(internal_user_api_mocker):
     user = User("my-user-name")
     assert repr(user) == "User(name=my-user-name)"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_str(internal_user_api_mocker):
     user = User("my-user-name")
     assert str(user) == "User(name=my-user-name)"
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_secrets_property(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -76,7 +76,7 @@ def test_user_secrets_property(internal_user_api_mocker):
     mock_get.assert_called_once()
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_set_secret(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -86,7 +86,7 @@ def test_user_set_secret(internal_user_api_mocker):
     mock_set.assert_called_once_with("NEW_SECRET", "secret_value")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_set_secret_invalid_name(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -97,7 +97,7 @@ def test_user_set_secret_invalid_name(internal_user_api_mocker):
         user.set_secret("123_INVALID", "secret_value")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_delete_secret(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -107,7 +107,7 @@ def test_user_delete_secret(internal_user_api_mocker):
     mock_delete.assert_called_once_with("OLD_SECRET")
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_delete_secret_invalid_name(internal_user_api_mocker):
     user = User("my-user-name")
 
@@ -122,7 +122,7 @@ def test_user_delete_secret_invalid_name(internal_user_api_mocker):
 
 @mock.patch("lightning_sdk.teamspace.Teamspace.__init__", return_value=None)
 @mock.patch("lightning_sdk.user._get_authed_user")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_create_teamspace(mock_get_authed_user, mock_teamspace_init, internal_user_api_mocker):
     user = User("user-abc")
     mock_get_authed_user.return_value.id = user.id
@@ -135,7 +135,7 @@ def test_user_create_teamspace(mock_get_authed_user, mock_teamspace_init, intern
 
 
 @mock.patch("lightning_sdk.user._get_authed_user")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_user_create_teamspace_not_authed_user(mock_get_authed_user, internal_user_api_mocker):
     user = User("user-abc")
     mock_get_authed_user.return_value.id = "different-user-id"

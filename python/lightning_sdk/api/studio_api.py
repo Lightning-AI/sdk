@@ -9,7 +9,6 @@ import requests
 from tqdm import tqdm
 
 from lightning_sdk.api.utils import (
-    _authenticate_and_get_auth_headers,
     _BlobUploader,
     _collect_download_results,
     _DummyBody,
@@ -20,11 +19,14 @@ from lightning_sdk.api.utils import (
     _stream_download_to_file,
     _tree_path_info,
     cached_lightning_client,
+    credential_auth,
+    request_auth,
 )
 from lightning_sdk.api.utils import (
     _get_cloud_url as _cloud_url,
 )
 from lightning_sdk.constants import _LIGHTNING_DEBUG
+from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.openapi import (
     AssistantsServiceCreateAssistantBody,
     AssistantsServiceCreateAssistantManagedEndpointBody,
@@ -56,7 +58,32 @@ from lightning_sdk.lightning_cloud.openapi import (
     V1UpstreamManaged,
     V1UserRequestedComputeConfig,
 )
+from lightning_sdk.lightning_cloud.openapi.rest import ApiException
 from lightning_sdk.machine import Machine
+
+# The server spends up to five minutes shutting a Studio's machine down after marking it deleted.
+_STUDIO_DELETE_READ_TIMEOUT = 6 * 60
+
+
+def _studio_marked_deleted(host: str, teamspace_id: str, studio_id: str) -> bool:
+    """Whether the Studio's record is already in the deleted state.
+
+    A failed lookup only means the state is not known yet. The delete request's own result decides then.
+    """
+    try:
+        response = requests.get(
+            f"{host}/v1/projects/{teamspace_id}/cloudspaces/{studio_id}",
+            auth=credential_auth(),
+            timeout=10,
+        )
+    except requests.RequestException:
+        return False
+    if response.status_code != 200:
+        return False
+    try:
+        return response.json().get("state") == V1CloudSpaceState.DELETED
+    except ValueError:
+        return False
 
 
 class StudioApi:
@@ -971,14 +998,51 @@ class StudioApi:
         return init_kwargs
 
     def delete_studio(self, studio_id: str, teamspace_id: str) -> None:
-        """Delete existing given Studio.
+        """Delete a Studio, returning once it is deleted.
+
+        The server marks the Studio deleted and then keeps the request open while its machine
+        shuts down. This returns as soon as that mark is visible, so a running Studio does not
+        have to finish powering off first. A caller who is not allowed to delete it gets a
+        ``PermissionError`` instead of the server's refusal.
 
         Args:
             studio_id: Studio (cloud space) ID to delete.
             teamspace_id: ID of the owning teamspace.
+
+        Raises:
+            PermissionError: If the caller may not delete this Studio.
         """
         self.stop_keeping_alive(teamspace_id=teamspace_id, studio_id=studio_id)
-        self._client.cloud_space_service_delete_cloud_space(project_id=teamspace_id, id=studio_id)
+
+        # One request, not the shared client's retries: a slow shutdown and a refusal are both final,
+        # and the retrying client turns a 403 into a bare Exception.
+        client = cached_lightning_client(retry=False)
+        outcome: Dict[str, BaseException] = {}
+        finished = Event()
+
+        def request() -> None:
+            try:
+                client.cloud_space_service_delete_cloud_space(
+                    project_id=teamspace_id,
+                    id=studio_id,
+                    _request_timeout=(env.LIGHTNING_CLOUD_CONNECT_TIMEOUT, _STUDIO_DELETE_READ_TIMEOUT),
+                )
+            except Exception as exc:
+                outcome["error"] = exc
+            finally:
+                finished.set()
+
+        Thread(target=request, daemon=True).start()
+        while not finished.wait(0.5):
+            if _studio_marked_deleted(client.api_client.configuration.host, teamspace_id, studio_id):
+                return
+
+        error = outcome.get("error")
+        if error is None:
+            return
+        if isinstance(error, ApiException) and error.status == 403:
+            raise PermissionError("You don't have permission to delete this Studio.") from error
+        raise error
 
     def get_tree(
         self,
@@ -1001,7 +1065,7 @@ class StudioApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
         )
         return r.json()
 
@@ -1111,7 +1175,7 @@ class StudioApi:
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}",
             params=query_params,
-            headers=_authenticate_and_get_auth_headers(),
+            auth=credential_auth(),
             stream=True,
             allow_redirects=True,
         )
@@ -1139,7 +1203,7 @@ class StudioApi:
         download_dir: Path,
         studio_id: str,
         teamspace_id: str,
-        auth_headers: Dict[str, str],
+        auth: object,
         pbar: Optional[tqdm],
     ) -> None:
         """Download a single file from Studio with progress tracking.
@@ -1150,7 +1214,7 @@ class StudioApi:
             download_dir: Local directory where the downloaded file is written.
             studio_id: Studio (cloud space) ID containing the file.
             teamspace_id: ID of the owning teamspace.
-            auth_headers: HTTP headers carrying the caller's credentials.
+            auth: Credential handler for this file's request.
             pbar: Optional tqdm progress bar to update as bytes are written.
 
         Raises:
@@ -1164,7 +1228,7 @@ class StudioApi:
 
         r = requests.get(
             f"{self._client.api_client.configuration.host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{file_path}",
-            headers=auth_headers,
+            auth=request_auth(auth),
             stream=True,
         )
 
@@ -1212,7 +1276,7 @@ class StudioApi:
             print(f"No files found in {path}")
             return
 
-        auth_headers = _authenticate_and_get_auth_headers()
+        auth = credential_auth()
 
         total_size = sum(f.get("size", 0) for f in files)
 
@@ -1237,7 +1301,7 @@ class StudioApi:
                         download_dir,
                         studio_id,
                         teamspace_id,
-                        auth_headers,
+                        auth,
                         pbar,
                     )
                     for file_info in files
@@ -1275,7 +1339,7 @@ class StudioApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/blobs/{path}"
 
-        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
+        r = requests.delete(url, auth=credential_auth(), timeout=30)
 
         if r.status_code == 204:
             return
@@ -1306,7 +1370,7 @@ class StudioApi:
         client_host = self._client.api_client.configuration.host
         url = f"{client_host}/v1/projects/{teamspace_id}/artifacts/cloudspaces/{studio_id}/trees/{path}"
 
-        r = requests.delete(url, headers=_authenticate_and_get_auth_headers(), timeout=30)
+        r = requests.delete(url, auth=credential_auth(), timeout=30)
 
         if r.status_code == 204:
             return

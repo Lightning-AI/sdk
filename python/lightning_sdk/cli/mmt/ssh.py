@@ -71,15 +71,8 @@ def ssh_impl(
 
     ssh_user = _ssh_user_for_job_id(job_id)
 
-    def _run(key_path: str) -> None:
-        command = f"ssh -i {key_path} {ssh_user}@{_SSH_HOST}"
-        subprocess.run(command.split())
-
+    key_path = configure_ssh_internal()
     try:
-        _run(configure_ssh_internal())
-    except Exception:
-        # Redownload keys in case they are stale, then retry once.
-        try:
-            _run(configure_ssh_internal(force_download=True))
-        except Exception:
-            raise click.ClickException("Failed to establish SSH connection") from None
+        subprocess.run(f"ssh -i {key_path} {ssh_user}@{_SSH_HOST}".split())
+    except OSError:
+        raise click.ClickException("Failed to establish SSH connection") from None

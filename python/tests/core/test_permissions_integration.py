@@ -60,7 +60,6 @@ def test_teamspace_studios_property_succeeds_when_enabled(mock_teamspace_api, mo
 
     mock_teamspace_api.return_value.get_teamspace.return_value = mock_project
     mock_teamspace_api.return_value._get_teamspace_by_id.return_value = mock_project
-    mock_teamspace_api.return_value.list_lightningapps.return_value = []
 
     # Create a teamspace instance
     ts = Teamspace.__new__(Teamspace)
@@ -182,7 +181,7 @@ def test_teamspace_multi_machine_jobs_property_succeeds_when_enabled(mock_teamsp
 
 
 # Studio class permission tests
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.studio._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")
@@ -298,7 +297,7 @@ def test_pipeline_init_raises_error_when_pipelines_disabled(mock_teamspace_api, 
 
 
 # Deployment class permission tests
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.lightning_cloud.login.Auth")
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.deployment._resolve_teamspace")
@@ -440,7 +439,7 @@ def test_litcontainer_upload_raises_error_when_containers_disabled(
 
 @mock.patch("lightning_sdk.api.utils.LightningClient")
 @mock.patch("lightning_sdk.api.lit_container_api.docker.from_env")
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 @mock.patch("lightning_sdk.user.UserApi")
 @mock.patch("lightning_sdk.lit_container._resolve_teamspace")
 @mock.patch("lightning_sdk.api.teamspace_api.TeamspaceApi")

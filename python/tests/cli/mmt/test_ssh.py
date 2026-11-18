@@ -180,7 +180,7 @@ def test_ssh_selects_rank_when_names_lack_rank_suffix() -> None:
     run.assert_called_once_with(["ssh", "-i", "/tmp/lightning_rsa", "j_r1@ssh.lightning.ai"])
 
 
-def test_ssh_retries_with_fresh_keys_on_failure() -> None:
+def test_ssh_reports_a_missing_ssh_client() -> None:
     rank0 = MagicMock()
     rank0.name = "train-0"
     rank0.rank = 0
@@ -191,18 +191,15 @@ def test_ssh_retries_with_fresh_keys_on_failure() -> None:
     mmt.name = "train"
     mmt.machines = (rank0,)
 
-    configure = MagicMock(side_effect=["/tmp/old_key", "/tmp/new_key"])
-    run = MagicMock(side_effect=[OSError("ssh missing"), None])
+    configure = MagicMock(return_value="/tmp/key")
+    run = MagicMock(side_effect=OSError("ssh missing"))
 
     with patch("lightning_sdk.cli.mmt.ssh.resolve_teamspace", return_value=MagicMock()), patch(
         "lightning_sdk.cli.mmt.ssh.resolve_mmt", return_value=mmt
     ), patch("lightning_sdk.cli.mmt.ssh.configure_ssh_internal", configure), patch(
         "lightning_sdk.cli.mmt.ssh.subprocess.run", run
-    ):
+    ), pytest.raises(click.ClickException, match="Failed to establish SSH connection"):
         ssh_impl(name="train", teamspace=None)
 
-    assert configure.call_count == 2
-    configure.assert_any_call(force_download=True)
-    assert run.call_args_list[0].args[0][2] == "/tmp/old_key"
-    assert run.call_args_list[1].args[0][2] == "/tmp/new_key"
-    assert run.call_args_list[1].args[0][-1] == "j_01abc@ssh.lightning.ai"
+    configure.assert_called_once_with()
+    run.assert_called_once()

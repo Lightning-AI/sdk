@@ -23,7 +23,7 @@ mock_cluster = [
 ]
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_billing_usage_with_empty_metrics():
     k8s_api = K8sCluster("test")
     get_billing_usage_mock = mock.Mock(return_value=[])
@@ -38,7 +38,7 @@ def test_get_billing_usage_with_empty_metrics():
     get_billing_usage_mock.assert_called_once_with(print_data=False)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_billing_usage_with_no_range():
     k8s_api = K8sCluster("test")
     get_billing_usage_mock = mock.Mock(return_value=mock_cluster)
@@ -55,7 +55,7 @@ def test_get_billing_usage_with_no_range():
     get_billing_usage_mock.assert_called_once_with(print_data=False)
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_billing_usage_with_only_start():
     k8s_api = K8sCluster("test")
     get_billing_usage_mock = mock.Mock(return_value=[mock_cluster[1]])
@@ -74,7 +74,7 @@ def test_get_billing_usage_with_only_start():
     get_billing_usage_mock.assert_called_once_with(print_data=False, start=to_iso_z(date))
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_billing_usage_with_only_end():
     k8s_api = K8sCluster("test")
     get_billing_usage_mock = mock.Mock(return_value=[mock_cluster[0]])
@@ -93,7 +93,7 @@ def test_get_billing_usage_with_only_end():
     get_billing_usage_mock.assert_called_once_with(print_data=False, end=to_iso_z(date))
 
 
-@mock.patch("lightning_sdk.lightning_cloud.rest_client.Auth", new=mock.MagicMock())
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_get_billing_usage_with_date_range():
     k8s_api = K8sCluster("test")
     get_billing_usage_mock = mock.Mock(return_value=mock_cluster)

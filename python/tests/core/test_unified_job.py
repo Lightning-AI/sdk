@@ -39,6 +39,21 @@ def test_job_lookup_falls_back_to_multi_machine() -> None:
     multi_api.get_job_by_name.assert_called_once()
 
 
+def test_job_lookup_does_not_fall_back_to_multi_machine_while_those_routes_are_closed() -> None:
+    teamspace = _teamspace()
+    standalone_api = MagicMock()
+    standalone_api.get_job_by_name.side_effect = ApiException(status=404)
+
+    with patch("lightning_sdk.job._resolve_teamspace", return_value=teamspace), patch(
+        "lightning_sdk.job.JobApiV2", return_value=standalone_api
+    ), patch("lightning_sdk.job.MMTApiV2") as multi_api, patch(
+        "lightning_sdk.cli.utils.lockdown_status.multi_machine_routes_closed", return_value=True
+    ), pytest.raises(ValueError, match="does not exist"):
+        Job("distributed", teamspace)
+
+    multi_api.return_value.get_job_by_name.assert_not_called()
+
+
 def test_job_lookup_prefers_standalone_on_name_collision() -> None:
     teamspace = _teamspace()
     standalone_api = MagicMock()
