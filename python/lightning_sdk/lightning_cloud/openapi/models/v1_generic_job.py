@@ -50,6 +50,7 @@ class V1GenericJob(object):
         'created_at': 'datetime',
         'current_run_attempt': 'int',
         'id': 'str',
+        'job_count': 'int',
         'max_run_attempts': 'int',
         'message': 'str',
         'name': 'str',
@@ -69,6 +70,7 @@ class V1GenericJob(object):
         'created_at': 'createdAt',
         'current_run_attempt': 'currentRunAttempt',
         'id': 'id',
+        'job_count': 'jobCount',
         'max_run_attempts': 'maxRunAttempts',
         'message': 'message',
         'name': 'name',
@@ -82,13 +84,14 @@ class V1GenericJob(object):
         'user_id': 'userId'
     }
 
-    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, id: 'str' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
+    def __init__(self, cloud_space_id: 'str' =None, cluster_id: 'str' =None, created_at: 'datetime' =None, current_run_attempt: 'int' =None, id: 'str' =None, job_count: 'int' =None, max_run_attempts: 'int' =None, message: 'str' =None, name: 'str' =None, project_id: 'str' =None, spec: 'V1GenericJobSpec' =None, started_at: 'datetime' =None, state: 'str' =None, stopped_at: 'datetime' =None, tags: 'list[V1WorkloadTag]' =None, type: 'str' =None, user_id: 'str' =None):  # noqa: E501
         """V1GenericJob - a model defined in Swagger"""  # noqa: E501
         self._cloud_space_id = None
         self._cluster_id = None
         self._created_at = None
         self._current_run_attempt = None
         self._id = None
+        self._job_count = None
         self._max_run_attempts = None
         self._message = None
         self._name = None
@@ -111,6 +114,8 @@ class V1GenericJob(object):
             self.current_run_attempt = current_run_attempt
         if id is not None:
             self.id = id
+        if job_count is not None:
+            self.job_count = job_count
         if max_run_attempts is not None:
             self.max_run_attempts = max_run_attempts
         if message is not None:
@@ -238,6 +243,27 @@ class V1GenericJob(object):
         """
 
         self._id = id
+
+    @property
+    def job_count(self) -> 'int':
+        """Gets the job_count of this V1GenericJob.  # noqa: E501
+
+
+        :return: The job_count of this V1GenericJob.  # noqa: E501
+        :rtype: int
+        """
+        return self._job_count
+
+    @job_count.setter
+    def job_count(self, job_count: 'int'):
+        """Sets the job_count of this V1GenericJob.
+
+
+        :param job_count: The job_count of this V1GenericJob.  # noqa: E501
+        :type: int
+        """
+
+        self._job_count = job_count
 
     @property
     def max_run_attempts(self) -> 'int':

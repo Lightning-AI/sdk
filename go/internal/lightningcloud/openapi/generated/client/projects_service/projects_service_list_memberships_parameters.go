@@ -75,6 +75,40 @@ type ProjectsServiceListMembershipsParams struct {
 	// OrganizationID.
 	OrganizationID *string
 
+	/* Page.
+
+	   absent: return every membership and ignore page_size. 1-based when set; 0 is invalid.
+
+	   Format: int32
+	*/
+	Page *int32
+
+	/* PageSize.
+
+	   applied only when page is set. 0 uses the server default of 50. values above 100 are capped.
+
+	   Format: int32
+	*/
+	PageSize *int32
+
+	/* Search.
+
+	   case-insensitive substring of display_name. applied before the page slice. empty matches everything.
+	*/
+	Search *string
+
+	/* SortBy.
+
+	   display_name or created_at. empty means display_name. unknown values are invalid.
+	*/
+	SortBy *string
+
+	/* SortOrder.
+
+	   asc or desc. empty means asc. unknown values are invalid.
+	*/
+	SortOrder *string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -161,6 +195,61 @@ func (o *ProjectsServiceListMembershipsParams) SetOrganizationID(organizationID 
 	o.OrganizationID = organizationID
 }
 
+// WithPage adds the page to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithPage(page *int32) *ProjectsServiceListMembershipsParams {
+	o.SetPage(page)
+	return o
+}
+
+// SetPage adds the page to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetPage(page *int32) {
+	o.Page = page
+}
+
+// WithPageSize adds the pageSize to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithPageSize(pageSize *int32) *ProjectsServiceListMembershipsParams {
+	o.SetPageSize(pageSize)
+	return o
+}
+
+// SetPageSize adds the pageSize to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetPageSize(pageSize *int32) {
+	o.PageSize = pageSize
+}
+
+// WithSearch adds the search to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithSearch(search *string) *ProjectsServiceListMembershipsParams {
+	o.SetSearch(search)
+	return o
+}
+
+// SetSearch adds the search to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetSearch(search *string) {
+	o.Search = search
+}
+
+// WithSortBy adds the sortBy to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithSortBy(sortBy *string) *ProjectsServiceListMembershipsParams {
+	o.SetSortBy(sortBy)
+	return o
+}
+
+// SetSortBy adds the sortBy to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetSortBy(sortBy *string) {
+	o.SortBy = sortBy
+}
+
+// WithSortOrder adds the sortOrder to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) WithSortOrder(sortOrder *string) *ProjectsServiceListMembershipsParams {
+	o.SetSortOrder(sortOrder)
+	return o
+}
+
+// SetSortOrder adds the sortOrder to the projects service list memberships params
+func (o *ProjectsServiceListMembershipsParams) SetSortOrder(sortOrder *string) {
+	o.SortOrder = sortOrder
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *ProjectsServiceListMembershipsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -215,6 +304,91 @@ func (o *ProjectsServiceListMembershipsParams) WriteToRequest(r runtime.ClientRe
 		if qOrganizationID != "" {
 
 			if err := r.SetQueryParam("organizationId", qOrganizationID); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Page != nil {
+
+		// query param page
+		var qrPage int32
+
+		if o.Page != nil {
+			qrPage = *o.Page
+		}
+		qPage := swag.FormatInt32(qrPage)
+		if qPage != "" {
+
+			if err := r.SetQueryParam("page", qPage); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PageSize != nil {
+
+		// query param pageSize
+		var qrPageSize int32
+
+		if o.PageSize != nil {
+			qrPageSize = *o.PageSize
+		}
+		qPageSize := swag.FormatInt32(qrPageSize)
+		if qPageSize != "" {
+
+			if err := r.SetQueryParam("pageSize", qPageSize); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.Search != nil {
+
+		// query param search
+		var qrSearch string
+
+		if o.Search != nil {
+			qrSearch = *o.Search
+		}
+		qSearch := qrSearch
+		if qSearch != "" {
+
+			if err := r.SetQueryParam("search", qSearch); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SortBy != nil {
+
+		// query param sortBy
+		var qrSortBy string
+
+		if o.SortBy != nil {
+			qrSortBy = *o.SortBy
+		}
+		qSortBy := qrSortBy
+		if qSortBy != "" {
+
+			if err := r.SetQueryParam("sortBy", qSortBy); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.SortOrder != nil {
+
+		// query param sortOrder
+		var qrSortOrder string
+
+		if o.SortOrder != nil {
+			qrSortOrder = *o.SortOrder
+		}
+		qSortOrder := qrSortOrder
+		if qSortOrder != "" {
+
+			if err := r.SetQueryParam("sortOrder", qSortOrder); err != nil {
 				return err
 			}
 		}

@@ -50,7 +50,9 @@ class V1ReportInferenceUsageRequest(object):
         'coding_plan': 'bool',
         'completion_tokens': 'str',
         'model': 'str',
-        'prompt_tokens': 'str'
+        'prompt_tokens': 'str',
+        'upstream': 'str',
+        'upstream_cost_usd': 'float'
     }
 
     attribute_map = {
@@ -59,10 +61,12 @@ class V1ReportInferenceUsageRequest(object):
         'coding_plan': 'codingPlan',
         'completion_tokens': 'completionTokens',
         'model': 'model',
-        'prompt_tokens': 'promptTokens'
+        'prompt_tokens': 'promptTokens',
+        'upstream': 'upstream',
+        'upstream_cost_usd': 'upstreamCostUsd'
     }
 
-    def __init__(self, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, coding_plan: 'bool' =None, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None):  # noqa: E501
+    def __init__(self, cache_creation_tokens: 'str' =None, cache_read_tokens: 'str' =None, coding_plan: 'bool' =None, completion_tokens: 'str' =None, model: 'str' =None, prompt_tokens: 'str' =None, upstream: 'str' =None, upstream_cost_usd: 'float' =None):  # noqa: E501
         """V1ReportInferenceUsageRequest - a model defined in Swagger"""  # noqa: E501
         self._cache_creation_tokens = None
         self._cache_read_tokens = None
@@ -70,6 +74,8 @@ class V1ReportInferenceUsageRequest(object):
         self._completion_tokens = None
         self._model = None
         self._prompt_tokens = None
+        self._upstream = None
+        self._upstream_cost_usd = None
         self.discriminator = None
         if cache_creation_tokens is not None:
             self.cache_creation_tokens = cache_creation_tokens
@@ -83,6 +89,10 @@ class V1ReportInferenceUsageRequest(object):
             self.model = model
         if prompt_tokens is not None:
             self.prompt_tokens = prompt_tokens
+        if upstream is not None:
+            self.upstream = upstream
+        if upstream_cost_usd is not None:
+            self.upstream_cost_usd = upstream_cost_usd
 
     @property
     def cache_creation_tokens(self) -> 'str':
@@ -211,6 +221,52 @@ class V1ReportInferenceUsageRequest(object):
         """
 
         self._prompt_tokens = prompt_tokens
+
+    @property
+    def upstream(self) -> 'str':
+        """Gets the upstream of this V1ReportInferenceUsageRequest.  # noqa: E501
+
+        Who served the tokens when our fleet didn't: only \"openrouter\". Empty means our fleet.  # noqa: E501
+
+        :return: The upstream of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :rtype: str
+        """
+        return self._upstream
+
+    @upstream.setter
+    def upstream(self, upstream: 'str'):
+        """Sets the upstream of this V1ReportInferenceUsageRequest.
+
+        Who served the tokens when our fleet didn't: only \"openrouter\". Empty means our fleet.  # noqa: E501
+
+        :param upstream: The upstream of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :type: str
+        """
+
+        self._upstream = upstream
+
+    @property
+    def upstream_cost_usd(self) -> 'float':
+        """Gets the upstream_cost_usd of this V1ReportInferenceUsageRequest.  # noqa: E501
+
+        What the upstream charged us for the request, in USD. Recorded for cost accounting; the caller is billed from the token counts either way.  # noqa: E501
+
+        :return: The upstream_cost_usd of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :rtype: float
+        """
+        return self._upstream_cost_usd
+
+    @upstream_cost_usd.setter
+    def upstream_cost_usd(self, upstream_cost_usd: 'float'):
+        """Sets the upstream_cost_usd of this V1ReportInferenceUsageRequest.
+
+        What the upstream charged us for the request, in USD. Recorded for cost accounting; the caller is billed from the token counts either way.  # noqa: E501
+
+        :param upstream_cost_usd: The upstream_cost_usd of this V1ReportInferenceUsageRequest.  # noqa: E501
+        :type: float
+        """
+
+        self._upstream_cost_usd = upstream_cost_usd
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""

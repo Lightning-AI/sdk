@@ -25,6 +25,7 @@ import (
 //   - JOB_TYPE_SLURM_JOB: Slurm jobs
 //   - JOB_TYPE_MULTI_MACHINE_JOB: Multi-machine jobs
 //   - JOB_TYPE_DEFAULT_JOBS: Default jobs (batch jobs, lightning apps, mmt, lit data, ...)
+//   - JOB_TYPE_JOB_GROUP: Groups of independent jobs submitted together
 //
 // swagger:model v1JobType
 type V1JobType string
@@ -63,6 +64,9 @@ const (
 
 	// V1JobTypeJOBTYPEDEFAULTJOBS captures enum value "JOB_TYPE_DEFAULT_JOBS"
 	V1JobTypeJOBTYPEDEFAULTJOBS V1JobType = "JOB_TYPE_DEFAULT_JOBS"
+
+	// V1JobTypeJOBTYPEJOBGROUP captures enum value "JOB_TYPE_JOB_GROUP"
+	V1JobTypeJOBTYPEJOBGROUP V1JobType = "JOB_TYPE_JOB_GROUP"
 )
 
 // for schema
@@ -70,7 +74,7 @@ var v1JobTypeEnum []any
 
 func init() {
 	var res []V1JobType
-	if err := json.Unmarshal([]byte(`["JOB_TYPE_UNSPECIFIED","JOB_TYPE_APP_INSTANCE","JOB_TYPE_BATCH_JOB","JOB_TYPE_DEPLOYMENT","JOB_TYPE_PIPELINE","JOB_TYPE_SLURM_JOB","JOB_TYPE_MULTI_MACHINE_JOB","JOB_TYPE_DEFAULT_JOBS"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["JOB_TYPE_UNSPECIFIED","JOB_TYPE_APP_INSTANCE","JOB_TYPE_BATCH_JOB","JOB_TYPE_DEPLOYMENT","JOB_TYPE_PIPELINE","JOB_TYPE_SLURM_JOB","JOB_TYPE_MULTI_MACHINE_JOB","JOB_TYPE_DEFAULT_JOBS","JOB_TYPE_JOB_GROUP"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

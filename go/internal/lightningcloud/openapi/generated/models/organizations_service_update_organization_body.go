@@ -131,6 +131,9 @@ type OrganizationsServiceUpdateOrganizationBody struct {
 	// start studios on spot instance
 	StartStudiosOnSpotInstance bool `json:"startStudiosOnSpotInstance,omitempty"`
 
+	// UNSPECIFIED leaves the stored value unchanged.
+	StudioPortsAccess *V1StudioPortsAccess `json:"studioPortsAccess,omitempty"`
+
 	// switch to default machine on idle
 	SwitchToDefaultMachineOnIdle bool `json:"switchToDefaultMachineOnIdle,omitempty"`
 
@@ -152,6 +155,10 @@ func (m *OrganizationsServiceUpdateOrganizationBody) Validate(formats strfmt.Reg
 	var res []error
 
 	if err := m.validateAlertsConfig(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStudioPortsAccess(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -184,11 +191,38 @@ func (m *OrganizationsServiceUpdateOrganizationBody) validateAlertsConfig(format
 	return nil
 }
 
+func (m *OrganizationsServiceUpdateOrganizationBody) validateStudioPortsAccess(formats strfmt.Registry) error {
+	if swag.IsZero(m.StudioPortsAccess) { // not required
+		return nil
+	}
+
+	if m.StudioPortsAccess != nil {
+		if err := m.StudioPortsAccess.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("studioPortsAccess")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("studioPortsAccess")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this organizations service update organization body based on the context it is used
 func (m *OrganizationsServiceUpdateOrganizationBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateAlertsConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStudioPortsAccess(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -214,6 +248,31 @@ func (m *OrganizationsServiceUpdateOrganizationBody) contextValidateAlertsConfig
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("alertsConfig")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OrganizationsServiceUpdateOrganizationBody) contextValidateStudioPortsAccess(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.StudioPortsAccess != nil {
+
+		if swag.IsZero(m.StudioPortsAccess) { // not required
+			return nil
+		}
+
+		if err := m.StudioPortsAccess.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("studioPortsAccess")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("studioPortsAccess")
 			}
 
 			return err

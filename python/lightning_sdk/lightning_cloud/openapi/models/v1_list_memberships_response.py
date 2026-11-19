@@ -45,19 +45,24 @@ class V1ListMembershipsResponse(object):
                             and the value is json key in definition.
     """
     swagger_types = {
-        'memberships': 'list[V1Membership]'
+        'memberships': 'list[V1Membership]',
+        'total_count': 'str'
     }
 
     attribute_map = {
-        'memberships': 'memberships'
+        'memberships': 'memberships',
+        'total_count': 'totalCount'
     }
 
-    def __init__(self, memberships: 'list[V1Membership]' =None):  # noqa: E501
+    def __init__(self, memberships: 'list[V1Membership]' =None, total_count: 'str' =None):  # noqa: E501
         """V1ListMembershipsResponse - a model defined in Swagger"""  # noqa: E501
         self._memberships = None
+        self._total_count = None
         self.discriminator = None
         if memberships is not None:
             self.memberships = memberships
+        if total_count is not None:
+            self.total_count = total_count
 
     @property
     def memberships(self) -> 'list[V1Membership]':
@@ -79,6 +84,29 @@ class V1ListMembershipsResponse(object):
         """
 
         self._memberships = memberships
+
+    @property
+    def total_count(self) -> 'str':
+        """Gets the total_count of this V1ListMembershipsResponse.  # noqa: E501
+
+        set only when the request set page. count of matches before the slice.  # noqa: E501
+
+        :return: The total_count of this V1ListMembershipsResponse.  # noqa: E501
+        :rtype: str
+        """
+        return self._total_count
+
+    @total_count.setter
+    def total_count(self, total_count: 'str'):
+        """Sets the total_count of this V1ListMembershipsResponse.
+
+        set only when the request set page. count of matches before the slice.  # noqa: E501
+
+        :param total_count: The total_count of this V1ListMembershipsResponse.  # noqa: E501
+        :type: str
+        """
+
+        self._total_count = total_count
 
     def to_dict(self) -> dict:
         """Returns the model properties as a dict"""
