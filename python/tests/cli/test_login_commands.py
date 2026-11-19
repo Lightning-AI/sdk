@@ -293,6 +293,118 @@ def test_auth_status_shows_a_mixed_grant(platform, browser, monkeypatch) -> None
     assert "a, l, l" not in text
 
 
+def _service_account(**fields):
+    described = {
+        "credentialKind": "access_token",
+        "authType": "AUTH_TYPE_SERVICE_ACCOUNT",
+        "serviceAccount": {"id": "sa-1", "name": "ci-deploy", "orgId": "org-1", "orgName": "Acme"},
+        "orgs": [{"orgId": "org-1", "orgName": "Acme", "allProjects": True}],
+        "permissions": ["read", "write"],
+        "expiresAt": "2027-02-16T13:00:00Z",
+    }
+    described.update(fields)
+    return described
+
+
+def test_auth_status_shows_who_a_service_account_key_acts_as(platform, monkeypatch) -> None:
+    platform.credentials["sa-1"] = _service_account(keyExpiresAt="2027-05-20T12:00:00Z")
+    platform.org_roles = {"org-1": {"sa-1": [{"id": "role-owner", "name": "OrganizationOwner"}]}}
+    platform.memberships = [{"projectId": "proj-9", "name": "research", "roles": [{"name": "ProjectAdministrator"}]}]
+    key = platform.add_service_account_key("sa-1")
+    monkeypatch.setenv("LIGHTNING_API_KEY", key)
+
+    result = _invoke(main_cli, ["auth", "status"])
+    text = _text(result)
+
+    assert result.exit_code == 0, text
+    assert "ci-deploy (sa-1)" in text
+    assert "Acme (org-1)" in text
+    assert "Admin" in text
+    # Its roles decide its teamspaces, not its grant's "all in Acme".
+    assert "research (Administrator)" in text
+    assert "all in Acme" not in text
+    assert "read, write" in text
+    assert "2027-02-16" in text
+    assert "Key expires" in text
+    assert "2027-05-20" in text
+    assert "not known" not in text
+    assert key not in text
+
+
+def test_auth_status_names_a_service_accounts_org_when_it_is_not_a_member(platform, monkeypatch) -> None:
+    # An account always belongs to one org, even with no org role there.
+    platform.credentials["sa-1"] = _service_account()
+    platform.org_roles = {"org-1": {}}
+    platform.memberships = []
+    monkeypatch.setenv("LIGHTNING_API_KEY", platform.add_service_account_key("sa-1"))
+
+    text = _text(_invoke(main_cli, ["auth", "status"]))
+
+    assert "Acme (org-1)" in text
+    assert "Org role" in text
+    assert "none" in text
+    assert "Key expires" in text
+    assert "not known" in text
+
+
+def test_auth_status_shows_what_a_workload_token_reaches(platform, monkeypatch, tmp_path) -> None:
+    platform.bearer_tokens["file-token"] = "user-1"
+    platform.credentials["user-1"] = {
+        "credentialKind": "workload_token",
+        "username": "ada",
+        "orgs": [
+            {"orgId": "org-1", "orgName": "Acme", "projects": [{"id": "proj-9", "name": "research"}]},
+        ],
+        "permissions": ["read", "write"],
+        "expiresAt": "2027-01-15T12:00:00Z",
+        "workload": {"resourceType": "cloudSpaceInstance", "resourceId": "studio-7"},
+    }
+    token_path = tmp_path / "token"
+    token_path.write_text("file-token")
+    monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", str(token_path))
+
+    result = _invoke(main_cli, ["auth", "status"])
+    text = _text(result)
+
+    assert result.exit_code == 0, text
+    assert "ada" in text
+    assert "Acme" in text
+    assert "research" in text
+    assert "read, write" in text
+    assert "Studio studio-7" in text
+    assert "2027-01-15" in text
+    assert "not known" not in text
+    assert "file-token" not in text
+
+
+def test_auth_status_takes_a_logins_reach_from_the_server(platform, browser, monkeypatch) -> None:
+    _login_with_grant(platform, monkeypatch, {"orgs": "all", "permissions": ["read"]})
+    platform.credentials["user-1"] = {
+        "credentialKind": "access_token",
+        "orgs": [{"orgId": "org-1", "orgName": "Acme", "allProjects": True}],
+        "permissions": ["read"],
+        "expiresAt": "2027-01-15T12:00:00Z",
+    }
+
+    text = _text(_invoke(main_cli, ["auth", "status"]))
+
+    assert "all in Acme" in text
+    assert "2027-01-15" in text
+    assert "Login expires" in text
+
+
+def test_auth_status_falls_back_when_the_server_doesnt_describe_the_credential(platform, monkeypatch) -> None:
+    monkeypatch.setenv("LIGHTNING_API_KEY", platform.add_service_account_key("sa-1"))
+
+    result = _invoke(main_cli, ["auth", "status"])
+    text = _text(result)
+
+    assert result.exit_code == 0, text
+    assert "sa-1" in text
+    assert "service-account key in LIGHTNING_API_KEY" in text
+    assert "not known" in text
+
+
 def test_an_unreadable_token_file_is_an_error_not_a_traceback(isolated, monkeypatch, tmp_path) -> None:
     directory = tmp_path / "not-a-file"
     directory.mkdir()
@@ -343,7 +455,7 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
     assert "login (keychain)" in _text(logged_in)
     assert "all" in _text(logged_in)
     assert login_token not in _text(logged_in)
-    assert f"Bearer {login_token}" in platform.authorizations_sent("/v1/auth/user")
+    assert f"Bearer {login_token}" in platform.authorizations_sent("/v1/auth/whoami")
 
     logout()
     token_path = tmp_path / "workload"
@@ -352,7 +464,7 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
     monkeypatch.setenv("LIGHTNING_AUTH_TOKEN_FILE", "workload")
     from_file = _invoke(main_cli, ["auth", "status"])
     assert "token file workload" in _text(from_file)
-    assert "not known locally" in _text(from_file)
+    assert "not known" in _text(from_file)
     assert "file-token" not in _text(from_file)
     assert "not logged in" not in _text(from_file).lower()
 
@@ -360,7 +472,7 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
     monkeypatch.setenv("LIGHTNING_AUTH_TOKEN", "env-token")
     from_env = _invoke(main_cli, ["auth", "status"])
     assert "LIGHTNING_AUTH_TOKEN" in _text(from_env)
-    assert "not known locally" in _text(from_env)
+    assert "not known" in _text(from_env)
     assert "env-token" not in _text(from_env)
     assert "not logged in" not in _text(from_env).lower()
 
@@ -372,13 +484,13 @@ def test_auth_status_names_each_source_and_never_a_token(platform, browser, monk
     assert "service-account key in LIGHTNING_API_KEY" in _text(from_key)
     assert "sa-1" in _text(from_key)
     assert key not in _text(from_key)
-    assert f"Bearer {key}" not in platform.authorizations_sent("/v1/auth/user")
+    assert f"Bearer {key}" not in platform.authorizations_sent("/v1/auth/whoami")
 
     monkeypatch.delenv("LIGHTNING_API_KEY")
     Auth().save(auth_token="sess_saved")
     from_session = _invoke(main_cli, ["auth", "status"])
     assert "interim session login" in _text(from_session)
-    assert "not known locally" in _text(from_session)
+    assert "not known" in _text(from_session)
     assert "sess_saved" not in _text(from_session)
 
     Auth.secrets_file.unlink()
