@@ -87,13 +87,29 @@ def _from_env_token() -> Optional[str]:
     return _present(os.environ.get(Keys.AUTH_TOKEN.value))
 
 
+_SESSION_DEPRECATED = (
+    "You're logged in with an older Lightning login, which will stop working soon. "
+    "Run `lightning login` to switch to the new one."
+)
+_session_warned = False
+
+
+def _from_saved_session() -> Optional[str]:
+    global _session_warned
+    token = cli_login._saved_session()
+    if token and not _session_warned:
+        _session_warned = True
+        cli_login._say(_SESSION_DEPRECATED)
+    return token
+
+
 # The order is the precedence.
 _READERS = (
     (CredentialKind.TOKEN_FILE, _from_token_file),
     (CredentialKind.ENV_TOKEN, _from_env_token),
     (CredentialKind.SERVICE_ACCOUNT, service_account.token),
     (CredentialKind.LOGIN, cli_login._request_token),
-    (CredentialKind.SESSION, cli_login._saved_session),
+    (CredentialKind.SESSION, _from_saved_session),
 )
 
 

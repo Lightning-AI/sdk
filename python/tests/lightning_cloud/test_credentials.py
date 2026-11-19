@@ -8,7 +8,7 @@ import threading
 import pytest
 import requests
 
-from lightning_sdk.lightning_cloud import cli_login, env
+from lightning_sdk.lightning_cloud import cli_login, credentials, env
 from lightning_sdk.lightning_cloud import rest_client as rest_client_module
 from lightning_sdk.lightning_cloud.__version__ import __version__
 from lightning_sdk.lightning_cloud.cli_login import LoginError
@@ -235,6 +235,19 @@ def test_a_session_saved_by_the_stable_sdk_still_sends_bearer(isolated_credentia
 
     GridRestClient(api_client=_Api(request), with_auth=True).api_client.request("GET", "http://example")
     assert seen == ["Bearer sess_interim"]
+
+
+def test_a_saved_session_warns_once_that_it_will_stop_working(isolated_credentials, monkeypatch, capsys):
+    monkeypatch.setattr(credentials, "_session_warned", False)
+    isolated_credentials.write_text(json.dumps({"auth_token": "sess_interim"}))
+
+    assert CredentialSource().resolve().kind is CredentialKind.SESSION
+    assert CredentialSource().resolve().kind is CredentialKind.SESSION
+
+    err = capsys.readouterr().err
+    assert err.count("older Lightning login, which will stop working soon") == 1
+    assert "Run `lightning login`" in err
+    assert "sess_interim" not in err
 
 
 def test_a_saved_new_login_is_sent(platform, browser):
