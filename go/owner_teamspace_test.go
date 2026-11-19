@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 var (
@@ -52,7 +53,7 @@ func TestOwnersListTeamspacesFromMemberships(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	u := mustUser(t, "user-1", "alice")
 	userTeamspaces, err := u.Teamspaces()
@@ -88,7 +89,7 @@ func TestUserOrganizationsUsesGeneratedRoute(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	u := mustUser(t, "user-1", "alice")
 	organizations, err := u.Organizations()
@@ -166,7 +167,7 @@ func TestTeamspaceListsStudiosJobsAndMMTs(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 
@@ -246,7 +247,7 @@ func TestTeamspaceListsJobsAndMMTsByTag(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 
@@ -292,7 +293,7 @@ func TestTeamspaceJobsRejectsUnknownTagBeforeListing(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"tags": tags})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 
@@ -341,7 +342,7 @@ func TestTeamspaceRefreshAndCloudAccountsUseGeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "")
 	require.NoErrorf(t, ts.Refresh(),
@@ -395,7 +396,7 @@ func TestTeamspaceDownloadFileUsesArtifactBlobRoute(t *testing.T) {
 		_, _ = w.Write([]byte("teamspace contents"))
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	targetPath := filepath.Join(t.TempDir(), "downloaded.txt")
@@ -458,7 +459,7 @@ func TestTeamspaceDownloadFolderUsesRecursiveTree(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	targetDir := t.TempDir()
@@ -520,7 +521,7 @@ func TestTeamspaceUploadFileUsesArtifactBlobRoute(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	sourcePath := filepath.Join(t.TempDir(), "source.txt")
@@ -573,7 +574,7 @@ func TestTeamspaceUploadFolderPreservesRelativePaths(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	sourceDir := t.TempDir()
@@ -616,7 +617,7 @@ func TestTeamspaceGetFolderUsesDataConnectionRoute(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"id": "connection-1"})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "")
 	require.NoErrorf(t, ts.NewFolder("datasets"),
@@ -645,7 +646,7 @@ func TestTeamspaceGetFolderCreatesAWSFolderOnCloudAccount(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"id": "connection-1"})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "")
 	require.NoErrorf(t, ts.NewFolder(
@@ -682,7 +683,7 @@ func TestTeamspaceGetConnectionCreatesReadOnlyEFSConnection(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"id": "connection-1"})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "")
 	writable := false
@@ -768,7 +769,7 @@ func TestTeamspaceListMachinesUsesBoundCloudAccounts(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default")
 	machines, err := ts.ListMachines("", "")
@@ -829,7 +830,7 @@ func TestTeamspaceListMachinesUsesExplicitCloudAccount(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default")
 	machines, err := ts.ListMachines("cloud-1", lit.MachineA10G)
@@ -890,7 +891,7 @@ func TestTeamspaceListMachinesUsesCloudProvider(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default")
 	machines, err := ts.ListMachines("aws", "")
@@ -937,7 +938,7 @@ func TestTeamspaceListMachinesTranslatesInstanceTypesToPublicMachines(t *testing
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default")
 	machines, err := ts.ListMachines("cloud-1", "")

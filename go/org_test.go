@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestOrgGetWithIDUsesSimpleStruct(t *testing.T) {
@@ -59,7 +60,7 @@ func TestOrgGetResolvesEnvOrg(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_ORG", "acme")
 
 	o, err := lit.GetOrganization("")

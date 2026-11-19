@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	lit "github.com/lightning-ai/sdk/go"
+	"github.com/lightning-ai/sdk/go/internal/sdktest"
 )
 
 func TestStudioCreateStartStopAndDeleteUseGeneratedRoutes(t *testing.T) {
@@ -69,7 +70,7 @@ func TestStudioCreateStartStopAndDeleteUseGeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	interruptible := true
 	s, err := lit.CreateStudio("dev",
@@ -127,7 +128,7 @@ func TestStudioStartUsesDefaultMachineAndInterruptibleOverride(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_INTERRUPTIBLE_OVERRIDE", "true")
 
 	s := mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Cloud: "cloud-1"})
@@ -163,7 +164,7 @@ func TestStudioRenameUsesUpdateCloudSpaceRoute(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s, err := lit.GetStudio("dev", lit.StudioOptions{ID: "studio-1", Teamspace: mustTeamspace(t, "project-1", "")})
 	require.NoErrorf(t, err,
@@ -200,7 +201,7 @@ func TestStudioPublicIPUsesInstanceStatusRoute(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1")
 	publicIP, err := s.PublicIP()
@@ -232,7 +233,7 @@ func TestStudioDownloadFileUsesArtifactBlobRoute(t *testing.T) {
 		_, _ = w.Write([]byte("file contents"))
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	targetPath := filepath.Join(t.TempDir(), "downloaded.txt")
@@ -293,7 +294,7 @@ func TestStudioDownloadFolderUsesRecursiveTree(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	targetDir := t.TempDir()
@@ -371,7 +372,7 @@ func TestStudioUploadFileUsesArtifactBlobRouteAndCompletion(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	sourcePath := filepath.Join(t.TempDir(), "source.txt")
@@ -424,7 +425,7 @@ func TestStudioUploadFolderPreservesRelativePaths(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 	t.Setenv("LIGHTNING_AUTH_TOKEN", "token-1")
 
 	sourceDir := t.TempDir()
@@ -488,7 +489,7 @@ func TestStudioRunWithExitCodeSubmitsAndPollsCommand(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Status: "Running"})
 	output, exitCode, err := s.RunWithExitCode("echo hello", "pwd")
@@ -529,7 +530,7 @@ func TestStudioRunReturnsCommandOutputAsErrorOnNonZeroExit(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Status: "Running"})
 	output, err := s.Run("false")
@@ -578,7 +579,7 @@ func TestStudioRunAndDetachPollsUntilCommandCompletes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Status: "Running"})
 	output, exitCode, err := s.RunAndDetach(
@@ -648,7 +649,7 @@ func TestStudioMapsAndSetsEnvironmentVariables(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s, err := lit.GetStudio("dev", lit.StudioOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -707,7 +708,7 @@ func TestStudioSetEnvMergesByDefault(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := func() *lit.Studio {
 		result, err := lit.GetStudio("dev", lit.StudioOptions{ID: "studio-1", Teamspace: mustTeamspace(t, "project-1", ""), Env: map[string]string{"KEEP": "yes"}})
@@ -750,7 +751,7 @@ func TestStudioDeleteEnvValidatesAndPreservesUnrelatedVariables(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s, err := lit.GetStudio("dev", lit.StudioOptions{
 		ID:        "studio-1",
@@ -797,7 +798,7 @@ func TestStudioListsPluginsThroughGeneratedRoutes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1")
 	available, err := s.AvailablePlugins()
@@ -855,7 +856,7 @@ func TestStudioInstallsRunsAndUninstallsPluginsThroughGeneratedRoutes(t *testing
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1")
 	require.NoErrorf(t, s.InstallPlugin("custom-port"),
@@ -957,7 +958,7 @@ func TestStudioMapsAndUpdatesAutoSleepConfig(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s, err := lit.GetStudio("dev", lit.StudioOptions{Teamspace: mustTeamspace(t, "project-1", "default", "alice")})
 	require.NoErrorf(t, err,
@@ -1013,7 +1014,7 @@ func TestStudioSwitchMachineUsesCodeConfigRoute(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	s := mustStudio(t, "studio-1", "project-1", lit.StudioOptions{Machine: "cpu", Cloud: "cloud-1"})
 	interruptible := true
@@ -1060,7 +1061,7 @@ func TestStudioDuplicateUsesForkRoute(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	sourceTeamspace := mustTeamspace(t, "source-project", "source", "alice")
 	s, err := lit.GetStudio("dev", lit.StudioOptions{ID: "source-studio", Teamspace: sourceTeamspace, Cloud: "cloud-1"})

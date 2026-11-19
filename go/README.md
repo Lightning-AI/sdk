@@ -48,12 +48,23 @@ go get github.com/lightning-ai/sdk/go@v0.YYYYMMDD.N
 Release `vYYYY.MM.DD` is Go version `v0.YYYYMMDD.0`, and a later release the
 same day, `vYYYY.MM.DD.postN`, is `v0.YYYYMMDD.(N+1)`.
 
-Authenticate with the same environment used by other Lightning SDKs:
+Authenticate with a service-account key:
 
 ```bash
-export LIGHTNING_USER_ID="..."
-export LIGHTNING_API_KEY="..."
+export LIGHTNING_API_KEY="lit_sa_..."
 ```
+
+The SDK swaps the key for a short-lived token and sends only the token. Before
+each request it uses the first credential it finds:
+
+1. The token file named by `LIGHTNING_AUTH_TOKEN_FILE`, re-read every time.
+1. A token in `LIGHTNING_AUTH_TOKEN`.
+1. A service-account key in `LIGHTNING_API_KEY`.
+1. The login saved in `~/.lightning/credentials.json`, or the file named by
+   `LIGHTNING_CREDENTIAL_PATH`.
+
+Inside a Lightning Studio, a credential is usually already set.
+`LIGHTNING_USER_ID` is no longer used.
 
 Run a container-backed job:
 

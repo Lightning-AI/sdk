@@ -58,7 +58,7 @@ func TestJobLifecycleUsesV2Routes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	j := func() *lit.Job {
 		return mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "running"})
@@ -103,7 +103,7 @@ func TestJobLogsErrorWhileMigratingToLogsAPI(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "completed"})
 	_, err := j.Logs()
@@ -117,7 +117,7 @@ func TestJobLogsPendingWithoutHistoryIsEmpty(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	// only a finished job can be waiting on a migration; one that hasn't started has no logs yet
 	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "pending"})
@@ -135,7 +135,7 @@ func TestJobLogsRunningWithoutHistoryDoesNotFallBack(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"entries": []map[string]any{}})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	j := mustJob(t, "job-1", "train", "project-1", "studio-1", lit.JobOptions{Status: "running"})
 	logs, err := j.Logs()
@@ -172,7 +172,7 @@ func TestJobWaitPollsUntilTerminalState(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	j := mustJob(t, "job-1", "train", "project-1", lit.JobOptions{Status: "running"})
 	require.NoErrorf(t, j.Wait(lit.JobWaitOptions{Interval: time.Millisecond}),
@@ -225,7 +225,7 @@ func TestMMTLifecycleUsesV2Routes(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	m := func() *lit.MMT {
 		return mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{NumMachines: 4, Status: "running"})
@@ -281,7 +281,7 @@ func TestMMTWaitPollsUntilTerminalState(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	m := func() *lit.MMT {
 		return mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{Status: "MultiMachineJob_STATE_RUNNING"})
@@ -335,7 +335,7 @@ func TestMMTListsSubJobsWithV2Route(t *testing.T) {
 		})
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	ts := mustTeamspace(t, "project-1", "default", "alice")
 	m := mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{Teamspace: ts, NumMachines: 4})
@@ -400,7 +400,7 @@ func TestMMTLogsMergeEveryMachine(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	m := mustMMT(t, "mmt-1", "dist-train", "project-1")
 	logs, err := m.Logs()
@@ -426,7 +426,7 @@ func TestMMTLogsFinishedWithoutHistoryReportsMigration(t *testing.T) {
 		}
 	}))
 	defer server.Close()
-	t.Setenv("LIGHTNING_CLOUD_URL", server.URL)
+	sdktest.UseAPI(t, server.URL)
 
 	m := mustMMT(t, "mmt-1", "dist-train", "project-1", lit.MMTOptions{Status: "completed"})
 	_, err := m.Logs()
