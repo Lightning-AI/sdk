@@ -153,7 +153,10 @@ from lightning_sdk.mmt import MMT
     "--include-credentials/--no-include-credentials",
     default=True,
     show_default=True,
-    help="Give the job a token that acts as you in its teamspace, so the SDK and CLI work inside it.",
+    help=(
+        "Give the job a token that acts as you in its teamspace, so the SDK and CLI work inside it. "
+        "A job in a Studio's environment always gets one, unless the Studio was created without secrets."
+    ),
 )
 def run_mmt(
     name: Optional[str] = None,
