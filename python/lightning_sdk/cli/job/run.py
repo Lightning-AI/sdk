@@ -154,6 +154,12 @@ _MACHINE_VALUES = tuple(
     type=click.IntRange(min=0),
     help=("Minutes to keep the machine after the job stops. Omit or pass 0 to release the machine immediately."),
 )
+@click.option(
+    "--include-credentials/--no-include-credentials",
+    default=True,
+    show_default=True,
+    help="Give the job a token that acts as you in its teamspace, so the SDK and CLI work inside it.",
+)
 def run_job(
     name: Optional[str] = None,
     num_machines: int = 1,
@@ -175,6 +181,7 @@ def run_job(
     tags: Sequence[str] = (),
     as_json: bool = False,
     keep_minutes: Optional[int] = None,
+    include_credentials: bool = True,
 ) -> None:
     """Run async workloads using a docker image or studio.
 
@@ -221,6 +228,7 @@ def run_job(
         num_machines=num_machines,
         tags=_resolve_tags(tags),
         keep_minutes=keep_minutes,
+        include_credentials=include_credentials,
     )
 
     if as_json:

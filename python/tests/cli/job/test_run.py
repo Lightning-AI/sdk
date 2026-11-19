@@ -227,3 +227,20 @@ def test_run_job_with_tags(monkeypatch, cli_args, expected) -> None:
 
     assert result.exit_code == 0, result.output
     assert mock_job.run.call_args.kwargs["tags"] == expected
+
+
+@pytest.mark.parametrize(("flags", "expected"), [([], True), (["--no-include-credentials"], False)])
+@mock_command_logging
+def test_run_job_includes_credentials_unless_asked_not_to(flags, expected) -> None:
+    submitted = MagicMock(name="test-job")
+    submitted.name = "test-job"
+    with patch("lightning_sdk.cli.job.run.resolve_teamspace", return_value=MagicMock()), patch(
+        "lightning_sdk.cli.job.run.Job.run",
+        return_value=submitted,
+    ) as run_sdk_job:
+        result = CliRunner().invoke(
+            run_job, ["--name", "test-job", "--image", "ubuntu", "--command", "echo hi", *flags]
+        )
+
+    assert result.exit_code == 0, result.output
+    assert run_sdk_job.call_args.kwargs["include_credentials"] is expected

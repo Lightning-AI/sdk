@@ -120,6 +120,7 @@ class MMT(Job):
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> "MMT":
         if num_machines <= 1:
             raise ValueError("Multi-Machine training cannot be run with less than 2 Machines")
@@ -149,5 +150,6 @@ class MMT(Job):
                 num_machines=num_machines,
                 tags=tags,
                 keep_minutes=keep_minutes,
+                include_credentials=include_credentials,
             ),
         )

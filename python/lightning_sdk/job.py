@@ -238,6 +238,7 @@ class Job(metaclass=TrackCallsMeta):
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> "Job":
         """Run async workloads using a docker image or a compute environment from your studio.
 
@@ -295,6 +296,8 @@ class Job(metaclass=TrackCallsMeta):
                 slightly differently from what was passed in.
             keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
                 releases the machine immediately.
+            include_credentials: Give the job a token that acts as you in its teamspace,
+                so the SDK and CLI work inside it. Defaults to ``True``.
 
         Returns:
             Job: The newly submitted Job instance.
@@ -399,6 +402,7 @@ class Job(metaclass=TrackCallsMeta):
             placement_group_id=placement_group_id,
             tags=tags,
             keep_minutes=keep_minutes,
+            include_credentials=include_credentials,
         )
 
         _logger.info(f"Job was successfully launched. View it at {job.link}")
@@ -426,6 +430,7 @@ class Job(metaclass=TrackCallsMeta):
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> "Job":
         if num_machines < 1:
             raise ValueError("A job needs to run on at least one machine")
@@ -507,6 +512,7 @@ class Job(metaclass=TrackCallsMeta):
             max_run_attempts=max_run_attempts,
             tags=tags,
             keep_minutes=keep_minutes,
+            include_credentials=include_credentials,
         )
         if num_machines <= 1 and submitted.name != self._name:
             warnings.warn(

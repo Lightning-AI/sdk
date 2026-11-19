@@ -149,6 +149,12 @@ from lightning_sdk.mmt import MMT
     type=click.IntRange(min=0),
     help=("Minutes to keep the machines after the job stops. Omit or pass 0 to release the machines immediately."),
 )
+@click.option(
+    "--include-credentials/--no-include-credentials",
+    default=True,
+    show_default=True,
+    help="Give the job a token that acts as you in its teamspace, so the SDK and CLI work inside it.",
+)
 def run_mmt(
     name: Optional[str] = None,
     num_machines: int = 2,
@@ -170,6 +176,7 @@ def run_mmt(
     tags: Sequence[str] = (),
     as_json: bool = False,
     keep_minutes: Optional[int] = None,
+    include_credentials: bool = True,
 ) -> None:
     """Run async workloads on multiple machines using a docker image."""
     if name is None:
@@ -211,6 +218,7 @@ def run_mmt(
         path_mappings=path_mappings_dict,
         tags=_resolve_tags(tags),
         keep_minutes=keep_minutes,
+        include_credentials=include_credentials,
     )
 
     if as_json:

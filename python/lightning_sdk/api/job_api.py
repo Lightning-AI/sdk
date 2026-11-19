@@ -95,6 +95,7 @@ class JobApiV2:
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> V1Job:
         """Submit a v2 job and return the created job object.
 
@@ -125,6 +126,8 @@ class JobApiV2:
                 teamspace yet are created, which requires permission to create tags.
             keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
                 releases the machine immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         Returns:
             The newly created ``V1Job`` object.
@@ -159,6 +162,7 @@ class JobApiV2:
             placement_group_id=placement_group_id,
             tags=tags,
             keep_minutes=keep_minutes,
+            include_credentials=include_credentials,
         )
 
         job: V1Job = self._client.jobs_service_create_job(project_id=teamspace_id, body=body)
@@ -186,6 +190,7 @@ class JobApiV2:
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> JobsServiceCreateJobBody:
         """Build the request body for creating a v2 job.
 
@@ -214,6 +219,8 @@ class JobApiV2:
             tags: Optional teamspace tag names to apply to the job.
             keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
                 releases the machine immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         Returns:
             A fully populated ``JobsServiceCreateJobBody`` ready to be sent to the jobs service.
@@ -255,6 +262,7 @@ class JobApiV2:
             path_mappings=path_mappings_list,
             machine_image_version=machine_image_version,
             placement_group_id=placement_group_id,
+            include_credentials=include_credentials,
             volumes=[V1Volume(path=k, size_gb=v, ephemeral=True) for k, v in scratch_disks.items()],
             **optional_spec_kwargs,
         )

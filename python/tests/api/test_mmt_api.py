@@ -54,6 +54,7 @@ def test_mmt_v2_submit_job(_mock_auth):
         run_id=mock.ANY,
         spot=False,
         image_cluster_credentials=True,
+        include_credentials=True,
         image_secret_ref="",
         path_mappings=[],
     )
@@ -97,6 +98,7 @@ def test_mmt_v2_submit_job(_mock_auth):
         run_id=mock.ANY,
         spot=True,
         image_cluster_credentials=False,
+        include_credentials=True,
         image_secret_ref="dockerhub",
         path_mappings=[
             V1PathMapping(container_path="/output2", connection_name="data2", connection_path="some-other-path"),
@@ -542,3 +544,33 @@ def test_mmt_set_tags_sends_empty_list(_mock_auth):
         workload_id="mmt-1",
         body=JobsServiceSetWorkloadTagsBody(tags=[]),
     )
+
+
+@pytest.mark.parametrize(("passed", "expected"), [({}, True), ({"include_credentials": False}, False)])
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth")
+def test_mmt_v2_submit_job_includes_credentials_unless_asked_not_to(_mock_auth, passed, expected):
+    job_api = MMTApiV2()
+    create_job_mock = mock.MagicMock()
+    job_api._client.jobs_service_create_multi_machine_job = create_job_mock
+
+    job_api.submit_job(
+        name="test-job",
+        num_machines=2,
+        cloud_account="c-abc",
+        teamspace_id="ts-abc",
+        studio_id="",
+        image="image-abc",
+        machine=Machine.CPU,
+        interruptible=False,
+        env=None,
+        command="echo hello",
+        image_credentials=None,
+        cloud_account_auth=False,
+        entrypoint="sh -c",
+        path_mappings=None,
+        max_runtime=None,
+        reuse_snapshot=True,
+        **passed,
+    )
+
+    assert create_job_mock.call_args.kwargs["body"].spec.include_credentials is expected

@@ -57,6 +57,7 @@ class MMTApiV2:
         max_run_attempts: Optional[int] = None,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> V1MultiMachineJob:
         """Submit a v2 multi-machine job and return the created job object.
 
@@ -90,6 +91,8 @@ class MMTApiV2:
                 teamspace yet are created, which requires permission to create tags.
             keep_minutes: Minutes to keep the machines after the job stops. ``None`` or ``0``
                 releases the machines immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         Returns:
             The newly created ``V1MultiMachineJob`` object.
@@ -116,6 +119,7 @@ class MMTApiV2:
             max_run_attempts=max_run_attempts,
             tags=tags,
             keep_minutes=keep_minutes,
+            include_credentials=include_credentials,
         )
 
         job: V1MultiMachineJob = self._client.jobs_service_create_multi_machine_job(project_id=teamspace_id, body=body)
@@ -143,6 +147,7 @@ class MMTApiV2:
         max_run_attempts: Optional[int] = None,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> JobsServiceCreateMultiMachineJobBody:
         """Build the request body for creating a v2 multi-machine job.
 
@@ -174,6 +179,8 @@ class MMTApiV2:
             tags: Optional teamspace tag names to apply to the job.
             keep_minutes: Minutes to keep the machines after the job stops. ``None`` or ``0``
                 releases the machines immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         Returns:
             A fully populated ``JobsServiceCreateMultiMachineJobBody`` ready to be sent to the jobs service.
@@ -210,6 +217,7 @@ class MMTApiV2:
             path_mappings=path_mappings_list,
             machine_image_version=machine_image_version,
             placement_group_id=placement_group_id,
+            include_credentials=include_credentials,
             **optional_spec_kwargs,
         )
         # max_run_attempts and fault_tolerance live on the multi-machine job body,

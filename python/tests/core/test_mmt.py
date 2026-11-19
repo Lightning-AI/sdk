@@ -103,6 +103,7 @@ def test_submit_mmt_v2_image(internal_studio_init_mocker, machine, command, env,
         max_run_attempts=None,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 
@@ -269,6 +270,7 @@ def test_submit_mmt_v2_studio(internal_studio_init_mocker, machine, env, interru
         max_run_attempts=None,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 

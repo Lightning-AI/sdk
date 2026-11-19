@@ -213,6 +213,7 @@ class JobStep:
         num_machines: int = 1,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> None:
         """Configure a job step in a pipeline.
 
@@ -248,6 +249,8 @@ class JobStep:
                 yet are created, which requires permission to create tags.
             keep_minutes: Minutes to keep the machine after the job stops. ``None`` or ``0``
                 releases the machine immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         """
         if num_machines < 1:
@@ -277,6 +280,7 @@ class JobStep:
         self.num_machines = num_machines
         self.tags = tags
         self.keep_minutes = keep_minutes
+        self.include_credentials = include_credentials
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -334,6 +338,7 @@ class JobStep:
                 max_run_attempts=self.max_run_attempts,
                 tags=self.tags,
                 keep_minutes=self.keep_minutes,
+                include_credentials=self.include_credentials,
             )
             return V1PipelineStep(
                 name=self.name,
@@ -363,6 +368,7 @@ class JobStep:
             placement_group_id=self.placement_group_id,
             tags=self.tags,
             keep_minutes=self.keep_minutes,
+            include_credentials=self.include_credentials,
         )
         return V1PipelineStep(
             name=self.name,
@@ -400,6 +406,7 @@ class MMTStep:
         placement_group_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
         keep_minutes: Optional[int] = None,
+        include_credentials: bool = True,
     ) -> None:
         """Configure a multi-machine training step in a pipeline.
 
@@ -433,6 +440,8 @@ class MMTStep:
                 yet are created, which requires permission to create tags.
             keep_minutes: Minutes to keep the machines after the job stops. ``None`` or ``0``
                 releases the machines immediately.
+            include_credentials: Whether the job gets a workload token that acts as its owner
+                in its teamspace. Defaults to ``True``.
 
         """
         self.machine = machine or Machine.CPU
@@ -458,6 +467,7 @@ class MMTStep:
         self.placement_group_id = placement_group_id
         self.tags = tags
         self.keep_minutes = keep_minutes
+        self.include_credentials = include_credentials
 
     def to_proto(
         self, teamspace: "Teamspace", cloud_account: str, shared_filesystem: Union[bool, V1SharedFilesystem]
@@ -512,6 +522,7 @@ class MMTStep:
             max_run_attempts=self.max_run_attempts,
             tags=self.tags,
             keep_minutes=self.keep_minutes,
+            include_credentials=self.include_credentials,
         )
 
         return V1PipelineStep(

@@ -100,3 +100,16 @@ def test_mmt_run_entrypoint_default(extra_args: list[str], expected_entrypoint: 
 
     assert result.exit_code == 0, result.output
     assert mock_run.call_args.kwargs["entrypoint"] == expected_entrypoint
+
+
+@pytest.mark.parametrize(("flags", "expected"), [([], True), (["--no-include-credentials"], False)])
+@mock_command_logging
+def test_run_mmt_includes_credentials_unless_asked_not_to(monkeypatch, flags, expected):
+    mock_mmt = MagicMock()
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.MMT", mock_mmt)
+    monkeypatch.setattr("lightning_sdk.cli.mmt.run.resolve_teamspace", MagicMock(return_value="teamspace"))
+
+    result = CliRunner().invoke(run_mmt, ["--name", "test-mmt", "--image", "ubuntu", "--command", "echo hi", *flags])
+
+    assert result.exit_code == 0, result.output
+    assert mock_mmt.run.call_args.kwargs["include_credentials"] is expected

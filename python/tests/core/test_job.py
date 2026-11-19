@@ -167,6 +167,7 @@ def test_submit_job_v2_image(internal_studio_init_mocker, machine, command, env,
         num_machines=1,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 
@@ -446,6 +447,22 @@ def test_submit_job_threads_keep_minutes(internal_studio_init_mocker):
 
 
 @mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
+def test_submit_job_threads_include_credentials(internal_studio_init_mocker):
+    teamspace = Teamspace("ts-abc", org="org-abc")
+    job = Job("test-job", teamspace, _fetch_job=False)
+    submit_mock = mock.MagicMock()
+    job._job_api.submit_job = submit_mock
+
+    job._submit(machine=Machine.CPU, image="image-abc", command="echo hello", cloud_account="c-abc")
+    assert submit_mock.call_args.kwargs["include_credentials"] is True
+
+    job._submit(
+        machine=Machine.CPU, image="image-abc", command="echo hello", cloud_account="c-abc", include_credentials=False
+    )
+    assert submit_mock.call_args.kwargs["include_credentials"] is False
+
+
+@mock.patch("lightning_sdk.lightning_cloud.credentials.Auth", new=mock.MagicMock())
 def test_job_exposes_keep_minutes(internal_studio_init_mocker):
     teamspace = Teamspace("ts-abc", org="org-abc")
     job = Job("test-job", teamspace, _fetch_job=False)
@@ -579,6 +596,7 @@ def test_submit_job_v2_studio(internal_studio_init_mocker, machine, env, interru
         num_machines=1,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 
@@ -972,6 +990,7 @@ def test_submit_jobv2_studio_resolve(
         num_machines=1,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 
@@ -1147,6 +1166,7 @@ def test_submit_job_v2_image_from_studio(
         num_machines=1,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
     assert keeping_alive_mock.call_count == 0
 
@@ -1195,6 +1215,7 @@ def test_run_job_with_cloud_provider(
         num_machines=1,
         tags=None,
         keep_minutes=None,
+        include_credentials=True,
     )
 
 
