@@ -1,5 +1,6 @@
 import type { Command } from "./command.js";
 import { PtyHandle } from "./pty.js";
+import { USER_AGENT } from "./user-agent.js";
 import type {
   PtyConnectOpts,
   PtyCreateOpts,
@@ -229,6 +230,7 @@ export class SandboxProcess {
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.ctx.getApiKey()}`,
+      "User-Agent": USER_AGENT,
     };
     if (this.ctx.organizationId) {
       headers["X-Lightning-Organization-Id"] = this.ctx.organizationId;

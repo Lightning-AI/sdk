@@ -343,6 +343,12 @@ func TestServiceAccountKeyIsExchangedAndOnlyTheTokenSent(t *testing.T) {
 	if got := exchange.header.Get("Authorization"); got != "" {
 		t.Errorf("exchange Authorization = %q, want none", got)
 	}
+	if got := exchange.header.Get("User-Agent"); got != userAgent() {
+		t.Errorf("exchange User-Agent = %q, want %q", got, userAgent())
+	}
+	if got := apiRequests[0].header.Get("User-Agent"); got != userAgent() {
+		t.Errorf("API request User-Agent = %q, want %q", got, userAgent())
+	}
 	want := url.Values{"grant_type": {"client_credentials"}, "client_secret": {"lit_sa_key"}}
 	if exchange.form.Encode() != want.Encode() {
 		t.Errorf("exchange form = %v, want %v", exchange.form, want)

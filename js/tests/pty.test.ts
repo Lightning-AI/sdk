@@ -125,6 +125,7 @@ test("createPty builds the WebSocket URL the controlplane expects", async () => 
     assert.equal(url.searchParams.get("restore"), null);
 
     assert.equal(ws.ctorOpts?.headers?.Authorization, "Bearer test-key");
+    assert.match(ws.ctorOpts?.headers?.["User-Agent"] ?? "", /^lightning-sdk-js\//);
     assert.equal(ws.ctorOpts?.headers?.["X-Lightning-Organization-Id"], "org-1");
 
     // Fully drain the handle so the test exits cleanly.
