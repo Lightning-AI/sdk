@@ -4,7 +4,7 @@ import click
 import pytest
 
 from lightning_sdk.cli.utils.auth import require_auth_header
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud.login import Auth
 
 
 def test_require_auth_header_returns_the_environment_token(monkeypatch) -> None:
@@ -35,4 +35,3 @@ def test_importing_the_cli_leaves_the_vendored_login_in_place() -> None:
     assert lightning_sdk.api.llm_api.authenticate is not None
     assert lightning_sdk.cli.legacy.deploy._auth.authenticate is not None
     assert Auth.save.__module__ == "lightning_sdk.lightning_cloud.login"
-    assert AuthServer.login_with_browser.__module__ == "lightning_sdk.lightning_cloud.login"

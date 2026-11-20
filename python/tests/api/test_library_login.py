@@ -4,14 +4,16 @@ import threading
 import webbrowser
 
 import click
+import keyring
 import pytest
 
 from lightning_sdk.api.llm_api import authenticate as litai_authenticate
 from lightning_sdk.cli.legacy.deploy._auth import _AuthMode
 from lightning_sdk.cli.legacy.deploy._auth import authenticate as litserve_authenticate
-from lightning_sdk.lightning_cloud import env
+from lightning_sdk.lightning_cloud import cli_login, env
 from lightning_sdk.lightning_cloud.login import Auth
 from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform
+from tests.lightning_cloud.utils.keyrings import MemoryKeyring
 
 _REAL_THREAD = threading.Thread
 
@@ -20,7 +22,6 @@ def _clear_credentials(monkeypatch, tmp_path):
     threading.Thread = _REAL_THREAD
     for name in ("LIGHTNING_AUTH_TOKEN", "LIGHTNING_API_KEY", "LIGHTNING_AUTH_TOKEN_FILE"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.delenv("LIGHTNING_CLI_OIDC_LOGIN", raising=False)
     secrets = tmp_path / "credentials.json"
     monkeypatch.setattr(Auth, "secrets_file", secrets)
     return secrets
@@ -48,10 +49,13 @@ def test_litserve_uses_an_existing_credential_without_a_browser(monkeypatch):
     assert opened == []
 
 
-def test_litai_puts_okbhrt_and_litaimodel_on_the_interim_sign_in(monkeypatch, tmp_path):
+def test_litai_logs_in_with_the_new_login(monkeypatch, tmp_path):
     _clear_credentials(monkeypatch, tmp_path)
+    monkeypatch.setattr(env, "LIGHTNING_LOGIN_PATH", str(tmp_path / "login.json"))
     monkeypatch.setattr("lightning_sdk.api.llm_api.time.sleep", lambda _seconds: None)
     monkeypatch.setattr("lightning_sdk.api.llm_api.Confirm.ask", lambda *_args, **_kwargs: True)
+    previous = keyring.get_keyring()
+    keyring.set_keyring(MemoryKeyring())
     platform = FakePlatform()
     monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", platform.url)
     monkeypatch.setenv("LIGHTNING_CLOUD_URL", platform.url)
@@ -59,13 +63,13 @@ def test_litai_puts_okbhrt_and_litaimodel_on_the_interim_sign_in(monkeypatch, tm
     monkeypatch.setattr(webbrowser, "open", browser.open)
     try:
         litai_authenticate("story-model")
-        query = platform.sign_ins[0]
-        assert query["okbhrt"] == "x334uv8t7v"
-        assert query["litaimodel"] == "story-model"
-        assert not platform.authorizations
+        assert len(platform.authorizations) == 1
+        assert not platform.sign_ins
+        assert cli_login.current_login() is not None
     finally:
         browser.finish()
         platform.stop()
+        keyring.set_keyring(previous)
 
 
 def test_litai_does_nothing_when_a_credential_already_exists(monkeypatch):

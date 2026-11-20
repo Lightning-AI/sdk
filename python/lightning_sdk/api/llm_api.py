@@ -43,7 +43,7 @@ def authenticate(model: str, shall_confirm: bool = True) -> None:
     print("Opening browser for authentication...")
     print("Please come back to the terminal after logging in.")
     time.sleep(1)
-    start_login(sign_in_params={"okbhrt": LITAI_CODE, "litaimodel": model})
+    start_login()
 
 
 class LLMApi:

@@ -10,7 +10,6 @@ from click.testing import CliRunner
 from lightning_sdk.cli.entrypoint import login, main_cli
 from lightning_sdk.cli.sandbox.commands import run_sandbox_command
 from lightning_sdk.cli.vm.ssh import ssh_vm
-from lightning_sdk.lightning_cloud.cli_login import OIDC_LOGIN_ENV
 from lightning_sdk.lightning_cloud.login import Auth
 from tests.cli.help import assert_help_contains, command_text, mock_command_logging, run_cli
 
@@ -23,7 +22,6 @@ def _clear_auth(monkeypatch, tmp_path) -> None:
     monkeypatch.delenv("LIGHTNING_USER_ID", raising=False)
     monkeypatch.delenv("LIGHTNING_API_KEY", raising=False)
     monkeypatch.delenv("LIGHTNING_AUTH_TOKEN", raising=False)
-    monkeypatch.delenv(OIDC_LOGIN_ENV, raising=False)
 
 
 @pytest.mark.parametrize(
@@ -45,19 +43,6 @@ def test_resource_commands_never_start_browser_authentication(monkeypatch, tmp_p
 
     assert result.exit_code == 1
     assert "Run `lightning login`" in str(result.exception)
-
-
-def test_login_no_browser_is_refused_without_the_opt_in(monkeypatch, tmp_path) -> None:
-    _clear_auth(monkeypatch, tmp_path)
-    Auth().save(auth_token="sess_kept")
-
-    result = CliRunner().invoke(main_cli, ["login", "--no-browser"])
-
-    assert result.exit_code == 2
-    assert "LIGHTNING_CLI_OIDC_LOGIN" in result.output
-    auth = Auth()
-    assert auth.load()
-    assert auth.auth_token == "sess_kept"
 
 
 def test_logout_forgets_the_local_login(monkeypatch, tmp_path) -> None:

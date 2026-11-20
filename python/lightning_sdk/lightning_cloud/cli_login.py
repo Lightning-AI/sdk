@@ -27,9 +27,6 @@ from lightning_sdk.lightning_cloud import env
 from lightning_sdk.lightning_cloud.login import Auth
 
 CLIENT_ID = "lightning-cli"
-# Production serves this login only from relaunch, so until then a new login
-# is the interim one unless this is set.
-OIDC_LOGIN_ENV = "LIGHTNING_CLI_OIDC_LOGIN"
 _KEYRING_SERVICE = CLIENT_ID
 _REFRESH_MARGIN = 300.0
 _PASTE_TRIES = 3
@@ -88,11 +85,6 @@ class LoginStatus:
 class Login(LoginStatus):
     access_token: str = dataclasses.field(repr=False)
     refresh_token: str = dataclasses.field(repr=False)
-
-
-def oidc_login_enabled() -> bool:
-    """Whether a new login uses this login rather than the interim one, read now."""
-    return env.truthy(os.environ.get(OIDC_LOGIN_ENV))
 
 
 def login(

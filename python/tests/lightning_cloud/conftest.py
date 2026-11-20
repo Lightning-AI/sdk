@@ -6,7 +6,7 @@ import keyring
 import pytest
 
 from lightning_sdk.lightning_cloud import env, login
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer
+from lightning_sdk.lightning_cloud.login import Auth
 from tests.lightning_cloud.utils.fake_platform import FakeBrowser, FakePlatform
 from tests.lightning_cloud.utils.keyrings import MemoryKeyring
 
@@ -31,13 +31,12 @@ _VENDORED = _load_vendored_login()
 
 @pytest.fixture(autouse=True)
 def _vendored_login(monkeypatch):
-    """Put back the vendored interim login, which the SDK CLI replaces when imported.
+    """Put back the vendored Auth.save, which the SDK CLI replaces when imported.
 
     Collecting any test that imports lightning_sdk.cli applies that replacement,
     which keeps no reference to the vendored methods, so they come from a fresh load.
     """
     monkeypatch.setattr(Auth, "save", _VENDORED.Auth.save)
-    monkeypatch.setattr(AuthServer, "login_with_browser", _VENDORED.AuthServer.login_with_browser)
 
 
 @pytest.fixture(autouse=True)
@@ -52,7 +51,6 @@ def isolated_login(_clear_lightning_env_vars, tmp_path, monkeypatch):
         "LIGHTNING_AUTH_TOKEN",
         "LIGHTNING_API_KEY",
         "LIGHTNING_USER_ID",
-        "LIGHTNING_CLI_OIDC_LOGIN",
         "LIGHTNING_DEPLOYMENT_ID",
     ):
         monkeypatch.delenv(name, raising=False)
@@ -75,11 +73,6 @@ def isolated_login(_clear_lightning_env_vars, tmp_path, monkeypatch):
         yield memory
     finally:
         keyring.set_keyring(previous)
-
-
-@pytest.fixture()
-def _oidc_login(monkeypatch):
-    monkeypatch.setenv("LIGHTNING_CLI_OIDC_LOGIN", "1")
 
 
 @pytest.fixture()

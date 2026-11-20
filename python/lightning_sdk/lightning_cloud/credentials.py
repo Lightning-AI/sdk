@@ -8,10 +8,10 @@ import dataclasses
 import enum
 import os
 import pathlib
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple
+from typing import Any, Callable, Iterator, Optional, Tuple
 
 from lightning_sdk.lightning_cloud import cli_login, env, service_account
-from lightning_sdk.lightning_cloud.login import Auth, AuthServer, Keys
+from lightning_sdk.lightning_cloud.login import Auth, Keys
 
 _MISSING_CREDENTIALS = (
     "We couldn't find any credentials linked to your account. "
@@ -46,10 +46,6 @@ class Credential:
     @property
     def header(self) -> str:
         return f"Bearer {self.token}"
-
-
-class LoginUnavailable(ValueError):
-    """A login option the interim login can't honour."""
 
 
 @contextlib.contextmanager
@@ -91,13 +87,29 @@ def _from_env_token() -> Optional[str]:
     return _present(os.environ.get(Keys.AUTH_TOKEN.value))
 
 
+_SESSION_DEPRECATED = (
+    "You're logged in with an older Lightning login, which will stop working soon. "
+    "Run `lightning login` to switch to the new one."
+)
+_session_warned = False
+
+
+def _from_saved_session() -> Optional[str]:
+    global _session_warned
+    token = cli_login._saved_session()
+    if token and not _session_warned:
+        _session_warned = True
+        cli_login._say(_SESSION_DEPRECATED)
+    return token
+
+
 # The order is the precedence.
 _READERS = (
     (CredentialKind.TOKEN_FILE, _from_token_file),
     (CredentialKind.ENV_TOKEN, _from_env_token),
     (CredentialKind.SERVICE_ACCOUNT, service_account.token),
     (CredentialKind.LOGIN, cli_login._request_token),
-    (CredentialKind.SESSION, cli_login._saved_session),
+    (CredentialKind.SESSION, _from_saved_session),
 )
 
 
@@ -181,34 +193,9 @@ class CredentialSource:
 def start_login(
     no_browser: bool = False,
     no_keychain: bool = False,
-    sign_in_params: Optional[Dict[str, str]] = None,
-) -> Optional[cli_login.Login]:
-    """Log in with the login ``LIGHTNING_CLI_OIDC_LOGIN`` selects when this is called.
-
-    The new login returns the ``Login`` and ignores ``sign_in_params``. The
-    interim login returns None, and raises ``LoginUnavailable`` for any other
-    option, because it has no way to honour one.
-    """
-    if cli_login.oidc_login_enabled():
-        return cli_login.login(
-            no_browser=no_browser,
-            no_keychain=no_keychain,
-        )
-    unavailable = [
-        flag
-        for flag, given in (
-            ("--no-browser", no_browser),
-            ("--no-keychain", no_keychain),
-        )
-        if given
-    ]
-    if unavailable:
-        raise LoginUnavailable(
-            f"{', '.join(unavailable)} needs the new login. "
-            f"Set {cli_login.OIDC_LOGIN_ENV}=1 to use it."
-        )
-    AuthServer(sign_in_params).login_with_browser(Auth())
-    return None
+) -> cli_login.Login:
+    """Log in through the browser, or by pasting the code the login page shows."""
+    return cli_login.login(no_browser=no_browser, no_keychain=no_keychain)
 
 
 def logout() -> Tuple[CredentialKind, ...]:
