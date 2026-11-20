@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { resetSandboxConfig } from "../src/config.js";
 import { Sandbox } from "../src/sandbox.js";
@@ -64,6 +65,21 @@ describe("Sandbox", () => {
       }) as typeof fetch;
       await Sandbox.get({ sandboxId: "sb-test" });
       assert.equal(calls[0], "Bearer secret-xyz");
+    });
+  });
+
+  describe("user agent", () => {
+    it("names the JS SDK and the package's version", async () => {
+      let userAgent = "";
+      globalThis.fetch = (async (_input, init) => {
+        userAgent = new Headers(init?.headers).get("User-Agent") ?? "";
+        return jsonResponse(sampleV1());
+      }) as typeof fetch;
+      await Sandbox.get({ sandboxId: "sb-test" });
+      const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+        version: string;
+      };
+      assert.equal(userAgent, `lightning-sdk-js/${version}`);
     });
   });
 

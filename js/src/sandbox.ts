@@ -44,6 +44,7 @@ import { FileSystem } from "./filesystem.js";
 import { SandboxProcess } from "./process.js";
 import { NetworkPolicy, fromV1NetworkPolicy, toV1NetworkPolicy } from "./network-policy.js";
 import { WarmStatus, fromV1WarmStatus, toV1Warm } from "./warm.js";
+import { USER_AGENT } from "./user-agent.js";
 
 /**
  * Suffix identifying the Docker-in-gVisor variant of a curated runtime. Their
@@ -95,6 +96,7 @@ async function request<T>(
   const url = `${getBaseUrl()}${path}`;
   const headers: Record<string, string> = {
     Authorization: `Bearer ${getApiKey(apiKeyOverride)}`,
+    "User-Agent": USER_AGENT,
   };
   const init: RequestInit = { method, headers };
 
