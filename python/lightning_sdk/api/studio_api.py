@@ -1523,7 +1523,6 @@ class StudioApi:
         """
         body = CloudSpaceServiceUpdateCloudSpaceBody(
             code_url=studio.code_url,
-            data_connection_mounts=studio.data_connection_mounts,
             description=studio.description,
             display_name=studio.display_name,
             env=studio.env,
