@@ -7,6 +7,10 @@ from lightning_sdk.lightning_cloud.openapi import V1CreateSSHPublicKeyRequest, V
 class SSHKeyRegistrationError(Exception):
     """The platform refused to register an SSH public key. The message is the platform's own, for the user."""
 
+    def __init__(self, message: str, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
 
 def _error_message(e: ApiException) -> str:
     body = e.body.decode(errors="replace") if isinstance(e.body, bytes) else e.body
@@ -24,7 +28,8 @@ class SSHKeyApi:
         """Register ``public_key`` under ``name``. If the account already has it, the platform returns it unchanged.
 
         Raises:
-            SSHKeyRegistrationError: With the platform's reason, e.g. that the key is held by another account.
+            SSHKeyRegistrationError: With the platform's reason, e.g. that the key is held by another account,
+                and the HTTP status. 403 means the signed-in credential isn't allowed to add keys at all.
         """
         # Not retried: once retries run out, the client raises a bare Exception without the platform's message.
         client = cached_lightning_client(retry=False)
@@ -33,4 +38,4 @@ class SSHKeyApi:
                 V1CreateSSHPublicKeyRequest(name=name, public_key=public_key)
             )
         except ApiException as e:
-            raise SSHKeyRegistrationError(_error_message(e)) from None
+            raise SSHKeyRegistrationError(_error_message(e), status=e.status) from None

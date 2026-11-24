@@ -178,6 +178,8 @@ def test_configure_creates_a_local_key_registers_it_and_adds_the_entry(home, ssh
         "  UserKnownHostsFile ~/.ssh/lightning_known_hosts\n"
     )
     assert "Added dev to ~/.ssh/config" in result.output
+    assert "settings/keys" not in result.output
+    assert result.output.rstrip().endswith("Connect with: ssh dev")
 
 
 @needs_ssh_keygen
@@ -202,7 +204,7 @@ def test_configure_again_reuses_the_key_and_leaves_the_config(home, ssh_key_api,
 @needs_ssh_keygen
 def test_configure_shows_the_platform_refusal(home, ssh_key_api, studio) -> None:
     refusal = "You can have at most 50 SSH keys. Delete one you no longer use, then add this one again."
-    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError(refusal)
+    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=400)
 
     result = _configure(studio)
 
@@ -210,6 +212,52 @@ def test_configure_shows_the_platform_refusal(home, ssh_key_api, studio) -> None
     # rich wraps the error in a box, so drop its border before matching.
     assert refusal in " ".join(click.unstyle(result.output).replace("│", " ").split())
     assert not (home / ".ssh" / "config").exists()
+
+
+@needs_ssh_keygen
+def test_configure_adds_the_entry_when_the_login_cant_add_keys(home, ssh_key_api, studio) -> None:
+    """What the user has to do comes last: add the key, then connect."""
+    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError("Forbidden", status=403)
+
+    result = _configure(studio)
+
+    assert result.exit_code == 0, result.output
+    assert host_uses_ssh_key((home / ".ssh" / "config").read_text(), "dev")
+    output = result.output
+    public_key = (home / ".ssh" / "lightning_ed25519.pub").read_text().strip()
+    assert output.index("Added dev to ~/.ssh/config") < output.index("/me/settings/keys") < output.index(public_key)
+    assert "run this command again" not in output
+    assert output.rstrip().endswith("Then connect with: ssh dev")
+
+
+@needs_ssh_keygen
+def test_legacy_connect_says_where_to_add_the_key_and_connects(home, ssh_key_api, studio) -> None:
+    from click.testing import CliRunner
+
+    from lightning_sdk.cli.legacy.connect import studio as connect_studio
+
+    # Made before subprocess.run is patched, since the patch reaches ssh-keygen too.
+    key_path = home / ".ssh" / "lightning_ed25519"
+    key_path.parent.mkdir()
+    subprocess.run(
+        ["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-C", "lightning@laptop", "-f", str(key_path)],
+        check=True,
+        stdin=subprocess.DEVNULL,
+    )
+    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError("Forbidden", status=403)
+    with patch("lightning_sdk.cli.legacy.configure.require_auth_header", return_value="Bearer token"), patch(
+        "lightning_sdk.cli.legacy.configure.resolve_teamspace", return_value=MagicMock()
+    ), patch("lightning_sdk.cli.legacy.configure.resolve_studio", return_value=studio), patch(
+        "lightning_sdk.cli.legacy.connect.resolve_teamspace", return_value=MagicMock()
+    ), patch("lightning_sdk.cli.legacy.connect.resolve_studio", return_value=studio), patch(
+        "lightning_sdk.cli.legacy.connect.subprocess.run"
+    ) as run:
+        result = CliRunner().invoke(connect_studio, ["--name", "dev"])
+
+    assert result.exit_code == 0, result.output
+    assert "/me/settings/keys and run this command again" in result.output
+    assert "Connect with" not in result.output
+    run.assert_called_once_with(["ssh", "dev"])
 
 
 @needs_ssh_keygen

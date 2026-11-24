@@ -3,16 +3,33 @@
 import platform
 import shutil
 import subprocess
+from dataclasses import dataclass
+from http import HTTPStatus
 from pathlib import Path
 
 import rich_click as click
 
 from lightning_sdk.api.ssh_key_api import SSHKeyApi, SSHKeyRegistrationError
 from lightning_sdk.cli.utils.auth import require_auth_header
+from lightning_sdk.lightning_cloud import env
 
 # The web UI's setup script uses the same file, so the browser and CLI flows share one key per machine.
 SSH_KEY_NAME = "lightning_ed25519"
+_ACCOUNT_SSH_KEYS_PATH = "/me/settings/keys"
 _MAX_KEY_NAME_LENGTH = 256
+
+
+@dataclass(frozen=True)
+class LocalSSHKey:
+    path: Path
+    public_key: str
+    # A 403 refuses the signed-in credential, not the key: the account may already have the key, added in the
+    # browser, so SSH decides.
+    add_refused: bool = False
+
+    @property
+    def public_key_path(self) -> Path:
+        return self.path.with_suffix(".pub")
 
 
 def ssh_key_path() -> Path:
@@ -20,16 +37,23 @@ def ssh_key_path() -> Path:
 
 
 def configure_ssh_internal() -> str:
-    """Make sure this machine's SSH key exists and is registered to the signed-in user, and return its path."""
+    """Make sure this machine's SSH key exists and is registered to the signed-in user, and return its path.
+
+    For commands that run ``ssh`` straight after: if the key can't be added from here, says where to add it first.
+    """
     require_auth_header()
-    return str(ensure_ssh_key())
+    key = ensure_ssh_key()
+    if key.add_refused:
+        click.echo(add_key_in_browser_message(key, rerun=True), err=True)
+    return str(key.path)
 
 
-def ensure_ssh_key() -> Path:
+def ensure_ssh_key() -> LocalSSHKey:
     """Create the SSH key if it's missing, and register its public key with the signed-in user's account.
 
     The private key is never replaced. The platform returns the key unchanged when the account already has it,
-    so this is safe to call on every connect.
+    so this is safe to call on every connect. When the signed-in credential isn't allowed to add keys, the result
+    says so rather than raising, and the caller tells the user where to add it.
     """
     key_path = ssh_key_path()
     public_key_path = key_path.with_suffix(".pub")
@@ -43,10 +67,23 @@ def ensure_ssh_key() -> Path:
     try:
         SSHKeyApi().create_public_key(name=_key_name(public_key), public_key=public_key)
     except SSHKeyRegistrationError as e:
-        raise click.ClickException(
-            f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
-        ) from None
-    return key_path
+        if e.status != HTTPStatus.FORBIDDEN:
+            raise click.ClickException(
+                f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
+            ) from None
+        return LocalSSHKey(key_path, public_key, add_refused=True)
+    return LocalSSHKey(key_path, public_key)
+
+
+def add_key_in_browser_message(key: LocalSSHKey, rerun: bool = False) -> str:
+    """Where to add ``key`` on lightning.ai; with ``rerun``, to then run the command again."""
+    keys_url = env.LIGHTNING_CLOUD_URL.rstrip("/") + _ACCOUNT_SSH_KEYS_PATH
+    then = " and run this command again" if rerun else ""
+    return (
+        "Your Lightning login can't add SSH keys to your account.\n"
+        f"If you haven't added {key.public_key_path} yet, add it at {keys_url}{then}. Its public key is:\n"
+        f"{key.public_key}"
+    )
 
 
 def _ssh_keygen() -> str:

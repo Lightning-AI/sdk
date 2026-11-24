@@ -22,7 +22,7 @@ def connect() -> None:
 )
 def studio(name: Optional[str], teamspace: Optional[str]) -> None:
     """Connect to a studio via SSH."""
-    _configure_ssh_internal(name=name, teamspace=teamspace, overwrite=False)
+    _configure_ssh_internal(name=name, teamspace=teamspace, overwrite=False, connecting=True)
 
     studio = resolve_studio(name, resolve_teamspace(teamspace))
 

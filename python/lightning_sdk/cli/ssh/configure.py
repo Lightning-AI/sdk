@@ -10,7 +10,7 @@ from lightning_sdk.cli.ssh.common import add_ssh_config
 from lightning_sdk.cli.utils.auth import require_auth_header
 from lightning_sdk.cli.utils.logging import LightningCommand
 from lightning_sdk.cli.utils.resource_resolution import resolve_studio, resolve_teamspace
-from lightning_sdk.cli.utils.ssh_connection import ensure_ssh_key
+from lightning_sdk.cli.utils.ssh_connection import add_key_in_browser_message, ensure_ssh_key
 
 OVERWRITE_HELP = "Deprecated, and has no effect: the SSH key is never replaced."
 OVERWRITE_WARNING = (
@@ -51,15 +51,26 @@ def configure_ssh(name: Optional[str] = None, teamspace: Optional[str] = None, o
     configure_studio_ssh(studio.name, f"s_{studio._studio.id}", overwrite=overwrite)
 
 
-def configure_studio_ssh(host: str, user: str, overwrite: bool = False) -> None:
-    """Set up this machine's SSH key and add the ``~/.ssh/config`` entry ``host`` for ``user``."""
+def configure_studio_ssh(host: str, user: str, overwrite: bool = False, connecting: bool = False) -> None:
+    """Set up this machine's SSH key and add the ``~/.ssh/config`` entry ``host`` for ``user``.
+
+    Ends with how to connect, unless ``connecting``, when the caller runs ``ssh`` itself.
+    """
     console = Console()
-    key_path = ensure_ssh_key()
+    key = ensure_ssh_key()
     if overwrite:
-        console.print(OVERWRITE_WARNING.format(key_path=key_path), style="yellow")
-    console.print(f"Using SSH key {key_path}")
+        console.print(OVERWRITE_WARNING.format(key_path=key.path), style="yellow")
+    console.print(f"Using SSH key {key.path}")
 
     if add_ssh_config(host=host, user=user):
         console.print(f"Added {host} to ~/.ssh/config")
     else:
         console.print(f"~/.ssh/config already uses this key for {host}")
+
+    if connecting:
+        if key.add_refused:
+            click.echo(add_key_in_browser_message(key, rerun=True), err=True)
+    elif key.add_refused:
+        click.echo(f"\n{add_key_in_browser_message(key)}\n\nThen connect with: ssh {host}")
+    else:
+        click.echo(f"Connect with: ssh {host}")

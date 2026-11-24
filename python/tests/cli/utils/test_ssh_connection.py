@@ -11,6 +11,7 @@ import rich_click as click
 
 from lightning_sdk.api.ssh_key_api import SSHKeyRegistrationError
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal, ensure_ssh_key
+from lightning_sdk.lightning_cloud import env
 
 needs_ssh_keygen = pytest.mark.skipif(shutil.which("ssh-keygen") is None, reason="needs OpenSSH's ssh-keygen")
 
@@ -39,9 +40,11 @@ def _make_key(path: Path, comment: str) -> None:
 
 @needs_ssh_keygen
 def test_creates_an_ed25519_key_without_a_passphrase_and_registers_it(home, api) -> None:
-    key_path = ensure_ssh_key()
+    key = ensure_ssh_key()
 
+    key_path = key.path
     assert key_path == home / ".ssh" / "lightning_ed25519"
+    assert not key.add_refused
     public_key = key_path.with_suffix(".pub").read_text().strip()
     key_type, _, comment = public_key.split(maxsplit=2)
     assert key_type == "ssh-ed25519"
@@ -57,11 +60,11 @@ def test_creates_an_ed25519_key_without_a_passphrase_and_registers_it(home, api)
 def test_a_second_run_registers_the_same_key_again(home, api) -> None:
     """The platform returns a key the account already has, so a repeat needs no check here."""
     first = ensure_ssh_key()
-    private_key = first.read_bytes()
+    private_key = first.path.read_bytes()
 
     assert ensure_ssh_key() == first
 
-    assert first.read_bytes() == private_key
+    assert first.path.read_bytes() == private_key
     assert api.create_public_key.call_count == 2
     assert api.create_public_key.call_args_list[0] == api.create_public_key.call_args_list[1]
 
@@ -98,13 +101,49 @@ def test_recreates_a_missing_public_key_from_the_private_key(home, api) -> None:
 @needs_ssh_keygen
 def test_shows_the_platform_refusal(home, api) -> None:
     refusal = "This SSH public key can't be added. Please generate a new key and add that instead."
-    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal)
+    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=400)
 
     with pytest.raises(click.ClickException) as error:
         ensure_ssh_key()
 
     assert refusal in error.value.message
     assert "lightning_ed25519.pub" in error.value.message
+
+
+@needs_ssh_keygen
+def test_a_credential_that_cant_add_keys_is_reported_not_raised(home, api) -> None:
+    """The account may already have the key from the browser, so the caller carries on."""
+    api.create_public_key.side_effect = SSHKeyRegistrationError("Forbidden", status=403)
+
+    key = ensure_ssh_key()
+
+    assert key.path == home / ".ssh" / "lightning_ed25519"
+    assert key.add_refused
+    assert key.public_key == key.public_key_path.read_text().strip()
+
+
+@needs_ssh_keygen
+def test_connecting_says_where_to_add_a_key_it_cant_add_and_carries_on(home, api, monkeypatch, capsys) -> None:
+    monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", "https://lightning.example.com/")
+    refusal = "Forbidden"
+    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=403)
+
+    with patch("lightning_sdk.cli.utils.ssh_connection.require_auth_header"):
+        key_path = configure_ssh_internal()
+
+    assert key_path == str(home / ".ssh" / "lightning_ed25519")
+    stderr = capsys.readouterr().err
+    assert refusal not in stderr
+    assert "add it at https://lightning.example.com/me/settings/keys and run this command again" in stderr
+    assert (home / ".ssh" / "lightning_ed25519.pub").read_text().strip() in stderr
+
+
+@needs_ssh_keygen
+def test_connecting_says_nothing_about_a_key_it_added(home, api, capsys) -> None:
+    with patch("lightning_sdk.cli.utils.ssh_connection.require_auth_header"):
+        configure_ssh_internal()
+
+    assert "settings/keys" not in capsys.readouterr().err
 
 
 def test_explains_a_missing_ssh_keygen(home, api) -> None:
