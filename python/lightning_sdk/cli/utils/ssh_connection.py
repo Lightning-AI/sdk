@@ -3,15 +3,18 @@
 import platform
 import shutil
 import subprocess
+from http import HTTPStatus
 from pathlib import Path
 
 import rich_click as click
 
 from lightning_sdk.api.ssh_key_api import SSHKeyApi, SSHKeyRegistrationError
 from lightning_sdk.cli.utils.auth import require_auth_header
+from lightning_sdk.lightning_cloud import env
 
 # The web UI's setup script uses the same file, so the browser and CLI flows share one key per machine.
 SSH_KEY_NAME = "lightning_ed25519"
+_ACCOUNT_SSH_KEYS_PATH = "/me/settings/keys"
 _MAX_KEY_NAME_LENGTH = 256
 
 
@@ -29,7 +32,8 @@ def ensure_ssh_key() -> Path:
     """Create the SSH key if it's missing, and register its public key with the signed-in user's account.
 
     The private key is never replaced. The platform returns the key unchanged when the account already has it,
-    so this is safe to call on every connect.
+    so this is safe to call on every connect. When the signed-in credential isn't allowed to add keys, this says
+    where to add the key in the browser and carries on.
     """
     key_path = ssh_key_path()
     public_key_path = key_path.with_suffix(".pub")
@@ -43,10 +47,23 @@ def ensure_ssh_key() -> Path:
     try:
         SSHKeyApi().create_public_key(name=_key_name(public_key), public_key=public_key)
     except SSHKeyRegistrationError as e:
-        raise click.ClickException(
-            f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
-        ) from None
+        if e.status != HTTPStatus.FORBIDDEN:
+            raise click.ClickException(
+                f"Could not add the SSH key {public_key_path} to your Lightning account: {e}"
+            ) from None
+        # A 403 refuses the credential, not the key. The account may already have the key, added in the
+        # browser, so SSH decides.
+        click.echo(_add_key_in_browser_message(public_key_path, public_key), err=True)
     return key_path
+
+
+def _add_key_in_browser_message(public_key_path: Path, public_key: str) -> str:
+    keys_url = env.LIGHTNING_CLOUD_URL.rstrip("/") + _ACCOUNT_SSH_KEYS_PATH
+    return (
+        "Your Lightning login can't add SSH keys to your account.\n"
+        f"If you haven't added {public_key_path} yet, add it at {keys_url}. Its public key is:\n"
+        f"{public_key}"
+    )
 
 
 def _ssh_keygen() -> str:

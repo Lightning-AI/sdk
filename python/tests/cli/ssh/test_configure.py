@@ -202,7 +202,7 @@ def test_configure_again_reuses_the_key_and_leaves_the_config(home, ssh_key_api,
 @needs_ssh_keygen
 def test_configure_shows_the_platform_refusal(home, ssh_key_api, studio) -> None:
     refusal = "You can have at most 50 SSH keys. Delete one you no longer use, then add this one again."
-    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError(refusal)
+    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=400)
 
     result = _configure(studio)
 
@@ -210,6 +210,18 @@ def test_configure_shows_the_platform_refusal(home, ssh_key_api, studio) -> None
     # rich wraps the error in a box, so drop its border before matching.
     assert refusal in " ".join(click.unstyle(result.output).replace("│", " ").split())
     assert not (home / ".ssh" / "config").exists()
+
+
+@needs_ssh_keygen
+def test_configure_adds_the_entry_when_the_login_cant_add_keys(home, ssh_key_api, studio) -> None:
+    ssh_key_api.create_public_key.side_effect = SSHKeyRegistrationError("Forbidden", status=403)
+
+    result = _configure(studio)
+
+    assert result.exit_code == 0, result.output
+    assert "/me/settings/keys" in result.output
+    assert host_uses_ssh_key((home / ".ssh" / "config").read_text(), "dev")
+    assert "Added dev to ~/.ssh/config" in result.output
 
 
 @needs_ssh_keygen

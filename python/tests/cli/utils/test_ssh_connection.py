@@ -11,6 +11,7 @@ import rich_click as click
 
 from lightning_sdk.api.ssh_key_api import SSHKeyRegistrationError
 from lightning_sdk.cli.utils.ssh_connection import configure_ssh_internal, ensure_ssh_key
+from lightning_sdk.lightning_cloud import env
 
 needs_ssh_keygen = pytest.mark.skipif(shutil.which("ssh-keygen") is None, reason="needs OpenSSH's ssh-keygen")
 
@@ -98,13 +99,29 @@ def test_recreates_a_missing_public_key_from_the_private_key(home, api) -> None:
 @needs_ssh_keygen
 def test_shows_the_platform_refusal(home, api) -> None:
     refusal = "This SSH public key can't be added. Please generate a new key and add that instead."
-    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal)
+    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=400)
 
     with pytest.raises(click.ClickException) as error:
         ensure_ssh_key()
 
     assert refusal in error.value.message
     assert "lightning_ed25519.pub" in error.value.message
+
+
+@needs_ssh_keygen
+def test_a_credential_that_cant_add_keys_says_where_to_add_it_and_carries_on(home, api, monkeypatch, capsys) -> None:
+    """The account may already have the key from the browser, so the connection goes ahead."""
+    monkeypatch.setattr(env, "LIGHTNING_CLOUD_URL", "https://lightning.example.com/")
+    refusal = "Forbidden"
+    api.create_public_key.side_effect = SSHKeyRegistrationError(refusal, status=403)
+
+    key_path = ensure_ssh_key()
+
+    assert key_path == home / ".ssh" / "lightning_ed25519"
+    stderr = capsys.readouterr().err
+    assert refusal not in stderr
+    assert "https://lightning.example.com/me/settings/keys" in stderr
+    assert key_path.with_suffix(".pub").read_text().strip() in stderr
 
 
 def test_explains_a_missing_ssh_keygen(home, api) -> None:

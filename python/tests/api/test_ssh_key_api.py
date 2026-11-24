@@ -46,7 +46,19 @@ def test_create_refusal_carries_the_platform_message(_login_token) -> None:
         SSHKeyApi().create_public_key(name="laptop", public_key=PUBLIC_KEY)
 
     assert str(error.value) == refusal
+    assert error.value.status == 400
     request.assert_called_once()
+
+
+def test_create_refusal_of_the_credential_carries_403(_login_token) -> None:
+    refusal = "Forbidden"
+    with patch(
+        "urllib3.PoolManager.request", return_value=_response(403, {"code": 7, "message": refusal})
+    ), pytest.raises(SSHKeyRegistrationError) as error:
+        SSHKeyApi().create_public_key(name="laptop", public_key=PUBLIC_KEY)
+
+    assert str(error.value) == refusal
+    assert error.value.status == 403
 
 
 def test_create_is_not_retried_on_a_server_error(_login_token) -> None:
@@ -63,5 +75,7 @@ def test_create_refusal_without_a_json_body_names_the_status(_login_token) -> No
     response.data = b"<html>blocked</html>"
     with patch("urllib3.PoolManager.request", return_value=response), pytest.raises(
         SSHKeyRegistrationError, match="HTTP 403"
-    ):
+    ) as error:
         SSHKeyApi().create_public_key(name="laptop", public_key=PUBLIC_KEY)
+
+    assert error.value.status == 403
