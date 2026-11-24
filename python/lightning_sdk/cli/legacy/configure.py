@@ -13,12 +13,12 @@ def configure() -> None:
 
 
 def _configure_ssh_internal(
-    name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False
+    name: Optional[str] = None, teamspace: Optional[str] = None, overwrite: bool = False, connecting: bool = False
 ) -> None:
     """Internal function to configure SSH without Click decorators."""
     require_auth_header()
     studio = resolve_studio(name, resolve_teamspace(teamspace))
-    configure_studio_ssh(studio.name, f"s_{studio._studio.id}", overwrite=overwrite)
+    configure_studio_ssh(studio.name, f"s_{studio._studio.id}", overwrite=overwrite, connecting=connecting)
 
 
 @configure.command(name="ssh")
