@@ -85,7 +85,7 @@ class Studio(metaclass=TrackCallsMeta):
         cloud: Optional[Union[CloudProvider, str]] = None,
         create_ok: bool = True,
         source: Optional[str] = None,
-        disable_secrets: bool = False,
+        disable_secrets: Optional[bool] = None,
         studio_type: Optional[str] = None,
     ) -> None:
         self._studio_api = StudioApi()
@@ -95,7 +95,14 @@ class Studio(metaclass=TrackCallsMeta):
         # Skip-init instances are name/id shells; regular instances resolve this before use.
         self._teamspace = cast(Teamspace, None)
         self._setup_done = getattr(self._skip_setup, "value", False)
-        self._disable_secrets = disable_secrets
+        if disable_secrets is not None:
+            warnings.warn(
+                "disable_secrets is deprecated and will be removed in a future release, "
+                "when Lightning stops honouring it.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        self._disable_secrets = bool(disable_secrets)
         # Cloud API models are generated and intentionally treated as an opaque boundary.
         self._studio: Any = None
 
