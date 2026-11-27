@@ -1,18 +1,18 @@
-* @justusschock @ethanwharris @k223kim @rusenask @tejapulagam @pwgardipee @andyland
+* @justusperillieux @ethanwharris @k223kim @rusenask @tejapulagam @pwgardipee @andyland
 
-/.github/ @justusschock @ethanwharris @owbone @rusenask
+/.github/ @justusperillieux @ethanwharris @owbone @rusenask
 
-/python/docs/ @justusschock @dhedey @ethanwharris @owbone @rusenask @tejapulagam @pwgardipee @andyland
+/python/docs/ @justusperillieux @dhedey @ethanwharris @owbone @rusenask @tejapulagam @pwgardipee @andyland
 
-/python/lightning_sdk/llm/ @justusschock @ethanwharris @k223kim @rusenask @Danidapena
-/python/lightning_sdk/pipeline/ @justusschock @ethanwharris @tchaton
-/python/lightning_sdk/sandbox/ @justusschock @ethanwharris @k223kim @rusenask
+/python/lightning_sdk/llm/ @justusperillieux @ethanwharris @k223kim @rusenask @Danidapena
+/python/lightning_sdk/pipeline/ @justusperillieux @ethanwharris @tchaton
+/python/lightning_sdk/sandbox/ @justusperillieux @ethanwharris @k223kim @rusenask
 
-/python/lightning_sdk/agents.py @justusschock @ethanwharris @k223kim @rusenask @Danidapena
-/python/lightning_sdk/base_studio.py @justusschock @ethanwharris @vivequeramji
-/python/lightning_sdk/deployment.py @justusschock @ethanwharris @rusenask @tchaton
-/python/lightning_sdk/filesystem.py @justusschock @ethanwharris @k223kim @owbone
-/python/lightning_sdk/serve.py @justusschock @ethanwharris @k223kim @rusenask @tchaton @tejapulagam @pwgardipee @andyland
+/python/lightning_sdk/agents.py @justusperillieux @ethanwharris @k223kim @rusenask @Danidapena
+/python/lightning_sdk/base_studio.py @justusperillieux @ethanwharris @vivequeramji
+/python/lightning_sdk/deployment.py @justusperillieux @ethanwharris @rusenask @tchaton
+/python/lightning_sdk/filesystem.py @justusperillieux @ethanwharris @k223kim @owbone
+/python/lightning_sdk/serve.py @justusperillieux @ethanwharris @k223kim @rusenask @tchaton @tejapulagam @pwgardipee @andyland
 
-/js/ @justusschock @ethanwharris @k223kim @rusenask
-/go/ @justusschock @owbone @ethanwharris @rusenask
+/js/ @justusperillieux @ethanwharris @k223kim @rusenask
+/go/ @justusperillieux @owbone @ethanwharris @rusenask
